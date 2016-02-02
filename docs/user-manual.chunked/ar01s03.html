@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>3. Features</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="Network UPS Tools User Manual" /><link rel="up" href="index.html" title="Network UPS Tools User Manual" /><link rel="prev" href="ar01s02.html" title="2. Network UPS Tools Overview" /><link rel="next" href="ar01s04.html" title="4. Download information" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ar01s02.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ar01s04.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="Features"></a>3. Features</h2></div></div></div><p>NUT provides many features, and is always improving.
+Thus this list may lag behind the current code.</p><p>Features frequently appear during the development cycles, so be sure to look at
+the <a class="ulink" href="http://www.networkupstools.org/download.html" target="_top">release notes and change logs</a>
+to see the latest additions.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_multiple_manufacturer_and_device_support"></a>3.1. Multiple manufacturer and device support</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Monitors many UPS, PDU and SCD models from more than 100 manufacturers with a
+unified interface (<a class="ulink" href="stable-hcl.html" target="_top">Hardware Compatibility List</a>).
+</li><li class="listitem"><p class="simpara">
+Various communication types are supported with the same common interface:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+serial,
+</li><li class="listitem">
+USB,
+</li><li class="listitem">
+network (SNMP, Eaton / MGE XML/HTTP).
+</li></ul></div></li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_multiple_architecture_support"></a>3.2. Multiple architecture support</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Cross-platform - different flavors of Unix can be managed together with a
+common set of tools, even crossing architectures.
+</li><li class="listitem">
+This software has been reported to run on Linux distributions, the BSDs, Apple’s
+OS X, Solaris, IRIX, HP/UX, Tru64 Unix, and AIX.
+</li><li class="listitem">
+Windows users may be able to build it directly with Cygwin.
+There is also a port of the client-side monitoring to Windows called WinNUT.
+</li><li class="listitem">
+Your system will probably run it too. You just need a good C compiler and
+possibly some more packages to gain access to the serial ports.
+Other features, such as USB / SNMP / whatever, will also need extra software
+installed.
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_layered_and_modular_design_with_multiple_processes"></a>3.3. Layered and modular design with multiple processes</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Three layers: drivers, server, clients.
+</li><li class="listitem">
+Drivers run on the same host as the server, and clients communicate with the
+server over the network.
+</li><li class="listitem">
+This means clients can monitor any UPS anywhere as long as there is a network
+path between them.
+</li></ul></div><div class="warning" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Warning</h3><p>Be sure to plug your network’s physical hardware (switches, hubs,
+routers, bridges, …) into the UPS!</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_redundancy_support_hot_swap_high_availability_power_supplies"></a>3.4. Redundancy support - Hot swap/high availability power supplies</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+upsmon can handle high-end servers which receive power from multiple UPSes
+simultaneously.
+</li><li class="listitem">
+upsmon won’t initiate a shutdown until the total power situation across all
+source UPSes becomes critical (on battery and low battery).
+</li><li class="listitem">
+You can lose a UPS completely as long as you still have at least the minimum
+number of sources available. The minimum value is configurable.
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_security_and_access_control"></a>3.5. Security and access control</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Manager functions are granted with per-user granularity. The admin can have
+full powers, while the admin’s helper can only do specific non-destructive tasks
+such as a battery test.
+</li><li class="listitem">
+The drivers, server, and monitoring client (upsmon) can all run as separate
+user IDs if this is desired for privilege separation.
+</li><li class="listitem">
+Only one tiny part of one program has root powers.
+upsmon starts as root and forks an unprivileged process which does the actual
+monitoring over the network.
+They remain connected over a pipe. When a shutdown is necessary, a single
+character is sent to the privileged process. It then calls the predefined
+shutdown command. In any other case, the privileged process exits.
+This was inspired by the auth mechanism in Solar Designer’s excellent popa3d.
+</li><li class="listitem">
+The drivers and network server may be run in a chroot jail for further
+security benefits. This is supported directly since version 1.4 and beyond with
+the <span class="emphasis"><em>chroot=</em></span> configuration directive.
+</li><li class="listitem">
+IP-based access control relies on the local firewall and
+<a class="ulink" href="http://en.wikipedia.org/wiki/TCP_Wrapper" target="_top">TCP Wrapper</a>.
+</li><li class="listitem">
+SSL is available as a build option ("--with-ssl").
+It encrypts sessions with upsd and can also be used to authenticate servers.
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_web_based_monitoring"></a>3.6. Web-based monitoring</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Comes stock with CGI-based web interface tools for UPS monitoring and
+management, including graphical status displays.
+</li><li class="listitem">
+Custom status web pages may be generated with the CGI programs, since they use
+templates to create the pages. This allows you to have status pages which fit
+the look and feel of the rest of your site.
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_free_software"></a>3.7. Free software</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+That’s free beer and free speech. Licensed under the GNU General Public
+License version 2 or later.
+</li><li class="listitem">
+Know your systems - all source code is available for inspection, so there are
+no mysteries or secrets in your critical monitoring tools.
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_ups_management_and_control"></a>3.8. UPS management and control</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Writable variables may be edited on higher end equipment for local customization
+</li><li class="listitem">
+Status monitoring can generate notifications (email/pager/SMS/…) on alert conditions
+</li><li class="listitem">
+Alert notices may be dampened to only trigger after a condition persists. This
+avoids the usual pager meltdown when something happens and no delay is used.
+</li><li class="listitem">
+Maintenance actions such as battery runtime calibration are available where
+supported by the UPS hardware.
+</li><li class="listitem">
+Power statistics can be logged in custom formats for later retrieval and analysis
+</li><li class="listitem">
+All drivers are started and stopped with one common program. Starting one is
+as easy as starting ten: <span class="emphasis"><em>upsdrvctl start</em></span>.
+</li><li class="listitem">
+Shutdowns and other procedures may be tested without stressing actual UPS
+hardware by simulating status values with the dummy-ups pseudo-driver. Anything
+which can happen in a driver can be replicated with dummy-ups.
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_monitoring_diagrams"></a>3.9. Monitoring diagrams</h3></div></div></div><p>These are the most common situations for monitoring UPS hardware. Other ways are
+possible, but they are mostly variants on these four.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>these examples show serial communications for simplicity, but USB or SNMP
+or any other monitoring is also possible.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_simple_configuration"></a>"Simple" configuration</h4></div></div></div><p><span class="inlinemediaobject"><img src="images/simple.png" alt="images/simple.png" /></span></p><p>One UPS, one computer. This is also known as "Standalone" configuration.</p><p>This is the configuration that most users will use. You need at least a driver,
+upsd, and upsmon running.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_advanced_configuration"></a>"Advanced" configuration</h4></div></div></div><p><span class="inlinemediaobject"><img src="images/advanced.png" alt="images/advanced.png" /></span></p><p>One UPS, multiple computers. Only one of them can actually talk to the UPS
+directly. That’s where the network comes in. The Master system runs the driver,
+upsd, and upsmon in master mode. The Slave systems only run upsmon in slave mode.</p><p>This is useful when you have a very large UPS that’s capable of running multiple
+systems simultaneously. There is no longer the need to buy a bunch of individual
+UPSes or "sharing" hardware, since this software will handle the sharing for you.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_big_box_configuration"></a>"Big Box" configuration</h4></div></div></div><p><span class="inlinemediaobject"><img src="images/bigbox.png" alt="images/bigbox.png" /></span></p><p>Some systems have multiple power supplies and cords. You typically find this on
+high-end servers that allow hot-swap and other fun features. In this case, you
+run multiple drivers (one per UPS), a single upsd, and a single upsmon (as
+master for both UPS 1 and UPS 2)</p><p>This software understands that some of these servers can also run with some of
+the supplies gone. For this reason, every UPS is assigned a "power value" - the
+quantity of power supplies that it feeds on a system.
+The total available "power value" is compared to the minimum that is required
+for that hardware. For example, if you have 3 power supplies and 3 UPSes, but
+only 2 supplies must be running at any given moment, the minimum would be 2.
+This means that you can safely lose any one UPS and the software will handle it
+properly by remaining online.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_bizarre_configuration"></a>"Bizarre" configuration</h4></div></div></div><p><span class="inlinemediaobject"><img src="images/bizarre.png" alt="images/bizarre.png" /></span></p><p>You can even have a UPS that has the serial port connected to a system that it’s
+not feeding. Sometimes a PC will be close to a UPS that needs to be monitored,
+so it’s drafted to supply a serial port for the purpose. This PC may in fact be
+getting power from some other UPS. This is not a problem.</p><p>The first system ("mixed") is a Master for UPS 1, but is only monitoring UPS 2.
+The other systems are Slaves of UPS 2.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_image_credits"></a>3.10. Image credits</h3></div></div></div><p>Thanks to Eaton for providing shiny modern graphics.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_compatibility_information"></a>3.11. Compatibility information</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_hardware"></a>Hardware</h4></div></div></div><p>The current list of hardware supported by NUT can be viewed <a class="link" href="apd.html" title="D. Hardware Compatibility List">here</a>.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_operating_systems"></a>Operating systems</h4></div></div></div><p>This software has been reported to run on:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Linux distributions,
+</li><li class="listitem">
+the BSDs,
+</li><li class="listitem">
+Apple’s OS X,
+</li><li class="listitem">
+Sun Solaris,
+</li><li class="listitem">
+SGI IRIX,
+</li><li class="listitem">
+HP/UX,
+</li><li class="listitem">
+Tru64 Unix,
+</li><li class="listitem">
+AIX.
+</li></ul></div><p>There is also a port of the client-side monitoring to Windows called WinNUT.
+Windows users may be able to build it directly with Cygwin.</p><p>Your system will probably run it too. You just need a good C compiler and
+possibly some more packages to gain access to the serial ports.
+Other features, such as USB / SNMP / whatever, will also need extra software
+installed.</p><p>Success reports are welcomed to keep this list accurate.</p></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
+		Last updated 2016-02-02 16:09:58 -- Network UPS Tools 2.7.3.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s02.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s04.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

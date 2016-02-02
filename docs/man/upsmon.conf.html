@@ -1,0 +1,1294 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<meta name="generator" content="AsciiDoc 8.6.9" />
+<title>UPSMON.CONF(5)</title>
+<style type="text/css">
+/* Shared CSS for AsciiDoc xhtml11 and html5 backends */
+
+/* Default font. */
+body {
+  font-family: Georgia,serif;
+}
+
+/* Title font. */
+h1, h2, h3, h4, h5, h6,
+div.title, caption.title,
+thead, p.table.header,
+#toctitle,
+#author, #revnumber, #revdate, #revremark,
+#footer {
+  font-family: Arial,Helvetica,sans-serif;
+}
+
+body {
+  margin: 1em 5% 1em 5%;
+}
+
+a {
+  color: blue;
+  text-decoration: underline;
+}
+a:visited {
+  color: fuchsia;
+}
+
+em {
+  font-style: italic;
+  color: navy;
+}
+
+strong {
+  font-weight: bold;
+  color: #083194;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #527bbd;
+  margin-top: 1.2em;
+  margin-bottom: 0.5em;
+  line-height: 1.3;
+}
+
+h1, h2, h3 {
+  border-bottom: 2px solid silver;
+}
+h2 {
+  padding-top: 0.5em;
+}
+h3 {
+  float: left;
+}
+h3 + * {
+  clear: left;
+}
+h5 {
+  font-size: 1.0em;
+}
+
+div.sectionbody {
+  margin-left: 0;
+}
+
+hr {
+  border: 1px solid silver;
+}
+
+p {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+ul, ol, li > p {
+  margin-top: 0;
+}
+ul > li     { color: #aaa; }
+ul > li > * { color: black; }
+
+.monospaced, code, pre {
+  font-family: "Courier New", Courier, monospace;
+  font-size: inherit;
+  color: navy;
+  padding: 0;
+  margin: 0;
+}
+pre {
+  white-space: pre-wrap;
+}
+
+#author {
+  color: #527bbd;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+#email {
+}
+#revnumber, #revdate, #revremark {
+}
+
+#footer {
+  font-size: small;
+  border-top: 2px solid silver;
+  padding-top: 0.5em;
+  margin-top: 4.0em;
+}
+#footer-text {
+  float: left;
+  padding-bottom: 0.5em;
+}
+#footer-badges {
+  float: right;
+  padding-bottom: 0.5em;
+}
+
+#preamble {
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+}
+div.imageblock, div.exampleblock, div.verseblock,
+div.quoteblock, div.literalblock, div.listingblock, div.sidebarblock,
+div.admonitionblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+div.admonitionblock {
+  margin-top: 2.0em;
+  margin-bottom: 2.0em;
+  margin-right: 10%;
+  color: #606060;
+}
+
+div.content { /* Block element content. */
+  padding: 0;
+}
+
+/* Block element titles. */
+div.title, caption.title {
+  color: #527bbd;
+  font-weight: bold;
+  text-align: left;
+  margin-top: 1.0em;
+  margin-bottom: 0.5em;
+}
+div.title + * {
+  margin-top: 0;
+}
+
+td div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content + div.title {
+  margin-top: 0.0em;
+}
+
+div.sidebarblock > div.content {
+  background: #ffffee;
+  border: 1px solid #dddddd;
+  border-left: 4px solid #f0f0f0;
+  padding: 0.5em;
+}
+
+div.listingblock > div.content {
+  border: 1px solid #dddddd;
+  border-left: 5px solid #f0f0f0;
+  background: #f8f8f8;
+  padding: 0.5em;
+}
+
+div.quoteblock, div.verseblock {
+  padding-left: 1.0em;
+  margin-left: 1.0em;
+  margin-right: 10%;
+  border-left: 5px solid #f0f0f0;
+  color: #888;
+}
+
+div.quoteblock > div.attribution {
+  padding-top: 0.5em;
+  text-align: right;
+}
+
+div.verseblock > pre.content {
+  font-family: inherit;
+  font-size: inherit;
+}
+div.verseblock > div.attribution {
+  padding-top: 0.75em;
+  text-align: left;
+}
+/* DEPRECATED: Pre version 8.2.7 verse style literal block. */
+div.verseblock + div.attribution {
+  text-align: left;
+}
+
+div.admonitionblock .icon {
+  vertical-align: top;
+  font-size: 1.1em;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #527bbd;
+  padding-right: 0.5em;
+}
+div.admonitionblock td.content {
+  padding-left: 0.5em;
+  border-left: 3px solid #dddddd;
+}
+
+div.exampleblock > div.content {
+  border-left: 3px solid #dddddd;
+  padding-left: 0.5em;
+}
+
+div.imageblock div.content { padding-left: 0; }
+span.image img { border-style: none; vertical-align: text-bottom; }
+a.image:visited { color: white; }
+
+dl {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+dt {
+  margin-top: 0.5em;
+  margin-bottom: 0;
+  font-style: normal;
+  color: navy;
+}
+dd > *:first-child {
+  margin-top: 0.1em;
+}
+
+ul, ol {
+    list-style-position: outside;
+}
+ol.arabic {
+  list-style-type: decimal;
+}
+ol.loweralpha {
+  list-style-type: lower-alpha;
+}
+ol.upperalpha {
+  list-style-type: upper-alpha;
+}
+ol.lowerroman {
+  list-style-type: lower-roman;
+}
+ol.upperroman {
+  list-style-type: upper-roman;
+}
+
+div.compact ul, div.compact ol,
+div.compact p, div.compact p,
+div.compact div, div.compact div {
+  margin-top: 0.1em;
+  margin-bottom: 0.1em;
+}
+
+tfoot {
+  font-weight: bold;
+}
+td > div.verse {
+  white-space: pre;
+}
+
+div.hdlist {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+div.hdlist tr {
+  padding-bottom: 15px;
+}
+dt.hdlist1.strong, td.hdlist1.strong {
+  font-weight: bold;
+}
+td.hdlist1 {
+  vertical-align: top;
+  font-style: normal;
+  padding-right: 0.8em;
+  color: navy;
+}
+td.hdlist2 {
+  vertical-align: top;
+}
+div.hdlist.compact tr {
+  margin: 0;
+  padding-bottom: 0;
+}
+
+.comment {
+  background: yellow;
+}
+
+.footnote, .footnoteref {
+  font-size: 0.8em;
+}
+
+span.footnote, span.footnoteref {
+  vertical-align: super;
+}
+
+#footnotes {
+  margin: 20px 0 20px 0;
+  padding: 7px 0 0 0;
+}
+
+#footnotes div.footnote {
+  margin: 0 0 5px 0;
+}
+
+#footnotes hr {
+  border: none;
+  border-top: 1px solid silver;
+  height: 1px;
+  text-align: left;
+  margin-left: 0;
+  width: 20%;
+  min-width: 100px;
+}
+
+div.colist td {
+  padding-right: 0.5em;
+  padding-bottom: 0.3em;
+  vertical-align: top;
+}
+div.colist td img {
+  margin-top: 0.3em;
+}
+
+@media print {
+  #footer-badges { display: none; }
+}
+
+#toc {
+  margin-bottom: 2.5em;
+}
+
+#toctitle {
+  color: #527bbd;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-top: 1.0em;
+  margin-bottom: 0.1em;
+}
+
+div.toclevel0, div.toclevel1, div.toclevel2, div.toclevel3, div.toclevel4 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+div.toclevel2 {
+  margin-left: 2em;
+  font-size: 0.9em;
+}
+div.toclevel3 {
+  margin-left: 4em;
+  font-size: 0.9em;
+}
+div.toclevel4 {
+  margin-left: 6em;
+  font-size: 0.9em;
+}
+
+span.aqua { color: aqua; }
+span.black { color: black; }
+span.blue { color: blue; }
+span.fuchsia { color: fuchsia; }
+span.gray { color: gray; }
+span.green { color: green; }
+span.lime { color: lime; }
+span.maroon { color: maroon; }
+span.navy { color: navy; }
+span.olive { color: olive; }
+span.purple { color: purple; }
+span.red { color: red; }
+span.silver { color: silver; }
+span.teal { color: teal; }
+span.white { color: white; }
+span.yellow { color: yellow; }
+
+span.aqua-background { background: aqua; }
+span.black-background { background: black; }
+span.blue-background { background: blue; }
+span.fuchsia-background { background: fuchsia; }
+span.gray-background { background: gray; }
+span.green-background { background: green; }
+span.lime-background { background: lime; }
+span.maroon-background { background: maroon; }
+span.navy-background { background: navy; }
+span.olive-background { background: olive; }
+span.purple-background { background: purple; }
+span.red-background { background: red; }
+span.silver-background { background: silver; }
+span.teal-background { background: teal; }
+span.white-background { background: white; }
+span.yellow-background { background: yellow; }
+
+span.big { font-size: 2em; }
+span.small { font-size: 0.6em; }
+
+span.underline { text-decoration: underline; }
+span.overline { text-decoration: overline; }
+span.line-through { text-decoration: line-through; }
+
+div.unbreakable { page-break-inside: avoid; }
+
+
+/*
+ * xhtml11 specific
+ *
+ * */
+
+div.tableblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+div.tableblock > table {
+  border: 3px solid #527bbd;
+}
+thead, p.table.header {
+  font-weight: bold;
+  color: #527bbd;
+}
+p.table {
+  margin-top: 0;
+}
+/* Because the table frame attribute is overriden by CSS in most browsers. */
+div.tableblock > table[frame="void"] {
+  border-style: none;
+}
+div.tableblock > table[frame="hsides"] {
+  border-left-style: none;
+  border-right-style: none;
+}
+div.tableblock > table[frame="vsides"] {
+  border-top-style: none;
+  border-bottom-style: none;
+}
+
+
+/*
+ * html5 specific
+ *
+ * */
+
+table.tableblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+thead, p.tableblock.header {
+  font-weight: bold;
+  color: #527bbd;
+}
+p.tableblock {
+  margin-top: 0;
+}
+table.tableblock {
+  border-width: 3px;
+  border-spacing: 0px;
+  border-style: solid;
+  border-color: #527bbd;
+  border-collapse: collapse;
+}
+th.tableblock, td.tableblock {
+  border-width: 1px;
+  padding: 4px;
+  border-style: solid;
+  border-color: #527bbd;
+}
+
+table.tableblock.frame-topbot {
+  border-left-style: hidden;
+  border-right-style: hidden;
+}
+table.tableblock.frame-sides {
+  border-top-style: hidden;
+  border-bottom-style: hidden;
+}
+table.tableblock.frame-none {
+  border-style: hidden;
+}
+
+th.tableblock.halign-left, td.tableblock.halign-left {
+  text-align: left;
+}
+th.tableblock.halign-center, td.tableblock.halign-center {
+  text-align: center;
+}
+th.tableblock.halign-right, td.tableblock.halign-right {
+  text-align: right;
+}
+
+th.tableblock.valign-top, td.tableblock.valign-top {
+  vertical-align: top;
+}
+th.tableblock.valign-middle, td.tableblock.valign-middle {
+  vertical-align: middle;
+}
+th.tableblock.valign-bottom, td.tableblock.valign-bottom {
+  vertical-align: bottom;
+}
+
+
+/*
+ * manpage specific
+ *
+ * */
+
+body.manpage h1 {
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  border-top: 2px solid silver;
+  border-bottom: 2px solid silver;
+}
+body.manpage h2 {
+  border-style: none;
+}
+body.manpage div.sectionbody {
+  margin-left: 3em;
+}
+
+@media print {
+  body.manpage div#toc { display: none; }
+}
+
+
+</style>
+<script type="text/javascript">
+/*<![CDATA[*/
+var asciidoc = {  // Namespace.
+
+/////////////////////////////////////////////////////////////////////
+// Table Of Contents generator
+/////////////////////////////////////////////////////////////////////
+
+/* Author: Mihai Bazon, September 2002
+ * http://students.infoiasi.ro/~mishoo
+ *
+ * Table Of Content generator
+ * Version: 0.4
+ *
+ * Feel free to use this script under the terms of the GNU General Public
+ * License, as long as you do not remove or alter this notice.
+ */
+
+ /* modified by Troy D. Hanson, September 2006. License: GPL */
+ /* modified by Stuart Rackham, 2006, 2009. License: GPL */
+
+// toclevels = 1..4.
+toc: function (toclevels) {
+
+  function getText(el) {
+    var text = "";
+    for (var i = el.firstChild; i != null; i = i.nextSibling) {
+      if (i.nodeType == 3 /* Node.TEXT_NODE */) // IE doesn't speak constants.
+        text += i.data;
+      else if (i.firstChild != null)
+        text += getText(i);
+    }
+    return text;
+  }
+
+  function TocEntry(el, text, toclevel) {
+    this.element = el;
+    this.text = text;
+    this.toclevel = toclevel;
+  }
+
+  function tocEntries(el, toclevels) {
+    var result = new Array;
+    var re = new RegExp('[hH]([1-'+(toclevels+1)+'])');
+    // Function that scans the DOM tree for header elements (the DOM2
+    // nodeIterator API would be a better technique but not supported by all
+    // browsers).
+    var iterate = function (el) {
+      for (var i = el.firstChild; i != null; i = i.nextSibling) {
+        if (i.nodeType == 1 /* Node.ELEMENT_NODE */) {
+          var mo = re.exec(i.tagName);
+          if (mo && (i.getAttribute("class") || i.getAttribute("className")) != "float") {
+            result[result.length] = new TocEntry(i, getText(i), mo[1]-1);
+          }
+          iterate(i);
+        }
+      }
+    }
+    iterate(el);
+    return result;
+  }
+
+  var toc = document.getElementById("toc");
+  if (!toc) {
+    return;
+  }
+
+  // Delete existing TOC entries in case we're reloading the TOC.
+  var tocEntriesToRemove = [];
+  var i;
+  for (i = 0; i < toc.childNodes.length; i++) {
+    var entry = toc.childNodes[i];
+    if (entry.nodeName.toLowerCase() == 'div'
+     && entry.getAttribute("class")
+     && entry.getAttribute("class").match(/^toclevel/))
+      tocEntriesToRemove.push(entry);
+  }
+  for (i = 0; i < tocEntriesToRemove.length; i++) {
+    toc.removeChild(tocEntriesToRemove[i]);
+  }
+
+  // Rebuild TOC entries.
+  var entries = tocEntries(document.getElementById("content"), toclevels);
+  for (var i = 0; i < entries.length; ++i) {
+    var entry = entries[i];
+    if (entry.element.id == "")
+      entry.element.id = "_toc_" + i;
+    var a = document.createElement("a");
+    a.href = "#" + entry.element.id;
+    a.appendChild(document.createTextNode(entry.text));
+    var div = document.createElement("div");
+    div.appendChild(a);
+    div.className = "toclevel" + entry.toclevel;
+    toc.appendChild(div);
+  }
+  if (entries.length == 0)
+    toc.parentNode.removeChild(toc);
+},
+
+
+/////////////////////////////////////////////////////////////////////
+// Footnotes generator
+/////////////////////////////////////////////////////////////////////
+
+/* Based on footnote generation code from:
+ * http://www.brandspankingnew.net/archive/2005/07/format_footnote.html
+ */
+
+footnotes: function () {
+  // Delete existing footnote entries in case we're reloading the footnodes.
+  var i;
+  var noteholder = document.getElementById("footnotes");
+  if (!noteholder) {
+    return;
+  }
+  var entriesToRemove = [];
+  for (i = 0; i < noteholder.childNodes.length; i++) {
+    var entry = noteholder.childNodes[i];
+    if (entry.nodeName.toLowerCase() == 'div' && entry.getAttribute("class") == "footnote")
+      entriesToRemove.push(entry);
+  }
+  for (i = 0; i < entriesToRemove.length; i++) {
+    noteholder.removeChild(entriesToRemove[i]);
+  }
+
+  // Rebuild footnote entries.
+  var cont = document.getElementById("content");
+  var spans = cont.getElementsByTagName("span");
+  var refs = {};
+  var n = 0;
+  for (i=0; i<spans.length; i++) {
+    if (spans[i].className == "footnote") {
+      n++;
+      var note = spans[i].getAttribute("data-note");
+      if (!note) {
+        // Use [\s\S] in place of . so multi-line matches work.
+        // Because JavaScript has no s (dotall) regex flag.
+        note = spans[i].innerHTML.match(/\s*\[([\s\S]*)]\s*/)[1];
+        spans[i].innerHTML =
+          "[<a id='_footnoteref_" + n + "' href='#_footnote_" + n +
+          "' title='View footnote' class='footnote'>" + n + "</a>]";
+        spans[i].setAttribute("data-note", note);
+      }
+      noteholder.innerHTML +=
+        "<div class='footnote' id='_footnote_" + n + "'>" +
+        "<a href='#_footnoteref_" + n + "' title='Return to text'>" +
+        n + "</a>. " + note + "</div>";
+      var id =spans[i].getAttribute("id");
+      if (id != null) refs["#"+id] = n;
+    }
+  }
+  if (n == 0)
+    noteholder.parentNode.removeChild(noteholder);
+  else {
+    // Process footnoterefs.
+    for (i=0; i<spans.length; i++) {
+      if (spans[i].className == "footnoteref") {
+        var href = spans[i].getElementsByTagName("a")[0].getAttribute("href");
+        href = href.match(/#.*/)[0];  // Because IE return full URL.
+        n = refs[href];
+        spans[i].innerHTML =
+          "[<a href='#_footnote_" + n +
+          "' title='View footnote' class='footnote'>" + n + "</a>]";
+      }
+    }
+  }
+},
+
+install: function(toclevels) {
+  var timerId;
+
+  function reinstall() {
+    asciidoc.footnotes();
+    if (toclevels) {
+      asciidoc.toc(toclevels);
+    }
+  }
+
+  function reinstallAndRemoveTimer() {
+    clearInterval(timerId);
+    reinstall();
+  }
+
+  timerId = setInterval(reinstall, 500);
+  if (document.addEventListener)
+    document.addEventListener("DOMContentLoaded", reinstallAndRemoveTimer, false);
+  else
+    window.onload = reinstallAndRemoveTimer;
+}
+
+}
+asciidoc.install();
+/*]]>*/
+</script>
+<meta name="format-detection" content="telephone=no" />
+</head>
+<body class="article">
+<div id="header">
+<h1>UPSMON.CONF(5)</h1>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_name">NAME</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>upsmon.conf - Configuration for Network UPS Tools upsmon</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_description">DESCRIPTION</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>This file&#8217;s primary job is to define the systems that <a href="upsmon.html">upsmon(8)</a>
+will monitor and to tell it how to shut down the system when necessary.
+It will contain passwords, so keep it secure.  Ideally, only the upsmon
+process should be able to read it.</p></div>
+<div class="paragraph"><p>Additionally, other optional configuration values can be set in this
+file.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_configuration_directives">CONFIGURATION DIRECTIVES</h2>
+<div class="sectionbody">
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>DEADTIME</strong> <em>seconds</em>
+</dt>
+<dd>
+<p>
+upsmon allows a UPS to go missing for this many seconds before declaring
+it "dead".  The default is 15 seconds.
+</p>
+<div class="paragraph"><p>upsmon requires a UPS to provide status information every few seconds
+(see POLLFREQ and POLLFREQALERT) to keep things updated.  If the status
+fetch fails, the UPS is marked stale.  If it stays stale for more than
+DEADTIME seconds, the UPS is marked dead.</p></div>
+<div class="paragraph"><p>A dead UPS that was last known to be on battery is assumed to have
+changed to a low battery condition.  This may force a shutdown if it is
+providing a critical amount of power to your system.  This seems
+disruptive, but the alternative is barreling ahead into oblivion and
+crashing when you run out of power.</p></div>
+<div class="paragraph"><p>Note: DEADTIME should be a multiple of POLLFREQ and POLLFREQALERT.
+Otherwise,  you&#8217;ll have "dead" UPSes simply because upsmon isn&#8217;t polling
+them quickly enough.  Rule of thumb: take the larger of the two POLLFREQ
+values, and multiply by 3.</p></div>
+</dd>
+<dt class="hdlist1">
+<strong>FINALDELAY</strong> <em>seconds</em>
+</dt>
+<dd>
+<p>
+When running in master mode, upsmon waits this long after sending the
+NOTIFY_SHUTDOWN to warn the users.  After the timer elapses, it then
+runs your SHUTDOWNCMD.  By default this is set to 5 seconds.
+</p>
+<div class="paragraph"><p>If you need to let your users do something in between those events,
+increase this number.  Remember, at this point your UPS battery is
+almost depleted, so don&#8217;t make this too big.</p></div>
+<div class="paragraph"><p>Alternatively, you can set this very low so you don&#8217;t wait around when
+it&#8217;s time to shut down.  Some UPSes don&#8217;t give much warning for low
+battery and will require a value of 0 here for a safe shutdown.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">If FINALDELAY on the slave is greater than HOSTSYNC on the master,
+the master will give up waiting for the slave to disconnect.</td>
+</tr></table>
+</div>
+</dd>
+<dt class="hdlist1">
+<strong>HOSTSYNC</strong> <em>seconds</em>
+</dt>
+<dd>
+<p>
+upsmon will wait up to this many seconds in master mode for the slaves
+to disconnect during a shutdown situation.  By default, this is 15
+seconds.
+</p>
+<div class="paragraph"><p>When a UPS goes critical (on battery + low battery, or "FSD": forced
+shutdown), the slaves are supposed to disconnect and shut down right
+away.  The HOSTSYNC timer keeps the master upsmon from sitting there
+forever if one of the slaves gets stuck.</p></div>
+<div class="paragraph"><p>This value is also used to keep slave systems from getting stuck if
+the master fails to respond in time.  After a UPS becomes critical,
+the slave will wait up to HOSTSYNC seconds for the master to set the
+FSD flag.  If that timer expires, the slave will assume that the master
+is broken and will shut down anyway.</p></div>
+<div class="paragraph"><p>This keeps the slaves from shutting down during a short-lived status
+change to "OB LB" that the slaves see but the master misses.</p></div>
+</dd>
+<dt class="hdlist1">
+<strong>MINSUPPLIES</strong> <em>num</em>
+</dt>
+<dd>
+<p>
+Set the number of power supplies that must be receiving power to keep
+this system running.  Normal computers have just one power supply, so
+the default value of 1 is acceptable.
+</p>
+<div class="paragraph"><p>Large/expensive server type systems usually have more, and can run
+with a few missing.  The HP NetServer LH4 can run with 2 out of 4, for
+example, so you&#8217;d set it to 2.  The idea is to keep the box running
+as long as possible, right?</p></div>
+<div class="paragraph"><p>Obviously you have to put the redundant supplies on different UPS
+circuits for this to make sense!  See big-servers.txt in the docs
+subdirectory for more information and ideas on how to use this
+feature.</p></div>
+<div class="paragraph"><p>Also see the section on "power values" in <a href="upsmon.html">upsmon(8)</a>.</p></div>
+</dd>
+<dt class="hdlist1">
+<strong>MONITOR</strong> <em>system</em> <em>powervalue</em> <em>username</em> <em>password</em> <em>type</em>
+</dt>
+<dd>
+<p>
+Each UPS that you need to be monitor should have a MONITOR line.  Not
+all of these need supply power to the system that is running upsmon.
+You may monitor other systems if you want to be able to send
+notifications about status changes on them.
+</p>
+</dd>
+</dl></div>
+<div class="paragraph"><p>You must have at least one MONITOR directive in <code>upsmon.conf</code>.</p></div>
+<div class="paragraph"><p><em>system</em> is a UPS identifier.  It is in this form:</p></div>
+<div class="paragraph"><p><code>&lt;upsname&gt;[@&lt;hostname&gt;[:&lt;port&gt;]]</code></p></div>
+<div class="paragraph"><p>The default hostname is "localhost".  Some examples:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+"su700@mybox" means a UPS called "su700" on a system called "mybox".
+This is the normal form.
+</p>
+</li>
+<li>
+<p>
+"fenton@bigbox:5678" is a UPS called "fenton" on a system called
+"bigbox" which runs <a href="upsd.html">upsd(8)</a> on port "5678".
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p><em>powervalue</em> is an integer representing the number of power supplies
+that the UPS feeds on this system.  Most normal computers have one power
+supply, and the UPS feeds it, so this value will be 1.  You need a very
+large or special system to have anything higher here.</p></div>
+<div class="paragraph"><p>You can set the <em>powervalue</em> to 0 if you want to monitor a UPS that
+doesn&#8217;t actually supply power to this system.  This is useful when you
+want to have upsmon do notifications about status changes on a UPS
+without shutting down when it goes critical.</p></div>
+<div class="paragraph"><p>The <em>username</em> and <em>password</em> on this line must match an entry
+in that system&#8217;s <a href="upsd.users.html">upsd.users(5)</a>.  If your username is "monmaster"
+and your password is "blah", the MONITOR line might look like this:</p></div>
+<div class="paragraph"><p><code>MONITOR <a href="mailto:myups@bigserver">myups@bigserver</a> 1 monmaster blah master</code></p></div>
+<div class="paragraph"><p>Meanwhile, the <code>upsd.users</code> on <code>bigserver</code> would look like this:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>[monmaster]
+        password  = blah
+        upsmon master #  (or slave)</code></pre>
+</div></div>
+<div class="paragraph"><p>The <em>type</em> refers to the relationship with <a href="upsd.html">upsd(8)</a>.  It can
+be either "master" or "slave".  See <a href="upsmon.html">upsmon(8)</a> for more information
+on the meaning of these modes.  The mode you pick here also goes in
+the <code>upsd.users</code> file, as seen in the example above.</p></div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>NOCOMMWARNTIME</strong> <em>seconds</em>
+</dt>
+<dd>
+<p>
+upsmon will trigger a NOTIFY_NOCOMM after this many seconds if it can&#8217;t
+reach any of the UPS entries in this configuration file.  It keeps
+warning you until the situation is fixed.  By default this is 300
+seconds.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>NOTIFYCMD</strong> <em>command</em>
+</dt>
+<dd>
+<p>
+upsmon calls this to send messages when things happen.
+</p>
+<div class="paragraph"><p>This command is called with the full text of the message as one
+argument.  The environment string NOTIFYTYPE will contain the type
+string of whatever caused this event to happen.</p></div>
+<div class="paragraph"><p>If you need to use <a href="upssched.html">upssched(8)</a>, then you must make it your
+NOTIFYCMD by listing it here.</p></div>
+<div class="paragraph"><p>Note that this is only called for NOTIFY events that have EXEC set with
+NOTIFYFLAG.  See NOTIFYFLAG below for more details.</p></div>
+<div class="paragraph"><p>Making this some sort of shell script might not be a bad idea.  For
+more information and ideas, see docs/scheduling.txt</p></div>
+<div class="paragraph"><p>Remember, this command also needs to be one element in the configuration file,
+so if your command has spaces, then wrap it in quotes.</p></div>
+<div class="paragraph"><p><code>NOTIFYCMD "/path/to/script --foo --bar"</code></p></div>
+<div class="paragraph"><p>This script is run in the background&#8212;that is, upsmon forks before it
+calls out to start it.  This means that your NOTIFYCMD may have multiple
+instances running simultaneously if a lot of stuff happens all at once.
+Keep this in mind when designing complicated notifiers.</p></div>
+</dd>
+<dt class="hdlist1">
+<strong>NOTIFYMSG</strong> <em>type</em> <em>message</em>
+</dt>
+<dd>
+<p>
+upsmon comes with a set of stock messages for various events.  You can
+change them if you like.
+</p>
+<div class="literalblock">
+<div class="content">
+<pre><code>NOTIFYMSG ONLINE "UPS %s is getting line power"</code></pre>
+</div></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>NOTIFYMSG ONBATT "Someone pulled the plug on %s"</code></pre>
+</div></div>
+<div class="paragraph"><p>Note that <code>%s</code> is replaced with the identifier of the UPS in question.</p></div>
+<div class="paragraph"><p>The message must be one element in the configuration file, so if it
+contains spaces, you must wrap it in quotes.</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>NOTIFYMSG NOCOMM "Someone stole UPS %s"</code></pre>
+</div></div>
+<div class="paragraph"><p>Possible values for <em>type</em>:</p></div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+ONLINE
+</dt>
+<dd>
+<p>
+UPS is back online
+</p>
+</dd>
+<dt class="hdlist1">
+ONBATT
+</dt>
+<dd>
+<p>
+UPS is on battery
+</p>
+</dd>
+<dt class="hdlist1">
+LOWBATT
+</dt>
+<dd>
+<p>
+UPS is on battery and has a low battery (is critical)
+</p>
+</dd>
+<dt class="hdlist1">
+FSD
+</dt>
+<dd>
+<p>
+UPS is being shutdown by the master (FSD = "Forced Shutdown")
+</p>
+</dd>
+<dt class="hdlist1">
+COMMOK
+</dt>
+<dd>
+<p>
+Communications established with the UPS
+</p>
+</dd>
+<dt class="hdlist1">
+COMMBAD
+</dt>
+<dd>
+<p>
+Communications lost to the UPS
+</p>
+</dd>
+<dt class="hdlist1">
+SHUTDOWN
+</dt>
+<dd>
+<p>
+The system is being shutdown
+</p>
+</dd>
+<dt class="hdlist1">
+REPLBATT
+</dt>
+<dd>
+<p>
+The UPS battery is bad and needs to be replaced
+</p>
+</dd>
+<dt class="hdlist1">
+NOCOMM
+</dt>
+<dd>
+<p>
+A UPS is unavailable (can&#8217;t be contacted for monitoring)
+</p>
+</dd>
+</dl></div>
+</dd>
+<dt class="hdlist1">
+<strong>NOTIFYFLAG</strong> <em>type</em> <em>flag</em>[+<em>flag</em>][+<em>flag</em>]&#8230;
+</dt>
+<dd>
+<p>
+By default, upsmon sends walls global messages to all logged in users)
+via /bin/wall and writes to the syslog when things happen.  You can
+change this.
+</p>
+<div class="paragraph"><p>Examples:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>NOTIFYFLAG ONLINE SYSLOG
+NOTIFYFLAG ONBATT SYSLOG+WALL+EXEC</code></pre>
+</div></div>
+<div class="paragraph"><p>Possible values for the flags:</p></div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+SYSLOG
+</dt>
+<dd>
+<p>
+Write the message to the syslog
+</p>
+</dd>
+<dt class="hdlist1">
+WALL
+</dt>
+<dd>
+<p>
+Write the message to all users with /bin/wall
+</p>
+</dd>
+<dt class="hdlist1">
+EXEC
+</dt>
+<dd>
+<p>
+Execute NOTIFYCMD (see above) with the message
+</p>
+</dd>
+<dt class="hdlist1">
+IGNORE
+</dt>
+<dd>
+<p>
+Don&#8217;t do anything
+</p>
+<div class="paragraph"><p>If you use IGNORE, don&#8217;t use any other flags on the same line.</p></div>
+</dd>
+</dl></div>
+</dd>
+<dt class="hdlist1">
+<strong>POLLFREQ</strong> <em>seconds</em>
+</dt>
+<dd>
+<p>
+Normally upsmon polls the <a href="upsd.html">upsd(8)</a> server every 5 seconds.  If this
+is flooding your network with activity, you can make it higher.  You can
+also make it lower to get faster updates in some cases.
+</p>
+<div class="paragraph"><p>There are some catches.  First, if you set the POLLFREQ too high, you
+may miss short-lived power events entirely.  You also risk triggering
+the DEADTIME (see above) if you use a very large number.</p></div>
+<div class="paragraph"><p>Second, there is a point of diminishing returns if you set it too low.
+While upsd normally has all of the data available to it instantly, most
+drivers only refresh the UPS status once every 2 seconds.  Polling any
+more than that usually doesn&#8217;t get you the information any faster.</p></div>
+</dd>
+<dt class="hdlist1">
+<strong>POLLFREQALERT</strong> <em>seconds</em>
+</dt>
+<dd>
+<p>
+This is the interval that upsmon waits between polls if any of its UPSes
+are on battery.  You can use this along with POLLFREQ above to slow down
+polls during normal behavior, but get quicker updates when something bad
+happens.
+</p>
+<div class="paragraph"><p>This should always be equal to or lower than the POLLFREQ value.  By
+default it is also set 5 seconds.</p></div>
+<div class="paragraph"><p>The warnings from the POLLFREQ entry about too-high and too-low values
+also apply here.</p></div>
+</dd>
+<dt class="hdlist1">
+<strong>POWERDOWNFLAG</strong> <em>filename</em>
+</dt>
+<dd>
+<p>
+upsmon creates this file when running in master mode when the UPS needs
+to be powered off.  You should check for this file in your shutdown
+scripts and call <code>upsdrvctl shutdown</code> if it exists.
+</p>
+<div class="paragraph"><p>This is done to forcibly reset the slaves, so they don&#8217;t get stuck at
+the "halted" stage even if the power returns during the shutdown
+process.  This usually does not work well on contact-closure UPSes that
+use the genericups driver.</p></div>
+<div class="paragraph"><p>See the config-notes.txt file in the docs subdirectory for more information.
+Refer to the section:
+<a id="UPS_shutdown"></a> "Configuring automatic shutdowns for low battery events",
+or refer to the online version.</p></div>
+</dd>
+<dt class="hdlist1">
+<strong>RBWARNTIME</strong> <em>seconds</em>
+</dt>
+<dd>
+<p>
+When a UPS says that it needs to have its battery replaced, upsmon will
+generate a NOTIFY_REPLBATT event.  By default, this happens every 43200
+seconds (12 hours).
+</p>
+<div class="paragraph"><p>If you need another value, set it here.</p></div>
+</dd>
+<dt class="hdlist1">
+<strong>RUN_AS_USER</strong> <em>username</em>
+</dt>
+<dd>
+<p>
+upsmon normally runs the bulk of the monitoring duties under another user
+ID after dropping root privileges.  On most systems this means it runs
+as "nobody", since that&#8217;s the default from compile-time.
+</p>
+<div class="paragraph"><p>The catch is that "nobody" can&#8217;t read your upsmon.conf, since by default
+it is installed so that only root can open it.  This means you won&#8217;t be
+able to reload the configuration file, since it will be unavailable.</p></div>
+<div class="paragraph"><p>The solution is to create a new user just for upsmon, then make it run
+as that user.  I suggest "nutmon", but you can use anything that isn&#8217;t
+already taken on your system.  Just create a regular user with no special
+privileges and an impossible password.</p></div>
+<div class="paragraph"><p>Then, tell upsmon to run as that user, and make <code>upsmon.conf</code> readable by it.
+Your reloads will work, and your config file will stay secure.</p></div>
+<div class="paragraph"><p>This file should not be writable by the upsmon user, as it would be
+possible to exploit a hole, change the SHUTDOWNCMD to something
+malicious, then wait for upsmon to be restarted.</p></div>
+</dd>
+<dt class="hdlist1">
+<strong>SHUTDOWNCMD</strong> <em>command</em>
+</dt>
+<dd>
+<p>
+upsmon runs this command when the system needs to be brought down.  If
+it is a slave, it will do that immediately whenever the current overall
+power value drops below the MINSUPPLIES value above.
+</p>
+<div class="paragraph"><p>When upsmon is a master, it will allow any slaves to log out before
+starting the local shutdown procedure.</p></div>
+<div class="paragraph"><p>Note that the command needs to be one element in the config file.  If
+your shutdown command includes spaces, then put it in quotes to keep it
+together, i.e.:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>SHUTDOWNCMD "/sbin/shutdown -h +0"</code></pre>
+</div></div>
+</dd>
+<dt class="hdlist1">
+<strong>CERTPATH</strong> <em>certificate file or database</em>
+</dt>
+<dd>
+<p>
+When compiled with SSL support, you can enter the certificate path here.
+</p>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+With NSS:
+</dt>
+<dd>
+<p>
+    Certificates are stored in a dedicated database (splitted in 3 files).
+    Specify the path of the database directory.
+</p>
+</dd>
+<dt class="hdlist1">
+With OpenSSL:
+</dt>
+<dd>
+<p>
+    Directory containing CA certificates in PEM format, used to verify
+    the server certificate presented by the upsd server. The files each
+    contain one CA certificate. The files are looked up by the CA subject
+    name hash value, which must hence be available.
+</p>
+</dd>
+</dl></div>
+</dd>
+<dt class="hdlist1">
+<strong>CERTIDENT</strong> <em>certificate name</em> <em>database password</em>
+</dt>
+<dd>
+<p>
+When compiled with SSL support with NSS, you can specify the certificate
+name to retrieve from database to authenticate itself and the password
+required to access certificate related private key.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>CERTHOST</strong> <em>hostname</em> <em>certificate name</em> <em>certverify</em> <em>forcessl</em>
+</dt>
+<dd>
+<p>
+When compiled with SSL support with NSS, you can specify security directive
+for each server you can contact.
+</p>
+<div class="paragraph"><p>Each entry maps server name with the expected certificate name and flags
+indicating if the server certificate is verified and if the connection
+must be secure.</p></div>
+</dd>
+<dt class="hdlist1">
+<strong>CERTVERIFY</strong> <em>0 | 1</em>
+</dt>
+<dd>
+<p>
+When compiled with SSL support, make upsmon verify all connections with
+certificates.
+</p>
+<div class="paragraph"><p>Without this, there is no guarantee that the upsd is the right host.
+Enabling this greatly reduces the risk of man-in-the-middle attacks.
+This effectively forces the use of SSL, so don&#8217;t use this unless
+all of your upsd hosts are ready for SSL and have their certificates
+in order.</p></div>
+<div class="paragraph"><p>When compiled with NSS support of SSL, can be overriden for host
+specified with a CERTHOST directive.</p></div>
+</dd>
+<dt class="hdlist1">
+<strong>FORCESSL</strong> <em>0 | 1</em>
+</dt>
+<dd>
+<p>
+When compiled with SSL, specify that a secured connection must be used
+to communicate with upsd.
+</p>
+<div class="paragraph"><p>If you don&#8217;t use <em>CERTVERIFY 1</em>, then this will at least make sure
+that nobody can sniff your sessions without a large effort. Setting
+this will make upsmon drop connections if the remote upsd doesn&#8217;t
+support SSL, so don&#8217;t use it unless all of them have it running.</p></div>
+<div class="paragraph"><p>When compiled with NSS support of SSL, can be overriden for host
+specified with a CERTHOST directive.</p></div>
+</dd>
+</dl></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_see_also">SEE ALSO</h2>
+<div class="sectionbody">
+<div class="paragraph"><p><a href="upsmon.html">upsmon(8)</a>, <a href="upsd.html">upsd(8)</a>, <a href="nutupsdrv.html">nutupsdrv(8)</a>.</p></div>
+<div class="sect2">
+<h3 id="_internet_resources">Internet resources:</h3>
+<div class="paragraph"><p>The NUT (Network UPS Tools) home page: <a href="http://www.networkupstools.org/">http://www.networkupstools.org/</a></p></div>
+</div>
+</div>
+</div>
+</div>
+<div id="footnotes"><hr /></div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2015-03-10 10:21:44 CET -- Network UPS Tools 2.7.3
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,209 @@
+# NDS:VERSION:2
+# ^ version of NDS
+# Normal comments are ignored everywhere
+  # Still ignored
+#again..
+	#..and again
+var.1: value
+var.2: value
+var.3: value	#BAD: Let's try the `#BAD` End Of Line comment
+# While 'special' comments are used in DDL generation:
+# var.3:COMMENT:
+#
+# Let's talk about comments.
+#
+# Like in +.dev+/+.seq+ files, comments are allowed as lines preceeded by a hash (++#++), and as lines with spaces followed by a hash (`++$$   # <comment>$$++').
+# Empty lines are ignored.
+#
+# In addition, +.nds+ files support some special comments, ignored by NUT's dummy-ups/whatever_will_replace_it but used by Devices Dumps Library generation tool.
+#
+# .'Special' comments:
+# End Of Line comments::
+# With the special End Of Line comment `#COMMENT: <comment>`, you can add a short sentence (supporting http://asciidoc.org/[AsciiDoc] inline markup) after the declaration of variables, RW types/values and commands, i.e.:
+# +
+# --
+# ----
+# <var.name>: <value>	#COMMENT: <comment>
+# RW:<var.name>:STRING:<length>	#COMMENT: <comment>
+# RW:<var.name>:RANGE:"<min>" "<max>" #COMMENT <comment>
+# RW:<var.name>:ENUM:"<enumerated value>"#COMMENT: <comment>
+# CMD:<command.name> #COMMENT: <comment>
+# ----
+#
+# Note that the colon after `#COMMENT` is not mandatory.
+# --
+#
+# Vars comments::
+# Comments that are binded to a particular variable.
+# +
+# --
+# ----
+# # <var.name>:COMMENT
+# # <comment>
+# # ...
+# # <comment>
+# # <var.name>:EOC
+# ----
+# --
+#
+# Commands comments::
+# Comments binded to a particular command.
+# +
+# --
+# ----
+# # <command.name>:COMMENT
+# # <comment>
+# # ...
+# # <comment>
+# # <command.name>:EOC
+# ----
+# --
+#
+# Device comment::
+# A special comment to express general thougths about the whole device and to describe the way NUT supports it.
+# +
+# --
+# ----
+# # DEVICE:COMMENT
+# # <comment>
+# # ...
+# # <comment>
+# # DEVICE:EOC
+# ----
+# --
+#
+# Device support level::
+# Express on a 1 to 10 level how much you think the device is well supported in NUT.
+# +
+# --
+# ----
+# # DEVICE:SUPPORT-LEVEL:<support-level>
+# ----
+# --
+#
+# NDS version::
+# This is reserved to store the version of NDS this particular file belongs to.
+# +
+# --
+# ----
+# # NDS:VERSION:<version>
+# ----
+# --
+#
+# Note that the leading space is mandatory: each line must begin with a hash followed by a single space (`++$$# $$++'), all comments not following this syntax will either produce an error or be ignored.
+#
+# Multi-lines comments (vars, commands, device) support http://asciidoc.org/[AsciiDoc] markup (inline, paragraphs, blocks, lists, tables... *not* sections).
+# Keep in mind that the leading space will always be removed and therefore you shouldn't consider it in your AsciiDoc markup.
+#
+# Also note that empty lines, comments without the required leading space after the hash and lines with spaces preceeding a hash will 'break' multi-line comments.
+#
+# .Report a bad value
+# If certain values are not correctly reported, you can flag them with the special End Of Line comment `#BAD`, you can even add a short sentence (still supporting http://asciidoc.org/[AsciiDoc] inline markup) after it, explaining the reason (e.g. `#BAD: unbelievably high value`, note that the colons are not mandatory).
+#
+# This kind of flags/comments is allowed (i.e. you can append it at the end of the line) in the declaration of variables, RW types/values and commands, i.e.:
+#
+# ----
+# <var.name>: <value>	#BAD
+# RW:<var.name>:STRING:<length>	#BAD: <reason>
+# RW:<var.name>:RANGE:"<min>" "<max>" #BAD: <reason>
+# RW:<var.name>:ENUM:"<enumerated value>"#BAD: <reason>
+# CMD:<command.name> #BAD
+# ----
+# var.3:EOC
+# ^ closing line of var comment
+RW:var.3:RANGE:"1" "10"	#BAD: Terse description of the reason
+# Another ignored-everywhere comment
+RW:var.3:RANGE:"15" "20"
+RW:var.3:RANGE:"25" "30"	#BAD: Another description here about *this* range
+var.4: value	#BAD
+var.5: value
+RW:var.5:STRING:32
+var.6: value
+RW:var.6:ENUM:"value"	#BAD
+RW:var.6:ENUM:"value2"
+RW:var.6:ENUM:"value3"	#COMMENT: Another `#COMMENT: <comment>` here..
+var.7: value	#BAD
+var.8: value
+var.9: value	#COMMENT: Just trying the End Of Line `#COMMENT: <comment>` comment
+RW:var.8:STRING:64	#BAD: Still trying the `#BAD` comment
+# Ignored comment; commands to follow
+CMD:command.1	#BAD
+CMD:command.2
+# An ignored comment..
+CMD:command.3	#BAD: Explanation of why this command is flagges as 'BAD'
+# command comment to follow..
+# command.3:COMMENT:
+#
+# As in +.seq+ files, +.nds+ files can simulate/record power events and the like through the `++TIMER <seconds>++' instruction, e.g.:
+# ----
+# TIMER 300
+# ups.status: OB DISCHRG
+# TIMER 300
+# ups.status: OB LB DISCHRG
+# TIMER 60
+# ----
+#
+# In DDL generation, after `++TIMER <seconds>++' instruction, only comments are considered.
+#
+# command.3:EOC
+# ^ closing line of command comment
+CMD:command.4
+CMD:command.5	#COMMENT: Yet another `#COMMENT: <comment>`
+
+TIMER 60
+
+var.1234567890: value
+
+# device comment to follow..
+# DEVICE:COMMENT:
+# Let's use this comment to explain vars/commands declaration.
+#
+# NUT variables are declared as:
+#
+# ----
+# <var.name>: <value>
+# ----
+#
+# RW variables are declared as:
+#
+# ----
+# RW:<var.name>:<type>:<options>
+# ----
+#
+# Where:
+#
+# [horizontal]
+# +<var.name>+::
+# Name of the RW variable.
+#
+# +<type>+::
+# Type of the RW variable +<var.name>+, one of *STRING*, *RANGE*, *ENUM*.
+#
+# +<options>+::
+# Options of +<type>+ for +<var.name>+, i.e.:
+# +
+# * if +<type>+ is *STRING*, maximum length of the settable string
+# +
+# ----
+# RW:<var.name>:STRING:<length>
+# ----
+# * if +<type>+ is *RANGE*, minimum and maximum settable value for the range, each one enclosed in quotes and separated by a space (+"<min>" "<max>"+)
+# +
+# ----
+# RW:<var.name>:RANGE:"<min>" "<max>"
+# ----
+# * if +<type>+ is *ENUM*, settable enumerated value, enclosed in quotes (+"<enumerated value>"+):
+# +
+# ----
+# RW:<var.name>:ENUM:"<enumerated value>"
+# ----
+#
+# Commands are declared as:
+#
+# ----
+# CMD:<command.name>
+# ----
+# DEVICE:EOC
+# ^ closing line of device comment
+# DEVICE:SUPPORT-LEVEL:6
+# ^ device support-level (1..10)

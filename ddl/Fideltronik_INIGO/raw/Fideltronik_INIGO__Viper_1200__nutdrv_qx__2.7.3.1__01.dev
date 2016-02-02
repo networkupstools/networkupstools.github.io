@@ -1,0 +1,95 @@
+# DEVICE:COMMENT:
+# Vendor site: http://fideltronikinigo.com/viper/viper-1200/
+#
+# The blazer_usb driver did not work with this device.
+#
+# `test.battery.*` commands were presented by driver, but do not work.
+#
+# Source and additional logs: http://lists.alioth.debian.org/pipermail/nut-upsdev/2015-July/007025.html
+# DEVICE:EOC
+battery.charge: 100
+battery.runtime: 600
+battery.voltage: 27.70
+battery.voltage.high: 26.00
+battery.voltage.low: 20.80
+battery.voltage.nominal: 24.0
+device.model: 1200VA
+device.type: ups
+driver.name: nutdrv_qx
+driver.parameter.bus: 004
+driver.parameter.chargetime: 28800
+driver.parameter.idleload: 10
+driver.parameter.offdelay: 60
+driver.parameter.ondelay: 60
+driver.parameter.pollfreq: 30
+driver.parameter.pollinterval: 2
+driver.parameter.port: auto
+driver.parameter.product: MEC0003
+driver.parameter.productid: 0000
+driver.parameter.runtimecal: 60,100,900,21
+driver.parameter.synchronous: no
+driver.parameter.vendor: MEC
+driver.parameter.vendorid: 0001
+driver.version: 2.7.3.1
+driver.version.data: Megatec 0.06
+driver.version.internal: 0.21
+input.current.nominal: 5.2
+input.frequency: 50.0
+input.frequency.nominal: 50
+input.voltage: 225.9
+input.voltage.fault: 225.9
+input.voltage.nominal: 230
+output.voltage: 225.9
+ups.beeper.status: enabled
+ups.delay.shutdown: 60 #BAD: UPS ignores this; constant 30 second delay
+ups.delay.start: 60 #BAD: UPS ignores this; constant 10 second delay
+ups.firmware: VER 1.00
+ups.load: 0
+ups.productid: 0000
+ups.status: OL
+ups.temperature: 25.0 #BAD: temperature is constant
+ups.type: offline / line interactive
+ups.vendorid: 0001
+
+#CMD:beeper.toggle
+# beeper.toggle:COMMENT:
+#  - if the beeper emits a beep at the time when command is issued the beep never ends...
+#  - the beeper can not be switched off if UPS is on line,
+#  - nutdrv_qx output:
+# +
+# ----
+#     396.231354	instcmd(beeper.toggle, [NULL])
+#     396.231400	send: Q
+#     396.231414	command index: 0x07
+#     396.250914	read: UPS No Ack
+#     396.250947	instcmd: FAILED
+# ----
+# beeper.toggle:EOC
+
+#CMD:load.off
+# load.off:COMMENT:
+#  - load are switched off after ~30s,
+#  - 'shutdown.stop' (`C` command) will not break the shutdown,
+#  - nutdrv_qx output: http://bpa.ksu.pl/pub/nutdrv_qx_load.off.txt (4kB)
+# load.off:EOC
+
+#CMD:load.on
+# load.on:COMMENT:
+#  - load are switched on after ~10s,
+#  - nutdrv_qx output: http://bpa.ksu.pl/pub/nutdrv_qx_load.on.txt (2kB)
+# load.on:EOC
+
+#CMD:shutdown.stop	#COMMENT: Stop only 'shutdown.return'
+
+#CMD:shutdown.return
+# shutdown.return:COMMENT:
+#  - load is switched on immediately, 'ups.delay.start' (`R<n>` part of the command, as in `S01R0001`) does not matter,
+#  - 'shutdown.stop' (`C` command) can break the shutdown,
+#  - nutdrv_qx output: http://bpa.ksu.pl/pub/nutdrv_qx_shutdown.return.txt (7kB)
+# shutdown.return:EOC
+
+#CMD:shutdown.stayoff
+# shutdown.stayoff:COMMENT:
+#  - 'shutdown.stop' (`C` command) will not break the shutdown,
+#  - nutdrv_qx output: http://bpa.ksu.pl/pub/nutdrv_qx_shutdown.stayoff.txt (7kB)
+# shutdown.stayoff:EOC

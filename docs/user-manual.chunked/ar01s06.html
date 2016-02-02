@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>6. Configuration notes</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="Network UPS Tools User Manual" /><link rel="up" href="index.html" title="Network UPS Tools User Manual" /><link rel="prev" href="ar01s05.html" title="5. Installation instructions" /><link rel="next" href="ar01s07.html" title="7. Advanced usage and scheduling notes" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ar01s05.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ar01s07.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="Configuration_notes"></a>6. Configuration notes</h2></div></div></div><p>This chapter describe most of the configuration and use aspects of NUT,
+including establishing communication with the device and configuring safe
+shutdowns when the UPS battery runs out of power.</p><p>There are many programs and <a class="link" href="ar01s03.html" title="3. Features">features</a> in this
+package.  You should check out the <a class="link" href="ar01s02.html" title="2. Network UPS Tools Overview">NUT Overview</a>
+and other accompanying documentation to see how it all works.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>NUT does not currently provide proper graphical configuration tools.
+However, there is now support for <a class="ulink" href="../developer-guide.chunked/index.html" target="_top">Augeas</a>,
+which will enable the easier creation of configuration tools.
+Moreover, <a class="ulink" href="../man/nut-scanner.html" target="_top">nut-scanner(8)</a> is available to discover supported devices
+(USB, SNMP, Eaton XML/HTTP and IPMI) and NUT servers (using Avahi or the classic
+connection method).</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_details_about_the_configuration_files"></a>6.1. Details about the configuration files</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_generalities"></a>Generalities</h4></div></div></div><p>All configuration files within this package are parsed with a common
+state machine, which means they all can use a number of extras described here.</p><p>First, most of the programs use an uppercase word to declare a
+configuration directive.  This may be something like MONITOR, NOTIFYCMD,
+or ACCESS.  The case does matter here.  "monitor" won’t be recognized.</p><p>Next, the parser does not care about whitespace between words.  If you
+like to indent things with tabs or spaces, feel free to do it here.</p><p>If you need to set a value to something containing spaces, it has to be
+contained within "quotes" to keep the parser from splitting up the line.
+That is, you want to use something like this:</p><pre class="literallayout">SHUTDOWNCMD "/sbin/shutdown -h +0"</pre><p>Without the quotes, it would only see the first word on the line.</p><p>OK, so let’s say you really need to embed that kind of quote within your
+configuration directive for some reason.  You can do that too.</p><pre class="literallayout">NOTIFYCMD "/bin/notifyme -foo -bar \"hi there\" -baz"</pre><p>In other words, <span class="strong"><strong>\</strong></span> can be used to escape the <span class="strong"><strong>"</strong></span>.</p><p>Finally, for the situation where you need to put the <span class="strong"><strong>\</strong></span> character into your
+string, you just escape it.</p><pre class="literallayout">NOTIFYCMD "/bin/notifyme c:\\dos\\style\\path"</pre><p>The <span class="strong"><strong>\</strong></span> can actually be used to escape any character, but you only really
+need it for <span class="strong"><strong>\</strong></span>, <span class="strong"><strong>"</strong></span>, and <span class="strong"><strong>#</strong></span> as they have special meanings to the parser.</p><p>When using file names with space characters, you may end up having tricky
+things since you need to write them inside <span class="strong"><strong>""</strong></span> which must be escaped:</p><pre class="literallayout">NOTIFYCMD "\"c:\\path with space\\notifyme\" \"c:\\path with space\\name\""</pre><p><span class="strong"><strong></strong></span> is the comment character.  Anything after an unescaped <span class="strong"><strong></strong></span> is ignored.</p><p>Something like this…</p><pre class="literallayout">identity = my#1ups</pre><div class="orderedlist"><ol class="orderedlist" type="i"><li class="listitem"><p class="simpara">
+will actually turn into "identity = my", since the <span class="strong"><strong></strong></span> stops the
+parsing. If you really need to have a <span class="strong"><strong></strong></span> in your configuration, then
+escape it.
+</p><pre class="literallayout">identity = my\#1ups</pre></li></ol></div><p>Much better.</p><p>The <span class="strong"><strong>=</strong></span> character should be used with care too. There should be only one
+"simple" <span class="strong"><strong>=</strong></span> character in a line: between the parameter name and its value.
+All other <span class="strong"><strong>=</strong></span> characters should be either escaped or within "quotes".</p><pre class="literallayout">password = 123=123</pre><div class="orderedlist"><ol class="orderedlist" type="i"><li class="listitem"><p class="simpara">
+is incorrect. You should use:
+</p><pre class="literallayout">password = 123\=123</pre></li><li class="listitem"><p class="simpara">
+or :
+</p><pre class="literallayout">password = "123=123"</pre></li></ol></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_line_spanning"></a>Line spanning</h4></div></div></div><p>You can put a backslash at the end of the line to join it to the next
+one.  This creates one virtual line that is composed of more than one
+physical line.</p><p>Also, if you leave the <span class="strong"><strong>""</strong></span> quote container open before a newline, it will
+keep scanning until it reaches another one.  If you see bizarre behavior
+in your configuration files, check for an unintentional instance of
+quotes spanning multiple lines.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_basic_configuration"></a>6.2. Basic configuration</h3></div></div></div><p>This chapter describe the base configuration to establish communication with
+the device.</p><p>This will be sufficient for PDU. But for UPS and SCD, you will also need to
+configure <a class="link" href="ar01s06.html#UPS_shutdown" title="6.3. Configuring automatic shutdowns for low battery events">automatic shutdowns for low battery events</a>.</p><p><span class="inlinemediaobject"><img src="images/simple.png" alt="images/simple.png" /></span></p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="Driver_configuration"></a>Driver configuration</h4></div></div></div><p>Create one section per UPS in /usr/local/ups/etc/ups.conf</p><p>To find out which driver to use, check the <a class="link" href="apd.html" title="D. Hardware Compatibility List">Hardware Compatibility List</a>,
+or data/driver.list.</p><p>Once you have picked a driver, create a section for your UPS in
+ups.conf.  You must supply values for "driver" and "port".</p><p>Some drivers may require other flags or settings.  The "desc" value
+is optional, but is recommended to provide a better description of
+what your UPS is supporting.</p><p>A typical device without any extra settings looks like this:</p><pre class="literallayout">[mydevice]
+        driver = mydriver
+        port = /dev/ttyS1
+        desc = "Workstation"</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>USB drivers (usbhid-ups, bcmxcp_usb, tripplite_usb, blazer_usb and
+richcomm_usb) are special cases and ignore the <span class="emphasis"><em>port</em></span> value.
+You must still set this value, but it does not matter what you set
+it to; a common and good practice is to set <span class="emphasis"><em>port</em></span> to <span class="strong"><strong>auto</strong></span>, but you can
+put whatever you like. If you only own one UBS UPS, the driver will
+find it automatically. If you own more than one, refer to the driver’s
+manual page for more information on matching a specific device.</p></div><p>References: <a class="ulink" href="../man/ups.conf.html" target="_top">ups.conf(5)</a>,
+<a class="ulink" href="../man/nutupsdrv.html" target="_top">nutupsdrv(8)</a>,
+<a class="ulink" href="../man/bcmxcp_usb.html" target="_top">bcmxcp_usb(8)</a>,
+<a class="ulink" href="../man/blazer.html" target="_top">blazer(8)</a>,
+<a class="ulink" href="../man/richcomm_usb.html" target="_top">richcomm_usb(8)</a>,
+<a class="ulink" href="../man/tripplite_usb.html" target="_top">tripplite_usb(8)</a>,
+<a class="ulink" href="../man/usbhid-ups.html" target="_top">usbhid-ups(8)</a></p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="Starting_drivers"></a>Starting the driver(s)</h4></div></div></div><p>Start the driver(s) for your hardware:</p><pre class="literallayout">/usr/local/ups/sbin/upsdrvctl start</pre><p>Make sure the driver doesn’t report any errors.  It should show a
+few details about the hardware and then enter the background.  You
+should get back to the command prompt a few seconds later.  For
+reference, a successful start of the <code class="literal">usbhid-ups</code> driver looks like this:</p><pre class="literallayout"># /usr/local/ups/sbin/upsdrvctl start
+Network UPS Tools - Generic HID driver 0.34 (2.4.1)
+USB communication driver 0.31
+Using subdriver: MGE HID 1.12
+Detected EATON - Ellipse MAX 1100 [ADKK22008]</pre><p>If the driver doesn’t start cleanly, make sure you have picked the
+right one for your hardware.  You might need to try other drivers
+by changing the "driver=" value in ups.conf.</p><p>Be sure to check the driver’s man page to see if it needs any extra
+settings in ups.conf to detect your hardware.</p><p>If it says "can’t bind /var/state/ups/…" or similar, then your
+state path probably isn’t writable by the driver.  Check the
+<a class="link" href="ar01s05.html#StatePath" title="State path creation">permissions and mode on that directory</a>.</p><p>After making changes, try the <a class="link" href="ar01s05.html#Ownership" title="Ownership and permissions">Ownership and permissions</a> step again.</p><p>References: man pages: <a class="ulink" href="../man/nutupsdrv.html" target="_top">nutupsdrv(8)</a>, <a class="ulink" href="../man/upsdrvctl.html" target="_top">upsdrvctl(8)</a></p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_data_server_configuration_upsd"></a>Data server configuration (upsd)</h4></div></div></div><p>Configure upsd, which serves data from the drivers to the clients.</p><p>First, edit upsd.conf to allow access to your client systems. By
+default, upsd will only listen to localhost port 3493/tcp. If you want
+to connect to it from other machines, you must specify each interface you
+want upsd to listen on for connections, optionally with a port number.</p><pre class="literallayout">LISTEN 127.0.0.1 3493
+LISTEN ::1 3493</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>Refer to the NUT user manual <a class="link" href="ar01s09.html" title="9. Notes on securing NUT">security chapter</a> for
+information on how to access and secure upsd clients connections.</p></div><p>Next, create upsd.users.  For now, this can be an empty file.
+You can come back and add more to it later when it’s time to
+configure upsmon or run one of the management tools.</p><p>Do not make either file world-readable, since they both hold
+access control data and passwords.  They just need to be readable by
+the user you created in the preparation process.</p><p>The suggested configuration is to chown it to root, chgrp it to the
+group you created, then make it readable by the group.</p><pre class="literallayout">chown root:nut upsd.conf upsd.users
+chmod 0640 upsd.conf upsd.users</pre><p>References: man pages: <a class="ulink" href="../man/upsd.conf.html" target="_top">upsd.conf(5)</a>,
+<a class="ulink" href="../man/upsd.users.html" target="_top">upsd.users(5)</a>,
+<a class="ulink" href="../man/upsd.html" target="_top">upsd(8)</a></p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="Starting_upsd"></a>Starting the data server</h4></div></div></div><p>Start the network data server:</p><pre class="literallayout">/usr/local/ups/sbin/upsd</pre><p>Make sure it is able to connect to the driver(s) on your system.
+A successful run looks like this:</p><pre class="literallayout"># /usr/local/ups/sbin/upsd
+Network UPS Tools upsd 2.4.1
+listening on 127.0.0.1 port 3493
+listening on ::1 port 3493
+Connected to UPS [eaton]: usbhid-ups-eaton</pre><p>upsd prints dots while it waits for the driver to respond.  Your
+system may print more or less depending on how many drivers you
+have and how fast they are.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>if upsd says that it can’t connect to a UPS or that the data
+is stale, then your ups.conf is not configured correctly, or you
+have a driver that isn’t working properly.  You must fix this before
+going on to the next step.</p></div><p>Reference: man page: <a class="ulink" href="../man/upsd.html" target="_top">upsd(8)</a></p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_check_the_ups_data"></a>Check the UPS data</h4></div></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_status_data"></a>Status data</h5></div></div></div><p>Make sure that the UPS is providing good status data.</p><pre class="literallayout">/usr/local/ups/bin/upsc myupsname@localhost ups.status</pre><p>You should see just one line in response:</p><pre class="literallayout">OL</pre><p>OL means your system is running on line power.  If it says something
+else (like OB - on battery, or LB - low battery), your driver was
+probably misconfigured during the <a class="link" href="ar01s06.html#Driver_configuration" title="Driver configuration">Driver configuration</a>
+step.  If you reconfigure the driver, use <span class="emphasis"><em>upsdrvctl stop</em></span> to stop it, then
+start it again as shown in the <a class="link" href="ar01s06.html#Starting_drivers" title="Starting the driver(s)">Starting driver(s)</a> step.</p><p>Reference: man page: <a class="ulink" href="../man/upsc.html" target="_top">upsc(8)</a></p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_all_data"></a>All data</h5></div></div></div><p>Look at all of the status data which is being monitored.</p><pre class="literallayout">/usr/local/ups/bin/upsc myupsname@localhost</pre><p>What happens now depends on the kind of device and driver you have.
+In the list, you should see ups.status with the same value you got
+above.  A sample run on a UPS (Eaton Ellipse MAX 1100) looks like this:</p><pre class="literallayout">battery.charge: 100
+battery.charge.low: 20
+battery.runtime: 2525
+battery.type: PbAc
+device.mfr: EATON
+device.model: Ellipse MAX 1100
+device.serial: ADKK22008
+device.type: ups
+driver.name: usbhid-ups
+driver.parameter.pollfreq: 30
+driver.parameter.pollinterval: 2
+driver.parameter.port: auto
+driver.version: 2.4.1-1988:1990M
+driver.version.data: MGE HID 1.12
+driver.version.internal: 0.34
+input.sensitivity: normal
+input.transfer.boost.low: 185
+input.transfer.high: 285
+input.transfer.low: 165
+input.transfer.trim.high: 265
+input.voltage.extended: no
+outlet.1.desc: PowerShare Outlet 1
+outlet.1.id: 2
+outlet.1.status: on
+outlet.1.switchable: no
+outlet.desc: Main Outlet
+outlet.id: 1
+outlet.switchable: no
+output.frequency.nominal: 50
+output.voltage: 230.0
+output.voltage.nominal: 230
+ups.beeper.status: enabled
+ups.delay.shutdown: 20
+ups.delay.start: 30
+ups.firmware: 5102AH
+ups.load: 0
+ups.mfr: EATON
+ups.model: Ellipse MAX 1100
+ups.power.nominal: 1100
+ups.productid: ffff
+ups.serial: ADKK22008
+ups.status: OL CHRG
+ups.timer.shutdown: -1
+ups.timer.start: -1
+ups.vendorid: 0463</pre><p>Reference: man page: <a class="ulink" href="../man/upsc.html" target="_top">upsc(8)</a>,
+<a class="link" href="apc.html" title="C. NUT command and variable naming scheme">NUT command and variable naming scheme</a></p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_startup_scripts"></a>Startup scripts</h4></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>This step is not need if you installed from packages.</p></div><p>Edit your startup scripts, and make sure upsdrvctl and upsd are run every time
+your system starts.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="UPS_shutdown"></a>6.3. Configuring automatic shutdowns for low battery events</h3></div></div></div><p>The whole point of UPS software is to bring down the OS cleanly when you
+run out of battery power. Everything else is roughly eye candy.</p><p>To make  sure your system shuts down properly, you will need to perform some
+additional configuration and run upsmon. Here are the basics.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="Shutdown_design"></a>Shutdown design</h4></div></div></div><p>When your UPS batteries get low, the operating system needs to be brought
+down cleanly.  Also, the UPS load should be turned off so that all devices
+that are attached to it are forcibly rebooted.</p><p>Here are the steps that occur when a critical power event happens:</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem">
+The UPS goes on battery
+</li><li class="listitem"><p class="simpara">
+The UPS reaches low battery (a "critical" UPS), that is to say
+   upsc displays:
+</p><pre class="literallayout">ups.status: OB LB</pre><p class="simpara">The exact behavior depends on the specific device, and is related to:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+battery.charge and battery.charge.low
+</li><li class="listitem">
+battery.runtime and battery.runtime.low
+</li></ul></div></li><li class="listitem"><p class="simpara">
+The upsmon master notices and sets "FSD" - the "forced shutdown"
+   flag to tell all slave systems that it will soon power down the load.
+</p><p class="simpara">(If you have no slaves, skip to step 6)</p></li><li class="listitem"><p class="simpara">
+upsmon slave systems see "FSD" and:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+generate a NOTIFY_SHUTDOWN event
+</li><li class="listitem">
+wait FINALDELAY seconds - typically 5
+</li><li class="listitem">
+call their SHUTDOWNCMD
+</li><li class="listitem">
+disconnect from upsd
+</li></ul></div></li><li class="listitem">
+The upsmon master system waits up to HOSTSYNC seconds (typically 15)
+   for the slaves to disconnect from upsd.  If any are connected after
+   this time, upsmon stops waiting and proceeds with the shutdown
+   process.
+</li><li class="listitem"><p class="simpara">
+The upsmon master:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+generates a NOTIFY_SHUTDOWN event
+</li><li class="listitem">
+waits FINALDELAY seconds - typically 5
+</li><li class="listitem">
+creates the POWERDOWNFLAG file - usually /etc/killpower
+</li><li class="listitem">
+calls the SHUTDOWNCMD
+</li></ul></div></li><li class="listitem">
+On most systems, init takes over, kills your processes, syncs and
+   unmounts some filesystems, and remounts some read-only.
+</li><li class="listitem">
+init then runs your shutdown script.  This checks for the
+   POWERDOWNFLAG, finds it, and tells the UPS driver(s) to power off
+   the load.
+</li><li class="listitem">
+The system loses power.
+</li><li class="listitem">
+Time passes.  The power returns, and the UPS switches back on.
+</li><li class="listitem">
+All systems reboot and go back to work.
+</li></ol></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_how_you_set_it_up"></a>How you set it up</h4></div></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="NUT_user_creation"></a>NUT user creation</h5></div></div></div><p>Create a upsd user for upsmon to use while monitoring this UPS.</p><p>Edit upsd.users and create a new section.  upsmon will connect
+to upsd and use this user name (in brackets) and password to
+authenticate.  This example is for a user called "monuser":</p><pre class="literallayout">[monuser]
+        password = mypass
+        upsmon master
+        # or upsmon slave</pre><p>References: <a class="ulink" href="../man/upsd.html" target="_top">upsd(8)</a>, <a class="ulink" href="../man/upsd.users.html" target="_top">upsd.users(5)</a></p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_reloading_the_data_server"></a>Reloading the data server</h5></div></div></div><p>Reload upsd.  Depending on your configuration, you may be able to
+do this without stopping upsd:</p><pre class="literallayout">/usr/local/ups/sbin/upsd -c reload</pre><p>If that doesn’t work (check the syslog), just restart it:</p><pre class="literallayout">/usr/local/ups/sbin/upsd -c stop
+/usr/local/ups/sbin/upsd</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>if you want to make reloading work later, see the entry in the
+<a class="ulink" href="FAQ.html" target="_top">FAQ</a> about starting upsd as a different user.</p></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_power_off_flag_file"></a>Power Off flag file</h5></div></div></div><p>Set the POWERDOWNFLAG location for upsmon.</p><p>In upsmon.conf, add a POWERDOWNFLAG directive with a filename.
+upsmon will create this file when the UPS needs to be powered off
+during a power failure when low battery is reached.</p><p>We will test for the presence of this file in a later step.</p><pre class="literallayout">POWERDOWNFLAG /etc/killpower</pre><p>References: man pages: <a class="ulink" href="../man/upsmon.html" target="_top">upsmon(8)</a>,
+<a class="ulink" href="../man/upsmon.conf.html" target="_top">upsmon.conf(5)</a></p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_securing_upsmon_conf"></a>Securing upsmon.conf</h5></div></div></div><p>The recommended setting is to have it owned by root:nut, then make it readable
+by the group and not world.  This file contains passwords that could be used by
+an attacker to start a shutdown, so keep it secure.</p><pre class="literallayout">chown root:nut upsmon.conf
+chmod 0640 upsmon.conf</pre><p>This step has been placed early in the process so you secure this file before
+adding sensitive data in the next step.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_create_a_monitor_directive_for_upsmon"></a>Create a MONITOR directive for upsmon</h5></div></div></div><p>Edit upsmon.conf and create a MONITOR line with the UPS definition
+(&lt;upsname&gt;@&lt;hostname&gt;), username and password from the <a class="link" href="ar01s06.html#NUT_user_creation" title="NUT user creation">NUT user creation</a>
+step, and the master or slave setting.</p><p>If it’s the master (i.e., it’s connected to this UPS directly):</p><pre class="literallayout">MONITOR myupsname@mybox 1 monuser mypass master</pre><p>If it’s just monitoring this UPS over the network, and some other system is the
+master:</p><pre class="literallayout">MONITOR myupsname@mybox 1 monuser mypass slave</pre><p>The number "1" here is the power value.  This should always be set to 1 unless
+you have a very special (read: expensive) system with redundant power supplies.
+In such cases, refer to the User Manual:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<a class="link" href="ar01s06.html#BigServers" title="6.5. Typical setups for big servers with UPS redundancy">typical setups for big servers</a>,
+</li><li class="listitem">
+<a class="link" href="ar01s06.html#DataRoom" title="6.4. Typical setups for enterprise networks and data rooms">typical setups for data rooms</a>.
+</li></ul></div><p>References: <a class="ulink" href="../man/upsmon.html" target="_top">upsmon(8)</a>, <a class="ulink" href="../man/upsmon.conf.html" target="_top">upsmon.conf(5)</a></p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_define_a_shutdowncmd_for_upsmon"></a>Define a SHUTDOWNCMD for upsmon</h5></div></div></div><p>Still in upsmon.conf, add a directive that tells upsmon how to shut down your
+system.  This example seems to work on most systems:</p><pre class="literallayout">SHUTDOWNCMD "/sbin/shutdown -h +0"</pre><p>Notice the presence of "quotes" here to keep it together.</p><p>If your system has special needs, you may want to set this to a script which
+does local shutdown tasks before calling init.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_start_upsmon"></a>Start upsmon</h5></div></div></div><pre class="literallayout">/usr/local/ups/sbin/upsmon</pre><p>If it complains about something, then check your configuration.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_checking_upsmon"></a>Checking upsmon</h5></div></div></div><p>Look for messages in the syslog to indicate success.  It should look something
+like this:</p><pre class="literallayout">May 29 01:11:27 mybox upsmon[102]: Startup successful
+May 29 01:11:28 mybox upsd[100]: Client monuser@192.168.50.1
+logged into UPS [myupsname]</pre><p>Any errors seen here are probably due to an error in the config files of either
+<code class="literal">upsmon</code> or <code class="literal">upsd</code>.  You should fix them before continuing.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_startup_scripts_2"></a>Startup scripts</h5></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>This step is not need if you installed from packages.</p></div><p>Edit your startup scripts, and add a call to <code class="literal">upsmon</code>.</p><p>Make sure <code class="literal">upsmon</code> starts when your system comes up.  Do it after <code class="literal">upsdrvctl</code>
+and <code class="literal">upsd</code>, or it will complain about not being able to contact the server.</p><p>You may delete the POWERDOWNFLAG in the startup scripts, but it is not
+necessary. <code class="literal">upsmon</code> will clear that file for you when it starts.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>Init script examples are provide in the <span class="emphasis"><em>scripts</em></span> directory of
+the NUT source tree, and in the various <a class="link" href="ar01s04.html#_binary_packages" title="4.2. Binary packages">packages</a>
+that exist.</p></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_shutdown_scripts"></a>Shutdown scripts</h5></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>This step is not need if you installed from packages.</p></div><p>Edit your shutdown scripts, and add <code class="literal">upsdrvctl shutdown</code>.</p><p>You should configure your system to power down the UPS after the filesystems are
+remounted read-only.  Have it look for the presence of the POWERDOWNFLAG (from
+<a class="ulink" href="../man/upsmon.conf.html" target="_top">upsmon.conf(5)</a>), using this as an example:</p><pre class="screen">        if (test -f /etc/killpower)
+        then
+                echo "Killing the power, bye!"
+                /usr/local/ups/bin/upsdrvctl shutdown
+
+                sleep 120
+
+                # uh oh... the UPS power-off failed
+                # you probably want to reboot here so you don't get stuck!
+                # *** see also the section on power races in the FAQ! ***
+        fi</pre><div class="warning" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Warning</h3><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Be careful that upsdrvctl command will probably power off your machine.
+Don’t use it unless your system is ready to be halted by force.
+If you run RAID, read the <a class="link" href="ar01s06.html#_raid_warning" title="RAID warning">RAID warning</a> below!
+</li><li class="listitem">
+Make sure the filesystem(s) containing upsdrvctl, ups.conf and your UPS
+driver(s) are mounted (possibly in read-only mode) when the system gets to this
+point.  Otherwise it won’t be able to figure out what to do.
+</li></ul></div></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="Testing_shutdowns"></a>Testing shutdowns</h5></div></div></div><p>UPS equipment varies from manufacturer to manufacturer and even within
+model lines.  You should test the <a class="link" href="ar01s06.html#Shutdown_design" title="Shutdown design">shutdown sequence</a>
+on your systems before leaving them unattended.  A successful sequence
+is one where the OS halts before the battery runs out, and the system
+restarts when power returns.</p><p>The first step is to see how upsdrvctl will behave without actually turning off
+power. To do so, use the <span class="emphasis"><em>-t</em></span> argument:</p><pre class="literallayout">/usr/local/ups/bin/upsdrvctl -t shutdown</pre><p>It will display the sequence without actually calling the drivers.</p><p>You can finally test a forced shutdown sequence (FSD) using:</p><pre class="literallayout">/usr/local/ups/sbin/upsmon -c fsd</pre><p>This will execute a full shutdown sequence, as presented in
+<a class="link" href="ar01s06.html#Shutdown_design" title="Shutdown design">Shutdown design</a>, starting from the 3rd step.</p><p>If everything works correctly, the computer will be forcibly powered
+off, may remain off for a few seconds to a few minutes (depending on
+the driver and UPS type), then will power on again.</p><p>If your UPS just sits there and never resets the load, you are vulnerable
+to a power race and should add the "reboot after timeout" hack at the very
+least.</p><p>Also refer to the section on power races in the <a class="ulink" href="FAQ.html" target="_top">FAQ</a>.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_using_suspend_to_disk"></a>Using suspend to disk</h4></div></div></div><p>Support for suspend to RAM and suspend to disk has been available in
+the Linux kernel for a while now. For obvious reasons, suspending to
+RAM isn’t particularly useful when the UPS battery is getting low,
+but suspend to disk may be an interesting concept.</p><p>This approach minimizes the amount of disruption which would be caused
+by an extended outage.  The UPS goes on battery, then reaches low
+battery, and the system takes a snapshot of itself and halts.  Then it
+is turned off and waits for the power to return.</p><p>Once the power is back, the system reboots, pulls the snapshot back in,
+and keeps going from there.  If the user happened to be away when it
+happened, they may return and have no idea that their system actually
+shut down completely in the middle.</p><p>In order for this to work, you need to shutdown NUT (UPS driver, upsd
+server and upsmon client) in the suspend script and start them again in
+the resume script.  Don’t try to keep them running.  The upsd server
+will latch the FSD state (so it won’t be usable after resuming) and so
+will the upsmon client.  Some drivers may work after resuming, but many
+don’t and some UPSs will require re-initialization, so it’s best not
+to keep this running either.</p><p>After stopping driver, server and client you’ll have to send the UPS
+the command to shutdown only if the POWERDOWNFLAG is present.  Note
+that most likely you’ll have to allow for a grace period after sending
+<span class="emphasis"><em>upsdrvctl shutdown</em></span> since the system will still have to take a
+snapshot of itself after that.  Not all drivers support this, so before
+going down this road, make sure that the one you’re using does.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_raid_warning"></a>RAID warning</h4></div></div></div><p>If you run any sort of RAID equipment, make sure your arrays are either halted
+(if possible) or switched to "read-only" mode. Otherwise you may suffer a long
+resync once the system comes back up.</p><p>The kernel may not ever run its final shutdown procedure, so you must take care
+of all array shutdowns in userspace before upsdrvctl runs.</p><p>If you use software RAID (md) on Linux, get mdadm and try using
+<span class="emphasis"><em>mdadm --readonly</em></span> to put your arrays in a safe state. This has to
+happen after your shutdown scripts have remounted the filesystems.</p><p>On hardware RAID or other kernels, you have to do some detective work. It may
+be necessary to contact the vendor or the author of your driver to find out
+how to put the array in a state where a power loss won’t leave it "dirty".</p><p>Our understanding is that most if not all RAID devices on Linux will be fine
+unless there are pending writes.  Make sure your filesystems are remounted
+read-only and you should be covered.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="DataRoom"></a>6.4. Typical setups for enterprise networks and data rooms</h3></div></div></div><p>The split nature of this UPS monitoring software allows a wide variety of
+power connections.  This chapter will help you identify how things should
+be configured using some general descriptions.</p><p>There are two main elements:</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem">
+There’s a UPS attached to a communication (serial, USB or network) port on
+this system.
+</li><li class="listitem">
+This system depends on a UPS for power.
+</li></ol></div><p>You can play "mix and match" with those two to arrive at these descriptions
+for individual hosts:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+A: 1 but not 2
+</li><li class="listitem">
+B: 2 but not 1
+</li><li class="listitem">
+C: 1 and 2
+</li></ul></div><p>A small to medium sized data room usually has one C and a bunch of Bs.
+This means that there’s a system (type C) hooked to the UPS which depends
+on it for power.  There are also some other systems in there (type B)
+which depend on that same UPS for power, but aren’t directly connected to
+it.</p><p>Larger data rooms or those with multiple UPSes may have several "clusters"
+of the "single C, many Bs" depending on how it’s all wired.</p><p>Finally, there’s a special case.  Type A systems are connected to a UPS’s
+serial port, but don’t depend on it for power.  This usually happens when
+a UPS is physically close to a box and can reach the serial port, but
+the wiring is such that it doesn’t actually feed it.</p><p>Once you identify a system’s type, use this list to decide which of the
+programs need to be run for monitoring:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+A: driver and upsd
+</li><li class="listitem">
+B: upsmon (as slave)
+</li><li class="listitem">
+C: driver, upsd, and upsmon (as master)
+</li></ul></div><p>To further complicate things, you can have a system that is hooked to
+multiple UPSes, but only depends on one for power.  This particular
+situation makes it an "A" relative to one UPS, and a "C" relative to the
+other.  The software can handle this - you just have to tell it what to do.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>NUT can also serve as a data proxy to increase the number of clients,
+or share the communication load between several upsd instances.</p></div><p><span class="inlinemediaobject"><img src="images/advanced.png" alt="images/advanced.png" /></span></p><p>If you are running large server-class systems that have more than one
+power feed, see the next section for information on how to handle it
+properly.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="BigServers"></a>6.5. Typical setups for big servers with UPS redundancy</h3></div></div></div><p>By using multiple MONITOR statements in upsmon.conf, you can configure an
+environment where a large machine with redundant power monitors multiple
+separate UPSes.</p><p><span class="inlinemediaobject"><img src="images/bigbox.png" alt="images/bigbox.png" /></span></p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_example_configuration"></a>Example configuration</h4></div></div></div><p>For the examples in this section, we will use a server with four power supplies
+installed.</p><p>Two UPS, <span class="emphasis"><em>Alpha</em></span> and <span class="emphasis"><em>Beta</em></span>, are each driving two of the power supplies.
+This means that either <span class="emphasis"><em>Alpha</em></span> <span class="strong"><strong>or</strong></span> <span class="emphasis"><em>Beta</em></span> can totally shut down and the
+server will be able to keep running.</p><p>The upsmon.conf configuration that reflect this is the following:</p><pre class="literallayout">MONITOR ups-alpha@myhost 2 monuser mypass master
+MONITOR ups-beta@myhost 2 monuser mypass master
+MINSUPPLIES 2</pre><p>With that configuration, upsmon will only shut down when both UPS reaches
+a critical (on battery + low battery) condition, since <span class="emphasis"><em>Alpha</em></span> and <span class="emphasis"><em>Beta</em></span>
+provide the same power value.</p><p>As an added bonus, this means you can move a running server from one UPS
+to another (for maintenance purpose for example) without bringing it down since
+the minimum power will be provided at all times.</p><p>The MINSUPPLIES line tells upsmon that we need at least 2 power supplies
+to be receiving power from a good UPS (on line or on battery, just not
+on battery and low battery).</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>we could have used a <span class="emphasis"><em>Power Value</em></span> of 1 for both UPS, and MINSUPPLIES
+set to 1 too. These values are purely arbitrary, so you are free to use your
+own rules. Here, we have linked these values to the number of power supplies
+that each UPS is feeding (2).</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_multiple_ups_shutdowns_ordering"></a>Multiple UPS shutdowns ordering</h4></div></div></div><p>If you have multiple UPSes connected to your system, chances are that you
+need to shut them down in a specific order.  The goal is to shut down
+everything but the one keeping upsmon alive at first, then you do that one
+last.</p><p>To set the order in which your UPSes receive the shutdown commands, define
+the <span class="emphasis"><em>sdorder</em></span> value in your ups.conf.</p><pre class="literallayout">[bigone]
+        driver = usbhid-ups
+        port = auto
+        sdorder = 2</pre><pre class="literallayout">[littleguy]
+        driver = mge-shut
+        port = /dev/ttyS0
+        sdorder = 1</pre><pre class="literallayout">[misc]
+        driver = blazer_ser
+        port = /dev/ttyS1
+        sdorder = 0</pre><p>The order runs from 0 to the highest number available.  So, for this
+configuration, the order of shutdowns would be <span class="emphasis"><em>misc</em></span>, <span class="emphasis"><em>littleguy</em></span>, and then
+<span class="emphasis"><em>bigone</em></span>.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>If you have a UPS that shouldn’t be shutdown when running <span class="emphasis"><em>upsdrvctl
+shutdown</em></span>, set the <span class="strong"><strong>sdorder</strong></span> to <span class="strong"><strong>-1</strong></span>.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_other_redundancy_configurations"></a>Other redundancy configurations</h4></div></div></div><p>There are a lot of ways to handle redundancy and they all come down to how many
+power supplies, power cords and independent UPS connections you have.  A
+system with a 1:1 cord:supply ratio has more wires stuffed behind it, but
+it’s much easier to move things around since any given UPS drives a smaller
+percentage of the overall power.</p><p>More information can be found in the <a class="ulink" href="../user-manual.chunked/index.html" target="_top">NUT user manual</a>,
+and the various <a class="ulink" href="man/index.html" target="_top">user manual pages</a>.</p></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
+		Last updated 2016-02-02 16:09:58 -- Network UPS Tools 2.7.3.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s05.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s07.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

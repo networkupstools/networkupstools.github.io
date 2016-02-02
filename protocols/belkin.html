@@ -1,0 +1,1332 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<title>Network UPS Tools - Belkin Regulator Pro smart protocol</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="generator" content="AsciiDoc 8.6.9" />
+<meta name="description" content="Power Devices support" />
+<meta name="keywords" content="NUT, Network UPS Tools, Eaton, APC, Free Software, UPS, Uninterruptible Power Supplies, PDU, Power Distributions Units, Solar Controllers, power, power devices, control, monitor, Linux, Unix, Windows, Mac OS X" />
+<meta name="format-detection" content="telephone=no" />
+<link rel="stylesheet" href="../css/xhtml11.css" type="text/css" />
+<link rel="stylesheet" href="../css/web-layout.css" type="text/css" />
+<link rel="shortcut icon" href="../faviconut.ico" />
+<link rel="icon" type="image/png" href="../faviconut.png" />
+<script type="text/javascript" src="../scripts/asciidoc.js"></script>
+<script type="text/javascript">
+/*<![CDATA[*/
+asciidoc.install(2);
+/*]]>*/
+</script>
+<!--[if lte IE 7]>
+<link rel="stylesheet" href="../css/ie-overrides.css" type="text/css" />
+<![endif]-->
+<!--[if lte IE 6]>
+<script type="text/javascript" src="../scripts/filter_png.js"></script>
+<![endif]-->
+</head>
+<body>
+<div id="layout-banner-box">
+<div id="layout-banner">
+  <div id="layout-logo"><img src="../images/nut-logo.png" alt="NUT logo" /></div>
+  <div id="layout-title">Network UPS Tools</div>
+  <div id="layout-description">Power Devices support</div>
+</div>
+</div>
+<div id="layout-menu-box">
+  <ul id="layout-menu">
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="../download.html">Download</a></li>
+    <li><a href="../projects.html">Related projects</a></li>
+    <li><a href="../stable-hcl.html">Compatibility</a></li>
+    <li><a href="../documentation.html">Documentation</a></li>
+    <li><a href="../support.html">Support</a></li>
+    <li><a href="https://github.com/networkupstools/nut/">GitHub</a></li>
+    <li><a href="https://alioth.debian.org/projects/nut/">Alioth (old)</a></li>
+  </ul>
+  <!-- div id="sponsor"><span>Hosted by<br/></span>
+    <a href="http://sponsor.com"><img src="../images/sponsor-logo.png" alt="Sponsor" /></a>
+  </div -->
+</div>
+<div id="layout-content-box">
+<div id="layout-content">
+<div id="header">
+<h1>Belkin Regulator Pro smart protocol</h1>
+<span id="author">Marcus Mueller</span><br />
+<span id="email"><tt>&lt;<a href="mailto:marcus@ebootis.de">marcus@ebootis.de</a>&gt;</tt></span><br />
+</div>
+<div id="toc">
+  <div id="toctitle">Table of Contents</div>
+  <noscript><p><b>JavaScript must be enabled in your browser to display the table of contents.</b></p></noscript>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_new_information_available">New information available</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Thanks to <a href="http://www.tankstage.co.uk/">Tank</a> (&lt;<a href="mailto:webmaster@tankstage.co.uk">webmaster@tankstage.co.uk</a>&gt;), <a href="belkin-protocol.html">far more information</a> is available on this protocol.
+This page may be updated to reflect this at some point.</p></div>
+<div class="paragraph"><p>This page is known to look bad on most browsers.
+It will be rewritten to look better some day.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_description">Description</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Following the tradition of the earlier APC and Opti-UPS decoding work, here is some knowledge about the newer Belkin UPS protocol.
+This has all been obtained by prodding a F6C525-SER and their closed-source software, so there will probably be a lot of holes or unknown items.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_beware_random_queries">Beware random queries</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>During the course of creating the original document, I managed to send a bunch of bogus queries and apparently managed to confuse my original UPS pretty badly.
+It started acting like a glorified power strip - unable to hold any significant load.</p></div>
+<div class="paragraph"><p>Play it safe: do not send random commands to this hardware.
+Many of them are aliased and you will uncover things that are merely duplicates of well-documented commands.</p></div>
+<div class="paragraph"><p>In particular, the <strong><code>SDE</code></strong> sequence seems to be very touchy.
+I convinced their software that it had a battery at 0 volts with 0% charge and that it was at 68 degrees F.
+The magic values for a F6C525-SER are "<code>160;2650;1932;1030;162</code>" - whatever that means.
+Now that you know how to break things, don&#8217;t step into this trap.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_firmware_differences">Firmware differences</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>There may be differences in the command strings from one version to the next.
+Occasionally bugs are fixed, so these notes may diverge from your hardware as time goes by and newer versions come out.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_string_format">String format</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>The strings seem to be formatted like this:</p></div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<strong><code>~</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+attention character
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>00</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+unknown
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>P</code></strong> or <strong><code>S</code></strong>, <strong><code>D</code></strong> or <strong><code>R</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+command type:
+</p>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<strong><code>P</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+from PC to UPS: poll value
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>S</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+from PC to UPS: set value / run command
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>D</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+from UPS to PC: response to poll
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>R</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+from UPS to PC: "unimplemented" response
+</p>
+</td>
+</tr>
+</table></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>nnn</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+length of data to follow, in bytes (e.g. <code>004</code>)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>xxx</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+3 letter command name (e.g. <code>BUZ</code>)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>zzz</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+optional: data for the command
+</p>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img src="../images/note.png" alt="Note" />
+</td>
+<td class="content">commands with multiple fields use <strong><code>;</code></strong> to separate them.</td>
+</tr></table>
+</div>
+</td>
+</tr>
+</table></div>
+<div class="paragraph"><p>A typical command might look like this:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>~00S004BUZ0</code></pre>
+</div></div>
+<div class="paragraph"><p>That&#8217;s a command from the PC (<code>S</code>), data length is <code>4</code>, the command is <code>BUZ</code>, and the data for the command is <code>0</code>.
+This command happens to be the one that turns off the buzzer in the UPS.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_commands_and_variable_setting">Commands and variable setting</h2>
+<div class="sectionbody">
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="middle">String                 </th>
+<th align="left" valign="middle">Apparent meaning                                                               </th>
+<th align="left" valign="middle">Typical value/response</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="middle"><p class="table"><code>~00S004BUZ0</code></p></td>
+<td align="left" valign="middle"><p class="table">Turn off UPS buzzer (may be BUZ2 on some hardware)</p></td>
+<td align="left" valign="middle"><p class="table">n/a</p></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code>~00S004BUZ1</code></p></td>
+<td align="left" valign="middle"><p class="table">Turn on UPS buzzer</p></td>
+<td align="left" valign="middle"><p class="table">n/a</p></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code>~00S006RON1;1</code></p></td>
+<td align="left" valign="middle"><p class="table">Turn on receptacle relay 1, delay 1 second</p></td>
+<td align="left" valign="middle"><p class="table">n/a</p></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code>~00S006ROF1;10</code></p></td>
+<td align="left" valign="middle"><p class="table">Turn off receptacle relay 1, delay 10 seconds</p></td>
+<td align="left" valign="middle"><p class="table">n/a</p></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code>~00S004TST3</code></p></td>
+<td align="left" valign="middle"><p class="table">10 second battery test</p></td>
+<td align="left" valign="middle"><p class="table">n/a</p></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code>~00S004TST4</code></p></td>
+<td align="left" valign="middle"><p class="table">Deep battery test</p></td>
+<td align="left" valign="middle"><p class="table">n/a</p></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code>~00S004TST0</code></p></td>
+<td align="left" valign="middle"><p class="table">Cancel battery test</p>
+<p class="table">After using this, the UPS may need to be rebooted before it will start another battery test.</p></td>
+<td align="left" valign="middle"><p class="table">n/a</p></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code>~00S004SDA0</code></p></td>
+<td align="left" valign="middle"><p class="table">Cancel shutdown</p></td>
+<td align="left" valign="middle"><p class="table">n/a</p></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code>~00S004SDT2</code></p></td>
+<td align="left" valign="middle"><p class="table">Unsure: may be "shutdown type" - used for shutdown+restore command</p></td>
+<td align="left" valign="middle"><p class="table">n/a</p></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code>~00S006SDA120</code></p></td>
+<td align="left" valign="middle"><p class="table">Shut down the UPS after 120 seconds</p>
+<p class="table">NOTE: the only known way to return from this is with the power button!</p></td>
+<td align="left" valign="middle"><p class="table">n/a</p></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code>~00S008SDRnnnnn</code></p></td>
+<td align="left" valign="middle"><p class="table">Untested, not seen in logs (only seen in <em>strings</em>)</p>
+<p class="table">Seen in the binary as "<code>~00S008SDR%d</code>" - probably also shutdown + scheduled return.</p>
+<p class="table">This may have second-level precision since 5 digits allows for values like 86400 - one day worth of seconds.</p></td>
+<td align="left" valign="middle"><p class="table">n/a</p></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code>~00S004ECO1</code></p></td>
+<td align="left" valign="middle"><p class="table">Enable "economic mode" - probably only on higher-end units</p></td>
+<td align="left" valign="middle"><p class="table">n/a</p></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code>~00S004VSN0</code></p></td>
+<td align="left" valign="middle"><p class="table">Set normal sensitivity</p></td>
+<td align="left" valign="middle"><p class="table">n/a</p></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code>~00S004VSN1</code></p></td>
+<td align="left" valign="middle"><p class="table">Set reduced sensitivity</p></td>
+<td align="left" valign="middle"><p class="table">n/a</p></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code>~00S004VSN2</code></p></td>
+<td align="left" valign="middle"><p class="table">Set low sensitivity</p></td>
+<td align="left" valign="middle"><p class="table">n/a</p></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code>~00S009TXVxx;yyy</code></p></td>
+<td align="left" valign="middle"><p class="table">Set low transfer point to <code>xx</code> VAC and high transfer point to <code>yyy</code> VAC</p></td>
+<td align="left" valign="middle"><p class="table">n/a</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_status_information_polling">Status/information polling</h2>
+<div class="sectionbody">
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">String         </th>
+<th align="left" valign="top">Apparent meaning                               </th>
+<th align="left" valign="top">Typical value/response</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table"><code>~00P003MNU</code></p></td>
+<td align="left" valign="top"><p class="table">Manufacturer</p></td>
+<td align="left" valign="top"><p class="table"><code>~00D006BELKIN</code></p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table"><code>~00P003MOD</code></p></td>
+<td align="left" valign="top"><p class="table">Model</p></td>
+<td align="left" valign="top"><p class="table"><code>~00D010F6C525-SER</code></p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table"><code>~00P003VER</code></p></td>
+<td align="left" valign="top"><p class="table">Firmware</p></td>
+<td align="left" valign="top"><p class="table"><code>~00D003001</code></p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table"><code>~00P003STB</code></p></td>
+<td align="left" valign="top"><p class="table">Status: battery</p></td>
+<td align="left" valign="top"><div><div class="paragraph"><p><code>~00D0220;0;1;;;;0136;;047;100</code></p></div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Field 1 (<code>0</code>)
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+unknown
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Field 2 (<code>0</code>)
+<br />
+</td>
+<td class="hdlist2">
+<div class="paragraph"><p><code>0</code> &#8594; battery normal</p></div>
+<div class="paragraph"><p><code>1</code> &#8594; battery weak (below 15%)</p></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Field 3 (<code>1</code>)
+<br />
+</td>
+<td class="hdlist2">
+<div class="paragraph"><p><code>1</code> &#8594; battery charging</p></div>
+<div class="paragraph"><p><code>3</code> &#8594; discharging</p></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Field 4 (<code>null</code>)
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+unknown
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Field 5 (<code>null</code>)
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+unknown
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Field 6 (<code>null</code>)
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+unknown
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Field 7 (<code>0136</code>)
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+battery voltage (13.6V)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Field 8 (<code>null</code>)
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+unknown
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Field 9 (<code>047</code>)
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+temperature (47 degrees C)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Field 10 (<code>100</code>)
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+battery charge level (100%)
+</p>
+</td>
+</tr>
+</table></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table"><code>~00P003STO</code></p></td>
+<td align="left" valign="top"><p class="table">Status: output</p></td>
+<td align="left" valign="top"><div><div class="paragraph"><p><code>~00D0182;600;1;1234;;;016</code></p></div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Field 1 (<code>2</code>)
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+power source:
+</p>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>1</code> &#8594; inverter
+</p>
+</li>
+<li>
+<p>
+<code>2</code> &#8594; utility
+</p>
+</li>
+</ul></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Field 2 (<code>600</code>)
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+output frequency (60.0 Hz)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Field 3 (<code>1</code>)
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+may be number of phases or output circuits
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Field 4 (<code>1234</code>)
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+output voltage 1 (123.4 V)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Field 5 (<code>null</code>)
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+unknown
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Field 6 (<code>null</code>)
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+unknown
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Field 7 (<code>016</code>)
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+UPS load (16%)
+</p>
+</td>
+</tr>
+</table></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table"><code>~00P003STI</code></p></td>
+<td align="left" valign="top"><p class="table">Status: input</p></td>
+<td align="left" valign="top"><div><div class="paragraph"><p><code>~00D0101;600;1245</code></p></div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Field 1 (<code>1</code>)
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+may mean number of phases
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Field 2 (<code>600</code>)
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+input frequency (60.0 Hz)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Field 3 (<code>1245</code>)
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+input voltage (124.5 V)
+</p>
+</td>
+</tr>
+</table></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table"><code>~00P003TSR</code></p></td>
+<td align="left" valign="top"><p class="table">Test result</p></td>
+<td align="left" valign="top"><div><div class="paragraph"><p><code>~00D001n</code></p></div>
+<div class="paragraph"><p>Values for <code>n</code>:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; no test performed
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; test passed
+</p>
+</li>
+<li>
+<p>
+<code>2</code> &#8594; test in progress
+</p>
+</li>
+<li>
+<p>
+<code>3</code> &#8594; battery test failed
+</p>
+</li>
+<li>
+<p>
+<code>4</code> &#8594; battery test failed (duplicated for some reason)
+</p>
+</li>
+<li>
+<p>
+<code>5</code> &#8594; deep battery test failed (monitor flips out with this one)
+</p>
+</li>
+<li>
+<p>
+<code>6</code> &#8594; test aborted
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table"><code>~00P003STA</code></p></td>
+<td align="left" valign="top"><p class="table">Alarm status</p></td>
+<td align="left" valign="top"><div><div class="paragraph"><p><code>~00D024;0;;0;;0;0;;0;;;0;0;0;0;;0;1</code></p></div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Field 1
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>1</code> &#8594; overheat
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Field 2
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>0</code> &#8594; on line
+</p>
+<div class="paragraph"><p><code>1</code> &#8594; on battery</p></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Field 3
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>1</code> &#8594; output bad
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Field 4
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>1</code> &#8594; overload - at/over 110% load, clears below 95%
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Field 5
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>1</code> &#8594; bypass bad
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Field 6
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>1</code> &#8594; output off
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Field 7
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>1</code> &#8594; UPS shutdown
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Field 8
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>1</code> &#8594; charger bad
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Field 9
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>1</code> &#8594; UPS system off
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Field 10
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>1</code> &#8594; fan failure
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Field 11
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>1</code> &#8594; fuse break
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Field 12
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>1</code> &#8594; UPS fault (general fault)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Field 13
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>1</code> &#8594; awaiting power
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Field 14
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>1</code> &#8594; shutdown pending (<strong><code>SDA</code></strong> command underway)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Field 15
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>1</code> &#8594; shutdown imminent (&lt;5 seconds of power left)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Field 16
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>0</code> &#8594; buzzer alarm off
+</p>
+<div class="paragraph"><p><code>1</code> &#8594; on</p></div>
+</td>
+</tr>
+</table></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table"><code>~00P003AVL</code></p></td>
+<td align="left" valign="top"><div><div class="paragraph"><p>Available commands</p></div>
+<div class="paragraph"><p>Each digit represents whether a given command is available on this hardware.</p></div>
+<div class="paragraph"><p>Bit 0 is the rightmost (last character).</p></div>
+<div class="paragraph"><p>One interpretation follows:</p></div>
+<div class="openblock">
+<div class="content">
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<thead>
+<tr>
+<th align="center" valign="middle">Bit    </th>
+<th align="center" valign="middle">Command</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>0</code></p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>UBD</strong></code></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>1</code></p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>TXF</strong></code></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>2</code></p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ECO</strong></code></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>3</code></p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ATT</strong></code></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>4</code></p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>BTT</strong></code></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>5</code></p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ATX</strong></code></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>6</code></p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ARB</strong></code></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>7</code></p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>BUZ</strong></code></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>8</code></p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>RST</strong></code></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>9</code></p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>SDA</strong></code></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>10</code></p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>SDR</strong></code></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>11</code></p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>SDT</strong></code></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>12</code></p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>TST</strong></code></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>13</code></p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>UBR</strong></code></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>14</code></p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>UID</strong></code></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>15</code></p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>TXV</strong></code></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>16</code></p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>VSN</strong></code></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>17</code></p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>RON</strong></code></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>18</code></p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ROF</strong></code></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>19</code></p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>RNF</strong></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div></div>
+<div class="paragraph"><p>I assume that older models simply lack the higher bits.</p></div></div></td>
+<td align="left" valign="top"><div><div class="paragraph"><p><code>~00D0130111100111111</code></p></div>
+<div class="paragraph"><p>Unconfirmed decoding:</p></div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Supported:
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>UBD</code></strong> (0), <strong><code>TXF</code></strong> (1), <strong><code>ECO</code></strong> (2), <strong><code>ATT</code></strong> (3), <strong><code>BTT</code></strong> (4), <strong><code>ATX</code></strong> (5)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Unsupported:
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>ARB</code></strong> (6), <strong><code>BUZ</code></strong> (7)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Supported:
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>RST</code></strong> (8), <strong><code>SDA</code></strong> (9), <strong><code>SDR</code></strong> (10), <strong><code>SDT</code></strong> (11)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Unsupported:
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>TST</code></strong> (12)
+</p>
+</td>
+</tr>
+</table></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table"><code>~00P003RAT</code></p></td>
+<td align="left" valign="top"><p class="table">UPS ratings</p></td>
+<td align="left" valign="top"><div><div class="paragraph"><p><code>~00D053134;612;159;600;525;315;;85;100;90;80;150;140;1;12</code></p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img src="../images/warning.png" alt="Warning" />
+</td>
+<td class="content">this is truncated in my hardware - full decoding impossible</td>
+</tr></table>
+</div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img src="../images/note.png" alt="Note" />
+</td>
+<td class="content">Broken in firmware 001, fixed in firmware 004.</td>
+</tr></table>
+</div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Field 1 (<code>120</code>)
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+nominal input voltage (120 V)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Field 2 (<code>600</code>)
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+nominal input frequency (60.0 Hz)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Field 3 (<code>120</code>)
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+nominal output voltage (120 V)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Field 4 (<code>600</code>)
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+nominal output frequency (60.0 Hz)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Field 5 (<code>525</code>)
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+VA rating (525 VA)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Field 6 (<code>315</code>)
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+wattage (315 W)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Field 7 (<code>null</code>)
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+unknown
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Field 8 (<code>85</code>)
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+nominal low transfer voltage
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Field 9 (<code>145</code>)
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+nominal high transfer voltage
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Field 10 (<code>90</code>)
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+severe load point (90%)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Field 11 (<code>80</code>)
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+load warning point (80%)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Field 12 (<code>150</code>)
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+unknown (absolute load shutdown point?)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Field 13 (<code>140</code>)
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+unknown (pre-load shutdown point?)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Field 14 (<code>1</code>)
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+unknown (battery count?)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Field 15 (<code>12</code>)
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+unknown (first battery voltage?) (truncated?)
+</p>
+</td>
+</tr>
+</table></div>
+<div class="paragraph"><p>Remaining data is unavailable</p></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table"><code>~00P003LET</code></p></td>
+<td align="left" valign="top"><p class="table">Unknown - only polled at startup</p></td>
+<td align="left" valign="top"><p class="table"><code>~00D003001</code></p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table"><code>~00P003STP</code></p></td>
+<td align="left" valign="top"><p class="table">Unknown - polled at startup, not supported</p></td>
+<td align="left" valign="top"><p class="table"><code>~00R000</code></p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table"><code>~00P003VSN</code></p></td>
+<td align="left" valign="top"><p class="table">Sensitivity</p></td>
+<td align="left" valign="top"><div><div class="paragraph"><p><code>~00D001n</code></p></div>
+<div class="paragraph"><p>Values for <code>n</code>:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; normal
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; reduced
+</p>
+</li>
+<li>
+<p>
+<code>2</code> &#8594; low
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table"><code>~00P003TXV</code></p></td>
+<td align="left" valign="top"><p class="table">Transfer voltages</p></td>
+<td align="left" valign="top"><div><div class="paragraph"><p><code>~00D007085;145</code></p></div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Field 1 (<code>085</code>)
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+low transfer point
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Field 2 (<code>145</code>)
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+high transfer point
+</p>
+</td>
+</tr>
+</table></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table"><code>~00P004SOL1</code></p></td>
+<td align="left" valign="top"><p class="table">Unknown - may mean "socket 1 offline"</p></td>
+<td align="left" valign="top"><p class="table"><code>~00D0010</code></p>
+<p class="table">Seems to be the same as <strong><code>STA</code></strong> field 6</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table"><code>~00P003ATX</code></p></td>
+<td align="left" valign="top"><p class="table">Unknown - only in program strings</p></td>
+<td align="left" valign="top"><p class="table"><code><code>004.</code></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_other_notes">Other notes</h2>
+<div class="sectionbody">
+<div class="paragraph"><p><strong><code>ARB</code></strong>, <strong><code>BRD</code></strong> and <strong><code>STP</code></strong> all return zero length responses.</p></div>
+<div class="paragraph"><p><strong><code>ATT</code></strong> returns the same data as <strong><code>STB</code></strong>.</p></div>
+<div class="paragraph"><p>Upon receiving any command with the <code>~00S</code> prefix, the UPS will respond with "<code>~00A</code>". This may be some kind of ACK response.</p></div>
+</div>
+</div>
+</div>
+<div id="footnotes"><hr /></div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2016-02-02 17:09:16 CET
+</div>
+<div id="footer-badges">
+<a href="http://www.methods.co.nz/asciidoc/">
+  <img style="border:0;width:88px;height:31px"
+    src="../images/asciidoc.png"
+    alt="Powered by AsciiDoc"/>
+</a>
+<a href="http://validator.w3.org/check?uri=referer">
+  <img style="border:0;width:88px;height:31px"
+    src="http://www.w3.org/Icons/valid-xhtml11-blue"
+    alt="Valid XHTML 1.1"/>
+</a>
+<a href="http://jigsaw.w3.org/css-validator/check?uri=referer">
+  <img style="border:0;width:88px;height:31px"
+    src="http://jigsaw.w3.org/css-validator/images/vcss-blue"
+    alt="Valid CSS!"/>
+</a>
+<a href="http://arnaud.quette.fr/tag/About">
+  <img style="border:0;width:118px;height:38px;"
+       src="../images/hostedby.png"
+       alt="Hoster"/>
+</a>
+</div>
+</div>
+</div>
+</div>
+<!-- Google Analytics integration -->
+<script type="text/javascript">
+
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-9664272-1']);
+        _gaq.push(['_trackPageview']);
+
+        (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+
+</script>
+</body>
+</html>

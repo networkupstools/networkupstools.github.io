@@ -1,0 +1,1957 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<title>Network UPS Tools - SEC UPS Protocol</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="generator" content="AsciiDoc 8.6.9" />
+<meta name="description" content="Power Devices support" />
+<meta name="keywords" content="NUT, Network UPS Tools, Eaton, APC, Free Software, UPS, Uninterruptible Power Supplies, PDU, Power Distributions Units, Solar Controllers, power, power devices, control, monitor, Linux, Unix, Windows, Mac OS X" />
+<meta name="format-detection" content="telephone=no" />
+<link rel="stylesheet" href="../css/xhtml11.css" type="text/css" />
+<link rel="stylesheet" href="../css/web-layout.css" type="text/css" />
+<link rel="shortcut icon" href="../faviconut.ico" />
+<link rel="icon" type="image/png" href="../faviconut.png" />
+<script type="text/javascript" src="../scripts/asciidoc.js"></script>
+<script type="text/javascript">
+/*<![CDATA[*/
+asciidoc.install(2);
+/*]]>*/
+</script>
+<!--[if lte IE 7]>
+<link rel="stylesheet" href="../css/ie-overrides.css" type="text/css" />
+<![endif]-->
+<!--[if lte IE 6]>
+<script type="text/javascript" src="../scripts/filter_png.js"></script>
+<![endif]-->
+</head>
+<body>
+<div id="layout-banner-box">
+<div id="layout-banner">
+  <div id="layout-logo"><img src="../images/nut-logo.png" alt="NUT logo" /></div>
+  <div id="layout-title">Network UPS Tools</div>
+  <div id="layout-description">Power Devices support</div>
+</div>
+</div>
+<div id="layout-menu-box">
+  <ul id="layout-menu">
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="../download.html">Download</a></li>
+    <li><a href="../projects.html">Related projects</a></li>
+    <li><a href="../stable-hcl.html">Compatibility</a></li>
+    <li><a href="../documentation.html">Documentation</a></li>
+    <li><a href="../support.html">Support</a></li>
+    <li><a href="https://github.com/networkupstools/nut/">GitHub</a></li>
+    <li><a href="https://alioth.debian.org/projects/nut/">Alioth (old)</a></li>
+  </ul>
+  <!-- div id="sponsor"><span>Hosted by<br/></span>
+    <a href="http://sponsor.com"><img src="../images/sponsor-logo.png" alt="Sponsor" /></a>
+  </div -->
+</div>
+<div id="layout-content-box">
+<div id="layout-content">
+<div id="header">
+<h1>SEC UPS Protocol</h1>
+<span id="author">John Marley,</span><br />
+<span id="email"><tt>&lt;<a href="mailto:John.Marley@alcatel.com.au">John.Marley@alcatel.com.au</a>&gt;</tt></span><br />
+</div>
+<div id="toc">
+  <div id="toctitle">Table of Contents</div>
+  <noscript><p><b>JavaScript must be enabled in your browser to display the table of contents.</b></p></noscript>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_message_format">Message Format</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>All messages passed between the PC and the UPS look like</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>^&lt;type&gt;&lt;len&gt;&lt;data&gt;</code></pre>
+</div></div>
+<div class="paragraph"><p>where</p></div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>^</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+The header character
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>&lt;type&gt;</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+The type of message being passed.
+</p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph"><p>The PC passes the following message types to the UPS:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<strong><code>P</code></strong> &#8594; PC polls UPS (a query)
+</p>
+</li>
+<li>
+<p>
+<strong><code>S</code></strong> &#8594; PC sets UPS variable
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>The UPS returns the following message types to the PC:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<strong><code>D</code></strong> &#8594; UPS returns Data to PC (result of query)
+</p>
+</li>
+<li>
+<p>
+<strong><code>0</code></strong> &#8594; UPS rejected command sent from PC
+</p>
+</li>
+<li>
+<p>
+<strong><code>1</code></strong> &#8594; UPS accepted command sent from PC
+</p>
+</li>
+</ul></div>
+</div></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>&lt;len&gt;</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+3 chars - length of following data (zero padded decimal ascii)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>&lt;data&gt;</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>&lt;len&gt;</code> characters of data
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_set_commands">Set Commands</h2>
+<div class="sectionbody">
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="middle">Command                </th>
+<th align="left" valign="middle">Description                    </th>
+<th align="left" valign="middle">Argument                       </th>
+<th align="left" valign="middle">Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="middle"><p class="table"><code><strong>ATR</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Enable/Disable Auto Restart</p></td>
+<td align="left" valign="middle"><p class="table">Enable/Disable Auto Restart</p></td>
+<td align="left" valign="middle"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; Enable
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Disable
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code><strong>PSD</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Shutdown After Delay</p></td>
+<td align="left" valign="middle"><p class="table">Delay (seconds)</p></td>
+<td align="left" valign="middle"><div><div class="paragraph"><p>min: <code>1</code></p></div>
+<div class="paragraph"><p>max: <code>999</code></p></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code><strong>PSD</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Cancel Shutdown</p></td>
+<td colspan="2" align="left" valign="middle"><p class="table"><code>-1</code></p></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code><strong>RWD</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Reboot With Duration</p></td>
+<td align="left" valign="middle"><p class="table">Delay (seconds)</p></td>
+<td align="left" valign="middle"><div><div class="paragraph"><p>min: <code>1</code></p></div>
+<div class="paragraph"><p>max: <code>30000</code></p></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code><strong>SDA</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Set Shutdown Type</p></td>
+<td align="left" valign="middle"><p class="table">Shutdown Type</p></td>
+<td align="left" valign="middle"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; UPS Output
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; UPS System
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code><strong>STD</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Startup After Delay</p></td>
+<td align="left" valign="middle"><p class="table">Delay (seconds)</p></td>
+<td align="left" valign="middle"><div><div class="paragraph"><p>min: <code>1</code></p></div>
+<div class="paragraph"><p>max: <code>30000</code></p></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code><strong>TST</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">UPS Test</p></td>
+<td align="left" valign="middle"><p class="table">UPS Test</p></td>
+<td align="left" valign="middle"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; General Test
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Battery Test
+</p>
+</li>
+<li>
+<p>
+<code>2</code> &#8594; Deep Battery Test
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code><strong>TST</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Abort Test</p></td>
+<td colspan="2" align="left" valign="middle"><p class="table"><code>-1</code></p></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code><strong>UID</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Set Identification</p></td>
+<td align="left" valign="middle"><p class="table">Set Identification</p></td>
+<td align="left" valign="middle"><div><div class="paragraph"><p>a string</p></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code><strong>NOM</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Set Nominal Input Voltage</p></td>
+<td align="left" valign="middle"><p class="table">Nominal Input Voltage</p></td>
+<td align="left" valign="middle"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> - <code>110</code>
+</p>
+</li>
+<li>
+<p>
+<code>1</code> - <code>120</code>
+</p>
+</li>
+<li>
+<p>
+<code>2</code> - <code>208</code>
+</p>
+</li>
+<li>
+<p>
+<code>3</code> - <code>220</code>
+</p>
+</li>
+<li>
+<p>
+<code>4</code> - <code>230</code>
+</p>
+</li>
+<li>
+<p>
+<code>5</code> - <code>240</code>
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code><strong>NOM,</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Set Nominal Input Frequency</p></td>
+<td align="left" valign="middle"><p class="table">Nominal Input Frequency (Hz)</p></td>
+<td align="left" valign="middle"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> - <code>50</code>
+</p>
+</li>
+<li>
+<p>
+<code>1</code> - <code>60</code>
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code><strong>NOM,,</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Set Nominal Output Voltage</p></td>
+<td align="left" valign="middle"><p class="table">Nominal Output Voltage (Volts)</p></td>
+<td align="left" valign="middle"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> - <code>110</code>
+</p>
+</li>
+<li>
+<p>
+<code>1</code> - <code>120</code>
+</p>
+</li>
+<li>
+<p>
+<code>2</code> - <code>208</code>
+</p>
+</li>
+<li>
+<p>
+<code>3</code> - <code>220</code>
+</p>
+</li>
+<li>
+<p>
+<code>4</code> - <code>230</code>
+</p>
+</li>
+<li>
+<p>
+<code>5</code> - <code>240</code>
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code><strong>NOM,,,</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Set Nominal Output Frequency</p></td>
+<td align="left" valign="middle"><p class="table">Nominal Output Frequency (Hz)</p></td>
+<td align="left" valign="middle"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> - <code>50</code>
+</p>
+</li>
+<li>
+<p>
+<code>1</code> - <code>60</code>
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code><strong>NOM,,,,</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Set Nominal Volt-Amp Rating</p></td>
+<td align="left" valign="middle"><p class="table">Nominal Volt-Amp Rating</p></td>
+<td align="left" valign="middle"><div><div class="paragraph"><p>a string</p></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code><strong>NOM,,,,,</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Set Nominal Output Power</p></td>
+<td align="left" valign="middle"><p class="table">Nominal Output Power (Watts)</p></td>
+<td align="left" valign="middle"><div><div class="paragraph"><p>a string</p></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code><strong>NOM,,,,,,</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Set Low Battery Time</p></td>
+<td align="left" valign="middle"><p class="table">Time (minutes)</p></td>
+<td align="left" valign="middle"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> - <code>2</code>
+</p>
+</li>
+<li>
+<p>
+<code>1</code> - <code>5</code>
+</p>
+</li>
+<li>
+<p>
+<code>2</code> - <code>10</code>
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code><strong>NOM,,,,,,,</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Set Audible Alarm State</p></td>
+<td align="left" valign="middle"><p class="table">Audible Alarm</p></td>
+<td align="left" valign="middle"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; Disabled
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Enabled
+</p>
+</li>
+<li>
+<p>
+<code>2</code> &#8594; Muted
+</p>
+</li>
+<li>
+<p>
+<code>3</code> &#8594; Low Battery
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code><strong>NOM,,,,,,,,,,</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Set Battery Install Date</p></td>
+<td align="left" valign="middle"><p class="table">Enter date in <code>MMDDYYYY</code> format</p></td>
+<td align="left" valign="middle"><div><div class="paragraph"><p>a string</p></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code><strong>NOM,,,,,,,,,,,</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Set Battery Life</p></td>
+<td align="left" valign="middle"><p class="table">Enter battery life in days</p></td>
+<td align="left" valign="middle"><div><div class="paragraph"><p>min: <code>0</code></p></div>
+<div class="paragraph"><p>max: <code>3000</code></p></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code><strong>NOM,,,,,,,,</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Set Low Voltage Transfer Point</p></td>
+<td align="left" valign="middle"><p class="table">Set the low voltage at which the UPS should switch to battery</p></td>
+<td align="left" valign="middle"><div><div class="paragraph"><p>min: <code>50</code></p></div>
+<div class="paragraph"><p>max: <code>240</code></p></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code><strong>NOM,,,,,,,,,</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Set High Voltage Xfer Pt.</p></td>
+<td align="left" valign="middle"><p class="table">Set the high voltage at which the UPS should switch to battery</p></td>
+<td align="left" valign="middle"><div><div class="paragraph"><p>min: <code>50</code></p></div>
+<div class="paragraph"><p>max: <code>240</code></p></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code><strong>UBR</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Set the UPS Baud Rate</p></td>
+<td align="left" valign="middle"><p class="table">UPS Baud Rate</p></td>
+<td align="left" valign="middle"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> - <code>1200</code>
+</p>
+</li>
+<li>
+<p>
+<code>1</code> - <code>2400</code>
+</p>
+</li>
+<li>
+<p>
+<code>2</code> - <code>4800</code>
+</p>
+</li>
+<li>
+<p>
+<code>3</code> - <code>9600</code>
+</p>
+</li>
+<li>
+<p>
+<code>4</code> - <code>19200</code>
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code><strong>STD</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Cancel Restart</p></td>
+<td colspan="2" align="left" valign="middle"><p class="table"><code>-1</code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_query_poll_commands">Query (Poll) Commands</h2>
+<div class="sectionbody">
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="middle">Command        </th>
+<th align="center" valign="middle">Field  </th>
+<th align="left" valign="middle">Variable Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" align="left" valign="middle"><p class="table"><code><strong>AP1</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Returns part 1 of a list of variable numbers that are supported by this UPS</p></td>
+</tr>
+<tr>
+<td colspan="2" align="left" valign="middle"><p class="table"><code><strong>AP2</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Returns part 2 of a list of variable numbers that are supported by this UPS</p></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code><strong>ATR</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">1</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Auto_Restart">Auto Restart</a></p></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code><strong>MAN</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">1</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Manufacturer">Manufacturer</a></p></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code><strong>MOD</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">1</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Model">Model</a></p></td>
+</tr>
+<tr>
+<td rowspan="12" align="left" valign="middle"><p class="table"><code><strong>NOM</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">1</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Nominal_Input_Voltage">Nominal Input Voltage</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">2</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Nom_Input_Frequency">Nom Input Frequency</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">3</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Nom_Output_Voltage">Nom Output Voltage</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">4</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Nom_Output_Frequency">Nom Output Frequency</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">5</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Nom_VA_Rating">Nom VA Rating</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">6</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Nominal_Output_Power">Nominal Output Power</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">7</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Nom_Low_Battery_Time">Nom Low Battery Time</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">8</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Audible_Alarm">Audible Alarm</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">9</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Low_Volt_Xfer_Pt">Low Volt Xfer Pt</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">10</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#High_Volt_Xfer_Pt">High Volt Xfer Pt</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">11</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Battery_Installed">Battery Installed</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">12</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Nominal_Battery_Life">Nominal Battery Life</a></p></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code><strong>SDA</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">1</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Shutdown_Type">Shutdown Type</a></p></td>
+</tr>
+<tr>
+<td rowspan="9" align="left" valign="middle"><p class="table"><code><strong>ST1</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">1</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Battery_Condition">Battery Condition</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">2</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Battery_Status">Battery Status</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">3</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Battery_Charge">Battery Charge</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">4</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Seconds_on_Battery">Seconds on Battery</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">5</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Estimated_Minutes">Estimated Minutes</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">6</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Estimated_Charge">Estimated Charge</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">7</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Battery_Voltage">Battery Voltage</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">8</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Battery_Current">Battery Current</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">9</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Battery_Temperature">Battery Temperature</a></p></td>
+</tr>
+<tr>
+<td rowspan="14" align="left" valign="middle"><p class="table"><code><strong>ST2</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">1</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Input_Line_Bads">Input Line Bads</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">2</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Input_Num_Lines">Input Num Lines</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">3</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Input_Frequency">Input Frequency</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">4</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Input_Voltage">Input Voltage</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">5</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Input_Current">Input Current</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">6</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Input_Power">Input Power</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">7</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Input_Frequency_2">Input Frequency 2</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">8</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Input_Voltage_2">Input Voltage 2</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">9</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Input_Current_2">Input Current 2</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">10</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Input_Power_2">Input Power 2</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">11</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Input_Frequency_3">Input Frequency 3</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">12</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Input_Voltage_3">Input Voltage 3</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">13</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Input_Current_3">Input Current 3</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">14</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Input_Power_3">Input Power 3</a></p></td>
+</tr>
+<tr>
+<td rowspan="15" align="left" valign="middle"><p class="table"><code><strong>ST3</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">1</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Output_Source">Output Source</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">2</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Output_Frequency">Output Frequency</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">3</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Output_Num_Lines">Output Num Lines</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">4</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Output_Voltage">Output Voltage</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">5</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Output_Current">Output Current</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">6</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Output_Power">Output Power</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">7</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Output_Load">Output Load</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">8</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Output_Voltage_2">Output Voltage 2</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">9</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Output_Current_2">Output Current 2</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">10</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Output_Power_2">Output Power 2</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">11</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Output_Load_2">Output Load 2</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">12</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Output_Voltage_3">Output Voltage 3</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">13</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Output_Current_3">Output Current 3</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">14</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Output_Power_3">Output Power 3</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">15</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Output_Load_3">Output Load 3</a></p></td>
+</tr>
+<tr>
+<td rowspan="11" align="left" valign="middle"><p class="table"><code><strong>ST4</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">1</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Bypass_Frequency">Bypass Frequency</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">2</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Bypass_Num_Lines">Bypass Num Lines</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">3</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Bypass_Voltage">Bypass Voltage</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">4</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Bypass_Current">Bypass Current</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">5</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Bypass_Power">Bypass Power</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">6</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Bypass_Voltage_2">Bypass Voltage 2</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">7</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Bypass_Current_2">Bypass Current 2</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">8</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Bypass_Power_2">Bypass Power 2</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">9</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Bypass_Voltage_3">Bypass Voltage 3</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">10</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Bypass_Current_3">Bypass Current 3</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">11</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Bypass_Power_3">Bypass Power 3</a></p></td>
+</tr>
+<tr>
+<td rowspan="15" align="left" valign="middle"><p class="table"><code><strong>ST5</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">1</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Temperature_Alarm">Temperature Alarm</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">2</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Input_Bad_Alarm">Input Bad Alarm</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">3</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Output_Bad_Alarm">Output Bad Alarm</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">4</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Overload_Alarm">Overload Alarm</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">5</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Bypass_Bad_Alarm">Bypass Bad Alarm</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">6</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Output_Off_Alarm">Output Off Alarm</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">7</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#UPS_Shutdown_Alarm">UPS Shutdown Alarm</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">8</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Charger_Failure_Alarm">Charger Failure Alarm</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">9</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#System_Off_Alarm">System Off Alarm</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">10</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Fan_Failure_Alarm">Fan Failure Alarm</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">11</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Fuse_Failure_Alarm">Fuse Failure Alarm</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">12</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#General_Fault_Alarm">General Fault Alarm</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">13</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Awaiting_Power_Alarm">Awaiting Power Alarm</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">14</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Shutdown_Pending_Alm">Shutdown Pending Alm</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">15</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Shutdown_Imminent_Alm">Shutdown Imminent Alm</a></p></td>
+</tr>
+<tr>
+<td rowspan="2" align="left" valign="middle"><p class="table"><code><strong>STR</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">1</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Test_Results_Summary">Test Results Summary</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">2</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Test_Results_Detail">Test Results Detail</a></p></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code><strong>UID</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">1</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#UPS_Identification">UPS Identification</a></p></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code><strong>VER</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">1</p></td>
+<td align="left" valign="middle"><p class="table"><a href="#Software_Version">Software Version</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_variables">Variables</h2>
+<div class="sectionbody">
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="center" valign="middle">Number                         </th>
+<th align="left" valign="middle">Variable               </th>
+<th align="center" valign="middle">Units  </th>
+<th align="center" valign="middle">Command        </th>
+<th align="center" valign="middle">Field  </th>
+<th align="left" valign="middle">Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Awaiting_Power_Alarm"></a>1</p></td>
+<td colspan="2" align="left" valign="middle"><p class="table">Awaiting Power Alarm</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST5</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">13</p></td>
+<td align="left" valign="middle"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; Normal
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Alarm
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Bypass_Bad_Alarm"></a>2</p></td>
+<td colspan="2" align="left" valign="middle"><p class="table">Bypass Bad Alarm</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST5</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">5</p></td>
+<td align="left" valign="middle"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; Normal
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Alarm
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Charger_Failure_Alarm"></a>3</p></td>
+<td colspan="2" align="left" valign="middle"><p class="table">Charger Failure Alarm</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST5</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">8</p></td>
+<td align="left" valign="middle"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; Normal
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Alarm
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Fan_Failure_Alarm"></a>4</p></td>
+<td colspan="2" align="left" valign="middle"><p class="table">Fan Failure Alarm</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST5</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">10</p></td>
+<td align="left" valign="middle"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; Normal
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Alarm
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Fuse_Failure_Alarm"></a>5</p></td>
+<td colspan="2" align="left" valign="middle"><p class="table">Fuse Failure Alarm</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST5</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">11</p></td>
+<td align="left" valign="middle"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; Normal
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Alarm
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="General_Fault_Alarm"></a>6</p></td>
+<td colspan="2" align="left" valign="middle"><p class="table">General Fault Alarm</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST5</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">12</p></td>
+<td align="left" valign="middle"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; Normal
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Alarm
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Input_Bad_Alarm"></a>7</p></td>
+<td colspan="2" align="left" valign="middle"><p class="table">Input Bad Alarm</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST5</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">2</p></td>
+<td align="left" valign="middle"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; Normal
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Alarm
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Output_Bad_Alarm"></a>8</p></td>
+<td colspan="2" align="left" valign="middle"><p class="table">Output Bad Alarm</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST5</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">3</p></td>
+<td align="left" valign="middle"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; Normal
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Alarm
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Output_Off_Alarm"></a>9</p></td>
+<td colspan="2" align="left" valign="middle"><p class="table">Output Off Alarm</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST5</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">6</p></td>
+<td align="left" valign="middle"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; Normal
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Alarm
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Overload_Alarm"></a>10</p></td>
+<td colspan="2" align="left" valign="middle"><p class="table">Overload Alarm</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST5</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">4</p></td>
+<td align="left" valign="middle"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; Normal
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Alarm
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Shutdown_Imminent_Alm"></a>11</p></td>
+<td colspan="2" align="left" valign="middle"><p class="table">Shutdown Imminent Alm</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST5</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">15</p></td>
+<td align="left" valign="middle"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; Normal
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Alarm
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Shutdown_Pending_Alm"></a>12</p></td>
+<td colspan="2" align="left" valign="middle"><p class="table">Shutdown Pending Alm</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST5</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">14</p></td>
+<td align="left" valign="middle"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; Normal
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Alarm
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="System_Off_Alarm"></a>13</p></td>
+<td colspan="2" align="left" valign="middle"><p class="table">System Off Alarm</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST5</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">9</p></td>
+<td align="left" valign="middle"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; Normal
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Alarm
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Temperature_Alarm"></a>14</p></td>
+<td colspan="2" align="left" valign="middle"><p class="table">Temperature Alarm</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST5</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">1</p></td>
+<td align="left" valign="middle"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; Normal
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Alarm
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="UPS_Shutdown_Alarm"></a>15</p></td>
+<td colspan="2" align="left" valign="middle"><p class="table">UPS Shutdown Alarm</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST5</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">7</p></td>
+<td align="left" valign="middle"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; Normal
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Alarm
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Audible_Alarm"></a>16</p></td>
+<td colspan="2" align="left" valign="middle"><p class="table">Audible Alarm</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>NOM</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">8</p></td>
+<td align="left" valign="middle"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; Disabled
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Enabled
+</p>
+</li>
+<li>
+<p>
+<code>2</code> &#8594; Muted
+</p>
+</li>
+<li>
+<p>
+<code>3</code> &#8594; Low Battery
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Auto_Restart"></a>17</p></td>
+<td colspan="2" align="left" valign="middle"><p class="table">Auto Restart</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ATR</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">1</p></td>
+<td align="left" valign="middle"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; Enable
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Disable
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Battery_Charge"></a>18</p></td>
+<td colspan="2" align="left" valign="middle"><p class="table">Battery Charge</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST1</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">3</p></td>
+<td align="left" valign="middle"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; Floating
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Charging
+</p>
+</li>
+<li>
+<p>
+<code>2</code> &#8594; Resting
+</p>
+</li>
+<li>
+<p>
+<code>3</code> &#8594; Discharging
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Battery_Condition"></a>19</p></td>
+<td colspan="2" align="left" valign="middle"><p class="table">Battery Condition</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST1</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">1</p></td>
+<td align="left" valign="middle"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; Good
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Weak
+</p>
+</li>
+<li>
+<p>
+<code>2</code> &#8594; Replace
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Battery_Current"></a>20</p></td>
+<td align="left" valign="middle"><p class="table">Battery Current</p></td>
+<td align="center" valign="middle"><p class="table">A/10</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST1</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">8</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Battery_Installed"></a>21</p></td>
+<td colspan="2" align="left" valign="middle"><p class="table">Battery Installed</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>NOM</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">11</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a string&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Battery_Status"></a>22</p></td>
+<td colspan="2" align="left" valign="middle"><p class="table">Battery Status</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST1</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">2</p></td>
+<td align="left" valign="middle"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; Normal
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Low
+</p>
+</li>
+<li>
+<p>
+<code>2</code> &#8594; Depleted
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Battery_Temperature"></a>23</p></td>
+<td align="left" valign="middle"><p class="table">Battery Temperature</p></td>
+<td align="center" valign="middle"><p class="table">C</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST1</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">9</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Battery_Voltage"></a>24</p></td>
+<td align="left" valign="middle"><p class="table">Battery Voltage</p></td>
+<td align="center" valign="middle"><p class="table">V/10</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST1</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">7</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Bypass_Current"></a>25</p></td>
+<td align="left" valign="middle"><p class="table">Bypass Current</p></td>
+<td align="center" valign="middle"><p class="table">A/10</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST4</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">4</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Bypass_Current_2"></a>26</p></td>
+<td align="left" valign="middle"><p class="table">Bypass Current 2</p></td>
+<td align="center" valign="middle"><p class="table">A/10</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST4</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">7</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Bypass_Current_3"></a>27</p></td>
+<td align="left" valign="middle"><p class="table">Bypass Current 3</p></td>
+<td align="center" valign="middle"><p class="table">A/10</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST4</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">10</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Bypass_Frequency"></a>28</p></td>
+<td align="left" valign="middle"><p class="table">Bypass Frequency</p></td>
+<td align="center" valign="middle"><p class="table">Hz/10</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST4</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">1</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Bypass_Num_Lines"></a>29</p></td>
+<td colspan="2" align="left" valign="middle"><p class="table">Bypass Num Lines</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST4</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">2</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Bypass_Power"></a>30</p></td>
+<td align="left" valign="middle"><p class="table">Bypass Power</p></td>
+<td align="center" valign="middle"><p class="table">W</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST4</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">5</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Bypass_Power_2"></a>31</p></td>
+<td align="left" valign="middle"><p class="table">Bypass Power 2</p></td>
+<td align="center" valign="middle"><p class="table">W</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST4</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">8</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Bypass_Power_3"></a>32</p></td>
+<td align="left" valign="middle"><p class="table">Bypass Power 3</p></td>
+<td align="center" valign="middle"><p class="table">W</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST4</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">11</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Bypass_Voltage"></a>33</p></td>
+<td align="left" valign="middle"><p class="table">Bypass Voltage</p></td>
+<td align="center" valign="middle"><p class="table">V/10</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST4</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">3</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Bypass_Voltage_2"></a>34</p></td>
+<td align="left" valign="middle"><p class="table">Bypass Voltage 2</p></td>
+<td align="center" valign="middle"><p class="table">V/10</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST4</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">6</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Bypass_Voltage_3"></a>35</p></td>
+<td align="left" valign="middle"><p class="table">Bypass Voltage 3</p></td>
+<td align="center" valign="middle"><p class="table">V/10</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST4</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">9</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Estimated_Charge"></a>36</p></td>
+<td align="left" valign="middle"><p class="table">Estimated Charge</p></td>
+<td align="center" valign="middle"><p class="table">%</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST1</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">6</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Estimated_Minutes"></a>37</p></td>
+<td colspan="2" align="left" valign="middle"><p class="table">Estimated Minutes</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST1</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">5</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="High_Volt_Xfer_Pt"></a>38</p></td>
+<td align="left" valign="middle"><p class="table">High Volt Xfer Pt</p></td>
+<td align="center" valign="middle"><p class="table">V</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>NOM</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">10</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a string&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="UPS_Identification"></a>39</p></td>
+<td colspan="2" align="left" valign="middle"><p class="table">UPS Identification</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>UID</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">1</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a string&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Input_Current"></a>40</p></td>
+<td align="left" valign="middle"><p class="table">Input Current</p></td>
+<td align="center" valign="middle"><p class="table">A/10</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST2</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">5</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Input_Current_2"></a>41</p></td>
+<td align="left" valign="middle"><p class="table">Input Current 2</p></td>
+<td align="center" valign="middle"><p class="table">A/10</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST2</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">9</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Input_Current_3"></a>42</p></td>
+<td align="left" valign="middle"><p class="table">Input Current 3</p></td>
+<td align="center" valign="middle"><p class="table">A/10</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST2</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">13</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Input_Frequency"></a>43</p></td>
+<td align="left" valign="middle"><p class="table">Input Frequency</p></td>
+<td align="center" valign="middle"><p class="table">Hz/10</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST2</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">3</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Input_Frequency_2"></a>44</p></td>
+<td align="left" valign="middle"><p class="table">Input Frequency 2</p></td>
+<td align="center" valign="middle"><p class="table">Hz/10</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST2</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">7</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Input_Frequency_3"></a>45</p></td>
+<td align="left" valign="middle"><p class="table">Input Frequency 3</p></td>
+<td align="center" valign="middle"><p class="table">Hz/10</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST2</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">11</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Input_Line_Bads"></a>46</p></td>
+<td colspan="2" align="left" valign="middle"><p class="table">Input Line Bads</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST2</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">1</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Input_Num_Lines"></a>47</p></td>
+<td colspan="2" align="left" valign="middle"><p class="table">Input Num Lines</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST2</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">2</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Input_Power"></a>48</p></td>
+<td align="left" valign="middle"><p class="table">Input Power</p></td>
+<td align="center" valign="middle"><p class="table">W</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST2</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">6</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Input_Power_2"></a>49</p></td>
+<td align="left" valign="middle"><p class="table">Input Power 2</p></td>
+<td align="center" valign="middle"><p class="table">W</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST2</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">10</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Input_Power_3"></a>50</p></td>
+<td align="left" valign="middle"><p class="table">Input Power 3</p></td>
+<td align="center" valign="middle"><p class="table">W</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST2</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">14</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Input_Voltage"></a>51</p></td>
+<td align="left" valign="middle"><p class="table">Input Voltage</p></td>
+<td align="center" valign="middle"><p class="table">V/10</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST2</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">4</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Input_Voltage_2"></a>52</p></td>
+<td align="left" valign="middle"><p class="table">Input Voltage 2</p></td>
+<td align="center" valign="middle"><p class="table">V/10</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST2</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">8</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Input_Voltage_3"></a>53</p></td>
+<td align="left" valign="middle"><p class="table">Input Voltage 3</p></td>
+<td align="center" valign="middle"><p class="table">V/10</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST2</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">12</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Low_Volt_Xfer_Pt"></a>54</p></td>
+<td align="left" valign="middle"><p class="table">Low Volt Xfer Pt</p></td>
+<td align="center" valign="middle"><p class="table">V</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>NOM</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">9</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a string&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Manufacturer"></a>55</p></td>
+<td colspan="2" align="left" valign="middle"><p class="table">Manufacturer</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>MAN</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">1</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a string&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Model"></a>56</p></td>
+<td colspan="2" align="left" valign="middle"><p class="table">Model</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>MOD</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">1</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a string&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Nominal_Battery_Life"></a>57</p></td>
+<td align="left" valign="middle"><p class="table">Nominal Battery Life</p></td>
+<td align="center" valign="middle"><p class="table">Days</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>NOM</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">12</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a string&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Nom_Input_Frequency"></a>58</p></td>
+<td align="left" valign="middle"><p class="table">Nom Input Frequency</p></td>
+<td align="center" valign="middle"><p class="table">Hz/10</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>NOM</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">2</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Nominal_Input_Voltage"></a>59</p></td>
+<td align="left" valign="middle"><p class="table">Nominal Input Voltage</p></td>
+<td align="center" valign="middle"><p class="table">V</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>NOM</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">1</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a string&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Nom_Low_Battery_Time"></a>60</p></td>
+<td colspan="2" align="left" valign="middle"><p class="table">Nom Low Battery Time</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>NOM</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">7</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a string&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Nom_Output_Frequency"></a>61</p></td>
+<td align="left" valign="middle"><p class="table">Nom Output Frequency</p></td>
+<td align="center" valign="middle"><p class="table">Hz/10</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>NOM</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">4</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Nominal_Output_Power"></a>62</p></td>
+<td align="left" valign="middle"><p class="table">Nominal Output Power</p></td>
+<td align="center" valign="middle"><p class="table">W</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>NOM</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">6</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a string&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Nom_Output_Voltage"></a>63</p></td>
+<td align="left" valign="middle"><p class="table">Nom Output Voltage</p></td>
+<td align="center" valign="middle"><p class="table">V</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>NOM</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">3</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a string&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Nom_VA_Rating"></a>64</p></td>
+<td align="left" valign="middle"><p class="table">Nom VA Rating</p></td>
+<td align="center" valign="middle"><p class="table">VA</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>NOM</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">5</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a string&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Output_Current"></a>65</p></td>
+<td align="left" valign="middle"><p class="table">Output Current</p></td>
+<td align="center" valign="middle"><p class="table">A/10</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST3</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">5</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Output_Current_2"></a>66</p></td>
+<td align="left" valign="middle"><p class="table">Output Current 2</p></td>
+<td align="center" valign="middle"><p class="table">A/10</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST3</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">9</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Output_Current_3"></a>67</p></td>
+<td align="left" valign="middle"><p class="table">Output Current 3</p></td>
+<td align="center" valign="middle"><p class="table">A/10</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST3</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">13</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Output_Frequency"></a>68</p></td>
+<td align="left" valign="middle"><p class="table">Output Frequency</p></td>
+<td align="center" valign="middle"><p class="table">Hz/10</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST3</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">2</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Output_Load"></a>69</p></td>
+<td align="left" valign="middle"><p class="table">Output Load</p></td>
+<td align="center" valign="middle"><p class="table">%</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST3</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">7</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Output_Load_2"></a>70</p></td>
+<td align="left" valign="middle"><p class="table">Output Load 2</p></td>
+<td align="center" valign="middle"><p class="table">%</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST3</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">11</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Output_Load_3"></a>71</p></td>
+<td align="left" valign="middle"><p class="table">Output Load 3</p></td>
+<td align="center" valign="middle"><p class="table">%</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST3</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">15</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Output_Num_Lines"></a>72</p></td>
+<td colspan="2" align="left" valign="middle"><p class="table">Output Num Lines</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST3</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">3</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Output_Power"></a>73</p></td>
+<td align="left" valign="middle"><p class="table">Output Power</p></td>
+<td align="center" valign="middle"><p class="table">W</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST3</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">6</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Output_Power_2"></a>74</p></td>
+<td align="left" valign="middle"><p class="table">Output Power 2</p></td>
+<td align="center" valign="middle"><p class="table">W</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST3</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">10</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Output_Power_3"></a>75</p></td>
+<td align="left" valign="middle"><p class="table">Output Power 3</p></td>
+<td align="center" valign="middle"><p class="table">W</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST3</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">14</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Output_Source"></a>76</p></td>
+<td colspan="2" align="left" valign="middle"><p class="table">Output Source</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST3</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">1</p></td>
+<td align="left" valign="middle"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; Normal
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; On Battery
+</p>
+</li>
+<li>
+<p>
+<code>2</code> &#8594; On Bypass
+</p>
+</li>
+<li>
+<p>
+<code>3</code> &#8594; Reducing
+</p>
+</li>
+<li>
+<p>
+<code>4</code> &#8594; Boosting
+</p>
+</li>
+<li>
+<p>
+<code>5</code> &#8594; Other
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Output_Voltage"></a>77</p></td>
+<td align="left" valign="middle"><p class="table">Output Voltage</p></td>
+<td align="center" valign="middle"><p class="table">V/10</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST3</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">4</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Output_Voltage_2"></a>78</p></td>
+<td align="left" valign="middle"><p class="table">Output Voltage 2</p></td>
+<td align="center" valign="middle"><p class="table">V/10</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST3</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">8</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Output_Voltage_3"></a>79</p></td>
+<td align="left" valign="middle"><p class="table">Output Voltage 3</p></td>
+<td align="center" valign="middle"><p class="table">V/10</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST3</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">12</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Reboot_With_Duration"></a>80</p></td>
+<td colspan="2" align="left" valign="middle"><p class="table">Reboot With Duration</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>RWD</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">1</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Seconds_on_Battery"></a>81</p></td>
+<td colspan="2" align="left" valign="middle"><p class="table">Seconds on Battery</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>ST1</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">4</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Shutdown_Type"></a>82</p></td>
+<td colspan="2" align="left" valign="middle"><p class="table">Shutdown Type</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>SDA</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">1</p></td>
+<td align="left" valign="middle"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; UPS Output
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; UPS System
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Shutdown_After_Delay"></a>83</p></td>
+<td colspan="2" align="left" valign="middle"><p class="table">Shutdown After Delay</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>STD</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">1</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Software_Version"></a>84</p></td>
+<td colspan="2" align="left" valign="middle"><p class="table">Software Version</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>VER</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">1</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a string&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Startup_After_Delay"></a>85</p></td>
+<td colspan="2" align="left" valign="middle"><p class="table">Startup After Delay</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>STD</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">1</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Test_Results_Detail"></a>86</p></td>
+<td colspan="2" align="left" valign="middle"><p class="table">Test Results Detail</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>STR</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">2</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a string&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Test_Results_Summary"></a>87</p></td>
+<td colspan="2" align="left" valign="middle"><p class="table">Test Results Summary</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>STR</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">1</p></td>
+<td align="left" valign="middle"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; No Test
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Passed
+</p>
+</li>
+<li>
+<p>
+<code>2</code> &#8594; In Progress
+</p>
+</li>
+<li>
+<p>
+<code>3</code> &#8594; GenTestFail
+</p>
+</li>
+<li>
+<p>
+<code>4</code> &#8594; BattTstFail
+</p>
+</li>
+<li>
+<p>
+<code>5</code> &#8594; DeepTstFail
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Test_Type"></a>88</p></td>
+<td colspan="2" align="left" valign="middle"><p class="table">Test Type</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>TST</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">1</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><a id="Baud_Rate"></a>89</p></td>
+<td colspan="2" align="left" valign="middle"><p class="table">Baud Rate</p></td>
+<td align="center" valign="middle"><p class="table"><code><strong>UBR</strong></code></p></td>
+<td align="center" valign="middle"><p class="table">1</p></td>
+<td align="left" valign="middle"><p class="table">&lt;a number&gt;</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div id="footnotes"><hr /></div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2016-02-02 17:09:36 CET
+</div>
+<div id="footer-badges">
+<a href="http://www.methods.co.nz/asciidoc/">
+  <img style="border:0;width:88px;height:31px"
+    src="../images/asciidoc.png"
+    alt="Powered by AsciiDoc"/>
+</a>
+<a href="http://validator.w3.org/check?uri=referer">
+  <img style="border:0;width:88px;height:31px"
+    src="http://www.w3.org/Icons/valid-xhtml11-blue"
+    alt="Valid XHTML 1.1"/>
+</a>
+<a href="http://jigsaw.w3.org/css-validator/check?uri=referer">
+  <img style="border:0;width:88px;height:31px"
+    src="http://jigsaw.w3.org/css-validator/images/vcss-blue"
+    alt="Valid CSS!"/>
+</a>
+<a href="http://arnaud.quette.fr/tag/About">
+  <img style="border:0;width:118px;height:38px;"
+       src="../images/hostedby.png"
+       alt="Hoster"/>
+</a>
+</div>
+</div>
+</div>
+</div>
+<!-- Google Analytics integration -->
+<script type="text/javascript">
+
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-9664272-1']);
+        _gaq.push(['_trackPageview']);
+
+        (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+
+</script>
+</body>
+</html>

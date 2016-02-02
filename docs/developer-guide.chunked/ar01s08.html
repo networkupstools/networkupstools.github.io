@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>8. Creating new client</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="Network UPS Tools Developer Guide" /><link rel="up" href="index.html" title="Network UPS Tools Developer Guide" /><link rel="prev" href="ar01s07.html" title="7. NUT device discovery" /><link rel="next" href="ar01s09.html" title="9. Network protocol information" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ar01s07.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ar01s09.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="new-clients"></a>8. Creating new client</h2></div></div></div><p>NUT provides bindings for several common languages that are
+presented below. All these are released under the same license as
+NUT (the GNU General Public License).</p><p>If none of these suits you for technical or legal reasons, you can
+implement one easily using the <a class="link" href="ar01s09.html" title="9. Network protocol information">Network protocol information</a>.</p><p>The latter approach has been used to create the Python <span class="emphasis"><em>PyNUT</em></span> module, the
+Nagios <span class="emphasis"><em>check_ups</em></span> plugin (and probably others), which can serve as a
+reference.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_c_c"></a>8.1. C / C++</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_client_access_library_2"></a>Client access library</h4></div></div></div><p><code class="literal">libupsclient</code> and <code class="literal">libnutclient</code> libraries can be linked into other programs
+to give access to upsd and UPS status information.
+Both static and shared versions are provided.</p><p>These library files and associated header files are not installed by
+default.  You must <code class="literal">./configure --with-dev</code> to enable building and
+installing these files. The libraries can then be built and installed
+with <code class="literal">make</code> and <code class="literal">make install</code> as usual. This must be done before
+building other (non-NUT) programs which depend on them.</p><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_low_level_library_libupsclient"></a>Low-level library: libupsclient</h5></div></div></div><p><code class="literal">libupsclient</code> provides a low-level interface to directly dialog with upsd.
+It is a wrapper around the NUT network protocol.</p><p>For more information, refer to the <a class="ulink" href="../man/upsclient.html" target="_top">upsclient(3)</a>,
+manual page and the various <a class="ulink" href="../man/index.html#devclient" target="_top">upscli_*(3)</a>
+functions documentation referenced in the same file.</p><p>Clients like upsc are provided as examples of how to retrieve data using the
+upsclient functions.
+<a class="ulink" href="http://www.networkupstools.org/projects.html" target="_top">Other programs</a> not included
+in this package may also use this library, such as wmnut.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_high_level_library_libnutclient"></a>High level library: libnutclient</h5></div></div></div><p><code class="literal">libnutclient</code> provides a high-level interface representing devices, variables
+and commands with an object-oriented API in C++ and C.</p><p>For more information, refer to the <a class="ulink" href="../man/libnutclient.html" target="_top">libnutclient(3)</a> manual page.</p><pre class="literallayout">#include &lt;iostream&gt;
+#include &lt;nutclient.h&gt;
+using namespace nut;
+using namespace std;</pre><pre class="literallayout">int main(int argc, char** argv)
+{
+  try
+  {
+    // Connection
+    Client* client = new TcpClient("localhost", 3493);
+    Device mydev = client-&gt;getDevice("myups");
+    cout &lt;&lt; mydev.getDescription() &lt;&lt; endl;
+    Variable var = mydev.getVariable("device.model");
+    cout &lt;&lt; var.getValue()[0] &lt;&lt; endl;
+  }
+  catch(NutException&amp; ex)
+  {
+    cerr &lt;&lt; "Unexpected problem : " &lt;&lt; ex.str() &lt;&lt; endl;
+  }
+  return 0;
+}</pre></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_configuration_helpers_2"></a>Configuration helpers</h4></div></div></div><p>NUT provides helper scripts to ease the configuration step of your program, by
+detecting the right compilation and link flags.</p><p>For more information, refer to a
+<a class="link" href="apb.html" title="B. NUT libraries complementary information">Appendix B: NUT libraries complementary information</a>.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_python_3"></a>8.2. Python</h3></div></div></div><p>The PyNUT module, contributed by David Goncalves, can be used for connecting a
+Python script to <code class="literal">upsd</code>. Note that this code (and the accompanying NUT-Monitor
+application) is licensed under the GPL v3.</p><p>The <code class="literal">PyNUTClient</code> class abstracts the connection to the server. In order to
+list the status variables for <code class="literal">ups1</code> on the local <code class="literal">upsd</code>, the following
+commands could be used:</p><pre class="literallayout">$ cd scripts/python/module
+$ python
+...
+&gt;&gt;&gt; import PyNUT
+&gt;&gt;&gt; from pprint import pprint
+&gt;&gt;&gt; client = PyNUT.PyNUTClient()
+&gt;&gt;&gt; vars = client.GetUPSVars('ups1')
+&gt;&gt;&gt; pprint(vars)
+{'battery.charge': '90',
+ 'battery.charge.low': '30',
+ 'battery.runtime': '3690',
+ 'battery.voltage': '230.0',
+...</pre><p>Further examples are given in the <code class="literal">test_nutclient.py</code> file. To see the entire
+API, you can run <code class="literal">pydoc</code> from the <code class="literal">module</code> directory.</p><p>If you wish to make the module available to everyone on the system, you will
+probably want to install it in the <code class="literal">site-packages</code> directory for your Python
+interpreter. (This is usually one of the last items in <code class="literal">sys.path</code>.)</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_perl_3"></a>8.3. Perl</h3></div></div></div><p>The old Perl bindings from CPAN have recently been updated and merged into the
+NUT source code. These operate in a similar fashion to the Python bindings,
+with the addition of access to single variables, and additional interpretation
+of the results. The Perl class instance encapsulates a single UPS, where the
+Python class instance represents a connection to the server (which may service
+multiple UPS units).</p><pre class="literallayout">use UPS::Nut;</pre><pre class="literallayout">$ups = new UPS::Nut( NAME =&gt; "myups",
+                     HOST =&gt; "somemachine.somewhere.com",
+                     PORT =&gt; "3493",
+                     USERNAME =&gt; "upsuser",
+                     PASSWORD =&gt; "upspasswd",
+                     TIMEOUT =&gt; 30,
+                     DEBUG =&gt; 1,
+                     DEBUGOUT =&gt; "/some/file/somewhere",
+                   );
+if ($ups-&gt;Status() =~ /OB/) {
+   print "Oh, no!  Power failure!\n";
+}</pre><pre class="literallayout">tie %other_ups, 'UPS::Nut',
+    NAME =&gt; "myups",
+    HOST =&gt; "somemachine.somewhere.com",
+    ... # same options as new();
+;</pre><pre class="literallayout">print $other_ups{MFR}, " ", $other_ups{MODEL}, "\n";</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_java_2"></a>8.4. Java</h3></div></div></div><p>The NUT Java support has been externalized.
+It is available at <a class="ulink" href="https://github.com/networkupstools/jnut" target="_top">https://github.com/networkupstools/jnut</a></p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
+		Last updated 2016-02-02 16:10:05 -- Network UPS Tools 2.7.3.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s07.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s09.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
