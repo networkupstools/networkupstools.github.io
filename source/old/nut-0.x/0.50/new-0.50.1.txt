@@ -1,0 +1,128 @@
+What's new in 0.50.1:
+
+Key features:
+
+ - This version reflects a lot of patch work to clean things up in
+   preparation for a final 1.0 release.  The usual "major subsystem
+   feature" that would appear here will return after that happens.
+
+Other new features:
+
+ - DESTDIR can now be set during a 'make install' for packaging
+   purposes.  The old INSTALLROOT is also still supported for now.
+
+Driver news:
+
+ - The bestuferrups801-807 driver now reports OL instead of nothing when
+   not on battery.  It also now terminates the off command with a
+   carriage return instead of a newline.	[Doug Rorem]
+
+ - The upseyeux driver has been converted to the new common core and
+   is available again.	[Aleksandar Topuzovic]
+
+ - Shutdown problems in mge-utalk have been fixed by removing the 
+   confirmation code.	[Arnaud Quette]
+
+ - The sec driver now supports Clary ST-800 hardware and the shutdown
+   sequence.	[Eric Lawson]
+
+ - genericups type 17 has been added to monitor PowerKinetics 9001
+   equipment.	[Jules Taplin]
+
+ - SOLA 325 hardware is now recognized by the bestups driver.
+   [Andrew Dorrell]
+
+ - The bestuferrups driver has been converted to the new style and
+   is again part of the normal distribution.	[Andreas Wrede]
+
+ - The powercom driver now handles a "Egys" sub type.  It also now
+   uses parameter tables for each of the sub types.	[Simon Rozman]
+
+ - Nitram Elite 2002 models are now supported with genericups type 16.
+   [Lyonel Vincent]
+
+ - The fentonups driver now also recognizes PowerCom ULT-1000 hardware.
+   [James Bromberger]
+
+ - A new experimental driver for APC SNMP devices called powernet has
+   been added.	[Dmitry Frolov]
+
+ - The mge-ellipse driver now reads the manufacturer and model name from
+   the UPS.	[Philippe Marzouk]
+
+ - The old powerware driver has been updated, and is back as "bcmxcp".
+   [Martin Schroeder]
+
+ - The powercom driver has had some casting cleanups applied.
+   [Shaul Karl]
+
+Compatability changes:
+
+ - The drivers are no longer called "models" in the tree.  This was
+   becoming a source of confusion, and no longer makes sense given the
+   current crop of driver names.
+
+   configure --with-modelpath is now --with-drvpath.
+
+ - The tests for libraries needed by the CGI programs are now only
+   performed if you add '--with-cgi' to the configure line.  This will
+   make the configure process faster for most users.
+
+   The 'make cgi' target will not work unless you use this new configure
+   switch.  configure will also now halt if gd is missing when this is
+   set.   
+
+ - The CGI programs no longer default to 'allow' when hosts.conf is
+   missing or otherwise unavailable.
+
+Bug fixes:
+
+ - upsd no longer sends access denied messages down the udp socket when
+   rejecting TCP connections.
+
+ - A problem in upsd where reconfiguring ups.conf with clients logged
+   into the default UPS would confuse the client kicker has been
+   corrected.
+
+ - upsmon now recognizes MINSUPPLIES in upsmon.conf again.
+
+ - upsmon and upsd now report on bogus configuration directives to catch
+   errors in their respective .conf files.	[Rossz Vamos-Wentworth]   
+
+ - upsd now opens the state file read-only, and doesn't use PROT_WRITE
+   for mmap.	[oss-list-ups]
+
+ - 'make install-cgi' now also installs the CGI man pages by default.
+   [Shaul Karl]
+
+ - upsd now refers to drivers as drivers rather than the potentially
+   confusing wording of "support module".
+
+ - configure --help now lists the default values for the --with and
+   --without options at the bottom.	[Shaul Karl]
+
+ - upsd now treats FLAG_RW properly with a bitwise AND.	[Dmitry Frolov]
+
+ - upsct2 now sends the @<upsname> in the SET command when controlling
+   a named ups on a server.	[Kurt Wampler]
+
+ - The drivers now call msync on the state file before renaming it to
+   the final name.  This fixes a problem on OpenBSD and other
+   platforms where the state file contained no useful data.
+   [NetBSD - Frederick Bruckman and Martin Husemann, via Luke Mewburn]
+
+ - upslog now honors %% to print a % again.
+   [NetBSD - Luke Mewburn]
+
+ - The 'serialize' function has been renamed in the driver core to avoid
+   namespace clashes with a library function of the same name on HP/UX.
+
+ - Configuration files that don't end with a newline are now parsed
+   properly.	[Bradley W. Langhorst]
+
+What's next:
+
+ - A new tree will open for "correctness" patches - documentation and
+   bug fixes.  This will become 1.0, and then interesting new features
+   will start being merged again.  It's time to leave the "zero dot"
+   world forever.

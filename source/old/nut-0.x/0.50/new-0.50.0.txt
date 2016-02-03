@@ -1,0 +1,134 @@
+What's new in 0.50.0:
+
+Compatibility changes:
+
+ - The TCP/UDP network code now uses port 3493 by default since IANA
+   has assigned that to the project.  If you have older installations
+   present on port 3305, be sure to specify the port numbers explicitly
+   until they are upgraded.
+
+   Just tack on a :3305 on the new systems, and :3493 on the old ones.
+
+   MONITOR ups@oldbox:3305 1 mypass slave
+   MONITOR ups@newbox:3493 1 mypass slave
+
+   If you have firewall rules protecting port 3305, remember to change
+   them to protect 3493 instead.
+
+ - All old style drivers have been removed from the tree.  The following
+   drivers are no longer being distributed as a result:
+
+   aeg, bestfort, bestuferrups, engetron, ipt-anzen, mgeups, multilink,
+   mustekups, optiups, sms, toshiba1500, upseyeux
+
+   For more information on why this happened and what you can do about
+   it, see the FAQ.
+
+Key features:
+
+ - This release was focused on cleaning up the drivers.
+
+   One benefit is that upsdrvctl will now control all of the drivers
+   that are distributed with the tree.
+
+Other new features:
+
+ - upsstats and upsimage have been cleaned up with respect to
+   host names and commands that are received from the user.
+
+ - More man pages have been written.
+
+ - upsc and upsct now allow you to poll a single variable by adding it
+   as an argument after the host name.  This saves the trouble of 
+   fetching the whole list and then throwing it away when grepping for
+   the one you really want to see.	[Richard Muratti]
+
+ - The statepath is now created as mode 0700 by default.  This will
+   make upsd happy, as it will let you know when the path is world
+   readable.  Your statepath should be locked down if your system doesn't
+   protect named pipes, as the .sock files live in there.
+   [Mark Bergman]
+
+Driver news:
+
+ - 0.45.5's newvictron replaced the old victronups.
+
+ - 0.45.5's newpowercom replaced the old powercom.  ups-trust425+625
+   was also removed as the same time, as this driver should support both.
+
+ - snmp-ups is a new experimental driver for RFC 1628 SNMP UPS support.
+   It requires UCD SNMP/Net-SNMP, so it's not built by default.
+   [Arnaud Quette]
+
+ - The fentonups and bestups drivers now send a 'cancel shutdown'
+   command during a normal startup just to be safe.
+
+ - The new powerware driver supports Powerware UPS 9120 'Binary Computer 
+   Mode'.	[Martin Schroeder]
+
+ - The old mgeups driver has been replaced by mge-utalk, which supports
+   the MGE UPS Systems UTALK protocol.
+   [Hans Ekkehard Plesser, Arnaud Quette, Nicholas Reilly, Dave Abbott
+   and Marek Kralewski]
+
+Bug fixes:
+
+ - upsset's showsettings mode should work again.
+
+ - Setting read-write variables wasn't working due to a subtle ) 
+   placement error in upsd.  Fixed.
+
+ - The config parser should no longer hang when compiled with gcc 2.95.4 
+   due to improper variable types being used with fgetc.
+
+ - bestups now delays slightly when sending queries.  This should make
+   status polls more reliable by not rushing the UPS.
+   [Frank T. Lofaro Jr.]
+
+ - upsd no longer returns "ERR <varname> VAR-UNKNOWN" in some situations,
+   which was confusing some of the clients.
+
+ - A case in the config parser where it might call memset after getting
+   an error from malloc was squashed.
+
+ - bestups and fentonups now ignore BOOST/TRIM when on battery since
+   it's meaningless while the inverter is active.
+
+ - The drivers now unlink the .sock file in the statepath when starting.
+   Previously they would fail if the driver or system crashed and they
+   encountered those files upon startup.
+
+ - mmap support is now explicitly disabled on HP-UX since it doesn't seem
+   to get along with our use of it.	[Mark Bergman]
+
+ - upsd no longer sends a double newline when reporting 
+   'ERR VAR-NOT-SUPPORTED', which could confuse clients.
+
+ - upssched actually routes log activity to the syslog now.  Previously
+   it thought it had a tty and was using stderr.  This didn't work since
+   it's usually called by upsmon which is in the background.
+   [Pascal Pichon]
+
+ - Instances of 'sigmask' were renamed throughout the code to avoid
+   conflicts with a variable of the same name in libraries on AIX.
+
+ - Similarly, sa_len was renamed to avoid conflicts on IRIX.
+   [Aleksandar Topuzovic]
+
+ - The cyberpower driver should now compile on IRIX.  It uses CRTSCTS
+   and IRIX doesn't have that #define.  This may not actually work, 
+   though.	[Aleksandar Topuzovic]
+
+ - The Makefiles no longer have a rule for .c.o.  This was breaking
+   compiles on OpenBSD 3.0, which complained about GNU-isms.
+
+Out there:
+
+ - Establish a channel from the drivers back to the clients for
+   reporting on instant commands
+
+ - Fix newapc for old hardware and retire apcsmart
+
+ - Document everything in the tree
+
+ - Slap a 1.0 tag on this thing

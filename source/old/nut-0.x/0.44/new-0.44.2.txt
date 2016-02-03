@@ -1,0 +1,179 @@
+What's new in 0.44.2:
+
+Key feature:
+
+ - upsmon now has a mini-scheduler available.  It lives in a separate
+   program called upssched, and is used to make things happen some number
+   of seconds after the UPS changes state.
+
+   If you only want to send a page about power status after the UPS has
+   been running on battery for 30 seconds, this is the solution.  It
+   can also be used right now to approximate an early shutdown if that's
+   what you really want.  Better ways of doing this will be coming,
+   though.
+
+   See upssched.txt in the docs subdirectory for more information.
+
+Binary change notice:
+
+ - upsmon and upsd now live in the sbin directory along with upssched.
+   If you're upgrading from an old version, this may affect you.  Be
+   sure to update your scripts so that they don't start the old versions.
+
+   The old versions will still work, but you'll be missing the goodies
+   introduced in this release.
+
+upsmon.conf reminder:
+
+ - Your SHUTDOWNCMD probably needs quotes around it.
+
+   SHUTDOWNCMD "/sbin/shutdown -h +0"
+
+   Otherwise, it will just run the first word after the space!  This
+   changed back in 0.44.1.
+
+Other new features:
+
+ - upsct2 can now handle non-interactive variable changing with
+   -s <var>=<value> and -p <password> on the command line. 
+   [Nigel Metheringham]
+
+ - newapc: New experimental driver for APC smart protocol units.  This
+   is intended to replace apcsmart at some future date, and aims to 
+   better support the wide range of their hardware with a less hackish
+   approach.  This driver also supports just about all of the possible
+   variables within the UPS, whereas apcsmart is missing many.
+   [Nigel Metheringham]
+
+ - Lots of compatibility changes to make the source build on SunOS 4.
+   [Mark Powell]
+
+ - More compatibility changes to help building on Solaris 5.x.
+   [Ben Collver]
+
+ - upsmon will now use ERR severity when syslogging login failures
+   so they are easier to spot.	[Nick Hibma]
+
+ - RH script improvements: upsd, upsmon, upspowerdown 
+   [Nigel Metheringham]
+
+ - The apcsmart driver can now turn off the UPS after the configurable
+   grace period with -s 3.  The meanings of these numbers are also
+   now explained in the -h help text.	[Patrik Rak]
+
+ - upsmon can now provide lots of debug information on demand without
+   being recompiled.  Use -d to enable this mode.	[Oliver Jones]
+
+ - upsmon will now notice the replace battery status flag (RB) and 
+   provides a notify type to handle it - NOTIFY_REPLBATT.  By default
+   it will only invoke it every 12 hours, but this can be changed in
+   the config file.
+
+ - The apcsmart driver now supports the BATTDATE variable for keeping
+   track of the last battery change.
+
+ - Failures in upsmon's system() call to the final shutdown command
+   are now syslogged for diagnostic purposes.	[Bill Richter]
+
+ - The genericups driver now allows overriding the settings for model
+   and manufacturer with -m and -M, respectively.  Use this when your
+   UPS matches a type already in the database but the identifying
+   strings are different.
+
+ - Various Win32 compatibility patches to make it compile there.
+   [Ben Collver]
+
+ - upsd's messages to the syslog about data staleness now include more
+   information on the cause, so you can track it down.	[Kenneth Porter]
+
+ - More 'compat' functions and other patches for HPUX compiles.
+   [Ben Collver]
+
+ - The man pages (both of them) will now go into a specified directory
+   if you use --mandir=<path> during configure.  Man pages added and
+   updated by Shaul Karl and Bill Richter.
+
+ - The bestups driver now recognizes PR2 as the Patriot Pro II.
+   ["Mark"]
+
+ - The upscommon driver will now show the received buffer during debug
+   runs to make serial diagnosis easier.	[Kenneth Porter]
+
+ - New driver: toshiba1500 - supports Toshiba 1500 units.
+   [Kenneth Porter]
+
+ - New driver: bestuferrups - supports Best Power Micro-Ferrups units.
+   [John Stone]
+
+ - New shutdown mode for apcsmart: -s 2 will turn the UPS off entirely.
+   [Igor Khristophorov]
+
+ - upsd no longer requires math.h, and no longer links to libm, since
+   the netmask calculations are now done with 1<<x rather than pow.
+
+ - Security domains.  You can now run upsd as one user and the model
+   driver(s) as another.  This way, compromising the upsd account won't
+   yield direct control of the serial port.  See Changes and the FAQ
+   for more information.	[Daniel Roesen]
+
+Bug fixes:
+
+ - upsd's complaints about "NULL password" now get syslogged. 
+   [Nick Hibma]
+
+ - Buffer lengths throughout the source have been increased significantly
+   to handle drivers with large datasets like newapc.  
+   [Nigel Metheringham]
+
+ - apcsmart's shutdown type 1 now sends the right number of characters 
+   to the serial port.	[Patrik Rak]
+
+ - In upsmon, broken MONITOR lines that are missing arguments will no
+   longer cause segfaults and will now generate a warning instead.
+
+ - The fentonups driver no longer mixes up the output and utility
+   voltages.	[Damion de Soto]
+
+ - The genericups driver should no longer believe that every call to
+   ioctl is broken.	[Eric Lawson]
+
+ - upscommon should now compile on systems without <sys/shm.h>.
+
+ - upsd can handle a /32 style ACL again without wrapping around and
+   eventually arriving at 0.  Overflowing variables is bad.
+
+ - NOTIFY_COMMBAD should actually work in upsmon now.	[Shaul Karl]
+
+ - Calls to ioctl are actually checked for saneness now.	
+   [Allen Mcintosh]
+
+ - Systems that don't have cfsetispeed() available now generate an error
+   at compile-time, since they will need to hack in some other way to
+   set the speed.	[Kenneth Porter]
+
+ - The models will actually be rebuilt when you edit one and run make.
+   The catch is that _all_ of them will be rebuilt.  This is due to
+   an evil hack to support BSD make.  See Changes for more, and send
+   in a fix if you know of one.
+
+ - SIGSYS errors due to ignoring the return value of shmget() in
+   upscommon should be gone now.
+
+ - fds 0-2 are now forced into /dev/null to keep other processes from
+   stealing them when calls to system() are made.
+
+ - The programs now call setsid() to avoid signals that would otherwise
+   kill them at startup on some systems.	[Bob Pekarske]
+
+ - Lots of pedantic cleanups.  More on the way.
+
+What's next:
+
+ - Callbacks from upssched to upsmon for coordinated early shutdowns.
+   Right now you can have upssched invoke /sbin/shutdown directly, but
+   that doesn't tell the slaves!  Expect pid files to arrive too.
+
+Out there:
+
+ - Finer grained user control as dictated by the server, and the silly
+   hack that is upsset's password scheme can go away.

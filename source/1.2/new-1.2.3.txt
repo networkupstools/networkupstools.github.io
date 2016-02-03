@@ -1,0 +1,249 @@
+If you're upgrading from an earlier version, see the UPGRADING file.
+
+---------------------------------------------------------------------------
+What's new since 1.2.2:
+
+ - MGE UPS equipment with the SHUT protocol is now supported with the
+   new mge-shut driver.
+   [Arnaud Quette, Philippe Marzouk]
+
+ - The experimental hidups driver has been expanded to allow basic
+   set commands and shutdowns on some hardware.
+   [Arnaud Quette]
+
+ - The newapc driver now sends a usable sequence when using sdtype 1.
+   [Don Lewis]
+
+ - The apcsmart driver actually honors sdtype now.  If you were relying
+   on it to always do type 0 no matter the setting, this will affect you.
+
+ - The powernet driver now supports environmental sensors on APC SNMP
+   cards like the AP9612TH.
+   [Dmitry Frolov, Chuck Fee]
+
+ - Energy Sistem UPS equipment is now supported with the esupssmart
+   driver.
+   [Antonio Trujillo Coronado]
+
+ - The Red Hat packaging and script files have been updated and cleaned up.
+   [Nigel Metheringham]
+
+ - configure now tests for systems which handle "inline" differently
+   and redefines it if necessary.  Some systems were having problems
+   compiling certain drivers before this.
+   [Petter Reinholdtsen]
+
+---------------------------------------------------------------------------
+What's new since 1.2.1:
+
+ - The snmp-ups driver has been upgraded and expanded.  It now supports
+   multiple MIBs, meaning it can handle RFC 1628, APCC, and MGE
+   equipment.  You can pick the right one with "mibs=" in ups.conf.
+
+   Support for setting variable and instant commands is also available.
+   [Arnaud Quette and Dmitry Frolov]
+
+ - The powernet driver has been upgraded.  It now supports more
+   variables, has cleaner logging, and may now be considered stable.
+   [Dmitry Frolov]
+
+ - The hidups driver now supports physical port IDs.  This avoids most
+   of the problems where the hiddev* names can jump around too easily.
+   It will now stay in the same place as long as you keep it plugged
+   into the same physical port.  See the CHANGES file for more details.
+   [David Brownell]
+
+ - The hidups driver now also supports the MFR variable on APC
+   Back-UPS ES equipment.
+   [Jonathan A. Davis]
+
+ - The sms driver has been updated to version 0.70.
+   [Marcio Gomes]
+
+ - The bestups driver now recognizes Best Power Axxium Rackmount
+   equipment.
+   [Ales Casar]
+
+ - The liebert driver now uses O_NONBLOCK, and should now work
+   consistently on OpenBSD as a result.
+   [Alex Cichowski]
+
+ - The liebert driver also now uses debouncing logic on the status
+   lines.  It was possible to get false readings that would start a 
+   shutdown or just annoy users with excessive onbatt/online notify
+   messages.  The new code forces the status to settle down for 3 polls
+   before accepting the new value.
+
+   This means that very short power events may not be detected.  The
+   alternative is having your machine shut down just because it decided
+   to wiggle over to OB LB for a few seconds.
+
+ - upsmon has had the disconnect logic fixed so the "communications
+   lost" (COMMBAD) notify will actually go out when the connection
+   fails.
+   [Steve Monett]
+
+ - upssched now uses a lock file to prevent a race where two could
+   start at the same time.  The second upssched would "win", and the
+   first one would be unreachable.  This had the side-effect of not
+   being able to cancel timers on the first one.	
+
+   If you use upssched, you must define the LOCKFN directive when
+   upgrading to this version, or it will not work.
+   [Gaspar Bakos]
+
+ - The packaging and scripts for Red Hat systems have been updated.
+   [Antonino Albanese]
+
+ - upsd is now a bit more lenient about access levels in the
+   'numlogins' check, which is what caused the problem in upsmon
+   (next item).
+
+ - upsmon no longer gets stuck in slavesync() when upsd is configured
+   to drop certain queries.  This usually happened at the worst
+   possible time: in the middle of a shutdown.
+   [John David Garza]
+
+ - The upsclient functions now do more sanity checking on data from
+   upsd so a short read won't return garbage to the callers.
+
+ - upsset now works properly with ENUM/VARTYPE values for multiple
+   UPSes on a single upsd.
+   [Dmitry Frolov]
+
+ - Various portability fixes for building on SGI were applied.
+   [Andrea Suatoni]
+
+ - upsd no longer tries to reference a deleted client structure if the
+   client disconnects at the wrong time.  Previously, it tried to use
+   that pointer after the sendback() function had already failed on 
+   write and deleted the client.  This could cause upsd to segfault
+   depending on what areas were accessed.
+   [Patrik Schindler]
+
+---------------------------------------------------------------------------
+
+What's new since 1.2.0:
+
+ - The sms driver is back, with support for Microlink Manager III
+   hardware. [Marcio Gomes]
+
+ - Fideltronik Ares Series hardware is now supported as genericups type
+   19.  [Tomek Orzechowski and Arkadiusz Mi¶kiewicz]
+
+ - The drivers no longer silently drop instant commands or set commands
+   from upsd that happen to get fragmented in transit.
+   [linux@horizon.com]
+
+ - The old multilink driver is back with a new name: liebert.  It
+   supports Liebert UPStation GXE hardware with the contact-closure
+   cable.  This is currently an experimental driver as there is no
+   way to power down the load.   
+
+ - configure now picks up the right flags for gd automatically if gd
+   2.0.8 or higher is installed.  This greatly simplifies the CGI build
+   process for most users.
+
+ - Shutdowns on FreeBSD using the genericups driver should work again.
+   [Petri Riihikallio]
+
+---------------------------------------------------------------------------
+
+What's new since 1.0.0:
+
+ - The CGI programs have received an overhaul.  multimon was replaced by
+   an expanded upsstats which can now parse templates.  These templates
+   contain directives which tell upsstats how to format the page.  You
+   are no longer limited to the hard-coded HTML - your status pages
+   can look like anything you want.
+
+   upsimage has a new look, and can generate bars for more variables.
+   It also allows you to change the look and feel via the upsstats
+   templates, so the color scheme is now up to you.
+   [Simon Rozman]
+
+ - Several new drivers:
+
+   - bestfortress: very old Best Fortress equipment
+     [Holger Dietze]
+
+   - oneac: Oneac EG and ON hardware
+     [Eric Lawson]
+
+   - etapro: ETA UPS hardware with the "PRO" option for smart mode
+     [Marek Michalkiewicz]
+
+   - isbmex: SOLA/BASIC Mexico ISBMEX protocol equipment 
+     [Edscott Wilson Garcia]
+
+ - Other drivers have received various improvements.
+
+ - The genericups driver now supports an additional type:
+
+  - 18: "TrippLite Omni 450LAN with Martin's cabling" 
+        see http://lists.exploits.org/upsdev/Jul2002/00012.htm
+
+ - upsmon now can log in to upsd as a specific user from upsd.users.
+   You should switch to this form, as the host-based authentication is
+   gradually being removed.  See UPGRADING for more information.
+   [Tilman Baumann]
+
+ - upsd and upsmon can now use OpenSSL for encryption and
+   authentication.  This is an optional feature, and is not compiled by
+   default.  See ssl.txt for more details.
+
+Interface changes:
+
+ - You must now perform 'manager' type commands with user-level
+   authentication.  This has been the default for several versions.
+
+   This change should only affect external programs that speak to
+   upsd directly.  Just set a USERNAME first, and have a matching entry
+   in upsd.users.
+
+ - The upsfetch routines are gone, and have been replaced by upsclient.
+   This is a new set of functions that allow stateful connections to
+   upsd.  Add-on programs that link to upsfetch will need to be changed
+   to handle the new interface.
+
+ - You must now use DESTDIR to send 'make install' into another
+   directory.  The old INSTALLROOT is no longer supported.
+
+ - upsct is gone, since upsc now speaks TCP.
+
+ - upsct2 was renamed to upsrw, since it made even less sense with upsct
+   gone.
+
+Bug fixes:
+
+ - upsd now logs connect failures at a higher level so they don't escape
+   detection with certain syslog configurations.
+
+ - upsd now complains about not being able to read a state file due to
+   a change of uid before it goes into the background, so the user can
+   see something when it starts.
+
+ - The configuration file parser now reports failures when opening
+   files.
+
+ - AC_PREFIX_DEFAULT is now used properly so the configure --help
+   displays make sense now.  Some other variable references were fixed
+   to incorporate the prefix at the same time.
+   [Fridtjof Busse]
+
+ - upsrw (formerly upsct2) now performs more sanity checks on network
+   data before using it.
+
+ - upssched no longer exits after executing the first AT line in case
+   there are more things that need to be done.
+   [Ralph-Thomas Aussem]
+
+ - upssched now does some basic serialization to avoid races when
+   starting multiple events.
+   [Ralph-Thomas Aussem]
+
+ - Some namespace issues were fixed to clean up compiles on Solaris
+   and Tru64 Unix 5.1.
+   [Petter Reinholdtsen]
+
+As always, for greater detail, refer to the CHANGES file.

@@ -1,0 +1,159 @@
+What's new in 0.45.5:
+
+Key features:
+
+ - upsd and the drivers now do instant commands and variable set 
+   commands over a socket in the STATEPATH.  The old SysV msg*()
+   interface has been dropped.  This provides the same features as
+   before, with the benefit of no longer needing that SysV interface.
+
+   If your OS doesn't enforce permissions on sockets, you *MUST*
+   lock down your state directory.  Otherwise, evildoers might be able
+   to trick the UPS driver into running their commands.
+
+   Your state directory (/var/state/ups or similar) should only be
+   accessible by your UPS driver(s) and upsd.
+
+   [oss-list-ups]
+
+ - upsd.users no longer requires the ugly "repeat if you need more than
+   5 args" hack.  Fixing this required changing the format of that file
+   completely, so see the entry down in "interface changes" below.
+
+Other new features:
+
+ - You can now use 'configure --with-drivers=driver1[,driver2,...]'
+   to specify which drivers get built and installed.  This means you
+   no longer have to waste time and disk space with 30 drivers if
+   you only need 1.
+
+ - The mge-ellipse driver now supports user-selectable restart and
+   shutdown delay values.	[Philippe Marzouk]
+
+ - HP Powertrust hardware is now supported with the new hp driver.
+   [Richard Muratti]
+
+ - To accommodate the upsd.users changes noted elsewhere, the config
+   file parser was replaced.  This new version allows the same tricks
+   as before, plus you can now escape a newline to have a logical line
+   that spans multiple physical lines if you really want to do that.
+
+ - The bestups driver now bases the TRIM/BOOST status words on the
+   outgoing voltage rather than the nominal voltage for better results.
+   It also now reports the outgoing voltage to clients.	
+   [Frank T. Lofaro Jr.]
+
+ - The newvictron driver now reports the battery temperature and current.
+   [Daniel Prynych]
+
+ - PowerWare 5119 ("NetUPS") units are now supported by the genericups
+   driver as type 15.
+
+Interface changes:
+
+ - The genericups driver has been converted to the new common core,
+   which means you can use ups.conf and upsdrvctl.  This comes at the
+   price of breaking the old command line arguments.  If you are using
+   this driver, you must change your startup routines.
+
+   Old way:                     genericups -t 2 /dev/ttyS0              
+
+   New way without ups.conf:    genericups -x upstype=2 /dev/ttyS0
+
+   Better way with ups.conf:    genericups -a myups
+
+   Best way overall:            upsdrvctl start
+
+   Here's what the ups.conf entry might look like now:
+
+        [myups]
+                driver = genericups
+                port = /dev/ttyS0
+                upstype = 2
+
+   The -m/-M options to override the manufacturer and model strings
+   are available as mfr= and model= either with -x or in ups.conf as
+   usual.
+
+ - upsd.users has changed formats.  It now resembles ups.conf with the
+   sections in [brackets] and all directives using the form of
+   "variable = value".  If you are using this file, you must convert it
+   to the new style or upsd will not allow you to do any administration
+   commands with upscmd/upsct2 or similar.
+
+   See the upsd.users(5) man page, or the sample upsd.users file.
+
+Bug fixes:
+
+ - There was a situation where the slave upsmon could shut down due to
+   a critical UPS and the master upsmon would never find out about it.
+   This would leave the slave halted permanently, as the usual poweroff
+   sequence would never execute on the UPS.
+
+   This would happen if the UPS went to "OB LB" then back to "OL" or "OB"
+   very quickly.  While this was happening, the slave would have to
+   get a poll in, and then the status would change back before the master
+   could poll.  This is a tight squeeze, but it actually happened once.
+
+   Slave upsmon processes now wait up to HOSTSYNC seconds for the master
+   to notice the situation and set the FSD (forced shutdown) flag.
+   If the master doesn't respond after that time, they shut down anyway
+   just in case the master is broken or otherwise unable to perform.
+   [Philippe Marzouk]
+
+ - upsfetch.o no longer requires symbols like upslogx().  This was 
+   breaking compiles with third party programs that use this object
+   file for network communications.
+
+ - flock/lockf ifdef blocks were replaced with fcntl for portability
+   and cleaner code in general.
+
+ - upsd no longer says "ERR <upsname> UNKNOWN-UPS" in some situations,
+   which is invalid according to the protocol and confuses the clients.
+
+ - The MODELPATH directory is now created at install time.  Previously
+   it wasn't, and this caused problems when installing the drivers
+   in a separate path for packaging.	[Kevin Myers]
+
+ - The newapc driver now flushes the input queue before sending a command
+   to work around potential problems with unexpected characters arriving
+   due to flaky UPS hardware.	[Nigel Metheringham]   
+
+ - upsd now no longer fails to return "DATA-STALE" to a client for a
+   UPS that has never been valid.  The fix for this changed the messages
+   from upsd slightly, so it will no longer say "Data ... is now OK".
+   All success messages from upsd about UPS acquisition will now be
+   the original "Read data ... successfully".
+
+ - The default value for FINALDELAY in upsmon is now 5 seconds.  This
+   was changed from 15 seconds since it was conflicting with the HOSTSYNC 
+   interval of 15 seconds in a master/slave environment.
+
+   If you have manually set FINALDELAY in your upsmon.conf, you should
+   make sure it's lower on the slaves than HOSTSYNC is on the master.
+
+ - Blank status readings are no longer ignored by upsmon.  If this
+   should happen due to a broken driver or similar, it will treat the
+   situation as a UPS that has lost communications.
+
+Ongoing:
+
+ - This is it for the old style drivers.  If you're running one of them,
+   you need to convert it or find someone to do it for you.
+
+   An old style driver is one that can't use ups.conf and upsdrvctl.
+
+   For more information, see this post:
+
+	http://lists.exploits.org/upsdev/Mar2002/00006.html
+
+Out there:
+
+ - Establish a channel from the drivers back to the clients for
+   reporting on instant commands
+
+ - Fix newapc for old hardware and retire apcsmart
+
+ - Document everything in the tree
+
+ - Slap a 1.0 tag on this thing

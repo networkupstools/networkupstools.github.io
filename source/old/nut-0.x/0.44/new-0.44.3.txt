@@ -1,0 +1,143 @@
+What's new in 0.44.3:
+
+Key feature:
+
+ - upsmon callbacks.  upsmon now writes a upsmon.pid file, and you can
+   send signals to it.  Use upsmon -c <command> to do it cleanly.
+
+   This is mostly of interest to people looking for a way to shut down
+   their systems early, since one of the new commands is FSD - that's
+   Forced Shutdown.  Call 'upsmon -c fsd', and your slave upsmon systems
+   will run their shutdown techniques before the master system turns off
+   the power.
+
+   If you want to shut down after n minutes on power, then use upssched
+   to run a timer for that long, then call 'upsmon -c fsd'.  Easy.
+
+   You can also do '-c stop' to tell upsmon to stop itself cleanly.
+
+   Use --with-pidpath to change the default pidpath of /var/run to
+   something else.
+
+Other new features:
+
+ - The config parser has been completely reworked.  All configuration files
+   should now support goodies like "quoted strings" and \e\s\c\a\p\i\n\g
+   characters.  This will have little effect for most users, but it means
+   that whitespace is no longer meaningful, so you can spread out your
+   configuration directives to look nice and neat.
+
+ - apcsmart: new variables supported: GRACEDELAY, RTHRESH, ALRMDEL.
+   [Daniel O'Connor]
+
+ - statedebug now works again, and now supports shared memory drivers.
+   This is useful if you are writing a UPS driver, or just hacking on
+   the existing code and want to understand how it works.
+
+ - The APC Back-UPS Office with 940-0119A cable is now supported by
+   the genericups driver as type 12.		[Peter Ellis]
+
+ - mge-ellipse: New driver for the MGE Pulsar Ellipse.  [Philippe Marzouk]
+
+ - configure will now detect a missing user or group and will warn you
+   in case you put something bogus in.  However, if you really want to
+   carry on and build with those settings, it won't stop you.
+   [Andrew Ryan, Luca Filipozzi]
+
+ - upssched: You can now add another word to CANCEL_TIMER directives
+   which is a command to run (via CMDSCRIPT) when the CANCEL_TIMER
+   command fails to find an active timer.  This fixes a problem where you
+   could send a page for on battery, but not be able to send another
+   when it goes back on line.	[Steven Schoch]
+
+ - mgeups: new driver for MGE Pulsar/Comet/Galaxy units.  [Ryan Murray]
+
+ - upseyeux: new driver for MicroDowell BBox models.	[Gilberto Iob]
+
+Bug fixes:
+
+ - upsimage will no longer try to compile if gd wasn't found, so that
+   it's obvious that something is missing.  This is mostly a sanity fix
+   to hopefully reduce support mails.
+ 
+ - The model drivers now tell you some more useful information about
+   their current UID when access to the state file fails.
+
+ - upsd will tell you what's wrong when a shmctl() call fails.
+
+ - nut.spec reworked for RH users.  [Daniel Roesen, others]
+
+ - The compatibility code in the common directory will now only be 
+   built on an as-needed basis.  This will stop the problems on some
+   systems where the functions were already present in the C library,
+   but we built a replacement anyway.	[Ben Collver]
+
+ - "Double opens" in the model drivers are now disabled by default.
+   They were breaking NetBSD, and probably aren't needed any more.
+   If you find that this version breaks due to this change, then you
+   need to reconfigure using --with-double-open and try it again.
+   If that works, tell the list about it, since the code will be removed
+   if nobody needs it.		[Ben Collver]
+
+ - The bogosity with $(INSTALLROOT) in the man subdirectory is gone.
+
+ - RUNUID and RUNGID now think in terms of user names rather than numbers.
+   Trying to resolve them with id and grep was causing portability
+   problems.	[Andrew Ryan]
+
+ - upsmon.conf now has better examples to show you how to configure
+   the MONITOR directive.	[John M Vinopal]
+
+ - upsd will now stop reading a state file when INFO_MEMBERS isn't
+   present.  This will keep it from trying to interpret things that
+   aren't state files.	[Peter Ellis]
+
+ - upsd now recognizes instant commands in the form <command>@<host>.
+   [Jeff Polk]
+
+ - Warnings about %c vs. %s in newapc format strings fixed.  [Shaul Karl]
+
+ - The apcsmart driver should now do the test for UPSTEMP properly.
+   [Karl O. Pinc]
+
+ - nut.spec now has a BuildRequires for gd and includes the man pages.
+   [Karl O. Pinc]
+
+ - Local versions of err and errx are provided for systems that lack
+   them in the C library.  So far I've only found it on BSD and Linux.
+
+ - The Makefile.in no longer uses := to assign a value for portability.
+   [Josh Chattin]
+
+Cleanups:
+
+ This has its own section due to the sheer quantity.
+
+ - rtrim moved to upscommon from drivers
+ - rtrim memory leak fixed
+ - switched to strlcpy/strlcat (included in common)
+ - syslog format string problems fixed
+ - more memory leaks fixed
+ - const added to function declarations
+ - basename moved to common
+ - info array is now local to upscommon and isn't exposed to the drivers
+   which means they now all use addinfo/setinfo
+ - unnecessary strdups dumped
+ - switched to err/errx throughout
+ - switch_to_user() generic function added
+ - more useful functions: vsyslog, upslogx, fatal, fatalx
+ - function wrappers: xmalloc, xcalloc, xrealloc, xstrdup
+ - setinfo now takes a format string
+
+ There are more.  The full listing can be found in Changes.
+ [oss-list-ups]
+
+What's next:
+
+ - The kludge that is upsset.passwd finally dies, as upsd will learn about
+   fine grained user control.
+
+Out there:
+
+ - Possible changes ahead for the driver coding structure.  There's a lot
+   of duplication that can be optimized away with a good skeleton design.

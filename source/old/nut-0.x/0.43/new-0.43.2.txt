@@ -1,0 +1,88 @@
+What's new in 0.43.2:
+
+This release's focus:
+
+ - Expanded features in upsset.cgi: instant commands
+
+   This program now lets you invoke instant commands like starting a
+   battery test through your web browser.  More of these commands will
+   show up with coming releases, but the ones supported now should still
+   be pretty useful.
+
+Other new things:
+
+ - The OFF command in the apcsmart driver must now be reissued after 3
+   seconds but before 15 have elapsed.  This is mostly a safety catch
+   to keep users from accidentally killing their systems remotely.
+
+   This can be disabled if you like living on the edge.  See apcsmart.h.
+
+ - IPT Anzen models are now supported by an experimental driver
+   contributed by Travis Tabbal.  This bears a striking resemblance to
+   the Opti-UPS protocol, so it may be extended to cover those units in
+   the future.
+
+ - APC's 940-0023A "share-ups" cable is now genericups type 9.  Pinout
+   information and testing was contributed by Alissa Rogers.
+
+ - Victron UPS models are now supported with a driver from Radek Benedikt.
+
+ - The nut.spec file has been updated again to keep our Red Hat users 
+   happy.  This update is courtesy of Andreas Piesk.
+
+Bug fixes:
+
+ - The apcsmart driver used to have a bogus status value for a second or
+   two at startup.  Fixed.  A few other init-time issues like this were
+   also cleaned up too.
+
+ - CMD_OFF should now work predictably in the apcsmart driver thanks to
+   an expanded delay between command characters.  
+
+ - genericups type 1 is now only for the 940-0095A and C cables.
+   The 940-0095B seems to be blind to the fact that anything has changed
+   when the UPS reaches low battery no matter what lines you set.
+
+   Meanwhile, type 1 was fixed so it doesn't read low battery all the
+   time.  This bug was spotted and fixed by Jirka Chraska.
+
+ - Capability detection code in the apcsmart driver no longer blindly
+   assumes that each option will have 4 values.  Now it just increments
+   the count as it finds them, which works a lot better on some of the
+   more interesting models.
+
+ - Contact closure models with a shutdown command of no lines set will no
+   longer get a "missing shutdown flags" error when running the -k
+   command.  The genericups driver can now tell the difference between
+   "none" and "undefined" in that area.
+
+ - Changing the UPS identity on older (read: slower) Matrix-UPS models
+   should work now.  Those models should also now be recognized by the 
+   apcsmart driver.
+
+ - Various places have had call to strtok() thrown out to avoid 
+   any "behind the scenes" effects that can happen when nesting occurs.
+
+ - upsd has been cleaned up to reduce some common code into functions.
+   You know, the sort of thing that makes CS profs happy.  This also
+   made a few memory leaks stand out, and they were quickly squashed.
+
+ - The CGI library parsing code no longer chokes on variables that are
+   declared without any values in the query string.
+
+ - Config files should now install to $(CONFPATH) instead of 
+   $(BASEPATH)/etc - an error that crept in during the change to BSD
+   install in the previous release.  Fixed by Luca Filipozzi.
+
+What's next:
+
+ - upsmon gets a long awaited overhaul.  Multiple power supplies and 
+   early (timed) shutdowns are just two of the things planned for it.
+   This is the next sub-project, so the versions will now be 0.44.x.
+
+Out there:
+
+ - My list of sub-projects has hit the bottom at long last.  Other
+   features will be considered, but after upsmon is overhauled, changes
+   will be a lot smaller.  Then the march to an eventual 1.0 release will
+   begin once all the planned features are complete.

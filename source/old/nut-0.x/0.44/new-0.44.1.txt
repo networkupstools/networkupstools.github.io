@@ -1,0 +1,122 @@
+What's new in 0.44.1:
+
+Key feature:
+
+ - Configurable notify handling for upsmon
+
+   It can be really annoying to have dozens of walls beeping you
+   mercilessly when a storm rolls through.  Now you can configure upsmon
+   with NOTIFYFLAG so that each NOTIFY event has a series of flags
+   associated with it.
+
+   Any combination of syslog, wall and exec (run notifycmd) are supported.
+   You can also ignore an event if it suits you.
+
+   The text that upsmon sends via wall and syslog can be set with
+   NOTIFYMSG directives in the .conf.  If the stock wording doesn't
+   please you, feel free to change it via your config files.  "%s" will be
+   replaced with the UPS that's responsible for the current event.
+
+Other new features:
+
+ - The notifycmd script is now called by upsmon with some helpful things
+   set in the environment.  UPSNAME and NOTIFYTYPE contain information
+   about which UPS generated the event, and what kind of event happened.
+   This is far easier than parsing the actual sentences that are sent.
+
+   Note: the text messages are now sent as one big argument.  If you
+   are using this feature, be sure to check your scripts so things
+   don't break.
+
+ - The powercom driver has more options and features.  [Shaul Karl]
+
+ - The genericups driver now honors TIOCM_ST - generate a BREAK.
+   [Peter Astrand]
+
+ - The fentonups and apcsmart drivers now report battery voltage and
+   output voltage from compatible hardware. 
+
+ - Serial ports are now opened with O_EXCL to keep ports locked down.
+
+ - The apcsmart driver now supports the 940-0095B grey dual-mode cable.
+  
+ - Shared memory can now be disabled at compile time with the
+   --without-shared-memory switch on configure.  [Jon Nelson]   
+
+ - The optiups driver has been improved and updated.
+   [Ted A. Kuban]
+
+ - upsmon can be made to loop after invoking the final shutdown sequence
+   so that shutdown scripts will still see it running.  This should
+   avoid the [FAILED] that can appear during these conditions.
+
+ - Distributions can now tag the arguments for model drivers onto the 
+   UPS lines in the upsd.conf for a unified startup design.
+   [Shaul Karl]
+
+ - UID and GID values are no longer hardcoded into the programs at 
+   compile-time.  Instead, user and group names are used.  
+   [Luca Filipozzi]
+
+ - upsd can bind to a specific interface with -i <IP>.
+   [Ondrej Kraus]
+
+New drivers:
+
+ - The bestups driver now recognizes the SOLA 520.  [Nick Allan]
+
+ - powercom: new driver for PowerCom models.  This is like the 
+   ups-trust425+625, but is being actively developed and has
+   support for the -k shutdown function.  [Shaul Karl]
+
+ - genericups type 11 supports the Powerware 3115 UPS.  [Peter Astrand]
+
+ - belkinups: new driver for Belkin Smart-UPS models.  [Marcus Mueller]
+
+ - engetron: new driver for Engetron Jr models.
+   [Adriano Roberto de Lima and Marcio Argollo F. de Menezes]
+
+Bug fixes:
+
+ - The default user on FreeBSD compiles is now uucp, which makes
+   more sense considering the usual serial line permissions.
+
+ - The bestups driver should now compile and run on FreeBSD.
+
+ - Calls to uu_lock() should now only happen once.
+
+ - upsmon no longer nukes the syslog socket after going into the
+   background, so log messages will again be seen.
+
+ - Access level matching in upsd should now work better in near-overlap
+   situations between similar permissions.
+
+ - The extra serial libs for FreeBSD model compiles are back.  They
+   were mistakenly deleted during an earlier cleanup of the Makefile.
+
+ - BSD make should again handle the models subdirectory.
+
+ - Note: upscommon's upsreadraw() function no longer includes the 
+   trailing CR from the network read.  This only affects people linking
+   to this code in their own projects.
+
+ - statedebug, the debugging tool in the server directory, will now
+   compile again.  It had been neglected previously.  [Jon Nelson]
+
+ - upsmon should no longer corrupt passwords used for logins.
+
+ - ACCESS lines with passwords in upsd should no longer leak data into 
+   following entries.  [Ilia Baldine]
+
+   The config parsing was also completely reworked at the same time to
+   make the whole operation cleaner.
+
+What's next:
+
+ - The parade of improvements for upsmon continues, this time for
+   initiating things at some offset relative to an event.  If you want
+   something to happen n seconds after something else, this is the way.
+
+Out there:
+
+ - upsd will learn about users, and upsset will defer to it.

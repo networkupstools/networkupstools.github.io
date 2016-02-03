@@ -1,0 +1,67 @@
+What's new in 0.42.1:
+
+ - Variable setting!  OK, this is only really useful for people with 
+   APC Smart-UPS and Back-UPS Pro models right now.  Other models either 
+   lack the support in the hardware or documentation on how to work it.
+
+   This requires "MANAGER" access.  Use the upsct2 program's -s argument
+   to set a variable to a value you like.  Some variables are enumerated
+   types, so you can only set them to certain values.  upsct2 will also 
+   show the possible values when called normally (without the -s)...
+
+   The password that upsct2 wants is the same one you put on the ACCESS
+   line in upsd.conf for the manager host(s).
+
+ - Lots of FreeBSD fixes.  I finally turned a penguin into a daemon and
+   tested it myself.  Things that now work include:
+
+   - uu_lock is now properly detected in configure
+
+   - The model programs now run as group dialer for lockfile happiness
+
+   - gd will now be found, even if it's in /usr/local/lib *and* your
+     linker has no clue about it.  configure is smart enough to try adding
+     the -I and -L flags that fix the problem for most users.
+
+ - multimon can now "auto-refresh".  Add a ?refresh=nn argument to the URL.
+   Contributed by Matthew Gabeler-Lee.
+
+ - Tripp Lite Internet Office contact closure models are now supported by
+   the genericups driver as type 5.  Contributed by Stephen Brown.
+ 
+ - Best Patriot contact closure models are now supported by the genericups
+   driver as type 6.  Contributed by Brian Craft.
+
+ - CyberPower Power99 is now genericups driver type 7.  
+
+ - Burn those GIFs.  upsimage now uses gdImagePng or nothing.
+
+Fixes and other random things:
+
+ - The battery percentage in the fentonups driver should now be sane.  
+   Also, more models should be detected and measured properly now.
+
+ - The C compiler is no longer assumed to be gcc.  It's now whatever
+   configure detects, as it should be.
+
+ - The RPM build from the .spec file should now work a lot better during
+   the chown.  Fixed by Brian Craft.
+
+ - Older APC "silent failure" models should now be detected properly. 
+   Fixed by Matthew Gabeler-Lee.
+
+ - The upscommon tiocmget/set calls have been rearranged so that 
+   "special" bits aren't thrown away.  This was inspired by a post to
+   linux-kernel about OUT2 being dropped and all sorts of evil following.
+
+ - Matrix-UPS capability strings should now be parsed properly.
+
+What's next:
+
+ - upsset.cgi gets the ability to actually change things.  Right now
+   it's still read-only, forcing you to use upsct2 to set a variable.
+
+Still out there:
+
+ - The manager interface incorporating this new variable setting along
+   with "instant" commands - run tests, make it beep, and so on.

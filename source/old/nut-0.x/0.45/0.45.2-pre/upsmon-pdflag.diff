@@ -1,0 +1,93 @@
+--- nut-0.45.1-stock/clients/upsmon.c	Sun Aug  5 12:58:56 2001
++++ nut-0.45.1/clients/upsmon.c	Fri Aug 31 15:10:15 2001
+@@ -14,7 +14,7 @@
+ 
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+-   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.              
++   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+  */
+ 
+ #include <errno.h>
+@@ -302,6 +302,22 @@
+ 	clearflag (&ups->status, ST_ONBATT);
+ }
+ 
++/* create the flag file if necessary */
++void setpdflag(void)
++{
++	FILE	*pdf;
++
++	if (powerdownflag != NULL) {
++		pdf = fopen (powerdownflag, "w");
++		if (!pdf) {
++			upslogx(LOG_ERR, "Failed to create power down flag!");
++			return;
++		}
++		fprintf (pdf, "%s", SDMAGIC);
++		fclose (pdf);
++	}
++}
++
+ /* the actual shutdown procedure */
+ void doshutdown(void)
+ {
+@@ -325,6 +341,10 @@
+ 		ret = write(pipefd[1], &ch, 1);
+ 	}
+ 	else {
++		/* one process model = we do all the work here */
++
++		setpdflag();
++
+ 		ret = system(shutdowncmd);
+ 
+ 		if (ret != 0)
+@@ -341,22 +361,6 @@
+ 	exit(1);
+ }
+ 
+-/* create the flag file if necessary */
+-void setpdflag(void)
+-{
+-	FILE	*pdf;
+-
+-	if (powerdownflag != NULL) {
+-		pdf = fopen (powerdownflag, "w");
+-		if (!pdf) {
+-			upslogx(LOG_ERR, "Failed to create power down flag!");
+-			return;
+-		}
+-		fprintf (pdf, "%s", SDMAGIC);
+-		fclose (pdf);
+-	}
+-}
+-
+ /* set forced shutdown flag so other upsmons know what's going on here */
+ void setfsd (utype *ups)
+ {
+@@ -458,9 +462,6 @@
+ 	/* wait up to HOSTSYNC seconds for slaves to logout */
+ 	slavesync();
+ 
+-	/* set power down flag for the shutdown script to call <model> -k */
+-	setpdflag();
+-
+ 	/* time expired or all the slaves are gone, so shutdown */
+ 	doshutdown();
+ }
+@@ -990,10 +991,13 @@
+ 	if (ch != 1)
+ 		fatalx("upsmon parent: got bogus pipe command %c", ch);
+ 
++	/* have to do this here - child is unprivileged */
++	setpdflag();
++
+ 	ret = system(shutdowncmd);
+ 
+ 	if (ret != 0)
+-		upslogx(LOG_ERR, "Unable to call shutdown command: %s\n",
++		upslogx(LOG_ERR, "parent: Unable to call shutdown command: %s\n",
+ 	        	shutdowncmd);
+ 
+ 	close(pipe);

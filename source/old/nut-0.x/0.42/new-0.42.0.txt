@@ -1,0 +1,91 @@
+Note the new URL: http://www.exploits.org/nut/
+
+Note the new program name: Network UPS Tools, aka NUT.
+
+What's new in 0.42.0:
+
+ - Variable control begins.  upsct2 and upsset.cgi are the command line
+   and web interfaces, respectively.  This version is strictly read-only,
+   and there are only variables of interest available when using the
+   apcsmart driver.  To see what's available now, use one of the
+   following:
+
+   upsct2 <host>
+
+   http://your.web.server/cgi-bin/ups/upsset.cgi?host=<host>
+
+   Further improvements to this code will follow in this 0.42.x
+   development series.
+
+   For those of you keeping score, this means that the capabilities code
+   from a *long* time ago (before 0.40.0) is back for good in the APC 
+   driver.  More information on how this works can be found in the 
+   new-modules.txt and protocol.txt files in the docs directory within
+   the source tree.
+
+ - "smartups" and "backupspro" drivers rolled into the "apcsmart" driver.
+   This model attempts to figure out what can be used in the model it
+   finds, and will report a "level" based on those findings.  Please
+   include that information in any bug reports.  Trying to make this work
+   on all these nutty older APC models is painful without it.
+
+ - Also note that the previously depreciated behavior of upsd supporting
+   state files on the command line has been totally removed.  You must now
+   specify all state files with UPS lines in the upsd.conf.  upsd will
+   let you know if you start it without any of those defined.
+
+ - upsd can now have the state checking interval loosened with MAXAGE in
+   the upsd.conf for those annoying models that can't keep up with a 15
+   second freshness check.
+
+ - Support for the Best Fortress models added with the "bestups" driver.
+   Thanks to Bo Kersey of VirCIO for the development unit.
+
+ - The Centralion CL-750 is now supported by the genericups driver as
+   type 5.  Info provided by Neil Muller.
+
+ - The UPSonic Lan Saver module has been removed since it is just a
+   contact closure model.  It is now supported by the genericups driver
+   as type 0.
+
+ - multimon now understands more of the possible status keywords such
+   as overload and replace battery.
+
+ - This should be of interest to packagers - TEMPF or TEMPC in the
+   multimon.conf will now set the default for the other fields, overriding
+   the presence or absence of --enable-celsius.  This means you can
+   compile a common binary and use the config file to switch scales.
+   The choice is passed through to upsstats for proper readings there too.
+
+   Expect the --enable-celsius option on configure to go away soon. 
+
+Fixes and related changes:
+
+ - The APC driver no longer does a shutdown+restore blindly, opting now to
+   probe the line status and act properly from there.
+
+ - The CGI routines and programs have been cleaned up a bit.
+
+ - The dead code for "master" is gone from upsd and upsmon.  
+
+ - Fixed an off by one bug in the fentonups driver that was breaking 
+   battery percentage calculation.  Spotted by Mark Cooke.
+
+ - Fixed some typos in the upsmon.conf and shutdown.txt spotted by
+   Klaus Schallhorn.
+
+What's next:
+
+ - Another layer of security for authenticating "manager" users - those
+   who will be able to use upsset.cgi to change R/W variables in the UPS.
+
+ - Actually setting the values in the UPS via the model programs.
+
+Way out there:
+
+ - Well-rounded manager console incorporating variable setting and other
+   "immediate commands" that make things happen in the UPS right away.
+   Click a button, make a UPS that's 2000 miles away go BEEP, that sort of 
+   thing.
+
+For further details and things I may have missed, see the Changes file.

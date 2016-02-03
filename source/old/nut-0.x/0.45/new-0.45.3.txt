@@ -1,0 +1,91 @@
+What's new in 0.45.3:
+
+Key features:
+
+ - upsd can now reload its configuration files on the fly.  You no
+   longer have to kill the server and restart it.  upsd will reload
+   all config files (ups.conf, upsd.conf, upsd.users) upon receiving
+   a HUP signal.  You can also have it signal itself by starting
+   another copy with the -c switch, i.e. 'upsd -c reload'.
+
+   Note: if you start upsd as root, reloading may not work.  upsd
+   switches to another user if you start it as root, and that user
+   may not have permission to read things like the upsd.conf or
+   upsd.users files.  If this happens to you, consider making a separate
+   role account for upsd.  Also see the FAQ entry on security domains.
+
+Other new features:
+
+ - The newpowercom driver has been added.  This is a new style driver
+   from Peter Bieringer that will is intended to replace powercom and
+   ups-trust425+625.
+
+ - 'upsdrvctl status' will check for the presence of pid files, so you
+   can see if your drivers are still running.  Suggested by Peter
+   Bieringer.
+
+ - CyberPower Systems AVR700 units are now partially supported with
+   the new experimental cyberpower driver.  This driver should support
+   other AVR series models, but some values may look strange.  Users
+   with this type of hardware are asked to provide success reports as
+   this protocol is not well understood.
+
+   Thanks to the company for providing the AVR700 for development.
+
+ - upsd can be stopped by running it again with '-c stop'.
+
+ - More man pages have been written.
+
+ - The mge-ellipse driver has been upgraded to a version based on the
+   new common core for ups.conf support among other things.
+   [Philippe Marzouk]
+
+Interface changes:
+
+ - configure now uses --with-port instead of --with-udpport, as that
+   variable has been controlling both TCP and UDP port numbers for
+   a couple of years now.
+
+ - The network protocol has been changed to remap a few error messages
+   into the form "ERR <error>" rather than the bogus "ANS <var> <error>".
+
+ - upsd no longer returns empty lists when a UPS is stale.  This 
+   means LISTVARS, LISTRW, and LISTINSTCMD will now generate 
+   "ERR DATA-STALE" or another error depending on the situation.
+
+Bug fixes:
+
+ - The install targets no longer pollute the prefix with bogus
+   cgi-bin and misc directories.
+
+ - The new style drivers no longer chdir to the STATEPATH before the
+   shutdown, which is impossible when that filesystem is not mounted.
+   [Patrik Rak, via Luca Filipozzi]
+
+ - upsmon no longer warns about "not root" when it's supposed to be
+   that way.
+
+ - Fixed a bug in upsmon where it could get wedged with a dead file
+   descriptor that was returning -EPIPE but never reset the connection.
+   This resulted in upsmon losing contact with upsd in the rare event
+   that this happened.
+
+ - upsmon now provides information in the syslog when status polls
+   or connections to upsd fail.
+
+ - upsd's config handler no longer segfaults when encountering a 
+   definition before a section header in the ups.conf. 
+
+What's next:
+
+ - SIGHUP signal handling to make upsmon reload config files
+
+Ongoing:
+
+ - Driver conversion to the common core.  If your favorite driver is
+   still using the old style, consider upgrading it yourself.  If you
+   do, send me a patch.
+
+Out there:
+
+ - Common control for driver/UPS shutdowns to simplify rc.0 type scripts

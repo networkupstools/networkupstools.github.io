@@ -1,0 +1,52 @@
+What's new in 0.43.1:
+
+This is mostly a maintenance release for the instant commands.  There's
+not a lot of features, but it's better to cut it loose now rather than 
+keep everyone waiting another month.
+
+The biggest feature this time:
+
+ - upslog now supports a customizable log format.  Matthew Gabeler-Lee 
+   stepped up and added this, so now you can log any variable that's
+   supported by your UPS.  You can also put other things in the file
+   to spice it up between fields.
+
+Other new stuff:
+
+ - BSD install is now used to put the binaries and config files in place.
+   This is a lot better than using mkdir and cp since it'll set the modes
+   for us at the same time.  This means the "sensitive" files in the
+   CONFPATH are now installed as root, mode 0600.
+
+ - The bestups and fentonups drivers now support the BTEST0 command to
+   stop the battery test immediately.
+
+ - The apcsmart driver supports CAL0 and CAL1 - stop and start calibration.
+   This is what lets the UPS set the internal "runtime" value.
+
+Bug fixes and cleanups:
+
+ - "Silent failure" Smart-UPS units now have instant commands available.
+
+ - Sending "SET <varname>" with no arguments no longer crashes upsd.  
+   You need manager access to do this in conjunction with a raw telnet,
+   so it's not "end of the world" material.
+
+ - sscanf is no longer used on data from the network.
+
+ - The configure option for --enable-celsius was previously depreciated.
+   It is now gone.  Use TEMPC and TEMPF in your multimon.conf files to
+   force one mode or the other.
+
+ - multimon no longer chokes when hosts.conf is missing.  
+   Spotted by Jirka Chraska.
+
+What's next:
+
+ - A few more instant commands for the models
+
+ - Another interface for invoking the commands
+
+Beyond this:
+
+ - upsmon gets more features and a whole lot smarter.

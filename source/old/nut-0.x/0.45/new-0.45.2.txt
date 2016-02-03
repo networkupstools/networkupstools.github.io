@@ -1,0 +1,96 @@
+What's new in 0.45.2:
+
+Key features:
+
+ - upsdrvctl has more options.  You can now say "stop" to stop all drivers,
+   or "stop <ups>" to stop just one.  Also, "start <ups>" to just start
+   one is now supported.
+
+ - Lots of man pages.  This isn't a traditional feature, but writing
+   documentation isn't a trivial thing, either.
+
+Other new features:
+
+ - ALTPIDPATH.  upsd and the common core model drivers use this path
+   to write .pid files.  This defaults to the state path, since those
+   programs should not run as root and can't normally write to /var/run.
+   Use configure --with-altpidpath to change it.	[Luca Filipozzi]
+
+ - upsd creates a upsd.pid file now so you can kill it cleanly.
+
+ - The common core drivers also now write pid files in the form
+   <driver>-<port>.pid.
+
+ - The newapc driver has been converted, so you can now use ups.conf
+   and upsdrvctl to control it.  Just like apcsmart, it means a few of
+   the command line arguments have changed:
+
+   If you used to do this:          You now have to do this:
+
+   newapc -c 940-0095B /dev/foo     newapc -x cable=940-0095B /dev/foo
+   newapc -s 2 -k /dev/f00          newapc -x sdtype=2 -k /dev/f00
+
+   Of course, if you use ups.conf, you can just stick those foo=bar
+   values in that section and call it done.  See the docs or the new
+   man pages.
+
+ - The new masterguard driver supports Masterguard UPS hardware.
+   [Michael Spanier]
+
+ - The fentonups driver now recognizes the PowerCom SMK-800A.
+   [Alexander Starostin]
+
+ - The bestups driver now does proper locking on the serial port.
+   It now also tries to log helpful messages when the UPS becomes
+   unreachable.
+
+ - The sms driver table has been updated, and there is now a sms.txt
+   document explaining the cabling.	[Marcio Gomes]
+
+Bug fixes:
+
+ - upsmon no longer tries to create the POWERDOWNFLAG from the
+   unprivileged section of the code.  This was preventing systems from
+   powering down under certain situations.
+
+ - Various patches to fix builds on Solaris.	[George Ross]
+
+ - configure.in should no longer annoy autoconf 2.52.	[Adam J. Richter]
+
+ - upsset now ignores UPSVAR_* values longer than 256 characters to
+   avoid a theoretical memory-related DOS attack.
+
+ - upsmon now calls shutdown() on fds when it exits.
+
+ - upsimage now draws the black utility bar where it should be, instead
+   of a couple of pixels too high.	[Jim Sandoz]
+
+ - The apcsmart driver no longer skips the ALRMDEL values due to a
+   badly placed break.	[Lars Balker Rasmussen]
+
+ - upssend() no longer returns -1 most of the time due to an extra ;.
+   This didn't actually affect any drivers, but it was still wrong. 
+   [Lars Balker Rasmussen]
+
+ - A potential memory leak in upsd's ups.conf parser has been squashed.
+
+ - More Solaris/portability fixes (see CHANGES for the full list).
+   [Lars Balker Rasmussen]
+
+ - Compiles with shared memory disabled should be cleaner now.
+   [Peter Bieringer]
+
+ - The nut.spec now installs more of the man pages.
+   [Peter Bieringer]
+
+What's next:
+
+ - SIGHUP signal handling to reload config files in upsd
+
+Ongoing:
+
+ - More driver conversions to the common core (main.c).  Help wanted.
+
+Out there:
+
+ - SIGHUP reloading for upsmon

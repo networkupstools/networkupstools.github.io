@@ -1,0 +1,124 @@
+What's new in 0.45.0:
+
+Key features:
+
+ - Sanity in user handling.  upsset.cgi no longer does its own
+   authentication, so you don't have to worry about how to secure the
+   upsset.users file.  All user authentication now takes place inside
+   upsd.  This also makes other things possible:
+
+ - upsd can now restrict access to certain instant commands by username.
+   You can now have a user called "admin" that gets to do all of them,
+   and also create a user called "peon" that can only do battery tests.
+   
+   You can also control whether a user can do SET commands to change the
+   value of variables inside the UPS hardware.  This is all configured
+   in the upsd.users file.
+
+ * Take note that your upsset.cgi will not function until you assure it
+   of your CGI directory's security.  See the sample upsset.conf for
+   more information about how to do this.  This is intended to keep you
+   from opening holes in the system by doing 'make install-cgi'.
+  
+Other new features:
+
+ - upscmd and upsct2 (the command line tools for administration) also
+   honor the new "user" level access as you would expect.
+
+ - statedebug has been reworked and now supports shared memory mode. 
+   This is only of interest to developers working on new drivers and
+   others who need to debug the interprocess communications.
+
+ - A new common driver design is now in the works.  The fentonups and
+   bestups drivers have already been converted.  This approach will
+   unify the startup process for all drivers and allow some other helpful
+   features in the future.
+
+ - The bestups driver now reports battery voltage.
+
+ - Liebert Multilink UPSes are now supported with the multilink driver.
+   [Rick Lyons]
+
+ - Config files are now installed as <name>.sample so you can compare them
+   to your existing files to see what's new.	[Ben Collver]
+
+ - upslog now writes a pid file for easy signal sending.
+   [Dirk-Willem van Gulik]
+
+ - Failures to open the UPS device will now yield a verbose message
+   showing the current user ID, intended device, and the permissions of
+   that device to help users set things right.	[Alan Kennington]
+
+ - SEC protocol hardware is now supported with the sec driver.
+   [John Marley]
+
+ - Repoteck RPT-800A and RPT-162A models are now supported as genericups
+   type 13.	[Theodor Milkov]
+
+ - Note that QUICKSTART is now called INSTALL, and Changes is now CHANGES.
+   [Michael Wayne]
+
+Bug fixes:
+
+ - The getupsmsg() stub in upscommon could have sucked 100% CPU if the
+   system lacked SysV message queue support.
+
+ - The normal getupsmsg() function was eating the CPU when message queues
+   failed at runtime.  This will no longer happen.  If you find that your
+   drivers can't create a queue, run ipcs and make sure that you don't
+   have runaway processes consuming your IPC resources.
+
+ - Using a hostname-only identifier for a UPS in upsmon will no longer
+   try to build a string from a NULL pointer.  This was causing the
+   forced shutdown routine to fail due to a mismatch on some systems, and
+   crashes on other depending on the interaction of snprintf, %s, and NULL.
+   [Matthew Dharm]
+
+ - Calling upsmon with a bogus argument to -c no longer starts the
+   program.	[Andrew Delpha]
+
+ - upsmon: another NULL + %s format bug squashed.	[Matthew Dharm]
+
+ - basename already exists in some C libraries, so work around it by
+   calling our version xbasename.	[Alan Kennington]
+
+ - The newapc driver no longer tries to open the serial port in the
+   forceshutdown call, as it's already open.  This was causing the -k
+   command to fail, disabling the forced power cycle of the load.
+   [John Pochmara]
+
+ - cfmakeraw compatibility routine added for systems which lack it,
+   since the multilink driver uses it.  This should help Solaris people.
+   I don't have one of those boxes, so let me know if it doesn't work.
+   [Marty Lee]
+
+ - genericups type 2 (APC 940-0020B) now uses RTS for cable power.  This
+   may make things better for some people, although it apparently may
+   never work on some systems.  See the discussion in the mailing list
+   archives for the full story, including the pin routing and possibly
+   invalid RS232 voltage levels.
+
+ - upsmon will now generate a notify event if the first poll of a UPS
+   is "on battery".
+
+ - time.h and sys/time.h are now both included where appropriate.
+   glibc 2.2 started throwing warnings, and this should fix it.
+
+ - Lots of sanity checks added to the code to make sure we don't try
+   to parse NULL values from config files or similar.
+
+ - powercom: the TIOCMSET ioctl now uses the address of the argument
+   rather than the argument itself, and checks the return codes to
+   detect errors.	[Igor Podlesny]
+
+What's next:
+
+ - Unified driver configuration and startup routines.
+
+ - USB HID UPS support under Linux at last.
+
+Out there:
+
+ - More drivers switch to the unified scheme.
+
+ - The final march to 1.0?  The todo list is getting pretty small...

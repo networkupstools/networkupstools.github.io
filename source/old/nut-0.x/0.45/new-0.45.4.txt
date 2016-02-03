@@ -1,0 +1,145 @@
+What's new in 0.45.4:
+
+Key features:
+
+ - upsmon can now reload its configuration on the fly.  Just call it
+   again with '-c reload' and it will reread upsmon.conf.  You can
+   also do this manually by sending a SIGHUP to the process id found in
+   upsmon.pid.
+
+   Note: upsmon.conf must be readable by the unprivileged worker
+   process that runs the monitoring.  Normally it is only accessible by
+   root, so you may have to reconfigure things before this will work on
+   your system.  See the documentation for more information.
+
+ - upsdrvctl now has a shutdown command to power off your UPS equipment
+   in an orderly fashion.  In the event that you have multiple UPSes
+   connected, you can set the shutdown order with "sdorder = n" in the
+   ups.conf.  See the man pages for more on this feature.
+
+ - upsd and the drivers can now mmap() the state file to provide a
+   better communication channel that doesn't require SysV shared memory.
+   [oss-list-ups]  
+
+Other new features:
+
+ - You can now set the user id of the monitoring upsmon process in
+   upsmon.conf with the RUN_AS_USER directive.  This is necessary for
+   proper operation during reloads (see above).
+
+ - upsmon now warns you if the parent goes away, as a proper OS shutdown
+   is no longer possible in that case.  The new notify event is called
+   NOPARENT.  This also logs messages to the syslog at the "alert" level
+   to make sure this critical condition is seen by the admins.
+
+ - The mustekups driver now supports the Belkin Regulator Pro net
+   series.	[Anton Ivanov]
+
+ - New drivers:
+
+   - tripplite - Tripp-Lite SmartUPS models [Rik Faith]
+   - newvictron - IMV/Victron hardware [Daniel Prynych]
+   - bestferrups801-807 - Best FerrUPS 8.01-8.07 firmware [Jonboy Corbin]
+   - genericups type 14 - for Online P-series units [David Santinoli]
+
+ - The dummycons development driver no longer uses pthreads and should
+   be usable on more systems as a result.
+
+ - upsdrvctl now waits up to "maxstartdelay" (default 45) seconds for a
+   driver to start before it gives up and goes to the next entry.  This
+   keeps your system from getting stuck in the startup script if a
+   driver decides to misbehave. 
+
+Interface changes:
+
+ - upsmon now forks before calling the NOTIFYCMD.  This means several
+   instances of it could be running at the same time if a lot of events
+   happen quickly.  If you're doing anything tricky in there, be sure it
+   can handle running concurrently with itself.
+
+ - All new-style drivers now disable locking entirely during the
+   shutdown (-k) process.   This means users on FreeBSD should no longer
+   need kludges like "-x nolock" when powering off the UPS. 
+
+Bug fixes:
+
+ - upsd no longer segfaults when upsd.conf is unavailable during a
+   reload.
+
+ - The upsmon privileged parent now ignores most signals.  Previously it
+   could react badly to misdirected signals from the user.   
+
+ - upsstats now uses "&deg;" instead of the literal degrees character.
+
+ - Error reporting from upsfetch no longer zaps errno by calling close()
+   too early.	[oss-list-ups]
+
+ - Reading and writing to the state files/shared memory is now governed
+   by a series of locks to prevent corruption.  Previously it was
+   possible for the data to change while upsd was reading from the
+   array.	[oss-list-ups]
+
+ - upsd now drops a client if its sendq fills.  This avoids a problem
+   where a client could make upsd hang by not accepting data from the
+   server.	[oss-list-ups]
+
+ - All new-style drivers now create their state files as
+   "driver-port.init" and rename them to the final name once they are 
+   finished with the initial process of configuring the info array.
+   This keeps upsd from serving up data from an array that is useless.
+
+ - All new style-drivers also now synchronize the child/parent processes
+   so the parent does not exit until the child has finished the renaming
+   process listed above.  Before this, it was possible for a driver to 
+   exit before it was totally ready, and upsd would come along and
+   complain about staleness.
+
+ - The fentonups and bestups drivers no longer clobber their callback
+   handlers for variable setting and instant commands.	[Rik Faith]   
+
+ - The bestups driver now deals with some models that invert the bypass
+   status bit.	[Charles Lepple]
+
+ - upsmon now forks before handling notify events.  This keeps it from
+   getting stuck if wall or the NOTIFYCMD take too long.  This also
+   fixes a problem where it would come back after DEADTIME, promote the
+   UPS to dead, and force a shutdown when things were still OK.
+
+ - upsdrvctl no longer crashes when encountering configuration
+   directives above the first UPS section.   
+
+ - newapc no longer leaves a ':' in the RUNTIME variable. [NetBSD]
+
+ - The tree should again compile cleanly on Solaris.
+   [Lars Balker Rasmussen]
+
+ - New style drivers no longer fail strangely when specifying -a and
+   ups.conf is not available.	[Nigel Metheringham]
+
+ - sete[u|g]id calls are now mapped to setres[u|g]id to fix builds on
+   HP-UX 10.20.	[Mark Bergman]
+
+ - A crash in upsd when sending "INSTCMD" with no arguments was fixed.
+   [oss-list-ups]
+
+ - Paths linked to the prefix (from configure) now work properly.
+   [Phil Davis]
+
+Ongoing:
+
+ - We still need to convert a lot of drivers to the new style.
+   If your driver doesn't support ups.conf/upsdrvctl, now is the time
+   to get involved.
+
+Out there:
+
+This section is getting harder to do as time goes by.  Here are some
+things that will be happening over the next few versions:
+
+ - Named pipe support to allow instant commands and variable setting
+   without requiring SysV message queues
+
+ - Returning status from instant commands to clients
+
+ - Fixing upsd.users to not have the bogus "repeat if you need more than
+   5" approach, which involves a new open-ended configuration parser

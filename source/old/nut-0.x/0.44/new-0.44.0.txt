@@ -1,0 +1,134 @@
+What's new in 0.44.0:
+
+The key feature in this release:
+
+ - upsmon gets smarter.
+
+   upsmon can now poll more than one UPS all within the same process.
+   This should be very good news for people with big servers, multiple
+   power supplies, and other interesting configurations.
+
+   *** Note: this means you no longer specify the UPS identifier and
+   master or slave on the command line.  See the upsmon.conf for how
+   to define the new "MONITOR" directives.
+
+   upsmon now handles a UPS that disappears differently.  If it goes away
+   while on battery, it's considered to be critical and no longer 
+   contributes to the overall "power value" or number of supplies that are
+   OK.  If this makes the power value drop below the minimum safe level,
+   the shutdown process begins.
+
+   Note that the UPS is given a short interval to return before being
+   declared 'dead'.  See the included example upsmon.conf for more info.
+   
+   Also new is the concept of a forced shutdown.  The details are too
+   lengthy for a release note, so here's the basic idea.  If the master
+   has to shut down a UPS for a reason other than 'on battery, low
+   battery', the slaves now have a way to know about it and shutdown
+   cleanly.  See Changes and the docs subdirectory for the whole scoop.
+
+Other new features:
+
+ - The apcsmart driver now supports an alternate powerdown sequence
+   to avoid a different race when the power returns.  This is mostly
+   for newer models.  Enable it with -s.
+   [Nigel Metheringham]
+
+ - RH users: The RPM spec file now builds three packages:
+
+   nut        - client software
+   nut-server - server software
+   nut-cgi    - CGI tools
+
+   [Nigel Metheringham]
+
+ - Most drivers now support the -d <num> feature to define how long to
+   wait before powering off.  -d 0 exits without waiting.
+   [Nigel Metheringham]
+
+ - Using --with-modelpath during configure will install the model drivers
+   to some directory other than the normal "bin".  [Nigel Metheringham]
+
+ - Similarly, --with-cgipath will move just the CGI binaries somewhere
+   else.  [Nigel Metheringham]
+
+ - The Makefiles now recognize INSTALLROOT for easier package building.
+   Use "INSTALLROOT=/foo/bar make install" and the entire tree will be
+   installed relative to /foo/bar.  [Nigel Metheringham]
+
+ - upslog now supports %ETIME% to print the epoch time.  [Chad Madison]
+
+ - Best Power Patriot Pro models are now recognized by the bestups driver.
+   [Jon Nelson]
+
+ - The apcsmart driver now supports the 940-0095B driver.  Use 
+   '-c 940-0095B' to enable the alternate cable mode.  [David Corbin]
+
+New drivers:
+
+ - dummyups: not a real driver, but useful for testing.  It provides a 
+   simple GUI through Xdialog which lets you set status values.  It's 
+   primarily used to test upsmon without stressing my poor UPSes any more.
+
+ - bestfort: supports older Best Fortress (usually black) models.
+   [Grant Taylor]
+
+ - mustekups: supports Mustek Electronics models.  [Jeremy Maccelari]
+
+ - genericups type 10: Victron Lite support.  [Daniel Prynych]
+   Also see docs/cables/victron.txt for more information on these models.
+
+Bug fixes:
+
+ - Capability strings over 256 chars should no longer break the
+   apcsmart driver.  [Nigel Metheringham]
+
+ - RH6 boxes should again be able to link gd with the libX11 and libttf
+   libraries which means upsimage will work again.  [Bill Carlson]
+
+ - The programs no longer step on the NetBSD libc functions send and recv.
+   These have been renamed to upssendchar and upsrecv, respectively.
+   [Will Ferry]
+
+ - The apcsmart driver handles drivers without capabilities better.
+   [Will Ferry]
+
+ - The fentonups driver should again report a manufacturer value.
+
+ - The included clients (upsc, upsct, upsct2, upscmd) now handle UPSes
+   that either don't exist, are stale according to upsd, or have no
+   supported features without segfaulting or spewing odd error messages.
+
+ - Calling apcsmart with just '-d 0' or any option without specifying
+   a device no longer segfaults.  [David Corbin]
+
+ - The Cyberpower Power99 type in the genericups driver should no longer
+   report "LB OL" erroneously.  [Geoffrey Keating]
+
+ - upsmon should clean up after itself when receiving SIGQUIT or SIGTERM.
+   Previously it left sockets hanging around in TIME_WAIT.  [Boris Popov]
+
+ - upsmon can now tell the difference between POLLFREQ and POLLFREQALERT.
+   This simple parsing bug caused upsmon to occasionally go crazy and 
+   poll upsd constantly.  This drove CPU usage disturbingly high as
+   both processes were kept busy by all the activity.  [Boris Popov]
+
+ - The models and clients should now install properly again, even on
+   systems where the install script/program only handles one file at a
+   time.  [Lars Balker Rasmussen]
+
+What's next:
+
+ - More upsmon improvements, specifically event handling.
+
+   When things start happening, upsmon likes to tell you about it.  The
+   focus will be on making all those actions configurable.  If you want to
+   send walls, e-mails, cat an .au into /dev/audio, or whatever, it will
+   be possible.  It will also be possible to squelch certain messages
+   entirely.
+
+Out there:
+
+ - Lots of people want to do "early shutdowns" - namely, kicking off
+   a certain response to the on battery event after a defined interval.
+   This will be addressed.

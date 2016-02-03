@@ -1,0 +1,225 @@
+What's new in 0.45.1:
+
+Key features:
+
+ - Unified driver configuration begins.  Driver settings can now be
+   defined in a new file called ups.conf.  It has a section-based
+   format that groups all the details for one UPS together.  This
+   replaces the old "UPS" lines in upsd.conf, which are now deprecated,
+   and will be removed in a future version.
+
+   A typical configuration might be:
+
+	[su700]
+	        driver = apcsmart
+        	port = /dev/ttyS1
+
+ - Unified driver control begins.  Using the same ups.conf, you can
+   now use the new "upsdrvctl" program to start certain drivers.
+   If your drivers support this method, then you can use a standard
+   startup sequence for all of your systems:
+
+	/usr/local/ups/bin/upsdrvctl start
+
+   upsdrvctl parses ups.conf and starts the right drivers for you.
+
+   Right now this *only* works for the following drivers:
+
+	- apcsmart
+	- belkin
+	- bestups 
+	- everups
+	- fentonups
+	- hidups
+	- sec
+
+   The other drivers will be converted to support this in future
+   releases.  If your driver doesn't support it yet, you can still
+   use ups.conf.  You just can't use upsdrvctl to autostart it.
+
+ - Experimental USB UPS support!  This is only working on Linux, and
+   then only with kernels that have the hiddev support added.  The
+   latest Linus tree (2.4.8) doesn't have it yet, so track down an -ac
+   kernel if you want to test this.  See the FAQ for more information
+   on how to use the hiddev driver.  This includes patches from Brad
+   Hards to run on MGE equipment.
+
+ - upsmon no longer runs most code as root by default.  It now forks,
+   with one process retaining root while the other drops it.  The
+   root process can do one of two things: shutdown the system or exit.
+   The other process does all of the usual UPS monitoring work, and
+   sends the shutdown command over a pipe to the root process when
+   necessary.
+
+   If you are running scripts from upsmon that depend on root and
+   absolutely can't rework them to use the new non-root design, you
+   can use the old "single monolithic root process" mode with the 
+   -p argument.
+
+   This technique should make it very hard to ever get root through
+   upsmon, as the majority of the code now runs as a normal user.
+   You can change which user that is with -u <user>.
+
+   This design was inspired by Solar Designer's popa3d.
+
+Other new features:
+
+ - upsimage now rescales the utility voltage graphic intelligently
+   when the high and low transfer points are available.  There should
+   now be two red sections (top and bottom) surrounding the green center
+   area for all users.
+
+ - upsset no longer calls xstrdup with CGI variables without freeing
+   the prior value to avoid variable redefinition attacks on system
+   resources.  It also has a hard limit on the number of variables
+   that can be returned by the client for similar reasons.
+
+ - The serial opening call used by genericups now provides better
+   error messages, just like the other drivers have been doing for
+   awhile.	[Larry Jones]
+
+ - AEG Protect S. models are now supported by the aeg driver.
+   [Ralf Sieger]
+
+ - SMS Ltda (Brazilian) units are now supported with the new
+   sms driver.	[Marcio Gomes]
+
+ - For testing purposes, there is now a "dummycons" pseudo-driver.
+   This one is like dummyups, but it does not need X.  You can use it
+   to test shutdowns and other client issues without torturing your
+   actual UPS equipment.
+
+ - The previously hardcoded 15 second delay in upsmon before the
+   shutdown command was called is now configurable as FINALDELAY in
+   the upsmon.conf.
+
+ - The SOLA 620 is now recognized by the bestups driver.
+   [Justin Hawkins]
+
+ - The victronups driver has been updated to report reasonable values
+   for LOWXFER and HIGHXFER.  It also now supports several additional
+   informational variables on the UPS.	[Michael Hettenbach]
+
+ - The umask is now forced to 022 before writing pid files.  A recent
+   issue popped up on some systems that don't set it explicitly,
+   leading to such interesting things as a world-writable upsmon.pid
+   file.
+
+ - Ever UPS models are now supported by the new everups driver.
+   [Bartek Szady]
+
+ - The belkinups driver should now be able to handle the shutdown
+   situation where the power returns, and a restart needs to be forced.
+
+ - Common core drivers (see above) now support '-x nolock' to skip the
+   usual serial locking procedures.  This is needed on systems like
+   FreeBSD that can't lock ports on read-only filesystems, which meant
+   that -k shutdowns were basically impossible.
+
+Interface changes:
+
+ - The apcsmart driver has been converted to the new common driver core,
+   and that means the hardware-specific arguments have been changed.
+
+   If you used to do this:            You now have to do this:
+
+   apcsmart -c 940-0095B /dev/foo     apcsmart -x cable=940-0095B /dev/foo
+   apcsmart -s 2 -k /dev/f00          apcsmart -x sdtype=2 -k /dev/f00
+
+   You can also put those definitions in your ups.conf section for
+   this UPS.  See the CHANGES file for the full explanation.
+
+Bug fixes:
+
+ - Battery percentage values outside the usual 0-100% range will no
+   longer make upsimage try to generate impossible PNGs.
+
+ - Load percentage values in upsimage are also similarly checked
+   for sanity.  Previously, a bogus number from a driver could make it
+   burn LOTS of CPU time inside the graphic creation functions.
+
+ - The simple serial port opening routines have had O_NONBLOCK added
+   to keep the driver from wedging on some systems that would otherwise
+   react badly to certain port status values.	
+   [Larry Jones and Alan Eldridge]
+
+ - The genmb build helper script in the model subdirectory is now
+   explicitly called with ./ to make sure it gets executed.
+   [Shaul Karl]
+
+ - The example in the stock upsd.users now reads INSTCMDS as it should,
+   rather than "ALLOW" which was something that leaked out of the
+   development phase.	[Alan Eldridge]
+
+ - upsset now says "was ..." rather than "now ..." when changing the
+   value of a variable to prevent confusion about what just happened.
+   [Bill Richter]
+
+ - The Makefiles now use the included install-sh script to make
+   directories, as some of the system-level ones out there don't
+   honor the -d switch.
+
+ - String trimming in drivers like fentonups has been fixed.
+   Previously, this was causing some otherwise compatible devices with
+   spaces in their IDs to be misdetected.
+
+ - A few stray ^Ms have been exterminated from the source files.
+   [George Ross]
+
+ - upsd.h no longer blindly includes err.h, which was breaking compiles
+   on systems lacking it.	[George Ross]
+
+ - Some changes were made for Unixware 7.1.1 compatibility, including:
+
+   - library dependencies were split into LIBDEP and LIBOBJ
+
+   - sys/termios.h is now included to allow the cfmakeraw compatability
+     function to compile.
+
+   [John Hughes]
+
+ - The simple serial open code now sets CLOCAL on the tty to keep the
+   system from parsing the modem status lines.	[Larry Jones]
+
+ - INFO_GRACEDELAY now exists in the shared-tables.h, which was causing
+   upsd to spit out warnings about unknown variables.	[John Hughes]
+
+ - upsset has had more sanity checks applied to the results of strchr.
+
+ - upssched now sets the umask to 077 before creating the interprocess
+   pipe file to keep other people from playing around with it.
+
+ - # comments in config files now work properly, and discard everything
+   else on the line.  To use a # in a config file without having it
+   be a comment, use a \ to escape it.
+
+ - The genericups.txt document should now accurately reflect the state
+   of the driver's UPS types.	[Larry Jones]
+
+ - multimon now uses &deg; instead of a high-bit character for better
+   internationalization.	[Henry Nelson]
+
+ - The -k shutdown calls in the common core drivers should work again.
+
+ - The DTR/RTS handling code in the powercom driver has been reworked.
+
+ - upsset now reports errors during the INSTCMD sequence.
+
+ - upsmon no longer checks the number of logins on a slave UPS.  This
+   could have caused an interesting temporary lock while two processes
+   both watched for the other to depart.  It would have eventually
+   exited due to the HOSTSYNC timer, though.
+
+What's next:
+
+ - More control functions for upsdrvctl
+
+ - Better pid file handling
+
+Ongoing:
+
+ - Driver conversions so they can use upsdrvctl
+
+Out there:
+
+ - Make good use of SIGHUP in upsd and upsmon.

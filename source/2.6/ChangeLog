@@ -1,0 +1,3917 @@
+2012-08-08  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3712] NEWS, UPGRADING, configure.in, docs/website/news.txt:
+	  Final update for 2.6.5 release
+	* [r3711] drivers: Subversion ignored files completion
+	  
+	  Mark oldmge-shut binary as Subversion ignored (no functional
+	  changes)
+	* [r3710] docs/configure.txt, m4/nut_check_libltdl.m4: Complete
+	  libltdl configuration options
+	  
+	  Add configure options to add specific cflags
+	  (--with-libltdl-includes) and libs (--with-libltdl-libs) for
+	  libltdl. This serves at least to point at non standard location,
+	  as on FreeBSD (reported by David Durieux)
+
+2012-08-06  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3708] docs/documentation.txt: Add a Wikipedia reference on
+	  Solar controller
+	* [r3707] docs/Makefile.am, docs/images/eaton-logo.png,
+	  docs/images/hostedby.png, docs/website/Makefile.am,
+	  docs/website/css/web-layout.css, docs/website/web-layout.conf:
+	  Free NUT from Eaton website hosting
+	  
+	  NUT is no more hosted by Eaton. Arnaud Quette (NUT project
+	  leader) has taken over NUT hosting on his own, to give NUT back
+	  some independance. This effort is also part of a logic to stop
+	  crediting Eaton for contributions from others (especially Arnaud
+	  Quette, as an individual). The new hosting service is located, as
+	  for Arnaud's blog (http://arnaud.quette.fr) on Gandi servers,
+	  using PaaS. This will allow more flexibility and automation of
+	  the release process
+
+2012-08-06  Charles Lepple <clepple+nut@gmail.com>
+
+	* [r3704] configure.in, docs/man/Makefile.am,
+	  docs/man/macosx-ups.txt, drivers/Makefile.am,
+	  drivers/macosx-ups.c: macosx-ups: new OS X Power Sources
+	  meta-driver
+	  
+	  Mac OS X provides UPS status information in a format similar to
+	  what is shown for laptop batteries. This driver will convert that
+	  information into a format compatible with NUT.
+
+2012-08-05  Charles Lepple <clepple+nut@gmail.com>
+
+	* [r3703] drivers/skel.c: Update comments in skel.c
+	  
+	  Fixed a typo, and added fatalx() as an alternative to
+	  fatal_with_errno()
+	* [r3702] docs/man/skel.txt: Update skeleton driver man page.
+
+2012-08-03  Charles Lepple <clepple+nut@gmail.com>
+
+	* [r3701] docs/man/nutscan.txt, docs/man/nutscan_scan_avahi.txt:
+	  nutscan documentation: editing
+
+2012-07-31  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3699] docs/images/simple.png: Remove extraneous text
+	* [r3698] data/driver.list.in: Add support for UNITEK Alpha650ipF
+	  and Alpha650ipE
+	  
+	  Add UNITEK Alpha650ipF and Alpha650ipE (USB ID 0x0f03:0x0001) to
+	  the list of blazer_usb supported models (reported by Pascal
+	  MIRALLES)
+	* [r3697] docs/website/projects.txt: Reference Buffalo NAS in
+	  Related projects
+	  
+	  Add a reference in the Related projects, on Buffalo TerraStation
+	  (Business-class) NAS range, which uses NUT for power protection
+
+2012-07-30  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3696] docs/download.txt, docs/website/news.txt: First NUT
+	  virtualization package (VMware ESXI 5.0)
+	  
+	  Add the reference to the first NUT virtualization package. This
+	  one is currently an external effort to add VMware NUT client for
+	  ESXI 5.0. But this support will be part of NUT in the long run
+
+2012-07-24  Charles Lepple <clepple+nut@gmail.com>
+
+	* [r3692] data/driver.list.in, docs/man/powercom.txt,
+	  drivers/powercom-hid.c: Synchronize Powercom USB documentation
+	  and code comments.
+	  
+	  Apparently, there are at least two different models with the USB
+	  VID:PID of 0d9f:0004. This update is based on the following
+	  report by Gordon Longland:
+	  
+	  http://lists.alioth.debian.org/pipermail/nut-upsuser/2012-July/007748.html
+
+2012-07-23  Charles Lepple <clepple+nut@gmail.com>
+
+	* [r3689] docs/man/powercom.txt: powercom: Mention this driver is
+	  serial only
+
+2012-07-20  Frederic Bohe <fbohe-guest@alioth.debian.org>
+
+	* [r3688] data/driver.list.in, drivers/Makefile.am: Switch mge-shut
+	  to oldmge-shut and newmge-shut to mge-shut
+	* [r3687] docs/man/mge-shut.txt: Update mge-shut man page for
+	  notification argument.
+	* [r3686] drivers/usbhid-ups.c: Add a "notification" parameter to
+	  newmge-shut driver.
+	  
+	  It is only here for compatibility with mge-shut driver. It is
+	  ignored since we are always using SHUT_SYNC_OFF in libshut.c.
+
+2012-07-19  Frederic Bohe <fbohe-guest@alioth.debian.org>
+
+	* [r3683] docs/man/mge-shut.txt: Add a note in man page about
+	  ondelay parameter unit discrepency between newmge-shut and
+	  mge-shut driver.
+	  
+	  mge-shut use a ten seconds unit for ondelay whereas newmge-shut
+	  uses seconds.
+	* [r3682] drivers/usbhid-ups.c, drivers/usbhid-ups.h: Add a lowbatt
+	  setting to newmge-shut in order to mimic mge-shut setting
+
+2012-07-19  Emilien Kia <emilienkia-guest@alioth.debian.org>
+
+	* [r3681] server/Makefile.am, server/conf.c, server/netcmds.h,
+	  server/netssl.c, server/netssl.h, server/ssl.c, server/ssl.h,
+	  server/upsd.c: Replace server/ssl.[h|c] by server/netssl.[h|c] in
+	  order to prepare nss branch merging.
+
+2012-07-17  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3678] drivers/apc-mib.c: APC SNMP MIB update and completion
+	  
+	  Add available high precision values, new variables
+	  (input.transfer.reason, battery.current.total and ups.test.date),
+	  and move ambient.{temperature,humidity}.{high,low} to
+	  ambient.1.*, since they relate to alarm threshold of external
+	  probe 1 (patch from Hong-Gunn Chew)
+	* [r3677] docs/nut-names.txt: Clarify the use of multiple ambient
+	  sensors
+	  
+	  Multiple sensors can be exposed using the indexed notation.
+	  'ambient.*', without index or using '0', relates to the embedded
+	  sensor. For example: 'ambient.temperature' represent the embedded
+	  sensor temperature. Other sensors (external, communication card,
+	  ...) can use indexes from '1' to 'n'. For example:
+	  'ambient.1.temperature' for the first external sensor
+	  temperature.
+	* [r3676] docs/nut-names.txt: NUT namespace completion
+	  
+	  Add two new variables 'ups.test.date' and
+	  'battery.current.total'. Also add a note on the 'ambient'
+	  collection for supporting multiple sensors
+
+2012-07-16  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3675] drivers/nut-ipmipsu.c, drivers/nut-libfreeipmi.c,
+	  m4/nut_check_libfreeipmi.m4, tools/nut-scanner/nut-scanner.c,
+	  tools/nut-scanner/scan_ipmi.c: Support for FreeIPMI 1.1.x and
+	  1.2.x
+	  
+	  Prepare for supporting API changes in FreeIPMI 1.1.x and 1.2.x.
+	  This is mostly related to SDR API simplifications. A 2nd
+	  iteration will probably address code redundancy, whenever
+	  possible
+
+2012-07-10  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3674] data/driver.list.in, drivers/eaton-mib.c,
+	  drivers/eaton-mib.h, drivers/snmp-ups.c, drivers/snmp-ups.h: Add
+	  support for Eaton ePDU Switched (Pulizzi)
+	  
+	  Implement support for older Eaton / Powerware ePDU Switched.
+	  These were once sold as Pulizzi, and have now been replaced by
+	  newer model (Eaton Marlin implementation and others)
+
+2012-07-09  Emilien Kia <emilienkia-guest@alioth.debian.org>
+
+	* [r3672] configure.in: Fix CppUnit detection.
+	  
+	  Fix inconsistent test for CppUnit install (using pkg-config) to
+	  really enable unit tests.
+
+2012-07-05  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3671] docs/man/nut-ipmipsu.txt: Fix an error on possible power
+	  supplies status
+
+2012-07-04  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3670] clients/upssched.c: Fix upssched regression
+	  
+	  Coverity branch merge r3555 introduced a regression: any
+	  upssched.conf command that takes a second argument resulted in a
+	  defective frame sent to the parent process. Thus, the command was
+	  not executed (patch from Oliver Schonefeld)
+	* [r3669] Makefile.am, configure.in, tests, tests/Makefile.am: Add
+	  basic infrastructure for unit tests
+	  
+	  Merge eki-unittests branch, with some adjustments, to add a basic
+	  initial infrastructure for unit tests, using CppUnit (v1.9.6+)
+	  (from Emilien Kia, from Eaton)
+
+2012-07-03  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3668] scripts/systemd/nut-driver.service.in,
+	  scripts/systemd/nutshutdown.in: Fix upsdrvctl call path
+	  
+	  upsdrvctl is located in @driverexecdir@, not @SBINDIR@ (reported
+	  by Michal Hlavinka, from Redhat)
+
+2012-06-15  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3666] configure.in: Adapt systemd installation directory #2
+	  
+	  Complete commit r3665, by also adapting paths for service files
+
+2012-06-14  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3665] configure.in: Adapt systemd installation directory
+	  
+	  Adapt systemd installation directory for the shutdown script, so
+	  that it does not try to install it in the actual system
+	  directory, but to the pointed build directory, including a sub
+	  directory prefix
+	* [r3664] docs/new-clients.txt: Fix broken link to upscli_*(3) HTML
+	  manual pages
+
+2012-06-12  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3662] docs/new-drivers.txt: Forgotten mention
+	  
+	  upsdrv_info_t->name is also published as "driver.name" variable
+	* [r3661] docs/man/belkinunv.txt, drivers/belkinunv.c,
+	  drivers/main.c, drivers/masterguard.c, drivers/metasys.c,
+	  drivers/mge-utalk.c, drivers/microdowell.c,
+	  drivers/nut-ipmipsu.c, drivers/safenet.c, drivers/tripplitesu.c,
+	  drivers/usbhid-ups.c: Remove redundant driver.version.internal
+	  publication
+	* [r3660] configure.in, docs/configure.txt,
+	  docs/man/nut-scanner.txt: Add missing references to libltdl for
+	  nut-scanner
+	  
+	  nut-scanner requires libltdl (Libtool dlopen abstraction) since
+	  NUT 2.6.3. Documentations have been completed, and nut-scanner
+	  build status is now exposed in the build configuration summary
+	* [r3659] drivers/snmp-ups.c: Fix publication of
+	  driver.version.data
+	  
+	  Publish the MIB name and version in driver.version.data, rather
+	  than merged into driver.version.internal
+	* [r3658] drivers/netxml-ups.c: Fix publication of
+	  driver.version.data
+	  
+	  netxml-ups subdriver version is to be tracked in
+	  driver.version.data, not in driver.version.internal
+	* [r3657] docs/nut-names.txt: Add missing variable
+	  driver.version.data
+	  
+	  Add variable driver.version.data, to track version of the
+	  internal data mapping, for generic drivers (reported by Luiz
+	  Angelo Daros de Luca)
+	* [r3656] docs/nut-names.txt: Fix comment for
+	  driver.version.internal
+	  
+	  Drivers internal version are always tracked separately, and
+	  stored in driver.version.internal
+
+2012-06-11  Michal Soltys <msoltyspl-guest@alioth.debian.org>
+
+	* [r3655] drivers/apcsmart.c: apcsmart: tcsetattr/tcgetattr
+	  addendum
+	  
+	  This small patch moves the comparison sequence into separate
+	  function. No functional changes.
+	  
+	  Also minor retab! run on defines.
+
+2012-06-11  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3654] data/driver.list.in: Add support for REDi Blazer
+	  
+	  Add REDi Blazer 400VA / 600VA / 800VA to the list of blazer_ser
+	  supported models (reported by Marius Gavrilescu)
+	* [r3653] docs/nut-names.txt: Fix a typo error on power.minimum
+	  description
+	  
+	  power.minimum is really the minimum seen apparent power in VA
+	  (reported by Luiz Angelo Daros de Luca)
+
+2012-06-07  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3652] data/driver.list.in, drivers/blazer_usb.c: Add support
+	  for Online Zinto A
+	  
+	  Add Online Zinto A (USB ID 0x06da:0x0601) to the list of
+	  blazer_usb supported models (reported by Carsten Burkhardt)
+
+2012-06-07  Charles Lepple <clepple+nut@gmail.com>
+
+	* [r3651] drivers/oneac.h: Remove unused constants to fix LLVM
+	  compilation error.
+
+2012-06-05  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3650] docs/website/news.txt, docs/website/projects.txt: WMNut
+	  updates
+	  
+	  Update WMNut release (0.64) and hosting URL
+
+2012-06-04  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3647] docs/download.txt, docs/website/news.txt: Update Windows
+	  package publications for 2.6.4-1
+
+2012-05-31  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3643] NEWS, UPGRADING, configure.in, docs/website/news.txt:
+	  Final update for 2.6.4 release
+
+2012-05-30  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3642] data/driver.list.in: Add support for Cyber Power Systems
+	  CP1000PFCLCD
+	  
+	  Add CyberPower Systems CP1000PFCLCD (USB ID 0x0764:0x0501) to the
+	  list of usbhid-ups supported models (reported by David Owen)
+	* [r3641] drivers/apc-mib.c: Track more APC SNMP sysOID values, as
+	  comments
+	* [r3640] drivers/upshandler.h: Fix code spacing (no functional
+	  change)
+	* [r3639] drivers/bcmxcp_ser.c, drivers/bcmxcp_usb.c: Add some
+	  debug traces on incoming / outgoing data
+	* [r3638] INSTALL: Add missing reference to nut.conf manual page
+	* [r3637] drivers/bestfortress.c: Improve Best Fortress LI675VA
+	  support
+	  
+	  Apply an old missed patch: all responses are preceded and
+	  terminated by "CR LF". But bestfortress driver discards anything
+	  after the first "CR LF". This patch trims everything up to the
+	  first LF. (patch from Jørgen Thomsen)
+	* [r3636] drivers/metasys.c: Remove extraneous spaces (no
+	  functional changes)
+
+2012-05-29  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3633] common/parseconf.c: Fix CVE-2012-2944: upsd can be
+	  remotely crashed
+	  
+	  NUT server (upsd), from versions 2.4.0 to 2.6.3, are exposed to
+	  crashes when receiving random data from the network.
+	  
+	  This issue is related to the way NUT parses characters,
+	  especially from the network. Non printable characters were missed
+	  from strings operation (such as strlen), but still copied to the
+	  buffer, causing an overflow.
+	  
+	  Thus, fix NUT parser, to only allow the subset Ascii charset from
+	  Space to ~
+	  
+	  (Reported by Sebastian Pohle, Alioth bug #313636, CVE-2012-2944)
+	* [r3632] data/driver.list.in: Add support for Lexis X-power Tigra
+	  1kVA
+	  
+	  Add Lexis X-power Tigra 1kVA to the list of blazer_ser or bestups
+	  supported models (reported by Tmima Pliroforikis Perifereiakis
+	  Enotitas Pierias)
+	* [r3631] data/driver.list.in: Encourage the use of blazer_ser
+	  instead of bestups
+	  
+	  Mention blazer_ser as prefered compared to bestups. Recent
+	  changes to blazer_ser have made it possible to use it instead of
+	  bestups. In the end, bestups will be replaced by blazer_ser, as
+	  for other Megatec/Q1 drivers
+	* [r3629] drivers/blazer.c, drivers/blazer_ser.c: Improve Best UPS
+	  support in blazer
+	  
+	  Best UPS units, which use a subset of the Megatec/Q1 protocol,
+	  supported by the blazer drivers, can now work with blazer_ser.
+	  This support is still limited, but already offers a decent set of
+	  features
+
+2012-05-25  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3628] server/user.c: Add debug traces for instcmds and actions
+	  
+	  Whenever upsd adds an instant command or an action, from
+	  upsd.users, display a debug trace
+	* [r3627] docs/man/upsd.users.txt: Clarify multiple actions
+	  specification
+	  
+	  Add more details and an example, to illustrate multiple actions
+	  specification (reported by Emilien Kia, from Eaton)
+
+2012-05-24  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3626] data/driver.list.in: Add support for Eaton Management
+	  Card Contact
+	  
+	  Add Eaton Management Card Contact (ref 66104) to the list of
+	  mge-shut or mge-utalk supported models
+	* [r3625] drivers/compaq-mib.c: HP SNMP completion
+	  
+	  Complete HP SNMP mapping table, with thresholds, nominal values
+	  and more commands
+
+2012-05-23  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3623] clients/upsrw.c, common/state.c,
+	  docs/man/upscli_list_start.txt, docs/man/upsrw.txt,
+	  docs/net-protocol.txt, docs/new-drivers.txt,
+	  docs/sock-protocol.txt, drivers/dstate.c, drivers/dstate.h,
+	  include/extstate.h, include/state.h,
+	  scripts/java/jNut/src/main/java/org/networkupstools/jnut/Variable.java,
+	  server/netget.c, server/netlist.c, server/netset.c,
+	  server/sstate.c, server/sstate.h: Support of ranges of values for
+	  writable variables
+	  
+	  Merge branch that implement [RFC]: new dstate_addrange() and
+	  "LIST RANGE" command: it is now possible to specify one or more
+	  ranges of values for writable variables, using dstate_addrange()
+	  in drivers. upsd also supports the new type 'RANGE' for 'GET
+	  TYPE', along with the 'LIST RANGE' command. Finally, users can
+	  interact through upsrw, which displays the supported ranges, and
+	  enforces new value checking against the provided boundaries
+	* [r3622] docs/website/projects.txt: Reference Thecus NAS in
+	  Related projects
+	  
+	  Add a reference in the Related projects, on Thecus NAS range,
+	  which uses NUT for power protection
+
+2012-05-22  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3621] drivers/apcsmart.c, drivers/apcsmart.h: Complete r3620
+	  for HP-UX
+	  
+	  HP-UX does not support VREPRINT, so make it conditional
+	* [r3620] drivers/apcsmart.c, drivers/apcsmart.h: Fix commit r3603
+	  
+	  Commit r3603 (fix tcsetattr() / tcgetattr() issue) has introduced
+	  some incompatibility with older Unix systems, such as Solaris,
+	  Aix and HP-UX. The present commit should address it
+	* [r3618] configure.in, docs/net-protocol.txt, server/netcmds.h,
+	  server/netmisc.c, server/netmisc.h: Add versioning to the network
+	  protocol
+	  
+	  Due to the number of recent evolutions to the network protocol,
+	  along with other possible future changes, NUT network protocol is
+	  now versioned. The chapter "Network protocol information", of the
+	  developer guide, stores the revision history, while a new
+	  "NETVER" command serves this information through the protocol
+
+2012-05-21  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3617] data/driver.list.in: Complete the supported PowerWalker
+	  ranges
+	  
+	  Add PowerWalker Online VFI LCD, Line-Interactive VI LCD and
+	  Line-Interactive VI models to the list of blazer_usb supported
+	  models
+	* [r3616] data/driver.list.in: Add support for Microline C-Lion
+	  Innova ranges
+	  
+	  Add Microline C-Lion Innova models to the list of blazer_usb
+	  supported models
+	* [r3614] data/driver.list.in: Add support for KOLFF ranges
+	  
+	  Add KOLFF BLACK NOVA models to the list of blazer_usb supported
+	  models
+	* [r3613] data/driver.list.in: Add support Ippon INNOVA RT range
+	  
+	  Add Ippon INNOVA RT models to the list of blazer_usb supported
+	  models
+	* [r3612] data/driver.list.in: Add support for Gtec ranges
+	  
+	  Add Gtec models to the list of blazer_ser or blazer_usb supported
+	  models
+	* [r3611] data/driver.list.in: Complete the supported EVER ranges
+	  
+	  Add EVER POWERLINE RT / 11 / 31 and DUO II Pro models to the list
+	  of blazer_ser or blazer_usb supported models
+	* [r3610] data/driver.list.in: Add support for COVER ENERGY SA
+	  ranges
+	  
+	  Add COVER ENERGY SA models to the list of blazer_usb supported
+	  models
+	* [r3609] data/driver.list.in: Add support for Borri ranges
+	  
+	  Add Borri models to the list of blazer_usb supported models
+	* [r3608] data/driver.list.in: Add support for ARTronic ranges
+	  
+	  Add ARTronic models, both serial and USB, to the list of
+	  blazer_ser and blazer_usb supported models
+	* [r3607] drivers/belkin-hid.c: Fix Liebert firmware (incorrect
+	  exponents)
+	  
+	  There are at least two Liebert firmware types which both report a
+	  VID:PID of 10af:0001. The newer ones tend not to have the Belkin
+	  broken Usage Pages (and therefore use standard HID PDC paths) but
+	  they have incorrect exponents for some fields. This patch fixes
+	  the values for the latter implementation
+	  
+	  Author: Charles Lepple <clepple+nut@gmail.com>
+	* [r3606] data/driver.list.in, drivers/netvision-mib.c: Add
+	  3-phases support to Socomec Netvision MIB
+	  
+	  Improve Socomec Netvision MIB, by adding support for 3-phases UPS
+	  (patch from Manuel Bouyer)
+	* [r3605] data/driver.list.in: Add support for PowerShield Defender
+	  1200VA
+	  
+	  Add PowerShield Defender 1200VA (USB ID 0665:5161) to the list of
+	  blazer_usb supported models (reported by Tom Clarkson)
+	* [r3604] drivers/blazer.c, drivers/blazer_ser.c,
+	  drivers/blazer_usb.c: beeper.status belongs to the "ups" data
+	  collection
+
+2012-05-16  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3603] drivers/apcsmart.c, drivers/apcsmart.h: Final fix to the
+	  tcsetattr() / tcgetattr() issue
+	  
+	  The most likely cause of all spurious differences between what
+	  was set on the port with tcsetattr() and what tcgetattr() shows
+	  are likely to do with the c_local PENDIN flag, which is a status
+	  bit, not a control bit. It will change when there's unread
+	  pending input, which can be quite often on an APC UPS.
+	  
+	  The right way to compare struct termios values is to clear the
+	  status flags _after_ the tcsetattr() and of course after the
+	  tcgetattr() call and then compare the result with what was set.
+	  
+	  Also set NOKERNINFO, if available, as we don't want the UPS or
+	  noise on the line to accidentally trigger status output back to
+	  the UPS, and finally make sure IEXTEN is also cleared along with
+	  ISIG since it too can cause weird things to happen.
+	  
+	  This change also adds some debug code to show any differences in
+	  the structures in a logical manner in debug output (and squashes
+	  one tiny compiler warning) (patch from Greg A. Woods)
+	* [r3602] docs/config-notes.txt, docs/man/upsmon.txt: Whitespace
+	  fixes
+	  
+	  Remove some extraneous spaces, suggested by "git diff --check",
+	  and improve a bit formatting (patch #36 from Greg A. Woods)
+
+2012-05-15  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3601] drivers/snmp-ups.c, drivers/snmp-ups.h: Remove dead code
+	  
+	  Remove dead code, related to shutdown handling (no functional
+	  changes) (based on patch #29 from Greg A. Woods)
+	* [r3599] docs/nut-names.txt: Fix formating issue
+	* [r3598] docs/nut-names.txt: Add missing battery.voltage data to
+	  the namespace
+	  
+	  Add missing battery.voltage.{low,high} to the standard NUT
+	  namespace
+	* [r3597] docs/nut-names.txt, drivers/upscode2.c: Rename
+	  peakcurrent to current.peak (as per RFC)
+	  
+	  Rename peakcurrent to current.peak, since it is more coherent and
+	  suitable
+	* [r3596] drivers/dummy-ups.c, drivers/dummy-ups.h: Update and
+	  cleanup
+	  
+	  Convert flags defitions to bitwise left shift, convert some
+	  comments about variables to actual values, and do a bit of
+	  cleanup (patch #27 from Greg A. Woods)
+	* [r3594] drivers/blazer.c: Add comment on shutdown.return ondelay
+	  value
+	  
+	  Add a comment reinforcing the need for ondelay=3 (partial patch
+	  #26 from Greg A. Woods)
+	* [r3593] docs/man/snmp-ups.txt: Complete APC SNMP compatibility
+	  information
+	  
+	  Mention more varieties of APC SNMP cards, and mention the
+	  POWERNET MIB (patch #25 from Greg A. Woods)
+	* [r3590] drivers/netvision-mib.c: Fix status processing for "ECO
+	  mode"
+	  
+	  When running in "ECO mode", the driver should report an
+	  ups.status set to "OL", or it otherwise ends up with an empty
+	  string that confuses upsmon (patch from Ivan Kuznetsov)
+
+2012-05-14  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3589] docs/man/blazer.txt: Mention General Electric in blazer
+	  manual page
+	  
+	  Mention General Electric as a user of the Megatec/Q1 protocol
+	  (patch #24 from Greg A. Woods)
+	* [r3588] clients/upsmon.h: Use bitwise left shift for flags
+	  definitions
+	  
+	  Use (1 << N) to define a bit flag at bit N, which is more
+	  coherent with other similar implementations in NUT (patch #23
+	  from Greg A. Woods)
+	* [r3587] clients/upsmon.c: Cosmetic changes
+	  
+	  Remove dead / redundant #defines, and enable interesting debug
+	  traces that were commented out (based on patch #22 from Greg A.
+	  Woods)
+	* [r3586] drivers/apcsmart.h: Use bitwise left shift for status
+	  flags definitions
+	  
+	  Use (1 << N) to define a bit flag at bit N, which is more
+	  coherent with other similar implementations in NUT (patch #21
+	  from Greg A. Woods)
+	* [r3585] drivers/apcsmart.c, drivers/apcsmart.h: Don't be too
+	  strict about terminal settings
+	  
+	  Don't log an error when tcgetattr() reports different settings on
+	  the port (patch #20 from Greg A. Woods)
+	* [r3584] tools/nut-usbinfo.pl: Better filtering on USB related
+	  files
+	  
+	  The current USB information extraction script is not optimal at
+	  filtering files that need to be inspected. While waiting for a
+	  proper rewrite, improve a bit more filenames filtering (patch #18
+	  from Greg A. Woods)
+	* [r3583] drivers/blazer_ser.c: Quote the debug output for space
+	  visibility
+	  
+	  Quote the debug output so one can see how many spaces there are
+	  (patch #16 from Greg A. Woods)
+	* [r3582] docs/cables/apc.txt: Update APC cabling information
+	  
+	  Update information about APC cable model numbering and revisions
+	  (patch #16 from Greg A. Woods)
+	* [r3581] data/driver.list.in: GE Digital Energy updates
+	  
+	  Rename "GE" to "GE Digital Energy", which is more appropriate in
+	  this context. Also add GT Series 1000-3000 VA to the list of
+	  blazer_ser supported models (patch #15 from Greg A. Woods)
+	* [r3580] docs/developers.txt: Complete notes on spaces for
+	  alignements
+	  
+	  Add complementary note on the use of spaces for alignements
+	  (patch #14 from Greg A. Woods)
+	* [r3577] docs/design.txt: Use more suitable examples
+	  
+	  Use an example driver name matching the unified NUT drivers
+	  generic manual page name (patch #13 from Greg A. Woods)
+	* [r3576] drivers/mge-hid.c: Complete and update Eaton HID usages
+	  table
+
+2012-05-11  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3574] tools/Makefile.am: Fix typo in comment
+	  
+	  Fix a typo error in comment (reported by Fred Bohé, from Eaton)
+	* [r3573] scripts/upower/95-upower-hid.rules: Update upower script
+	  
+	  Update upower script with recent changes and updates (redundant
+	  with patch #6 from Greg A. Woods)
+	* [r3572] tools/Makefile.am: Explicit mention of Makefiles
+	  brokenness
+	  
+	  Document that, at least, this Makefile.am is broken by design
+	  (patch #5 from Greg A. Woods)
+	* [r3571] docs/man/apcsmart.txt: Fix documentation wording
+	  
+	  "there're" is not a valid contraction, especially not in a
+	  technical document (patch #4 from Greg A. Woods)
+	* [r3570] docs/man/apcsmart.txt: Always use upper case for the
+	  acronym "UPS"
+	  
+	  Be consistent in using all upper case for the acronym "UPS" (Ie
+	  Uninterruptible Power Supply) (patch #3 from Greg A. Woods)
+	* [r3569] docs/man/apcsmart.txt: Fix SmartUPS cabling nomenclature
+	  
+	  Correct the nomenclature of the SmartUPS cabling part numbers
+	  (patch #2 from Greg A. Woods)
+	* [r3568] configure.in: Fix a configure error message
+	  
+	  Asciidoc might actually be installed but documentation might
+	  still not be build-able (earlier messages should hint at exactly
+	  what was missing) (patch #1 from Greg A. Woods)
+	* [r3567] data/driver.list.in: Add support for ATEK Defensor range
+	  
+	  Add ATEK Defensor range (Innova series) to the list of blazer_usb
+	  supported models
+	* [r3566] data/driver.list.in: Fix EVER brand name
+	  
+	  The correct name is "EVER", not "EVER UPS", as per a request from
+	  the manufacturer
+
+2012-05-10  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3565] docs/website/news.txt: Update for WMNut 0.63 publication
+	* [r3564] docs/website/ups-protocols.txt: Official Riello protocols
+	  publication
+
+2012-05-03  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3558] drivers/libshut.c, drivers/mge-shut.c: Forgotten driver
+	  version bump
+	* [r3557] clients/upsmon.c: Coverity fix on upsmon
+	  
+	  Remove an unneeded null check, that cause a Coverity error
+	  (reported by Michal Hlavinka from RedHat)
+	* [r3556] drivers/libshut.c, drivers/mge-shut.c: Coverity fix on
+	  Eaton SHUT
+	  
+	  Fix some tests that are always false, regardless of the values of
+	  operands (reported by Michal Hlavinka from RedHat)
+	* [r3555] clients/upssched.c, drivers/bcmxcp.c,
+	  drivers/bcmxcp_usb.c, drivers/dstate.c, drivers/mge-utalk.c,
+	  drivers/rhino.c, drivers/solis.c, drivers/tripplite_usb.c,
+	  tools/nut-scanner/scan_nut.c, tools/nut-scanner/scan_xml_http.c:
+	  Merge Coverity branch
+	  
+	  Merge all work done part of the Coverity static analysis scan,
+	  done by Michal Hlavinka from RedHat
+
+2012-05-02  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3553] docs/download.txt, docs/website/news.txt: Update Windows
+	  package publications
+	* [r3552] common/Makefile.am, include/Makefile.am: Better handling
+	  of nut_version.h
+	  
+	  nut_version.h should not be distributed, since it is
+	  automatically built. Moreover, hard dependency in common/ is not
+	  needed since BUILT_SOURCES reference ensure generation before any
+	  other target:
+	  http://www.gnu.org/software/automake/manual/automake.html#Sources
+	  (Reported by Regid Ichira, Debian bug #613643)
+
+2012-04-27  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3547] data/driver.list.in, drivers/cps-hid.c: Add support for
+	  CyberPower Systems PR6000LCDRTXL5U
+	  
+	  Add CyberPower Systems PR6000LCDRTXL5U (USB ID 0x0764:0x0601) to
+	  the list of usbhid-ups supported models (reported by Dax Kelson)
+	* [r3546] data/driver.list.in: Complete HP supported devices list
+	  
+	  Add HP UPS Management Module to the list of snmp-ups supported
+	  models. Also complete serial compatibility for some models, using
+	  mge-shut
+
+2012-04-25  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3542] docs/man/nut-scanner.txt: Clarify nut-scanner compilation
+	  and distribution
+	  
+	  Document explicitely how nut-scanner is compiled, and how its
+	  features are made available, according to its dependencies (both
+	  compile time and runtime)
+
+2012-04-24  Frederic Bohe <fbohe-guest@alioth.debian.org>
+
+	* [r3539] tools/nut-scanner/nut-scanner.c,
+	  tools/nut-scanner/nutscan-init.c,
+	  tools/nut-scanner/nutscan-init.h, tools/nut-scanner/scan_avahi.c,
+	  tools/nut-scanner/scan_ipmi.c, tools/nut-scanner/scan_nut.c,
+	  tools/nut-scanner/scan_snmp.c, tools/nut-scanner/scan_usb.c,
+	  tools/nut-scanner/scan_xml_http.c: Cleaner exit for nut-scanner
+
+2012-04-23  Frederic Bohe <fbohe-guest@alioth.debian.org>
+
+	* [r3538] tools/nut-scanner/scan_avahi.c,
+	  tools/nut-scanner/scan_ipmi.c, tools/nut-scanner/scan_nut.c,
+	  tools/nut-scanner/scan_snmp.c, tools/nut-scanner/scan_usb.c,
+	  tools/nut-scanner/scan_xml_http.c: Be more verbose when failing
+	  to dynamically load a library
+
+2012-04-14  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3534] docs/man, docs/man/Makefile.am, docs/man/index.txt,
+	  docs/man/nut-recorder.txt, tools/nut-recorder.sh: Create
+	  nut-recorder manual page
+	* [r3533] drivers/tripplite-hid.c: HP USB UPS completion #3
+	  
+	  Remove R/T3000 USB ID (0x03f0:0x1fe5) from the TrippLite HID
+	  mapping, since it is supported by the Eaton HID mapping. This
+	  completes commit r3525. Also adds ups.firmware and device.part
+	* [r3532] drivers/usbhid-ups.c: Correct Celsius temperatures that
+	  should be in Kelvin
+	  
+	  Check if raw value is in the Kelvin range, to detect buggy values
+	  that are already expressed in Celsius degrees, as found on some
+	  HP devices
+	* [r3531] docs/developer-guide.txt, tools/Makefile.am,
+	  tools/device-recorder.sh, tools/nut-recorder.sh: Rename
+	  device-recorder to nut-recorder
+	* [r3530] data/driver.list.in: Reorder Dell devices by connection
+	  type
+
+2012-04-10  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3529] scripts/systemd/nut-driver.service.in,
+	  scripts/systemd/nut-monitor.service.in,
+	  scripts/systemd/nut-server.service.in,
+	  scripts/systemd/nutshutdown.in: Fix broken systemd integration in
+	  the build system
+	  
+	  Step 2: add the theoretical path templates to the systemd
+	  scripts. This however requires adjustments to the RPM package.
+	  Namely, upsd and upsmon will have to be installed in /sbin,
+	  instead of the current /usr/sbin
+	* [r3528] configure.in, scripts/systemd/Makefile.am: Fix broken
+	  systemd integration in the build system
+	  
+	  Step 1: remove Makefile rules that were both useless, and causing
+	  warning. Generate nut-*.service files from .in templates in
+	  configure, as it should be, which is currently void since there
+	  is no target to substitute. This has however required to export
+	  SBINDIR and PIDPATH through AC_SUBST, in configure
+	* [r3525] drivers/mge-hid.c: HP USB UPS completion #2
+	  
+	  Address HP USB/HID devices, that use the Eaton HID definitions.
+	  This includes the latest products range (USB IDs 0x1fe5, 0x1fe6,
+	  0x1fe7 and 0x1fe8), and few more variables and commands
+	* [r3524] drivers/mge-hid.c: Fix Eaton / MGE outlet.2.switchable
+	  flags
+	  
+	  outlet.2.switchable should only be writable to enable ECO mode on
+	  Ellipse ECO, Protection Station and some 3S. Other models should
+	  only expose it as read only (reported by Prachi Gandhi from
+	  Eaton, Alioth bug #313587)
+
+2012-04-04  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3520] scripts/Makefile.am, scripts/logrotate,
+	  scripts/logrotate/nutlogd: Provide log rotation configuration for
+	  NUT
+	  
+	  Provide a basic configuration file for managing rotation
+	  (logrotate) of NUT log files, generated by upslog
+
+2012-04-02  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3518] docs/nut-names.txt: Update the namespace
+	  
+	  Complete the namespace with missing variables and commands, that
+	  are either known or have had an RFC
+	* [r3517] docs/man: Subversion ignored files completion
+	  
+	  Mark nutscan_init.html as Subversion ignored (no functional
+	  changes)
+
+2012-03-31  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3516] data/driver.list.in: Add support for AEG Power Solutions
+	  PROTECT HOME
+	  
+	  Add AEG Power Solutions PROTECT HOME (USB ID 0x0665:0x5161) to
+	  the list of blazer_ser and blazer_usb supported models (reported
+	  by Joachim Schiele)
+
+2012-03-30  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3514] drivers/bcmxcp_usb.c: Add debug traces for read / write
+	  commands
+	* [r3512] common/common.c, include/common.h: Improve support
+	  functions for trimming strings
+	  
+	  Enforce verifications in rtrim, and add an ltrim function
+
+2012-03-29  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3511] data/driver.list.in, drivers/blazer_usb.c: Add support
+	  Innova online UPS family
+	  
+	  Add Innova T (0x06da:0x0201), Innova RT (0x06da:0x0005) and
+	  Innova 3/1 T (0x06da:0x0004) to the list of of blazer_usb and
+	  blazer_ser supported models. Innova series are online UPS
+	  supporting Q1 for compatibility, and many more commands. Better
+	  support, either through blazer_* rewrite or through a new driver,
+	  is considered as a future possibility
+
+2012-03-24  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3508] configure.in, docs/Makefile.am, docs/security.txt,
+	  scripts/Makefile.am, scripts/ufw, scripts/ufw/README,
+	  scripts/ufw/nut.ufw.profile.in: Uncomplicated Firewall (UFW)
+	  support
+	  
+	  Provide an Uncomplicated Firewall (UFW) profile (nut.ufw.profile)
+	  to tightly integrate NUT, along with some documentation
+	  completion for the Security chapter of the user manual
+
+2012-03-23  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3507] conf/nut.conf.sample, docs/man/nut.conf.txt: Fix nut.conf
+	  documentation and sample file
+	  
+	  Since nut.conf is intended to be sourced by shell scripts, spaces
+	  must not be added around the equal sign. Fix documentation and
+	  sample file to conform to this purpose, and add bold warning
+	  (reported by Tim Rice, Alioth bug #312452)
+	* [r3506] clients/upsmon.c, server/upsd.c: Detect duplicate
+	  instances of upsd / upsmon
+	  
+	  Fix a long standing issue, that is the lack of detection of
+	  duplicate upsd / upsmon instances when starting another one of
+	  these daemons. This previously resulted in inconsistencies, such
+	  as being unable to stop the daemon, due to its .pid file being
+	  removed by the newly started instance (last reported by Andrew
+	  Min Chang)
+
+2012-03-21  Frederic Bohe <fbohe-guest@alioth.debian.org>
+
+	* [r3503] drivers/libshut.c: Avoid stack corruption on invalid
+	  frame
+	  
+	  In the protocol, the frame size can be 8 bytes max. That is why
+	  the frame buffer is only 8 bytes long. If the frame is corrupted,
+	  the size read may be up to 15, which may corrupt the stack while
+	  writing into the frame buffer. This patch add a simple sanity
+	  check on the size to avoid a crash and enforce protocol
+	  limitation.
+	* [r3501] drivers/libshut.c: Fix SHUT variables read (from Arnaud
+	  Quette)
+	* [r3500] drivers/bcmxcp.c, drivers/bcmxcp.h, drivers/bcmxcp_usb.c:
+	  Change timeout for PW9120
+	  
+	  Current timeout (1 sec) is too short for PW9120: numerous frames
+	  are lost. Setting this to 2 seconds fix this.
+	* [r3499] drivers/libshut.c: Deactivate UPS notification
+	  
+	  Currently this driver is ignoring notification by automatically
+	  sending NACK when they are received. Nevertheless,this behavior
+	  creates communication errors with some UPS (M2200). So this patch
+	  completly disable the sending of notification from the UPS.
+	  Ideally we should correclty implement notifications managment for
+	  optimal performance, but with this patch, at least, communiaton
+	  works.
+	* [r3498] drivers/libshut.c: Fix shut notification mask
+
+2012-03-09  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3495] docs/config-notes.txt: Emphasize special characters
+	* [r3494] data/driver.list.in, drivers/tripplite-hid.c: HP USB UPS
+	  completion #1
+	  
+	  Address HP USB/HID devices, that use the TrippLite HID
+	  definitions. This includes new ProductIDs, and few more variables
+	  and commands
+	* [r3493] drivers/oneac.h: Remove extraneous comment start
+
+2012-03-08  Frederic Bohe <fbohe-guest@alioth.debian.org>
+
+	* [r3487] common/parseconf.c, common/upsconf.c,
+	  docs/config-notes.txt: More flexible '=' character managment in
+	  conf files
+	  
+	  This allow to support the following forms : 'foo = bar',
+	  'foo=bar', 'foo =bar' and 'foo= bar'
+
+2012-03-06  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3485] docs/man/oneac.txt, drivers/oneac.c, drivers/oneac.h:
+	  Improve general OneAC support (oneac 0.80)
+	  
+	  Improve support for all families of Oneac (EG, ON, OZ and OB),
+	  including support for more data and instant commands (patch from
+	  Bill Elliot)
+
+2012-03-05  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3484] drivers/blazer.c, drivers/blazer_ser.c,
+	  drivers/blazer_usb.c: Guesstimate battery high and low voltages
+	  
+	  Add an automatic estimation for high and low voltages, to be able
+	  to determine battery charge. This should cover most cases, but a
+	  bold mention has been added at driver startup, to inform the
+	  user. Driver version (USB and serial) have been bumped to reflect
+	  this change
+	* [r3483] drivers/blazer.c: Set 'FSD' status flag upon need
+	  
+	  As per the recent decision to allow driver to set 'FSD' status
+	  flag, set 'FSD' upon "Shutdown imminent" detection
+
+2012-03-02  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3481] autogen.sh, scripts/augeas/Makefile.am: Sanity check
+	  before python script execution
+	  
+	  Only generate Augeas ups.conf lens if we can import required
+	  Python modules (re,glob,codecs)
+	* [r3480] docs/man/blazer.txt: Fix typo error in runtimecal example
+	  values
+	* [r3479] docs/stable-hcl.txt: Improve formating
+	* [r3478] docs/new-drivers.txt: Formalize the use of the FSD status
+	  flag
+	  
+	  As an exception, drivers are now allowed to set the "FSD" (Forced
+	  ShutDown) status flag when an imminent shutdown has been detected
+
+2012-02-29  Charles Lepple <clepple+nut@gmail.com>
+
+	* [r3477] clients/upsc.c, docs/man/upsc.txt: Client side
+	  implementation of "LIST CLIENT"
+	  
+	  Implement "LIST CLIENT" in upsc, using "-c <device name>"
+	  
+	  Author: Arnaud Quette <arnaud.quette@free.fr>
+	* [r3476] docs/net-protocol.txt, server/netlist.c: Adjust server
+	  side implementation of "LIST CLIENT"
+	  
+	  Commands of the "LIST" family have to be coherent with the
+	  command name. Ie, "LIST CLIENT" should use the same "CLIENT"
+	  prefix, or it will otherwise break client side verification
+	  mechanism
+	  
+	  Author: Arnaud Quette <arnaud.quette@free.fr>
+	* [r3475] server/netlist.c: Adjust "LIST CLIENTS" implementation
+	  
+	  Adjust "LIST CLIENTS" implementation to be more coherent with
+	  other network protocol commands
+	  
+	  Author: Arnaud Quette <arnaud.quette@free.fr>
+	* [r3474] docs/net-protocol.txt: Document new "LIST CLIENTS"
+	  command
+	  
+	  Author: Arnaud Quette <arnaud.quette@free.fr>
+	* [r3473] server/upsd.c, server/upsd.h: Remove upsd "info" command
+	  
+	  Adjust initial "LIST CLIENTS" commit, by removing the upsd "info"
+	  command, which is not suitable, and redundant with the "LIST
+	  CLIENT" command of the network protocol
+	  
+	  [Fixed compilation error]
+	  
+	  Author: Arnaud Quette <arnaud.quette@free.fr>
+	* [r3472] scripts/python/module/PyNUT.py: Add support for LIST
+	  CLIENTS, etc. to PyNUT.
+	  
+	  Patch by Rene Martín Rodríguez <rmrodri@ull.edu.es>. Merged with
+	  typo fixes in repository.
+	  
+	  Covers LIST CLIENTS, FSD, HELP and VER. Module version bumped to
+	  1.2.2.
+	  
+	  Discussion:
+	  http://article.gmane.org/gmane.comp.monitoring.nut.devel/5871
+	* [r3471] server/netlist.c, server/upsd.c, server/upsd.h: Add new
+	  "LIST CLIENTS" command to NUT protocol.
+	  
+	  Patch by Rene Martín Rodríguez <rmrodri@ull.edu.es>, with
+	  indentation changed to tabs.
+	  
+	  Discussion:
+	  http://article.gmane.org/gmane.comp.monitoring.nut.devel/5870
+	* [r3470] drivers/blazer.c: Update URL to Megatec protocol
+	  description.
+
+2012-02-28  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3469] drivers/liebert-hid.c: UPower optimization
+	  
+	  Always spell manufacturer names the same way across the various
+	  USB drivers. This avoids duplication of manufacturer entries in
+	  scripts/upower/95-upower-hid.rules, during automatic generation
+
+2012-02-27  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3468] data/driver.list.in, drivers/cps-hid.c: Add support for
+	  CyberPower OR700LCDRM1U
+	  
+	  Add CyberPower OR700LCDRM1U (0x0764:0x0601) to the list of
+	  usbhid-ups supported models (reported by Brian McCann)
+
+2012-02-22  Michal Soltys <msoltyspl-guest@alioth.debian.org>
+
+	* [r3467] drivers/apcsmart.c: drivers/apcsmart.c: setvar_string()
+	  and apc_write_long() bugfixes
+	  
+	  setvar_string() couldn't function properly, due to the use of
+	  wrong variable.
+	  
+	  Not associated with any bugreport (reported directly to email).
+	* [r3466] drivers/apcsmart.c: drivers/apcsmart.c: make
+	  tcsetattr()/tcgetattr() difference not fatal
+	  
+	  This is follow up from earlier bug report (#313395). Earlier
+	  commit should have fixed the issue, but the original submitter
+	  never commented on it.
+	  
+	  Just in case - instead of making it fatal, we only log the issue.
+
+2012-02-20  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3450] drivers/snmp-ups.c, tools/nut-scanner/scan_snmp.c: Better
+	  handling of Net-SNMP AES PrivProtocol
+	  
+	  Handle smartly issues related to Net-SNMP support and declaration
+	  of AES PrivProtocol
+
+2012-02-19  Charles Lepple <clepple+nut@gmail.com>
+
+	* [r3449] drivers/snmp-ups.c, drivers/snmp-ups.h: Don't allocate
+	  storage for variables in snmp-ups.h
+	  
+	  The header files should declare variables as extern, and they
+	  should be allocated in only one .c file (not all of the files
+	  which include the .h file). While this is not an immediate
+	  problem when only one .c file includes the .h file, it still
+	  should be fixed in case that changes in the future.
+	  
+	  Patch by Daniel Macks:
+	  http://fink.cvs.sourceforge.net/viewvc/fink/experimental/dmacks/finkinfo/nut.patch?revision=1.1&view=markup
+	* [r3448] drivers/bcmxcp.c, drivers/bcmxcp.h: Don't allocate
+	  storage for variables in bcmxcp.h
+	  
+	  The header files should declare variables as extern, and they
+	  should be allocated in only one .c file (not all of the files
+	  which include the .h file). This was causing multiple symbol
+	  definitions on Mac OS X.
+	  
+	  Patch by Daniel Macks:
+	  http://fink.cvs.sourceforge.net/viewvc/fink/experimental/dmacks/finkinfo/nut.patch?revision=1.1&view=markup
+
+2012-02-16  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3447] data/driver.list.in, drivers/blazer_usb.c: Add support
+	  for Online Yunto YQ450
+	  
+	  Add Online Yunto YQ450 (0x06da:0x0002) to the list of blazer_usb
+	  supported models (reported by Thomas Maisl)
+
+2012-02-16  Charles Lepple <clepple+nut@gmail.com>
+
+	* [r3445] tools/git-svn.authors, tools/svn2cl.authors: Update SVN
+	  username mappings
+
+2012-02-14  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3440] data/driver.list.in: Add support for Tripp-Lite
+	  OMNISMART500
+	  
+	  Add Tripp-Lite OMNISMART500 (productID 0001) to the list of
+	  tripplite_usb supported models (reported by Matt Schulte)
+
+2012-02-10  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3439] data/driver.list.in: Support for Dell UPS Network
+	  Management Card
+	  
+	  Add Dell UPS Network Management Card to the list of snmp-ups and
+	  netxml-ups supported models. SNMP support currently relies on
+	  IETF (RFC-1628) MIB, and not on Dell UPS MIB
+
+2012-02-09  Frederic Bohe <fbohe-guest@alioth.debian.org>
+
+	* [r3435] tools/nut-scanner/scan_snmp.c: Remove useless lib_mutex
+	  and buggy dev_mutex
+
+2012-02-03  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3431] Makefile.am: Update ChangeLog generation and fix text
+	  wrapping
+	  
+	  Adapt the ChangeLog file generation process to correctly wrap
+	  text, even with the new 'git style' format, used for Subversion
+	  commit messages
+
+2012-02-02  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3426] drivers/bcmxcp.c, drivers/bcmxcp.h: Improve XCP support
+	  for battery status
+	  
+	  Add support for battery test publication in ups.test.result, and
+	  RB (replace battery) in ups.status
+
+2012-01-31  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3424] drivers/bestfortress.c: Add more debug traces
+	  
+	  Add more debug traces, again, to work on the checksum corruption
+	  issue
+
+2012-01-23  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3411] drivers/mge-mib.c: Clean and complete MGE MIB
+	  
+	  Complete MGE MIB for status, variables and commands, using IETF
+	  MIB OIDs when needed. Macro have also been replaced by actual
+	  numeric OID paths for better clarity.
+	* [r3410] drivers/snmp-ups.c, drivers/snmp-ups.h: snmp-ups shutdown
+	  support
+	  
+	  snmp-ups now provides support for UPS shutdown, based on
+	  usbhid-ups mechanisms (composite commands and fallback).
+	  Composite commands are also supported. This means, for example,
+	  that if 'shutdown.return' is not supported, a combination of
+	  'load.off' + 'load.on' may be used.
+	* [r3409] drivers/ietf-mib.c: Fix invalid variable name
+	  
+	  Beeper status belongs to the 'ups' data collection
+	* [r3408] drivers/snmp-ups.c: Check validity of instant commands
+	  before addition
+	  
+	  Prior to adding new instant commands, referenced OIDs are now
+	  checked for existance. This avoid adding commands that are not
+	  supported
+	* [r3407] docs/man/upsmon.txt: Fix upsmon synopsis
+	  
+	  Add the missing '-K' (Test for the shutdown flag) to upsmon
+	  synopsis (reported by Regid Ichira)
+
+2012-01-20  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3406] data/driver.list.in: Support for Riello Netman Plus 102
+	  SNMP Card
+	  
+	  Add Riello Netman Plus 102 SNMP Card, and attached Sentinel SDL
+	  6000-7 and Sentinel Dual SDH 1000-7 UPS, to the list of snmp-ups
+	  supported models (reported by Rainer Stumbaum)
+
+2012-01-19  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3400] drivers/bestfortress.c: Add more debug traces, to work on
+	  the checksum corruption issue
+
+2012-01-18  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3399] docs/nut-names.txt, drivers/usbhid-ups.c: Adjust
+	  ups.start.auto value for shutdown commands
+	  
+	  When present, ups.start.auto value needs to be adjusted for
+	  shutdown.{return,stayoff} to behave as expected. This is limited
+	  to Eaton devices (reported by Rich Wrenn)
+
+2012-01-11  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3395] UPGRADING: Cleanup garbage line
+	  
+	  Remove garbage line that was added by accident during the
+	  AsciiDoc branch merge or work
+	* [r3394] tools/nut-scanner/Makefile.am,
+	  tools/nut-scanner/nutscan-init.c, tools/nut-scanner/scan_nut.c:
+	  Move libupsclient to weak runtime dependencies
+	  
+	  libupsclient, as other libraries used by nut-scanner, is now a
+	  weak runtime dependency, through the use of lt_dl*() functions.
+	  This means that libupsclient is not anymore required, but only
+	  suggested. This should also solve the distcheck-light compilation
+	  on Aix (on behalf of Frédéric Bohe, from Eaton)
+
+2012-01-09  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3382] drivers/bestups.c: Add the missing driver variable
+	  "battvoltmult" (patch from Sadara Kael)
+
+2012-01-06  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3379] drivers/snmp-ups.c: Reword the message when sysOID
+	  detection fails
+	* [r3378] drivers/compaq-mib.c: Add the sysOID value, and bump the
+	  MIB version to 1.1 (reported by Jack Challen)
+	* [r3377] docs/download.txt: Remove inline SHA-256 sum, and provide
+	  links to MD5 and SHA-256 sums
+
+2012-01-05  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3376] server/netget.c: GET UPSDESC does not need device sanity
+	  checks (Ie connected, with fresh data) to answer (reported by
+	  Emilien Kia, Alioth bug #313323)
+	* [r3374] data/driver.list.in: Add Dynamix 1000VA USB to the list
+	  of blazer_usb supported models (requires "langid_fix=0x0409" in
+	  ups.conf ; reported by Glen Ogilvie)
+
+2012-01-04  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3372] docs/download.txt: Add the missing SHA-256 sum on the
+	  Download page / section (need to be generated after the
+	  distribution package)
+	* [r3371] docs/website/news.txt: Update 2.6.3 release date
+
+2012-01-03  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3370] NEWS, UPGRADING, configure.in, docs/website/news.txt:
+	  Final update for 2.6.3 release
+
+2012-01-03  Frederic Bohe <fbohe-guest@alioth.debian.org>
+
+	* [r3369] docs/config-notes.txt: Add a note about file names with
+	  space characters in the documentation.
+
+2012-01-03  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3368] drivers/dummy-ups.c: Add a comment for further processing
+
+2012-01-03  Frederic Bohe <fbohe-guest@alioth.debian.org>
+
+	* [r3367] tools/nut-scanner/nut-scanner.c: Fix nut scanner SNMP v3
+	  help message.
+	* [r3366] docs/man/nut-scanner.txt: Fix nut scanner SNMP v3
+	  documentation.
+
+2011-12-17  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3364] drivers/blazer_usb.c: Actually apply the langid_fix
+	  value, when calling usb_get_string (reported by Charles Lepple)
+	* [r3363] data/driver.list.in, docs/man/blazer.txt,
+	  drivers/blazer_usb.c: Try to fix language ID support for USB
+	  units from LDLC, Dynamix and no names in blazer_usb (reworked
+	  patch, from Brian R. Smith and Aurélien Grenotton)
+
+2011-12-16  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3362] scripts/HP-UX: Add the generated HP-UX packaging script
+	  (.psf) to the list of Subversion ignored files
+	* [r3361] drivers/eaton-mib.c, drivers/snmp-ups.c: Fix newer Eaton
+	  ePDU OIDs declaration ordering, so that it better supports the
+	  various models (switched or advanced monitored)
+
+2011-12-15  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3360] clients/upsclient.c, drivers/belkinunv.c,
+	  drivers/etapro.c, drivers/gamatronic.c, drivers/isbmex.c,
+	  drivers/libshut.c, drivers/metasys.c, drivers/mge-shut.c,
+	  drivers/microdowell.c, drivers/nut-libfreeipmi.c,
+	  drivers/rhino.c, drivers/solis.c: Fix set but not used variables
+	  [-Wunused-but-set-variable] (including patch from Regid Ichira)
+
+2011-12-13  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3359] Makefile.am, configure.in, docs/man,
+	  docs/man/Makefile.am, docs/man/nutscan_init.txt,
+	  docs/man/nutscan_scan_avahi.txt, docs/man/nutscan_scan_ipmi.txt,
+	  docs/man/nutscan_scan_nut.txt, docs/man/nutscan_scan_snmp.txt,
+	  docs/man/nutscan_scan_usb.txt,
+	  docs/man/nutscan_scan_xml_http.txt, drivers/nut-libfreeipmi.c,
+	  m4/nut_check_libfreeipmi.m4, m4/nut_check_libltdl.m4,
+	  tools/nut-scanner/Makefile.am, tools/nut-scanner/nut-scan.h,
+	  tools/nut-scanner/nut-scanner.c,
+	  tools/nut-scanner/nutscan-init.c,
+	  tools/nut-scanner/nutscan-init.h, tools/nut-scanner/scan_avahi.c,
+	  tools/nut-scanner/scan_ipmi.c, tools/nut-scanner/scan_nut.c,
+	  tools/nut-scanner/scan_snmp.c, tools/nut-scanner/scan_usb.c,
+	  tools/nut-scanner/scan_xml_http.c: Merge nut-scanner_dlopen
+	  branch, at revision 3358. This brings weak runtime dependencies
+	  to nut-scanner, allowing to compile with all options and to run
+	  according to the available dependencies. It also adds IPMI scan
+	* [r3358] compile: Update compile script, as per the latest version
+	  available in Automake (1.11)
+
+2011-12-05  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3341] data/driver.list.in, docs/man/snmp-ups.txt,
+	  drivers/Makefile.am, drivers/cyberpower-mib.c,
+	  drivers/cyberpower-mib.h, drivers/snmp-ups.c: Add Cyber Power
+	  Systems with SNMP RMCARD (100, 201, 202 and 301) to the list of
+	  snmp-ups supported models (patch from Eric Schultz)
+	* [r3340] drivers/snmp-ups.c: Remove the Eaton Marlin hook, for
+	  base outlet index, since it has been fixed by a new firmware
+	  revision
+
+2011-11-29  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3338] tools/nut-snmpinfo.py: Fix indentation and use open()
+	  instead of file(), to better support Python 3 (Alioth bug
+	  #313446, patch from Bohdan Popovych)
+
+2011-11-25  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3335] drivers/nut-ipmi.h: Fix wrong prototype declaration, that
+	  was causing a compilation warning (implicit declaration of
+	  function ‘nut_ipmi_get_sensors_status’)
+
+2011-11-24  Prachi Gandhi <prachi-guest@alioth.debian.org>
+
+	* [r3328] Makefile.am, configure.in, scripts/Makefile.am,
+	  scripts/Solaris: Reverted changes made for Solaris packaging
+	  files(revision 3326), added files in NUT_packaging branch
+	* [r3326] Makefile.am, configure.in, scripts/Makefile.am,
+	  scripts/Solaris, scripts/Solaris/Makefile.am,
+	  scripts/Solaris/makelocal.sh, scripts/Solaris/pkginfo.in,
+	  scripts/Solaris/prototype: Solaris NUT package files added
+
+2011-11-15  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3321] drivers/blazer_usb.c, drivers/usb-common.h: Revert commit
+	  r2993 and r2994. This enables again inclusion of buggy USB Device
+	  and Vendor IDs, supported by blazer_usb, in udev rules file
+	  (Reported by Stanislav Brabec, from Suse)
+	* [r3320] tools/Makefile.am: Add missing comment
+
+2011-11-12  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3318] drivers/mge-mib.c: Add upsmgBatteryLowCondition OID to
+	  the status mapping (reported by Kiss Gabor (Bitman))
+
+2011-11-11  Praveen Kumar <praveenkumar-guest@alioth.debian.org>
+
+	* [r3317] scripts/HP-UX/makedepot.sh: script file to create package
+	  (depot) for HP-UX
+
+2011-11-08  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3316] docs/website/web-layout.conf: Complete search keywords
+	* [r3315] docs/website/web-layout.conf: Final fix for the
+	  displaying of the legend, to work on all browsers, while still
+	  being conforming to W3C validation
+
+2011-11-07  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3314] docs/website/web-layout.conf: Fix displaying of the
+	  legend
+
+2011-11-05  Michal Soltys <msoltyspl-guest@alioth.debian.org>
+
+	* [r3313] docs/cables.txt, docs/man/apcsmart.txt: apcsmart.txt:
+	  minor documentation update
+	  
+	  Broken diagram link and 940-0024E cable mention (reported by
+	  Jonathan Laventhol).
+
+2011-11-05  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3312] conf/upsd.conf.sample, server/upsd.c: Don't fail to start
+	  if at least one of the listening interface is available. This is
+	  needed on systems where either IPv4 or IPv6 is disabled, and no
+	  explicit LISTEN directive has been specified (Reported by Pavel
+	  Zubkou, Debian bug #598741)
+
+2011-11-02  Praveen Kumar <praveenkumar-guest@alioth.debian.org>
+
+	* [r3310] configure.in, scripts/HP-UX/nut.psf.in: Adding packaging
+	  script for HPUX
+
+2011-10-31  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3308] docs/download.txt, docs/website/news.txt: Publish update
+	  jNut 0.2, along with the new jNutWebAPI (contributed by Emilien
+	  Kia, from Eaton)
+
+2011-10-28  Emilien Kia <emilienkia-guest@alioth.debian.org>
+
+	* [r3306] scripts/java/README, scripts/java/jNutWebAPI,
+	  scripts/java/jNutWebAPI/README, scripts/java/jNutWebAPI/pom.xml,
+	  scripts/java/jNutWebAPI/src, scripts/java/jNutWebAPI/src/main,
+	  scripts/java/jNutWebAPI/src/main/java,
+	  scripts/java/jNutWebAPI/src/main/java/org,
+	  scripts/java/jNutWebAPI/src/main/java/org/networkupstools,
+	  scripts/java/jNutWebAPI/src/main/java/org/networkupstools/jnutwebapi,
+	  scripts/java/jNutWebAPI/src/main/java/org/networkupstools/jnutwebapi/NutRestProvider.java,
+	  scripts/java/jNutWebAPI/src/main/java/org/networkupstools/jnutwebapi/RestWSApplication.java,
+	  scripts/java/jNutWebAPI/src/main/java/org/networkupstools/jnutwebapi/ScannerProvider.java,
+	  scripts/java/jNutWebAPI/src/main/resources,
+	  scripts/java/jNutWebAPI/src/main/webapp,
+	  scripts/java/jNutWebAPI/src/main/webapp/WEB-INF,
+	  scripts/java/jNutWebAPI/src/main/webapp/WEB-INF/web.xml,
+	  scripts/java/jNutWebAPI/src/test,
+	  scripts/java/jNutWebAPI/src/test/java,
+	  scripts/java/jNutWebAPI/src/test/java/org,
+	  scripts/java/jNutWebAPI/src/test/java/org/networkupstools,
+	  scripts/java/jNutWebAPI/src/test/java/org/networkupstools/jnutwebapi:
+	  Initial commit of jNutWebAPI.
+	* [r3305] scripts/java/jNut,
+	  scripts/java/jNut/src/main/java/org/networkupstools/jnut/Scanner.java:
+	  Fix a little bug with function namming (get instead of set).
+
+2011-10-27  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3304] docs/maintainer-guide.txt: Create a basic NUT maintainer
+	  guide, to start tracking and improving maintenance workflow
+	* [r3303] drivers/bcmxcp_usb.c: Handle disconnection issues and
+	  reconnection mechanism (bug reported by Rich Wrenn)
+
+2011-10-25  Emilien Kia <emilienkia-guest@alioth.debian.org>
+
+	* [r3302]
+	  scripts/java/jNut/src/test/java/org/networkupstools/jnut/ClientTest.java:
+	  Add licence information.
+	* [r3301] scripts/java/jNut/README, scripts/java/jNut/pom.xml,
+	  scripts/java/jNut/src/main/java/org/networkupstools/jnut/Scanner.java,
+	  scripts/java/jNut/src/test/java/org/networkupstools/jnut/ScannerTest.java:
+	  Add nut-scanner.
+
+2011-10-25  Frederic Bohe <fbohe-guest@alioth.debian.org>
+
+	* [r3300] tools/nut-scanner/scan_snmp.c: Add sanity checks
+	* [r3299] tools/nut-scanner/scan_avahi.c: Remove unused variable
+
+2011-10-25  Michal Soltys <msoltyspl-guest@alioth.debian.org>
+
+	* [r3298] drivers/apcsmart.c: drivers/apcsmart.c: minor correction
+	  
+	  Assigning 0 directly was wrong (actually, a leftover from earlier
+	  version of the code that was removed) - ser_set_speed() prepares
+	  the port initially, we only adjust certain options.
+
+2011-10-24  Frederic Bohe <fbohe-guest@alioth.debian.org>
+
+	* [r3297] docs/man/nut-scanner.txt,
+	  tools/nut-scanner/nut-scanner.c: Forgot to document "-q" option
+	  (thanks to Emilien Kia for reporting this)
+
+2011-10-21  Frederic Bohe <fbohe-guest@alioth.debian.org>
+
+	* [r3296] tools/nut-scanner/nut-scanner.c: Trivial layout
+	  consistency
+	* [r3295] docs/man/nut-scanner.txt: Update man page with -V and -a
+	  option
+	* [r3294] tools/nut-scanner/nut-scanner.c: Add an option to display
+	  available bus (usefull for wrapper).
+	* [r3293] tools/nut-scanner/nut-scanner.c: return -1 on bad command
+	  line option
+
+2011-10-19  Frederic Bohe <fbohe-guest@alioth.debian.org>
+
+	* [r3292] tools/nut-scanner/nutscan-ip.c: Fix crash on 32bits
+	  systems
+	* [r3291] tools/nut-scanner/nut-scanner.c: Add a switch to display
+	  NUT version.
+
+2011-10-19  Charles Lepple <clepple+nut@gmail.com>
+
+	* [r3290] docs/FAQ.txt: Add FAQ entry for LISTEN directive
+
+2011-10-18  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3289] drivers/eaton-mib.c: Fix outlets reported current, which
+	  were off by 100 in aphel_genesisII MIB, and bump MIB version to
+	  0.46 (patch from Sven Nilsson)
+
+2011-10-14  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3288] docs/Makefile.am, docs/images/nut-logo.png,
+	  docs/images/nut.svg, docs/website/Makefile.am,
+	  docs/website/css/web-layout.css, docs/website/faviconut.ico,
+	  docs/website/faviconut.png, docs/website/web-layout.conf: Add the
+	  new NUT logo (contributed by Luc Descotils, from Eaton)
+	* [r3287] docs/website/web-layout.conf: Fix another W3C validator
+	  error (there is no attribute "language" anymore for <script> in
+	  XHTML 1.1)
+	* [r3286] data/driver.list.in: Remove redundant entry, that
+	  probably causes a W3C validator error (end tag for "tr" which is
+	  not finished)
+	* [r3285] tools/Makefile.am: Only generate static and JSON HCL if
+	  we can import json, simplejson and lxml Python modules
+	* [r3284] docs/Makefile.am: Remove the user manual dependency on
+	  static HCL, which broke Buildbot
+	* [r3283] configure.in, docs/Makefile.am, docs/download.txt,
+	  docs/website/Makefile.am: Automate generation of the version
+	  release information, in the Download section. This is a rewritten
+	  version of commit 3272, this time using Asciidoc mechanism
+	  instead of Autoconf
+	* [r3282] Makefile.am, docs/Makefile.am, tools/Makefile.am,
+	  tools/nut-hclinfo.py: Add static HCL as a user manual dependency,
+	  along with the needed build rules
+
+2011-10-14  Charles Lepple <clepple+nut@gmail.com>
+
+	* [r3281] include/Makefile.am: nut_version.h: grab Git revision, if
+	  any
+
+2011-10-13  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3280] docs/configure.txt: Add missing --with-avahi
+	  documentation
+	* [r3279] docs/Makefile.am, docs/developer-guide.txt,
+	  tools/nut-scanner, tools/nut-scanner/README,
+	  tools/nut-scanner/nut-scan.h: Add a 'NUT device discovery'
+	  chapter to the developer guide, to document libnutscan
+	* [r3278] configure.in: Enable Avahi automatic support, upon
+	  detection
+	* [r3277] docs/man, docs/man/Makefile.am, docs/man/index.txt,
+	  docs/man/nutscan.txt: Add an overview manpage for libnutscan
+	* [r3276] configure.in, docs/Makefile.am, docs/download.txt,
+	  docs/download.txt.in: Revert commit 3272, which breaks
+	  distribution check, while waiting for a suitable solution
+
+2011-10-13  Charles Lepple <clepple+nut@gmail.com>
+
+	* [r3275] docs/man/nut-scanner.txt: nut-scanner.txt: spelling and
+	  style edits
+
+2011-10-13  Frederic Bohe <fbohe-guest@alioth.debian.org>
+
+	* [r3274] docs/man/nut-scanner.txt: Add examples to nut-scanner man
+	  page
+
+2011-10-12  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3273] docs: Mark download.txt as Subversion ignored, since it
+	  is now generated automatically (no functional changes)
+
+2011-10-11  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3272] configure.in, docs/Makefile.am, docs/download.txt,
+	  docs/download.txt.in: Automate generation of the stable release
+	  information, in the Download section
+
+2011-10-10  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3271] drivers/nut-libfreeipmi.c,
+	  tools/nut-scanner/scan_avahi.c: Replace <time.h> inclusion by
+	  "timehead.h", as per NUT coding standard (Reported by Prachi
+	  Gandhi, from Eaton)
+
+2011-10-10  Frederic Bohe <fbohe-guest@alioth.debian.org>
+
+	* [r3270] docs/man/nut-scanner.txt,
+	  tools/nut-scanner/nut-scanner.c: Add CIDR option manual
+
+2011-10-10  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3269] scripts/upower/95-upower-hid.rules: Update upower script
+	  with Powercom entry
+	* [r3268] docs/website/projects.txt: Advertise more the official
+	  Windows port, with regard to WinNUT
+	* [r3267] Makefile.am: Force ChangeLog regeneration upon make dist,
+	  in case it has already been generated previously
+
+2011-10-06  Charles Lepple <clepple+nut@gmail.com>
+
+	* [r3266] docs/support.txt: Reduce recommended debug level from 5
+	  to 2 in Support page.
+
+2011-10-05  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3265] data/driver.list.in, drivers/powercom-hid.c: Add Powercom
+	  BNT-xxxAP (productID 0004) to the list of usbhid-ups supported
+	  models (reported by Virus, on Ubuntu Launchpad)
+
+2011-09-30  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3264] data/driver.list.in: Add Belkin F6S600auUSB to the list
+	  of blazer_usb supported models (reported by Simon Dwyer)
+
+2011-09-26  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3260] conf/upsd.conf.sample: Complete LISTEN information, with
+	  regard to IP v4 or v6 disabled kernel (reported by Pavel Zubkou,
+	  Debian bug #598741)
+	* [r3259] clients/Makefile.am: Fix forgotten update of libupsclient
+	  version information (bump from 1:0:0 to 2:0:1)
+	* [r3258] docs/man/bcmxcp.txt, docs/man/blazer.txt,
+	  docs/man/dummy-ups.txt: Fix spelling and typo errors (patch from
+	  Laurent Bigonville, Debian)
+	* [r3257] tools/nut-scanner/scan_xml_http.c: Fix remaining
+	  compilation errors on FreeBSD, due to missing <netinet/in.h>
+	  header inclusion
+
+2011-09-26  Frederic Bohe <fbohe-guest@alioth.debian.org>
+
+	* [r3256] tools/nut-scanner/nutscan-ip.c: Remove AI_NUMERICSERV
+	  since it's useless and produces compile error on some systems.
+	* [r3255] tools/nut-scanner/nutscan-ip.h: Try to fix FreeBSD build
+
+2011-09-23  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3254] docs/config-notes.txt: Add a note on nut-scanner
+	  availability
+	* [r3253] docs: Mark some forgotten generated HTML files as
+	  Subversion ignored files (no functional changes)
+	* [r3252] docs/Makefile.am, docs/developer-guide.txt,
+	  docs/new-clients.txt, lib/README: Complete lib/README and convert
+	  it to Asciidoc, as 'Appendix B: NUT libraries complementary
+	  information'
+	* [r3251] configure.in, docs/macros.txt, docs/man/Makefile.am,
+	  docs/website/Makefile.am, drivers/Makefile.am,
+	  m4/nut_check_libfreeipmi.m4, m4/nut_check_libwrap.m4,
+	  m4/nut_report_feature.m4, tools/nut-scanner/Makefile.am,
+	  tools/nut-scanner/nut-scan.h, tools/nut-scanner/nut-scanner.c,
+	  tools/nut-scanner/scan_avahi.c, tools/nut-scanner/scan_ipmi.c,
+	  tools/nut-scanner/scan_snmp.c, tools/nut-scanner/scan_usb.c:
+	  Rework the whole HAVE_<FEATURE> versus WITH_<FEATURE> logic,
+	  which is not suitable anymore since nut-scanner. Previously, we
+	  only defined an automake variable (AM_CONDITIONAL) that allowed
+	  to compile coherent set of features (a specific driver, for
+	  example). With nut-scanner, we also need a pre-processor macro
+	  (AC_DEFINE) to manage code activation inside of a feature. The
+	  NUT_REPORT_FEATURE macro has been modified to handle all this
+	  logic
+
+2011-09-23  Frederic Bohe <fbohe-guest@alioth.debian.org>
+
+	* [r3250] tools/nut-scanner/nutscan-ip.c,
+	  tools/nut-scanner/nutscan-ip.h, tools/nut-scanner/scan_snmp.c,
+	  tools/nut-scanner/scan_xml_http.c: Replace calls to inet_*
+	  functions by equivalent getaddrinfo and getnameinfo for
+	  portability
+
+2011-09-22  Frederic Bohe <fbohe-guest@alioth.debian.org>
+
+	* [r3249] tools/nut-scanner/nut-scanner.c: Move a pthread variable
+	  to a #ifdef HAVE_PTHREAD section.
+
+2011-09-20  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3248] server/Makefile.am, server/ctype.h, server/netcmds.h,
+	  server/netget.c, server/netget.h, server/netinstcmd.c,
+	  server/netinstcmd.h, server/netlist.c, server/netlist.h,
+	  server/netmisc.c, server/netmisc.h, server/netset.c,
+	  server/netset.h, server/netuser.c, server/netuser.h,
+	  server/nut_ctype.h, server/ssl.c, server/ssl.h, server/upsd.c,
+	  server/upsd.h: Rename upsd internal client structure and header
+	  from ctype_t to nut_ctype_t. This avoids namespace conflict on
+	  Aix, and is more suitable in general
+
+2011-09-18  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3247] docs/man/nutupsdrv.txt: Add the missing '-q' option
+	  (closes Alioth patch #301145)
+	* [r3246] tools/nut-scanner/Makefile.am: Distribute the needed
+	  headers for libnutscan
+	* [r3245] configure.in, lib, lib/Makefile.am, lib/libnutscan.pc.in:
+	  Add pkg-config support for libnutscan
+	* [r3244] common/Makefile.am: Remove extraneous space
+
+2011-09-17  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3243] docs/developer-guide.txt, docs/man/dummy-ups.txt:
+	  Complete device simulation and recording information
+	* [r3242] docs/man/index.txt: Add nut-scanner and libnutscan
+	  entries to the manual pages index
+	* [r3241] docs/man: Mark some more generated HTML files as a
+	  Subversion ignored files (no functional changes)
+
+2011-09-15  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3239] docs/download.txt: Add the missing SHA-256 sum on the
+	  Download page / section (need to be generated after the
+	  distribution package)
+	* [r3238] drivers/nut-ipmipsu.c, drivers/nut-libfreeipmi.c: Don't
+	  override PSU absence with the power failure flag
+	* [r3237] NEWS, UPGRADING, configure.in, docs/download.txt,
+	  docs/website/news.txt: Final update for 2.6.2 release
+	* [r3236] docs/configure.txt: Complete the minimum FreeIPMI version
+	  required
+	* [r3235] tools/nut-scanner: Mark remaining generated files as a
+	  Subversion ignored files (no functional changes)
+
+2011-09-15  Frederic Bohe <fbohe-guest@alioth.debian.org>
+
+	* [r3234] tools/nut-scanner/scan_nut.c: Conditional inclusion of
+	  pthread.h
+	* [r3233] tools/nut-scanner/nut-scanner.c,
+	  tools/nut-scanner/nutscan-display.c,
+	  tools/nut-scanner/scan_avahi.c, tools/nut-scanner/scan_ipmi.c,
+	  tools/nut-scanner/scan_nut.c, tools/nut-scanner/scan_usb.c,
+	  tools/nut-scanner/scan_xml_http.c: config.h is included in
+	  common.h, so only include common.h
+	* [r3232] include/parseconf.h: We need stdio.h because we use FILE
+	  type.
+
+2011-09-15  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3231] docs/man: Mark remaining generated manual pages as a
+	  Subversion ignored files (no functional changes)
+	* [r3230] docs/man/nut-ipmipsu.txt, drivers/nut-ipmi.h,
+	  drivers/nut-ipmipsu.c, drivers/nut-libfreeipmi.c,
+	  m4/nut_check_libfreeipmi.m4: Complete nut-ipmipsu, by adding
+	  sensors discovery and monitoring
+
+2011-09-14  Frederic Bohe <fbohe-guest@alioth.debian.org>
+
+	* [r3229] tools/nut-scanner/scan_snmp.c: Remove use of strndup.
+	  This is not supported on Solaris.
+
+2011-09-14  Charles Lepple <clepple+nut@gmail.com>
+
+	* [r3228] tools/nut-scanner/scan_snmp.c: Remove unbalanced #endif
+	* [r3227] tools/nut-scanner/scan_snmp.c: nut-scanner: use
+	  "common.h", which includes "config.h"
+	* [r3226] tools/nut-scanner/scan_snmp.c,
+	  tools/nut-scanner/scan_usb.c: Include <string.h> for nut-scanner
+	* [r3225] tools/nut-scanner/scan_snmp.c: Silence redefined PACKAGE_
+	  macro warnings
+	  
+	  This should be fixed properly upstream, but in the mean time, the
+	  SNMP-based tools can't use these macros properly (since they will
+	  have the values for Net-SNMP, not NUT).
+
+2011-09-14  Frederic Bohe <fbohe-guest@alioth.debian.org>
+
+	* [r3224] tools/nut-scanner/nutscan-ip.c: Get rid of s6_addr32 in
+	  IPv6 code since it is implementation specific. Replaced by
+	  s6_addr. ( thanks to Charles Lepple)
+
+2011-09-14  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3223] drivers: Mark apcsmart-old binary as a Subversion ignored
+	  file (no functional changes)
+
+2011-09-14  Emilien Kia <emilienkia-guest@alioth.debian.org>
+
+	* [r3222]
+	  scripts/java/jNut/src/main/java/org/networkupstools/jnut/Client.java,
+	  scripts/java/jNut/src/main/java/org/networkupstools/jnut/Command.java,
+	  scripts/java/jNut/src/main/java/org/networkupstools/jnut/Device.java,
+	  scripts/java/jNut/src/main/java/org/networkupstools/jnut/NutException.java,
+	  scripts/java/jNut/src/main/java/org/networkupstools/jnut/StringLineSocket.java,
+	  scripts/java/jNut/src/main/java/org/networkupstools/jnut/Variable.java:
+	  Fix mail address typo for javadoc.
+
+2011-09-13  Frederic Bohe <fbohe-guest@alioth.debian.org>
+
+	* [r3221] tools/nut-scanner/Makefile.am: Fix make distcheck-light
+
+2011-09-13  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3220] drivers/bcmxcp.c: Fix compilation warning on values
+	  comparison being always false
+	* [r3219] configure.in, tools/nut-scanner/nut-scanner.c: Complete
+	  commit r3218, to address getopt_long too
+	* [r3218] configure.in: Do a second check to ensure inclusion of
+	  getopt.h, in case optind is known
+	* [r3217] drivers/bcmxcp.c, drivers/bcmxcp.h, drivers/bcmxcp_ser.c:
+	  Add support for outlet.n.delay.{start,shutdown}, and use
+	  outlet.n.delay.shutdown for outlet.n.shutdown.return instead of
+	  the default 3 seconds (patch from Rich Wrenn)
+
+2011-09-13  Frederic Bohe <fbohe-guest@alioth.debian.org>
+
+	* [r3216] tools/nut-scanner/nutscan-ip.c: Do not use long long
+	  variable anymore
+	* [r3215] tools/nut-scanner/scan_avahi.c,
+	  tools/nut-scanner/scan_nut.c: Remove all calls to asprintf
+
+2011-09-12  Frederic Bohe <fbohe-guest@alioth.debian.org>
+
+	* [r3214] clients/upsclient.c, clients/upsclient.h, configure.in,
+	  docs/man/Makefile.am, docs/man/nut-scanner.txt,
+	  docs/man/nutscan_add_device_to_device.txt,
+	  docs/man/nutscan_add_option_to_device.txt,
+	  docs/man/nutscan_cidr_to_ip.txt,
+	  docs/man/nutscan_display_parsable.txt,
+	  docs/man/nutscan_display_ups_conf.txt,
+	  docs/man/nutscan_free_device.txt,
+	  docs/man/nutscan_new_device.txt, docs/man/nutscan_scan_avahi.txt,
+	  docs/man/nutscan_scan_ipmi.txt, docs/man/nutscan_scan_nut.txt,
+	  docs/man/nutscan_scan_snmp.txt, docs/man/nutscan_scan_usb.txt,
+	  docs/man/nutscan_scan_xml_http.txt, m4/nut_check_libavahi.m4,
+	  tools/Makefile.am, tools/nut-scanner,
+	  tools/nut-scanner/Makefile.am, tools/nut-scanner/nut-scan.h,
+	  tools/nut-scanner/nut-scanner.c,
+	  tools/nut-scanner/nutscan-device.c,
+	  tools/nut-scanner/nutscan-device.h,
+	  tools/nut-scanner/nutscan-display.c,
+	  tools/nut-scanner/nutscan-ip.c, tools/nut-scanner/nutscan-ip.h,
+	  tools/nut-scanner/scan_avahi.c, tools/nut-scanner/scan_ipmi.c,
+	  tools/nut-scanner/scan_nut.c, tools/nut-scanner/scan_snmp.c,
+	  tools/nut-scanner/scan_usb.c, tools/nut-scanner/scan_xml_http.c,
+	  tools/nut-snmpinfo.py, tools/nut-usbinfo.pl: Add nut-scanner tool
+
+2011-09-12  Michal Soltys <msoltyspl-guest@alioth.debian.org>
+
+	* [r3211] docs/man/Makefile.am, docs/man/apcsmart-old.txt,
+	  docs/man/apcsmart.txt, drivers/Makefile.am,
+	  drivers/apcsmart-old.c, drivers/apcsmart-old.h,
+	  drivers/apcsmart.c, drivers/apcsmart.h, drivers/apcsmart_tabs.c,
+	  drivers/apcsmart_tabs.h: merge updated apcsmart driver from
+	  apcsmart-dev branch
+	  
+	  This commit clones trunk apcsmart to apcsmart-old, and merges
+	  updated driver from apcsmart-dev.
+	  
+	  Both drivers are built and available for the users, should there
+	  be any issues with the new version.
+	  
+	  The driver/table version is also incremented (3.0).
+
+2011-09-12  Charles Lepple <clepple+nut@gmail.com>
+
+	* [r3206] docs/FAQ.txt: Reword rewording in FAQ
+
+2011-09-09  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3205] docs/FAQ.txt: Fix wording, that is not appropriate
+	  anymore
+	* [r3204] docs/config-notes.txt: Complete shutdown information on
+	  the "critical UPS" notion
+	* [r3203] docs/download.txt: Add missing comma for OpenWrt
+	* [r3202] docs/stable-hcl.txt: Complete information for reporting
+	  new device
+	* [r3201] drivers/eaton-mib.c, drivers/eaton-mib.h,
+	  drivers/snmp-ups.c: Add a missing Eaton MIB for PDU
+
+2011-09-08  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3199] docs/download.txt: Forgotten commit for the new updated
+	  Windows package
+	* [r3198] docs/website/web-layout.conf: Fix XHTML 1.1 compliance
+	  (reported by W3C validators)
+	* [r3196] ., configure.in, m4/nut_check_os.m4, scripts/Makefile.am,
+	  scripts/README, scripts/systemd, scripts/systemd/Makefile.am,
+	  scripts/systemd/README, scripts/systemd/nut-driver.service.in,
+	  scripts/systemd/nut-monitor.service.in,
+	  scripts/systemd/nut-server.service.in,
+	  scripts/systemd/nutshutdown.in: Add initial support for systemd
+	  (patch from Michal Hlavinka)
+
+2011-09-06  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3194] drivers/apc-mib.c, drivers/bestpower-mib.c,
+	  drivers/eaton-mib.c, drivers/ietf-mib.c, drivers/mge-mib.c,
+	  drivers/netvision-mib.c, drivers/powerware-mib.c,
+	  drivers/raritan-pdu-mib.c, drivers/snmp-ups.c,
+	  drivers/snmp-ups.h: Add a new initialization method, that uses
+	  sysObjectID (indirection to the main MIB of the device) to detect
+	  supported devices. This speeds up even more init stage and should
+	  render void the use of 'mib' option
+	* [r3193] drivers/snmp-ups.c: Force numeric OIDs resolution, ie do
+	  not resolve to textual names. This is mostly for the convenience
+	  of debug output
+
+2011-09-05  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3186] scripts/java/Makefile.am, scripts/java/jNutList/src/test:
+	  Remove test code, since it is bound to jNut and not jNutList
+	  (reported by Emilien Kia)
+	* [r3185] drivers/mge-hid.c: Add support for battery.runtime.low,
+	  and end of battery life (life cycle monitoring) ; along with
+	  measurements (outlet power factor, power, real power and current)
+	  for 5 PX
+	* [r3184] configure.in, scripts/Makefile.am, scripts/java,
+	  scripts/java/Makefile.am: Complete jNut automake integration
+	  (distribution rules)
+
+2011-09-03  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3183] docs/man: Mark nut-ipmipsu.html as a Subversion ignored
+	  files (no functional changes)
+
+2011-09-02  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3182] docs/new-clients.txt: Fix jNut Asciidoc integration
+	* [r3181] docs/download.txt, docs/new-clients.txt,
+	  docs/website/news.txt, scripts/README, scripts/java/README,
+	  scripts/java/jNut/README, scripts/java/jNutList/README: Integrate
+	  jNUT information in the developer guide, along with news and
+	  download section
+	* [r3180] docs/website/news.txt: Add the Beta NUT 2.6.1-1 package
+	  for Windows, and some news history (just intended for VCS
+	  history)
+	* [r3179] docs/website/projects.txt: Formatting fixes
+
+2011-09-02  Emilien Kia <emilienkia-guest@alioth.debian.org>
+
+	* [r3178] scripts/java, scripts/java/README, scripts/java/jNut,
+	  scripts/java/jNut/README, scripts/java/jNut/pom.xml,
+	  scripts/java/jNut/src, scripts/java/jNut/src/main,
+	  scripts/java/jNut/src/main/java,
+	  scripts/java/jNut/src/main/java/org,
+	  scripts/java/jNut/src/main/java/org/networkupstools,
+	  scripts/java/jNut/src/main/java/org/networkupstools/jnut,
+	  scripts/java/jNut/src/main/java/org/networkupstools/jnut/Client.java,
+	  scripts/java/jNut/src/main/java/org/networkupstools/jnut/Command.java,
+	  scripts/java/jNut/src/main/java/org/networkupstools/jnut/Device.java,
+	  scripts/java/jNut/src/main/java/org/networkupstools/jnut/NutException.java,
+	  scripts/java/jNut/src/main/java/org/networkupstools/jnut/StringLineSocket.java,
+	  scripts/java/jNut/src/main/java/org/networkupstools/jnut/Variable.java,
+	  scripts/java/jNut/src/main/resources, scripts/java/jNut/src/test,
+	  scripts/java/jNut/src/test/java,
+	  scripts/java/jNut/src/test/java/org,
+	  scripts/java/jNut/src/test/java/org/networkupstools,
+	  scripts/java/jNut/src/test/java/org/networkupstools/jnut,
+	  scripts/java/jNut/src/test/java/org/networkupstools/jnut/ClientTest.java,
+	  scripts/java/jNutList, scripts/java/jNutList/README,
+	  scripts/java/jNutList/pom.xml, scripts/java/jNutList/src,
+	  scripts/java/jNutList/src/main,
+	  scripts/java/jNutList/src/main/java,
+	  scripts/java/jNutList/src/main/java/org,
+	  scripts/java/jNutList/src/main/java/org/networkupstools,
+	  scripts/java/jNutList/src/main/java/org/networkupstools/jnutlist,
+	  scripts/java/jNutList/src/main/java/org/networkupstools/jnutlist/AppList.java,
+	  scripts/java/jNutList/src/main/resources,
+	  scripts/java/jNutList/src/test,
+	  scripts/java/jNutList/src/test/java,
+	  scripts/java/jNutList/src/test/java/org,
+	  scripts/java/jNutList/src/test/java/org/networkupstools,
+	  scripts/java/jNutList/src/test/java/org/networkupstools/jnuttest,
+	  scripts/java/jNutList/src/test/java/org/networkupstools/jnuttest/AppTest.java:
+	  Add jNut (NUT client in Java) to trunk.
+
+2011-09-02  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3174] drivers/main.c: Remove extraneous empty line
+
+2011-08-31  Emilien Kia <emilienkia-guest@alioth.debian.org>
+
+	* [r3173] drivers/usb-common.c: Fix pointer check on wrong variable
+	  (Patch from Thomas Jarosch)
+	* [r3172] drivers/mge-utalk.c: Fix use of uninitialized variable
+	  (Patch from Thomas Jarosch)
+	* [r3171] common/common.c: Fix file descriptor leak (Patch from
+	  Thomas Jarosch)
+
+2011-08-29  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3164] drivers/mge-hid.c: Add region/country management, to
+	  improve features provided such as 'output.voltage.nominal' and 3S
+	  Eco control
+	* [r3163] data/driver.list.in, drivers/mge-hid.c: Add Eaton 3S to
+	  the list of usbhid-ups supported models
+
+2011-08-25  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3160] docs/nut-names.txt: Fix duplication
+
+2011-08-20  Charles Lepple <clepple+nut@gmail.com>
+
+	* [r3158] m4/nut_report_feature.m4: Avoid implementation-specific
+	  use of "echo" in autoconf
+	  
+	  http://pubs.opengroup.org/onlinepubs/009695399/utilities/echo.html
+
+2011-08-05  Charles Lepple <clepple+nut@gmail.com>
+
+	* [r3150] configure.in: configure.in: minor changes to output
+	  
+	  * Capitalized "UPS" * --with-drivers= : Only *build* specific
+	  drivers
+
+2011-07-30  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3149] data/driver.list.in: Add Cyber Power Systems CP1000AVRLCD
+	  to the list of usbhid-ups supported models (reported by David C.
+	  Rankin)
+
+2011-07-28  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3148] tools/nut-usbinfo.pl: Proper fix to r3012, which
+	  satisfies both udev and upower
+
+2011-07-27  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3147] tools/nut-usbinfo.pl: Partially revert r3012. It caused a
+	  udev regression, with several missing USB IDs (thanks to Pawel
+	  Sikora for uncovering it)
+	* [r3146] scripts/augeas/README: Add a complete Python Augeas
+	  example code
+
+2011-07-26  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3145] configure.in, docs/man/nut-ipmipsu.txt, scripts/udev,
+	  scripts/udev/Makefile.am, scripts/udev/README,
+	  scripts/udev/nut-ipmipsu.rules.in: Add udev rules file and
+	  documentation for nut-ipmipsu
+	* [r3144] m4/nut_check_libfreeipmi.m4: Improve detection of the
+	  needed functions
+	* [r3143] data/driver.list.in: Add Orvaldi 750 / 900SP to the list
+	  of blazer_usb supported models (reported by Pawel Sikora)
+	* [r3142] drivers/nut-ipmipsu.c: Fix missing comment closure, add a
+	  TODO list and remove unused variables
+
+2011-07-21  Charles Lepple <clepple+nut@gmail.com>
+
+	* [r3141] tools/git-svn.authors: Added authors file for git-svn
+	  synchronization
+
+2011-07-19  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3140] data/driver.list.in: Add POWEREX VI 1000 LED to the list
+	  of blazer_usb supported models (reported by Sergey Talchuk)
+
+2011-07-17  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3139] data/driver.list.in: Add SVEN Power Pro+ series (USB ID
+	  ffff:0000) to the list of blazer_usb supported models (reported
+	  by Vlad)
+
+2011-07-16  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3138] configure.in: Fix --with-[free]ipmi configure option so
+	  that it actually behave correctly in automatic detection mode
+
+2011-07-14  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3137] configure.in: Fix the typo that made its way into commit
+	  r3136, and broke configure
+	* [r3136] configure.in, docs/configure.txt, docs/man,
+	  docs/man/Makefile.am, docs/man/nut-ipmipsu.txt, drivers,
+	  drivers/Makefile.am, drivers/nut-ipmi.h, drivers/nut-ipmipsu.c,
+	  drivers/nut-libfreeipmi.c, m4/nut_check_libfreeipmi.m4: First
+	  attempt to create a driver to monitor power supply units using
+	  IPMI. This preliminary version only reads FRU (Field Replace
+	  Unit) information, but not yet the sensor information (describing
+	  if the PSU is present and online), and includes base
+	  documentation (manpage and configure options). It currently
+	  supports GNU FreeIPMI, but uses an abstract IPMI implementation
+	  that will allow to use other IPMI toolkits
+
+2011-07-13  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3135] docs/configure.txt: Move several misplaced options to the
+	  right sections
+	* [r3132] drivers/bestfcom.c: Remove unused variables (patch from
+	  Regid Ichira, Debian bug #633756)
+
+2011-07-12  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3131] MAINTAINERS: Update the corporate mail address and some
+	  details
+
+2011-07-08  Charles Lepple <clepple+nut@gmail.com>
+
+	* [r3129] docs/acknowledgements.txt: Fix typo in link on
+	  Acknowledgements page
+
+2011-07-07  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3127] docs/acknowledgements.txt: Move Arjen de Korte, NUT
+	  Senior lieutenant, to the Retired members section. Thanks for all
+	  his years of dedication to make NUT better
+
+2011-07-01  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r3115] MAINTAINERS: It's been fun, but I feel the time has come
+	  to say farewell. All the best...
+
+2011-06-29  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3109] configure.in, scripts/Makefile.am, scripts/avahi,
+	  scripts/avahi/nut.service.in: Add Avahi support for NUT mDNS
+	  publication, using a static service file
+	* [r3106] tools/svn2cl.authors: Add missing committers, and reorder
+	  using the Project Member List:
+	  https://alioth.debian.org/project/memberlist.php?group_id=30602
+
+2011-06-28  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3105] data/driver.list.in: Add various models equiped with APC
+	  AP9618 management card, including APC Smart-UPS RT XL, to the
+	  list of snmp-ups supported models (reported by Angela Williams)
+
+2011-06-23  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r3057] drivers/main.c: Try to prevent that drivers are started
+	  multiple times for the same UPS.
+
+2011-06-17  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r3047] docs/man/blazer.txt, drivers/blazer.c: Add preselection
+	  of communication protocol used
+
+2011-06-16  Frederic Bohe <fbohe-guest@alioth.debian.org>
+
+	* [r3045] drivers/snmp-ups.c: Fix SNMP v3 session initialisation
+
+2011-06-08  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3037] docs/website/web-layout.conf: Update the Firefox download
+	  button, since the previous one has disappeared
+	* [r3036] docs/website/news.txt, docs/website/projects.txt: Add a
+	  news entry, and a reference in the Related projects, on Dell
+	  PowerVault NX3500, which uses NUT for power protection (approved
+	  by Dell)
+
+2011-06-04  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3026] data/driver.list.in: Add PowerWalker VI 850 LCD to the
+	  list of blazer_usb supported models (reported by Wayne Thomas)
+
+2011-06-01  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3023] docs/download.txt: Add the missing SHA-256 sum on the
+	  Download page / section
+	* [r3022] NEWS, UPGRADING, configure.in, docs/download.txt,
+	  docs/website/news.txt: Final update for 2.6.1 release
+	* [r3021] docs/configure.txt: Update '--with-all' option
+	  documentation
+	* [r3020] configure.in: HAL deprecation (continued): HAL support is
+	  not enabled anymore when using '--with-all' configure option
+	* [r3019] drivers/mge-hid.c: Add support for 'battery.runtime.low'
+	* [r3018] data/cmdvartab: Add the missing entry for
+	  'ups.efficiency'
+	* [r3017] data/driver.list.in: Add Vivaldi EA200 LED to the list of
+	  richcomm_usb supported models (reported by Sergey Talchuk)
+	* [r3016] drivers/mge-hid.c: Add 'ups.efficiency' data, supported
+	  by Eaton 5 PX
+
+2011-05-31  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3015] docs/nut-names.txt: Documentation the new
+	  'ups.efficiency' NUT variable
+	* [r3014] data/driver.list.in: Add Eaton 5 PX to the list of
+	  usbhid-ups, mge-shut and newmge-shut supported models
+	* [r3013] scripts/upower/95-upower-hid.rules: Update UPower script
+	  with Phoenixtec fix
+	* [r3012] tools/nut-usbinfo.pl: Do not overwrite manufacturer names
+	  with empty values
+	* [r3011] drivers/liebert-hid.c: Fix USB VendorID 0x06da, which is
+	  Phoenixtec, not Liebert
+	* [r3010] docs/download.txt: Update Subversion access information,
+	  following Alioth update
+	* [r3009] docs/download.txt, docs/website/news.txt: Add the Windows
+	  Beta package information
+
+2011-05-27  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r3008] scripts/upower/95-upower-hid.rules: Update upower script
+	  with Powerware entry
+	* [r3006] drivers/blazer.c: Don't log status read failures until
+	  MAXTRIES subsequent failures. Occasional communication errors are
+	  common for these devices and are not a concern.
+
+2011-05-26  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3005] drivers/bcmxcp.c, drivers/bcmxcp_ser.c: Improve bcmxcp
+	  support for older PowerWare 9315 (patch from Chris Adams)
+
+2011-05-25  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r3002] server/netinstcmd.c: Fix the missing 'extra value'
+	  handling for instant commands
+
+2011-05-24  Michal Soltys <msoltyspl-guest@alioth.debian.org>
+
+	* [r2997] drivers/apcsmart.c: apcmsart.c: fix
+	  upsdrv_shutdown_advanced() - with 'continue' statement, sdcmd_*s
+	  ignoring 'n' weren't called.
+
+2011-05-20  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2994] drivers/blazer_usb.c: Don't use the USB_DEVICE()
+	  declaration macro with non compliant identifiers, such as
+	  blazer_usb' krauler subdriver (missing from previous commit)
+
+2011-05-20  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2993] drivers/blazer_usb.c, drivers/usb-common.h: Don't use the
+	  USB_DEVICE() declaration macro with non compliant identifiers,
+	  such as blazer_usb' krauler subdriver
+
+2011-05-19  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2991] server/netlist.c: State explicitely when device
+	  description is not available, to avoid user confusion (reported
+	  by Noel David Torres Taño, Debian bug #595773
+	* [r2990] docs/man/powercom.txt, drivers/powercom.c: Improve
+	  formating and wording of the powercom documentation, manual page
+	  and driver messages (patch from Keven L. Ates)
+
+2011-05-13  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2984] drivers/powercom.c, drivers/powercom.h: Improve PowerCom
+	  BNT 1500A and BNT-other support, and bump driver version to 0.13
+	  (patch from Keven L. Ates)
+
+2011-04-30  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2979] data/driver.list.in: Complete Informer Compact supported
+	  VA ratings (reported by Dushan Tcholich)
+
+2011-04-27  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2978] docs/website/Makefile.am: Enable website quirks to
+	  address Internet Explorer 6, which were missing since 2.6.0
+	  publication
+	* [r2977] docs/website/web-layout.conf: Complete meta keywords, and
+	  enable meta name and keywords on all pages
+	* [r2976] data/driver.list.in: Add Numeric 3000 SW to the list of
+	  blazer_ser supported models (reported by Petr Kubánek)
+
+2011-04-26  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2975] data/driver.list.in, drivers/blazer_usb.c: Add support
+	  for GE EP series
+	  
+	  [http://lists.alioth.debian.org/pipermail/nut-upsuser/2011-April/006788.html]
+
+2011-04-18  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2973] drivers/libhid.c: Smarter solution for r2972 (pointed by
+	  Arjen de Korte)
+	* [r2972] drivers/libhid.c: Trim extraneous end-of-line, in buggy
+	  HID string tables, which results in upsc breaking the
+	  communication pipe (Ubuntu bug #753661)
+
+2011-04-15  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2971] docs/stable-hcl.txt: Detail existing guidelines for
+	  reporting new device entry
+	* [r2970] docs/features.txt: Refreshed graphic illustrations
+	  credits
+	* [r2969] docs/images/advanced.png, docs/images/bigbox.png,
+	  docs/images/bizarre.png, docs/images/simple.png: Refreshed
+	  graphic illustrations (provided by Eaton)
+
+2011-04-01  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2964] data/driver.list.in: Add Inform Sinus SS 210 to list of
+	  supported devices
+	  
+	  [http://lists.alioth.debian.org/pipermail/nut-upsuser/2011-March/006767.html]
+	* [r2963] drivers/cps-hid.c: Clamp reported battery charge to 100%
+	  (seems to report AbsoluteStateOfCharge instead of
+	  RemainingCapacity)
+	  
+	  [http://lists.alioth.debian.org/pipermail/nut-upsuser/2011-March/006770.html]
+
+2011-03-31  Frederic Bohe <fbohe-guest@alioth.debian.org>
+
+	* [r2962] data/driver.list.in, drivers/mge-hid.c: Add Eaton
+	  Powerware 9140 to the list of usbhid-ups supported models
+
+2011-03-29  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2961] drivers/blazer.c, drivers/blazer_usb.c: Make the
+	  terminating '\r' in the Q1 reply optional
+
+2011-03-29  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2960] lib/libupsclient-config.in, lib/libupsclient.pc.in: Fix
+	  remaining references to LIBSSL_LDFLAGS, instead of LIBSSL_LIBS,
+	  which cause unresolved symbol on libupsclient users (reported by
+	  Fabrice Coutadeur on Ubuntu)
+
+2011-03-23  Frederic Bohe <fbohe-guest@alioth.debian.org>
+
+	* [r2957] INSTALL: Reverting previous commit (should not be in the
+	  trunk)
+	* [r2956] INSTALL: Add information about installing Windows
+
+2011-03-18  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2952] include/Makefile.am: The include/nut_stdint.h file is no
+	  longer a generated one (part two)
+	* [r2951] include/Makefile.am: The include/nut_stdint.h file is no
+	  longer a generated one
+	* [r2950] configure.in, include, include/nut_stdint.h,
+	  m4/ax_create_stdint_h.m4: Clean up fixed width integer types.
+	  
+	  All C99 capable systems have <inttypes.h>, which shall include
+	  <stdint.h>.
+	* [r2947] drivers/solis.c: Fix typo in previous commit
+	* [r2945] drivers/solis.c: Fix compilation warning (no functional
+	  change)
+	* [r2944] data/driver.list.in: Update driver list for SVEN Power
+	  Pro+ series (recent models ship with a different USB to serial
+	  implementation)
+	* [r2942] clients/upssched.c, configure.in, drivers/dstate.c,
+	  server/upsd.c: The third argument to accept is an int on HPUX if
+	  _XOPEN_SOURCE_EXTENDED is not defined (reverting previous commit)
+	* [r2941] configure.in: Quick check to see if defining '-munix=95'
+	  on HPUX fixes a problem with the accept() call
+
+2011-03-15  Chetan Agarwal <chetanagarwal-guest@alioth.debian.org>
+
+	* [r2936] drivers/rhino.c: Fix compilation error (no functional
+	  change)
+	* [r2935] drivers/rhino.c: Fix missing comment closure from
+	  previous commit (no functional change)
+	* [r2934] drivers/bcmxcp_usb.c, drivers/microdowell.c,
+	  drivers/rhino.c, drivers/solis.c: Fix remaining C++ style
+	  comments, to conform to the NUT coding rules (no functional
+	  change) on behalf of Prachi Gandhi (prachisgandhi@eaton.com)
+
+2011-03-14  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2933] configure.in: Quick check to see if defining _REENTRANT
+	  on HPUX fixes a compilation warning
+
+2011-03-14  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2932] data/driver.list.in: Add IPAR Mini Energy ME 800 to the
+	  list of blazer_usb supported models
+
+2011-03-06  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2930] drivers/apcsmart.c: Fix another compilation warning. Some
+	  compilers (rightfully) claim that the value of 'n' may be used
+	  without initialization. Until this is resolved, skip over this if
+	  the value isn't set.
+	* [r2929] drivers/apcsmart.c: Fix compilation warning
+	* [r2928] drivers/apcsmart.h: Add additional Matrix models
+	  [http://lists.alioth.debian.org/pipermail/nut-upsdev/2011-March/005319.html]
+	* [r2927] drivers/apcsmart.c: Flush the input buffer before sending
+	  a command [on behalf of Michal Soltys <soltys@ziu.info>]
+	* [r2926] drivers/apcsmart.c, drivers/apcsmart.h: protocol_verify()
+	  only cares about explicitly specified commands and variables [on
+	  behalf of Michal Soltys <soltys@ziu.info>]
+	* [r2925] drivers/apcsmart.c: Additional driver variables that can
+	  be set to influence shutdown behavior [on behalf of Michal Soltys
+	  <soltys@ziu.info>]
+	* [r2924] drivers/apcsmart.c: Update version and author info [on
+	  behalf of Michal Soltys <soltys@ziu.info>]
+	* [r2923] drivers/apcsmart.c: Deal with more different shutdown
+	  methods [on behalf of Michal Soltys <soltys@ziu.info>]
+	* [r2922] drivers/apcsmart.c: As 'b' can return different things
+	  than firmware version on some old models, prefer 'V' over 'b' [on
+	  behalf of Michal Soltys <soltys@ziu.info>]
+	* [r2921] drivers/apcsmart.c: remove superfluous status_commit()
+	  [on behalf of Michal Soltys <soltys@ziu.info>]
+	* [r2920] drivers/apcsmart.c, drivers/apcsmart.h: adjust ignored
+	  chars and handle over/~over [on behalf of Michal Soltys
+	  <soltys@ziu.info>]
+	* [r2919] drivers/apcsmart.c: cosmetics [on behalf of Michal Soltys
+	  <soltys@ziu.info>]
+	* [r2918] drivers/apcsmart.c, drivers/apcsmart.h: remove APC_IGNORE
+	  [on behalf of Michal Soltys <soltys@ziu.info>]
+	* [r2917] drivers/apcsmart.h: add compat hardware, add commands [on
+	  behalf of Michal Soltys <soltys@ziu.info>]
+	* [r2916] drivers/apcsmart.h: comsetics - adjust tabs [on behalf of
+	  Michal Soltys <soltys@ziu.info>]
+
+2011-03-02  Charles Lepple <clepple+nut@gmail.com>
+
+	* [r2915] docs/FAQ.txt: Update Mac power-on FAQ
+
+2011-03-01  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2913] drivers/liebert-esp2.c: Improved Liebert ESP II support,
+	  including UPS shutdown (poweroff), 1 and 3-phase input and output
+	  variables, and most input / output / bypass / nominal variables,
+	  along with a fix for the USB to serial cable (patch from Farkas
+	  Levente and Spiros Ioannou)
+	* [r2912] data/driver.list.in: Add Eaton Powerware 9140, using the
+	  serial interface, to the list of bcmxcp supported models
+
+2011-02-25  Charles Lepple <clepple+nut@gmail.com>
+
+	* [r2910] docs/download.txt: Moved SHA-256 value into download
+	  page, and reformatted a bit.
+
+2011-02-24  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2909] data/driver.list.in: Add several upscode2 supported
+	  devices that were reported on the list:
+	  http://lists.alioth.debian.org/pipermail/nut-upsdev/2011-February/005281.html
+	  http://lists.alioth.debian.org/pipermail/nut-upsuser/2005-July/000031.html
+
+2011-02-21  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2906] data/driver.list.in, drivers/mge-hid.c: Add Eaton Ellipse
+	  ECO (with Eco control support) to the list of usbhid-ups
+	  supported models
+	* [r2905] drivers/eaton-mib.c: Add support for the first ambient
+	  sensor (up to 8 sensors can be supported) on Eaton ePDU managed
+	* [r2904] clients/upsrw.c: Add the missing 'help' handler ('-h') to
+	  the supported options
+
+2011-02-20  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2903] docs/man/ups.conf.txt, drivers/dstate.c: Variables that
+	  have an override.<variable> in ups.conf are now really immutable.
+	  They can't be changed anymore (not even if they would have been
+	  R/W otherwise). Rationale is, that if a user wants to override a
+	  value, we should honor that request.
+	  
+	  Added documentation accordingly (and corrected previous commit).
+	* [r2902] docs/man/ups.conf.txt, drivers/dstate.c, drivers/main.c:
+	  Add 'ignorelb' flag to list of UPS fields in ups.conf to override
+	  the LB condition reported by the UPS.
+	  
+	  This allows all drivers that report battery.charge
+	  (battery.runtime) to shutdown early by setting this flag and
+	  battery.charge.low (battery.runtime.low) in ups.conf.
+	* [r2901] data/driver.list.in: Removing subdriver setting (cypress
+	  is auto detected for this VID:PID combination, so there is no
+	  need to specify this in usb.conf)
+
+2011-02-19  Charles Lepple <clepple+nut@gmail.com>
+
+	* [r2900] data/driver.list.in: Add Mustek Yukai PowerMust 1000 USB
+	  
+	  Reported by Noel David Torres Taño:
+	  http://lists.alioth.debian.org/pipermail/nut-upsuser/2010-August/006163.html
+	  
+	  Other models may be supported as well. *
+	  http://www.mustek.com.tw/Yukai/html/prod_ups/PowerMust1000.html *
+	  http://www.mustek.com.tw/Yukai/html/UPS.html
+
+2011-02-17  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2899] docs/download.txt: Preliminary support for source release
+	  hash, using unsigned SHA256 sum
+
+2011-02-15  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2898] common/parseconf.c: In PCONF_CTX_t, argsize is an array
+	  of type size_t values, so instead of using sizeof(int *) we
+	  really should use sizeof(size_t) for the size of individual
+	  elements
+
+2011-02-15  Charles Lepple <clepple+nut@gmail.com>
+
+	* [r2897] data/driver.list.in: Re-add some devices to
+	  driver.list.in from r2516
+	  
+	  These entries seem to have been dropped, potentially due to the
+	  rename from driver.list to driver.list.in, and the format change.
+
+2011-02-11  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2893] drivers/libhid.c: Restore the nut-2.4.1 behavior for
+	  reading reports from devices
+
+2011-02-09  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2891] drivers/dummy-ups.c: Prefer 'snprintf' and 'snprintfcat'
+	  over 'strncat' (the latter can overflow the destination buffer)
+
+2011-02-09  Frederic Bohe <fbohe-guest@alioth.debian.org>
+
+	* [r2888] drivers/dummy-ups.c: Fix a memory leak in dummy-ups
+	  driver
+
+2011-02-08  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2887] drivers/apc-hid.c: Add yet another way to shutdown the
+	  APC CS-500
+	  
+	  [http://lists.alioth.debian.org/pipermail/nut-upsuser/2011-January/006550.html]
+
+2011-02-02  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2884] drivers/mge-hid.c: Fix a wrong value mapping resolution,
+	  and bump driver's HID data version to 1.20
+	* [r2883] docs/website/web-layout.conf: Unconditional inclusion of
+	  Google Analytics code
+	* [r2882] docs/man/dummy-ups.txt, docs/man/metasys.txt,
+	  drivers/apcsmart.c, drivers/dummy-ups.c, drivers/genericups.c,
+	  drivers/metasys.c, drivers/snmp-ups.c: Fix some spelling errors
+	  (base patch from Laurent Bigonville, from Debian)
+
+2011-01-31  Charles Lepple <clepple+nut@gmail.com>
+
+	* [r2877] docs/documentation.txt, docs/download.txt: Update URL for
+	  Trac.
+
+2011-01-28  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2874] configure.in: Add missing variables setting, to allow
+	  AC_SUBST() propagation
+
+2011-01-22  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2850] drivers/apc-hid.c: Add mappings to APC HID subdriver
+
+2011-01-17  Charles Lepple <clepple+nut@gmail.com>
+
+	* [r2836] scripts/Makefile.am: Include perl/Nut.pm in tarball.
+	* [r2835] COPYING, Makefile.am: Include LICENSE-GPL{2,3} in
+	  tarball.
+	  
+	  Made the text in COPYING agree with the filenames.
+
+2011-01-14  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2832] docs/download.txt, docs/website/news.txt: Missing website
+	  update for 2.6.0
+	* [r2830] configure.in: Final update for 2.6.0 release
+	* [r2829] autogen.sh, docs/download.txt, nut-autoreconf: Rename the
+	  nut-autoreconf script to autogen.sh, since it is a more standard
+	  name
+
+2011-01-14  Charles Lepple <clepple+nut@gmail.com>
+
+	* [r2828] docs/developer-guide.txt, docs/history.txt,
+	  docs/user-manual.txt: Remove work-in-progress warnings.
+	* [r2827] docs/Makefile.am, docs/docinfo.xml: Add basic revision
+	  information to PDF documentation.
+	  
+	  This should be automated later.
+
+2011-01-13  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2825] docs/Makefile.am, docs/configure.txt: Remove AsciiDoc
+	  hard-coded verbose flag, which can now be enabled using
+	  'ASCIIDOC_VERBOSE=-v make'
+
+2011-01-13  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2824] clients/upsclient.c: Revert commit 2819 which seems to
+	  break certificate validation on some systems
+
+2011-01-13  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2823] docs/documentation.txt: Add a NUT Korean GuideBook to the
+	  documentation (from PointBre)
+	* [r2821] clients/Makefile.am, configure.in, drivers/Makefile.am,
+	  m4/nut_check_libhal.m4, m4/nut_check_libneon.m4,
+	  m4/nut_check_libnetsnmp.m4, m4/nut_check_libpowerman.m4,
+	  m4/nut_check_libssl.m4, m4/nut_check_libusb.m4,
+	  m4/nut_check_libwrap.m4, server/Makefile.am: Fix the wrong use of
+	  *_LDFLAGS instead of *_LIBS, which break compilation on newer
+	  toolchains like the on the upcoming Ubuntu Natty (patch from
+	  Laurent Bigonville, from Debian)
+
+2011-01-11  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2819] clients/upsclient.c: Set SSL verification method in CTX,
+	  rather than through the filedescriptor (for clarity, no
+	  functional change)
+
+2011-01-11  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2816] drivers/idowell-hid.c: Remove the wrong
+	  'battery.capacity' data mapping
+	* [r2815] NEWS, data/driver.list.in: Add iDowell iBox UPS to the
+	  list of usbhid-ups supported models, and upgrade the NEWS
+	* [r2814] Makefile.am: Disable distcleancheck rule, which fails due
+	  to files generated at 'make dist' time, while waiting for a
+	  proper solution. This will allow older Unix to enter the BuildBot
+	  system
+
+2011-01-10  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2812] configure.in: Restore --with[out]-all flags that were
+	  lost during the AsciiDoc branch merge
+
+2011-01-08  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2811] scripts/upower/95-upower-hid.rules: Update upower script
+	  with iDowell driver
+
+2011-01-05  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2803] drivers/idowell-hid.c: Complete HID to NUT mapping
+
+2011-01-04  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2802] drivers/Makefile.am, drivers/idowell-hid.c,
+	  drivers/idowell-hid.h, drivers/usbhid-ups.c: Add generated
+	  'iDowell' subdriver (HID to NUT mapping to be added)
+	* [r2801] server/desc.c: Minor cleanup (change 'struct dlist_t' to
+	  proper 'dlist_t' and zero dynamically allocated memory before
+	  use)
+	* [r2800] server/conf.c: If multiple 'driver', 'port' or 'desc'
+	  entries were specified in 'ups.conf', the server would leak
+	  memory on (re)loading the configuration file. Also make sure
+	  dynamically allocated memory is zero'd before use (to prevent
+	  accidentally free'ing uninitialized pointers).
+
+2011-01-04  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2799] NEWS, data/driver.list.in: Add Rocketfish RF-1000VA /
+	  RF-1025VA to the list of usbhid-ups supported models (reported by
+	  James "Among The Living")
+
+2010-12-31  Charles Lepple <clepple+nut@gmail.com>
+
+	* [r2795] nut-autoreconf, scripts/augeas/Makefile.am,
+	  scripts/augeas/gen-nutupsconf-aug.py,
+	  scripts/python/app/NUT-Monitor, scripts/python/module/PyNUT.py,
+	  scripts/python/module/test_nutclient.py, tools/Makefile.am,
+	  tools/nut-hclinfo.py, tools/nut-usbinfo.pl: Do not hardcode
+	  Python and Perl interpreter paths
+	  
+	  Useful for systems like FreeBSD where Python is optional, and
+	  pulled in from the ports tree.
+	  
+	  This patch uses the first interpreter seen in $PATH. A future
+	  improvement would be to add a configure script argument, although
+	  that might be annoying for the nut-autoreconf script.
+
+2010-12-24  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2793] docs, docs/man: Don't version generated files (no
+	  functional change)
+	* [r2792] docs/Makefile.am, docs/images/old-cgi.png: Add the
+	  missing old CGI image
+	* [r2791] docs/configure.txt: Add a mention that '--with-doc=auto'
+	  will try to build only the possible documents
+	* [r2790] docs/download.txt, docs/website/news.txt: Website update
+	  for 2.6.0-pre1
+	* [r2789] NEWS, UPGRADING, configure.in: News, upgrading
+	  information and configure version bump for 2.6.0(-pre1)
+	* [r2788] docs/Makefile.am, docs/stable-hcl.txt,
+	  docs/user-manual.txt, docs/website/Makefile.am,
+	  docs/website/stable-hcl.txt, tools/nut-hclinfo.py: Fist stab to
+	  integrate hardware compatibility list to the user manual
+	* [r2787] docs/asciidoc.conf: Fix linkdoc AsciiDoc macro, to handle
+	  more smartly links with no anchors
+	* [r2786] docs/website/website.txt: Prepare website for the switch
+	  to production, by removing the WARNING banner on the homepage
+	* [r2785] scripts/augeas: Don't version generated files (no
+	  functional change)
+	* [r2784] docs/Makefile.am, docs/config-notes.txt,
+	  docs/developer-guide.txt, scripts/augeas/README: Improve Augeas
+	  documentation, integrate it as a chapter in the developer guide,
+	  and reference the user section in the user manual
+
+2010-12-23  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2783] docs/download.txt, nut-autoreconf: Create an autoreconf
+	  wrapper script to ensure that the source tree is in a buildable
+	  state after an initial Subversion checkout
+	* [r2782] INSTALL, README, docs/asciidoc.conf,
+	  docs/config-notes.txt, docs/configure.txt,
+	  docs/documentation.txt, docs/download.txt, docs/nut-names.txt,
+	  docs/support.txt, docs/user-manual.txt: Create a linkdoc AsciiDoc
+	  macro to deal with cross references between NUT documentations
+	  and variables paths (which depend on the generated documentation
+	  format). A remaining limitation is that anchors are only
+	  supported for single page HTML
+	* [r2781] configure.in, scripts/Makefile.am, scripts/README,
+	  scripts/augeas: Merge the Augeas branch, related to configuration
+	  files management
+
+2010-12-22  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2778] data/Makefile.am, data/epdu-managed.dev,
+	  data/evolution500.dev, data/evolution500.seq: Add more comments
+	  to the simulation files samples, and rename the UPS one to .seq
+	  since it includes TIMER examples
+
+2010-12-22  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2777] data, docs/man, drivers, scripts/hal,
+	  scripts/hal/ups-nut-device.fdi.in, scripts/hotplug,
+	  scripts/hotplug/libhid.usermap, scripts/udev,
+	  scripts/udev/nut-usbups.rules.in: Don't version generated files
+
+2010-12-22  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2775] README, docs/Makefile.am, docs/asciidoc.conf,
+	  docs/config-notes.txt, docs/contact-closure.txt,
+	  docs/developer-guide.txt, docs/new-clients.txt,
+	  docs/scheduling.txt, docs/security.txt: Create, and distribute, a
+	  linkman AsciiDoc macro to deal with variables manual pages path
+	  (which depend on the generated documentation format): chunked
+	  HTML points a level up, single page HTML points to the same
+	  directory and PDF points online versions (which will only be
+	  active once the new website is in production!)
+	* [r2774] docs/man/Makefile.am: Also distribute asciidoc.conf,
+	  since it is needed for the linkman macro
+	* [r2773] docs/man/upscli_connect.txt,
+	  docs/man/upscli_disconnect.txt, docs/man/upscli_fd.txt,
+	  docs/man/upscli_get.txt, docs/man/upscli_list_next.txt,
+	  docs/man/upscli_list_start.txt, docs/man/upscli_readline.txt,
+	  docs/man/upscli_sendline.txt, docs/man/upscli_ssl.txt,
+	  docs/man/upscli_strerror.txt, docs/man/upscli_upserror.txt,
+	  docs/man/upsclient.txt: Fix wrong references to the NUT C client
+	  structure (UPSCONN instead of UPSCONN_t)
+
+2010-12-21  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2766] AUTHORS, conf/ups.conf.sample, data/driver.list.in,
+	  docs/FAQ.txt, docs/acknowledgements.txt, docs/cables/sms.txt,
+	  docs/config-notes.txt, docs/man/Makefile.am, docs/man/blazer.txt,
+	  docs/man/index.txt, docs/man/megatec.txt,
+	  docs/man/megatec_usb.txt, docs/man/nutupsdrv.txt,
+	  docs/man/ups.conf.txt, docs/new-drivers.txt,
+	  docs/website/scripts/nut_jquery.js, drivers/Makefile.am,
+	  drivers/megatec.c, drivers/megatec.h, drivers/megatec_usb.c,
+	  tools/nut-usbinfo.pl: Final removal of the megatec and
+	  megatec_usb drivers, now replaced by blazer_ser and blazer_usb
+	* [r2765] drivers/dstate.c, drivers/dstate.h: Rename the second
+	  parameter of dstate_init() from 'port' to 'devname', since the
+	  port name has been replaced for long by the device entry name, as
+	  specified in ups.conf
+	* [r2764] docs/man/Makefile.am: Fix HTML_CONF_MANS files extension,
+	  complete the clean stage and make AsciiDoc mandatory for 'make
+	  dist'
+
+2010-12-20  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2759] tools/nut-usbinfo.pl: Fix udev rules refreshing issue
+	  (reported by Laurent Bigonville, Debian bug #557178)
+
+2010-12-20  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2758] drivers/ietf-mib.c: Extend the IETF MIB with some
+	  previously unmapped variables
+	* [r2757] drivers/snmp-ups.c, drivers/snmp-ups.h: Add
+	  'input.bypass' to the list of variables for which we support
+	  detection of single or three phase operation
+
+2010-12-20  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2756] conf/upsd.conf.sample, docs/man/upsd.conf.txt: Complete
+	  missing configuration directives in upsd.conf manual page and
+	  sample configuration file
+
+2010-12-20  Charles Lepple <clepple+nut@gmail.com>
+
+	* [r2753] tools/svn2cl.authors: Update authors list for ChangeLog
+	  generation
+
+2010-12-19  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2751] configure.in, m4/nut_report_feature.m4: Rework
+	  configuration summary report ordering in a more comprehensive way
+	* [r2750] configure.in: Revert commit r2748
+
+2010-12-17  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2749] drivers/mge-utalk.c: Fix initialisation sequence, improve
+	  model detection, don't declare stale too quickly and bump driver
+	  version to 0.92
+	* [r2748] configure.in: --with-doc=auto now behave depending on
+	  AsciiDoc presence
+	* [r2747] docs/man/Makefile.am: Fix manual pages distribution and
+	  installation issue
+
+2010-12-16  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2742] docs/website/news.txt, docs/website/projects.txt: Update
+	  NUT-Monitor link, and announce release 1.3
+	* [r2741] configure.in: Fix minor typo, among which some broke some
+	  syntax highlighters
+
+2010-12-15  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2739] Makefile.am, configure.in, docs/man/Makefile.am,
+	  docs/man/index.txt, docs/man/ivtscd.txt, man: Switch manual pages
+	  to AsciiDoc, thus removing the redundant toplevel man/ directory,
+	  now replaced by docs/man/
+
+2010-12-15  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2738] drivers/ietf-mib.c, drivers/powerware-mib.c: The
+	  upsConfigLowBattTime OID is in minutes. In order to convert this
+	  to the seconds, we need to multiply by 60. Currently, the
+	  conversion factor is stored in the length field. So we can either
+	  make this value ST_FLAG_RW (and not convert from minutes to
+	  seconds) or show the correct value without being able to modify
+	  it.
+	  
+	  If we set ST_FLAG_RW | ST_FLAG_STRING, the length field must show
+	  the length of the string that needs to be passed by clients (and
+	  this can't be done).
+	* [r2737] clients/upsrw.c: Cleanup of upsrw client (no functional
+	  changes)
+	* [r2736] clients/upscmd.c: Return server response to user (instead
+	  of silently failing, which confuses the heck out of people)
+	  
+	  [http://lists.alioth.debian.org/pipermail/nut-upsuser/2010-December/006459.html]
+
+2010-12-13  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2735] drivers/belkin.c: Discard the manufacturer information
+	  (which doesn't seem to be consistent between models) and instead
+	  only require a valid reply format
+
+2010-12-12  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2734] drivers/powerp-bin.c: Reinstate support for older
+	  CyberPower models that report the model number in a numerical
+	  format (which was supported through the now obsolete 'cyberpower'
+	  driver)
+	  
+	  [http://lists.alioth.debian.org/pipermail/nut-upsdev/2010-July/004866.html]
+	* [r2733] conf/upsd.users.sample, docs/man/upsd.users.txt:
+	  upsd.users: Specifying multiple instcmds Add examples for adding
+	  multiple instcmds to upsd.users
+	  
+	  [https://alioth.debian.org/tracker/index.php?func=detail&aid=312768&group_id=30602&atid=411544]
+	* [r2732] drivers/belkin.c, drivers/belkin.h: Update to fix
+	  datastale reports and general overhaul of driver code
+	  
+	  [https://alioth.debian.org/tracker/index.php?func=detail&aid=312877&group_id=30602&atid=411544]
+
+2010-12-11  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2731] docs, docs/man, docs/website, docs/website/scripts:
+	  Complete the list of Subversion ignored files, with AsciiDoc
+	  generated contents (no functional changes)
+
+2010-12-10  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2730] docs/Makefile.am, docs/cables.txt,
+	  docs/cables/73-0724.png, docs/cables/940-0024C.jpg,
+	  docs/cables/Lansafecable.jpg, docs/cables/SOLA-330.png,
+	  docs/cables/belkin-f6cx-rkm-xu-cable.jpg,
+	  docs/cables/mac-940-0024C.png, docs/cables/mge-66049.png,
+	  docs/cables/mge-db9-rj12.jpg, docs/cables/mge-db9-rj45.jpg,
+	  docs/documentation.txt, docs/images/cables,
+	  docs/images/cables/73-0724.png, docs/images/cables/940-0024C.jpg,
+	  docs/images/cables/Lansafecable.jpg,
+	  docs/images/cables/SOLA-330.png,
+	  docs/images/cables/belkin-f6cx-rkm-xu-cable.jpg,
+	  docs/images/cables/mac-940-0024C.png,
+	  docs/images/cables/mge-66049.png,
+	  docs/images/cables/mge-db9-rj12.jpg,
+	  docs/images/cables/mge-db9-rj45.jpg, docs/support.txt: Fix
+	  cabling information integration, and some remaining broken links
+	  in the documentation and website
+
+2010-12-06  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2725] drivers/apc-hid.c: Add HID to NUT mappings
+	  
+	  [http://lists.alioth.debian.org/pipermail/nut-upsdev/2010-December/005105.html]
+
+2010-12-05  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2724] clients/upsclient.c: Rather than relying on
+	  TLSv1_client_method() to never return a NULL pointer and/or
+	  SSL_CTX_new() dealing with this gracefully, make this check
+	  explicit (no functional change)
+	* [r2723] server/ssl.c: Fixed compilation warning (OpenSSL 1.0.0
+	  added the 'const' qualifier to SSL_METHOD)
+
+2010-12-04  Charles Lepple <clepple+nut@gmail.com>
+
+	* [r2722] INSTALL, Makefile.am, README, TODO, UPGRADING,
+	  configure.in, data/Makefile.am, data/driver.list,
+	  data/driver.list.in, docs/FAQ, docs/FAQ.txt, docs/Makefile.am,
+	  docs/README, docs/acknowledgements.txt, docs/acpi.txt,
+	  docs/asciidoc.txt, docs/big-servers.txt, docs/cables.txt,
+	  docs/cables/73-0724.png, docs/cables/940-0024C.jpg,
+	  docs/cables/Lansafecable.jpg, docs/cables/SOLA-330.png,
+	  docs/cables/belkin-f6cx-rkm-xu-cable.jpg,
+	  docs/cables/mac-940-0024C.png, docs/cables/mge-66049.png,
+	  docs/cables/mge-db9-rj12.jpg, docs/cables/mge-db9-rj45.jpg,
+	  docs/chroot.txt, docs/commands.txt, docs/config-files.txt,
+	  docs/config-notes.txt, docs/configure.txt,
+	  docs/contact-closure.txt, docs/data-room.txt, docs/design.txt,
+	  docs/developer-guide.txt, docs/developers.txt,
+	  docs/documentation.txt, docs/download.txt, docs/features.txt,
+	  docs/hid-subdrivers.txt, docs/history.txt, docs/ideas.txt,
+	  docs/images, docs/images/advanced.png, docs/images/asciidoc.png,
+	  docs/images/bigbox.png, docs/images/bizarre.png,
+	  docs/images/blue-arrow.png, docs/images/eaton-logo.png,
+	  docs/images/note.png, docs/images/nut-banner.png,
+	  docs/images/nut_layering.png, docs/images/nut_layering.svg,
+	  docs/images/simple.png, docs/images/warning.png, docs/macros.txt,
+	  docs/man, docs/man/Makefile.am, docs/man/apcsmart.txt,
+	  docs/man/asciidoc.conf, docs/man/bcmxcp.txt,
+	  docs/man/bcmxcp_usb.txt, docs/man/belkin.txt,
+	  docs/man/belkinunv.txt, docs/man/bestfcom.txt,
+	  docs/man/bestfortress.txt, docs/man/bestuferrups.txt,
+	  docs/man/bestups.txt, docs/man/blazer.txt, docs/man/clone.txt,
+	  docs/man/dummy-ups.txt, docs/man/etapro.txt,
+	  docs/man/everups.txt, docs/man/gamatronic.txt,
+	  docs/man/genericups.txt, docs/man/hosts.conf.txt,
+	  docs/man/index.txt, docs/man/isbmex.txt,
+	  docs/man/libupsclient-config.txt, docs/man/liebert-esp2.txt,
+	  docs/man/liebert.txt, docs/man/masterguard.txt,
+	  docs/man/megatec.txt, docs/man/megatec_usb.txt,
+	  docs/man/metasys.txt, docs/man/mge-shut.txt,
+	  docs/man/mge-utalk.txt, docs/man/microdowell.txt,
+	  docs/man/netxml-ups.txt, docs/man/nut.conf.txt,
+	  docs/man/nutupsdrv.txt, docs/man/oneac.txt, docs/man/optiups.txt,
+	  docs/man/powercom.txt, docs/man/powerman-pdu.txt,
+	  docs/man/powerpanel.txt, docs/man/rhino.txt,
+	  docs/man/richcomm_usb.txt, docs/man/safenet.txt,
+	  docs/man/skel.txt, docs/man/snmp-ups.txt, docs/man/solis.txt,
+	  docs/man/tripplite.txt, docs/man/tripplite_usb.txt,
+	  docs/man/tripplitesu.txt, docs/man/ups.conf.txt,
+	  docs/man/upsc.txt, docs/man/upscli_connect.txt,
+	  docs/man/upscli_disconnect.txt, docs/man/upscli_fd.txt,
+	  docs/man/upscli_get.txt, docs/man/upscli_list_next.txt,
+	  docs/man/upscli_list_start.txt, docs/man/upscli_readline.txt,
+	  docs/man/upscli_sendline.txt, docs/man/upscli_splitaddr.txt,
+	  docs/man/upscli_splitname.txt, docs/man/upscli_ssl.txt,
+	  docs/man/upscli_strerror.txt, docs/man/upscli_upserror.txt,
+	  docs/man/upsclient.txt, docs/man/upscmd.txt,
+	  docs/man/upscode2.txt, docs/man/upsd.conf.txt, docs/man/upsd.txt,
+	  docs/man/upsd.users.txt, docs/man/upsdrvctl.txt,
+	  docs/man/upsimage.cgi.txt, docs/man/upslog.txt,
+	  docs/man/upsmon.conf.txt, docs/man/upsmon.txt,
+	  docs/man/upsrw.txt, docs/man/upssched.conf.txt,
+	  docs/man/upssched.txt, docs/man/upsset.cgi.txt,
+	  docs/man/upsset.conf.txt, docs/man/upsstats.cgi.txt,
+	  docs/man/upsstats.html.txt, docs/man/usbhid-ups.txt,
+	  docs/man/victronups.txt, docs/megatec.txt, docs/net-protocol.txt,
+	  docs/new-clients.txt, docs/new-drivers.txt, docs/new-names.txt,
+	  docs/nut-names.txt, docs/nut-qa.txt, docs/osd-notify.txt,
+	  docs/outlets.txt, docs/packager-guide.txt, docs/pager.txt,
+	  docs/powersaving.txt, docs/protocol.txt, docs/scheduling.txt,
+	  docs/security.txt, docs/shutdown.txt, docs/sock-protocol.txt,
+	  docs/ssl.txt, docs/support.txt, docs/suspend-to-disk.txt,
+	  docs/upssched.txt, docs/user-manual.txt, docs/website,
+	  docs/website/Makefile.am, docs/website/css,
+	  docs/website/css/ie-overrides.css,
+	  docs/website/css/web-layout.css,
+	  docs/website/css/xhtml11-quirks.css,
+	  docs/website/css/xhtml11.css, docs/website/faviconut.ico,
+	  docs/website/faviconut.png, docs/website/news.txt,
+	  docs/website/projects.txt, docs/website/scripts,
+	  docs/website/scripts/filter_png.js,
+	  docs/website/scripts/jquery.js,
+	  docs/website/scripts/nut_jquery.js, docs/website/scripts/toc.js,
+	  docs/website/stable-hcl.txt, docs/website/ups-protocols.txt,
+	  docs/website/web-layout.conf, docs/website/website.txt,
+	  drivers/skel.c, m4/ax_compare_version.m4,
+	  m4/nut_check_asciidoc.m4, m4/nut_check_os.m4, tools/Makefile.am,
+	  tools/nut-hclinfo.py: Merging AsciiDoc branch into trunk
+	  
+	  Merged svn://svn.debian.org/nut/branches/AsciiDoc at r2701, with
+	  the trunk as of r2720. The AsciiDoc branch commit r2721 was
+	  cherry-picked later.
+	  
+	  The AsciiDoc homepage is http://www.methods.co.nz/asciidoc/ and
+	  the earliest suggested version to use (in order to properly
+	  generate all output formats) is 8.6.3.
+	  
+	  The commits have been grouped into the following categories:
+	  
+	  == Build Machinery, File Management, Miscellaneous ==
+	  
+	  r1874, r1880, r1894, r1895, r1896, r1897, r1898, r1908, r1909,
+	  r1910, r1917, r1920, r1927, r1928, r1929, r1931, r1958, r1976,
+	  r1977, r1978, r1994, r2032, r2125, r2126, r2130, r2155, r2160,
+	  r2246, r2470, r2473, r2474, r2475, r2505, r2522, r2538,
+	  ~~r2541~~, r2542, r2544, r2546, r2547, r2548, r2549, r2552,
+	  ~~r2553~~, r2554, r2558, r2560, ~~r2563~~, r2564, r2565, r2566,
+	  r2606, r2607, r2608, r2611, r2612, r2613, r2614, r2615, r2617,
+	  r2630, r2661, r2669, r2670, r2672, r2673, r2674, ~~r2679~~,
+	  r2683, r2684, r2685, r2686, r2689, r2690
+	  
+	  == Text File Conversion ==
+	  
+	  r1875, r1881, r1899, r1900, r1901, r1902, r1903, r1912, r1913,
+	  r1916, r1921, r1922, r1923, r1924, r1925, r1926, r1997, r1998,
+	  r2003, r2030, r2031, r2064, r2065, r2135, r2150, r2157, r2158,
+	  r2245, r2283, r2284, r2285, r2289, r2291, r2292, r2328, r2409,
+	  r2463, r2465, r2481, r2482, r2497, r2498, r2499, r2502, r2517,
+	  r2519, r2520, r2525, r2526, r2527, r2530, r2533, r2534, r2535,
+	  r2536, r2537, r2556, r2561, r2562, r2649, r2701
+	  
+	  == Updated Content ==
+	  
+	  r1938, r1939, r1984, r1985, r1991, r1992, r2052, r2069, r2108,
+	  r2124, r2131, r2142, r2144, r2149, r2154, r2156, r2164, r2211,
+	  r2227, r2293, r2304, r2309, r2351, r2358, r2409, r2416, r2418,
+	  r2419, r2420, r2438, r2460, r2461, r2462, r2464, r2466, r2469,
+	  r2471, r2472, r2476, r2477, r2478, r2479, r2480, r2483, r2484,
+	  r2485, r2493, r2496, r2501, r2503, r2506, r2507, r2510, r2512,
+	  r2518, r2529, r2540, r2543, r2545, r2550, r2551, r2555, r2557,
+	  r2559, r2631, r2632, r2633, r2634, r2637, r2638, r2639, r2640,
+	  r2643, r2648, r2652, r2653, r2655, r2662, r2664, r2665, r2666,
+	  r2681
+	  
+	  == Website ==
+	  
+	  r1883, r1905, r1907, r1911, r1933, r1935, r1937, r1940, r1950,
+	  r1953, r1954, r1967, r1973, r1974, r1975, r2000, r2001, r2002,
+	  r2058, r2059, ~~r2060~~, r2061, r2063, r2066, r2123, r2134,
+	  r2136, r2159, r2225, r2288, r2290, r2486, r2487, r2494, r2495,
+	  r2500, r2504, r2515, r2521, r2523, r2539, r2562, r2607, r2721
+	  
+	  == Manual Page Conversion ==
+	  
+	  r1961, r1962, r1963, r1965, r1969, r1971, r1972, r1981, r1982,
+	  r1986, r1987, r1988, r1993, r2004, r2005, r2006, r2007, r2008,
+	  r2009, r2010, r2011, r2012, r2013, r2014, r2019, r2020, r2021,
+	  r2028, r2033, r2034, r2038, r2044, r2047, r2048, r2049, r2050,
+	  r2051, r2062, r2067, r2068, r2074, r2075, r2107, r2109, r2110,
+	  r2111, r2112, r2113, r2127, r2129, r2132, r2137, r2146, r2147,
+	  r2151, r2152, r2162, r2204, r2205, r2206, r2207, r2208, r2209,
+	  r2210, r2211, r2226, r2227, r2228, r2229, r2249, r2251, r2252,
+	  r2258, r2259, r2310, r2311, r2312, r2313, r2314, r2572, r2580
+	  
+	  == Ported from trunk ==
+	  
+	  r2039, r2043, r2049, r2076, r2110, r2120, r2209, r2210, r2249,
+	  r2258, r2287, r2325, r2358, r2393, r2429, r2430, r2434, r2439,
+	  r2440, r2443, r2447, r2514, r2532, r2567, r2657, r2694, r2696,
+	  r2700
+
+2010-12-03  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2720] server/upsd.c: Allow hostnames in /etc/hosts.allow too
+	  (not only IPv4 and/or IPv6 addresses). This is a frequent source
+	  of confusion for people setting up libwrap access control.
+	  
+	  [http://lists.alioth.debian.org/pipermail/nut-upsdev/2010-December/005097.html]
+	* [r2719] drivers/libhid.c: Revert commit 2407 (which breaks
+	  reading reports larger than 8 bytes) and make sure we only store
+	  data that was read.
+	  
+	  Breaking up the buffer in chunks that the USB interface can
+	  handle is the job of the libusb library. If this doesn't work,
+	  it's libusb that needs fixing, not NUT.
+
+2010-11-30  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2713] server/ssl.c: When a CERTFILE is configured for the
+	  server, mandate that SSL is started or else fail starting the
+	  server (so that a configuration problem doesn't remain hidden).
+	  
+	  Remove redundant OpenSSL_add_ssl_algorithms() call (same as
+	  SSL_library_init).
+
+2010-11-29  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2710] scripts/upower/95-upower-hid.rules, tools/nut-usbinfo.pl:
+	  Complete the renaming from DeviceKit-power to UPower, synchronise
+	  the rules file as per upstream changes and update the generated
+	  content
+
+2010-11-23  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2699] drivers/dummy-ups.c, drivers/dummy-ups.h,
+	  man/dummy-ups.8: dummy-ups 0.12 now allows variable removal, by
+	  setting an empty value
+
+2010-11-20  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2697] data/driver.list: Also add CyberPower CP1500AVRLCD to the
+	  list of usbhid-ups supported models (reported by Patrick
+	  O'Malley)
+	* [r2695] data/driver.list: Add CyberPower CP1350AVRLCD to the list
+	  of usbhid-ups supported models (reported by Patrick O'Malley)
+
+2010-11-13  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2688] Makefile.am: Create empty website target (to silence
+	  warnings about missing target)
+
+2010-11-12  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2687] drivers/apc-hid.c: Add additional HID mappings for
+	  shutting down APC SmartUPS RM series
+	  
+	  [http://lists.alioth.debian.org/pipermail/nut-upsuser/2010-November/006318.html]
+
+2010-11-06  David Goncalves <david@lestat.st>
+
+	* [r2682] scripts/python/Makefile.am,
+	  scripts/python/app/NUT-Monitor, scripts/python/app/gui-1.2.glade,
+	  scripts/python/app/gui-1.3.glade, scripts/python/app/locale,
+	  scripts/python/app/locale/fr,
+	  scripts/python/app/locale/fr/LC_MESSAGES,
+	  scripts/python/app/locale/fr/LC_MESSAGES/NUT-Monitor.mo:
+	  NUT-Monitor 1.3 - Added localization support
+
+2010-11-05  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2680] drivers/blazer.c: Check for NULL pointer before checking
+	  the status flags was missing
+	  
+	  [http://lists.alioth.debian.org/pipermail/nut-upsdev/2010-November/005045.html]
+
+2010-11-03  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2656] data/driver.list, drivers/tripplite-hid.c: Add HP T750 G2
+	  to the list of usbhid-ups supported models (patch from Jorge
+	  Salamero Sanz)
+
+2010-11-02  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2654] configure.in, m4/nut_check_libnetsnmp.m4: Exclude -I. and
+	  extra developer warning flags with Net-SNMP support enabled
+	  (using them is the responsibility of the NUT developers)
+
+2010-10-31  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2651] configure.in, drivers/upsdrvctl.c: Fix remaining
+	  compilation warnings by doing an explicit cast that removes the
+	  'const' qualification and ignoring this specific GCC warning.
+	  Sadly the underlying functions don't support this qualifier (and
+	  it's not trivial to work around these remaining warnings).
+
+2010-10-28  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2647] drivers/powerman-pdu.c: Fix compilation warnings
+	* [r2646] drivers/dstate-hal.c: Fix compilation warnings
+	* [r2645] drivers/megatec_usb.c: Fix compilation warnings
+
+2010-10-27  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2636] drivers/mge-utalk.c, drivers/mge-utalk.h: Fix compilation
+	  warnings
+	* [r2635] drivers/mge-shut.c, drivers/mge-shut.h: Fix compilation
+	  warnings
+
+2010-10-26  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2629] drivers/tripplite.c: Fix compilation warnings
+	* [r2628] drivers/rhino.c: Fix compilation warnings
+	* [r2627] drivers/powercom.h: Fix compilation warnings
+	* [r2626] drivers/libshut.c, drivers/libshut.h: Fix compilation
+	  warnings
+	* [r2625] drivers/microdowell.c: Fix compilation warnings
+	* [r2624] drivers/gamatronic.c, drivers/gamatronic.h: Fix
+	  compilation warnings
+	* [r2623] drivers/usb-common.c: Fix compilation warnings
+	* [r2622] drivers/mge-xml.c, drivers/netxml-ups.h: Fix compilation
+	  warnings
+	* [r2621] drivers/bestfortress.c: Fix compilation warnings
+	* [r2620] drivers/dummy-ups.h: Fix compilation warnings
+	* [r2619] drivers/bcmxcp.c, drivers/bcmxcp.h: Fix compilation
+	  warnings
+	* [r2618] drivers/powerp-txt.c, drivers/powerpanel.h: Fix
+	  compilation warnings
+
+2010-10-25  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2616] drivers/mge-hid.c, drivers/powercom-hid.c,
+	  drivers/usbhid-ups.h: Remove superfluous const declaration
+	  (function return values can never be a lvalue)
+
+2010-10-20  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2604] server/upsd.c: Revert experimental stuff that
+	  accidentally made it into commit 2600
+	* [r2603] drivers/mge-hid.c: Fix wrong pointer type
+	* [r2602] configure.in: Remove inet_aton from AC_REPLACE_FUNCS (no
+	  longer needed)
+	* [r2601] drivers/bcmxcp_usb.c, drivers/bestfcom.c,
+	  drivers/ivtscd.c, drivers/libshut.c, drivers/metasys.c,
+	  drivers/optiups.c, drivers/powerp-bin.c, drivers/powerp-txt.c,
+	  drivers/rhino.c, drivers/richcomm_usb.c, drivers/safenet.c,
+	  drivers/snmp-ups.c, drivers/solis.h: Fix bad prototypes (missing
+	  void)
+	* [r2600] Makefile.am, clients/upsclient.c, clients/upsclient.h,
+	  clients/upsmon.c, common/inet_aton.c, configure.in,
+	  docs/configure.txt, m4/nut_check_ipv6.m4, server/upsd.c: Remove
+	  code that used the (now obsoleted) gethostbyaddr in favor of the
+	  (IPv6 capable) getaddrinfo function
+	* [r2599] drivers/libusb.h: Fix compilation warnings
+	* [r2598] drivers/tripplite_usb.c: Fix compilation warnings
+	* [r2597] drivers/serial.c: Replace explicit typecasts of void
+	  pointers by adding an intermediate variable of the proper type
+	* [r2596] drivers/apcsmart.c: Fix compilation warnings (functions
+	  returning string contants, should return (const char *), not
+	  (char *))
+
+2010-10-19  Charles Lepple <clepple+nut@gmail.com>
+
+	* [r2581] scripts/python/module/PyNUT.py: Fix small typo in
+	  comments of PyNUT class
+
+2010-10-16  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2573] man/upsd.conf.5: Add information on the CERTFILE keyword,
+	  needed for SSL support in the upsd server
+
+2010-10-13  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2571] drivers/belkin.c, drivers/belkin.h: Add battery tests and
+	  beeper control commands, and report the beeper and test status
+	  (patch from John Bayly)
+
+2010-10-08  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2570] drivers/apc-hid.c, drivers/belkin-hid.c,
+	  drivers/cps-hid.c, drivers/explore-hid.c, drivers/liebert-hid.c,
+	  drivers/mge-hid.c, drivers/powercom-hid.c,
+	  drivers/tripplite-hid.c, drivers/usbhid-ups.c,
+	  drivers/usbhid-ups.h, scripts/subdriver/path-to-subdriver.sh: Fix
+	  compilation warnings for the usbhid-ups driver (functions
+	  returning string contants, should return (const char *), not
+	  (char *))
+	* [r2569] clients/upsmon.c, common/common.c: Change strange (but
+	  valid) construction. Setting a flag should be done by either
+	  '*val |= *flag' or '*val = (*val | flag)'. Using '*val = (*val |=
+	  flag)' will first set the flag in *val and then assign the result
+	  to *val (which is redundant).
+	* [r2568] server/upsd.c: Initialize SSL before we drop privileges
+	  (we may not be able to read the keyfile as non-root)
+
+2010-09-22  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2531] drivers/snmp-ups.c, drivers/snmp-ups.h, man/snmp-ups.8:
+	  Add SNMP v3 support, and rework SNMP initialisation
+
+2010-09-20  Charles Lepple <clepple+nut@gmail.com>
+
+	* [r2528] drivers/libhid.c, drivers/usbhid-ups.c: Print HID values
+	  in scientific notation.
+
+2010-09-15  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2524] data/driver.list, drivers/tripplite-hid.c: Add a bunch of
+	  Tripplite USB/HID devices, reported from UPower, and HP R1500 G2
+	  INTL to the list of supported Tripplite HID devices
+
+2010-09-11  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2516] data/driver.list, drivers/tripplite-hid.c: Add
+	  Smart1000LCD to list of supported devices
+	  [http://lists.alioth.debian.org/pipermail/nut-upsuser/2010-September/006188.html]
+
+2010-09-08  Chetan Agarwal <chetanagarwal-guest@alioth.debian.org>
+
+	* [r2513] data/driver.list: Fixed renaming of liebertgxt2 to
+	  liebert-esp2 driver done in commit r2432 and in r2444
+
+2010-09-07  Chetan Agarwal <chetanagarwal-guest@alioth.debian.org>
+
+	* [r2511] data/driver.list: Add Eaton ConnectUPS X / BD / E Slot to
+	  compatibility list for bcmxcp and snmp-ups
+
+2010-09-06  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2509] data/driver.list, drivers/tripplite-hid.c: Add HP T1500
+	  INTL to list of supported devices
+	  [http://lists.alioth.debian.org/pipermail/nut-upsdev/2010-September/004938.html]
+
+2010-08-30  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2508] drivers/mge-hid.c: ups.test.result is now refreshed upon
+	  each full polling cycle
+
+2010-07-25  David Goncalves <david@lestat.st>
+
+	* [r2492] scripts/python/Makefile.am, scripts/python/app/pixmaps,
+	  scripts/python/app/pixmaps/on_battery.png,
+	  scripts/python/app/pixmaps/on_line.png,
+	  scripts/python/app/pixmaps/var-ro.png,
+	  scripts/python/app/pixmaps/var-rw.png,
+	  scripts/python/app/pixmaps/warning.png: Added missing pixmaps for
+	  NUT-Monitor 1.2
+
+2010-07-25  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2491] drivers/upsdrvctl.c: Check for NULL before xbasename() on
+	  'port' variable (legacy code for nut-2.0.4 drivers and older)
+	  
+	  [http://lists.alioth.debian.org/pipermail/nut-upsdev/2010-July/004894.html]
+
+2010-07-24  Charles Lepple <clepple+nut@gmail.com>
+
+	* [r2490] scripts/python/Makefile.am: Add new glade filename to
+	  Makefile.am
+	  
+	  Should fix Buildbot failure from r2489.
+
+2010-07-23  David Goncalves <david@lestat.st>
+
+	* [r2489] scripts/python/app/NUT-Monitor,
+	  scripts/python/app/gui-1.2.glade, scripts/python/app/gui.glade,
+	  scripts/python/module/PyNUT.py: Upgrade NUT-Monitor to 1.2
+	* [r2488] scripts/python/module/PyNUT.py: Upgrade PyNUT module to
+	  1.2
+
+2010-07-11  Charles Lepple <clepple+nut@gmail.com>
+
+	* [r2468] data/driver.list: driver.list: Split entries for Tripp
+	  Lite OmniVS1000
+	  
+	  http://article.gmane.org/gmane.comp.monitoring.nut.user/5591
+
+2010-06-25  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2459] drivers/apc-hid.c: Add support for APC 5G models
+	  http://lists.alioth.debian.org/pipermail/nut-upsdev/2010-June/004846.html
+
+2010-06-24  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2458] drivers/mge-hid.c: Do no ignore DST offset, or it will be
+	  substracted from the actual value in the target device
+
+2010-06-22  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2457] drivers/dummy-ups.c: Fix status handling in simulation
+	  (dummy) mode, conform to the coding rules, fix a memory leak and
+	  bump the release to 0.11
+
+2010-05-13  Charles Lepple <clepple+nut@gmail.com>
+
+	* [r2456] tools/nut-usbinfo.pl: BUS to SUBSYSTEMS in nut-usbinfo.pl
+	  (to match r2411)
+	* [r2455] data/driver.list, drivers/tripplite-hid.c: Add "Tripp
+	  Lite SmartOnline SU1000XLA" to list of supported devices. [Ron
+	  Peterson]
+	  
+	  http://lists.alioth.debian.org/pipermail/nut-upsuser/2010-May/006055.html
+
+2010-05-04  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2454] configure.in, drivers/main-hal.c, m4/nut_check_libhal.m4:
+	  Use AC_CHECK_FUNCS to see if g_timeout_add_seconds is available
+	  (rather than checking the version of the library that is
+	  installed)
+
+2010-05-04  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2453] drivers/mge-xml.c, drivers/usbhid-ups.c: Add "Test
+	  scheduled" handling for ups.test.result on Eaton and derivative
+	  units
+
+2010-05-02  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2452] m4/nut_check_libhal.m4: Additionally check for 'glib.h'
+	  and 'dbus/glib.h' to see if the requirements for HAL are met
+
+2010-04-19  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2445] data/driver.list, drivers/Makefile.am,
+	  drivers/bestpower-mib.c, drivers/bestpower-mib.h,
+	  drivers/snmp-ups.c, drivers/snmp-ups.h: Add Eaton Best Ferrups
+	  with older ConnectUPS card to the list of snmp-ups supported
+	  models
+
+2010-04-18  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2444] drivers/Makefile.am: Renaming the liebertgxt2 to
+	  liebert-esp2 driver in commit r2432 failed to update the
+	  Makefile.am
+	* [r2442] data/driver.list: Add two models that were reported on
+	  the mailinglists:
+	  http://lists.alioth.debian.org/pipermail/nut-upsdev/2010-April/004738.html
+	  http://lists.alioth.debian.org/pipermail/nut-upsuser/2010-April/006023.html
+	* [r2441] drivers/tripplite-hid.c: Allow 'productid' overrides for
+	  Hewlett Packard UPS devices
+
+2010-04-15  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2437] drivers/tripplite-hid.c: Add 'HP T1000 INTL UPS' to list
+	  of supported devices [Sturle Sunde]
+	  http://lists.alioth.debian.org/pipermail/nut-upsdev/2010-April/004735.html
+
+2010-04-14  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2436] docs/new-names.txt: Add 'output.crestfactor' and
+	  'outlet.n.crestfactor' to list of supported variables
+
+2010-04-10  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2435] drivers/liebert-esp2.c: Allow spaces in model name and
+	  add 'battery.temperature' variable (Spiros Ioannou)
+	  http://lists.alioth.debian.org/pipermail/nut-upsdev/2010-April/004719.html
+
+2010-04-10  Charles Lepple <clepple+nut@gmail.com>
+
+	* [r2433] drivers: Add 'liebert-esp2' driver to svn:ignore list.
+
+2010-04-10  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2432] drivers/Makefile.am, drivers/liebert-esp2.c,
+	  drivers/liebertgxt2.c, man/Makefile.am, man/liebert-esp2.8,
+	  man/liebertgxt2.8: Rename 'liebertgxt2' driver to 'liebert-esp2'
+	  (GXT2 is a model name, ESP-II the serial protocol being used by
+	  other models as well)
+
+2010-04-09  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2431] drivers/liebertgxt2.c, man/liebertgxt2.8: Allow to
+	  override default baudrate to user specified value (needed on some
+	  models)
+
+2010-04-09  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2428] data/driver.list: Add Eaton 9395 with serial interface to
+	  the list of bcmxcp supported models
+
+2010-04-07  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2426] drivers/liebertgxt2.c: Add CHRG and DISCHRG status flags
+	  (based on the reported battery.current)
+	* [r2425] drivers/liebertgxt2.c: Fix previous commit
+	* [r2424] drivers/liebertgxt2.c: Add 'battery.current' value
+	  [Spiros Ioannou] removing the CHRG flag at the same time (which
+	  doesn't seem to be usable)
+	  http://lists.alioth.debian.org/pipermail/nut-upsdev/2010-April/004700.html
+	* [r2423] drivers/liebertgxt2.c: Fix ups.firmware [Robert Jobbagy]
+	  and only require ups.model for successful detection
+	  http://lists.alioth.debian.org/pipermail/nut-upsdev/2010-April/004701.html
+
+2010-04-07  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2422] scripts/Makefile.am, scripts/README, scripts/dkp,
+	  scripts/upower, scripts/upower/95-devkit-power-hid.rules,
+	  scripts/upower/95-upower-hid.rules: Update DeviceKit-power
+	  resource to the new UPower name
+
+2010-04-06  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2421] drivers/liebertgxt2.c: More byte swapping issues fixed
+	  [Richard Gregory]
+	  http://lists.alioth.debian.org/pipermail/nut-upsdev/2010-April/004698.html
+
+2010-04-02  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2415] drivers/liebertgxt2.c: Swap bytes in calculations for
+	  reported values by the UPS [Robert Jobbagy]
+	  http://lists.alioth.debian.org/pipermail/nut-upsdev/2010-April/004695.html]
+
+2010-03-29  Charles Lepple <clepple+nut@gmail.com>
+
+	* [r2414] ., ChangeLog, Makefile.am, tools/Makefile.am,
+	  tools/svn2cl.authors: Generate the ChangeLog file with 'make
+	  dist' from SVN history
+	  
+	  ` svn merge -r2401:r2413
+	  svn+ssh://svn.debian.org/svn/nut/branches/svn-auto-changelog `
+	  
+	  Includes the following: - r2402 removes the static ChangeLog and
+	  adds a rule and the authors file. - r2403 shows how little I
+	  remember about automake - r2404 and r2413 cancel each other out -
+	  r2405 fixes the SVN starting revision syntax.
+
+2010-03-27  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2411] scripts/udev/nut-usbups.rules.in: Change BUS to
+	  SUBSYSTEMS, since the former is deprecated (patch from Michal
+	  Hlavinka, Red Hat)
+
+2010-03-26  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2410] drivers/powercom-hid.c, man/usbhid-ups.8: Reject devices
+	  that are known not to be supported by the powercom-hid subdriver
+
+2010-03-23  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2408] clients/Makefile.am, common/Makefile.am,
+	  drivers/Makefile.am, server/Makefile.am: Fix the distribution and
+	  compilation of local implementation of missing systems functions.
+	  This resulted in compilation failure on HP-UX, and possibly other
+	  older Unix systems, like Aix. Refer to configure.in ->
+	  AC_REPLACE_FUNCS for more information.
+
+2010-03-22  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2407] drivers/libhid.c: Reduce size of buffer to maximum size
+	  supported by low-speed USB devices.
+
+2010-03-22  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2406] drivers/Makefile.am: Add the missing link to the math
+	  library for bcmxcp driver
+
+2010-03-12  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2400] README: Remove monitor-only option that never existed.
+	  Whether or not a system will shutdown is determined by the
+	  combined powervalue of all devices it monitors (this has nothing
+	  to do with the master or slave setting).
+
+2010-03-08  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2399] clients/upsclient.h, drivers/hidparser.h,
+	  drivers/hidtypes.h, include/parseconf.h: Add control comments for
+	  'ident' to switch off formatting in some places
+	* [r2398] clients/upsimage.c, clients/upsimagearg.h,
+	  clients/upslog.c, clients/upslog.h, clients/upssched.c,
+	  clients/upssched.h, drivers/apcsmart.c, drivers/apcsmart.h,
+	  drivers/dstate-hal.h, drivers/gamatronic.h, drivers/main-hal.h,
+	  drivers/main.h, drivers/netxml-ups.h, drivers/usbhid-ups.h,
+	  server/netcmds.h: Finalize cleanup of type definitions for
+	  structures where needed and/or useful (and replace a couple of
+	  void pointers by the proper structures)
+
+2010-03-07  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2397] common/state.c, drivers/dstate-hal.h, drivers/dstate.c,
+	  drivers/dstate.h, include/extstate.h, include/state.h,
+	  server/netget.c, server/netinstcmd.c, server/netlist.c,
+	  server/netset.c, server/sstate.c, server/sstate.h,
+	  server/upstype.h: Create types for structures that already
+	  suggested that they were types, but were not (cmdlist_t, conn_t,
+	  enum_t and st_tree_t) and use these instead
+	* [r2396] drivers/blazer.c: Fix loss of precision in dividing
+	  integers
+
+2010-03-07  Charles Lepple <clepple+nut@gmail.com>
+
+	* [r2395] docs/cables/ge-imv-victron.txt: Remove escape sequence
+	  from cable diagram.
+	  
+	  Pointed out on Feb 25 2010 by Yury V. Zaytsev on nut-upsuser.
+
+2010-03-04  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2392] data/driver.list: Add PowerWare 5119 RM support through
+	  upscode2 driver
+	  [http://lists.alioth.debian.org/pipermail/nut-upsdev/2010-March/004608.html]
+	* [r2391] drivers/upscode2.c: Use "shutdown.reboot" (which was used
+	  before r2389 was committed) instead of "shutdown.return" in the
+	  shutdown function
+
+2010-03-03  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2390] drivers/upscode2.c: Update based on information provided
+	  by Steve Golson
+	  [http://lists.alioth.debian.org/pipermail/nut-upsdev/2010-March/004608.html]
+	* [r2389] drivers/upscode2.c: Update based on information provided
+	  by Steve Golson
+	  [http://lists.alioth.debian.org/pipermail/nut-upsdev/2010-March/004608.html]
+
+2010-03-01  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2387] configure.in: No longer require autoconf version 2.60 or
+	  better and work around broken quadrigraphs before autoconf
+	  version 2.62
+	* [r2385] drivers/mge-hid.c: Add missing Kelvin to Celcius
+	  conversion
+	  [http://lists.alioth.debian.org/pipermail/nut-upsuser/2010-March/005944.html]
+	* [r2384] configure.in: Attempt to fix problem with two consecutive
+	  '@:>@' quadrigraphs (also reports m4 version used)
+
+2010-02-28  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2383] configure.in, m4/nut_check_libgd.m4,
+	  m4/nut_check_libhal.m4, m4/nut_check_libneon.m4,
+	  m4/nut_check_libnetsnmp.m4, m4/nut_check_libpowerman.m4,
+	  m4/nut_check_libssl.m4, m4/nut_check_libusb.m4,
+	  m4/nut_config_libhal.m4: Restore @<:@ and @:>@ quadrigraphs
+	* [r2382] configure.in: Revert commit 2380 which fails on Debian
+	* [r2381] m4/nut_check_libgd.m4, m4/nut_check_libhal.m4,
+	  m4/nut_check_libneon.m4, m4/nut_check_libnetsnmp.m4,
+	  m4/nut_check_libpowerman.m4, m4/nut_check_libssl.m4,
+	  m4/nut_check_libusb.m4, m4/nut_config_libhal.m4: Revert commit
+	  2380 which fails on Debian
+	* [r2380] configure.in, m4/nut_check_libgd.m4,
+	  m4/nut_check_libhal.m4, m4/nut_check_libneon.m4,
+	  m4/nut_check_libnetsnmp.m4, m4/nut_check_libpowerman.m4,
+	  m4/nut_check_libssl.m4, m4/nut_check_libusb.m4,
+	  m4/nut_config_libhal.m4: Change escaped characters (no functional
+	  changes)
+	* [r2379] configure.in, m4/nut_check_libgd.m4,
+	  m4/nut_check_libhal.m4, m4/nut_check_libneon.m4,
+	  m4/nut_check_libnetsnmp.m4, m4/nut_check_libpowerman.m4,
+	  m4/nut_check_libssl.m4, m4/nut_check_libusb.m4,
+	  m4/nut_config_libhal.m4: Clean up output of 'configure --help'
+	  (indentation, optional parameters) and don't allow options which
+	  need a parameter
+	* [r2378] m4/nut_check_libgd.m4, m4/nut_check_libhal.m4,
+	  m4/nut_check_libneon.m4, m4/nut_check_libnetsnmp.m4,
+	  m4/nut_check_libpowerman.m4, m4/nut_check_libssl.m4,
+	  m4/nut_check_libusb.m4, m4/nut_config_libhal.m4,
+	  scripts/hal/ups-nut-device.fdi.in,
+	  scripts/udev/nut-usbups.rules.in: When setting variables from
+	  pkg-config, rather than checking for the return value, check for
+	  a (non-)zero length. It will happily return zero for unknown
+	  variables in otherwise supported packages (and this is usually
+	  not what we want). Also direct stderr to /dev/null for systems
+	  that don't use pkg-config.
+	* [r2377] m4/nut_config_libhal.m4: Fix type (leftover from
+	  debugging)
+	* [r2376] configure.in, m4/nut_check_libhal.m4,
+	  m4/nut_config_libhal.m4: Keep compile and linker options separate
+	  from runtime configuration parameters (and skip the latter if the
+	  first are not usable)
+
+2010-02-27  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2375] m4/nut_check_libhal.m4: Test for empty variable, rather
+	  than the return value of pkg-config
+	* [r2374] docs/configure.txt, m4/nut_check_libhal.m4: Allow
+	  overrides in ./configure for all variables needed for HAL support
+
+2010-02-26  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2372] common/common.c, configure.in, drivers/main.c,
+	  include/common.h, man/nutupsdrv.8, man/upsd.8, server/upsd.c: Due
+	  to popular demand, add a possibility to reduce the verbosity of
+	  messages written to the syslog (by adding one or more -q flags in
+	  a similar fashion as the -D debug flag)
+	* [r2371] m4/nut_check_libgd.m4, m4/nut_check_libneon.m4,
+	  m4/nut_check_libnetsnmp.m4, m4/nut_check_libpowerman.m4,
+	  m4/nut_check_libssl.m4, m4/nut_check_libusb.m4: Check if
+	  overrides are specified, but the mandatory argument is missing
+	  (and refer to 'docs/configure.txt')
+
+2010-02-25  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2370] clients/upslog.c, clients/upsmon.c, clients/upsrw.c,
+	  clients/upssched.c, server/sockdebug.c, server/upsd.c: Use
+	  open_syslog wrapper function instead of openlog directly and grab
+	  program name from argv[0]
+
+2010-02-23  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2367] drivers/netvision-mib.c: Fixes Alioth bug #312364
+
+2010-02-23  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2366] ChangeLog, NEWS, UPGRADING, configure.in: Final update
+	  for 2.4.3 release
+
+2010-02-20  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2365] m4/nut_check_ipv6.m4: Fix broken logic to enable IPv6
+	  support
+
+2010-02-19  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2363] ChangeLog, configure.in: Final update for 2.4.2 release
+	* [r2362] NEWS, data/driver.list: Add HP R1500 G2 to compatibility
+	  list for bcmxcp (reported by Stephan Schupfer)
+
+2010-02-19  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2361] clients/upsmon.h: Fixed typo
+	* [r2360] clients/upsmon.c, clients/upsmon.h: You can't compare
+	  strings with '!=' in C, so the logic to determine if the stock
+	  message was overridden was flawed (causing problems with
+	  (de)allocation of memory)
+
+2010-02-19  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2357] conf/nut.conf.sample, conf/upsmon.conf.sample, docs/FAQ,
+	  man/upsmon.conf.5: Remove remaining references to ACL /
+	  allowfrom.
+
+2010-02-19  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2355] configure.in: Replace __func__ on pre-C99 compilers with
+	  __FUNCTION__ (may be available on older GNU C compilers) or
+	  __LINE__ (which is always available)
+
+2010-02-16  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2353] drivers/main.h: Static initialization of flexible array
+	  members is non-portable (GNU C extension), so don't use a
+	  flexible array member here
+	* [r2352] configure.in: Check if the C compiler supports flexible
+	  array members and/or variable-length arrays
+	* [r2350] drivers/upscode2.c: Don't use signed constants in a
+	  bitfield
+
+2010-02-15  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2349] drivers/main.h: Fix missing semi-colon
+	* [r2348] drivers/main.h: Attempt to fix compiler warning on
+	  Solaris (although I have my doubts about the portability of array
+	  declarations within structures)
+	* [r2347] drivers/snmp-ups.c, drivers/snmp-ups.h: Fix for buggy
+	  Net-SNMP config should be before including headers, since our
+	  autoconf generated header is the first to be included (so the
+	  conflict is caused by subsequently including the Net-SNMP
+	  headers)
+	* [r2346] drivers/apcsmart.c, drivers/metasys.c, drivers/serial.c:
+	  Fix unreachable code warnings
+	* [r2345] drivers/upscode2.c: An (int) is only guaranteed to be at
+	  least 16-bit while we need 32-bit here (so it's better to use a
+	  fixed width integer)
+
+2010-02-14  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2344] configure.in, docs/configure.txt, drivers/powerman-pdu.c,
+	  m4/nut_check_libneon.m4, m4/nut_check_libnetsnmp.m4,
+	  m4/nut_check_libpowerman.m4, m4/nut_check_libusb.m4: Allow to
+	  override CFLAGS and LDFLAGS detected by the *.m4 macros in case
+	  pkg-config is not available
+	* [r2343] docs/configure.txt, m4/nut_check_libssl.m4: Allow cflags
+	  and ldflags overrides for openssl (may be useful/needed if
+	  pkg-config is not available)
+
+2010-02-13  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2342] drivers/liebertgxt2.c: Use (unsigned char) instead of
+	  (char) in command definitions (to prevent overflow warnings
+	  definitions)
+	* [r2341] drivers/mge-shut.h: The usage code must be at least a
+	  32-bit integer (and 'int' is only guaranteed to be at least
+	  16-bit).
+	* [r2340] m4/nut_check_libnetsnmp.m4: Check if Net-SNMP library is
+	  usable
+
+2010-02-12  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2339] docs/cables/apc.txt: APC cable diagrams as reported on
+	  the mailinglist
+	  [http://lists.alioth.debian.org/pipermail/nut-upsuser/2005-August/000118.html]
+
+2010-02-11  Charles Lepple <clepple+nut@gmail.com>
+
+	* [r2338] ChangeLog: Generate ChangeLog entries from r2337 through
+	  r2331.
+
+2010-02-11  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2337] NEWS: Complete news information for the 2.4.2 release.
+
+2010-02-11  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2336] COPYING, ChangeLog, INSTALL, LICENSE-GPL2, LICENSE-GPL3,
+	  MAINTAINERS, Makefile.am, NEWS, UPGRADING, clients/cgilib.c,
+	  clients/cgilib.h, clients/status.h, clients/upsc.c,
+	  clients/upsclient.c, clients/upsclient.h, clients/upscmd.c,
+	  clients/upsimage.c, clients/upsimagearg.h, clients/upslog.c,
+	  clients/upslog.h, clients/upsmon.c, clients/upsmon.h,
+	  clients/upsrw.c, clients/upssched-cmd, clients/upssched.c,
+	  clients/upssched.h, clients/upsset.c, clients/upsstats.c,
+	  clients/upsstats.h, common/Makefile.am, common/atexit.c,
+	  common/common.c, common/inet_aton.c, common/parseconf.c,
+	  common/setenv.c, common/snprintf.c, common/state.c,
+	  common/strerror.c, common/upsconf.c, compile, conf/Makefile.am,
+	  conf/hosts.conf.sample, conf/nut.conf.sample,
+	  conf/ups.conf.sample, conf/upsd.conf.sample,
+	  conf/upsd.users.sample, conf/upsmon.conf.sample,
+	  conf/upssched.conf.sample.in, conf/upsset.conf.sample,
+	  conf/upsstats-single.html.sample, conf/upsstats.html.sample,
+	  configure.in, data/Makefile.am, data/cmdvartab, data/driver.list,
+	  data/epdu-managed.dev, data/evolution500.dev,
+	  data/html/Makefile.am, data/html/README, data/html/bottom.html,
+	  data/html/header.html.in, data/html/index.html,
+	  data/html/nut-banner.png, docs/FAQ, docs/Makefile.am,
+	  docs/README, docs/acpi.txt, docs/big-servers.txt,
+	  docs/cables/apc-rs500-serial.txt, docs/cables/apc.txt,
+	  docs/cables/ge-imv-victron.txt, docs/cables/imv.txt,
+	  docs/cables/mgeups.txt, docs/cables/powerware.txt,
+	  docs/cables/repotec.txt, docs/cables/sms.txt, docs/chroot.txt,
+	  docs/commands.txt, docs/config-files.txt, docs/configure.txt,
+	  docs/contact-closure.txt, docs/data-room.txt, docs/design.txt,
+	  docs/developers.txt, docs/hid-subdrivers.txt, docs/ideas.txt,
+	  docs/macros.txt, docs/megatec.txt, docs/new-drivers.txt,
+	  docs/new-names.txt, docs/nut-hal.txt, docs/osd-notify.txt,
+	  docs/pager.txt, docs/powersaving.txt, docs/protocol.txt,
+	  docs/shutdown.txt, docs/snmp.txt, docs/sock-protocol.txt,
+	  docs/ssl.txt, docs/suspend-to-disk.txt, docs/upssched.txt,
+	  drivers/Makefile.am, drivers/apc-hid.c, drivers/apc-hid.h,
+	  drivers/apc-mib.c, drivers/apc-mib.h, drivers/apcsmart.c,
+	  drivers/apcsmart.h, drivers/baytech-mib.c, drivers/baytech-mib.h,
+	  drivers/bcmxcp.c, drivers/bcmxcp.h, drivers/bcmxcp_io.h,
+	  drivers/bcmxcp_ser.c, drivers/bcmxcp_usb.c, drivers/belkin-hid.c,
+	  drivers/belkin-hid.h, drivers/belkin.c, drivers/belkin.h,
+	  drivers/belkinunv.c, drivers/bestfcom.c, drivers/bestfortress.c,
+	  drivers/bestuferrups.c, drivers/bestups.c, drivers/blazer.c,
+	  drivers/blazer.h, drivers/blazer_ser.c, drivers/blazer_usb.c,
+	  drivers/clone-outlet.c, drivers/clone.c, drivers/compaq-mib.c,
+	  drivers/compaq-mib.h, drivers/cps-hid.c, drivers/cps-hid.h,
+	  drivers/dstate-hal.c, drivers/dstate-hal.h, drivers/dstate.c,
+	  drivers/dstate.h, drivers/dummy-ups.c, drivers/dummy-ups.h,
+	  drivers/eaton-mib.h, drivers/etapro.c, drivers/everups.c,
+	  drivers/explore-hid.c, drivers/explore-hid.h,
+	  drivers/gamatronic.c, drivers/gamatronic.h, drivers/genericups.c,
+	  drivers/genericups.h, drivers/hidparser.c, drivers/hidparser.h,
+	  drivers/hidtypes.h, drivers/ietf-mib.c, drivers/ietf-mib.h,
+	  drivers/isbmex.c, drivers/ivtscd.c, drivers/libhid.c,
+	  drivers/libhid.h, drivers/libshut.c, drivers/libshut.h,
+	  drivers/libusb.c, drivers/libusb.h, drivers/liebert-hid.c,
+	  drivers/liebert-hid.h, drivers/liebert.c, drivers/liebertgxt2.c,
+	  drivers/main-hal.c, drivers/main-hal.h, drivers/main.c,
+	  drivers/main.h, drivers/masterguard.c, drivers/megatec.c,
+	  drivers/megatec.h, drivers/megatec_usb.c, drivers/metasys.c,
+	  drivers/mge-hid.c, drivers/mge-hid.h, drivers/mge-mib.c,
+	  drivers/mge-mib.h, drivers/mge-shut.c, drivers/mge-shut.h,
+	  drivers/mge-utalk.c, drivers/mge-utalk.h, drivers/mge-xml.c,
+	  drivers/mge-xml.h, drivers/microdowell.c, drivers/microdowell.h,
+	  drivers/netvision-mib.c, drivers/netvision-mib.h,
+	  drivers/netxml-ups.c, drivers/netxml-ups.h, drivers/optiups.c,
+	  drivers/powercom-hid.c, drivers/powercom-hid.h,
+	  drivers/powercom.c, drivers/powercom.h, drivers/powerman-pdu.c,
+	  drivers/powerp-bin.c, drivers/powerp-bin.h, drivers/powerp-txt.c,
+	  drivers/powerp-txt.h, drivers/powerpanel.c, drivers/powerpanel.h,
+	  drivers/powerware-mib.c, drivers/powerware-mib.h,
+	  drivers/raritan-pdu-mib.h, drivers/rhino.c,
+	  drivers/richcomm_usb.c, drivers/safenet.c, drivers/safenet.h,
+	  drivers/serial.c, drivers/serial.h, drivers/skel.c,
+	  drivers/snmp-ups.c, drivers/snmp-ups.h, drivers/solis.c,
+	  drivers/solis.h, drivers/tripplite-hid.c,
+	  drivers/tripplite-hid.h, drivers/tripplite.c,
+	  drivers/tripplite.h, drivers/tripplite_usb.c,
+	  drivers/tripplitesu.c, drivers/upscode2.c, drivers/upsdrvctl.c,
+	  drivers/upshandler.h, drivers/usb-common.c, drivers/usb-common.h,
+	  drivers/usbhid-ups.c, drivers/usbhid-ups.h, drivers/victronups.c,
+	  include/Makefile.am, include/attribute.h, include/common.h,
+	  include/extstate.h, include/parseconf.h, include/proto.h,
+	  include/state.h, include/timehead.h, include/upsconf.h,
+	  lib/Makefile.am, lib/README, lib/libupsclient-config.in,
+	  lib/libupsclient.pc.in, m4/ax_create_stdint_h.m4,
+	  m4/nut_arg_with.m4, m4/nut_check_ipv6.m4, m4/nut_check_libgd.m4,
+	  m4/nut_check_libhal.m4, m4/nut_check_libneon.m4,
+	  m4/nut_check_libnetsnmp.m4, m4/nut_check_libpowerman.m4,
+	  m4/nut_check_libssl.m4, m4/nut_check_libusb.m4,
+	  m4/nut_check_libwrap.m4, m4/nut_check_os.m4,
+	  m4/nut_report_feature.m4, m4/nut_type_socklen_t.m4,
+	  man/Makefile.am, man/apcsmart.8, man/bcmxcp.8, man/bcmxcp_usb.8,
+	  man/belkin.8, man/belkinunv.8, man/bestfcom.8,
+	  man/bestfortress.8, man/bestuferrups.8, man/bestups.8,
+	  man/blazer.8, man/clone.8, man/dummy-ups.8, man/etapro.8,
+	  man/everups.8, man/gamatronic.8, man/genericups.8,
+	  man/hosts.conf.5, man/isbmex.8, man/ivtscd.8,
+	  man/libupsclient-config.1, man/liebert.8, man/liebertgxt2.8,
+	  man/masterguard.8, man/megatec.8, man/megatec_usb.8,
+	  man/metasys.8, man/mge-shut.8, man/mge-utalk.8,
+	  man/microdowell.8, man/netxml-ups.8, man/nut.conf.5,
+	  man/nutupsdrv.8, man/oneac.8, man/optiups.8, man/powercom.8,
+	  man/powerman-pdu.8, man/powerpanel.8, man/rhino.8,
+	  man/richcomm_usb.8, man/safenet.8, man/skel.8, man/snmp-ups.8,
+	  man/solis.8, man/tripplite.8, man/tripplite_usb.8,
+	  man/tripplitesu.8, man/ups.conf.5, man/upsc.8,
+	  man/upscli_connect.3, man/upscli_disconnect.3, man/upscli_fd.3,
+	  man/upscli_get.3, man/upscli_list_next.3,
+	  man/upscli_list_start.3, man/upscli_readline.3,
+	  man/upscli_sendline.3, man/upscli_splitaddr.3,
+	  man/upscli_splitname.3, man/upscli_ssl.3, man/upscli_strerror.3,
+	  man/upscli_upserror.3, man/upsclient.3, man/upscmd.8,
+	  man/upscode2.8, man/upsd.8, man/upsd.conf.5, man/upsd.users.5,
+	  man/upsdrvctl.8, man/upsimage.cgi.8, man/upslog.8, man/upsmon.8,
+	  man/upsmon.conf.5, man/upsrw.8, man/upssched.8,
+	  man/upssched.conf.5, man/upsset.cgi.8, man/upsset.conf.5,
+	  man/upsstats.cgi.8, man/upsstats.html.5, man/usbhid-ups.8,
+	  man/victronups.8, scripts/HP-UX/Makefile,
+	  scripts/HP-UX/nut-drvctl, scripts/HP-UX/nut-drvctl.sh,
+	  scripts/HP-UX/nut-upsd, scripts/HP-UX/nut-upsd.sh,
+	  scripts/HP-UX/nut-upsmon, scripts/HP-UX/nut-upsmon.sh,
+	  scripts/Makefile.am, scripts/README, scripts/RedHat/README,
+	  scripts/RedHat/halt.patch, scripts/RedHat/ups,
+	  scripts/RedHat/upsd, scripts/RedHat/upsd.in,
+	  scripts/RedHat/upsmon, scripts/RedHat/upsmon.in,
+	  scripts/Solaris8/S99upsmon, scripts/Windows/Makefile,
+	  scripts/Windows/halt.c, scripts/dkp/95-devkit-power-hid.rules,
+	  scripts/hal/Makefile.am, scripts/hal/ups-nut-device.fdi.in,
+	  scripts/hotplug/Makefile.am, scripts/hotplug/README,
+	  scripts/hotplug/libhid.usermap, scripts/hotplug/libhidups.in,
+	  scripts/misc/nut.bash_completion, scripts/misc/osd-notify,
+	  scripts/perl/Nut.pm, scripts/python/Makefile.am,
+	  scripts/python/README, scripts/python/app/NUT-Monitor,
+	  scripts/python/app/README, scripts/python/app/gui.glade,
+	  scripts/python/app/nut-monitor.desktop,
+	  scripts/python/app/nut-monitor.png,
+	  scripts/python/module/PyNUT.py,
+	  scripts/python/module/test_nutclient.py,
+	  scripts/subdriver/path-to-subdriver.sh, scripts/udev/Makefile.am,
+	  scripts/udev/README, scripts/udev/nut-usbups.rules.in,
+	  server/Makefile.am, server/conf.c, server/conf.h, server/ctype.h,
+	  server/desc.c, server/desc.h, server/netcmds.h, server/neterr.h,
+	  server/netget.c, server/netget.h, server/netinstcmd.c,
+	  server/netinstcmd.h, server/netlist.c, server/netlist.h,
+	  server/netmisc.c, server/netmisc.h, server/netset.c,
+	  server/netset.h, server/netuser.c, server/netuser.h,
+	  server/sockdebug.c, server/ssl.c, server/ssl.h, server/sstate.c,
+	  server/sstate.h, server/stype.h, server/upsd.c, server/upsd.h,
+	  server/upstype.h, server/user-data.h, server/user.c,
+	  server/user.h, tools/Makefile.am, tools/device-recorder.sh,
+	  tools/nut-usbinfo.pl: No functional changes (properties only)
+	* [r2335] AUTHORS: No functional changes (properties only)
+
+2010-02-10  Arnaud Quette <arnaud.quette@free.fr>
+
+	* [r2334] ChangeLog: Trimmed 2.4.0 entries.
+
+2010-02-10  Arjen de Korte <adkorte-guest@alioth.debian.org>
+
+	* [r2333] m4/nut_check_ipv6.m4: Check for presence of structures
+	  required for IPv6 support in the header files that are defined by
+	  POSIX (don't rely on the netdb.h header to include them)
+
+2010-02-10  Charles Lepple <clepple+nut@gmail.com>
+
+	* [r2332] ChangeLog: Generate ChangeLog entries from SVN r2331 back
+	  through r2117.
+
