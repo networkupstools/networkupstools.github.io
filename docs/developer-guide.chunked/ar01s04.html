@@ -112,9 +112,13 @@ below).
 </li><li class="listitem">
 As an exception, drivers may set "FSD" when an imminent shutdown has been
 detected. In this case, the "on battery + low battery" condition should not be
-met. Otherwise, setting status to "OB LB" should be prefered.
+met. Otherwise, setting status to "OB LB" should be preferred.
 </li><li class="listitem">
 the OL and OB flags are an indication of the input line status only.
+</li><li class="listitem">
+the CHRG and DISCHRG flags are under replacement by battery.charger.status.
+See the <a class="ulink" href="../user-manual.chunked/index.html" target="_top">NUT command and variable naming scheme</a>
+for more information.
 </li></ul></div></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_ups_alarms"></a>4.9. UPS alarms</h3></div></div></div><p>These work like ups.status, and have three special functions which you
 must use to manage them.</p><pre class="literallayout">alarm_init() - before doing anything else</pre><pre class="literallayout">alarm_set() - add an alarm word</pre><pre class="literallayout">alarm_commit() - push the value into ups.alarm</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>the ALARM flag in ups.status is automatically set whenever you use
 alarm_set.  To remove that flag from ups.status, call alarm_init and
@@ -626,7 +630,7 @@ OR information dumps.
 </li></ul></div><p>You can create an initial "stub" subdriver for your device by using the helper
 script <span class="strong"><strong>scripts/subdriver/gen-snmp-subdriver.sh</strong></span>. Note that this only creates
 a "stub" which MUST be customized to be useful (see CUSTOMIZATION below).</p><p>You have two options to run gen-snmp-subdriver.sh:</p><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_mode_1_get_snmp_data_from_a_real_agent"></a>mode 1: get SNMP data from a real agent</h5></div></div></div><p>This method requires to have a network access to the device, in order to
-automatically retrieve the needed information.</p><p>You have to specify the following paramaters:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+automatically retrieve the needed information.</p><p>You have to specify the following parameters:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 <span class="strong"><strong>-H</strong></span> host address: is the SNMP host IP address or name
 </li><li class="listitem">
 <span class="strong"><strong>-c</strong></span> community: is the SNMP v1 community name (default: public)"
@@ -701,7 +705,7 @@ NUT variable name.</p><p>Check the <a class="link" href="apa.html" title="A. NU
 to find a name that matches the OID name (closest fit). If nothing matches,
 contact the upsdev list, and we’ll figure it out.</p><p>In the above example, the right NUT variable is obviously "device.model".</p><p>The MIB definition file (.mib) also contains some description of these OIDs,
 along with the possible enumerated values.</p></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="nutdrv_qx-subdrivers"></a>4.25. How to make a new subdriver to support another Q* UPS</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_overall_concept_4"></a>Overall concept</h4></div></div></div><p>The NUT "<span class="strong"><strong>nutdrv_qx</strong></span>" driver is a meta-driver that handles Q* UPS devices.</p><p>It consists of a core driver that handles most of the work of talking to the hardware, and several sub-drivers to handle specific UPS manufacturers.</p><p>Adding support for a new UPS device is easy, because it requires only the creation of a new sub-driver.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_creating_a_subdriver_2"></a>Creating a subdriver</h4></div></div></div><p>In order to develop a new subdriver for a specific UPS you have to know the idiom spoken by that device.</p><p>This kind of devices speaks idioms that can be summed up as follows:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
-We send the UPS a query for one or more informations
+We send the UPS a query for one or more information
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 If the query is supported by the device, we’ll get a reply that is mostly of a fixed length, therefore, in most cases, each information starts and ends always at the same indexes
 </li></ul></div></li><li class="listitem"><p class="simpara">
@@ -834,7 +838,7 @@ Command sent to the UPS to get answer/to execute a instant command/to set a vari
 <span class="strong"><strong><code class="literal">answer</code></strong></span>
 </span></dt><dd><p class="simpara">
 Answer from the UPS, filled at runtime.
-</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>If you expect a nonvalid C string (e.g.: inner <code class="literal">\0</code>s) or need to perform actions before the answer is used (and treated as a null-terminated string), you should set a <code class="literal">preprocess_answer()</code> function.</p></div></dd><dt><span class="term">
+</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>If you expect a non-valid C string (e.g.: inner <code class="literal">\0</code>s) or need to perform actions before the answer is used (and treated as a null-terminated string), you should set a <code class="literal">preprocess_answer()</code> function.</p></div></dd><dt><span class="term">
 <span class="strong"><strong><code class="literal">answer_len</code></strong></span>
 </span></dt><dd>
 Expected minimum length of the answer.
@@ -1270,7 +1274,7 @@ Filled at runtime
 <code class="literal">voltronic_p31b</code>
 </p>
 <p>This function will be called <span class="strong"><strong>after</strong></span> the <code class="literal">command</code> has been sent to the UPS and we got back the <code class="literal">answer</code> and stored the <code class="literal">value</code> in order to process it to NUT standards: in this case we will check if the value is in the range and then publish the human readable form of it (i.e. <code class="literal">Li</code>, <code class="literal">Flooded</code> or <code class="literal">AGM</code>).</p>
-</td></tr></tbody></table></div><p>We also know that we can change battery type with the <code class="literal">PBTnn\r</code> command; we are expecting either <code class="literal">(ACK\r</code> if the command succeded or <code class="literal">(NAK\r</code> if the command is rejected.</p><pre class="screen">&gt; [PBTnn\r]             nn = 00/01/02
+</td></tr></tbody></table></div><p>We also know that we can change battery type with the <code class="literal">PBTnn\r</code> command; we are expecting either <code class="literal">(ACK\r</code> if the command succeeded or <code class="literal">(NAK\r</code> if the command is rejected.</p><pre class="screen">&gt; [PBTnn\r]             nn = 00/01/02
 &lt; [(ACK\r]
    01234
    0</pre><p>Here’s the <code class="literal">item_t</code>:</p><pre class="screen">{ "battery.type", 0, voltronic_e_batt_type, "PBT%02.0f\r", "", 5, '(', "", 1, 4, NULL,
@@ -1646,7 +1650,7 @@ Not used for <code class="literal">QX_FLAG_ABSENT</code>
 <p>
 <code class="literal">voltronic_process_setvar</code>
 </p>
-<p>This function will be called, in setvar, before the driver stores the value in the NUT var: here it’s used to truncate the user-provided value to the neareset settable interval.</p>
+<p>This function will be called, in setvar, before the driver stores the value in the NUT var: here it’s used to truncate the user-provided value to the nearest settable interval.</p>
 </td></tr></tbody></table></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_informations_not_yet_available_in_nut"></a>Informations not yet available in NUT</h5></div></div></div><p>If your UPS reports some informations that are not yet available as NUT variables and you need to process them, you can add them in <code class="literal">item_t</code> data structure adding the <code class="literal">QX_FLAG_NONUT</code> flag to its <code class="literal">qxflags</code>: the info will then be printed to the logs.</p><p>So we know that the UPS reports actual input/output phase angles when queried for <code class="literal">QPD\r</code>:</p><pre class="screen">&gt; [QPD\r]
 &lt; [(000 120\r]  &lt;- Input Phase Angle - Output Phase Angle
    012345678
@@ -2101,4 +2105,4 @@ Please, make sure to add your driver in that list in a smart way: if your device
 </li><li class="listitem">
 <code class="literal">nutdrv_qx_zinto.</code>{<code class="literal">c</code>,<code class="literal">h</code>}
 </li></ul></div></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2016-02-02 16:10:05 -- Network UPS Tools 2.7.3.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s03.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s05.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2016-03-09 14:27:57 -- Network UPS Tools 2.7.4</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s03.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s05.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

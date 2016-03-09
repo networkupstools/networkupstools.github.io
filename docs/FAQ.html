@@ -263,7 +263,9 @@ The most frequent issue is that udev has not actually applied the rule:</p><div 
 if NUT has been freshly installed,
 </li><li class="listitem">
 and if the device USB cord was already plugged when installing NUT.
-</li></ul></div><p>In this case, just unplug and plug back the USB cord, then restart NUT.</p><p>There was a mistake in the naming of the NUT udev rules file which resulted in
+</li></ul></div><p>In this case, just unplug and plug back the USB cord, then restart NUT.
+Instead of unplugging, you might also be able to run <code class="literal">udevadm trigger
+--subsystem-match=usb --action=change</code> to fix permissions.</p><p>There was a mistake in the naming of the NUT udev rules file which resulted in
 the rules being overridden by another udev configuration file. While this has
 been fixed in the Git master branch, your distribution may still be affected.
 Details are available in the following Github issue:
@@ -277,7 +279,7 @@ have very similar permissions problems as the <code class="literal">/dev/bus/usb
 libusb approach uses.</p><p>Due to difficulties in running libusb on OS X and Windows, those platforms
 might benefit more from a native HID approach.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_i_get_a_message_from_the_kernel_that_the_driver_did_not_claim_interface_0_before_use"></a>31. I get a message from the kernel that the driver "did not claim interface 0 before use"</h2></div></div></div><p>On Linux, if two copies of a driver are competing for the UPS, these messages
 will appear in dmesg:</p><pre class="literallayout">usbfs: process 29641 (usbhid-ups) did not claim interface 0 before use</pre><p>This can be a symptom of a source install conflicting with a package install.
-There is a rudimetary locking mechanism in NUT, but there is a chance that the
+There is a rudimentary locking mechanism in NUT, but there is a chance that the
 packages might not use the same directory as the NUT default, and the conflict
 will be reported by the kernel.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_why_doesn_8217_t_my_package_work"></a>32. Why doesn’t my package work?</h2></div></div></div><p>Or a variation like…</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_i_can_8217_t_run_this_because_there_8217_s_no_package_for_it_why_isn_8217_t_this_in_a_package_yet"></a>33. I can’t run this because there’s no package for it.  Why isn’t this in a package yet?</h2></div></div></div><p>Sorry, can’t help you there.  All official releases are source code
 and are posted on <a class="ulink" href="http://www.networkupstools.org/" target="_top">http://www.networkupstools.org/</a> along with PGP
@@ -379,4 +381,4 @@ then
         /usr/local/ups/sbin/upsdrvctl shutdown</pre><pre class="literallayout">sleep 120</pre><pre class="literallayout">        # uh oh, we never got shut down! (power race?)
         reboot
 fi</pre></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2015-04-22 08:47:28 -- Network UPS Tools 2.7.3</div></body></html>
+		Last updated 2016-03-09 14:28:04 -- Network UPS Tools 2.7.4</div></body></html>

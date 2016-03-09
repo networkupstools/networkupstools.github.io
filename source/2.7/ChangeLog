@@ -1,5 +1,1090 @@
+2016-03-09  Arnaud Quette <arnaud.quette@free.fr>
+
+	* configure.ac: Fix autoreconf on Debian  For some reason, Automake
+	  doesn't search the current directory correctly when searching for
+	  helper scripts, when 'nut' is running as a git-submodule, as it is
+	  the case with the website repository
+	* configure.ac: update version to 2.7.4
+	* drivers/apc-ats-mib.c: snmp-ups: add APC ATS input.source
+	* drivers/snmp-ups.c: snmp-ups: fix the matching OID tests  For both
+	  sysOID and classic methods, we used to test one of the two OIDs
+	  provided in the mib2nut structures. However, these two OIDs
+	  (oid_pwr_status and oid_auto_check) tend to be redundant and
+	  confusing. Replace these matching by an extraction of
+	  {ups,device}.model
+	* drivers/nut-libfreeipmi.c: nut-ipmipsu: fix compilation warnings
+	* NEWS, UPGRADING, docs/FAQ.txt, docs/net-protocol.txt, docs/new-
+	  drivers.txt, docs/nut-names.txt, docs/nutdrv_qx-subdrivers.txt,
+	  docs/packager-guide.txt, docs/snmp-subdrivers.txt, lib/README,
+	  scripts/augeas/README: Fix spelling and typo errors  Following the
+	  spell-checking scope expansion, do a spell-checking pass
+	* docs/documentation.txt: Update documentation as per the new devices
+	  scope
+	* docs/features.txt, docs/user-manual.txt: Update documentation as
+	  per the new devices scope
+	* docs/Makefile.am: Expand spell-checking scope  Add more documents,
+	  outside of the docs/ directory Closes:
+	  https://github.com/networkupstools/nut/issues/222
+
+2016-03-08  Arnaud Quette <arnaud.quette@free.fr>
+
+	* configure.ac, tools/Makefile.am, tools/driver-list-format.sh: Check
+	  driver.list[.in] format at make dist time  Instead of checking
+	  driver.list.in at configure time, move the checking and
+	  modification into a script that is called at make dist time. The
+	  script can also be called manually, and will try to fix both
+	  driver.list.in and driver.list
+
+2016-03-07  Arnaud Quette <arnaud.quette@free.fr>
+
+	* drivers/powerware-mib.c: Remove an erroneous test  This was made
+	  test the enumerated values registration in snmp-ups, and should not
+	  have been committed
+	* data/driver.list.in: HCL: APC ATS AP7724 supported by snmp-ups
+	  These Automatic Transfer Switch should be supported by snmp-ups,
+	  however this was not tested at all Reference:
+	  https://github.com/networkupstools/nut/issues/260
+	* NEWS, UPGRADING: Update for release 2.7.4
+	* drivers/Makefile.am, drivers/apc-ats-mib.c, drivers/apc-ats-mib.h,
+	  drivers/snmp-ups.c: snmp-ups: support APC Automatic Transfer Switch
+	  Following the recent extension of NUT scope and variable namespace,
+	  to support Automatic Transfer Switch (ATS), implement SNMP support
+	  for APC ATS (with help from "maaboo" through github) Reference:
+	  https://github.com/networkupstools/nut/issues/260
+
+2016-03-04  Arnaud Quette <arnaud.quette@free.fr>
+
+	* drivers/baytech-mib.c, drivers/bestpower-mib.c, drivers/compaq-
+	  mib.c, drivers/cyberpower-mib.c, drivers/eaton-mib.c, drivers/mge-
+	  mib.c, drivers/netvision-mib.c, drivers/powerware-mib.c, drivers
+	  /raritan-pdu-mib.c: snmp-ups: fix mib2nut structures  Non existent
+	  OIDs, for testing MIB selection, must be expressed as NULL and not
+	  as empty string ("") for the algorithm to work
+
+2016-03-03  Daniele Pezzini <hyouko@gmail.com>
+
+	* docs/download.txt: docs: update several download links
+
+2016-03-03  Arnaud Quette <arnaud.quette@free.fr>
+
+	* docs/man/upsrw.txt, docs/net-protocol.txt: Clarification on NUMBER
+	  type float values  Clarify a bit more documentation on how to
+	  express float values, when using upsrw.  That is to say, using
+	  decimal (base 10) english-based representation, so using a dot, in
+	  non-scientific notation.  So hexadecimal, exponents, and comma for
+	  thousands separator are forbiden
+	* clients/upsrw.c, docs/net-protocol.txt, server/netget.c: Prefer
+	  NUMBER to NUMERIC for variable type  As per discussion on the
+	  Github pull request, NUMBER would be more suitable than NUMERIC
+
+2015-11-22  Daniele Pezzini <hyouko@gmail.com>
+
+	* drivers/nutdrv_qx.c: nutdrv_qx: increase timeouts in 'sgs' USB
+	  subdriver  Apparently the previously used timeouts in the 'sgs' USB
+	  subdriver were not always enough, so increase them.
+
+2015-11-11  Daniele Pezzini <hyouko@gmail.com>
+
+	* data/driver.list.in: HCL: various TS Shara UPSes supported by
+	  nutdrv_qx  Protocol: 'megatec' USB subdriver: 'sgs'
+	* drivers/nutdrv_qx.c: nutdrv_qx: make sure 'sgs' USB subdriver uses
+	  only what it reads  Since, in 'sgs' USB subdriver, we read only 8
+	  bytes at a time and we expect the first byte to tell us the length
+	  of the data that follows, make sure we don't use more than what we
+	  read from the device in case the first byte is not what we expect
+	  it to be.
+
+2015-03-04  Daniele Pezzini <hyouko@gmail.com>
+
+	* drivers/nutdrv_qx.c: nutdrv_qx: increase verbosity of 'sgs' USB
+	  subdriver  In 'sgs' USB subdriver: - be more verbose when
+	  debugging, - always print the return code when dealing with an
+	  error.
+
+2014-01-31  Daniele Pezzini <hyouko@gmail.com>
+
+	* docs/man/nutdrv_qx.txt: nutdrv_qx: update man page for new 'sgs'
+	  USB subdriver
+
+2014-01-31  Ronaldo Yamada <rhyamada@gmail.com>
+
+	* drivers/nutdrv_qx.c: nutdrv_qx: add new 'sgs' USB subdriver to
+	  support TS Shara units
+
+2016-03-02  Arnaud Quette <arnaud.quette@free.fr>
+
+	* data/driver.list.in: HCL: added Eaton Powerware 9125-5000g
+	  Supported with the additional USB card, with the bcmxcp_usb driver
+	* docs/man/upsrw.txt, docs/net-protocol.txt: Clarification on NUMERIC
+	  type float values  Clarify documentation on how to express float
+	  values, when using upsrw.  That is to say, using decimal english-
+	  based representation, so using a dot
+	* drivers/mge-xml.c: netxml-ups: fix Eaton XML published data  Some
+	  raw protocol data were wrongly published, and are now commented.
+	  Also add some R/W flags to ambient thresholds Closes:
+	  https://github.com/networkupstools/nut/issues/201
+	* tools/nut-scanner/nut-scanner.c: nut-scanner: fix thread attachment
+	  Add a test to have the right thread waiting for the scan to be
+	  complete (patch from Michal Hlavinka, Red Hat)
+	* configure.ac, tools/nut-scanner/nutscan-init.c, tools/nut-
+	  scanner/scan_avahi.c, tools/nut-scanner/scan_ipmi.c, tools/nut-
+	  scanner/scan_nut.c, tools/nut-scanner/scan_snmp.c, tools/nut-
+	  scanner/scan_usb.c, tools/nut-scanner/scan_xml_http.c: nut-scanner:
+	  don't depend on development libraries  nut-scanner was previously
+	  trying to use directly libXXX.so (libusb-0.1, libfreeipmi,
+	  libnetsnmp, libavahi-client, libneon, libupsclient}. However, these
+	  files are generally provided by the development packages. nut-
+	  scanner now tries to look at some known paths, including the one
+	  provided through --libdir, to find the correct libraries Closes:
+	  https://github.com/networkupstools/nut/issues/233
+
+2016-03-01  Arnaud Quette <arnaud.quette@free.fr>
+
+	* clients/upsrw.c, docs/net-protocol.txt, server/netget.c: Default to
+	  type NUMERIC for variables  Any variable that is not STRING, RANGE
+	  or ENUM is just a simple numeric value. The protocol documentation
+	  (net-protocol.txt) was previously stating that "The default <type>,
+	  when omitted, is integer." which was not fully true, since a
+	  variable could also be a float.  Hence, the wording was changed to
+	  advertise this, and that each driver is then responsible for
+	  handling values as either integer or float.  Moreover, instead of
+	  returning a TYPE "UNKNOWN", return "NUMERIC", which is more
+	  suitable, and aligned with the NUT protocol specification
+	* tools/nut-snmpinfo.py: SNMP subdriver generator: fix output
+	  formatting
+	* tools/nut-snmpinfo.py: SNMP subdriver generator: discard commented
+	  lines  Discard any commented mib2nut_info_t declaration, which
+	  should thus not be taken into account
+
+2016-02-26  Arnaud Quette <arnaud.quette@free.fr>
+
+	* data/driver.list.in, drivers/Makefile.am, drivers/eaton-ats-mib.c,
+	  drivers/eaton-ats-mib.h, drivers/snmp-ups.c: snmp-ups: support
+	  Eaton Automatic Transfer Switch  Following the recent extension of
+	  NUT scope and variable namespace, to support Automatic Transfer
+	  Switch (ATS), implement SNMP support for Eaton ATS.  Note that this
+	  device can also be supported through Eaton XML/PDC (XML over HTTP)
+	  protocol, supported by the NUT netxml-ups driver
+	* data/cmdvartab, docs/nut-names.txt: Extend namespace for Automatic
+	  Transfer Switch (ATS)  Extend NUT namespace to support a new type
+	  of power device: ATS - Automatic Transfer Switch.  These devices
+	  are used to setup 2 power systems, such as UPS, to power a single
+	  power supply system, and be able to automatically transfer between
+	  the input sources in case of failure of the primary one. The added
+	  variable are for now limited to 'input.source' and
+	  'input.source.preferred', but may be extended if needed
+
+2016-02-25  C Fraire <cfraire@me.com>
+
+	* docs/scheduling.txt: Fix docs location of upssched to sbin
+
+2016-02-25  Arnaud Quette <arnaud.quette@free.fr>
+
+	* scripts/subdriver/gen-snmp-subdriver.sh: snmp-ups: add the last
+	  missing element in the structure
+	* drivers/apc-mib.c, drivers/bestpower-mib.c, drivers/compaq-mib.c,
+	  drivers/cyberpower-mib.c, drivers/delta_ups-mib.c, drivers/huawei-
+	  mib.c, drivers/ietf-mib.c, drivers/mge-mib.c, drivers/netvision-
+	  mib.c, drivers/powerware-mib.c, drivers/xppc-mib.c,
+	  scripts/subdriver/gen-snmp-subdriver.sh: snmp-ups: fix values
+	  lookup terminating element  The terminating element should really
+	  be NULL, and not the string "NULL", as it was originally done, back
+	  in 2002
+	* drivers/snmp-ups.c: snmp-ups: revert order of the NULL/"NULL" test
+	  Fix a segfault when doing first the string comparison test
+	* drivers/snmp-ups.c: snmp-ups: register values enumerations
+	  Whenever there is a values lookup structure for read/write data,
+	  push the values as enumerations for upsrw
+	* drivers/snmp-ups.c: snmp-ups: try to lookup values for numeric
+	  elements  Numeric elements can also use the value resolution
+	  mechanism
+	* drivers/snmp-ups.c: snmp-ups: counter test sysOID with a test OID
+	  Some devices have buggy sysOID exposed. Allow to counter test
+	  another OID, to be able to select between different mapping
+	  structures
+
+2016-02-24  Arnaud Quette <arnaud.quette@free.fr>
+
+	* scripts/subdriver/gen-snmp-subdriver.sh: SNMP subdriver creation
+	  script: allow sysOID override  Allow to use -s to override buggy
+	  sysOID in some device FW. In this case, the sysOID entry in the
+	  mib2nut structure should be set to NULL
+
+2016-02-11  Arnaud Quette <arnaud.quette@free.fr>
+
+	* drivers/raritan-pdu-mib.c: snmp-ups: fix macaddr support for
+	  Raritan PDU  Raritan MIB was fixed to expose macaddr on
+	  device.macaddr instead of ups.macaddr
+	* drivers/baytech-mib.c: snmp-ups: fix macaddr support for Baytech
+	  PDU  Baytech MIB was fixed to expose macaddr on device.macaddr
+	  instead of ups.macaddr
+	* drivers/eaton-mib.c: snmp-ups: fix and complete macaddr support for
+	  Eaton  Eaton G2 and G3 can now expose the MAC address of the
+	  device, using device.macaddr. Eaton G1 Aphel was fixed to expose
+	  this data on device.macaddr instead of ups.macaddr
+	* drivers/snmp-ups.c: snmp-ups: add support for hexadecimal octet
+	  strings
+	* drivers/snmp-ups.c: snmp-ups: fallback for classic MIB detection
+	  If the sysOID matching has failed, then snmp-ups uses ups.model to
+	  get an OID to test. In case ups.model is not available, fallback to
+	  trying to use device.model instead
+	* docs/images/nut_layering.png, docs/images/nut_layering.svg: Refresh
+	  and complete NUT architecture diagram
+
+2016-02-08  Arnaud Quette <arnaud.quette@free.fr>
+
+	* drivers/powerware-mib.c: snmp-ups: extend Eaton 3ph outputSource
+	  values map  Add the new status values for xupsOutputSource
+	  (.1.3.6.1.4.1.534.1.4.5.0), that maps to both ups.status and
+	  ups.type
+
+2016-02-03  Arnaud Quette <arnaud.quette@free.fr>
+
+	* drivers/powerware-mib.c: snmp-ups: improve support for Eaton 3ph
+	  Improve support for temperature and humidity data, including: -
+	  ups.temperature now available - fixing ambient.temperature
+	  (previously pointing at a wrong OID) - ambient.humidity now
+	  available - the following settings now available: *
+	  ups.temperature.low * ups.temperature.high * ambient.humidity.high
+	  * ambient.humidity.low * ambient.temperature.high *
+	  ambient.temperature.low
+
+2016-02-01  Daniele Pezzini <hyouko@gmail.com>
+
+	* data/driver.list.in: HCL: various APCUPSD-controlled APC devices
+	  via apcupsd-ups  Originally reported by GitHub user @Thermionix.
+	  Reference: https://github.com/networkupstools/nut/pull/215
+
+2016-01-31  Charles Lepple <clepple+nut@gmail.com>
+
+	* docs/man/nutdrv_atcl_usb.txt: man/nutdrv_atcl_usb: point to
+	  nutdrv_qx (fuji) for 0001:0000  Also update best guess for the USB-
+	  to-serial converter situation.
+	* docs/FAQ.txt: FAQ: udevadm for fixing permissions
+
+2016-01-30  Charles Lepple <clepple+nut@gmail.com>
+
+	* drivers/nut-libfreeipmi.c: FreeIPMI: do not split function
+	  arguments with a conditional  Alternate approach to suggestion by
+	  Romero B. de S. Malaquias  Closes:
+	  https://github.com/networkupstools/nut/pull/250
+
+2016-01-24  Charles Lepple <clepple+nut@gmail.com>
+
+	* docs/config-notes.txt: Documentation: fix formatting  Put syntax
+	  examples in verbatim mode, and remove spaces from ends of lines.
+	* drivers/apc-hid.c: usbhid-ups: handle missing USB strings in APC
+	  code  Closes: https://github.com/networkupstools/nut/issues/258
+	  Might fix:
+	  https://bugs.launchpad.net/ubuntu/+source/nut/+bug/1483615
+
+2016-01-23  Charles Lepple <clepple+nut@gmail.com>
+
+	* data/driver.list.in: HCL: added NHS Laser Senoidal 5000VA  Source:
+	  http://article.gmane.org/gmane.comp.monitoring.nut.devel/7123
+	  Closes: https://github.com/networkupstools/nut/issues/254
+
+2016-01-14  Arnaud Quette <arnaud.quette@free.fr>
+
+	* drivers/snmp-ups.c: snmp-ups: fix staleness detection  With some
+	  ePDUs or devices using template for outlet and outlet.group,
+	  communication loss with the device were not detected, due to the
+	  handling mechanism. Simply skipping commands for templates, after
+	  the init time, is sufficient to avoid this issue
+
+2016-01-05  Arnaud Quette <arnaud.quette@free.fr>
+
+	* drivers/snmp-ups.c: snmp-ups: improve stale communication recovery
+	  Disable the 10 iterations to retry communicating with stale device.
+	  This was leading up to 10 x 30 seconds, so 5mn, before being able
+	  to get data again
+	* docs/new-drivers.txt, docs/nut-names.txt: Document
+	  battery.charger.status  This will in time replace the historic CHRG
+	  and DISCHRG flags published in ups.status.  Closes
+	  https://github.com/networkupstools/nut/issues/196
+
+2016-01-03  Charles Lepple <clepple+nut@gmail.com>
+
+	* data/driver.list.in: HCL: Sweex model P220 via blazer_usb
+	  Reference: https://github.com/networkupstools/nut/issues/251
+
+2016-01-04  Arnaud Quette <arnaud.quette@free.fr>
+
+	* drivers/ietf-mib.c, drivers/ietf-mib.h, drivers/snmp-ups.c: snmp-
+	  ups: add support for Tripplite units on IETF mib  These devices
+	  expose ".1.3.6.1.4.1.850.1", which could be supported through this
+	  specific MIB.  For now, just link that to the IETF MIB, to provide
+	  a first level of support  Reference:
+	  https://github.com/networkupstools/nut/issues/171
+
+2015-12-30  Arnaud Quette <arnaud.quette@free.fr>
+
+	* configure.ac: First stab at checking driver.list.in format
+
+2015-12-29  Charles Lepple <clepple+nut@gmail.com>
+
+	* scripts/upower/95-upower-hid.rules: upower: update for AEG
+
+2015-12-29  Arnaud Quette <arnaud.quette@free.fr>
+
+	* drivers/powercom.c: Fix the processing of output voltage for KIN
+	  units  The processing of output voltage requires to also take into
+	  account the line voltage, as reported by Patrik Dufresne. This may
+	  still need some further adjustments  Reference:
+	  https://github.com/networkupstools/nut/issues/187
+	* drivers/powercom.c: Fix the processing of input voltage for KIN
+	  units  The processing of input voltage requires to also take into
+	  account the line voltage, as reported by Patrik Dufresne. Also bump
+	  the driver version to 0.16, since 0.15 was already used, but not
+	  set  Reference: https://github.com/networkupstools/nut/issues/187
+	* drivers/mge-hid.c: Fix letter case for AEG USB VendorID  The letter
+	  case of this VendorID may be important for generated files, such as
+	  the udev ones (reported by Charles Lepple)
+
+2015-12-28  Arnaud Quette <arnaud.quette@free.fr>
+
+	* data/driver.list.in, drivers/mge-hid.c: HCL: AEG PROTECT B / NAS
+	  supported by usbhid-ups  Reference:
+	  https://github.com/networkupstools/nut/issues/249
+
+2015-12-17  Daniele Pezzini <hyouko@gmail.com>
+
+	* data/driver.list.in: HCL: Legrand Keor Multiplug supported by
+	  nutdrv_qx  Reference:
+	  https://github.com/networkupstools/nut/issues/248
+
+2015-12-09  Andrey Jr. Melnikov <temnota.am@gmail.com>
+
+	* drivers/bcmxcp_usb.c: Don't call usb_close() after reset
+
+2015-12-08  Andrey Jr. Melnikov <temnota.am@gmail.com>
+
+	* drivers/bcmxcp_usb.c: Call usb_reset() when driver unable to claim
+	  device
+	* drivers/bcmxcp.h, drivers/bcmxcp_usb.c: Refactor get_answer()
+	  routine, make it properly deal with multi-packets responses. Lower
+	  stack usage.
+
+2015-07-27  Daniele Pezzini <hyouko@gmail.com>
+
+	* common/common.c, common/str.c, drivers/bcmxcp.c, drivers/blazer.c,
+	  drivers/blazer_ser.c, drivers/blazer_usb.c, drivers/libhid.c,
+	  drivers/mge-xml.c, drivers/nutdrv_qx.c, drivers/powerp-bin.c,
+	  drivers/powerp-txt.c, drivers/powerpanel.c, drivers/tripplitesu.c,
+	  drivers/upscode2.c, include/common.h, include/str.h, server/upsd.c,
+	  tools/nut-scanner/scan_usb.c: common: consolidate some string-
+	  related functions  Move *trim*() functions from common to str.
+	  Prepend the 'str_' common prefix. Bailout early if string is NULL
+	  or empty. In *trim_m() functions, make sure the string containing
+	  characters to be removed is not NULL and bailout early if empty.
+	  Add new str_trim[_m]() functions to remove both leading and
+	  trailing characters at the same time. Update all the tree
+	  accordingly; versioning where appropriate.
+	* common/Makefile.am, common/str.c, include/Makefile.am,
+	  include/common.h, include/str.h: common: add some string-related
+	  functions
+
+2015-11-10  Charles Lepple <clepple+nut@gmail.com>
+
+	* data/driver.list.in: HCL: Electrys UPS 2500 (nutdrv_qx and
+	  blazer_ser)  Closes
+	  https://github.com/networkupstools/nut/issues/241
+	* data/driver.list.in: HCL: Eaton E Series DX UPS 1-20 kVA uses
+	  blazer_ser  Closes
+	  https://github.com/networkupstools/nut/issues/238
+
+2015-11-09  Arnaud Quette <arnaud.quette@free.fr>
+
+	* drivers/eaton-mib.c: snmp-ups: add number of outlets in Eaton ePDU
+	  groups
+	* docs/nut-names.txt: Add a variable for the number of outlets in a
+	  group  Added 'outlet.group.n.count' which provides the number of
+	  outlets in the outlet group 'n'
+
+2015-11-06  Daniele Pezzini <hyouko@gmail.com>
+
+	* drivers/nutdrv_qx_voltronic-qs.c: nutdrv_qx: update 'voltronic-qs'
+	  subdriver  Since, for devices supported by 'voltronic-qs'
+	  subdriver, in reality: - invalid commands or queries are echoed
+	  back, - accepted commands are followed by action without any
+	  further reply, update the subdriver interface accordingly. Also: -
+	  change slightly the way we publish protocol as ups.firmware.aux, -
+	  update F's reply examples and some info_type (ratings;
+	  output.frequency) in QX to NUT table to reflect reality, - increase
+	  version number.
+
+2015-10-19  Daniele Pezzini <hyouko@gmail.com>
+
+	* drivers/nutdrv_qx_voltronic-qs-hex.c: nutdrv_qx: improve 'T'
+	  protocol support in 'voltronic-qs-hex' subdriver  Since the last
+	  byte of the reply to the QS query (before the trailing CR) of
+	  devices that implement the 'T' protocol holds in reality ratings
+	  informations (nominal output frequency/voltage and nominal battery
+	  voltage) in its bits, change the 'voltronic-qs-hex' subdriver
+	  accordingly. Also: - change slightly the way we publish protocol as
+	  ups.firmware.aux, - increase version number.
+	* drivers/nutdrv_qx_voltronic-qs-hex.c: nutdrv_qx: simplify
+	  {in,out}put voltage conversion in 'voltronic-qs-hex'  In
+	  'voltronic-qs-hex' subdriver, instead of calculating separately the
+	  fractional and integer part of input and output voltage, do it at
+	  once. Also, increase version number.
+	* drivers/nutdrv_qx_voltronic-qs-hex.c: nutdrv_qx: improve protocol
+	  identification in 'voltronic-qs-hex'  Since 'V' protocol, in
+	  reality, never happens to use the encoded version of the reply to
+	  the QS query, but it always uses the plain version already
+	  implemented in 'voltronic-qs' subdriver, remove it from the
+	  identification process of 'voltronic-qs-hex' subdriver. Also,
+	  remove some non-significant entries from the testing table and
+	  increase version number.
+	* drivers/nutdrv_qx_voltronic-qs-hex.c: nutdrv_qx: harmonize
+	  declarations/definitions in 'voltronic-qs-hex'  In 'voltronic-qs-
+	  hex' subdriver, the scope of support functions is limited to the
+	  subdriver as rightly stated in forward declarations, so correct
+	  their definitions to reflect that. Also, increase version number.
+
+2015-10-09  Arnaud Quette <arnaud.quette@free.fr>
+
+	* docs/nut-qa.txt: Reference Black Duck OpenHUB in QA documentation
+	  Closes networkupstools/nut#192
+
+2015-10-08  Arnaud Quette <arnaud.quette@free.fr>
+
+	* drivers/snmp-ups.c: snmp-ups: also use __func__ for additional
+	  traces
+	* drivers/powerware-mib.c: powerware-mib: more comments for RFC
+	  device.event  Add more comments on the need to RFC device.event for
+	  some data that are currently published under ups.alarm
+	* drivers/powerware-mib.c: snmp-ups: improve Eaton 3-phase UPS alarms
+	  reporting  Eaton 3phase UPS, using the Powerware MIB, can expose
+	  many new alarms. Also use the standard driver "X.YY" versioning,
+	  and bump subdriver release to "0.85"
+	* drivers/snmp-ups.c, drivers/snmp-ups.h: snmp-ups: fix and improve
+	  the ups.alarms mechanism  This mechanism allows to walk a subtree
+	  (array) of alarms, composed of OID references. The object
+	  referenced should not be accessible, but rather when present, this
+	  means that the alarm condition is TRUE. Both ups.status and/or
+	  ups.alarm values can be provided
+	* drivers/snmp-ups.c: snmp-ups: fix on some snprintf calls  Some
+	  snprintf calls are using dynamically allocated variables, which
+	  doesn't work with sizeof
+	* drivers/snmp-ups.c: snmp-ups: use __func__ in debug messages
+	* drivers/snmp-ups.c: snmp-ups: nut_snmp_get_oid() returns TRUE on
+	  success
+	* drivers/snmp-ups.c: snmp-ups: only use snprintf calls instead of
+	  sprintf
+	* drivers/eaton-mib.c, drivers/snmp-ups.c: snmp-ups: simplify
+	  handling of other alarms  outlet, outlet groups and phase alarms
+	  are now using a simplified approach that does not require specific
+	  lookup structure to adapt alarm messages. This applies to Eaton
+	  ePDU G2/G3
+
+2015-09-22  Arnaud Quette <arnaud.quette@free.fr>
+
+	* drivers/snmp-ups.c: snmp-ups: fix a typo error in debug message
+	  Unknown is spelled with an ending N (reported by Evgeny "Jim"
+	  Klimov, from Eaton)
+	* drivers/snmp-ups.c: snmp-ups: optimize phase number extraction
+	  efficiency  Since we know that we are processing an alarm for a
+	  phase "Lx", don't use strchr, but simply index (reported by Evgeny
+	  "Jim" Klimov, from Eaton)
+	* docs/nut-names.txt, drivers/eaton-mib.c: snmp-ups: use dash-
+	  separator for out-of-range  For the sake of coherence with other
+	  status relative to thresholds, "out of range" frequency status now
+	  also use dash as separator, instead of space
+	* drivers/eaton-mib.c: Fix a spelling error in comments
+	* drivers/eaton-mib.c: snmp-ups: fix a typo error on Eaton ePDU G2/G3
+	  MIB  Critical is really spelled critical, and not cricital, as used
+	  in the various status thresholds value-lookup structures (reported
+	  by Evgeny "Jim" Klimov, from Eaton)
+	* data/cmdvartab: Mention the unit for ambient humidity information
+	  Add an explicit mention that ambient information related to
+	  humidity use the "(percent)" unit
+	* data/cmdvartab, docs/nut-names.txt: Mention the unit for input
+	  voltage information  Add an explicit mention that input information
+	  related to voltage use the "Volts (V)" unit
+	* data/cmdvartab: Mention the unit for ambient temperature
+	  information  Add an explicit mention that ambient information
+	  related to temperature use the "degrees C" unit
+
+2015-09-18  Arnaud Quette <arnaud.quette@free.fr>
+
+	* drivers/eaton-mib.c: snmp-ups: add outlet group identifier for
+	  Eaton ePDU  Eaton ePDU can now publish the parent group of each
+	  outlet
+	* docs/nut-names.txt: Extend outlet collection namespace with group
+	  ID  An outlet can now publish the group to which it belongs to
+	* drivers/snmp-ups.c: snmp-ups: complete nut_snmp_get_{str,int}
+	  These methods now allow to get the value of an OID returned by the
+	  source OID (as for the sysOID). In case of failure (non existent
+	  OID), the functions return the last part of the returned OID (ex:
+	  1.2.3 => 3)
+	* drivers/snmp-ups.c: snmp-ups: create a nut_snmp_get_oid() function
+	  This method allows to get the value of an OID which is also an OID
+	  (as for the sysOID), without trying to get the value of the pointed
+	  OID. This will allow to use nut_snmp_get_{int,str}() the get the
+	  value of the pointed OID
+
+2015-09-17  Arnaud Quette <arnaud.quette@free.fr>
+
+	* drivers/eaton-mib.c: snmp-ups: outlet groups type handling for
+	  Eaton ePDU  Eaton ePDU can now publish the type of outlet group
+	* docs/nut-names.txt: Extend outlet group collection namespace with
+	  type  The type of outlet group can now be published, part of the
+	  new outlet.group data collection
+	* drivers/eaton-mib.c: snmp-ups: outlet groups commands for Eaton
+	  ePDU  Eaton ePDU can now handle commands outlet groups, including
+	  on, off and reboot (cycle)
+	* drivers/snmp-ups.c: snmp-ups: fix commands handling for outlet
+	  groups  The su_instcmd() function of snmp-ups is now adapted to
+	  support outlet groups
+	* drivers/eaton-mib.c: Advanced outlets groups alarm handling for
+	  Eaton ePDU  Eaton ePDU can now handle alarms on outlets groups, for
+	  voltage and current, relative to the configured thresholds
+	* drivers/snmp-ups.c: snmp-ups: improvements for outlet groups and
+	  alarms  Improve the code for general template management, including
+	  outlets and outlets groups for now, and add alarm management for
+	  outlet groups, the same way as for outlets
+
+2015-09-16  Arnaud Quette <arnaud.quette@free.fr>
+
+	* drivers/snmp-ups.c: snmp-ups: fix set variable for outlet groups
+	  The setvar() function of snmp-ups is now adapted to support outlet
+	  groups
+	* drivers/eaton-mib.c: snmp-ups: outlet groups handling for Eaton
+	  ePDU  Eaton ePDU can now handle outlet groups, including voltage
+	  and current (with thresholds and status relative to the configured
+	  thresholds), along with power and realpower. A subsequent commit
+	  will address the alarms, settings and commands. Bump subdriver
+	  version to 0.30
+	* drivers/snmp-ups.c: snmp-ups: update debug message  The template
+	  guestimation function name was changed, but the debug message was
+	  left with the old function name
+
+2015-09-15  Arnaud Quette <arnaud.quette@free.fr>
+
+	* docs/nut-names.txt: Extend NUT namespace with outlet.group
+	  collection  A new data collection, called "outlet.group", is now
+	  available. It provides grouped management for a set of outlets. The
+	  same principles and data than the outlet collection apply to
+	  outlet.group
+	* drivers/snmp-ups.c, drivers/snmp-ups.h: snmp-ups: adapt template
+	  mechanisms for outlet groups  The template handling mechanisms,
+	  originally created for outlets, is now adapted to also manage
+	  outlet groups
+
+2015-09-14  root <root@arno-zbook15.euro.ad.etn.com>
+
+	* docs/nut-names.txt: Add a note on the outlet.count variable
+
+2015-09-14  Arnaud Quette <arnaud.quette@free.fr>
+
+	* drivers/eaton-mib.c: snmp-ups: add nominal input current for Eaton
+	  ePDU  snmp-ups now provides input.[Lx.]current.nominal for Eaton
+	  ePDU G2/G3, both for 1phase and 3phase
+	* drivers/eaton-mib.c: snmp-ups: better input.power handling for
+	  Eaton ePDUs  Improve the way we declare and process input.power, as
+	  previously done for input.realpower, in order to address the
+	  variations between Eaton ePDUs G2 and G3
+
+2015-09-11  Arnaud Quette <arnaud.quette@free.fr>
+
+	* drivers/eaton-mib.c: snmp-ups: publish part number for Eaton ePDU
+	  device.part was standardized in NUT namespace, so enable the
+	  declaration for Eaton ePDU
+	* drivers/eaton-mib.c: snmp-ups: 3-phase alarm handling for Eaton
+	  ePDU  Eaton ePDU can now handle alarms on 3-phase, currently
+	  limited to voltage and current, relative to the configured
+	  thresholds
+	* drivers/snmp-ups.c: snmp-ups: implement 3-phase alarm handling
+	  snmp-ups now allows to publish 3-phase alarms in ups.alarm, the
+	  same way as with outlet.  Declaration of such alarms are done using
+	  "Lx.alarm". info_lkp_t structures messages are shared templates
+	  with outlets, and use the string formats to include the context
+	  (outlet or phase) and the number (of the outlet or phase) in alarm
+	  messages.  These alarms are then published in "ups.alarm", with the
+	  standard mechanism for alarm publication
+	* docs/nut-names.txt: Extend 3-phase collection namespace with alarms
+	  3-phase data collection now allows to specify alarms, the same way
+	  than with the outlet collection ("outlet.n.alarm"), but using
+	  "Lx.alarm" (for example "L1.alarm").  These alarms are then
+	  published in "ups.alarm", with the standard mechanism for alarm
+	  publication
+	* drivers/eaton-mib.c: Advanced threshold handling for Eaton 3-phase
+	  ePDU  Eaton ePDU can now handle warning and critical thresholds
+	  settings and status for input voltage and current on 3-phase units.
+	  Alarms are however still to be implement
+	* docs/nut-names.txt: Extend 3-phase collection namespace with
+	  threshold  3-phase data collection now allows to specify low / high
+	  warning and critical thresholds for voltage and current. Status
+	  relative to the thresholds also exist for these data
+
+2015-09-07  Arnaud Quette <arnaud.quette@free.fr>
+
+	* drivers/snmp-ups.c, drivers/snmp-ups.h: snmp-ups: fix loss of
+	  precision when setting values  su_setvar() was losing precision
+	  when converting and casting the provided values to send to the SNMP
+	  agent. As an example, with an OID in millivolt (multiplier set to
+	  0.001), when providing 238 (V) using upsrw, the value sent to the
+	  SNMP agent was 237999, so leaking 0.1 volt
+
+2015-09-04  Arnaud Quette <arnaud.quette@free.fr>
+
+	* drivers/dstate.c: Extend ups.alarm internal buffer to 1024 chars
+	  Currently, ups.alarm can hold up to 256 chars to expose alarms.
+	  With the recent outlet alarms handling addition, the buffer may
+	  quickly be to small.  Thus, increase to 1024, which may still not
+	  be sufficient but already provides a bit more room
+	* drivers/eaton-mib.c: snmp-ups: outlet alarm handling for Eaton ePDU
+	  Eaton ePDU can now handle alarms on outlets, currently limited to
+	  outlet voltage and current, relative to the configured thresholds
+	* drivers/snmp-ups.c: snmp-ups: implement outlets / PDU alarm
+	  handling  snmp-ups now allows to publish outlets and PDU alarms in
+	  ups.alarm, the same way as with ups.status.  Declaration of such
+	  alarms are done using the outlet template mechanism
+	  ("outlet.%i.alarm"). info_lkp_t structures messages can also use
+	  the string formats to include the outlet number in alarm messages.
+	  These alarms are then published in "ups.alarm", with the standard
+	  mechanism for alarm publication
+	* docs/nut-names.txt: Extend outlet collection namespace with alarms
+	  Outlet data collection now allows to specify alarms, using the
+	  template definitions ("outlet.n.alarm").  These alarms are then
+	  published in "ups.alarm", with the standard mechanism for alarm
+	  publication
+
+2015-09-02  Arnaud Quette <arnaud.quette@free.fr>
+
+	* drivers/eaton-mib.c: snmp-ups: outlet threshold handling for Eaton
+	  ePDU  Eaton ePDU can now handle warning and critical thresholds
+	  settings and status for outlet voltage and current
+	* docs/nut-names.txt: Extend outlet collection namespace with
+	  threshold  Outlet data collection now allows to specify low / high
+	  warning and critical thresholds for voltage and current. Status
+	  relative to the thresholds also exist for these data
+
+2015-09-01  Arnaud Quette <arnaud.quette@free.fr>
+
+	* drivers/eaton-mib.c: snmp-ups: alarms handling for Eaton ePDU
+	  Eaton ePDU can now publish alarms, related to input status
+	  (voltage, frequency and current) and ambient status (temperature
+	  and humidity). Note that alarms are still published under
+	  ups.alarms, though these should belong to either pdu.alarms or
+	  better device.alarms
+	* drivers/eaton-mib.c: Advanced input threshold handling for Eaton
+	  ePDU  Eaton ePDU can now handle warning and critical thresholds
+	  settings and status for input voltage and current, along with the
+	  frequency status
+	* data/cmdvartab, docs/nut-names.txt: Extend input collection
+	  namespace with threshold  Input data collection now allows to
+	  specify low / high warning and critical thresholds for voltage and
+	  current. Status relative to the thresholds also exist for these
+	  data, and for the frequency
+
+2015-08-31  Arnaud Quette <arnaud.quette@free.fr>
+
+	* drivers/eaton-mib.c: snmp-ups: ambient dry contacts support for
+	  Eaton ePDU  Eaton ambient modules, connected on ePDU, now publish
+	  the status of the connected dry contacts sensors
+	* data/cmdvartab, docs/nut-names.txt: Extend ambient collection
+	  namespace with dry contacts  Ambient data collection now allow to
+	  specify dry contacts sensor status
+	* drivers/eaton-mib.c: snmp-ups: fix Eaton Pulizzi Switched PDU
+	  multiplier  As per the previous commit, to well handle integer RW
+	  variables
+	* drivers/eaton-mib.c: snmp-ups: ambient threshold handling for Eaton
+	  ePDU  Eaton ePDU can now handle warning and critical thresholds and
+	  status for both humidity and temperature
+	* data/cmdvartab, docs/nut-names.txt: Extend ambient collection
+	  namespace with threshold  Ambient data collection now allow to
+	  specify warning and critical thresholds
+	* drivers/eaton-mib.c: snmp-ups: publish presence of Eaton ambient
+	  sensor  Publish the actual presence of ambient sensor for Eaton
+	  ePDU G2 and G3
+	* data/cmdvartab, docs/nut-names.txt: Publish the actual presence of
+	  an ambient sensor  A new data was created (ambient.present) to
+	  publish the actual presence of an ambient sensor
+
+2015-10-06  Charles Lepple <clepple+nut@gmail.com>
+
+	* data/driver.list.in: HCL: Asium P700, Micropower LCD 1000 and Eaton
+	  5E1100iUSB
+
+2015-10-06  Daniele Pezzini <hyouko@gmail.com>
+
+	* data/driver.list.in: HCL: LYONN CTB-800V supported by nutdrv_qx
+	  Protocol: 'voltronic-qs-hex'  Reference:
+	  https://github.com/networkupstools/nut/pull/230
+
+2015-08-22  Mariano <marianojan@users.noreply.github.com>
+
+	* drivers/nutdrv_qx_voltronic-qs-hex.c: nutdrv_qx: add support for
+	  LYONN CTB-800V  Small protocol validation change in 'voltronic-qs-
+	  hex' subdriver to add support for the protocol used by the LYONN
+	  CTB-800V UPS.
+
+2015-09-28  Arnaud Quette <arnaud.quette@free.fr>
+
+	* docs/new-drivers.txt: Fix spacing error
+
+2015-09-22  Charles Lepple <clepple+nut@gmail.com>
+
+	* drivers/solis.c, drivers/solis.h: solis: remove additional warnings
+	  The "Waiting" flag is always zero, and several other variables were
+	  not used.
+	* drivers/solis.c, drivers/solis.h: solis: clean up warnings  Comment
+	  out unused constants, and add 'static' and 'const' wherever
+	  possible.
+
+2015-09-20  Charles Lepple <clepple+nut@gmail.com>
+
+	* drivers/Makefile.am, drivers/solis.c: solis: math fixes  As
+	  mentioned here: https://github.com/networkupstools/nut/pull/235
+
+2015-09-19  bsalvador <bruno.salvador@gmail.com>
+
+	* drivers/solis.c, drivers/solis.h: solis: patch for Microsol Back-
+	  Ups BZ1200-BR  patch for correct reading for Microsol Back-Ups
+	  BZ1200-BR  (rebased onto solis_debug branch, and cleaned up
+	  whitespace. -- CFL)  Closes
+	  https://github.com/networkupstools/nut/pull/235 and Closes
+	  https://github.com/networkupstools/nut/pull/236
+
+2015-09-16  Arnaud Quette <arnaud.quette@free.fr>
+
+	* data/driver.list.in, docs/man/snmp-ups.txt, drivers/powerware-
+	  mib.c, drivers/powerware-mib.h, drivers/snmp-ups.c: snmp-ups: add
+	  Eaton Power Xpert Gateway UPS Card  This newer generation of SNMP
+	  card is used for BladeUPS or other UPS, and is serving the same
+	  XUPS MIB, as in the "pw" subdriver
+	* scripts/subdriver/gen-snmp-subdriver.sh: Update SNMP subdriver
+	  generation script  Complete the documentation, by adding some notes
+	  and examples ; Fix the MIBs directories list and the "keep
+	  temporary files" option
+
+2015-09-11  Arnaud Quette <arnaud.quette@free.fr>
+
+	* drivers/snmp-ups.c: Improve log/debug output trace
+
+2015-09-08  Charles Lepple <clepple+nut@gmail.com>
+
+	* drivers/solis.c: solis: resync with end-of-packet character (0.64)
+	  Suggested by @rpvelloso in https://github.com/networkupstools/nut/i
+	  ssues/231#issuecomment-134795747  Note that the driver could
+	  possibly get out-of-sync after initial detection.
+
+2015-09-07  Charles Lepple <clepple+nut@gmail.com>
+
+	* docs/man/macosx-ups.txt, drivers/macosx-ups.c: macosx-ups:
+	  gracefully handle disconnection of UPS  Tested on 10.9.5 and
+	  10.10.5. Returns "data stale" when UPS disappears.
+
+2015-09-07  Arnaud Quette <arnaud.quette@free.fr>
+
+	* drivers/powerware-mib.c: Bump Powerware SNMP subdriver version
+
+2015-09-04  Charles Lepple <clepple+nut@gmail.com>
+
+	* Makefile.am, docs/configure.txt, docs/new-clients.txt, tools/nut-
+	  scanner/README: doc: correct remaining `--with-lib` references
+	  Credit: Paul Vermeer
+
+2015-09-01  Arnaud Quette <arnaud.quette@free.fr>
+
+	* drivers/snmp-ups.h: Minor updates to TODO comments
+	* drivers/snmp-ups.c: Implement ups.alarm for SNMP  snmp-ups now
+	  allows to publish alarms in ups.alarm, the same way as with
+	  ups.status
+
+2015-08-31  Arnaud Quette <arnaud.quette@free.fr>
+
+	* drivers/snmp-ups.c: Proper handling of integer RW variables  RW
+	  variables were previously supposed to always be strings. Thus, the
+	  multiplier (using the info_len field) was not applied. Also allow
+	  setting float values, not only integer
+	* drivers/snmp-ups.c, drivers/snmp-ups.h: Fix default SNMP retries
+	  and timeout  The previous patch was using the default values from
+	  Net-SNMP, which are set to -1. When the user was not providing
+	  overriden values, this was causing the driver to not be able to
+	  establish the communication with the device. The default values are
+	  now fixed, as per documented (i.e. 5 retries and timeout of 1
+	  second). Also bump the driver version to 0.74
+	* docs/man/ups.conf.txt, drivers/dstate.c: Make more obvious the
+	  socket write failure  Document the error that require the use of
+	  the 'synchronous' flag. Also use debug level 1 instead of 2 for the
+	  debug message
+
+2015-08-23  Charles Lepple <clepple+nut@gmail.com>
+
+	* drivers/solis.c: solis: Add upsdebug*() and upslogx() calls for
+	  diagnostics
+
+2015-08-18  Kenny Root <kenny@the-b.org>
+
+	* drivers/powerware-mib.c: Add ups.start.auto for Powerware SNMP  Use
+	  the IETF UPS MIB to indicate to Powerware devices that it should
+	  restart when mains power is applied.
+	* drivers/powerware-mib.c: Fix some indentation problems in PowerWare
+	  SNMP
+	* drivers/powerware-mib.c: Add shutdown.return for Powerware SNMP
+	  The Powerware MIB supports the concept of shutting down with a
+	  delay and then returning when line power is restored. The delay is
+	  set to 0 seconds currently.
+	* drivers/powerware-mib.c: Add load.{off,on}.delay for Powerware SNMP
+	  The commands to shut down with delay have existed since the first
+	  version of the Powerware MIB so add the newer commands
+	  "load.off.delay" and "load.on.delay" to aid in shutdown scripts.
+
+2015-08-07  Arnaud Quette <arnaud.quette@free.fr>
+
+	* drivers/dummy-ups.c, drivers/dummy-ups.h: Fix dummy-ups for
+	  external value changes  dummy-ups allow to change the values of the
+	  publicated variables through the standard upsrw tool. This method
+	  is handy to script value changes, in a controlled way, compared to
+	  the dynamic version (using the TIMER keyword in .dev files), which
+	  changes the values in a non controlled way. Bump driver version to
+	  0.14
+	* m4/nut_check_libnss.m4: Fully check for a working Mozilla NSS
+	  Rework the NSS tests so that just having runtime libraries
+	  installed is not enough. Moreover, since GNU libc6 also provides a
+	  nss.h header, the test now checks for both nss.h and ssl.h  Closes
+	  networkupstools/nut#184
+	* docs/download.txt: Fix Red Hat / Fedora packages repository URL
+
+2015-08-03  Tomas Halman <TomasHalman@eaton.com>
+
+	* clients/nutclient.cpp: Problem: nutclient library sometimes reads
+	  socket closed by server. Solution: proper read return value
+	  evaluation
+
+2015-08-04  Arnaud Quette <arnaud.quette@free.fr>
+
+	* tools/nut-scanner/scan_snmp.c: Fix a crash on a 2nd call to
+	  libnutscan  on behalf of Tomas Halman, from Eaton Opensource Team
+
+2015-07-24  Nash Kaminski <nashkaminski@gmail.com>
+
+	* drivers/tripplitesu.c: tripplitesu: Fix initialization when
+	  tripplite firmware is buggy  With some Tripplite SU1000RT2U (and
+	  possibly more) UPS's, a firmware bug causes a malformed response to
+	  the very first command that is sent after the serial port is opened
+	  following a warm or cold boot of the system. My theory is that this
+	  related to either the RS232 data lines or handshaking lines being
+	  pulled high once the server's UART is powered however I have not
+	  determined precisely if this is related to the data line being
+	  pulled high or the handshaking lines being asserted. However, I
+	  have been able to consistently reproduce the issue where the driver
+	  fails to start on the first attempt after a cold/warm boot across 3
+	  different machines and 2 SU1000RT2U UPS's. To workaround this, the
+	  initial enumeration is repeated a 2nd time after 300ms(to allow all
+	  garbage data to arrive) if the first attempt fails, which allows
+	  the driver to consistently startup successfully on the 1st attempt.
+	  Closes networkupstools/nut#220
+
+2015-07-24  Tim Smith <tsmith84@gmail.com>
+
+	* INSTALL.nut: Spelling fixes  Spelling fixes and capitalization of
+	  SUSE
+
+2015-07-23  Arnaud Quette <arnaud.quette@free.fr>
+
+	* scripts/augeas/nutupsconf.aug.tpl: Update Augeas lens for ups.conf
+	  Add the various missing global directives and ups fields
+
+2015-07-20  Daniele Pezzini <hyouko@gmail.com>
+
+	* data/driver.list.in: HCL: fix case and spacing
+
+2015-07-18  Daniele Pezzini <hyouko@gmail.com>
+
+	* drivers/nutdrv_qx.c: nutdrv_qx: when targeting 'UPS No Ack'
+	  consider also the trailing CR  In 'fabula' and 'krauler' USB
+	  subdrivers, take into account also the trailing CR in the reply
+	  while looking for a 'UPS No Ack'.
+	* drivers/nutdrv_qx.c: nutdrv_qx: stay true to return code in
+	  'fabula' USB subdriver  In 'fabula' USB subdriver, when reading
+	  'UPS No Ack' from device, since we already mimic a timeout, also
+	  empty the reply.
+
+2015-07-11  Charles Lepple <clepple+nut@gmail.com>
+
+	* data/driver.list.in: HCL: Fideltronic INIGO Viper 1200 supported by
+	  nutdrv_qx
+
+2015-07-02  Charles Lepple <clepple+nut@gmail.com>
+
+	* drivers/usbhid-ups.c: usbhid-ups: bump version to 0.41  Both the
+	  eaton_dual_reportdesc and usbhid_ups_input_vs_feature branches
+	  claimed version 0.40, so let's disambiguate the merged version.
+
+2015-07-02  Arnaud Quette <arnaud.quette@free.fr>
+
+	* drivers/libhid.c: Add a debug trace for the number of HID objects
+	  found
+	* drivers/hidtypes.h: Fix testing typo  MAX_REPORT is really 500 (HID
+	  objects), not 50!
+	* drivers/hidparser.c: Report when there are further unprocessed HID
+	  objects  Following the last commits, and especially the MAX_REPORT
+	  one, warn whenever there are remaining HID objects that were not
+	  processed. This may serve
+	* drivers/hidtypes.h: Increase the maximum number of HID objects  The
+	  previous value (300) was causing a trim of the remaining objects.
+	  Increase the value to 500, which should give a bit of time
+	* drivers/libshut.c, drivers/libshut.h, drivers/libusb.c, drivers
+	  /usb-common.h, drivers/usbhid-ups.c: Add support for Eaton dual HID
+	  report descriptor  All devices use HID descriptor at index 0.
+	  However, some newer Eaton units have a light HID descriptor at
+	  index 0, and the full version is at index 1 (in which case,
+	  bcdDevice == 0x0202). This dual report descriptor approach is due
+	  to the fact that the main report descriptor is now too heavy, and
+	  cause some BIOS to hang. A light version is thus provided at the
+	  default index, solving this BIOS issues
+
+2015-06-27  Charles Lepple <clepple+nut@gmail.com>
+
+	* drivers/macosx-ups.c: macosx-ups: fix for 10.10 (Yosemite); v1.1
+	  In OS X 10.9 and earlier, IOPSGetPowerSourcesInfo() returned a
+	  CFDictionary. In 10.10 it returns a CFArray. Programmers are
+	  supposed to use IOPSGetPowerSourceDescription() to gloss over this
+	  distinction.  However, this does not make it easy to distinguish
+	  between a laptop battery and an UPS. So the "port" driver option no
+	  longer has any effect.  https://developer.apple.com/library/mac/doc
+	  umentation/IOKit/Reference/IOPowerSources_header_reference/#//apple
+	  _ref/c/func/IOPSGetPowerSourceDescription
+
+2015-06-22  Arnaud Quette <arnaud.quette@free.fr>
+
+	* scripts/upower/95-upower-hid.rules, tools/nut-usbinfo.pl: Update
+	  UPower HID rules and generator
+
+2015-06-11  Charles Lepple <clepple+nut@gmail.com>
+
+	* drivers/usbhid-ups.c: usbhid-ups.c: fall back to HID Input type if
+	  not a Feature
+
+2015-06-07  Charles Lepple <clepple+nut@gmail.com>
+
+	* drivers/tripplite-hid.c: tripplite-hid.c: device.part is static
+	  (version 0.82)
+
+2015-06-04  Daniele Pezzini <hyouko@gmail.com>
+
+	* drivers/nutdrv_qx.c: nutdrv_qx: make sure processed item's
+	  boundaries are not wrong
+
+2015-04-26  Nick Mayerhofer <nick.mayerhofer@enchant.at>
+
+	* docs/nutdrv_qx-subdrivers.txt, drivers/nutdrv_qx.c,
+	  drivers/nutdrv_qx.h: nutdrv_qx: improve documentation for some
+	  methods
+
+2015-06-04  Daniele Pezzini <hyouko@gmail.com>
+
+	* docs/nutdrv_qx-subdrivers.txt, drivers/nutdrv_qx.c,
+	  drivers/nutdrv_qx.h: nutdrv_qx: remove redundant comments and
+	  update docs
+
+2015-04-28  Nick Mayerhofer <nick.mayerhofer@enchant.at>
+
+	* drivers/nutdrv_qx_voltronic.c: nutdrv_qx: move var declaration in
+	  'voltronic' subdriver  Move variable declaration to fulfill
+	  condition '3.3. Portability' of the developer guide. Bump version.
+	* drivers/libhid.c: libhid: replace "flush loop" with memset  Move to
+	  the C way of setting memory (memset), replacing a for loop with a
+	  few anti-patterns in it: - for (...; ; i++) - for (...; i <
+	  MAGIC_NUMBER; ...) - for (...) array[i] = 0
+
+2015-05-18  Daniele Pezzini <hyouko@gmail.com>
+
+	* docs/nutdrv_qx-subdrivers.txt, drivers/nutdrv_qx.c,
+	  drivers/nutdrv_qx.h, drivers/nutdrv_qx_bestups.c,
+	  drivers/nutdrv_qx_mecer.c, drivers/nutdrv_qx_megatec-old.c,
+	  drivers/nutdrv_qx_megatec.c, drivers/nutdrv_qx_mustek.c,
+	  drivers/nutdrv_qx_q1.c, drivers/nutdrv_qx_voltronic-qs-hex.c,
+	  drivers/nutdrv_qx_voltronic-qs.c, drivers/nutdrv_qx_voltronic.c,
+	  drivers/nutdrv_qx_zinto.c: nutdrv_qx: give subdrivers a last chance
+	  to process the command  Add (and document) a new function
+	  ('preprocess_command()') to preprocess the command to be sent to
+	  the device, just before the actual sending and, in case of instant
+	  commands/setvars, after the 'preprocess()' function has been
+	  triggered (if appropriate). As an example, this function can be
+	  useful to add to all commands (both queries and instant
+	  commands/setvars) a CRC or to fill the command of a query with some
+	  data. Also, in qx_process(), address buf size vs item->answer size
+	  earlier. Update all subdrivers accordingly, bump versions.
+
+2015-06-01  Arnaud Quette <arnaud.quette@free.fr>
+
+	* docs/man/snmp-ups.txt, drivers/snmp-ups.c, drivers/snmp-ups.h:
+	  Provide access to Net-SNMP timeout and retries  Two new extra
+	  arguments are now available to allow overriding Net-SNMP number of
+	  retries (snmp_retries) and timeout per retry (snmp_timeout). These
+	  respectively maps to snmpcmd "-r retries" and "-t timeout"
+
+2015-05-29  Arnaud Quette <arnaud.quette@free.fr>
+
+	* scripts/upower/95-upower-hid.rules: Update UPower HID rules
+	* tools/nut-usbinfo.pl: Fix UPower device matching for recent kernels
+	  As per the UPower patch below referenced, hiddev* devices now have
+	  class "usbmisc", rather than "usb".  See
+	  http://cgit.freedesktop.org/upower/commit/rules/95-upower-
+	  hid.rules?id=9f31068707fc79744961cea7258b0eb262effbf1
+
+2015-05-28  Arnaud Quette <arnaud.quette@free.fr>
+
+	* tools/nut-scanner/nut-scan.h, tools/nut-scanner/nut-scanner.c,
+	  tools/nut-scanner/nutscan-device.c, tools/nut-scanner/nutscan-
+	  device.h, tools/nut-scanner/nutscan-display.c, tools/nut-scanner
+	  /nutscan-init.c, tools/nut-scanner/nutscan-init.h, tools/nut-
+	  scanner/nutscan-ip.c, tools/nut-scanner/nutscan-ip.h, tools/nut-
+	  scanner/nutscan-serial.c, tools/nut-scanner/nutscan-serial.h, tools
+	  /nut-scanner/scan_avahi.c, tools/nut-scanner/scan_eaton_serial.c,
+	  tools/nut-scanner/scan_ipmi.c, tools/nut-scanner/scan_nut.c, tools
+	  /nut-scanner/scan_snmp.c, tools/nut-scanner/scan_usb.c, tools/nut-
+	  scanner/scan_xml_http.c: Fix legal information on source-code
+	  headers  Copyright and author were not mentioned as it should be.
+	  Most of the nut-scanner copyright belongs to EATON, apart from few
+	  parts. Files descriptions are now also in Doxygen format
+
+2015-05-18  Daniele Pezzini <hyouko@gmail.com>
+
+	* docs/nutdrv_qx-subdrivers.txt, drivers/nutdrv_qx.c,
+	  drivers/nutdrv_qx.h, drivers/nutdrv_qx_bestups.c, drivers
+	  /nutdrv_qx_blazer-common.c, drivers/nutdrv_qx_blazer-common.h,
+	  drivers/nutdrv_qx_mecer.c, drivers/nutdrv_qx_megatec-old.c,
+	  drivers/nutdrv_qx_megatec.c, drivers/nutdrv_qx_mustek.c,
+	  drivers/nutdrv_qx_q1.c, drivers/nutdrv_qx_voltronic-qs-hex.c,
+	  drivers/nutdrv_qx_voltronic-qs.c, drivers/nutdrv_qx_voltronic.c,
+	  drivers/nutdrv_qx_zinto.c: nutdrv_qx: make preprocessed value's
+	  size_t a const  There's no need to intervene on the passed-to-the-
+	  function value of a preprocessed value's size_t, so clarify it is a
+	  const. Update all subdrivers accordingly, bump versions.
+	* drivers/nutdrv_qx.c: nutdrv_qx: make sure an answer is not reused
+	  if preprocess_answer() fails  If an item's preprocess_answer()
+	  function fails, the answer should not be considered valid and
+	  inherited by the following items with the same command. Therefore,
+	  on failure, clear the answer so that the following items are forced
+	  to query the device and preprocess the answer anew, if appropriate.
+
+2015-05-13  Arnaud Quette <arnaud.quette@free.fr>
+
+	* docs/download.txt: Update NUT packages for Windows to 2.6.5-6
+
+2015-05-07  Arnaud Quette <arnaud.quette@free.fr>
+
+	* scripts/systemd/nut-server.service.in: Restore systemd relationship
+	  with nut-driver service  The Requires directive from nut-server to
+	  nut-driver was previously removed, since it was preventing upsd
+	  from starting whenever one or more drivers, among several, was
+	  failing to start. Use the Wants directive, a weaker version of
+	  Requires, which will start upsd even if the nut-driver unit fails
+	  to start.  closes https://github.com/networkupstools/nut/issues/200
+
+2015-04-23  Arnaud Quette <arnaud.quette@free.fr>
+
+	* Makefile.am: Cleanup GPG signature before generation
+
 2015-04-22  Arnaud Quette <arnaud.quette@free.fr>
 
+	* configure.ac: bump version back to 2.7.3.1
 	* configure.ac: Restore version 2.7.3 for release
 	* docs/security.txt: Missing link reference update  The filename of
 	  the previous GPG release key was not updated, leading to pointing
@@ -145,6 +1230,17 @@
 	  battery.charger.status. For now, at least, when ABM is enabled, the
 	  historic CHRG and DISCHRG flags are not published anymore in
 	  ups.status
+
+2015-03-26  Stuart Henderson <stu@spacehopper.org>
+
+	* data/driver.list.in, docs/man/snmp-ups.txt, docs/snmp-
+	  subdrivers.txt, drivers/Makefile.am, drivers/huawei-mib.c, drivers
+	  /huawei-mib.h, drivers/snmp-ups.c: snmp-ups: new subdriver for
+	  Huawei  "Hi, the [commit] below adds a new subdriver for snmp-ups
+	  to support Huawei UPS, based on an observed walk from a UPS5000-E
+	  with a few bits filled in from the MIBs (copy at
+	  http://junkpile.org/HUAWEI_UPS_MIB/)."  http://news.gmane.org/find-
+	  root.php?message_id=slrnmh6npf.tg7.stu%40naiad.spacehopper.org
 
 2015-03-25  Daniele Pezzini <hyouko@gmail.com>
 
@@ -1050,6 +2146,10 @@
 
 	* NEWS, UPGRADING, configure.ac: Update for release 2.7.2  Complete
 	  the release information for NUT 2.7.2
+
+2014-04-17  Stephen J. Butler <stephen.butler@gmail.com>
+
+	* drivers/tripplite-hid.c: Scale for SMART1500LCDT
 
 2014-04-07  Arnaud Quette <arnaud.quette@free.fr>
 
