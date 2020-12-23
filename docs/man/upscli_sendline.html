@@ -740,7 +740,7 @@ asciidoc.install();
 <div class="sect1">
 <h2 id="_name">NAME</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>upscli_sendline - send a single command to a UPS</p></div>
+<div class="paragraph"><p>upscli_sendline, upscli_sendline_timeout - send a single command to a UPS</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -752,25 +752,30 @@ asciidoc.install();
 </div></div>
 <div class="literalblock">
 <div class="content">
-<pre><code>int upscli_sendline(UPSCONN_t *ups, const char *buf, size_t buflen);</code></pre>
+<pre><code>int upscli_sendline(UPSCONN_t *ups, const char *buf, size_t buflen);
+int upscli_sendline_timeout(UPSCONN_t *ups, const char *buf, size_t buflen, unsigned int timeout);</code></pre>
 </div></div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>The <strong>upscli_sendline()</strong> function takes the pointer <em>ups</em> to a
-<code>UPSCONN_t</code> state structure and transmits a buffer <em>buf</em> of size
-<em>buflen</em> to the server.</p></div>
+<div class="paragraph"><p>The <strong>upscli_sendline()</strong> and <strong>upscli_sendline_timeout()</strong> functions take the
+pointer <em>ups</em> to a <code>UPSCONN_t</code> state structure and transmit a buffer <em>buf</em> of
+size <em>buflen</em> to the server.</p></div>
 <div class="paragraph"><p>The data in <em>buf</em> must be a fully formatted protocol command as no
 parsing of the buffer occurs within this function.</p></div>
+<div class="paragraph"><p>The difference between the two functions is that <strong>upscli_sendline_timeout()</strong>
+lets the caller decide the amount of time (<em>timeout</em> seconds) after which it
+should give up and return, whereas <strong>upscli_sendline()</strong> does not offer this
+freedom, and uses an immediate timeout (0 second).</p></div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_return_value">RETURN VALUE</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>The <strong>upscli_sendline()</strong> function returns 0 on success, or -1 if an
-error occurs.</p></div>
+<div class="paragraph"><p>The <strong>upscli_sendline()</strong> and <strong>upscli_sendline_timeout()</strong> functions return 0 on
+success, or -1 if an error occurs.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -786,7 +791,7 @@ error occurs.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-03-09 14:05:25 CET -- Network UPS Tools 2.7.4
+Last updated 2020-12-21 15:06:50 CET -- Network UPS Tools 2.7.4.1
 </div>
 </div>
 </body>

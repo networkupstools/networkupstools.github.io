@@ -747,7 +747,7 @@ asciidoc.install();
 <h2 id="_note">NOTE</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>This man page only documents the specific features of the
-dummy-ups driver.  For information about the core driver, see
+<strong>dummy-ups</strong> driver.  For information about the core driver, see
 <a href="nutupsdrv.html">nutupsdrv(8)</a>.</p></div>
 </div>
 </div>
@@ -755,55 +755,66 @@ dummy-ups driver.  For information about the core driver, see
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>This program is a multi-purpose UPS emulation tool.
-Its behavior depends on the running mode:</p></div>
+Its behavior depends on the running mode: "dummy" or "repeater".</p></div>
 <div class="sect2">
 <h3 id="_dummy_mode">Dummy Mode</h3>
-<div class="paragraph"><p><strong>dummy-ups</strong> looks like a standard device driver to <a href="upsd.html">upsd(8)</a> and
-allows one to change any value for testing purposes.  It is both interactive,
-controllable through the <a href="upsrw.html">upsrw(1)</a> and <a href="upscmd.html">upscmd(1)</a> commands (or
-equivalent graphical tool), and batchable through script files. It can be
-configured, launched and used as any other real driver.  This mode is mostly
-useful for development and testing purposes.</p></div>
+<div class="paragraph"><p>In this mode, <strong>dummy-ups</strong> looks like a standard NUT device driver to
+<a href="upsd.html">upsd(8)</a> and allows one to change any value for testing purposes.
+It is both interactive, controllable through the <a href="upsrw.html">upsrw(1)</a> and
+<a href="upscmd.html">upscmd(1)</a> commands (or equivalent graphical tool), and batchable
+through script files. It can be configured, launched and used as any other
+"real" NUT driver. This mode is mostly useful for development and testing
+purposes.</p></div>
 </div>
 <div class="sect2">
 <h3 id="_repeater_mode">Repeater Mode</h3>
-<div class="paragraph"><p><strong>dummy-ups</strong> acts as a NUT client, simply forwarding data. This can be useful
-for supervision purposes. This can also allow some load sharing between several
-UPS instances, using a point-to-point communication with the UPS.</p></div>
+<div class="paragraph"><p>In this mode, <strong>dummy-ups</strong> acts as a NUT client, simply forwarding data.
+This can be useful for supervision purposes. This mode can also allow some
+load sharing between several <code>upsd</code> instances communicating with ultimate
+NUT clients, with a "central" one using a point-to-point communication with
+the UPS. This arrangement can also help with networked UPSes, whose network
+management cards can be overwhelmed with a farm of servers directly polling
+SNMP or other protocols every few seconds.</p></div>
 </div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_implementation">IMPLEMENTATION</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>The port specification depends on the running mode, and allows the driver to
-select the right mode.</p></div>
+<div class="paragraph"><p>The <code>port</code> specification in <code>ups.conf</code> depends on the running mode, and allows
+the driver to select the right mode of operation.</p></div>
 <div class="sect2">
 <h3 id="_dummy_mode_2">Dummy Mode</h3>
-<div class="paragraph"><p>Port is a definition file name for <strong>dummy-ups</strong>. This can either
-be an absolute or a relative path name. In the latter case the NUT
-sysconfig directory (ie /etc/nut, /usr/local/ups/etc, &#8230;) is prepended.</p></div>
+<div class="paragraph"><p>In this context, <code>port</code> in the <code>ups.conf</code> block defines a file name for the
+<strong>dummy-ups</strong> to read data from. This can either be an absolute or a relative
+path name. In the latter case the NUT sysconfig directory (i.e. <code>/etc/nut</code>,
+<code>/usr/local/ups/etc</code>, &#8230;) is prepended.</p></div>
 <div class="paragraph"><p>For instance:</p></div>
 <div class="literalblock">
 <div class="content">
 <pre><code>[dummy]
         driver = dummy-ups
-        port = evolution500.dev
+        port = evolution500.seq
         desc = "dummy-ups in dummy mode"</code></pre>
 </div></div>
-<div class="paragraph"><p>This file is generally named "something.dev". It contains a list of all
-valid data and associated values, and has the same format as an <a href="upsc.html">upsc(8)</a>
-dump (&lt;varname&gt;: &lt;value&gt;). So you can easily create definition
-files from an existing UPS using "upsc &gt; file.dev".
-It can also be empty, in which case only a basic set of data is available:
-device.<strong>, driver.</strong>, ups.mfr, ups.model, ups.status</p></div>
-<div class="paragraph"><p>Samples definition files are available in the "data" directory of the nut source
-tree, and generally in the sysconfig directory of your system distribution.</p></div>
+<div class="paragraph"><p>This file is generally named <code>something.dev</code> or <code>something.seq</code>. It contains
+a list of all valid variables and associated values (you can later use <code>upsrw</code>
+only to modify values of these variables), and has the same format as an
+<a href="upsc.html">upsc(8)</a> dump (<code>&lt;varname&gt;: &lt;value&gt;</code>). So you can easily create
+definition files from an existing UPS using <code>upsc &gt; file.dev</code>.</p></div>
+<div class="paragraph"><p>It can also be empty, in which case only a basic set of data is available:
+<code>device.*</code>, <code>driver.*</code>, <code>ups.mfr</code>, <code>ups.model</code>, <code>ups.status</code> as filled by
+the driver itself.</p></div>
+<div class="paragraph"><p>Some sample definition files are available in the <code>data</code> directory of the
+NUT source tree, and generally in the sysconfig directory of your system
+distribution.</p></div>
 <div class="paragraph"><p>Since <strong>dummy-ups</strong> will loop on reading this file, you can dynamically modify
-it to interact with the driver. This will avoid message spam into your
-system log files, if you are using NUT default configuration.</p></div>
-<div class="paragraph"><p>You can also use the "TIMER &lt;seconds&gt;" instruction to create scheduled events
-sequences. For example, the following sequence will loop on switching ups.status
+it with some external process to "interact" with the driver. This will avoid
+message spam into your system log files, if you are using NUT default
+configuration.</p></div>
+<div class="paragraph"><p>You can also use the <code>TIMER &lt;seconds&gt;</code> instruction to create scheduled event
+sequences (such files are traditionally named with the <code>.seq</code> extension).
+For example, the following sequence will loop on switching <code>ups.status</code>
 between "OL", "OB" and "OB LB" every minute:</p></div>
 <div class="literalblock">
 <div class="content">
@@ -811,15 +822,20 @@ between "OL", "OB" and "OB LB" every minute:</p></div>
 TIMER 60
 ups.status: OB
 TIMER 60
-ups.status: LB
+ups.status: OB LB
 TIMER 60</code></pre>
 </div></div>
-<div class="paragraph"><p>It is wise to end the script with a TIMER. Otherwise dummy-ups will directly
-go back to the beginning of the file.</p></div>
+<div class="paragraph"><p>It is wise to end the script with a <code>TIMER</code> keyword. Otherwise <strong>dummy-ups</strong>
+will directly go back to the beginning of the file and, in particular, forget
+any values you could have just set with <code>upsrw</code>.</p></div>
+<div class="paragraph"><p>Note that to avoid CPU overload with an infinite loop, the driver "sleeps"
+a bit between file-reading cycles (currently this delay is hardcoded to one
+second), independently of (and/or in addition to) any <code>TIMER</code> keywords.</p></div>
 </div>
 <div class="sect2">
 <h3 id="_repeater_mode_2">Repeater Mode</h3>
-<div class="paragraph"><p>Port is the name of a remote UPS, using the NUT form, ie:</p></div>
+<div class="paragraph"><p>In this context, <code>port</code> in the <code>ups.conf</code> block is the name of a remote UPS,
+using the NUT format, i.e.:</p></div>
 <div class="literalblock">
 <div class="content">
 <pre><code>&lt;upsname&gt;@&lt;hostname&gt;[:&lt;port&gt;]</code></pre>
@@ -828,13 +844,17 @@ go back to the beginning of the file.</p></div>
 <div class="literalblock">
 <div class="content">
 <pre><code>[repeater]
-            driver = dummy-ups
-            port = ups@hostname
-            desc = "dummy-ups in repeater mode"</code></pre>
+        driver = dummy-ups
+        port = ups1@remotehost
+        desc = "dummy-ups in repeater mode"</code></pre>
 </div></div>
 <div class="paragraph"><p>Unlike UPS specifications in the rest of NUT, the <code>@hostname</code> portion is not
 optional - it is the <code>@</code> character which enables Repeater Mode. To refer to an
 UPS on the same host as <strong>dummy-ups</strong>, use <code>port = upsname@localhost</code>.</p></div>
+<div class="paragraph"><p>Note that to avoid CPU overload with an infinite loop, the driver "sleeps" a
+bit between data-requesting cycles (currently this delay is hardcoded to one
+second), so propagation of data updates available to a remote <code>upsd</code> may lag
+by this much.</p></div>
 </div>
 </div>
 </div>
@@ -842,15 +862,16 @@ UPS on the same host as <strong>dummy-ups</strong>, use <code>port = upsname@loc
 <h2 id="_interaction">INTERACTION</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>Once the driver is loaded in dummy mode, you can change any variables, except
-those of the driver.* and server.* collections.
+those of the <code>driver.*</code> and <code>server.*</code> collections.
 You can do this by either editing the definition file, or use the
 <a href="upsrw.html">upsrw(1)</a> and <a href="upscmd.html">upscmd(1)</a> commands.</p></div>
-<div class="paragraph"><p>Note that in simulation mode, new variables can be added on the fly, by
-adding these to the definition file. Conversely, if you need to remove
-variable (such as transient ones, like ups.alarm), simply update these
-by setting an empty value. As a result, they will get removed from the data.</p></div>
-<div class="paragraph"><p>In repeater mode, the driver acts according to the capabilities of the UPS, and
-so support the same instant commands and settable values.</p></div>
+<div class="paragraph"><p>Note that in simulation mode, new variables can be added on the fly, but only
+by adding these to the definition file (and waiting for it to be re-read).
+Conversely, if you need to remove variable (such as transient ones, like
+<code>ups.alarm</code>), simply update these by setting an empty value. As a result,
+they will get removed from the data.</p></div>
+<div class="paragraph"><p>In repeater mode, the driver acts according to the capabilities of the UPS,
+and so supports the same instant commands and settable values.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -897,7 +918,7 @@ checking enforcement, as well as boundaries or enumeration definition.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-03-09 14:05:25 CET -- Network UPS Tools 2.7.4
+Last updated 2020-12-21 15:06:50 CET -- Network UPS Tools 2.7.4.1
 </div>
 </div>
 </body>
