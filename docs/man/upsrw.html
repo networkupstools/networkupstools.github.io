@@ -748,7 +748,7 @@ asciidoc.install();
 <div class="sectionbody">
 <div class="paragraph"><p><strong>upsrw</strong> <em>ups</em></p></div>
 <div class="paragraph"><p><strong>upsrw</strong> -h</p></div>
-<div class="paragraph"><p><strong>upsrw</strong> -s <em>variable</em> [-u <em>username</em>] [-p <em>password</em>] <em>ups</em></p></div>
+<div class="paragraph"><p><strong>upsrw</strong> -s <em>variable</em> [-u <em>username</em>] [-p <em>password</em>] [-w] [-t &lt;timeout&gt;] <em>ups</em></p></div>
 </div>
 </div>
 <div class="sect1">
@@ -816,6 +816,27 @@ like -u, and you will be prompted for it if necessary.
 </p>
 </dd>
 <dt class="hdlist1">
+<strong>-w</strong>
+</dt>
+<dd>
+<p>
+Wait for the completion of setting execution by the driver and return its
+actual result from the device. Note that this feature requires that both upsd
+and the driver support TRACKING (NUT version 2.7.5 or higher) or it will
+otherwise fail.
+The command will also block until an actual result is provided from the driver,
+or the timeout is reached (see <strong>-t</strong>).
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>-t</strong> <em>seconds</em>
+</dt>
+<dd>
+<p>
+Set a timeout when using <strong>-w</strong>. Defaults to 10 seconds.
+</p>
+</dd>
+<dt class="hdlist1">
 <em>ups</em>
 </dt>
 <dd>
@@ -855,7 +876,7 @@ username you are using has permissions to SET variables.</p></div>
 <div class="paragraph"><p>When using <strong>upsrw</strong> to modify a numeric float value, that values must be given
 using decimal (base 10) english-based representation, so using a dot, in
 non-scientific notation.  So hexadecimal, exponents, and comma for thousands
-separator are forbiden.
+separator are forbidden.
 For example: "1200.20" is valid, while "1,200.20" and "1200,20" are invalid.</p></div>
 </div>
 </div>
@@ -880,7 +901,7 @@ confusing.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-03-09 14:05:52 CET -- Network UPS Tools 2.7.4
+Last updated 2020-12-21 15:06:50 CET -- Network UPS Tools 2.7.4.1
 </div>
 </div>
 </body>
