@@ -1,9 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
     "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
-<meta name="generator" content="AsciiDoc 8.6.9" />
+<meta name="generator" content="AsciiDoc 9.0.0rc2" />
 <title>NUTUPSDRV(8)</title>
 <style type="text/css">
 /* Shared CSS for AsciiDoc xhtml11 and html5 backends */
@@ -435,7 +436,7 @@ thead, p.table.header {
 p.table {
   margin-top: 0;
 }
-/* Because the table frame attribute is overriden by CSS in most browsers. */
+/* Because the table frame attribute is overridden by CSS in most browsers. */
 div.tableblock > table[frame="void"] {
   border-style: none;
 }
@@ -761,15 +762,19 @@ package.</p></div>
 hardware and the <a href="upsd.html">upsd(8)</a> server.  The driver is responsible for
 translating the native protocol of the UPS to the common format used by
 the rest of this package.</p></div>
-<div class="paragraph"><p>The core has two modes of operation which are determined by the
+<div class="paragraph"><p>The core has three modes of operation which are determined by the
 command line switches.  In the normal mode, the driver will periodically
-poll the UPS for its state and parameters.  The results of this command
-is presented to upsd.  The driver will also handle setting variables and
-instant commands if available.</p></div>
-<div class="paragraph"><p>The driver can also instruct the UPS to shut down the load, possibly
-after some delay.  This mode of operation is intended for cases when it is
-known that the UPS is running out of battery power and the systems
-attached must be turned off to ensure a proper reboot when power returns.</p></div>
+poll the UPS for its state and parameters, as per the <strong>pollinterval</strong> parameter
+in <a href="ups.conf.html">ups.conf(5)</a>.  The results of this command are presented to upsd.
+The driver will also handle setting variables and instant commands if available.</p></div>
+<div class="paragraph"><p>In the second mode, using <strong>-k</strong>, the driver can instruct the UPS to shut down
+the load, possibly after some delay.  This mode of operation is intended for
+cases when it is known that the UPS is running out of battery power and the
+systems attached must be turned off to ensure a proper reboot when power
+returns.</p></div>
+<div class="paragraph"><p>In the third mode, using <strong>-d</strong>, the driver will exit after some update loops,
+dumping the data tree (in upsc-like format) to stdout.  This can be useful to
+complement the nut-scanner to discover devices, along with in-depth data.</p></div>
 <div class="admonitionblock">
 <table><tr>
 <td class="icon">
@@ -807,6 +812,19 @@ Autoconfigure this driver using the <em>id</em> section of <a href="ups.conf.htm
 </p>
 </dd>
 <dt class="hdlist1">
+<strong>-s</strong> <em>id</em>
+</dt>
+<dd>
+<p>
+Configure this driver only with command line arguments instead of reading
+<a href="ups.conf.html">ups.conf(5)</a>. To be used instead of <strong>-a</strong> option when need to run
+a driver not present in driver configuration file. Instead, driver
+configuration have to be set with <strong>-x</strong> options directly in the command line.
+As the driver instance cannot be controlled by <a href="upsdrvctl.html">upsdrvctl(8)</a>,
+this option should be used for specific needs only.
+</p>
+</dd>
+<dt class="hdlist1">
 <strong>-D</strong>
 </dt>
 <dd>
@@ -823,6 +841,17 @@ output.  More often than not, if you just pick a level, the output may be
 either too limited or too verbose to be of any use.</p></div>
 </dd>
 <dt class="hdlist1">
+<strong>-d</strong> <em>update_count</em>
+</dt>
+<dd>
+<p>
+Dump the data tree (in upsc-like format) to stdout after running the driver
+update loop for <em>update_count</em> times and exit.
+Note that the driver banner will be printed too, so when using this option in
+scripts, don&#8217;t forget to trim the first line.
+</p>
+</dd>
+<dt class="hdlist1">
 <strong>-q</strong>
 </dt>
 <dd>
@@ -836,7 +865,7 @@ Raise log level threshold.  Use this multiple times to log more details.
 </dt>
 <dd>
 <p>
-Set the poll interval for the device.
+Set the poll interval for the device.  The default value is 2 (in seconds).
 </p>
 </dd>
 <dt class="hdlist1">
@@ -852,7 +881,7 @@ Print only version information, then exit.
 </dt>
 <dd>
 <p>
-Print a parseable list of driver variables. Mostly useful for configuration
+Print a parsable list of driver variables. Mostly useful for configuration
 wizard programs.
 </p>
 </dd>
@@ -885,12 +914,20 @@ the jail.  In fact, it is somewhat safer if you do not.</p></div>
 </dt>
 <dd>
 <p>
-If started as root, the driver will setuid(2) to the user id
-associated with <em>username</em>.
+Override the unprivileged username that the driver may use after startup.  If
+started as root, after opening configuration files (and optionally calling
+chroot(2), as described in the previous option), the driver will look up
+<em>username</em> in the <code>passwd</code> database, then change to the user and group
+identities associated with <em>username</em>. (If started with a nonzero UID or
+effective UID, the driver will silently ignore this option.)
 </p>
-<div class="paragraph"><p>If you do not specify this value and start it as root, the driver will
-switch to the default value that was compiled into the code.  This is
-typically <em>nobody</em>, and is far from ideal.</p></div>
+<div class="paragraph"><p>When compiling NUT from source, the default username is typically <code>nobody</code>, and
+this may cause permission errors when the driver opens the UPS device node. You
+can use this option to temporarily override the defaults. For testing purposes,
+you can set this option to <code>root</code> to bypass permission errors, especially with
+USB-based drivers. However, you will want to remove this option later in order
+to avoid permission conflicts between the driver and the unprivileged copy of
+<a href="upsd.html">upsd(8)</a>.</p></div>
 </dd>
 <dt class="hdlist1">
 <strong>-x</strong> <em>var</em>=<em>val</em>
@@ -941,6 +978,22 @@ to start and where the hardware is attached.
 </div>
 </div>
 <div class="sect1">
+<h2 id="_environment_variables">ENVIRONMENT VARIABLES</h2>
+<div class="sectionbody">
+<div class="paragraph"><p><strong>NUT_CONFPATH</strong> is the path name of the directory that contains
+<code>upsd.conf</code> and other configuration files.  If this variable is not set,
+<strong>upsd</strong> uses a built-in default, which is often <code>/usr/local/ups/etc</code>.</p></div>
+<div class="paragraph"><p><strong>NUT_STATEPATH</strong> is the path name of the directory in which
+<strong>upsd</strong> keeps state information.  If this variable is not set,
+<strong>upsd</strong> uses a built-in default, which is often <code>/var/state/ups</code>.
+The <strong>STATEPATH</strong> directive in <a href="upsd.conf.html">upsd.conf(5)</a> overrides this variable.</p></div>
+<div class="paragraph"><p><strong>NUT_ALTPIDPATH</strong> is the path name of the directory in which
+<strong>upsd</strong> and drivers store .pid files.  If this variable is not set,
+<strong>upsd</strong> and drivers use either <strong>NUT_STATEPATH</strong> if set, or ALTPIDPATH if set,
+or otherwise the built-in default <strong>STATEPATH</strong>.</p></div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_bugs">BUGS</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>Some of the drivers may have bugs.  See their manuals for more
@@ -984,7 +1037,6 @@ information.</p></div>
 <a href="mge-shut.html">mge-shut(8)</a>,
 <a href="mge-utalk.html">mge-utalk(8)</a>,
 <a href="mge-xml.html">mge-xml(8)</a>,
-<a href="newmge-shut.html">newmge-shut(8)</a>,
 <a href="nitram.html">nitram(8)</a>,
 <a href="nutdrv_qx.html">nutdrv_qx(8)</a>,
 <a href="oneac.html">oneac(8)</a>,
@@ -1011,7 +1063,7 @@ The NUT (Network UPS Tools) home page: <a href="http://www.networkupstools.org/"
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-03-09 14:05:25 CET -- Network UPS Tools 2.7.4
+Last updated 2022-02-04 21:16:21 CET -- Network UPS Tools 2.7.4.1
 </div>
 </div>
 </body>

@@ -1,9 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
     "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
-<meta name="generator" content="AsciiDoc 8.6.9" />
+<meta name="generator" content="AsciiDoc 9.0.0rc2" />
 <title>UPSD(8)</title>
 <style type="text/css">
 /* Shared CSS for AsciiDoc xhtml11 and html5 backends */
@@ -435,7 +436,7 @@ thead, p.table.header {
 p.table {
   margin-top: 0;
 }
-/* Because the table frame attribute is overriden by CSS in most browsers. */
+/* Because the table frame attribute is overridden by CSS in most browsers. */
 div.tableblock > table[frame="void"] {
   border-style: none;
 }
@@ -855,14 +856,14 @@ Display the version of the program.
 <div class="paragraph"><p>upsd can reload its configuration files without shutting down the process
 if you send it a SIGHUP or start it again with <code>-c reload</code>.  This only works
 if the background process is able to read those files.</p></div>
-<div class="paragraph"><p>If you think that upsd can&#8217;t reload, check your syslogs for error messages.
+<div class="paragraph"><p>If you think that upsd can&#8217;t reload, check your syslog for error messages.
 If it&#8217;s complaining about not being able to read the files, then you need
 to adjust your system to make it possible.  Either change the permissions
 on the files, or run upsd as another user that will be able to read them.</p></div>
 <div class="paragraph"><p>DO NOT make your upsd.conf or upsd.users world-readable, as those files
 hold important authentication information.  In the wrong hands, it could
-be used by some evil person to spoof your master upsmon and command your
-systems to shut down.</p></div>
+be used by some evil person to spoof your primary-mode upsmon and command
+your systems to shut down.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -912,6 +913,10 @@ controlled in <a href="upsd.users.html">upsd.users(5)</a>.  UPS definitions are 
 <strong>upsd</strong> keeps state information.  If this variable is not set,
 <strong>upsd</strong> uses a built-in default, which is often <code>/var/state/ups</code>.
 The <strong>STATEPATH</strong> directive in <a href="upsd.conf.html">upsd.conf(5)</a> overrides this variable.</p></div>
+<div class="paragraph"><p><strong>NUT_ALTPIDPATH</strong> is the path name of the directory in which
+<strong>upsd</strong> and drivers store .pid files.  If this variable is not set,
+<strong>upsd</strong> and drivers use either <strong>NUT_STATEPATH</strong> if set, or ALTPIDPATH if set,
+or otherwise the built-in default <strong>STATEPATH</strong>.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -948,7 +953,7 @@ The <strong>STATEPATH</strong> directive in <a href="upsd.conf.html">upsd.conf(5
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-03-09 14:05:25 CET -- Network UPS Tools 2.7.4
+Last updated 2022-02-04 21:16:21 CET -- Network UPS Tools 2.7.4.1
 </div>
 </div>
 </body>

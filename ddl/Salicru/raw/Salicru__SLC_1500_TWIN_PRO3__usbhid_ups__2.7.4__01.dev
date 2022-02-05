@@ -1,0 +1,81 @@
+# As initially reported in https://github.com/networkupstools/nut/issues/1142
+# modified back to "native" VID/PID (that report was done with UPS apparently
+# modified to reply to IDs supported by existing drivers to check its work
+# "out of the box":
+battery.capacity: 0.00
+battery.charge: 91
+battery.charge.low: 0
+battery.charge.restart: 0
+battery.charger.status: floating
+battery.protection: yes
+battery.runtime: 59940
+battery.runtime.low: 180
+battery.type: PbAc
+device.mfr: PHOENIXTEC
+device.model: SLC-1500-TWIN PRO3
+device.serial: CP10M3031700001
+device.type: ups
+driver.name: usbhid-ups
+driver.parameter.pollfreq: 30
+driver.parameter.pollinterval: 2
+driver.parameter.port: auto
+driver.parameter.synchronous: no
+driver.version: 2.7.4
+driver.version.data: MGE HID 1.40
+driver.version.internal: 0.41
+input.frequency.nominal: 50
+input.voltage.nominal: 230
+outlet.1.status: on
+output.current: 0.00
+output.frequency: 50.0
+output.frequency.nominal: 50
+output.voltage: 230.2
+output.voltage.nominal: 230
+ups.date: 2019/12/31
+ups.delay.shutdown: 20
+ups.delay.start: 30
+ups.firmware: 00.01.9319
+ups.load: 0
+ups.mfr: PHOENIXTEC
+ups.model: SLC-1500-TWIN PRO3
+ups.power: 0
+ups.power.nominal: 1500
+ups.productid: 0201
+ups.realpower: 0
+ups.realpower.nominal: 1500
+ups.serial: CP10M3031700001
+ups.shutdown: enabled
+ups.status: OL CHRG
+ups.temperature: 25.9
+ups.test.interval: 2592000
+ups.test.result: Done and passed
+ups.time: 20:18:14
+ups.timer.shutdown: 0
+ups.timer.start: 0
+ups.type: online
+ups.vendorid: 2e66
+
+# $ upsrw -s battery.runtime.low Unity
+# Enter new value for battery.runtime.low: 240
+# OK
+#
+# $ upsc Unity battery.runtime.low
+# 240
+# I successfully set the “ups.delay.shutdown” from 20 to 120 via “upsrw -s ups.delay.shutdown Unity” command
+
+# $ upscmd -l Unity
+# Instant commands supported on UPS [Unity]:
+#
+# load.off - Turn off the load immediately
+# load.off.delay - Turn off the load with a delay (seconds)
+# load.on - Turn on the load immediately
+# load.on.delay - Turn on the load with a delay (seconds)
+# shutdown.return - Turn off the load and return when power is back
+# shutdown.stayoff - Turn off the load and remain off
+# shutdown.stop - Stop a shutdown in progress
+# test.battery.start.deep - Start a deep battery test
+# test.battery.start.quick - Start a quick battery test
+# test.battery.stop - Stop the battery test
+#
+# Send command “upscmd Unity load.off” , the output voltage has changed from 230.2 to 0 after loading off.
+# Send command “upscmd Unity load.on”, the output voltage has changed from 0 to 230.2 after loading on.

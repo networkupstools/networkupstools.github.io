@@ -1,15 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>I.3. Changes from 2.7.1 to 2.7.2</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="Network UPS Tools User Manual" /><link rel="up" href="api.html" title="I. Upgrading notes" /><link rel="prev" href="apis02.html" title="I.2. Changes from 2.7.2 to 2.7.3" /><link rel="next" href="apis04.html" title="I.4. Changes from 2.6.5 to 2.7.1" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="apis02.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="apis04.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_7_1_to_2_7_2"></a>I.3. Changes from 2.7.1 to 2.7.2</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-upsdrvctl is now installed to $prefix/sbin rather than $driverexec.
-  This usually means moving from /bin to /sbin, apart from few exceptions.
-  In all cases, please adapt your scripts.
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>I.3. Changes from 2.7.2 to 2.7.3</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><link rel="home" href="index.html" title="Network UPS Tools User Manual" /><link rel="up" href="api.html" title="I. Upgrading notes" /><link rel="prev" href="apis02.html" title="I.2. Changes from 2.7.3 to 2.7.4" /><link rel="next" href="apis04.html" title="I.4. Changes from 2.7.1 to 2.7.2" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="apis02.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="apis04.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_7_2_to_2_7_3"></a>I.3. Changes from 2.7.2 to 2.7.3</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+The <a class="ulink" href="../man/nutdrv_qx.html" target="_top">nutdrv_qx(8)</a> driver will eventually supersede <a class="ulink" href="../man/bestups.html" target="_top">bestups(8)</a>.
+  It has been tested on a U-series Patriot Pro II. Please test the new driver
+  on your hardware during your next maintenance window, and report any bugs.
 </li><li class="listitem">
-FreeDesktop Hardware Abstraction Layer (HAL) support was removed.
-  Please adapt your packaging files, if you used to distribute the
-  nut-hal-drivers package.
+If you are upgrading from a new install of 2.7.1 or 2.7.2, double-check the
+  value of POWERDOWNFLAG in $prefix/etc/upsmon.conf - it has been restored to
+  /etc/killpower as in 2.6.5 and earlier.
 </li><li class="listitem">
-This is a good time to point out that for stricter packaging systems, it may
-  be beneficial to add "--enable-option-checking=fatal" to the ./configure
-  command line, in order to quickly pick up any other removed option flags.
+If you use upslog with a large sleep value, you may be interested in adding
+  <code class="literal">killall -SIGUSR1 upslog</code> to any OB/OL script actions. This will force
+  upslog to write a log entry to catch short power transients.
+</li><li class="listitem">
+Be sure that your SSL keys are readable by the NUT system user. The SSL
+  subsystem is now initialized after <code class="literal">upsd</code> forks, to work around issues in the
+  NSS library.
+</li><li class="listitem">
+The systemd nut-server.service does not Require nut-driver to be started
+  successfully.  This was previously preventing upsd startup, even for just
+  one driver failure among many.  This also matches the behavior of sysV
+  initscripts.
 </li></ul></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2016-03-09 14:27:49 -- Network UPS Tools 2.7.4</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apis02.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="api.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="apis04.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2022-02-04 20:20:34 -- Network UPS Tools 2.7.4.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apis02.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="api.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="apis04.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

@@ -1,22 +1,33 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>4. Creating a new driver to support another device</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="Network UPS Tools Developer Guide" /><link rel="up" href="index.html" title="Network UPS Tools Developer Guide" /><link rel="prev" href="ar01s03.html" title="3. Information for developers" /><link rel="next" href="ar01s05.html" title="5. Driver/server socket protocol" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ar01s03.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ar01s05.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="new-drivers"></a>4. Creating a new driver to support another device</h2></div></div></div><p>This chapter will present the process of creating a new driver to support
-another device.</p><p>Since NUT already supports many major power devices protocols through
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>4. Creating a new driver to support another device</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><link rel="home" href="index.html" title="Network UPS Tools Developer Guide" /><link rel="up" href="index.html" title="Network UPS Tools Developer Guide" /><link rel="prev" href="ar01s03.html" title="3. Information for developers" /><link rel="next" href="ar01s05.html" title="5. Driver/server socket protocol" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ar01s03.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ar01s05.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="new-drivers"></a>4. Creating a new driver to support another device</h2></div></div></div><p>This chapter will present the process of creating a new driver to support
+another device.</p><p>Since NUT already supports many major power device protocols through
 several generic drivers (genericups, usbhid-ups, snmp-ups, blazer_* and
-nutdrv_qx), creation of new drivers has become rare.</p><p>So most of the time, it will be limited to completing one of these
-generic drivers.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_smart_vs_contact_closure"></a>4.1. Smart vs. Contact-closure</h3></div></div></div><p>If your UPS only does contact closure readings, then go straight to the
-<a class="link" href="ar01s04.html#contact-closure" title="4.22. Contact closure hardware information">Contact closure hardware</a> chapter for information on
-adding support.  It’s a lot easier to add a few lines to a header file
-than it is to create a whole new driver.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_serial_vs_usb_vs_snmp_and_more"></a>4.2. Serial vs. USB vs. SNMP and more</h3></div></div></div><p>If your UPS connects to your computer via a USB port, then go straight
-to the <a class="link" href="ar01s04.html#hid-subdrivers" title="4.23. How to make a new subdriver to support another USB/HID UPS">HID subdrivers</a> chapter. You can probably add
-support for your device by writing a new subdriver to the existing
-usbhid-ups driver, which is easier than writing an entire new driver.</p><p>Similarly, if your UPS connects to your computer via an SNMP network
-card, you can probably add support for your device by writing a new
+nutdrv_qx), creation of new drivers has become rare.</p><p>So most of the time, this process will be limited to completing one of these
+generic drivers.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_smart_vs_contact_closure"></a>4.1. Smart vs. Contact-closure</h3></div></div></div><p>If your UPS only does contact closure readings over an RS-232 serial port, then
+go straight to the <a class="link" href="ar01s04.html#contact-closure" title="4.22. Contact closure hardware information">Contact closure hardware</a> chapter for
+information on adding support.  It’s a lot easier to add a few lines to a
+header file than it is to create a whole new driver.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_serial_vs_usb_vs_snmp_and_more"></a>4.2. Serial vs. USB vs. SNMP and more</h3></div></div></div><p>If your UPS connects to your computer via a USB port, then it most likely
+appears as a USB HID device (this is the simplest way for the vendor to write
+a Windows control program for it). What comes next depends on whether the
+vendor implemented the HID PDC (Power Device Class) specification, or simply
+used the HID protocol to transport serial data to the UPS microcontroller.</p><p>A rough heuristic is to check the length of the HID Descriptor length
+(<code class="literal">wDescriptorLength</code> in <code class="literal">lsusb -v</code> output). If it is less than 200 bytes long,
+the UPS probably has a glorified USB-to-serial converter built in. Since the
+query strings often start with the letter <code class="literal">Q</code>, this family of protocols is
+often referred to as <code class="literal">Q*</code> in the NUT documentation. See the
+<a class="link" href="ar01s04.html#nutdrv_qx-subdrivers" title="4.25. How to make a new subdriver to support another Q* UPS">Q* UPS</a> chapter for more details.</p><p>Otherwise, if the HID Descriptor is longer, you can go to the
+<a class="link" href="ar01s04.html#hid-subdrivers" title="4.23. How to make a new subdriver to support another USB/HID UPS">HID subdrivers</a> chapter. You can probably add support for
+your device by writing a new subdriver to the existing usbhid-ups driver,
+which is easier (and more maintainable) than writing an entire new driver.</p><p>If your USB UPS does not appear to fall into either of these two categories,
+feel free to contact the <code class="literal">nut-upsdev</code> mailing list with details of your
+device.</p><p>Similarly, if your UPS connects to your computer via an SNMP network
+card, you can probably add support for your device by adding a new
 subdriver to the existing snmp-ups driver. Instructions are provided
-in the <a class="link" href="ar01s04.html#snmp-subdrivers" title="4.24. How to make a new subdriver to support another SNMP device">SNMP subdrivers</a> chapter.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_overall_concept"></a>4.3. Overall concept</h3></div></div></div><p>The basic design of drivers is simple.  main.c handles most of the work
+in the <a class="link" href="ar01s04.html#snmp-subdrivers" title="4.24. How to make a new subdriver to support another SNMP device">SNMP subdrivers</a> chapter.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_overall_concept"></a>4.3. Overall concept</h3></div></div></div><p>The basic design of drivers is simple.  <code class="literal">main.c</code> handles most of the work
 for you.  You don’t have to worry about arguments, config files, or
 anything else like that.  Your only concern is talking to the hardware
-and providing data to the outside world.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_skeleton_driver"></a>4.4. Skeleton driver</h3></div></div></div><p>Familiarize yourself with the design of skel.c in the drivers directory.
-It shows a few examples of the functions that main will call to obtain
+and providing data to the outside world.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_skeleton_driver"></a>4.4. Skeleton driver</h3></div></div></div><p>Familiarize yourself with the design of <code class="literal">skel.c</code> in the drivers directory.
+It shows a few examples of the functions that <code class="literal">main.c</code> will call to obtain
 updated information from the hardware.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_essential_structure"></a>4.5. Essential structure</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_upsdrv_info_t"></a>upsdrv_info_t</h4></div></div></div><p>This structure tracks several description information about the driver:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 <span class="strong"><strong>name</strong></span>:    the driver full name, for banner printing and "driver.name" variable.
 </li><li class="listitem">
@@ -24,8 +35,9 @@ updated information from the hardware.</p></div><div class="section"><div class=
               to sub_upsdrv_info. This value has the form "X.YZ", and is
               published by main as "driver.version.internal".
 </li><li class="listitem">
-<span class="strong"><strong>authors</strong></span>: the driver’s author(s) name. If multiple authors are listed, separate
-              them with a newline character so that it can be broken up by author if needed.
+<span class="strong"><strong>authors</strong></span>: the driver’s author(s) name. If multiple authors are listed,
+              separate them with a newline character so that it can be broken
+              up by author if needed.
 </li><li class="listitem"><p class="simpara">
 <span class="strong"><strong>status</strong></span>:  the driver development status. The following values are allowed:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -42,23 +54,23 @@ DRV_EXPERIMENTAL: set this value if your driver is potentially
 DRV_BETA: this value means that the driver is more stable and
               complete. But it is still not recommended for production systems.
 </li><li class="listitem">
-DRV_STABLE: the driver is suitable for production systems, but not
-              100 % feature complete.
+DRV_STABLE: the driver is suitable for production systems, but
+              not 100 % feature complete.
 </li><li class="listitem">
-DRV_COMPLETE: this is the gold level! It implies that 100 % of the
-              protocol is implemented, and a full QA pass.
+DRV_COMPLETE: this is the gold level! It implies that 100 % of
+              the protocol is implemented, and a full QA pass.
 </li></ul></div></li><li class="listitem">
 <span class="strong"><strong>subdrv_info</strong></span>: array of upsdrv_info_t for sub driver(s) information. For
    example, this is used by usbhid-ups.
-</li></ul></div><p>This information is currently used for the startup banner printing and tests.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_essential_functions"></a>4.6. Essential functions</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_upsdrv_initups"></a>upsdrv_initups</h4></div></div></div><p>Open the port (device_path) and do any low-level things that it may need
+</li></ul></div><p>This information is currently used for the startup banner printing and tests.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_essential_functions"></a>4.6. Essential functions</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_upsdrv_initups"></a>upsdrv_initups</h4></div></div></div><p>Open the port (<code class="literal">device_path</code>) and do any low-level things that it may need
 to start using that port.  If you have to set DTR or RTS on a serial
 port, do it here.</p><p>Don’t do any sort of hardware detection here, since you may be going
 into upsdrv_shutdown next.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_upsdrv_initinfo"></a>upsdrv_initinfo</h4></div></div></div><p>Try to detect what kind of UPS is out there, if any, assuming that’s
 possible for your hardware.  If there is a way to detect that hardware
 and it doesn’t appear to be connected, display an error and exit. This
-is the last time your driver is allowed to bail out.</p><p>This is usually a good place to create variables like ups.mfr,
-ups.model, ups.serial, and other "one time only" items.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_upsdrv_updateinfo"></a>upsdrv_updateinfo</h4></div></div></div><p>Poll the hardware, and update any variables that you care about
-monitoring.  Use dstate_setinfo() to store the new values.</p><p>Do at most one pass of the variables.  You MUST return from this
+is the last time your driver is allowed to bail out.</p><p>This is usually a good place to create variables like <code class="literal">ups.mfr</code>,
+<code class="literal">ups.model</code>, <code class="literal">ups.serial</code>, and other "one time only" items.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_upsdrv_updateinfo"></a>upsdrv_updateinfo</h4></div></div></div><p>Poll the hardware, and update any variables that you care about
+monitoring.  Use <code class="literal">dstate_setinfo()</code> to store the new values.</p><p>Do at most one pass of the variables.  You MUST return from this
 function or upsd will be unable to read data from your driver.  main
 will call this function at regular intervals.</p><p>Don’t spent more than a couple of seconds in this function. Typically
 five (5) seconds is the maximum time allowed before you risk that the
@@ -68,20 +80,20 @@ from this function after sending a command immediately and read the
 answer the next time it is called.</p><p>You must never abort from upsdrv_updateinfo(), even when the UPS doesn’t
 seem to be attached anymore. If the connection with the UPS is lost, the
 driver should retry to re-establish communication for as long as it is
-running. Calling exit() or any of the fatal*() functions is specifically
+running. Calling <code class="literal">exit()</code> or any of the <code class="literal">fatal*()</code> functions is specifically
 not allowed anymore.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_upsdrv_shutdown"></a>upsdrv_shutdown</h4></div></div></div><p>Do whatever you can to make the UPS power off the load but also return
 after the power comes back on.  You may use a different command that
 keeps the UPS off if the user has requested that with a configuration
 setting.</p><p>You should attempt the UPS shutdown command even if the UPS detection
 fails.  If the UPS does not shut down the load, then the user is
 vulnerable to a race if the power comes back on during the shutdown
-process.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_data_types"></a>4.7. Data types</h3></div></div></div><p>To be of any use, you must supply data in ups.status.  That is the
+process.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_data_types"></a>4.7. Data types</h3></div></div></div><p>To be of any use, you must supply data in <code class="literal">ups.status</code>.  That is the
 minimum needed to let upsmon do its job.  Whenever possible, you should
 also provide anything else that can be monitored by the driver.  Some
 obvious things are the manufacturer name and model name, voltage data,
-and so on.</p><p>If you can’t figure out some value automatically, use the ups.conf
+and so on.</p><p>If you can’t figure out some value automatically, use the <code class="literal">ups.conf</code>
 options to let the user tell you.  This can be useful when a driver
-needs to support many similar hardware models but can’t probe to see
+needs to support many similar hardware models, but can’t probe to see
 what is actually attached.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_manipulating_the_data"></a>4.8. Manipulating the data</h3></div></div></div><p>All status data lives in structures that are managed by the dstate
 functions.  All access and modifications must happen through those
 functions.  Any other changes are forbidden, as they will not pushed out
@@ -90,42 +102,43 @@ values right there:</p><pre class="literallayout">dstate_setinfo("ups.model", "M
 are strings.  The ST_FLAG_* values can be used to tell upsd more about
 what it can do.</p><pre class="literallayout">dstate_setflags("input.transfer.high", ST_FLAG_RW);</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_status_data"></a>Status data</h4></div></div></div><p>UPS status flags like on line (OL) and on battery (OB) live in
 ups.status.  Don’t manipulate this by hand.  There are functions which
-will do this for you.</p><pre class="literallayout">status_init() - before doing anything else</pre><pre class="literallayout">status_set(val) - add a status word (OB, OL, etc)</pre><pre class="literallayout">status_commit() - push out the update</pre><p>Possible values for status_set:</p><pre class="literallayout">OL      - On line (mains is present)
-OB      - On battery (mains is not present)
-LB      - Low battery
-HB      - High battery
-RB      - The battery needs to be replaced
-CHRG    - The battery is charging
-DISCHRG - The battery is discharging (inverter is providing load power)
-BYPASS  - UPS bypass circuit is active - no battery protection is available
-CAL     - UPS is currently performing runtime calibration (on battery)
-OFF     - UPS is offline and is not supplying power to the load
-OVER    - UPS is overloaded
-TRIM    - UPS is trimming incoming voltage (called "buck" in some hardware)
-BOOST   - UPS is boosting incoming voltage
-FSD     - Forced Shutdown (restricted use, see the note below)</pre><p>Anything else will not be recognized by the usual clients.  Coordinate
+will do this for you.</p><pre class="literallayout">status_init() -- before doing anything else</pre><pre class="literallayout">status_set(val) -- add a status word (OB, OL, etc)</pre><pre class="literallayout">status_commit() -- push out the update</pre><p>Possible values for status_set:</p><pre class="literallayout">OL      -- On line (mains is present)
+OB      -- On battery (mains is not present)
+LB      -- Low battery
+HB      -- High battery
+RB      -- The battery needs to be replaced
+CHRG    -- The battery is charging
+DISCHRG -- The battery is discharging (inverter is providing load power)
+BYPASS  -- UPS bypass circuit is active -- no battery protection is available
+CAL     -- UPS is currently performing runtime calibration (on battery)
+OFF     -- UPS is offline and is not supplying power to the load
+OVER    -- UPS is overloaded
+TRIM    -- UPS is trimming incoming voltage (called "buck" in some hardware)
+BOOST   -- UPS is boosting incoming voltage
+FSD     -- Forced Shutdown (restricted use, see the note below)</pre><p>Anything else will not be recognized by the usual clients.  Coordinate
 with the nut-upsdev list before creating something new, since there will be
 duplication and ugliness otherwise.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-upsd injects "FSD" by itself following that command by a master upsmon
+upsd injects <code class="literal">FSD</code> by itself following that command by a primary upsmon
 process.  Drivers must not set that value, apart from specific cases (see
 below).
 </li><li class="listitem">
-As an exception, drivers may set "FSD" when an imminent shutdown has been
+As an exception, drivers may set <code class="literal">FSD</code> when an imminent shutdown has been
 detected. In this case, the "on battery + low battery" condition should not be
-met. Otherwise, setting status to "OB LB" should be preferred.
+met. Otherwise, setting status to <code class="literal">OB LB</code> should be preferred.
 </li><li class="listitem">
-the OL and OB flags are an indication of the input line status only.
+the <code class="literal">OL</code> and <code class="literal">OB</code> flags are an indication of the input line status only.
 </li><li class="listitem">
-the CHRG and DISCHRG flags are under replacement by battery.charger.status.
-See the <a class="ulink" href="../user-manual.chunked/index.html" target="_top">NUT command and variable naming scheme</a>
-for more information.
+the <code class="literal">CHRG</code> and <code class="literal">DISCHRG</code> flags are being replaced with
+<code class="literal">battery.charger.status</code>.  See the <a class="ulink" href="../user-manual.chunked/index.html" target="_top">NUT command and variable naming scheme</a> for more information.
 </li></ul></div></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_ups_alarms"></a>4.9. UPS alarms</h3></div></div></div><p>These work like ups.status, and have three special functions which you
-must use to manage them.</p><pre class="literallayout">alarm_init() - before doing anything else</pre><pre class="literallayout">alarm_set() - add an alarm word</pre><pre class="literallayout">alarm_commit() - push the value into ups.alarm</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>the ALARM flag in ups.status is automatically set whenever you use
+must use to manage them.</p><pre class="literallayout">alarm_init() -- before doing anything else</pre><pre class="literallayout">alarm_set() -- add an alarm word</pre><pre class="literallayout">alarm_commit() -- push the value into ups.alarm</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>the ALARM flag in ups.status is automatically set whenever you use
 alarm_set.  To remove that flag from ups.status, call alarm_init and
 alarm_commit without calling alarm_set in the middle.</p></div><p>You should never try to set or unset the ALARM flag manually.</p><p>If you use UPS alarms, the call to status_commit() should be after
 alarm_commit(), otherwise there will be a delay in setting the ALARM
 flag in ups.status.</p><p>There is no official list of alarm words as of this writing, so don’t
-use these functions until you check with the upsdev list.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_staleness_control"></a>4.10. Staleness control</h3></div></div></div><p>If you’re not talking to a polled UPS, then you must ensure that it
+use these functions until you check with the upsdev list.</p><p>Also refer to the <a class="link" href="apb.html" title="B. NUT daisychain support notes">NUT daisychain support notes</a> chapter
+of the user manual and developer guide for information related to alarms
+handling in daisychain mode.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_staleness_control"></a>4.10. Staleness control</h3></div></div></div><p>If you’re not talking to a polled UPS, then you must ensure that it
 is still out there and is alive before calling dstate_dataok().  Even
 if nothing is changing, you should still "ping" it or do something
 else to ensure that it is really available.  If the attempts to
@@ -178,44 +191,49 @@ logic 1.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style
 int ser_close(int fd, const char *port)
 </li></ul></div><p>This function unlocks the port if possible and closes the fd.  You
 should call this in your upsdrv_cleanup handler.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-int ser_send_char(int fd, char ch)
+ssize_t ser_send_char(int fd, unsigned char ch)
 </li></ul></div><p>This attempts to write one character and returns the return value from
 write.  You could call write directly, but using this function allows
 for future error handling in one place.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-int ser_send_pace(int fd, unsigned long d_usec, const char *fmt, …)
+ssize_t ser_send_pace(int fd, useconds_t d_usec,
+                                const char *fmt, …)
 </li></ul></div><p>If you need to send a formatted buffer with an intercharacter delay, use
 this function.  There are a number of UPS controllers which can’t take
 commands at the full speed that would normally be possible at a given
 bit rate.  Adding a small delay usually turns a flaky UPS into a solid
 one.</p><p>The return value is the number of characters that was sent to the port,
 or -1 if something failed.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-int ser_send(int fd, const char *fmt, …)
+ssize_t ser_send(int fd, const char *fmt, …)
 </li></ul></div><p>Like ser_send_pace, but without a delay.  Only use this if you’re sure
 that your UPS can handle characters at the full line rate.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-int ser_send_buf(int fd, const char *buf, size_t buflen)
+ssize_t ser_send_buf(int fd, const void *buf, size_t buflen)
 </li></ul></div><p>This sends a raw buffer to the fd.  It is typically used for binary
 transmissions.  It returns the results of the call to write.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-int ser_send_buf_pace(int fd, unsigned long d_usec, const char *buf, size_t buflen)
+ssize_t ser_send_buf_pace(int fd, useconds_t d_usec,
+                                    const void *buf, size_t buflen)
 </li></ul></div><p>This is just ser_send_buf with an intercharacter delay.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-int ser_get_char(int fd, char *ch, long d_sec, long d_usec)
+ssize_t ser_get_char(int fd, void *ch, time_t d_sec, useconds_t d_usec)
 </li></ul></div><p>This will wait up to d_sec seconds + d_usec microseconds for one
 character to arrive, storing it at ch.  It returns 1 on success, -1
 if something fails and 0 on a timeout.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>the delay value must not be too large, or your driver will not get
 back to the usual idle loop in main in time to answer the PINGs from
 upsd.  That will cause an oscillation between staleness and normal
 behavior.</p></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-int ser_get_buf(int fd, char *buf, size_t buflen, long d_sec, long d_usec)
+ssize_t ser_get_buf(int fd, void *buf, size_t buflen,
+                              time_t d_sec, useconds_t d_usec)
 </li></ul></div><p>Like ser_get_char, but this one reads up to buflen bytes storing all of
 them in buf.  The buffer is zeroed regardless of success or failure.  It
 returns the number of bytes read, -1 on failure and 0 on a timeout.</p><p>This is essentially a single read() function with a timeout.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-int ser_get_buf_len(int fd, char *buf, size_t buflen, long d_sec, long d_usec)
+ssize_t ser_get_buf_len(int fd, void *buf, size_t buflen,
+                                  time_t d_sec, useconds_t d_usec)
 </li></ul></div><p>Like ser_get_buf, but this one waits for buflen bytes to arrive,
 storing all of them in buf.  The buffer is zeroed regardless of success
 or failure.  It returns the number of bytes read, -1 on failure
 and 0 on a timeout.</p><p>This should only be used for binary reads.  See ser_get_line for
 protocols that are terminated by characters like CR or LF.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-int ser_get_line(int fd, char *buf, size_t buflen, char endchar,
-                const char *ignset, long d_sec, long d_usec)
+ssize_t ser_get_line(int fd, void *buf, size_t buflen,
+                               char endchar, const char *ignset,
+                               time_t d_sec, useconds_t d_usec)
 </li></ul></div><p>This is the reading function you should use if your UPS tends to send
 responses like "OK\r" or "1234\n".  It reads up to buflen bytes and
 stores them in buf, but it will return immediately if it encounters
@@ -224,30 +242,32 @@ return if it manages to collect a full buffer before reaching the
 endchar.  It returns the number of bytes stored in the buffer, -1 on
 failure and 0 on a timeout.</p><p>If the character matches the ignset with strchr(), it will not be added
 to the buffer.  If you don’t need to ignore any characters, just pass it
-an empty string - "".</p><p>The buffer is always cleared and is always null-terminated.  It does
-this by reading at most (buflen - 1) bytes.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>any other data which is read after the endchar in the serial
+an empty string — <code class="literal">""</code>.</p><p>The buffer is always cleared and is always <code class="literal">null</code>-terminated.  It does
+this by reading at most <code class="literal">(buflen - 1)</code> bytes.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>any other data which is read after the endchar in the serial
 buffer will be lost forever.  As a result, you should not use this
-unless your UPS uses a polled protocol.</p></div><p>Let’s say your endchar is \n and your UPS sends "OK\n1234\nabcd\n".
-This function will read() all of that, find the first \n, and stop
-there.  Your driver will get "OK", and the rest is gone forever.</p><p>This also means that you should not "pipeline" commands to the UPS.
+unless your UPS uses a polled protocol.</p></div><p>Let’s say your endchar is <code class="literal">\n</code> and your UPS sends <code class="literal">"OK\n1234\nabcd\n"</code>.
+This function will <code class="literal">read()</code> all of that, find the first <code class="literal">\n</code>, and stop
+there.  Your driver will get <code class="literal">"OK"</code>, and the rest is gone forever.</p><p>This also means that you should not "pipeline" commands to the UPS.
 Send a query, then read the response, then send the next query.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-int ser_get_line_alert(int fd, char *buf, size_t buflen,
-                char endchar, const char *ignset, const char *alertset,
-                void handler(char ch), long d_sec, long d_usec)
+ssize_t ser_get_line_alert(int fd, void *buf, size_t buflen,
+                                     char endchar, const char *ignset,
+                                     const char *alertset,
+                                     void handler(char ch),
+                                     time_t d_sec, useconds_t d_usec)
 </li></ul></div><p>This is just like ser_get_line, but it allows you to specify a set of
 alert characters which may be received at any time.  They are not added
 to the buffer, and this function will call your handler function,
 passing the character as an argument.</p><p>Implementation note: this function actually does all of the work, and
 ser_get_line is just a wrapper that sets an empty alertset and a NULL
 handler.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-int ser_flush_in(int fd, const char *ignset, int verbose)
+ssize_t ser_flush_in(int fd, const char *ignset, int verbose)
 </li></ul></div><p>This function will drain the input buffer.  If verbose is set to a
 positive number, then it will announce the characters which have been
 read in the syslog.  You should not set verbose unless debugging is
 enabled, since it could be very noisy.</p><p>This function returns the number of characters which were read, so you
 can check for extra bytes by looking for a nonzero return value.  Zero
 will also be returned if the read fails for some reason.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-int set_flush_io(int fd)
+int ser_flush_io(int fd)
 </li></ul></div><p>This function drains both the in- and output buffers. Return zero on
 success.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 void ser_comm_fail(const char *fmt, …)
@@ -266,28 +286,36 @@ void ser_comm_good(void)
 </li></ul></div><p>This will clear the error counter and write a "re-established" message
 to the syslog after communications have been lost.  Your driver should
 call this whenever it has successfully contacted the UPS.  A good place
-for most drivers is where it calls dstate_dataok.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_usb_port_handling"></a>4.12. USB port handling</h3></div></div></div><p>Drivers which use USB functions should include usb-common.h and use these:</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_structure_and_macro"></a>Structure and macro</h4></div></div></div><p>You should us the usb_device_id structure, and the USB_DEVICE macro to
+for most drivers is where it calls dstate_dataok.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_usb_port_handling"></a>4.12. USB port handling</h3></div></div></div><p>Drivers which use USB functions should include usb-common.h and use these:</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_structure_and_macro"></a>Structure and macro</h4></div></div></div><p>You should use the usb_device_id_t structure, and the USB_DEVICE macro to
 declare the supported devices. This allows the automatic extraction of
-USB information, to generate the Hotplug, udev and UPower support files.</p><p>For example:</p><pre class="screen">/* SomeVendor name */
+USB information, to generate the Hotplug, udev and UPower support files.</p><p>The structure allows to convey <code class="literal">uint16_t</code> values of VendorID and ProductID,
+and an optional matching-function callback to interrogate the device in
+more detail (constrain known supported firmware versions, OEM brands, etc.)</p><p>For example:</p><pre class="screen">/* SomeVendor name */
 #define SOMEVENDOR_VENDORID             0xXXXX
 
 /* USB IDs device table */
-static usb_device_id sv_usb_device_table [] = {
+static usb_device_id_t sv_usb_device_table [] = {
         /* some models 1 */
         { USB_DEVICE(SOMEVENDOR_VENDORID, 0xYYYY), NULL },
+
         /* various models */
         { USB_DEVICE(SOMEVENDOR_VENDORID, 0xZZZZ), NULL },
         { USB_DEVICE(SOMEVENDOR_VENDORID, 0xAAAA), NULL },
+
         /* Terminating entry */
-        { -1, -1, NULL }
+        { 0, 0, NULL }
 };</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_function"></a>Function</h4></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-is_usb_device_supported(usb_device_id **usb_device_id_list,
-                                                        int dev_VendorID, int dev_ProductID)
-</li></ul></div><p>Call this in your device opening / matching function. Pass your usb_device_id
-structure, and a set of VendorID / DeviceID.</p><p>This function returns one of the following value:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+is_usb_device_supported(usb_device_id_t *usb_device_id_list,
+                                  USBDevice_t *device)
+</li></ul></div><p>Call this in your device opening / matching function. Pass your usb_device_id_t
+list structure, and a set of VendorID, DeviceID, as well as Vendor, Product and
+Serial strings, possibly also Bus, bcdDevice (device release number) and Device
+name on the bus strings, in the USBDevice_t fields describing the specific piece
+of hardware you are inspecting.</p><p>This function returns one of the following value:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 NOT_SUPPORTED (0),
 </li><li class="listitem">
-POSSIBLY_SUPPORTED (1,  returned when the VendorID is matched, but the DeviceID is unknown),
+POSSIBLY_SUPPORTED (1,  returned when the VendorID is matched, but the
+DeviceID is unknown),
 </li><li class="listitem">
 or SUPPORTED (2).
 </li></ul></div><p>For implementation examples, refer to the various USB drivers, and search for
@@ -305,12 +333,12 @@ setvar  = setting UPS variables (SET VAR protocol command)
 </li><li class="listitem">
 instcmd = instant UPS commands (INSTCMD protocol command)
 </li></ul></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_set"></a>SET</h4></div></div></div><p>If your driver’s function for handling variable set events is called
-my_ups_set(), then you’d do this to add the pointer:</p><pre class="literallayout">upsh.setvar = my_ups_set;</pre><p>my_ups_set() will receive two parameters:</p><pre class="literallayout">const char * - the variable being changed
-const char * - the new value</pre><p>You should return either STAT_SET_HANDLED if your driver recognizes the
+my_ups_set(), then you’d do this to add the pointer:</p><pre class="literallayout">upsh.setvar = my_ups_set;</pre><p>my_ups_set() will receive two parameters:</p><pre class="literallayout">const char * -- the variable being changed
+const char * -- the new value</pre><p>You should return either STAT_SET_HANDLED if your driver recognizes the
 command, or STAT_SET_UNKNOWN if it doesn’t.  Other possibilities will be
 added at some point in the future.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_instcmd"></a>INSTCMD</h4></div></div></div><p>This works just like the set process, with slightly different values
-arriving from the server.</p><pre class="literallayout">upsh.instcmd = my_ups_cmd;</pre><p>Your function will receive two args:</p><pre class="literallayout">const char * - the command name
-const char * - (reserved)</pre><p>You should return either STAT_INSTCMD_HANDLED or STAT_INSTCMD_UNKNOWN
+arriving from the server.</p><pre class="literallayout">upsh.instcmd = my_ups_cmd;</pre><p>Your function will receive two args:</p><pre class="literallayout">const char * -- the command name
+const char * -- (reserved)</pre><p>You should return either STAT_INSTCMD_HANDLED or STAT_INSTCMD_UNKNOWN
 depending on whether your driver can handle the requested command.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_notes"></a>Notes</h4></div></div></div><p>Use strcasecmp.  The command names arriving from upsd should be treated
 without regards to case.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_responses"></a>Responses</h4></div></div></div><p>Drivers will eventually be expected to send responses to commands.
 Right now, there is no channel to get these back through upsd to
@@ -357,7 +385,7 @@ files, and any additional linker flags. If your driver uses the C math
 library, be sure to add <code class="literal">-lm</code>, since this flag is not always included by
 default on embedded systems.</p><p>When you add a driver to one of these lists, pay attention to the backslash
 continuation characters (<code class="literal">\\</code>) at the end of the lines.</p><p>The <code class="literal">automake</code> program converts the <code class="literal">Makefile.am</code> files into <code class="literal">Makefile.in</code>
-files to be processed by <code class="literal">./configure</code>. See the discussion in <a class="xref" href="ar01s03.html#building" title="3.13. Building the Code">Section 3.13, “Building the Code”</a>
+files to be processed by <code class="literal">./configure</code>. See the discussion in <a class="xref" href="ar01s03.html#building" title="3.14. Building the Code">Section 3.14, “Building the Code”</a>
 about automating the rebuild process for these files.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="contact-closure"></a>4.22. Contact closure hardware information</h3></div></div></div><p>This is a collection of notes that apply to contact closure UPS
 hardware, specifically those monitored by the genericups driver.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_definitions"></a>Definitions</h4></div></div></div><p>"Contact closure" refers to a situation where one line is connected to
 another inside UPS hardware to indicate some sort of situation.  These
@@ -395,17 +423,25 @@ are left.  The other lines on a typical 9 pin port are transmit,
 receive, and the ground.  Anything trying to do a high/low signal on
 those three is beyond the scope of the genericups driver.  The only
 exception is an outgoing BREAK, which we already support.</p><p>When editing the genericups.h, the values have the following meanings:</p><p>Outgoing lines:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-line_norm = what to set to make the line "normal" - i.e. cable power
+line_norm = what to set to make the line "normal" — i.e. cable power
 </li><li class="listitem">
 line_sd   = what to set to make the UPS shut down the load
 </li></ul></div><p>Incoming lines:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-line_ol   = flag that appears for on line / on battery
+line_ol     = flag that appears for on line / on battery
 </li><li class="listitem">
-val_ol    = value of that flag when the UPS is on battery
+val_ol      = value of that flag when the UPS is on battery
 </li><li class="listitem">
-line_bl   = flag that appears for low battery / battery OK
+line_bl     = flag that appears for low battery / battery OK
 </li><li class="listitem">
-val_bl    = value of that flag when the battery is low
+val_bl      = value of that flag when the battery is low
+</li><li class="listitem">
+line_rb     = flag that appears for battery health
+</li><li class="listitem">
+val_rb      = value of that flag when the battery needs a replacement
+</li><li class="listitem">
+line_bypass = flag that appears for battery bypass / battery protection active
+</li><li class="listitem">
+val_bypass  = value of that flag when the battery is bypassed / missing
 </li></ul></div><p>This may seem a bit confusing to have two variables per value that
 we want to read, but here’s how it works.  If you set line_ol to
 TIOCM_RNG, then the value of TIOCM_RNG (0x080 on my box) will be anded
@@ -422,20 +458,21 @@ different classes (audio, imaging, mass storage etc). Almost all UPS
 devices belong to the "HID" class, which means "Human Interface
 Device", and also includes things like keyboards and mice. What HID
 devices have in common is a particular (and very flexible) interface
-for reading and writing information (such as x/y coordinates and
-button states, in case of a mouse, or voltages and status information,
-in case of a UPS).</p><p>The NUT "usbhid-ups" driver is a meta-driver that handles all HID UPS
+for reading and writing information (such as X/Y coordinates and
+button states, in the case of a mouse, or voltages and status information,
+in the case of a UPS).</p><p>The NUT "usbhid-ups" driver is a meta-driver that handles all HID UPS
 devices. It consists of a core driver that handles most of the work of
 talking to the USB hardware, and several sub-drivers to handle
 specific UPS manufacturers (MGE, APC, and Belkin are currently
 supported).  Adding support for a new HID UPS device is easy, because
-it requires only the creation of a new sub-driver.</p><p>There are a few USB UPS devices that are not HID devices. These
+it requires only the creation of a new sub-driver.</p><p>There are a few USB UPS devices that are not true HID devices. These
 devices typically implement some version of the manufacturer’s serial
 protocol over USB (which is a really dumb idea, by the way). An
-example is the Tripplite USB. Such devices are <span class="strong"><strong>not</strong></span> supported by the
-usbhid-ups driver, and are not covered in this document. If you need to
-add support for such a device, read new-drivers.txt and see the
-tripplite_usb driver for inspiration.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_hid_usage_tree"></a>HID Usage Tree</h4></div></div></div><p>From the point of view of writing a HID subdriver, a HID device
+example is the original Tripplite USB interface (USB idProduct = 0001). Its HID
+descriptor is only 52 bytes long (compared to several hundred bytes for a true
+PDC HID UPS).  Such devices are <span class="strong"><strong>not</strong></span> supported by the usbhid-ups driver, and
+are not covered in this document. If you need to add support for such a device,
+read new-drivers.txt and see the "tripplite_usb" driver for inspiration.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_hid_usage_tree"></a>HID Usage Tree</h4></div></div></div><p>From the point of view of writing a HID subdriver, a HID device
 consists of a bunch of variables.  Some variables (such as the current
 input voltage) are read-only, whereas other variables (such as the
 beeper enabled/disabled/muted status) can be read and written. These
@@ -444,7 +481,7 @@ tree shape, similar to directories in a file system. This tree is
 called the "usage" tree. For example, here is part of the usage tree
 for a typical APC device. Variable components are separated by ".".
 Typical values for each variable are also shown for illustrative
-purposes.</p><div class="informaltable"><table cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="35%"><colgroup><col class="col_1" /><col class="col_2" /></colgroup><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>UPS.Battery.Voltage</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>11.4 V</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>UPS.Battery.ConfigVoltage</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>12 V</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>UPS.Input.Voltage</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>117 V</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>UPS.Input.ConfigVoltage</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>120 V</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>UPS.AudibleAlarmControl</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>2 (=enabled)</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>UPS.PresentStatus.Charging</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>1 (=yes)</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>UPS.PresentStatus.Discharging</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>0 (=no)</p></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p>UPS.PresentStatus.ACPresent</p></td><td style="" align="left" valign="top"><p>1 (=yes)</p></td></tr></tbody></table></div><p>As you can see, variables that describe the battery status might be
+purposes.</p><div class="informaltable"><table class="informaltable" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="35%"><colgroup><col class="col_1" /><col class="col_2" /></colgroup><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>UPS.Battery.Voltage</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>11.4 V</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>UPS.Battery.ConfigVoltage</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>12 V</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>UPS.Input.Voltage</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>117 V</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>UPS.Input.ConfigVoltage</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>120 V</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>UPS.AudibleAlarmControl</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>2 (=enabled)</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>UPS.PresentStatus.Charging</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>1 (=yes)</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>UPS.PresentStatus.Discharging</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>0 (=no)</p></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p>UPS.PresentStatus.ACPresent</p></td><td style="" align="left" valign="top"><p>1 (=yes)</p></td></tr></tbody></table></div><p>As you can see, variables that describe the battery status might be
 grouped together under "Battery", variables that describe the input
 power might be grouped together under "Input", and variables that
 describe the current UPS status might be grouped together under
@@ -491,24 +528,24 @@ a mapping of HID variables to NUT variables.
 such as custom implementations of specific instant commands (load.off,
 shutdown.restart), and conversions of manufacturer specific data
 formats.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_writing_a_subdriver"></a>Writing a subdriver</h4></div></div></div><p>In preparation for writing a subdriver for a device that is currently
-unsupported, run usbhid-ups with the following command line:</p><pre class="literallayout">drivers/usbhid-ups -DD -u root -x explore -x vendorid=XXXX auto</pre><p>(substitute your device’s 4-digit VendorID instead of "XXXX").
+unsupported, run usbhid-ups with the following command line:</p><pre class="literallayout">drivers/usbhid-ups -DD -u root -x explore -x vendorid=XXXX -x port=auto -s ups</pre><p>(substitute your device’s 4-digit VendorID instead of "XXXX").
 This will produce a bunch of debugging information, including a number
 of lines starting with "Path:" that describe the device’s usage tree.
-This information forms the initial basis for a new subdriver.</p><p>You should save this information to a file, e.g.
- drivers/usbhid-ups -DD -u root -x explore -x vendorid=XXXX auto &gt;&amp; /tmp/info</p><p>You can create an initial "stub" subdriver for your device by using
+This information forms the initial basis for a new subdriver.</p><p>You should save this information to a file, e.g.:</p><pre class="literallayout">drivers/usbhid-ups -DD -u root -x explore -x vendorid=XXXX \
+        -x port=auto -s ups 2&gt;&amp;1 | tee /tmp/info</pre><p>You can create an initial "stub" subdriver for your device by using
 script scripts/subdriver/gen-usbhid-subdriver.sh. Note: this only creates
-a "stub" and needs to be futher customized to be useful (see
-CUSTOMIZATION below).</p><p>Use the script as follows:</p><pre class="literallayout">scripts/subdriver/gen-usbhid-subdriver.sh &lt; /tmp/info</pre><p>where /tmp/info is the file where you previously saved the debugging
+a "stub" and needs to be further customized to be useful (see
+"Customization" below).</p><p>Use the script as follows:</p><pre class="literallayout">scripts/subdriver/gen-usbhid-subdriver.sh &lt; /tmp/info</pre><p>where /tmp/info is the file where you previously saved the debugging
 information.</p><p>This script prompts you for a name for the subdriver; use only letters
 and digits, and use natural capitalization such as "Belkin" (not
 "belkin" or "BELKIN"). The script may prompt you for additional
 information.</p><p>You should put the generated files into the drivers/ subdirectory, and
-update usbhid-ups.c by adding the appropriate #include line and by
-updating the definition of subdriver_list in usbhid-ups.c. You must
-also add the subdriver to USBHID_UPS_SUBDRIVERS in drivers/Makefile.am
-and call "autoreconf" and/or "./configure" from the top level NUT directory.
-You can then recompile usbhid-ups, and start experimenting with the new
-subdriver.</p><p>CUSTOMIZATION: The initially generated subdriver code is only a stub,
+update <code class="literal">usbhid-ups.c</code> by adding the appropriate <code class="literal">#include</code> line and by
+updating the definition of <code class="literal">subdriver_list</code> in <code class="literal">usbhid-ups.c</code>. You must
+also add the subdriver to USBHID_UPS_SUBDRIVERS in <code class="literal">drivers/Makefile.am</code>
+and call <code class="literal">autoreconf</code> and/or <code class="literal">./configure</code> from the top-level NUT directory.
+You can then recompile <code class="literal">usbhid-ups</code>, and start experimenting with the new
+subdriver.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_customization"></a>Customization</h4></div></div></div><p>The initially generated subdriver code is only a stub,
 and will not implement any useful functionality (in particular, it
 will be unable to shut down the UPS). In the beginning, it simply
 attempts to monitor some UPS variables. To make this driver useful,
@@ -516,7 +553,7 @@ you must examine the NUT variables of the form "unmapped.*" in the
 hid_info_t data structure, and map them to actual NUT variables and
 instant commands. There are currently no step-by-step instructions for
 how to do this. Please look at the files to see how the currently implemented
-subdrivers are written.:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+subdrivers are written:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 apc-hid.c/h
 </li><li class="listitem">
 belkin-hid.c/h
@@ -534,7 +571,7 @@ mge-hid.c/h
 powercom-hid.c/h
 </li><li class="listitem">
 tripplite-hid.c/h
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_shutting_down_the_ups"></a>Shutting down the UPS</h4></div></div></div><p>It is desireable to support shutting down the UPS. Usually (for
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_shutting_down_the_ups"></a>Shutting down the UPS</h4></div></div></div><p>It is desirable to support shutting down the UPS. Usually (for
 devices that follow the HID Power Device Class specification), this
 requires sending the UPS two commands. One for shutting down the UPS
 (with an <span class="emphasis"><em>offdelay</em></span>) and one for restarting it (with an <span class="emphasis"><em>ondelay</em></span>),
@@ -666,7 +703,7 @@ copy "&lt;LDRIVER&gt;-mib.c" and "&lt;LDRIVER&gt;-mib.h" to ../drivers/
 finally call the following, from the top level directory,  to test
 compilation:
 </p><pre class="literallayout">$ autoreconf &amp;&amp; configure &amp;&amp; make</pre></li></ul></div><p>You can already start experimenting with the new subdriver; but all data
-will be prefixed by "unmapped.". You will now have to customize it.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_customization"></a>CUSTOMIZATION</h5></div></div></div><p>The initially generated subdriver code is only a stub (mainly a big C
+will be prefixed by "unmapped.". You will now have to customize it.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_customization_2"></a>CUSTOMIZATION</h5></div></div></div><p>The initially generated subdriver code is only a stub (mainly a big C
 structure to be precise), and will not implement any useful functionality
 (in particular, it will be unable to shut down the UPS). In the beginning,
 it simply attempts to monitor some UPS variables. To make this driver useful,
@@ -674,7 +711,7 @@ you must examine the NUT variables of the form "unmapped.*" in the
 hid_info_t data structure, and map them to actual NUT variables and
 instant commands. There are currently no step-by-step instructions for
 how to do this. Please look at the files to see how the currently implemented
-subdrivers are written.:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+subdrivers are written:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 apc-mib.c/h
 </li><li class="listitem">
 baytech-mib.c/h
@@ -685,7 +722,7 @@ compaq-mib.c/h
 </li><li class="listitem">
 cyberpower-mib.c/h
 </li><li class="listitem">
-eaton-mib.c/h
+eaton-*-mib.c/h
 </li><li class="listitem">
 ietf-mib.c/h
 </li><li class="listitem">
@@ -704,7 +741,7 @@ displays the textual OID name. For example, the following entry:</p><pre class="
 NUT variable name.</p><p>Check the <a class="link" href="apa.html" title="A. NUT command and variable naming scheme">NUT command and variable naming scheme</a> section first
 to find a name that matches the OID name (closest fit). If nothing matches,
 contact the upsdev list, and we’ll figure it out.</p><p>In the above example, the right NUT variable is obviously "device.model".</p><p>The MIB definition file (.mib) also contains some description of these OIDs,
-along with the possible enumerated values.</p></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="nutdrv_qx-subdrivers"></a>4.25. How to make a new subdriver to support another Q* UPS</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_overall_concept_4"></a>Overall concept</h4></div></div></div><p>The NUT "<span class="strong"><strong>nutdrv_qx</strong></span>" driver is a meta-driver that handles Q* UPS devices.</p><p>It consists of a core driver that handles most of the work of talking to the hardware, and several sub-drivers to handle specific UPS manufacturers.</p><p>Adding support for a new UPS device is easy, because it requires only the creation of a new sub-driver.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_creating_a_subdriver_2"></a>Creating a subdriver</h4></div></div></div><p>In order to develop a new subdriver for a specific UPS you have to know the idiom spoken by that device.</p><p>This kind of devices speaks idioms that can be summed up as follows:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
+along with the possible enumerated values.</p></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="nutdrv_qx-subdrivers"></a>4.25. How to make a new subdriver to support another Q* UPS</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_overall_concept_4"></a>Overall concept</h4></div></div></div><p>The NUT "<span class="strong"><strong>nutdrv_qx</strong></span>" driver is a meta-driver that handles Q* UPS devices.</p><p>It consists of a core driver that handles most of the work of talking to the hardware, and several sub-drivers to handle specific UPS manufacturers.</p><p>Adding support for a new UPS device is easy, because it requires only the creation of a new sub-driver.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_creating_a_subdriver_2"></a>Creating a subdriver</h4></div></div></div><p>In order to develop a new subdriver for a specific UPS you have to know the "idiom" (dialect of the protocol) spoken by that device.</p><p>This kind of devices speaks idioms that can be summed up as follows:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
 We send the UPS a query for one or more information
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 If the query is supported by the device, we’ll get a reply that is mostly of a fixed length, therefore, in most cases, each information starts and ends always at the same indexes
@@ -729,7 +766,7 @@ If the query/command isn’t supported by the device we’ll get either the quer
 } subdriver_t;</pre><p>Where:</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">
 <span class="strong"><strong><code class="literal">name</code></strong></span>
 </span></dt><dd>
-Name of this subdriver: name of the <code class="literal">protocol</code> that will need to be set in <code class="literal">ups.conf</code> to use this subdriver plus the internal version of it separated by a space (e.g. "<code class="literal">Megatec 0.01</code>").
+Name of this subdriver: name of the <code class="literal">protocol</code> that will need to be set in the <code class="literal">ups.conf</code> file to use this subdriver plus the internal version of it separated by a space (e.g. "<code class="literal">Megatec 0.01</code>").
 </dd><dt><span class="term">
 <span class="strong"><strong><code class="literal">claim</code></strong></span>
 </span></dt><dd>
@@ -787,7 +824,7 @@ Answer length:
 if set to <code class="literal">-1</code> → auto calculate answer length (treat <code class="literal">answer</code> as a null-terminated string),
 </li><li class="listitem">
 otherwise → use the provided length (if reasonable) and preserve inner <code class="literal">\0</code>s (treat <code class="literal">answer</code> as a sequence of bytes till the <code class="literal">item_t</code>'s <code class="literal">preprocess_answer()</code> function gets called).
-</li></ul></div></dd></dl></div><p class="simpara">For more informations, see <a class="link" href="ar01s04.html#_mapping_an_idiom_to_nut" title="Mapping an idiom to NUT">Mapping an idiom to NUT</a>.</p></dd></dl></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_mapping_an_idiom_to_nut"></a>Mapping an idiom to NUT</h4></div></div></div><p>If you understand the idiom spoken by your device, you can easily map it to NUT variables and instant commands, filling <code class="literal">qx2nut</code> with an array of <code class="literal">item_t</code> data structure:</p><pre class="screen">typedef struct item_t {
+</li></ul></div></dd></dl></div><p class="simpara">For more information, see <a class="link" href="ar01s04.html#_mapping_an_idiom_to_nut" title="Mapping an idiom to NUT">Mapping an idiom to NUT</a>.</p></dd></dl></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_mapping_an_idiom_to_nut"></a>Mapping an idiom to NUT</h4></div></div></div><p>If you understand the idiom spoken by your device, you can easily map it to NUT variables and instant commands, filling <code class="literal">qx2nut</code> with an array of <code class="literal">item_t</code> data structure:</p><pre class="screen">typedef struct item_t {
         const char      *info_type;
         const int       info_flags;
         info_rw_t       *info_rw;
@@ -833,7 +870,7 @@ Optional function to preprocess range/enum <code class="literal">value</code>.
 </p><p class="simpara">This function will be given <code class="literal">value</code> and its <code class="literal">size_t</code> and must return either <code class="literal">0</code> if <code class="literal">value</code> is supported or <code class="literal">-1</code> if not supported.</p></dd></dl></div></dd><dt><span class="term">
 <span class="strong"><strong><code class="literal">command</code></strong></span>
 </span></dt><dd>
-Command sent to the UPS to get answer/to execute a instant command/to set a variable.
+Command sent to the UPS to get answer, or to execute an instant command, or to set a variable.
 </dd><dt><span class="term">
 <span class="strong"><strong><code class="literal">answer</code></strong></span>
 </span></dt><dd><p class="simpara">
@@ -872,7 +909,7 @@ If <code class="literal">QX_FLAG_CMD</code> → default command value
 <span class="strong"><strong><code class="literal">qxflags</code></strong></span>
 </span></dt><dd><p class="simpara">
 Driver’s own flags.
-</p><div class="informaltable"><table cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; "><colgroup><col class="col_1" /><col class="col_2" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">QX_FLAG_STATIC</code></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>Retrieve this variable only once.</p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">QX_FLAG_SEMI_STATIC</code></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>Retrieve this info smartly, i.e. only when a command/setvar is executed and we expect that data could have been changed.</p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">QX_FLAG_ABSENT</code></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>Data is absent in the device, use default value.</p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">QX_FLAG_QUICK_POLL</code></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>Mandatory vars.</p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">QX_FLAG_CMD</code></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>Instant command.</p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">QX_FLAG_SETVAR</code></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>The var is settable and the actual item stores info on how to set it.</p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">QX_FLAG_TRIM</code></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>This var’s value need to be trimmed of leading/trailing spaces/hashes.</p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">QX_FLAG_ENUM</code></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>Enum values exist.</p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">QX_FLAG_RANGE</code></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>Ranges for this var are available.</p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">QX_FLAG_NONUT</code></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>This var doesn’t have a corresponding var in NUT.</p></td></tr><tr><td style="" align="left" valign="top"><p><code class="literal">QX_FLAG_SKIP</code></p></td><td style="" align="left" valign="top"><p>Skip this var: this item won’t be processed.</p></td></tr></tbody></table></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>The driver will run a so-called <code class="literal">QX_WALKMODE_INIT</code> in <code class="literal">initinfo</code> walking through all the items in <code class="literal">qx2nut</code>, adding instant commands and the like.
+</p><div class="informaltable"><table class="informaltable" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; "><colgroup><col class="col_1" /><col class="col_2" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">QX_FLAG_STATIC</code></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>Retrieve this variable only once.</p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">QX_FLAG_SEMI_STATIC</code></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>Retrieve this info smartly, i.e. only when a command/setvar is executed and we expect that data could have been changed.</p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">QX_FLAG_ABSENT</code></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>Data is absent in the device, use default value.</p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">QX_FLAG_QUICK_POLL</code></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>Mandatory vars.</p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">QX_FLAG_CMD</code></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>Instant command.</p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">QX_FLAG_SETVAR</code></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>The var is settable and the actual item stores info on how to set it.</p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">QX_FLAG_TRIM</code></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>This var’s value need to be trimmed of leading/trailing spaces/hashes.</p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">QX_FLAG_ENUM</code></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>Enum values exist.</p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">QX_FLAG_RANGE</code></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>Ranges for this var are available.</p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">QX_FLAG_NONUT</code></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>This var doesn’t have a corresponding var in NUT.</p></td></tr><tr><td style="" align="left" valign="top"><p><code class="literal">QX_FLAG_SKIP</code></p></td><td style="" align="left" valign="top"><p>Skip this var: this item won’t be processed.</p></td></tr></tbody></table></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>The driver will run a so-called <code class="literal">QX_WALKMODE_INIT</code> in <code class="literal">initinfo</code> walking through all the items in <code class="literal">qx2nut</code>, adding instant commands and the like.
 From then on it’ll run a so-called <code class="literal">QX_WALKMODE_QUICK_UPDATE</code> just to see if the UPS is still there and then it’ll do a so-called <code class="literal">QX_WALKMODE_FULL_UPDATE</code> to update all the vars.</p><p>If there’s a problem with a var in <code class="literal">QX_WALKMODE_INIT</code>, the driver will automagically set <code class="literal">QX_FLAG_SKIP</code> on it and then it’ll skip that item in <code class="literal">QX_WALKMODE_QUICK_UPDATE</code>/<code class="literal">QX_WALKMODE_FULL_UPDATE</code>, provided that the item has not the flag <code class="literal">QX_FLAG_QUICK_POLL</code> set, in that case the driver will set <code class="literal">datastale</code>.</p></div></dd><dt><span class="term">
 <span class="strong"><strong><code class="literal">preprocess_command(item, command, commandlen)</code></strong></span>
 </span></dt><dd>
@@ -898,7 +935,7 @@ Otherwise the function will be used to process the value we got from the answer 
 </p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>In this case <code class="literal">value</code> must be filled with the processed value already compliant to NUT standards.</p></div></li></ul></div></dd></dl></div><div class="important" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Important</h3><p>You must provide an <code class="literal">item_t</code> with <code class="literal">QX_FLAG_SETVAR</code> and its boundaries set for both <code class="literal">ups.delay.start</code> and <code class="literal">ups.delay.shutdown</code> to map the driver variables <code class="literal">ondelay</code> and <code class="literal">offdelay</code>, as they will be used in the shutdown sequence.</p></div><div class="tip" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Tip</h3><p>In order to keep the data flow at minimum you should keep together the items in <code class="literal">qx2nut</code> that need data from the same query (i.e. <code class="literal">command</code>): doing so the driver will send the query only once and then every <code class="literal">item_t</code> processed after the one that got the answer, provided that it’s filled with the same <code class="literal">command</code> and that the answer wasn’t <code class="literal">NULL</code>, will get that <code class="literal">answer</code>.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_examples"></a>Examples</h4></div></div></div><p>The following examples are from the <code class="literal">voltronic</code> subdriver.</p><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_simple_vars"></a>Simple vars</h5></div></div></div><p>We know that when the UPS is queried for status with <code class="literal">QGS\r</code>, it replies with something like <code class="literal">(234.9 50.0 229.8 50.0 000.0 000 369.1 ---.- 026.5 ---.- 018.8 100000000001\r</code> and we want to access the output voltage (the third token, in this case <code class="literal">229.8</code>).</p><pre class="screen">&gt; [QGS\r]
 &lt; [(234.9 50.0 229.8 50.0 000.0 000 369.1 ---.- 026.5 ---.- 018.8 100000000001\r]
    0123456789012345678901234567890123456789012345678901234567890123456789012345
-   0         1         2         3         4         5         6         7</pre><p>Here’s the <code class="literal">item_t</code>:</p><pre class="screen">{ "output.voltage", 0, NULL, "QGS\r", "", 76, '(', "", 12, 16, "%.1f", 0, NULL, NULL, NULL },</pre><div class="horizontal"><table cellpadding="4px" style="border: none;"><colgroup><col /><col /></colgroup><tbody valign="top"><tr><td style="" valign="top">
+   0         1         2         3         4         5         6         7</pre><p>Here’s the <code class="literal">item_t</code>:</p><pre class="screen">{ "output.voltage", 0, NULL, "QGS\r", "", 76, '(', "", 12, 16, "%.1f", 0, NULL, NULL, NULL },</pre><div class="horizontal"><table class="horizontal" cellpadding="4px" style="border: none;"><colgroup><col /><col /></colgroup><tbody valign="top"><tr><td style="" valign="top">
 <p>
 <code class="literal">info_type</code>
 </p>
@@ -1023,7 +1060,7 @@ Because of that we need to provide a floating point specifier.</p>
 </td></tr></tbody></table></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_mandatory_vars"></a>Mandatory vars</h5></div></div></div><p>Also from <code class="literal">QGS\r</code>, we want to process the 9th status bit <code class="literal">10000000</code><span class="strong"><strong><code class="literal">0</code></strong></span><code class="literal">001</code> that tells us whether the UPS is shutting down or not.</p><pre class="screen">&gt; [QGS\r]
 &lt; [(234.9 50.0 229.8 50.0 000.0 000 369.1 ---.- 026.5 ---.- 018.8 100000000001\r]
    0123456789012345678901234567890123456789012345678901234567890123456789012345
-   0         1         2         3         4         5         6         7</pre><p>Here’s the <code class="literal">item_t</code>:</p><pre class="screen">{ "ups.status", 0, NULL, "QGS\r", "", 76, '(', "", 71, 71, "%s", QX_FLAG_QUICK_POLL, NULL, NULL, voltronic_status },</pre><div class="horizontal"><table cellpadding="4px" style="border: none;"><colgroup><col /><col /></colgroup><tbody valign="top"><tr><td style="" valign="top">
+   0         1         2         3         4         5         6         7</pre><p>Here’s the <code class="literal">item_t</code>:</p><pre class="screen">{ "ups.status", 0, NULL, "QGS\r", "", 76, '(', "", 71, 71, "%s", QX_FLAG_QUICK_POLL, NULL, NULL, voltronic_status },</pre><div class="horizontal"><table class="horizontal" cellpadding="4px" style="border: none;"><colgroup><col /><col /></colgroup><tbody valign="top"><tr><td style="" valign="top">
 <p>
 <code class="literal">info_type</code>
 </p>
@@ -1111,7 +1148,7 @@ Filled at runtime
 <p>
 <code class="literal">%s</code>
 </p>
-<p>Since a <code class="literal">preprocess</code> function is defined for this item, this could have been <code class="literal">NULL</code>, however, if we want - like here -, we can use it in our <code class="literal">preprocess</code> function.</p>
+<p>Since a <code class="literal">preprocess</code> function is defined for this item, this could have been <code class="literal">NULL</code>, however, if we want — like here — we can use it in our <code class="literal">preprocess</code> function.</p>
 </td></tr><tr><td style="" valign="top">
 <p>
 <code class="literal">qxflags</code>
@@ -1119,7 +1156,7 @@ Filled at runtime
 </td><td style="" valign="top">
 <p>
 <code class="literal">QX_FLAG_QUICK_POLL</code> → this item will be polled every time the driver will check for updates.
-Since this item is mandatory to run the driver, if a problem arises in <code class="literal">QX_WALKMODE_INIT</code> the driver won’t skip it an it’ll set <code class="literal">datastale</code>.
+Since this item is mandatory to run the driver, if a problem arises in <code class="literal">QX_WALKMODE_INIT</code> the driver won’t skip it and it will set <code class="literal">datastale</code>.
 </p>
 </td></tr><tr><td style="" valign="top">
 <p>
@@ -1150,7 +1187,7 @@ Since this item is mandatory to run the driver, if a problem arises in <code cla
 &lt; [(01\r]       &lt;- 00="Li", 01="Flooded" or 02="AGM"
    0123
    0</pre><p>Here’s the <code class="literal">item_t</code>:</p><pre class="screen">{ "battery.type", ST_FLAG_RW, voltronic_e_batt_type, "QBT\r", "", 4, '(', "", 1, 2, "%s",
-  QX_FLAG_SEMI_STATIC | QX_FLAG_ENUM, NULL, NULL, voltronic_p31b },</pre><div class="horizontal"><table cellpadding="4px" style="border: none;"><colgroup><col /><col /></colgroup><tbody valign="top"><tr><td style="" valign="top">
+  QX_FLAG_SEMI_STATIC | QX_FLAG_ENUM, NULL, NULL, voltronic_p31b },</pre><div class="horizontal"><table class="horizontal" cellpadding="4px" style="border: none;"><colgroup><col /><col /></colgroup><tbody valign="top"><tr><td style="" valign="top">
 <p>
 <code class="literal">info_type</code>
 </p>
@@ -1239,14 +1276,14 @@ Filled at runtime
 <p>
 <code class="literal">%s</code>
 </p>
-<p>Since a <code class="literal">preprocess</code> function is defined for this item, this could have been <code class="literal">NULL</code>, however, if we want - like here -, we can use it in our <code class="literal">preprocess</code> function.</p>
+<p>Since a <code class="literal">preprocess</code> function is defined for this item, this could have been <code class="literal">NULL</code>, however, if we want — like here — we can use it in our <code class="literal">preprocess</code> function.</p>
 </td></tr><tr><td style="" valign="top">
 <p>
 <code class="literal">qxflags</code>
 </p>
 </td><td style="" valign="top">
 <p>
-<code class="literal">QX_FLAG_SEMI_STATIC</code> → this item changes - and will therefore updated - only when we send a command/setvar to the UPS
+<code class="literal">QX_FLAG_SEMI_STATIC</code> → this item changes — and will therefore be updated — only when we send a command/setvar to the UPS
 </p>
 <p><code class="literal">QX_FLAG_ENUM</code> → this r/w variable is of the enumerated type and the enumerated values are listed in the <code class="literal">info_rw</code> structure (i.e. <code class="literal">voltronic_e_batt_type</code>)</p>
 </td></tr><tr><td style="" valign="top">
@@ -1278,7 +1315,7 @@ Filled at runtime
 &lt; [(ACK\r]
    01234
    0</pre><p>Here’s the <code class="literal">item_t</code>:</p><pre class="screen">{ "battery.type", 0, voltronic_e_batt_type, "PBT%02.0f\r", "", 5, '(', "", 1, 4, NULL,
-  QX_FLAG_SETVAR | QX_FLAG_ENUM, NULL, NULL, voltronic_p31b_set },</pre><div class="horizontal"><table cellpadding="4px" style="border: none;"><colgroup><col /><col /></colgroup><tbody valign="top"><tr><td style="" valign="top">
+  QX_FLAG_SETVAR | QX_FLAG_ENUM, NULL, NULL, voltronic_p31b_set },</pre><div class="horizontal"><table class="horizontal" cellpadding="4px" style="border: none;"><colgroup><col /><col /></colgroup><tbody valign="top"><tr><td style="" valign="top">
 <p>
 <code class="literal">info_type</code>
 </p>
@@ -1302,7 +1339,7 @@ Filled at runtime
 <p>
 <code class="literal">voltronic_e_batt_type</code>
 </p>
-<p>The value provided by the user will be automagically checked by the core nutdrv_qx driver against the enumerated values already set by the non setvar item (i.e. <code class="literal">Li</code>, <code class="literal">Flooded</code> or <code class="literal">AGM</code>), so this could have been <code class="literal">NULL</code>, however if we want - like here - we can use it in our <code class="literal">preprocess</code> function.</p>
+<p>The value provided by the user will be automagically checked by the core nutdrv_qx driver against the enumerated values already set by the non setvar item (i.e. <code class="literal">Li</code>, <code class="literal">Flooded</code> or <code class="literal">AGM</code>), so this could have been <code class="literal">NULL</code>, however if we want — like here — we can use it in our <code class="literal">preprocess</code> function.</p>
 </td></tr><tr><td style="" valign="top">
 <p>
 <code class="literal">command</code>
@@ -1404,7 +1441,7 @@ Not used for <code class="literal">QX_FLAG_SETVAR</code>
 </td></tr></tbody></table></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_instant_commands_3"></a>Instant commands</h5></div></div></div><p>We know that we have to send to the UPS <code class="literal">Tnn\r</code> or <code class="literal">T.n\r</code> in order to start a battery test lasting <code class="literal">nn</code> minutes or <code class="literal">.n</code> minutes: we are expecting either <code class="literal">(ACK\r</code> on success or <code class="literal">(NAK\r</code> if the command is rejected.</p><pre class="screen">&gt; [Tnn\r]
 &lt; [(ACK\r]
    01234
-   0</pre><p>Here’s the <code class="literal">item_t</code>:</p><pre class="screen">{ "test.battery.start", 0, NULL, "T%s\r", "", 5, '(', "", 1, 4, NULL, QX_FLAG_CMD, NULL, NULL, voltronic_process_command },</pre><div class="horizontal"><table cellpadding="4px" style="border: none;"><colgroup><col /><col /></colgroup><tbody valign="top"><tr><td style="" valign="top">
+   0</pre><p>Here’s the <code class="literal">item_t</code>:</p><pre class="screen">{ "test.battery.start", 0, NULL, "T%s\r", "", 5, '(', "", 1, 4, NULL, QX_FLAG_CMD, NULL, NULL, voltronic_process_command },</pre><div class="horizontal"><table class="horizontal" cellpadding="4px" style="border: none;"><colgroup><col /><col /></colgroup><tbody valign="top"><tr><td style="" valign="top">
 <p>
 <code class="literal">info_type</code>
 </p>
@@ -1525,8 +1562,8 @@ Not used for <code class="literal">QX_FLAG_CMD</code>
 <code class="literal">voltronic_process_command</code>
 </p>
 <p>This function will be called <span class="strong"><strong>before</strong></span> the <code class="literal">command</code> is sent to the UPS so that we can fill <code class="literal">command</code> with the value provided by the user: in this case the function will check if the value is in the accepted range and then fill <code class="literal">value</code> (the second argument passed to the <code class="literal">preprocess</code> function) with <code class="literal">command</code> and the given value.</p>
-</td></tr></tbody></table></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_informations_absent_in_the_device"></a>Informations absent in the device</h5></div></div></div><p>In order to set the server-side var <code class="literal">ups.delay.start</code>, that will be then used by the driver, we have to provide the following <code class="literal">item_t</code>:</p><pre class="screen">{ "ups.delay.start", ST_FLAG_RW, voltronic_r_ondelay, NULL, "", 0, 0, "", 0, 0, "180",
-  QX_FLAG_ABSENT | QX_FLAG_SETVAR | QX_FLAG_RANGE, NULL, NULL, voltronic_process_setvar },</pre><div class="horizontal"><table cellpadding="4px" style="border: none;"><colgroup><col /><col /></colgroup><tbody valign="top"><tr><td style="" valign="top">
+</td></tr></tbody></table></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_information_absent_in_the_device"></a>Information absent in the device</h5></div></div></div><p>In order to set the server-side var <code class="literal">ups.delay.start</code>, that will be then used by the driver, we have to provide the following <code class="literal">item_t</code>:</p><pre class="screen">{ "ups.delay.start", ST_FLAG_RW, voltronic_r_ondelay, NULL, "", 0, 0, "", 0, 0, "180",
+  QX_FLAG_ABSENT | QX_FLAG_SETVAR | QX_FLAG_RANGE, NULL, NULL, voltronic_process_setvar },</pre><div class="horizontal"><table class="horizontal" cellpadding="4px" style="border: none;"><colgroup><col /><col /></colgroup><tbody valign="top"><tr><td style="" valign="top">
 <p>
 <code class="literal">info_type</code>
 </p>
@@ -1651,11 +1688,11 @@ Not used for <code class="literal">QX_FLAG_ABSENT</code>
 <code class="literal">voltronic_process_setvar</code>
 </p>
 <p>This function will be called, in setvar, before the driver stores the value in the NUT var: here it’s used to truncate the user-provided value to the nearest settable interval.</p>
-</td></tr></tbody></table></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_informations_not_yet_available_in_nut"></a>Informations not yet available in NUT</h5></div></div></div><p>If your UPS reports some informations that are not yet available as NUT variables and you need to process them, you can add them in <code class="literal">item_t</code> data structure adding the <code class="literal">QX_FLAG_NONUT</code> flag to its <code class="literal">qxflags</code>: the info will then be printed to the logs.</p><p>So we know that the UPS reports actual input/output phase angles when queried for <code class="literal">QPD\r</code>:</p><pre class="screen">&gt; [QPD\r]
-&lt; [(000 120\r]  &lt;- Input Phase Angle - Output Phase Angle
+</td></tr></tbody></table></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_information_not_yet_available_in_nut"></a>Information not yet available in NUT</h5></div></div></div><p>If your UPS reports some data items that are not yet available as NUT variables and you need to process them, you can add them in <code class="literal">item_t</code> data structure adding the <code class="literal">QX_FLAG_NONUT</code> flag to its <code class="literal">qxflags</code>: the info will then be printed to the logs.</p><p>So we know that the UPS reports actual input/output phase angles when queried for <code class="literal">QPD\r</code>:</p><pre class="screen">&gt; [QPD\r]
+&lt; [(000 120\r]  &lt;- Input Phase Angle -- Output Phase Angle
    012345678
    0</pre><p>Here’s the <code class="literal">item_t</code> for input phase angle:</p><pre class="screen">{ "input_phase_angle", 0, NULL, "QPD\r", "", 9, '(', "", 1, 3, "%03.0f",
-  QX_FLAG_STATIC | QX_FLAG_NONUT, NULL, NULL, voltronic_phase },</pre><div class="horizontal"><table cellpadding="4px" style="border: none;"><colgroup><col /><col /></colgroup><tbody valign="top"><tr><td style="" valign="top">
+  QX_FLAG_STATIC | QX_FLAG_NONUT, NULL, NULL, voltronic_phase },</pre><div class="horizontal"><table class="horizontal" cellpadding="4px" style="border: none;"><colgroup><col /><col /></colgroup><tbody valign="top"><tr><td style="" valign="top">
 <p>
 <code class="literal">info_type</code>
 </p>
@@ -1781,7 +1818,7 @@ Here instead it’s used by the <code class="literal">preprocess</code> function
 </p>
 <p>This function will be called <span class="strong"><strong>after</strong></span> the <code class="literal">command</code> has been sent to the UPS so that we can parse the value we got back and check it.</p>
 </td></tr></tbody></table></div><p>Here’s the <code class="literal">item_t</code> for output phase angle:</p><pre class="screen">{ "output_phase_angle", ST_FLAG_RW, voltronic_e_phase, "QPD\r", "", 9, '(', "", 5, 7, "%03.0f",
-  QX_FLAG_SEMI_STATIC | QX_FLAG_ENUM | QX_FLAG_NONUT, NULL, NULL, voltronic_phase },</pre><div class="horizontal"><table cellpadding="4px" style="border: none;"><colgroup><col /><col /></colgroup><tbody valign="top"><tr><td style="" valign="top">
+  QX_FLAG_SEMI_STATIC | QX_FLAG_ENUM | QX_FLAG_NONUT, NULL, NULL, voltronic_phase },</pre><div class="horizontal"><table class="horizontal" cellpadding="4px" style="border: none;"><colgroup><col /><col /></colgroup><tbody valign="top"><tr><td style="" valign="top">
 <p>
 <code class="literal">info_type</code>
 </p>
@@ -1798,7 +1835,7 @@ Here instead it’s used by the <code class="literal">preprocess</code> function
 <p>
 <code class="literal">ST_FLAG_RW</code>
 </p>
-<p>This could also be <code class="literal">0</code> (it’s not really used by the driver), but it’s set to <code class="literal">ST_FLAG_RW</code> for cohesion with other rw vars - also, if ever a NUT variable would become available for this item, it’ll be easier to change this item and its <code class="literal">QX_FLAG_SETVAR</code> counterpart to use it.</p>
+<p>This could also be <code class="literal">0</code> (it’s not really used by the driver), but it’s set to <code class="literal">ST_FLAG_RW</code> for cohesion with other rw vars — also, if ever a NUT variable would become available for this item, it’ll be easier to change this item and its <code class="literal">QX_FLAG_SETVAR</code> counterpart to use it.</p>
 </td></tr><tr><td style="" valign="top">
 <p>
 <code class="literal">info_rw</code>
@@ -1881,7 +1918,7 @@ Here instead it’s used by the <code class="literal">preprocess</code> function
 </p>
 </td><td style="" valign="top">
 <p>
-<code class="literal">QX_FLAG_SEMI_STATIC</code> → this item changes - and will therefore updated - only when we send a command/setvar to the UPS
+<code class="literal">QX_FLAG_SEMI_STATIC</code> → this item changes — and will therefore be updated — only when we send a command/setvar to the UPS
 </p>
 <p><code class="literal">QX_FLAG_ENUM</code> → this r/w variable is of the enumerated type and the enumerated values are listed in the <code class="literal">info_rw</code> structure (i.e. <code class="literal">voltronic_e_phase</code>).</p>
 <p><code class="literal">QX_FLAG_NONUT</code> → this item doesn’t have yet a NUT variable</p>
@@ -1915,7 +1952,7 @@ Here it’s used also to store a var that will then be used to check the value i
 &lt; [(ACK\r]
    01234
    0</pre><p>Here’s the <code class="literal">item_t</code></p><pre class="screen">{ "output_phase_angle", 0, voltronic_e_phase, "PPD%03.0f\r", "", 5, '(', "", 1, 4, NULL,
-  QX_FLAG_SETVAR | QX_FLAG_ENUM | QX_FLAG_NONUT, NULL, NULL, voltronic_phase_set },</pre><div class="horizontal"><table cellpadding="4px" style="border: none;"><colgroup><col /><col /></colgroup><tbody valign="top"><tr><td style="" valign="top">
+  QX_FLAG_SETVAR | QX_FLAG_ENUM | QX_FLAG_NONUT, NULL, NULL, voltronic_phase_set },</pre><div class="horizontal"><table class="horizontal" cellpadding="4px" style="border: none;"><colgroup><col /><col /></colgroup><tbody valign="top"><tr><td style="" valign="top">
 <p>
 <code class="literal">info_type</code>
 </p>
@@ -2082,10 +2119,11 @@ Return the currently processed status so that it can be checked with one of the 
 </dd><dt><span class="term">
 <span class="strong"><strong><code class="literal">void  update_status(const char *nutvalue)</code></strong></span>
 </span></dt><dd>
-If you need to edit the current status call this function with one of the NUT status (all but <code class="literal">OB</code> are supported, simply set it as not <code class="literal">OL</code>); preceed them with an exclamation mark if you want to clear them from the status (e.g. <code class="literal">!OL</code>).
-</dd></dl></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_notes_2"></a>Notes</h4></div></div></div><p>You must put the generated files into the <code class="literal">drivers/</code> subdirectory, with the name of your subdriver preceded by <code class="literal">nutdrv_qx_</code>, and update <code class="literal">nutdrv_qx.c</code> by adding the appropriate <code class="literal">#include</code> line and by updating the definition of <code class="literal">subdriver_list</code>.
-Please, make sure to add your driver in that list in a smart way: if your device supports also the basic commands used by the other subdrivers to claim a device, add something that is unique (i.e. not supported by the other subdrivers) to your device in your claim function and then add it on top of the slighty supported ones in that list.</p><p>You must also add the subdriver to <code class="literal">NUTDRV_QX_SUBDRIVERS</code> in <code class="literal">drivers/Makefile.am</code> and call "<code class="literal">autoreconf</code>" and/or "<code class="literal">./configure</code>" from the top level NUT directory.</p><p>You can then recompile <code class="literal">nutdrv_qx</code>, and start experimenting with the new subdriver.</p><p>For more informations, have a look at the currently available subdrivers:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+If you need to edit the current status call this function with one of the NUT status (all but <code class="literal">OB</code> are supported, simply set it as not <code class="literal">OL</code>); prefix them with an exclamation mark if you want to clear them from the status (e.g. <code class="literal">!OL</code>).
+</dd></dl></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_notes_2"></a>Notes</h4></div></div></div><p>You must put the generated files into the <code class="literal">drivers/</code> subdirectory, with the name of your subdriver preceded by <code class="literal">nutdrv_qx_</code>, and update <code class="literal">nutdrv_qx.c</code> by adding the appropriate <code class="literal">#include</code> line and by updating the definition of <code class="literal">subdriver_list</code>.</p><p>Please, make sure to add your driver in that list in a smart way: if your device supports also the basic commands used by the other subdrivers to claim a device, add something that is unique (i.e. not supported by the other subdrivers) to your device in your claim function and then add it on top of the slightly supported ones in that list.</p><p>You must also add the subdriver to <code class="literal">NUTDRV_QX_SUBDRIVERS</code> list variable in the <code class="literal">drivers/Makefile.am</code> and call "<code class="literal">autoreconf</code>" and/or "<code class="literal">./configure</code>" from the top level NUT directory.</p><p>You can then recompile <code class="literal">nutdrv_qx</code>, and start experimenting with the new subdriver.</p><p>For more details, have a look at the currently available subdrivers:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 <code class="literal">nutdrv_qx_bestups.</code>{<code class="literal">c</code>,<code class="literal">h</code>}
+</li><li class="listitem">
+<code class="literal">nutdrv_qx_masterguard.</code>{<code class="literal">c</code>,<code class="literal">h</code>}
 </li><li class="listitem">
 <code class="literal">nutdrv_qx_mecer.</code>{<code class="literal">c</code>,<code class="literal">h</code>}
 </li><li class="listitem">
@@ -2104,5 +2142,7 @@ Please, make sure to add your driver in that list in a smart way: if your device
 <code class="literal">nutdrv_qx_voltronic-qs-hex.</code>{<code class="literal">c</code>,<code class="literal">h</code>}
 </li><li class="listitem">
 <code class="literal">nutdrv_qx_zinto.</code>{<code class="literal">c</code>,<code class="literal">h</code>}
+</li><li class="listitem">
+<code class="literal">nutdrv_qx_ablerex.</code>{<code class="literal">c</code>,<code class="literal">h</code>}
 </li></ul></div></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2016-03-09 14:27:57 -- Network UPS Tools 2.7.4</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s03.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s05.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2022-02-04 20:20:45 -- Network UPS Tools 2.7.4.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s03.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s05.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

@@ -1,9 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
     "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
-<meta name="generator" content="AsciiDoc 8.6.9" />
+<meta name="generator" content="AsciiDoc 9.0.0rc2" />
 <title>GENERICUPS(8)</title>
 <style type="text/css">
 /* Shared CSS for AsciiDoc xhtml11 and html5 backends */
@@ -435,7 +436,7 @@ thead, p.table.header {
 p.table {
   margin-top: 0;
 }
-/* Because the table frame attribute is overriden by CSS in most browsers. */
+/* Because the table frame attribute is overridden by CSS in most browsers. */
 div.tableblock > table[frame="void"] {
   border-style: none;
 }
@@ -758,7 +759,8 @@ uses the very simplest of signaling schemes.  Contact closure refers to a
 kind of interface where basic high/low signals are provided to indicate
 status.  This kind of UPS can only report line power and battery status.</p></div>
 <div class="paragraph"><p>This means that you will only get the essentials in ups.status: OL, OB,
-and LB.  Anything else requires a smarter UPS.</p></div>
+and LB (some UPSes may also support RB and BYPASS).  Anything else requires
+a smarter UPS.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -883,6 +885,22 @@ Low battery
 </p>
 </dd>
 <dt class="hdlist1">
+RB
+</dt>
+<dd>
+<p>
+Replace battery
+</p>
+</dd>
+<dt class="hdlist1">
+BYPASS
+</dt>
+<dd>
+<p>
+Battery bypass active or no battery installed
+</p>
+</dd>
+<dt class="hdlist1">
 SD
 </dt>
 <dd>
@@ -939,11 +957,36 @@ Data Terminal Ready.  Sent by the PC.
 </p>
 </dd>
 <dt class="hdlist1">
+DSR
+</dt>
+<dd>
+<p>
+Data Set Ready.  Received from the UPS.
+</p>
+</dd>
+<dt class="hdlist1">
 ST
 </dt>
 <dd>
 <p>
 Send a BREAK on the transmit data line
+</p>
+</dd>
+<dt class="hdlist1">
+NULL
+</dt>
+<dd>
+<p>
+Disable this signal.  Disabled signal will always be low except for OL
+       which will always be high.
+</p>
+</dd>
+<dt class="hdlist1">
+none
+</dt>
+<dd>
+<p>
+Alias to <code>NULL</code> which matches some other documentation.
 </p>
 </dd>
 </dl></div>
@@ -1083,6 +1126,12 @@ the battery is OK when that line is held high.</p></div>
 <div class="content">
 <pre><code>[CP=RTS] [OL=CTS] [LB=-DCD] [SD=DTR]</code></pre>
 </div></div>
+<div class="paragraph"><p>23 = Generic FTTx (Fiber to the x) battery backup
+     with 4-wire telemetry interface</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>[CP=RTS] [OL=CTS] [LB=-DCD] [RB=-RNG] [BYPASS=-DSR] [SD=none]</code></pre>
+</div></div>
 </div>
 </div>
 <div class="sect1">
@@ -1220,7 +1269,7 @@ driver will start up happily even if no UPS is detected.  It also means
 that if the connection between the UPS and computer is interrupted, you
 may not be able to sense this in software.</p></div>
 <div class="paragraph"><p>Most contact-closure UPSes will not power down the load if the line power
-is present.  This can create a race when using slave <a href="upsmon.html">upsmon(8)</a>
+is present.  This can create a race when using secondary <a href="upsmon.html">upsmon(8)</a>
 systems.  See the <a href="upsmon.html">upsmon(8)</a> man page for more information.</p></div>
 <div class="paragraph"><p>The solution to both of these problems is to upgrade to a smart protocol
 UPS of some kind that allows detection and proper load cycling on command.</p></div>
@@ -1243,7 +1292,7 @@ UPS of some kind that allows detection and proper load cycling on command.</p></
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-03-09 14:05:25 CET -- Network UPS Tools 2.7.4
+Last updated 2022-02-04 21:18:47 CET -- Network UPS Tools 2.7.4.1
 </div>
 </div>
 </body>

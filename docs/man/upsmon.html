@@ -1,9 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
     "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
-<meta name="generator" content="AsciiDoc 8.6.9" />
+<meta name="generator" content="AsciiDoc 9.0.0rc2" />
 <title>UPSMON(8)</title>
 <style type="text/css">
 /* Shared CSS for AsciiDoc xhtml11 and html5 backends */
@@ -435,7 +436,7 @@ thead, p.table.header {
 p.table {
   margin-top: 0;
 }
-/* Because the table frame attribute is overriden by CSS in most browsers. */
+/* Because the table frame attribute is overridden by CSS in most browsers. */
 div.tableblock > table[frame="void"] {
   border-style: none;
 }
@@ -760,7 +761,7 @@ can call out to other helper programs for notification purposes during
 power events.</p></div>
 <div class="paragraph"><p>upsmon can monitor multiple systems using a single process.  Every UPS
 that is defined in the <a href="upsmon.conf.html">upsmon.conf(5)</a> configuration file is assigned
-a power value and a type (<strong>slave</strong> or <strong>master</strong>).</p></div>
+a power value and a type (<strong>primary</strong> or <strong>secondary</strong>).</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -789,7 +790,7 @@ commands are:
 </dt>
 <dd>
 <p>
-shutdown all master UPSes (use with caution)
+shutdown all primary-mode UPSes (use with caution)
 </p>
 </dd>
 <dt class="hdlist1">
@@ -896,11 +897,10 @@ on power values below.</p></div>
 <div class="paragraph"><p>The <em>username</em> is a section in your <a href="upsd.users.html">upsd.users(5)</a> file.
 Whatever password you set in that section must match the <em>password</em>
 set in this file.</p></div>
-<div class="paragraph"><p>The type set in that section must also match the <em>type</em> here--
-<strong>master</strong> or <strong>slave</strong>.  In general, a master process is one
+<div class="paragraph"><p>The type set in that section must also match the <em>type</em> here&#8201;&#8212;&#8201;<strong>primary</strong> or <strong>secondary</strong>.  In general, a primary process is one
 running on the system with the UPS actually plugged into a serial
-port, and a slave is drawing power from the UPS but can&#8217;t talk to it
-directly.  See the section on UPS types for more.</p></div>
+port, and a secondary is drawing power from the UPS but can&#8217;t
+talk to it directly.  See the section on UPS types for more.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -997,7 +997,7 @@ that will handle events that occur.</p></div>
 <div class="paragraph"><p>The program you run as your NOTIFYCMD can use the environment variables
 NOTIFYTYPE and UPSNAME to know what has happened and on which UPS.  It
 also receives the notification message (see below) as the first (and
-only) argument, so you can deliver a preformatted message too.</p></div>
+only) argument, so you can deliver a pre-formatted message too.</p></div>
 <div class="paragraph"><p>Note that the NOTIFYCMD will only be called for a given event when you set
 the EXEC flag by using the notify flags, below:</p></div>
 </div>
@@ -1102,18 +1102,18 @@ put into "forced shutdown" mode, it no longer contributes.</p></div>
 power supplies that the UPS runs on the current system.</p></div>
 <div class="paragraph"><p><code>MONITOR</code> <em>upsname</em> <em>powervalue</em> <em>username</em> <em>password</em> <em>type</em></p></div>
 <div class="paragraph"><p>Normally, you only have one power supply, so it will be set to 1.</p></div>
-<div class="paragraph"><p><code>MONITOR <a href="mailto:myups@myhost">myups@myhost</a> 1 username mypassword master</code></p></div>
+<div class="paragraph"><p><code>MONITOR <a href="mailto:myups@myhost">myups@myhost</a> 1 username mypassword primary</code></p></div>
 <div class="paragraph"><p>On a large server with redundant power supplies, the power value for a UPS
 may be greater than 1.  You may also have more than one of them defined.</p></div>
-<div class="paragraph"><p><code>MONITOR <a href="mailto:ups-alpha@myhost">ups-alpha@myhost</a> 2 username mypassword master</code></p></div>
-<div class="paragraph"><p><code>MONITOR <a href="mailto:ups-beta@myhost">ups-beta@myhost</a> 2 username mypassword master</code></p></div>
+<div class="paragraph"><p><code>MONITOR <a href="mailto:ups-alpha@myhost">ups-alpha@myhost</a> 2 username mypassword primary</code></p></div>
+<div class="paragraph"><p><code>MONITOR <a href="mailto:ups-beta@myhost">ups-beta@myhost</a> 2 username mypassword primary</code></p></div>
 <div class="paragraph"><p>You can also set the power value for a UPS to 0 if it does not supply any
 power to that system.  This is generally used when you want to use the
 upsmon notification features for a UPS even though it&#8217;s not actually
-running the system that hosts upsmon.  Don&#8217;t set this to "master" unless
+running the system that hosts upsmon.  Don&#8217;t set this to "primary" unless
 you really want to power this UPS off when this instance of upsmon needs
 to shut down for its own reasons.</p></div>
-<div class="paragraph"><p><code>MONITOR <a href="mailto:faraway@anotherbox">faraway@anotherbox</a> 0 username mypassword slave</code></p></div>
+<div class="paragraph"><p><code>MONITOR <a href="mailto:faraway@anotherbox">faraway@anotherbox</a> 0 username mypassword secondary</code></p></div>
 <div class="paragraph"><p>The "minimum power value" is the number of power supplies that must be
 receiving power in order to keep the computer running.</p></div>
 <div class="paragraph"><p><code>MINSUPPLIES</code> <em>value</em></p></div>
@@ -1134,28 +1134,28 @@ down the entire system while still working properly for smaller systems.</p></di
 <div class="sectionbody">
 <div class="paragraph"><p><strong>upsmon</strong> and <a href="upsd.html">upsd(8)</a> don&#8217;t always run on the same system.  When they
 do, any UPSes that are directly attached to the upsmon host should be
-monitored in "master" mode.  This makes upsmon take charge of that
-equipment, and it will wait for slaves to disconnect before shutting
+monitored in "primary" mode.  This makes upsmon take charge of that equipment,
+and it will wait for the "secondary" systems to disconnect before shutting
 down the local system.  This allows the distant systems (monitoring over
 the network) to shut down cleanly before <code>upsdrvctl shutdown</code> runs
 and turns them all off.</p></div>
-<div class="paragraph"><p>When upsmon runs as a slave, it is relying on the distant system to tell
+<div class="paragraph"><p>When upsmon runs as a secondary, it is relying on the distant system to tell
 it about the state of the UPS.  When that UPS goes critical (on battery
 and low battery), it immediately invokes the local shutdown command.  This
-needs to happen quickly.  Once it disconnects from the distant
-<a href="upsd.html">upsd(8)</a> server, the master upsmon will start its own shutdown
-process.  Your slaves must all shut down before the master turns off the
-power or filesystem damage may result.</p></div>
-<div class="paragraph"><p>upsmon deals with slaves that get wedged, hang, or otherwise fail to
+needs to happen quickly.  Once all secondaries disconnect from the distant
+<a href="upsd.html">upsd(8)</a> server, its primary-mode upsmon will start its own shutdown
+process.  Your secondary systems must all quiesce and shut down before the
+primary turns off the shared power source, or filesystem damage may result.</p></div>
+<div class="paragraph"><p>upsmon deals with secondaries that get wedged, hang, or otherwise fail to
 disconnect from <a href="upsd.html">upsd(8)</a> in a timely manner with the HOSTSYNC
-timer.  During a shutdown situation, the master upsmon will give up after
-this interval and it will shut down anyway.  This keeps the master from
-sitting there forever (which would endanger that host) if a slave should
-break somehow.  This defaults to 15 seconds.</p></div>
-<div class="paragraph"><p>If your master system is shutting down too quickly, set the FINALDELAY
+timer.  During a shutdown situation, the primary upsmon will give up after
+this interval and it will shut down anyway.  This keeps the primary from
+sitting there forever (which would endanger that host) if a secondary
+should break somehow.  This defaults to 15 seconds.</p></div>
+<div class="paragraph"><p>If your primary system is shutting down too quickly, set the FINALDELAY
 interval to something greater than the default 15 seconds.  Don&#8217;t set
 this too high, or your UPS battery may run out of power before the
-master upsmon process shuts down that system.</p></div>
+primary upsmon process shuts down that system.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -1206,9 +1206,10 @@ whatever, as long as you maintain the minimum power value at all times.</p></div
 <div class="sectionbody">
 <div class="paragraph"><p>Besides being able to monitor multiple UPSes, upsmon can also monitor them
 as different roles.  If you have a system with multiple power supplies
-serviced by separate UPS batteries, it&#8217;s possible to be a master on one
-and a slave on the other.  This usually happens when you run out of serial
-ports and need to do the monitoring through another system nearby.</p></div>
+serviced by separate UPS batteries, it&#8217;s possible to be a primary on one
+UPS and a secondary on the other.  This usually happens when you run
+out of serial or USB ports and need to do the monitoring through another
+system nearby.</p></div>
 <div class="paragraph"><p>This is also complicated, especially when it comes time to power down a
 UPS that has gone critical but doesn&#8217;t supply the local system.  You can
 do this with some scripting magic in your notify command script, but it&#8217;s
@@ -1219,14 +1220,14 @@ beyond the scope of this manual.</p></div>
 <h2 id="_forced_shutdowns">FORCED SHUTDOWNS</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>When upsmon is forced to bring down the local system, it sets the
-"FSD" (forced shutdown) flag on any UPSes that it is running in master
-mode.  This is used to synchronize slaves in the event that a master UPS
-that is otherwise OK needs to be brought down due to some pressing event
-on the master.</p></div>
-<div class="paragraph"><p>You can manually invoke this mode on the master upsmon by starting another
-copy with <code>-c fsd</code>.  This is useful when you want to initiate a shutdown
-before the critical stage through some external means, such as
-<a href="upssched.html">upssched(8)</a>.</p></div>
+"FSD" (forced shutdown) flag on any UPSes that it is running in primary
+mode.  This is used to synchronize secondary systems in the event that
+a primary which is otherwise OK needs to be brought down due to some
+pressing event on the UPS manager system.</p></div>
+<div class="paragraph"><p>You can manually invoke this mode on the system with primary-mode upsmon
+by starting another copy of the program with <code>-c fsd</code> command line argument.
+This is useful when you want to initiate a shutdown before the critical
+stage through some external means, such as <a href="upssched.html">upssched(8)</a>.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -1268,9 +1269,12 @@ values during a reload.</p></div>
 you need only set the forced shutdown (FSD) flag on them.  You can do this
 by calling upsmon again to set the flag, i.e.:</p></div>
 <div class="paragraph"><p><code>upsmon -c fsd</code></p></div>
-<div class="paragraph"><p>After that, the master and the slaves will do their usual shutdown sequence
-as if the battery had gone critical.  This is much easier on your UPS
-equipment, and it beats crawling under a desk to find the plug.</p></div>
+<div class="paragraph"><p>After that, the primary and the secondary will do their usual shutdown
+sequence as if the battery had gone critical, while you can time how long
+it takes for them.  This is much easier on your UPS equipment, and it beats
+crawling under a desk to find the plug.</p></div>
+<div class="paragraph"><p>Note you can also use a dummy SHUTDOWNCMD setting to just report that the
+systems would shut down at this point, without actually disrupting their work.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -1305,7 +1309,7 @@ equipment, and it beats crawling under a desk to find the plug.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-03-09 14:05:25 CET -- Network UPS Tools 2.7.4
+Last updated 2022-02-04 21:16:21 CET -- Network UPS Tools 2.7.4.1
 </div>
 </div>
 </body>

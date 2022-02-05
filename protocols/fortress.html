@@ -4,7 +4,7 @@
 <head>
 <title>Network UPS Tools - Fortress UPS Protocol</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta name="generator" content="AsciiDoc 8.6.9" />
+<meta name="generator" content="AsciiDoc 9.0.0rc2" />
 <meta name="description" content="Power Devices support" />
 <meta name="keywords" content="NUT, Network UPS Tools, Eaton, APC, Free Software, UPS, Uninterruptible Power Supplies, PDU, Power Distributions Units, Solar Controllers, power, power devices, control, monitor, Linux, Unix, Windows, Mac OS X" />
 <meta name="format-detection" content="telephone=no" />
@@ -39,8 +39,10 @@ asciidoc.install(2);
     <li><a href="../download.html">Download</a></li>
     <li><a href="../projects.html">Related projects</a></li>
     <li><a href="../stable-hcl.html">Compatibility</a></li>
+    <li><a href="../features.html">Features</a></li>
     <li><a href="../documentation.html">Documentation</a></li>
     <li><a href="../support.html">Support</a></li>
+    <li><a href="/historic/index.html">Sub-sites for historic releases</a></li>
     <li><a href="https://github.com/networkupstools/nut/">GitHub</a></li>
     <li><a href="https://alioth.debian.org/projects/nut/">Alioth (old)</a></li>
   </ul>
@@ -50,14 +52,6 @@ asciidoc.install(2);
 </div>
 <div id="layout-content-box">
 <div id="layout-content">
-<div id="header">
-<h1>Fortress UPS Protocol</h1>
-</div>
-<div id="toc">
-  <div id="toctitle">Table of Contents</div>
-  <noscript><p><b>JavaScript must be enabled in your browser to display the table of contents.</b></p></noscript>
-</div>
-<div id="content">
 <div class="sect1">
 <h2 id="_communicating_with_fortress_174_using_the_rs232_port">Communicating with Fortress&#174; Using the RS232 Port</h2>
 <div class="sectionbody">
@@ -105,7 +99,7 @@ See step 8 in the Startup section of the Fortress User Guide.
 <p>
 Fortress has contacts that indicate when the unit is running on battery and when it is sounding a Low Battery Alarm.
 You can connect these contacts to your own alarm system or indicator for remote monitoring.
-ChcckUPS II software also uses these contacts to control the shutdown of computers or computer networks.
+CheckUPS II software also uses these contacts to control the shutdown of computers or computer networks.
 </p>
 <div class="paragraph"><p>Using parameter 81, you can decide which alarms will activate alarm contact; see <a href="#s503">section <em>Choosing Which Alarms Enable the Alarm Contact (Parameter 81)</em></a> for more information.
 Using parameters 80 and 88-89, you can also change the contacts from normally open to normally closed, and you can change the delay before the battery contact closes.
@@ -534,14 +528,14 @@ cellspacing="0" cellpadding="4">
 <td align="left" valign="middle"><p class="table"><strong><code>alarmshelp</code></strong> (<strong><code>ah</code></strong>)</p></td>
 <td align="center" valign="middle"><p class="table">None</p></td>
 <td align="left" valign="middle"><p class="table">Shows a list of all alarm messages, their alarm codes and whether each alarm is active (sounding) now.
-This command also shows whether a DB9 contact is enabled for each alarm; "enabled means the contact will change position when there is ana alarm,
+This command also shows whether a DB9 contact is enabled for each alarm; "enabled means the contact will change position when there is an alarm,
 To choose which alarms will enable the contact see <a href="#s503">section <em>Choosing Which Alarms Enable the Alarm Contact (Parameter 81)</em></a>.</p></td>
 </tr>
 <tr>
 <td align="left" valign="middle"><p class="table"><strong><code>alarmstatus</code></strong> (<strong><code>as</code></strong>)</p></td>
 <td align="center" valign="middle"><p class="table">None</p></td>
 <td align="left" valign="middle"><p class="table">Shows a list of all alarm messages, their alarm codes and whether each alarm active (sounding) now.
-This command also shows whether a DB9 contact is enabled for each alarm; "enabled means the contact will change position when there is ana alarm,
+This command also shows whether a DB9 contact is enabled for each alarm; "enabled means the contact will change position when there is an alarm,
 To choose which alarms will enable the contact see <a href="#s503">section <em>Choosing Which Alarms Enable the Alarm Contact (Parameter 81)</em></a>.</p></td>
 </tr>
 <tr>
@@ -685,12 +679,12 @@ After shutdown, if you try to restart the UPS before utility power (AC input pow
 <td align="center" valign="middle"><p class="table">Depends on parameter password</p></td>
 <td align="left" valign="middle"><p class="table">Shows a list of Fortress parameters.
 (See sections <a href="#s405"><em>Parameter Commands</em></a> and <a href="#s501"><em>Parameter Table</em></a>.)
-You can also display a arange of parameters by entering the starting and ending parameter number or parameter name after the command.</p></td>
+You can also display a range of parameters by entering the starting and ending parameter number or parameter name after the command.</p></td>
 </tr>
 <tr>
 <td align="left" valign="middle"><p class="table"><strong><code>paramkeywords</code></strong> (<strong><code>pk</code></strong>)</p></td>
 <td align="center" valign="middle"><p class="table">Depends on parameter password</p></td>
-<td align="left" valign="middle"><p class="table">Displays all paramaters and their keywords (the names you can use with commands).
+<td align="left" valign="middle"><p class="table">Displays all parameters and their keywords (the names you can use with commands).
 You can also display a range of parameters by entering the numbers or the names of the starting and ending parameters.</p></td>
 </tr>
 <tr>
@@ -761,7 +755,7 @@ You can also use the <strong><code>systemmode</code></strong> command to put the
 </td>
 <td class="hdlist2">
 <p style="margin-top: 0;">
-The normal operating mode; the unit will operate on utily power until there is a power outage or a severe power problem; then, it will switch to battery power.
+The normal operating mode; the unit will operate on utility power until there is a power outage or a severe power problem; then, it will switch to battery power.
 </p>
 </td>
 </tr>
@@ -818,7 +812,7 @@ To set the time, enter <strong><code>[hour]:[minutes]</code></strong> after the 
 <td align="left" valign="middle"><p class="table"><strong><code>turnoff</code></strong> (<strong><code>toff</code></strong>)</p></td>
 <td align="center" valign="middle"><p class="table">User</p></td>
 <td align="left" valign="middle"><p class="table">Shuts down the Fortress after the number of seconds you specify and restarts it after the number of minutes you specify.
-The format of this command is <strong><code>turnoff [minutes until restart] [seconds untill turnoff]</code></strong>.
+The format of this command is <strong><code>turnoff [minutes until restart] [seconds until turnoff]</code></strong>.
 For example, <strong><code>turnoff 3 60</code></strong> would turn off the Fortress after 60 seconds and restart if after three minutes.</p></td>
 </tr>
 <tr>
@@ -1324,7 +1318,7 @@ cellspacing="0" cellpadding="4">
 <td align="left" valign="middle"><p class="table header">Alarm</p></td>
 <td align="center" valign="middle"><p class="table">External Shutdown</p></td>
 <td align="center" valign="middle"><p class="table">Output Overload</p></td>
-<td align="center" valign="middle"><p class="table">Fan Malfcuntion</p></td>
+<td align="center" valign="middle"><p class="table">Fan Malfunction</p></td>
 <td align="center" valign="middle"><p class="table">Low AC Output</p></td>
 <td align="center" valign="middle"><p class="table">Low Runtime</p></td>
 <td align="center" valign="middle"><p class="table">High Battery</p></td>
@@ -1423,7 +1417,7 @@ cellspacing="0" cellpadding="4">
 <td align="center" valign="middle"><p class="table">2</p></td>
 <td align="left" valign="middle"><p class="table">Battery Voltage (BCD).
 <em>Range:</em> 0000-9999</p>
-<p class="table">A decimal point is implied after the thir digit (xxx.x).</p></td>
+<p class="table">A decimal point is implied after the third digit (xxx.x).</p></td>
 </tr>
 <tr>
 <td align="center" valign="middle"><p class="table">54-57</p></td>
@@ -1520,7 +1514,7 @@ cellspacing="0" cellpadding="4">
 </li>
 <li>
 <p>
-<code>0E</code> = Unreconized error code
+<code>0E</code> = Unrecognized error code
 </p>
 </li>
 </ul></div></div></td>
@@ -1770,7 +1764,7 @@ For example, <code>5000</code> means the nominal frequency is 50 Hz.</p></td>
 <td align="center" valign="middle"><p class="table">13</p></td>
 <td align="center" valign="middle"><p class="table">4 characters</p></td>
 <td align="left" valign="middle"><p class="table">Low frequency setpoint in Hz (xx.xx).
-When the input frequency drops to this level, the Fortress begins runnint on battery power because input frequency is too low.</p></td>
+When the input frequency drops to this level, the Fortress begins running on battery power because input frequency is too low.</p></td>
 </tr>
 <tr>
 <td align="center" valign="middle"><p class="table">14</p></td>
@@ -1793,7 +1787,7 @@ For example, <code>0480</code> means the nominal battery voltage is 48 VDC.</p><
 <td align="center" valign="middle"><p class="table">17</p></td>
 <td align="center" valign="middle"><p class="table">4 characters</p></td>
 <td align="left" valign="middle"><p class="table">Near low battery setpoint in VDC (xxx.x).
-The point at which the Fortress sounds a Newar Low Battery alarm (alarm B; see the Fortress User Guide).</p></td>
+The point at which the Fortress sounds a Near Low Battery alarm (alarm B; see the Fortress User Guide).</p></td>
 </tr>
 <tr>
 <td align="center" valign="middle"><p class="table">18</p></td>
@@ -1878,7 +1872,7 @@ If the Fortress does not have any data for that field, no data will be between t
 <td align="center" valign="middle"><p class="table">1 character (<code>|</code>)</p></td>
 <td align="left" valign="middle"><p class="table"><code>|</code> (ASCII <code>7Ch</code>).
 This is the end-of transmission character.
-If you are programmin your system to work with the Fortress, you should program it to ignore any data after this character.</p></td>
+If you are programming your system to work with the Fortress, you should program it to ignore any data after this character.</p></td>
 </tr>
 <tr>
 <td align="center" valign="middle"><p class="table">trailer</p></td>
@@ -1948,7 +1942,7 @@ See field 1 below.</p></td>
 <td align="center" valign="middle"><p class="table">1 character (<code>&amp;</code>)</p></td>
 <td align="left" valign="middle"><p class="table"><code>&amp;</code> (ASCII <code>26h</code>).
 This is the start-of-transmission character.
-Since Fortress echos back the command you enter and begins the <strong><code>fp</code></strong> string witha carriage return and line feed, you should program your system to discard any data before this character.</p></td>
+Since Fortress echos back the command you enter and begins the <strong><code>fp</code></strong> string with a carriage return and line feed, you should program your system to discard any data before this character.</p></td>
 </tr>
 <tr>
 <td align="center" valign="middle"><p class="table">2</p></td>
@@ -1959,7 +1953,7 @@ For example, <code>092396</code> = September 23, 1996.</p></td>
 <tr>
 <td align="center" valign="middle"><p class="table">3</p></td>
 <td align="center" valign="middle"><p class="table">6 characters</p></td>
-<td align="left" valign="middle"><p class="table">The time programmed into Fortress paramater 0 (hour:minutes:seconds).
+<td align="left" valign="middle"><p class="table">The time programmed into Fortress parameter 0 (hour:minutes:seconds).
 Remember that the Fortress uses 24-hour time.
 For example, <code>153602</code> = 3:36 p.m. and 2 seconds.</p></td>
 </tr>
@@ -2146,12 +2140,12 @@ For example, <code>0036</code> = 3.6 amperes.</p></td>
 <tr>
 <td align="center" valign="middle"><p class="table">25</p></td>
 <td align="center" valign="middle"><p class="table">4 characters</p></td>
-<td align="left" valign="middle"><p class="table">The number of seconds the UPS has been operating on battery power; if the UPS in not runninf on battery power, this shows the lingth of the last battery power run (in seconds).</p></td>
+<td align="left" valign="middle"><p class="table">The number of seconds the UPS has been operating on battery power; if the UPS in not running on battery power, this shows the length of the last battery power run (in seconds).</p></td>
 </tr>
 <tr>
 <td align="center" valign="middle"><p class="table">26</p></td>
 <td align="center" valign="middle"><p class="table">1 character</p></td>
-<td align="left" valign="middle"><p class="table">For Fortress, this character is alwas "<code>?</code>".</p></td>
+<td align="left" valign="middle"><p class="table">For Fortress, this character is always "<code>?</code>".</p></td>
 </tr>
 <tr>
 <td align="center" valign="middle"><p class="table">27</p></td>
@@ -2394,7 +2388,7 @@ If the Fortress does not have any data for that field, no data will be between t
 <td align="center" valign="middle"><p class="table">1 characters (<code>|</code>)</p></td>
 <td align="left" valign="middle"><p class="table"><code>|</code> (ASCII <code>7Ch</code>).
 This is the end-of-transmission character.
-If you are programmin your system to work with the Fortress, you should program it to ignore any data after this character.</p></td>
+If you are programming your system to work with the Fortress, you should program it to ignore any data after this character.</p></td>
 </tr>
 <tr>
 <td align="center" valign="middle"><p class="table">trailer</p></td>
@@ -3503,7 +3497,7 @@ cellspacing="0" cellpadding="4">
 <td align="left" valign="middle"><p class="table">User</p></td>
 <td align="center" valign="middle"><p class="table">0:00-23:59</p></td>
 <td align="left" valign="middle"><p class="table">Time.
-Fortress uses this time when tou program it to startup and shut down automatically.
+Fortress uses this time when you program it to startup and shut down automatically.
 See <a href="#s502">section <em>Automatic Startup and Shutdown (Parameters 90-93)</em></a>.</p></td>
 </tr>
 <tr>
@@ -3588,7 +3582,7 @@ If this value falls outside preset limits, Fortress switches to battery operatio
 <td align="left" valign="middle"><p class="table"><code>09 Runtime 10m</code></p></td>
 <td align="left" valign="middle"><p class="table">Change not allowed</p></td>
 <td align="center" valign="middle"><p class="table">0-255</p></td>
-<td align="left" valign="middle"><p class="table">The stimated number of minutes that Fortress can run (or continue to run) on battery power.</p></td>
+<td align="left" valign="middle"><p class="table">The estimated number of minutes that Fortress can run (or continue to run) on battery power.</p></td>
 </tr>
 <tr>
 <td align="center" valign="middle"><p class="table"><code>10</code></p></td>
@@ -3617,7 +3611,7 @@ See <a href="#s502">section <em>Automatic Startup and Shutdown (Parameters 90-93
 <td align="left" valign="middle"><p class="table">The password level when the UPS starts up.
 Normally, this is set to <code>0</code>, so you must enter the appropriate password level before you program the UPS.
 <code>0</code> = None, <code>1</code> = User, <code>2</code> = Service and <code>3</code> and <code>4</code> = higher passwords.
-<strong>You can only change the setting to a password level you have already enterede; for example, to change the setting to <code>2)Service</code>, you must first enter the Service password.</strong></p></td>
+<strong>You can only change the setting to a password level you have already entered; for example, to change the setting to <code>2)Service</code>, you must first enter the Service password.</strong></p></td>
 </tr>
 <tr>
 <td align="center" valign="middle"><p class="table"><code>13</code></p></td>
@@ -3666,8 +3660,8 @@ Normally, this is set to <code>0</code>, so you must enter the appropriate passw
 <td align="left" valign="middle"><p class="table">Change not allowed</p></td>
 <td align="center" valign="middle"><p class="table">Not applicable</p></td>
 <td align="left" valign="middle"><p class="table">The power factor of your equipment.
-This is the difference in the way it draws output volta an current.
-Power factor = parameter 17 divided bu parameter 5.
+This is the difference in the way it draws output volts and current.
+Power factor = parameter 17 divided by parameter 5.
 This parameter also tells whether power factor is leading (<code>Lead</code>), lagging (<code>Lag</code>) or distortion (<code>Dist</code>).</p></td>
 </tr>
 <tr>
@@ -3724,7 +3718,7 @@ This parameter also tells whether power factor is leading (<code>Lead</code>), l
 <td align="left" valign="middle"><p class="table"><code>25 BTTime 02:00</code></p></td>
 <td align="left" valign="middle"><p class="table">User</p></td>
 <td align="center" valign="middle"><p class="table">00:00-23:59</p></td>
-<td align="left" valign="middle"><p class="table">The time of dat when Fortress will perform the automatic battery test.</p></td>
+<td align="left" valign="middle"><p class="table">The time of day when Fortress will perform the automatic battery test.</p></td>
 </tr>
 <tr>
 <td align="center" valign="middle"><p class="table"><code>26</code></p></td>
@@ -3766,7 +3760,7 @@ To disable the automatic battery test set this parameter to "<code>0</code>".</p
 <td align="left" valign="middle"><p class="table"><code>30 MinDCV 30.0</code></p></td>
 <td align="left" valign="middle"><p class="table">User</p></td>
 <td align="center" valign="middle"><p class="table">0.0-72.0</p></td>
-<td align="left" valign="middle"><p class="table">The minimum battery voltage measured since you started the Fortress or sincethe last time you used the <strong><code>extendedhistory</code></strong> command.</p></td>
+<td align="left" valign="middle"><p class="table">The minimum battery voltage measured since you started the Fortress or since the last time you used the <strong><code>extendedhistory</code></strong> command.</p></td>
 </tr>
 <tr>
 <td align="center" valign="middle"><p class="table"><code>31</code></p></td>
@@ -3952,7 +3946,7 @@ When AC input voltage is above this voltage but below parameter 44, the Fortress
 <td align="left" valign="middle"><p class="table"><code>53 LowFreq -3.00</code></p></td>
 <td align="left" valign="middle"><p class="table">Service</p></td>
 <td align="center" valign="middle"><p class="table">0.25-4.00</p></td>
-<td align="left" valign="middle"><p class="table">Wjem AC input frequency drops to this level, the Fortress will run on battery power because frequency is low.
+<td align="left" valign="middle"><p class="table">When AC input frequency drops to this level, the Fortress will run on battery power because frequency is low.
 "<code>-3.00</code>" means 3 Hz below nominal frequency, parameter 51.</p></td>
 </tr>
 <tr>
@@ -3961,7 +3955,7 @@ When AC input voltage is above this voltage but below parameter 44, the Fortress
 <td align="left" valign="middle"><p class="table"><code>54 HiFreq +3.00</code></p></td>
 <td align="left" valign="middle"><p class="table">Service</p></td>
 <td align="center" valign="middle"><p class="table">0.25-4.00</p></td>
-<td align="left" valign="middle"><p class="table">When AC input frequency rises to this level, the Fortress will run on battery power beacuse input frequency is too high.
+<td align="left" valign="middle"><p class="table">When AC input frequency rises to this level, the Fortress will run on battery power because input frequency is too high.
 "<code>+3.00</code>" means 3 Hz above nominal frequency, parameter 51.</p></td>
 </tr>
 <tr>
@@ -3991,7 +3985,7 @@ When AC input voltage is above this voltage but below parameter 44, the Fortress
 <tr>
 <td align="center" valign="middle"><p class="table"><code>58</code></p></td>
 <td align="left" valign="middle"><p class="table"><strong><code>linesensitivity</code></strong> (<strong><code>ls</code></strong>)</p></td>
-<td align="left" valign="middle"><p class="table"><code>58LineSens 10</code></p></td>
+<td align="left" valign="middle"><p class="table"><code>58 LineSens 10</code></p></td>
 <td align="left" valign="middle"><p class="table">Service</p></td>
 <td align="center" valign="middle"><p class="table">1-127</p></td>
 <td align="left" valign="middle"><p class="table">This parameter sets the Fortress' sensitivity to line fault glitches.</p></td>
@@ -4002,7 +3996,7 @@ When AC input voltage is above this voltage but below parameter 44, the Fortress
 <td align="left" valign="middle"><p class="table"><code>59 FaltSens 1)Hi</code></p></td>
 <td align="left" valign="middle"><p class="table">Service</p></td>
 <td align="center" valign="middle"><p class="table">0)Lo-1)Hi</p></td>
-<td align="left" valign="middle"><p class="table">This parameter sets the Fortress' sensitiviti to line faults.</p></td>
+<td align="left" valign="middle"><p class="table">This parameter sets the Fortress' sensitivity to line faults.</p></td>
 </tr>
 <tr>
 <td align="center" valign="middle"><p class="table"><code>60</code></p></td>
@@ -4093,7 +4087,7 @@ See the User Guide.</p></td>
 <td align="left" valign="middle"><p class="table"><code>70 BaudRt 2)1200</code></p></td>
 <td align="left" valign="middle"><p class="table">Service</p></td>
 <td align="center" valign="middle"><p class="table">0)300-2)1200</p></td>
-<td align="left" valign="middle"><p class="table">When DIP switch 1 on the back of the Fortress is set to the <strong>left</strong>, this parameter sets the communiation port&#8217;s baud rate (communication rate).
+<td align="left" valign="middle"><p class="table">When DIP switch 1 on the back of the Fortress is set to the <strong>left</strong>, this parameter sets the communication port&#8217;s baud rate (communication rate).
 <code>0</code> = 300 baud, <code>1</code> = 600 baud and <code>2</code> = 1200 baud.
 When the DIP switch is set to the <strong>right</strong>, baud rate is always 1200.</p></td>
 </tr>
@@ -4148,7 +4142,7 @@ When this is set to <code>1)Yes</code>, the Fortress will pause transmissions wh
 <td align="left" valign="middle"><p class="table"><code>76 Echo 1)Yes</code></p></td>
 <td align="left" valign="middle"><p class="table">Service</p></td>
 <td align="center" valign="middle"><p class="table">0)No-1)Yes</p></td>
-<td align="left" valign="middle"><p class="table">This parameter enables and disables charcter echo back during RS232 communication.</p></td>
+<td align="left" valign="middle"><p class="table">This parameter enables and disables character echo back during RS232 communication.</p></td>
 </tr>
 <tr>
 <td align="center" valign="middle"><p class="table"><code>77</code></p></td>
@@ -4180,7 +4174,7 @@ When this is set to <code>1)Yes</code>, the Fortress will pause transmissions wh
 <td align="left" valign="middle"><p class="table"><code>80 AlmCPol 0)Neg</code></p></td>
 <td align="left" valign="middle"><p class="table">Service</p></td>
 <td align="center" valign="middle"><p class="table">0)Neg-1)Pos</p></td>
-<td align="left" valign="middle"><p class="table">When this is set to <code>0)Neg</code>, Fortress closes the alarm contact (pin 5) during the alarms you set in paramter 81.
+<td align="left" valign="middle"><p class="table">When this is set to <code>0)Neg</code>, Fortress closes the alarm contact (pin 5) during the alarms you set in parameter 81.
 When this is set to <code>1)Pos</code>, the contact is normally closed and it opens during the alarms.
 See <a href="#s504">section <em>Changing the Settings for Alarm and Battery Contacts (Parameters 80 and 88-89)</em></a>.</p></td>
 </tr>
@@ -4225,7 +4219,7 @@ See <a href="#s505">section <em>Changing Remote Shutdown Settings (Parameters 82
 <td align="left" valign="middle"><p class="table"><code>85 EPO Pol 0)Neg</code></p></td>
 <td align="left" valign="middle"><p class="table">Service</p></td>
 <td align="center" valign="middle"><p class="table">0)Neg-1)Pos</p></td>
-<td align="left" valign="middle"><p class="table">This parameter determines when Fortress will start a remote shutdwon based on pin 7.
+<td align="left" valign="middle"><p class="table">This parameter determines when Fortress will start a remote shutdown based on pin 7.
 When this is set to <code>0)Neg</code>, Fortress will shut down when the pin shorts to pin 4.
 When this is set to <code>1)Pos</code>, Fortress will shut down when the contact opens.
 See <a href="#s505">section <em>Changing Remote Shutdown Settings (Parameters 82-84 and 85-87)</em></a>.</p></td>
@@ -4262,7 +4256,7 @@ See <a href="#s504">section <em>Changing the Settings for Alarm and Battery Cont
 <td align="left" valign="middle"><p class="table"><code>89 InvCDly 1.0</code></p></td>
 <td align="left" valign="middle"><p class="table">Service</p></td>
 <td align="center" valign="middle"><p class="table">0.1-25.5</p></td>
-<td align="left" valign="middle"><p class="table">After the Fortress begins running on battery power, it will delay this many seconds bfore activating the inverter (on battery) contact on pin 3 of the communication port.</p></td>
+<td align="left" valign="middle"><p class="table">After the Fortress begins running on battery power, it will delay this many seconds before activating the inverter (on battery) contact on pin 3 of the communication port.</p></td>
 </tr>
 <tr>
 <td align="center" valign="middle"><p class="table"><code>90</code></p></td>
@@ -4338,7 +4332,7 @@ See <a href="#s502">section <em>Automatic Startup and Shutdown (Parameters 90-93
 <td align="left" valign="middle"><p class="table"><code>98 GuardSt 27</code></p></td>
 <td align="left" valign="middle"><p class="table">Change not allowed</p></td>
 <td align="center" valign="middle"><p class="table">0-31</p></td>
-<td align="left" valign="middle"><p class="table">This parameter helps to gevern how the Fortress detects power problems.</p></td>
+<td align="left" valign="middle"><p class="table">This parameter helps to govern how the Fortress detects power problems.</p></td>
 </tr>
 <tr>
 <td align="center" valign="middle"><p class="table"><code>99</code></p></td>
@@ -4346,7 +4340,7 @@ See <a href="#s502">section <em>Automatic Startup and Shutdown (Parameters 90-93
 <td align="left" valign="middle"><p class="table"><code>99 GuardEnd 6</code></p></td>
 <td align="left" valign="middle"><p class="table">Change not allowed</p></td>
 <td align="center" valign="middle"><p class="table">0-31</p></td>
-<td align="left" valign="middle"><p class="table">This parameter helps to gevern how the Fortress detects power problems.</p></td>
+<td align="left" valign="middle"><p class="table">This parameter helps to govern how the Fortress detects power problems.</p></td>
 </tr>
 <tr>
 <td align="center" valign="middle"><p class="table"><code>100</code></p></td>
@@ -4354,7 +4348,7 @@ See <a href="#s502">section <em>Automatic Startup and Shutdown (Parameters 90-93
 <td align="left" valign="middle"><p class="table"><code>100 ChargdV 25.6</code></p></td>
 <td align="left" valign="middle"><p class="table">Change not allowed</p></td>
 <td align="center" valign="middle"><p class="table">25.6-55.2</p></td>
-<td align="left" valign="middle"><p class="table">When battery voltage reaches this level, the Fortress considres the batteries charged.</p></td>
+<td align="left" valign="middle"><p class="table">When battery voltage reaches this level, the Fortress considers the batteries charged.</p></td>
 </tr>
 <tr>
 <td align="center" valign="middle"><p class="table"><code>101</code></p></td>
@@ -4410,7 +4404,7 @@ See <a href="#s502">section <em>Automatic Startup and Shutdown (Parameters 90-93
 <td align="left" valign="middle"><p class="table"><code>113 CFACVOD 105</code></p></td>
 <td align="left" valign="middle"><p class="table">Change not allowed</p></td>
 <td align="center" valign="middle"><p class="table">0-255</p></td>
-<td align="left" valign="middle"><p class="table">Calibration factor denominator for AC outpu voltage.</p></td>
+<td align="left" valign="middle"><p class="table">Calibration factor denominator for AC output voltage.</p></td>
 </tr>
 <tr>
 <td align="center" valign="middle"><p class="table"><code>114</code></p></td>
@@ -4450,7 +4444,7 @@ See <a href="#s502">section <em>Automatic Startup and Shutdown (Parameters 90-93
 <td align="left" valign="middle"><p class="table"><code>118 RefNom 168</code></p></td>
 <td align="left" valign="middle"><p class="table">Change not allowed</p></td>
 <td align="center" valign="middle"><p class="table">0-255</p></td>
-<td align="left" valign="middle"><p class="table">This parameter helps determine how the Fortress determines a line glith.</p></td>
+<td align="left" valign="middle"><p class="table">This parameter helps determine how the Fortress determines a line glitch.</p></td>
 </tr>
 <tr>
 <td align="center" valign="middle"><p class="table"><code>119</code></p></td>
@@ -4458,7 +4452,7 @@ See <a href="#s502">section <em>Automatic Startup and Shutdown (Parameters 90-93
 <td align="left" valign="middle"><p class="table"><code>119 XfmrRes 50</code></p></td>
 <td align="left" valign="middle"><p class="table">Change not allowed</p></td>
 <td align="center" valign="middle"><p class="table">0-255</p></td>
-<td align="left" valign="middle"><p class="table">Transformer resistange constant.</p></td>
+<td align="left" valign="middle"><p class="table">Transformer resistance constant.</p></td>
 </tr>
 <tr>
 <td align="center" valign="middle"><p class="table"><code>120</code></p></td>
@@ -4672,7 +4666,7 @@ cellspacing="0" cellpadding="4">
 <td align="left" valign="top"><p class="table"></p></td>
 </tr>
 <tr>
-<td align="left" valign="top"><p class="table">Newar Low Battery (B)</p></td>
+<td align="left" valign="top"><p class="table">Near Low Battery (B)</p></td>
 <td align="center" valign="top"><p class="table">2</p></td>
 <td align="left" valign="top"><p class="table"></p></td>
 </tr>
@@ -4934,7 +4928,7 @@ Clear the password using the command <strong><code>clearpassword</code></strong>
 <p>
 If your Fortress is set to Extended Signal communication mode (see <a href="#s200">section <em>Choosing a Communication Mode</em></a>), remote shutdown is also available on pin 1.
 If the UPS is using battery power, a +12-volt signal applied to the pin for 5 seconds will shut down the UPS 30 seconds later.
-The UPS willl automatically restart when the power outage ends (unless you have changed parameter 39).
+The UPS will automatically restart when the power outage ends (unless you have changed parameter 39).
 </p>
 <div class="paragraph"><p>You can change the way this feature operates by using parameters 82, 83 and 84.</p></div>
 <div class="paragraph"><p>Parameter 82 determines the type of signal on pin 1 that will start a Fortress shutdown.
@@ -4988,28 +4982,76 @@ All rights reserved.</strong></p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-03-09 15:27:15 CET
+Last updated 2022-02-04 20:41:30 CET
 </div>
 <div id="footer-badges">
+<a href="https://github.com/networkupstools/nut">
+  <img style="border:0;height:20"
+    src="https://img.shields.io/github/checks-status/networkupstools/nut/master"
+    alt="Latest GitHub checks status: master branch"/>
+</a>
+<!--
+<a href="https://travis-ci.org/github/networkupstools/nut">
+  <img style="border:0;height:20"
+    src="https://api.travis-ci.org/networkupstools/nut.svg?branch=master"
+    alt="Latest Travis CI build status: master branch"/>
+</a>
+-->
+<a href="https://ci.networkupstools.org/job/nut/job/nut/job/master/">
+  <img style="border:0;height:20"
+    src="https://ci.networkupstools.org/buildStatus/icon?job=nut%2Fnut%2Fmaster"
+    alt="Latest NUT CI build status: master branch"/>
+</a>
+<a href="https://ci.networkupstools.org/job/nut/job/nut/job/fightwarn/">
+  <img style="border:0;height:20"
+    src="https://ci.networkupstools.org/buildStatus/icon?job=nut%2Fnut%2Ffightwarn&subject=Fightwarn%20Branch"
+    alt="Latest NUT CI build status: fightwarn branch"/>
+</a>
+<!--
+<a href="https://github.com/networkupstools/nut/releases">
+  <img style="border:0;height:20"
+    src="https://img.shields.io/github/v/release/networkupstools/nut"
+    alt="Latest GitHub drafted NUT source release"/>
+</a>
+-->
+<a href="https://github.com/networkupstools/nut/releases">
+  <img style="border:0;height:20"
+    src="https://img.shields.io/github/v/tag/networkupstools/nut?sort=semver"
+    alt="Latest Git-tagged NUT source release"/>
+</a>
+<!-- Maintainer note: for the counter below to work, a git tag
+     is not sufficient -- a release must be drafted and published
+     at https://github.com/networkupstools/nut/releases
+     Counter URL may also be .../latest/BRANCHNAME -->
+<a href="https://github.com/networkupstools/nut">
+  <img style="border:0;height:20"
+    src="https://img.shields.io/github/commits-since/networkupstools/nut/latest.svg"
+    alt="Commits on master branch since latest release on GitHub"/>
+</a>
 <a href="http://www.methods.co.nz/asciidoc/">
   <img style="border:0;width:88px;height:31px"
     src="../images/asciidoc.png"
     alt="Powered by AsciiDoc"/>
 </a>
-<a href="http://validator.w3.org/check?uri=referer">
+<a href="https://validator.w3.org/check?uri=referer">
   <img style="border:0;width:88px;height:31px"
-    src="http://www.w3.org/Icons/valid-xhtml11-blue"
+    src="https://www.w3.org/Icons/valid-xhtml11-blue"
     alt="Valid XHTML 1.1"/>
 </a>
-<a href="http://jigsaw.w3.org/css-validator/check?uri=referer">
+<a href="https://jigsaw.w3.org/css-validator/check?uri=referer">
   <img style="border:0;width:88px;height:31px"
-    src="http://jigsaw.w3.org/css-validator/images/vcss-blue"
+    src="https://jigsaw.w3.org/css-validator/images/vcss-blue"
     alt="Valid CSS!"/>
 </a>
-<a href="http://arnaud.quette.fr/tag/About">
-  <img style="border:0;width:118px;height:38px;"
-       src="../images/hostedby.png"
-       alt="Hoster"/>
+<a href="https://www.gandi.net/">
+  <img style="border:0;height:38px;"
+       src="../images/gandi-ar21.svg"
+       alt="DNS, redirection and related services Hoster"/>
+</a>
+<a href="https://fosshost.org/">
+  <img style="border:0;width:112px;height:38px;"
+       src="../images/ci/fosshost.org_Host_Light_38px.png"
+       alt="Dedicated Hosting for NUT CI"/>
 </a>
 </div>
 </div>

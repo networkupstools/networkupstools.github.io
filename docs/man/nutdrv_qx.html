@@ -1,9 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
     "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
-<meta name="generator" content="AsciiDoc 8.6.9" />
+<meta name="generator" content="AsciiDoc 9.0.0rc2" />
 <title>NUTDRV_QX(8)</title>
 <style type="text/css">
 /* Shared CSS for AsciiDoc xhtml11 and html5 backends */
@@ -435,7 +436,7 @@ thead, p.table.header {
 p.table {
   margin-top: 0;
 }
-/* Because the table frame attribute is overriden by CSS in most browsers. */
+/* Because the table frame attribute is overridden by CSS in most browsers. */
 div.tableblock > table[frame="void"] {
   border-style: none;
 }
@@ -753,10 +754,19 @@ For information about the core driver, see <a href="nutupsdrv.html">nutupsdrv(8)
 <div class="sect1">
 <h2 id="_supported_hardware">SUPPORTED HARDWARE</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>The <strong>nutdrv_qx</strong> driver is known to work with various UPSes from <em>Blazer</em>, <em>Energy Sistem</em>, <em>Fenton Technologies</em>, <em>General Electric</em>, <em>Mustek</em>, <em>Voltronic Power</em> (rebranded by many, many - have I said many? - others.. Long story short: if your UPS came with a software called <em>Viewpower</em>, chances are high that it works with this driver with one of the <a href="#_extra_arguments"><em>voltronic*</em> protocols or with the <em>mecer</em> one</a>) and many others.</p></div>
-<div class="paragraph"><p>The <a href="#_internet_resources">NUT compatibility table</a> lists all the known supported models.
-Keep in mind, however, that other models not listed there may also be supported, but haven&#8217;t been tested.</p></div>
-<div class="paragraph"><p>All devices with a serial interface and many with a USB interface are supported.</p></div>
+<div class="paragraph"><p>The <strong>nutdrv_qx</strong> driver is known to work with various UPSes from
+<em>Armac</em>, <em>Blazer</em>, <em>Energy Sistem</em>, <em>Fenton Technologies</em>, <em>General Electric</em>,
+<em>Hunnox</em>, <em>Masterguard</em>, <em>Mustek</em>, <em>Powercool</em>, <em>Voltronic Power</em>
+(rebranded by many, many - have I said many? - others&#8230;
+Long story short: if your UPS came with a software called <em>Viewpower</em>,
+chances are high that it works with this driver with one of the
+<a href="#_extra_arguments"><em>voltronic*</em> protocols or with the <em>mecer</em> one</a>),
+and many others.</p></div>
+<div class="paragraph"><p>The <a href="#_internet_resources">NUT compatibility table</a> lists all the known
+supported models. Keep in mind, however, that other models not listed
+there may also be supported, but haven&#8217;t been tested or reported back.</p></div>
+<div class="paragraph"><p>All devices with a serial interface and many with a USB interface are
+supported.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -801,17 +811,19 @@ If you set stayoff in <a href="ups.conf.html">ups.conf(5)</a> when FSD arises th
 <dd>
 <p>
 Skip autodetection of the protocol to use and only use the one specified.
-Supported values: <em>bestups</em>, <em>mecer</em>, <em>megatec</em>, <em>megatec/old</em>, <em>mustek</em>, <em>q1</em>, <em>voltronic</em>, <em>voltronic-qs</em>, <em>voltronic-qs-hex</em> and <em>zinto</em>.
+Supported values: <em>bestups</em>, <em>hunnox</em>, <em>masterguard</em>, <em>mecer</em>, <em>megatec</em>, <em>megatec/old</em>, <em>mustek</em>, <em>q1</em>, <em>voltronic</em>, <em>voltronic-qs</em>, <em>voltronic-qs-hex</em> and <em>zinto</em>.
 </p>
 <div class="paragraph"><p>Note that if you end up using the <em>q1</em> protocol, you may want to give a try to the <em>mecer</em>, <em>megatec</em> and <em>zinto</em> ones setting the <a href="#old-blazer-protocols-options"><strong>novendor</strong>/<strong>norating</strong> flags</a> (only one, or both).</p></div>
 </dd>
 <dt class="hdlist1">
-<strong>pollfreq =</strong> <em>value</em>
+<strong>pollfreq =</strong> <em>num</em>
 </dt>
 <dd>
 <p>
-Set polling frequency, in seconds, to reduce the data flow.
-Between two polling requests the driver will do &#8216;quick polls&#8217; dealing just with ups.status.
+Set polling interval for full updates, in seconds, to reduce the message traffic.
+Between two polling requests, the driver will do <em>quick polls</em> dealing just
+with <strong>ups.status</strong> at an interval specified by the <strong>pollinterval</strong> driver option
+(details in <a href="ups.conf.html">ups.conf(5)</a>).
 The default value is 30 (in seconds).
 </p>
 </dd>
@@ -973,7 +985,22 @@ The acceptable range is <code>12..5940</code> seconds.
 </dt>
 <dd>
 <p>
-Set <a href="http://www.networkupstools.org/protocols/sola.html#_shutdown_set_command">shutdown mode functionality of Pin 1 and Pin 7</a> on the UPS DB9 communication port (Per Best Power’s EPS-0059) to <em>value</em> [<code>0..6</code>].
+Set <a href="http://www.networkupstools.org/protocols/sola.html#_shutdown_set_command">shutdown mode functionality of Pin 1 and Pin 7</a> on the UPS DB9 communication port (Per Best Power&#8217;s EPS-0059) to <em>value</em> [<code>0..6</code>].
+</p>
+</dd>
+</dl></div>
+</div>
+<div class="sect2">
+<h3 id="_masterguard_protocol">MASTERGUARD PROTOCOL</h3>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>slave_addr =</strong> <em>value</em>
+</dt>
+<dd>
+<p>
+Make the claim function verify it&#8217;s talking to the specified <em>slave address</em> (<strong>ups.id</strong>).
+Safeguard against talking to the wrong one of several identical UPSes on the same USB bus.
+Note that when changing <strong>ups.id</strong> (through <a href="upsrw.html">upsrw(8)</a>) the driver will continue to talk to the UPS with the new <em>slave address</em>, but won&#8217;t claim it again on restart until the <strong>slave_addr</strong> parameter is adjusted.
 </p>
 </dd>
 </dl></div>
@@ -1073,7 +1100,7 @@ Reset capability options and their voltage and frequency limits to safe default 
 <div class="paragraph"><p>Note that setting this option will reset also <strong>ups.start.auto</strong>, <strong>battery.protection</strong>, <strong>battery.energysave</strong>, <strong>ups.start.battery</strong>, <strong>outlet.0.switchable</strong>, <strong>input.transfer.high</strong>, <strong>input.transfer.low</strong>, <strong>input.frequency.high</strong> and <strong>input.frequency.low</strong>.</p></div>
 </dd>
 </dl></div>
-<div class="paragraph"><p>These UPSes can be fine-tuned to suit your needs enabling or disabling the following options (the driver should tell you which one the UPS is capable of on startup: the settable ones will be reported either ar <em>enabled</em> or <em>disabled</em> in the logs):</p></div>
+<div class="paragraph"><p>These UPSes can be fine-tuned to suit your needs enabling or disabling the following options (the driver should tell you which one the UPS is capable of on startup: the settable ones will be reported either are <em>enabled</em> or <em>disabled</em> in the logs):</p></div>
 <div class="dlist"><dl>
 <dt class="hdlist1">
 <strong>alarm_control =</strong> <em>string</em>
@@ -1243,7 +1270,7 @@ Device grid working range for P31 UPSes [<code>Appliance</code>/<code>UPS</code>
 <div class="sect3">
 <h4 id="_testing">TESTING</h4>
 <div class="paragraph"><p>This protocol comes with a couple of functions that are not enabled by default because of the lack of knowledge of some part of the communication protocol used by these UPSes by your friendly neighborhood developer.
-Since these functions are supposed to be queries to the UPS for some kind of informations, they <em>should</em> not make your UPS go boom.
+Since these functions are supposed to be queries to the UPS for some kind of information, they <em>should</em> not make your UPS go boom.
 So if you are brave enough to risk your UPS and attached devices' life to help the developers, this will be very appreciated..
 <strong>Do it at your own risk</strong>.</p></div>
 <div class="dlist"><dl>
@@ -1328,8 +1355,18 @@ Try <strong>-DD</strong> for finding out the strings to match.
 </dt>
 <dd>
 <p>
-Select a UPS on a specific USB bus or group of busses.
+Select a UPS on a specific USB bus or group of buses.
 The argument is a regular expression that must match the bus name where the UPS is connected (e.g. <code>bus="002"</code>, <code>bus="00[2-3]"</code>).
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>device =</strong> <em>regex</em>
+</dt>
+<dd>
+<p>
+Select a UPS on a specific USB device or group of devices.
+The argument is a regular expression that must match the device name where the UPS is connected (e.g. <code>device="001"</code>, <code>device="00[1-2]"</code>).
+Note that device numbers are not guaranteed by the OS to be stable across re-boots or device re-plugging.
 </p>
 </dd>
 <dt class="hdlist1">
@@ -1338,7 +1375,7 @@ The argument is a regular expression that must match the bus name where the UPS 
 <dd>
 <p>
 Select a serial-over-USB subdriver to use.
-You have a choice between <strong>cypress</strong>, <strong>fabula</strong>, <strong>fuji</strong>, <strong>ippon</strong>, <strong>krauler</strong>, <strong>phoenix</strong> and <strong>sgs</strong>.
+You have a choice between <strong>cypress</strong>, <strong>fabula</strong>, <strong>fuji</strong>, <strong>hunnox</strong>, <strong>ippon</strong>, <strong>krauler</strong>, <strong>phoenix</strong>, <strong>phoenixtec</strong>, <strong>sgs</strong>, <strong>snr</strong>,  <strong>armac</strong> and <strong>ablerex</strong>.
 When using this option, it is mandatory to also specify the <strong>vendorid</strong> and <strong>productid</strong>.
 </p>
 </dd>
@@ -1352,10 +1389,30 @@ This is mandatory for some devices to work (LDLC, Dynamix and others).
 You must provide <strong>value</strong> (<code>0x409</code> or <code>0x4095</code>), according to your device entry in NUT hardware compatibility list (HCL).
 </p>
 </dd>
+<dt class="hdlist1">
+<strong>noscanlangid</strong>
+</dt>
+<dd>
+<p>
+If this flag is set, don&#8217;t autoscan valid range for langid.
+</p>
+</dd>
 </dl></div>
 <div class="sect3">
 <h4 id="_implementation_notes">IMPLEMENTATION NOTES</h4>
 <div class="dlist"><dl>
+<dt class="hdlist1">
+<strong><em>armac</em> subdriver</strong>
+</dt>
+<dd>
+<p>
+The Armac communication subdriver reproduces a communication protocol used by
+an old release of "PowerManagerII" software, which doesn&#8217;t seem to be Armac
+specific: its banner is "2004 Richcomm Technologies, Inc. Dec 27 2005 ver 1.1."
+Maybe other Richcomm UPSes would work with this&#8201;&#8212;&#8201;maybe better than with
+the older standalone <code>richcomm_usb</code> driver.
+</p>
+</dd>
 <dt class="hdlist1">
 <strong><em>fabula</em> subdriver</strong>
 </dt>
@@ -1363,6 +1420,14 @@ You must provide <strong>value</strong> (<code>0x409</code> or <code>0x4095</cod
 <p>
 This subdriver, meant to be used with the <em>megatec</em> protocol, does <strong>not</strong> support the various <strong>test.battery</strong> commands.
 Plus, the <strong>shutdown.return</strong> command ignores the values set in <em>ups.delay.start</em>/<strong>ondelay</strong> and makes the UPS turn on the load as soon as power is back.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong><em>hunnox</em> subdriver</strong>
+</dt>
+<dd>
+<p>
+This protocol subdriver is closely related to <em>fabula</em> one, with a few tweaks for devices not directly supported by that driver.
 </p>
 </dd>
 <dt class="hdlist1">
@@ -1376,6 +1441,14 @@ Plus, the <strong>shutdown.return</strong> command ignores the values set in <em
 </dd>
 <dt class="hdlist1">
 <strong><em>krauler</em> subdriver</strong>
+</dt>
+<dd>
+<p>
+This subdriver, meant to be used with the <em>megatec</em> protocol, does <strong>not</strong> support the shutdown commands, i.e.: <strong>shutdown.return</strong>, <strong>shutdown.stayoff</strong> and <strong>load.off</strong>.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong><em>snr</em> subdriver</strong>
 </dt>
 <dd>
 <p>
@@ -1480,6 +1553,52 @@ Stop a running battery test.
 <dd>
 <p>
 Perform a battery test for the duration of <em>value</em> seconds (truncated to 60 seconds) [<code>60..5940</code>].
+</p>
+</dd>
+</dl></div>
+</div>
+<div class="sect2">
+<h3 id="_masterguard_protocol_2">MASTERGUARD PROTOCOL</h3>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>beeper.enable</strong>
+</dt>
+<dd>
+<p>
+Enable the UPS beeper.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>beeper.disable</strong>
+</dt>
+<dd>
+<p>
+Disable the UPS beeper.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>test.battery.start</strong> <em>value</em>
+</dt>
+<dd>
+<p>
+Perform a battery test for the duration of <em>value</em> seconds (truncated to 60 seconds) [<code>0..5940</code>].
+This value is truncated to units of 6 seconds (less than 60 seconds) or 60 seconds (more than 60 seconds).
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>bypass.start</strong>
+</dt>
+<dd>
+<p>
+Put the UPS in bypass mode
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>bypass.stop</strong>
+</dt>
+<dd>
+<p>
+Take the UPS in normal mode
 </p>
 </dd>
 </dl></div>
@@ -1853,7 +1972,7 @@ If disabled, the UPS will provide continuous power to programmable outlets until
 &#8594; <strong>input.transfer.high</strong>
 </p>
 <div class="paragraph"><p>Maximum voltage for ECO Mode (V).
-If AC voltage is within acceptable range, ECO mode will be used (If the UPS is capable of and it’s enabled).</p></div>
+If AC voltage is within acceptable range, ECO mode will be used (If the UPS is capable of and it&#8217;s enabled).</p></div>
 </td>
 </tr>
 <tr>
@@ -1866,7 +1985,7 @@ If AC voltage is within acceptable range, ECO mode will be used (If the UPS is c
 &#8594; <strong>input.transfer.low</strong>
 </p>
 <div class="paragraph"><p>Minimum voltage for ECO Mode (V).
-If AC voltage is within acceptable range, ECO mode will be used (If the UPS is capable of and it’s enabled).</p></div>
+If AC voltage is within acceptable range, ECO mode will be used (If the UPS is capable of and it&#8217;s enabled).</p></div>
 </td>
 </tr>
 <tr>
@@ -1879,7 +1998,7 @@ If AC voltage is within acceptable range, ECO mode will be used (If the UPS is c
 &#8594; <strong>input.frequency.high</strong>
 </p>
 <div class="paragraph"><p>Maximum frequency for ECO Mode (Hz).
-If AC frequency is within acceptable range, ECO mode will be used (If the UPS is capable of and it’s enabled).</p></div>
+If AC frequency is within acceptable range, ECO mode will be used (If the UPS is capable of and it&#8217;s enabled).</p></div>
 </td>
 </tr>
 <tr>
@@ -1892,7 +2011,7 @@ If AC frequency is within acceptable range, ECO mode will be used (If the UPS is
 &#8594; <strong>input.frequency.low</strong>
 </p>
 <div class="paragraph"><p>Minimum frequency for ECO Mode (Hz).
-If AC frequency is within acceptable range, ECO mode will be used (If the UPS is capable of and it’s enabled).</p></div>
+If AC frequency is within acceptable range, ECO mode will be used (If the UPS is capable of and it&#8217;s enabled).</p></div>
 </td>
 </tr>
 <tr>
@@ -1969,6 +2088,10 @@ However, some UPS models don&#8217;t allow this.</p></div>
 <div class="paragraph"><p>Some models report a bogus value for the beeper status (will always be <em>enabled</em> or <em>disabled</em>).
 So, the <strong>beeper.toggle</strong> command may appear to have no effect in the status reported by the driver when, in fact, it is working fine.</p></div>
 <div class="paragraph"><p>The temperature and load value is known to be bogus in some models.</p></div>
+<div class="sect2">
+<h3 id="_masterguard_units">MASTERGUARD UNITS</h3>
+<div class="paragraph"><p>The driver is supposed to support both "new" A series (A700/1000/2000/3000 and their -19 cousins) and E series (E60/100/200) but was tested only on A due to lack of E hardware.</p></div>
+</div>
 <div class="sect2">
 <h3 id="_voltronic_qs_units">VOLTRONIC-QS UNITS</h3>
 <div class="paragraph"><p>Both <strong>load.off</strong> and <strong>shutdown.stayoff</strong> instant commands are known to work as expected (i.e. turn the load off indefinitely) only if mains is present, otherwise, as soon as mains returns the load will be powered.</p></div>
@@ -2268,7 +2391,8 @@ Arnaud Quette &lt;<a href="mailto:arnaud.quette@gmail.com">arnaud.quette@gmail.c
 John Stamp &lt;<a href="mailto:kinsayder@hotmail.com">kinsayder@hotmail.com</a>&gt;,
 Peter Selinger &lt;<a href="mailto:selinger@users.sourceforge.net">selinger@users.sourceforge.net</a>&gt;,
 Arjen de Korte &lt;<a href="mailto:adkorte-guest@alioth.debian.org">adkorte-guest@alioth.debian.org</a>&gt;,
-Alexander Gordeev &lt;<a href="mailto:lasaine@lvk.cs.msu.su">lasaine@lvk.cs.msu.su</a>&gt;</p></div>
+Alexander Gordeev &lt;<a href="mailto:lasaine@lvk.cs.msu.su">lasaine@lvk.cs.msu.su</a>&gt;,
+Edgar Fuß &lt;<a href="mailto:ef@math.uni-bonn.de">ef@math.uni-bonn.de</a>&gt;</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -2294,7 +2418,7 @@ Alexander Gordeev &lt;<a href="mailto:lasaine@lvk.cs.msu.su">lasaine@lvk.cs.msu.
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-03-09 14:05:52 CET -- Network UPS Tools 2.7.4
+Last updated 2022-02-04 21:18:47 CET -- Network UPS Tools 2.7.4.1
 </div>
 </div>
 </body>

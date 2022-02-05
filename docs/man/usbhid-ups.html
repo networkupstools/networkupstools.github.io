@@ -1,9 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
     "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
-<meta name="generator" content="AsciiDoc 8.6.9" />
+<meta name="generator" content="AsciiDoc 9.0.0rc2" />
 <title>USBHID-UPS(8)</title>
 <style type="text/css">
 /* Shared CSS for AsciiDoc xhtml11 and html5 backends */
@@ -435,7 +436,7 @@ thead, p.table.header {
 p.table {
   margin-top: 0;
 }
-/* Because the table frame attribute is overriden by CSS in most browsers. */
+/* Because the table frame attribute is overridden by CSS in most browsers. */
 div.tableblock > table[frame="void"] {
   border-style: none;
 }
@@ -749,16 +750,14 @@ asciidoc.install();
 <div class="paragraph"><p>This man page only documents the hardware-specific features of the
 usbhid-ups driver.  For information about the core driver, see
 <a href="nutupsdrv.html">nutupsdrv(8)</a>.</p></div>
-<div class="paragraph"><p>This driver, formerly called <em>newhidups</em>, replaces the legacy <em>hidups</em> driver,
-which only supported Linux systems.</p></div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_supported_hardware">SUPPORTED HARDWARE</h2>
 <div class="sectionbody">
-<div class="paragraph"><p><strong>usbhid-ups</strong> brings USB/HID UPS monitoring to NUT on all platform supporting
-USB through libusb. It should detect any UPS that uses the HID power device
-class, but the amount of data will vary depending on the manufacturer and
+<div class="paragraph"><p><strong>usbhid-ups</strong> brings USB/HID UPS monitoring to NUT on all platforms supporting
+USB through libusb. It should detect any UPS that uses the HID Power Device
+Class, but the amount of data will vary depending on the manufacturer and
 model.</p></div>
 <div class="paragraph"><p>At the present time, usbhid-ups supports:</p></div>
 <div class="ulist"><ul>
@@ -775,6 +774,11 @@ all MGE USB models,
 <li>
 <p>
 all Dell USB models,
+</p>
+</li>
+<li>
+<p>
+all AMETEK Powervar UPM models,
 </p>
 </li>
 <li>
@@ -804,7 +808,7 @@ some TrippLite models.
 </li>
 </ul></div>
 <div class="paragraph"><p>For a more complete list, refer to the NUT hardware compatibility list,
-available in the source distribution as data/drivers.list, or on the
+available in the source distribution as data/driver.list, or on the
 NUT website. You may use the "explore" driver option to gather
 information from HID UPSes which are not yet supported; see below for
 details.</p></div>
@@ -848,6 +852,9 @@ sent (via the <strong>-k</strong> switch).
 </p>
 <div class="paragraph"><p>The default value is 20 (in seconds). Usually this <strong>must be lower</strong> than
 <em>ondelay</em>, but the driver will <strong>not</strong> warn you upon startup if it isn&#8217;t.</p></div>
+<div class="paragraph"><p>Note that many Cyber Power Systems (CPS) models tend to divide this delay by
+60 and round down, so the minimum advisable value is 60 to avoid powering off
+immediately after NUT sends the shutdown command to the UPS.</p></div>
 </dd>
 <dt class="hdlist1">
 <strong>ondelay</strong>=<em>num</em>
@@ -855,27 +862,28 @@ sent (via the <strong>-k</strong> switch).
 <dd>
 <p>
 Set the timer for the UPS to switch on in case the power returns after the
-kill power command had been sent but before the actual switch off. This
+kill power command had been sent, but before the actual switch off. This
 ensures the machines connected to the UPS are, in all cases, rebooted after
 a power failure.
 </p>
 <div class="paragraph"><p>The default value is 30 (in seconds). Usually this <strong>must be greater</strong>
 than offdelay, but the driver will <strong>not</strong> warn you upon startup if it
-isn&#8217;t. Some UPS&#8217;es will restart no matter what, even if the power is
-(still) out at the moment this timer elapses. In that case, you could try
-if setting <em>ondelay = -1</em> in <strong>ups.conf</strong> helps.</p></div>
+isn&#8217;t. Some UPSes will restart no matter what, even if the power is
+(still) out at the moment this timer elapses. In that case, you could see
+whether setting <code>ondelay = -1</code> in <strong>ups.conf</strong> helps.</p></div>
+<div class="paragraph"><p>Note that many CPS models tend to divide this delay by 60 and round down, so
+the minimum advisable value is 120 to allow a short delay between when the UPS
+shuts down, and when the power returns.</p></div>
 </dd>
 <dt class="hdlist1">
 <strong>pollfreq</strong>=<em>num</em>
 </dt>
 <dd>
 <p>
-Set polling frequency, in seconds, to reduce the USB data flow.
-Between two polling requests, the driver will wait for interrupts (aka UPS
-notifications), which are data changes returned by the UPS by itself.
-This mechanism allow to avoid or reduce staleness message, due to the UPS
-being temporarily overloaded with too much polling requests.
-The default value is 30 (in seconds).
+Set polling frequency for full updates, in seconds. Compared to the quick
+updates performed every "pollinterval" (the latter option is described in
+<a href="ups.conf.html">ups.conf(5)</a>), the "pollfreq" interval is for polling the less-critical
+variables.  The default value is 30 (in seconds).
 </p>
 </dd>
 <dt class="hdlist1">
@@ -883,8 +891,9 @@ The default value is 30 (in seconds).
 </dt>
 <dd>
 <p>
-If this flag is set, the driver will ignore interrupts it receives from the
-UPS (not recommended, but needed if these reports are broken on your UPS).
+If this flag is set, the driver will not use Interrupt In transfers during the
+shorter "pollinterval" cycles (not recommended, but needed if these reports
+are broken on your UPS).
 </p>
 </dd>
 <dt class="hdlist1">
@@ -905,7 +914,7 @@ UPS (not recommended, but needed if these reports are broken on your UPS).
 <dd>
 <p>
 Select a specific UPS, in case there is more than one connected via
-USB Each option specifies an extended regular expression (see
+USB. Each option specifies an extended regular expression (see
 regex(7)) that must match the UPS&#8217;s entire vendor/product/serial
 string (minus any surrounding whitespace), or the whole 4-digit
 hexadecimal code for vendorid and productid. Try <strong>-DD</strong> for
@@ -935,9 +944,21 @@ finding out the strings to match.
 </dt>
 <dd>
 <p>
-Select a UPS on a specific USB bus or group of busses. The argument is
+Select a UPS on a specific USB bus or group of buses. The argument is
 a regular expression that must match the bus name where the UPS is
 connected (e.g. bus="002", bus="00[2-3]").
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>device =</strong> <em>regex</em>
+</dt>
+<dd>
+<p>
+Select a UPS on a specific USB device or group of devices. The argument is
+a regular expression that must match the device name where the UPS is
+connected (e.g. device="001", device="00[1-2]").
+Note that device numbers are not guaranteed by the OS to be stable across
+re-boots or device re-plugging.
 </p>
 </dd>
 <dt class="hdlist1">
@@ -994,13 +1015,13 @@ and libhid.usermap, generally in /etc/hotplug/usb/), or the udev file
 (nut-usbups.rules, generally in /etc/udev/rules.d/) to address the
 permission settings problem. For more information, refer to the README
 file in nut/scripts/hotplug or nut/scripts/udev.</p></div>
-<div class="paragraph"><p>On Linux with MGE equipment, you will need at least a 2.4.25 or 2.6.2 kernel as
-well as libusb-0.1.8 or later to disable hiddev support and avoid conflict.</p></div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_implementation">IMPLEMENTATION</h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="_selecting_a_specific_ups">Selecting a specific UPS</h3>
 <div class="paragraph"><p>The driver ignores the "port" value in <strong>ups.conf</strong>. Unlike previous
 versions of this driver, it is now possible to control multiple UPS
 units simultaneously with this driver, provided they can be distinguished
@@ -1018,6 +1039,22 @@ by setting some combination of the "vendor", "product", "serial",
         vendorid = 09ae</code></pre>
 </div></div>
 </div>
+<div class="sect2">
+<h3 id="_usb_polling_and_interrupt_transfers">USB Polling and Interrupt Transfers</h3>
+<div class="paragraph"><p>The <strong>usbhid-ups</strong> driver has two polling intervals. The "pollinterval"
+configuration option controls what can be considered the "inner loop", where
+the driver polls and waits briefly for "interrupt" reports. The "pollfreq"
+option is for less frequent updates of a larger set of values, and as such, we
+recommend setting that interval to several times the value of "pollinterval".</p></div>
+<div class="paragraph"><p>Many UPSes will respond to a USB Interrupt In transfer with HID reports
+corresponding to values which have changed. This saves the driver from having
+to poll each value individually with USB Control transfers. Since the <code>OB</code> and
+<code>LB</code> status flags are important for a clean shutdown, the driver also
+explicitly polls the HID paths corresponding to those status bits during the
+inner "pollinterval" time period. The "pollonly" option can be used to skip
+the Interrupt In transfers if they are known not to work.</p></div>
+</div>
+</div>
 </div>
 <div class="sect1">
 <h2 id="_known_issues_and_bugs">KNOWN ISSUES AND BUGS</h2>
@@ -1033,7 +1070,9 @@ usb 2-1: usbfs: USBDEVFS_CONTROL failed cmd usbhid-ups rqt 128 rq 6 len 256
 ret -110</code></pre>
 </div></div>
 <div class="paragraph"><p>In this case, simply modify the general parameter "pollinterval" to a higher
-value (like 10 for 10 seconds). This should solve the issue.</p></div>
+value (such as 10 seconds). This should solve the issue.</p></div>
+<div class="paragraph"><p>Note that if you increase "pollinterval" beyond 10 or 15 seconds, you might
+also want to increase "pollfreq" by the same factor.</p></div>
 </div>
 <div class="sect2">
 <h3 id="_got_eperm_operation_not_permitted_upon_driver_startup">Got EPERM: Operation not permitted upon driver startup</h3>
@@ -1056,6 +1095,13 @@ If you do the same without mains present, it should do the same, but in
 this case, the outputs shall remain off until mains power is applied
 again.</p></div>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_history">HISTORY</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>This driver, formerly called <em>newhidups</em>, replaces the legacy <em>hidups</em> driver,
+which only supported Linux systems.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -1083,7 +1129,7 @@ Arnaud Quette, Peter Selinger, Arjen de Korte</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-03-09 14:05:25 CET -- Network UPS Tools 2.7.4
+Last updated 2022-02-04 21:18:47 CET -- Network UPS Tools 2.7.4.1
 </div>
 </div>
 </body>

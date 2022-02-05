@@ -1,9 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
     "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
-<meta name="generator" content="AsciiDoc 8.6.9" />
+<meta name="generator" content="AsciiDoc 9.0.0rc2" />
 <title>UPSMON.CONF(5)</title>
 <style type="text/css">
 /* Shared CSS for AsciiDoc xhtml11 and html5 backends */
@@ -435,7 +436,7 @@ thead, p.table.header {
 p.table {
   margin-top: 0;
 }
-/* Because the table frame attribute is overriden by CSS in most browsers. */
+/* Because the table frame attribute is overridden by CSS in most browsers. */
 div.tableblock > table[frame="void"] {
   border-style: none;
 }
@@ -785,7 +786,7 @@ values, and multiply by 3.</p></div>
 </dt>
 <dd>
 <p>
-When running in master mode, upsmon waits this long after sending the
+When running in primary mode, upsmon waits this long after sending the
 NOTIFY_SHUTDOWN to warn the users.  After the timer elapses, it then
 runs your SHUTDOWNCMD.  By default this is set to 5 seconds.
 </p>
@@ -800,8 +801,9 @@ battery and will require a value of 0 here for a safe shutdown.</p></div>
 <td class="icon">
 <div class="title">Note</div>
 </td>
-<td class="content">If FINALDELAY on the slave is greater than HOSTSYNC on the master,
-the master will give up waiting for the slave to disconnect.</td>
+<td class="content">If FINALDELAY on the secondary is greater than HOSTSYNC on the
+primary, the primary will give up waiting for that secondary upsmon
+to disconnect.</td>
 </tr></table>
 </div>
 </dd>
@@ -810,21 +812,21 @@ the master will give up waiting for the slave to disconnect.</td>
 </dt>
 <dd>
 <p>
-upsmon will wait up to this many seconds in master mode for the slaves
+upsmon will wait up to this many seconds in primary mode for the secondaries
 to disconnect during a shutdown situation.  By default, this is 15
 seconds.
 </p>
 <div class="paragraph"><p>When a UPS goes critical (on battery + low battery, or "FSD": forced
-shutdown), the slaves are supposed to disconnect and shut down right
-away.  The HOSTSYNC timer keeps the master upsmon from sitting there
-forever if one of the slaves gets stuck.</p></div>
-<div class="paragraph"><p>This value is also used to keep slave systems from getting stuck if
-the master fails to respond in time.  After a UPS becomes critical,
-the slave will wait up to HOSTSYNC seconds for the master to set the
-FSD flag.  If that timer expires, the slave will assume that the master
-is broken and will shut down anyway.</p></div>
-<div class="paragraph"><p>This keeps the slaves from shutting down during a short-lived status
-change to "OB LB" that the slaves see but the master misses.</p></div>
+shutdown), the secondary systems are supposed to disconnect and shut
+down right away.  The HOSTSYNC timer keeps the primary upsmon from sitting
+there forever if one of the secondaries gets stuck.</p></div>
+<div class="paragraph"><p>This value is also used to keep secondary systems from getting stuck if
+the primary fails to respond in time.  After a UPS becomes critical, the
+secondary will wait up to HOSTSYNC seconds for the primary to set the
+FSD flag.  If that timer expires, the secondary upsmon will assume that the
+primary (or communications path to it) is broken and will shut down anyway.</p></div>
+<div class="paragraph"><p>This keeps the secondaries from shutting down during a short-lived status
+change to "OB LB" and back that the secondaries see but the primary misses.</p></div>
 </dd>
 <dt class="hdlist1">
 <strong>MINSUPPLIES</strong> <em>num</em>
@@ -883,21 +885,31 @@ large or special system to have anything higher here.</p></div>
 doesn&#8217;t actually supply power to this system.  This is useful when you
 want to have upsmon do notifications about status changes on a UPS
 without shutting down when it goes critical.</p></div>
-<div class="paragraph"><p>The <em>username</em> and <em>password</em> on this line must match an entry
-in that system&#8217;s <a href="upsd.users.html">upsd.users(5)</a>.  If your username is "monmaster"
-and your password is "blah", the MONITOR line might look like this:</p></div>
-<div class="paragraph"><p><code>MONITOR <a href="mailto:myups@bigserver">myups@bigserver</a> 1 monmaster blah master</code></p></div>
+<div class="paragraph"><p>The <em>username</em> and <em>password</em> on this line must match an entry in
+the <code>upsd</code> server system&#8217;s <a href="upsd.users.html">upsd.users(5)</a> file.</p></div>
+<div class="paragraph"><p>If your username is "observer" and your password is "abcd", the MONITOR
+line might look like this (likely on a remote secondary system):</p></div>
+<div class="paragraph"><p><code>MONITOR <a href="mailto:myups@bigserver">myups@bigserver</a> 1 observer abcd secondary</code></p></div>
 <div class="paragraph"><p>Meanwhile, the <code>upsd.users</code> on <code>bigserver</code> would look like this:</p></div>
 <div class="literalblock">
 <div class="content">
-<pre><code>[monmaster]
-        password  = blah
-        upsmon master #  (or slave)</code></pre>
+<pre><code>[observer]
+        password = abcd
+        upsmon secondary</code></pre>
 </div></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>[upswired]
+        password = blah
+        upsmon primary</code></pre>
+</div></div>
+<div class="paragraph"><p>And the copy of upsmon on that bigserver would run with the primary
+configuration:</p></div>
+<div class="paragraph"><p><code>MONITOR <a href="mailto:myups@bigserver">myups@bigserver</a> 1 upswired blah primary</code></p></div>
 <div class="paragraph"><p>The <em>type</em> refers to the relationship with <a href="upsd.html">upsd(8)</a>.  It can
-be either "master" or "slave".  See <a href="upsmon.html">upsmon(8)</a> for more information
-on the meaning of these modes.  The mode you pick here also goes in
-the <code>upsd.users</code> file, as seen in the example above.</p></div>
+be either "primary" or "secondary".  See <a href="upsmon.html">upsmon(8)</a> for more
+information on the meaning of these modes.  The mode you pick here
+also goes in the <code>upsd.users</code> file, as seen in the example above.</p></div>
 <div class="dlist"><dl>
 <dt class="hdlist1">
 <strong>NOCOMMWARNTIME</strong> <em>seconds</em>
@@ -988,7 +1000,7 @@ FSD
 </dt>
 <dd>
 <p>
-UPS is being shutdown by the master (FSD = "Forced Shutdown")
+UPS is being shutdown by the primary (FSD = "Forced Shutdown")
 </p>
 </dd>
 <dt class="hdlist1">
@@ -1122,12 +1134,12 @@ also apply here.</p></div>
 </dt>
 <dd>
 <p>
-upsmon creates this file when running in master mode when the UPS needs
+upsmon creates this file when running in primary mode when the UPS needs
 to be powered off.  You should check for this file in your shutdown
 scripts and call <code>upsdrvctl shutdown</code> if it exists.
 </p>
-<div class="paragraph"><p>This is done to forcibly reset the slaves, so they don&#8217;t get stuck at
-the "halted" stage even if the power returns during the shutdown
+<div class="paragraph"><p>This is done to forcibly reset the secondary systems, so they don&#8217;t get
+stuck at the "halted" stage even if the power returns during the shutdown
 process.  This usually does not work well on contact-closure UPSes that
 use the genericups driver.</p></div>
 <div class="paragraph"><p>See the config-notes.txt file in the docs subdirectory for more information.
@@ -1174,10 +1186,10 @@ malicious, then wait for upsmon to be restarted.</p></div>
 <dd>
 <p>
 upsmon runs this command when the system needs to be brought down.  If
-it is a slave, it will do that immediately whenever the current overall
-power value drops below the MINSUPPLIES value above.
+it is a secondary, it will do that immediately whenever the current
+overall power value drops below the MINSUPPLIES value above.
 </p>
-<div class="paragraph"><p>When upsmon is a master, it will allow any slaves to log out before
+<div class="paragraph"><p>When upsmon is a primary, it will allow any secondaries to log out before
 starting the local shutdown procedure.</p></div>
 <div class="paragraph"><p>Note that the command needs to be one element in the config file.  If
 your shutdown command includes spaces, then put it in quotes to keep it
@@ -1200,7 +1212,7 @@ With NSS:
 </dt>
 <dd>
 <p>
-    Certificates are stored in a dedicated database (splitted in 3 files).
+    Certificates are stored in a dedicated database (data split in 3 files).
     Specify the path of the database directory.
 </p>
 </dd>
@@ -1252,7 +1264,7 @@ Enabling this greatly reduces the risk of man-in-the-middle attacks.
 This effectively forces the use of SSL, so don&#8217;t use this unless
 all of your upsd hosts are ready for SSL and have their certificates
 in order.</p></div>
-<div class="paragraph"><p>When compiled with NSS support of SSL, can be overriden for host
+<div class="paragraph"><p>When compiled with NSS support of SSL, can be overridden for host
 specified with a CERTHOST directive.</p></div>
 </dd>
 <dt class="hdlist1">
@@ -1267,7 +1279,7 @@ to communicate with upsd.
 that nobody can sniff your sessions without a large effort. Setting
 this will make upsmon drop connections if the remote upsd doesn&#8217;t
 support SSL, so don&#8217;t use it unless all of them have it running.</p></div>
-<div class="paragraph"><p>When compiled with NSS support of SSL, can be overriden for host
+<div class="paragraph"><p>When compiled with NSS support of SSL, can be overridden for host
 specified with a CERTHOST directive.</p></div>
 </dd>
 </dl></div>
@@ -1287,7 +1299,7 @@ specified with a CERTHOST directive.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-03-09 14:05:25 CET -- Network UPS Tools 2.7.4
+Last updated 2022-02-04 21:16:21 CET -- Network UPS Tools 2.7.4.1
 </div>
 </div>
 </body>

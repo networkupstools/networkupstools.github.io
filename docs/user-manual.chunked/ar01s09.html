@@ -1,257 +1,118 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>9. Notes on securing NUT</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets V1.78.1" /><link rel="home" href="index.html" title="Network UPS Tools User Manual" /><link rel="up" href="index.html" title="Network UPS Tools User Manual" /><link rel="prev" href="ar01s08.html" title="8. NUT outlets management and PDU notes" /><link rel="next" href="apa.html" title="A. Glossary" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ar01s08.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="apa.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="NUT_Security"></a>9. Notes on securing NUT</h2></div></div></div><p>The NUT Team is very interested in providing the highest security level to its
-users.</p><p>Many internal and external mechanisms exist to secure NUT. And several steps are
-needed to ensure that your NUT setup meets your security requirements.</p><p>This chapter will present you these mechanisms, by increasing order of security
-level. This means that the more security you need, the more mechanisms you will
-have to apply.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>you may want to have a look at NUT Quality Assurance, since some
-topics are related to NUT security and reliability.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="verifySourceSig"></a>9.1. How to verify the NUT source code signature</h3></div></div></div><p>In order to verify the NUT source code signature for releases, perform the following steps:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-Retrieve the <a class="ulink" href="http://www.networkupstools.org/download.html" target="_top">NUT source code</a> (nut-X.Y.Z.tar.gz) and the matching signature (nut-X.Y.Z.tar.gz.sig)
-</li><li class="listitem"><p class="simpara">
-Retrieve the <a class="ulink" href="http://www.networkupstools.org/source/nut-key.gpg" target="_top">NUT maintainer’s signature</a>:
-</p><pre class="literallayout">$ gpg --fetch-keys http://www.networkupstools.org/source/nut-key.gpg</pre></li></ul></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>As of NUT 2.7.3, a new release key is used. In order to verify previous release, please use
-<a class="ulink" href="http://www.networkupstools.org/source/nut-old-key.gpg" target="_top">NUT old maintainer’s signature</a></p></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
-Launch the GPG checking using the following command:
-</p><pre class="literallayout">$ gpg --verify nut-X.Y.Z.tar.gz.sig</pre></li><li class="listitem"><p class="simpara">
-You should see a message mentioning a "Good signature", like:
-</p><pre class="literallayout">gpg: Signature made Wed Apr 15 15:55:30 2015 CEST using RSA key ID 55CA5976
-gpg: Good signature from "Arnaud Quette ..."
-...</pre></li></ul></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>the previously used maintainer’s signature would output:</p></div><p>+
-        gpg: Signature made Thu Jul  5 16:15:05 2007 CEST using DSA key ID 204DDF1B
-        gpg: Good signature from "Arnaud Quette …"
-        …</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_system_level_privileges_and_ownership"></a>9.2. System level privileges and ownership</h3></div></div></div><p>All configuration files should be protected so that the world can’t read them.
-Use the following commands to accomplish this:</p><pre class="literallayout">chown root:nut /etc/nut/*
-chmod 640 /etc/nut/*</pre><p>Finally, the <a class="link" href="ar01s05.html#StatePath" title="State path creation">state path</a> directory, which holds the
-communication between the driver(s) and upsd, should also be secured.</p><pre class="literallayout">chown root:nut /var/state/ups
-chmod 0770 /var/state/ups</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_nut_level_user_privileges"></a>9.3. NUT level user privileges</h3></div></div></div><p>Administrative commands such as setting variables and the instant commands
-are powerful, and access to them needs to be restricted.</p><p>NUT provides an internal mechanism to do so, through
-<a class="ulink" href="../man/upsd.users.html" target="_top">upsd.users(5)</a>.</p><p>This file defines who may access instant commands and settings, and what
-is available.</p><p>During the initial
-<a class="link" href="ar01s06.html#NUT_user_creation" title="NUT user creation">NUT user creation</a>, we have created a
-monitoring user for upsmon.</p><p>You can also create an <span class="emphasis"><em>administrator</em></span> user with full power using:</p><pre class="literallayout">[administrator]
-        password = mypass
-        actions = set
-        instcmds = all</pre><p>For more information on how to restrict actions and instant commands, refer
-to <a class="ulink" href="../man/upsd.users.html" target="_top">upsd.users(5)</a> manual page.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>NUT administrative user definitions should be used in conjunction with
-<a class="link" href="ar01s09.html#TCP_Wrappers" title="TCP Wrappers">TCP Wrappers</a>.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_network_access_control"></a>9.4. Network access control</h3></div></div></div><p>If you are not using NUT on a standalone setup, you will need to enforce
-network access to upsd.</p><p>There are various ways to do so.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_nut_listen_directive"></a>NUT LISTEN directive</h4></div></div></div><p><a class="ulink" href="../man/upsd.conf.html" target="_top">upsd.conf(5)</a>.</p><pre class="literallayout">LISTEN interface port</pre><p>Bind a listening port to the interface specified by its Internet address.  This
-may be useful on hosts with multiple interfaces.  You should not rely
-exclusively on this for security, as it can be subverted on many systems.</p><p>Listen on TCP port <code class="literal">port</code> instead of the default value which was compiled into
-the code.  This overrides any value  you  may  have  set  with <code class="literal">configure
---with-port</code>.  If you don’t change it with configure or this value, <code class="literal">upsd</code> will
-listen on port 3493 for this interface.</p><p>Multiple LISTEN addresses may be specified.  The default is to bind to
-127.0.0.1 if no LISTEN addresses are specified (and ::1 if IPv6 support is
-compiled in).</p><pre class="literallayout">LISTEN 127.0.0.1
-LISTEN 192.168.50.1
-LISTEN ::1
-LISTEN 2001:0db8:1234:08d3:1319:8a2e:0370:7344</pre><p>This parameter will only be read at startup.  You’ll need to restart (rather
-than reload) <code class="literal">upsd</code> to apply any changes made here.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_firewall"></a>Firewall</h4></div></div></div><p>NUT has its own official IANA port: 3493/tcp.</p><p>The <code class="literal">upsmon</code> process on slave systems, as well as any other NUT client (such
-as <code class="literal">upsc</code>, <code class="literal">upscmd</code>, <code class="literal">upsrw</code>, NUT-Monitor, …) connects to the <code class="literal">upsd</code> process
-on the master system via this TCP port. The <code class="literal">upsd</code> process does not connect out.</p><p>You should use this to restrict network access.</p><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="UFW"></a>Uncomplicated Firewall (UFW) support</h5></div></div></div><p>NUT can tightly integrate with
-<a class="ulink" href="http://en.wikipedia.org/wiki/Uncomplicated_Firewall" target="_top">Uncomplicated Firewall</a>
-using the provided profile (nut.ufw.profile).</p><p>You must first install the profile on your system:</p><pre class="literallayout">$ cp nut.ufw.profile /etc/ufw/applications.d/</pre><p>To enable outside access to your local upsd, use:</p><pre class="literallayout">$ ufw allow NUT</pre><p>To restrict access to the network <span class="emphasis"><em>192.168.X.Y</em></span>, use:</p><pre class="literallayout">$ ufw allow from 192.168.0.0/16 to any app NUT</pre><p>You can also use graphical frontends, such as gui-ufw (gufw), ufw-kde
-or ufw-frontends.</p><p>For more information, refer to:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-<a class="ulink" href="http://gufw.tuxfamily.org/" target="_top">UFW homepage</a>,
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>9. NUT daisychain support notes</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><link rel="home" href="index.html" title="Network UPS Tools User Manual" /><link rel="up" href="index.html" title="Network UPS Tools User Manual" /><link rel="prev" href="ar01s08.html" title="8. NUT outlets management and PDU notes" /><link rel="next" href="ar01s10.html" title="10. Notes on securing NUT" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ar01s08.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ar01s10.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="daisychain"></a>9. NUT daisychain support notes</h2></div></div></div><p>NUT supports daisychained devices for any kind of device that proposes
+it. This chapter introduces:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+for developers: how to implement such mechanism,
 </li><li class="listitem">
-<a class="ulink" href="https://launchpad.net/ufw" target="_top">UFW project page</a>,
+for users: how to manage and use daisychained devices in NUT in general,
+  and how to take advantage of the provided features.
+</li></ul></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_introduction_3"></a>9.1. Introduction</h3></div></div></div><p>It’s not unusual to see some daisy-chained PDUs or UPSs, connected together
+in master-slave mode, to only consume 1 IP address for their communication
+interface (generally, network card exposing SNMP data) and expose only one
+point of communication to manage several devices, through the daisy-chain
+master.</p><p>This breaks the historical consideration of NUT that one driver provides
+data for one unique device. However, there is an actual need, and a smart
+approach was considered to fulfill this, while not breaking the standard
+scope (for base compatibility).</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_implementation_notes"></a>9.2. Implementation notes</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_general_specification"></a>General specification</h4></div></div></div><p>The daisychain support uses the device collection to extend the historical
+NUT scope (1 driver — 1 device), and provides data from the additional
+devices accessible through a single management interface.</p><p>A new variable was introduced to provide the number of devices exposed: the
+<code class="literal">device.count</code>, which:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+defaults to 1
 </li><li class="listitem">
-<a class="ulink" href="https://wiki.ubuntu.com/UncomplicatedFirewall" target="_top">UFW wiki</a>,
+if higher than 1, enables daisychain support and access to data of each
+individual device through <code class="literal">device.X.{...}</code>
+</li></ul></div><p>To ensure backward compatibility in NUT, the data of the various devices
+are exposed the following way:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<code class="literal">device.0</code> is a special case, for the whole set of devices (the whole
+daisychain). It is equivalent to <code class="literal">device</code> (without <code class="literal">.X</code> index) and root
+collections. The idea is to be able to get visibility and control over the
+whole daisychain from a single point.
 </li><li class="listitem">
-UFW manual page, section APPLICATION INTEGRATION
-</li></ul></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="TCP_Wrappers"></a>TCP Wrappers</h4></div></div></div><p>If the server is build with tcp-wrappers support enabled, it will check if the
-NUT username is allowed to connect from the client address through the
-<code class="literal">/etc/hosts.allow</code> and <code class="literal">/etc/hosts.deny</code> files.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>this will only be done for commands that require the user to be logged
-into the server.</p></div><p><code class="literal">hosts.allow</code>:</p><pre class="literallayout">ups : admin@127.0.0.1/32
-ups : monslave@127.0.0.1/32 monslave@192.168.1.0/24</pre><p><code class="literal">hosts.deny</code>:</p><pre class="literallayout">upsd : ALL</pre><p>Further details are described in hosts_access(5).</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_configuring_ssl"></a>9.5. Configuring SSL</h3></div></div></div><p>SSL is available as a build option (<code class="literal">--with-ssl</code>).</p><p>It encrypts sessions between upsd and clients, and can also be used to
-authenticate servers.</p><p>This means that stealing port 3493 from upsd will no longer net you interesting
-passwords.</p><p>Several things must happen before this will work, however. This chapter will
-present these steps.</p><p>SSL is available via two back-end libraries : NSS and OpenSSL (historically).
-You can choose to use one of them by specifying it with a build option
-(<code class="literal">--with-nss</code> or <code class="literal">--with-openssl</code>). If neither is specified, the configure
-script will try to detect one of them, with a precedence for OpenSSL.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_openssl_backend_usage"></a>OpenSSL backend usage</h4></div></div></div><p>This section describes how to enable NUT SSL support using
-<a class="ulink" href="http://www.openssl.org" target="_top">OpenSSL</a>.</p><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_install_openssl"></a>Install OpenSSL</h5></div></div></div><p>Install <a class="ulink" href="http://www.openssl.org" target="_top">OpenSSL</a> as usual, either from source
-or binary packages. If using binary packages, be sure to include the developer
-libraries.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_recompile_and_install_nut"></a>Recompile and install NUT</h5></div></div></div><p>Recompile NUT from source, starting with <code class="literal">configure --with-openssl</code>.</p><p>Then install everything as usual.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_create_a_certificate_and_key_for_upsd"></a>Create a certificate and key for upsd</h5></div></div></div><p>openssl (the program) should be in your PATH, unless you installed it from
-source yourself, in which case it may be in /usr/local/ssl/bin.</p><p>Use the following command to create the certificate:</p><pre class="literallayout">openssl req -new -x509 -nodes -out upsd.crt -keyout upsd.key</pre><p>You can also put a <code class="literal">-days nnn</code> in there to set the expiration.  If
-you skip this, it may default to 30 days.  This is probably not what
-you want.</p><p>It will ask several questions.  What you put in there doesn’t matter a whole
-lot, since nobody is going to see it for now.  Future versions of the
-clients may present data from it, so you might use this opportunity to
-identify each server somehow.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_figure_out_the_hash_for_the_key"></a>Figure out the hash for the key</h5></div></div></div><p>Use the following command to determine the hash of the certificate:</p><pre class="literallayout">openssl x509 -hash -noout -in upsd.crt</pre><p>You’ll get back a single line with 8 hex characters.  This is the
-hash of the certificate, which is used for naming the client-side
-certificate.  For the purposes of this example the hash is <span class="strong"><strong>0123abcd</strong></span>.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_install_the_client_side_certificate"></a>Install the client-side certificate</h5></div></div></div><p>Use the following commands to install the client-side certificate:</p><pre class="literallayout">mkdir &lt;certpath&gt;
-chmod 0755 &lt;certpath&gt;
-cp upsd.crt &lt;certpath&gt;/&lt;hash&gt;.0</pre><p>Example:</p><pre class="literallayout">mkdir /usr/local/ups/etc/certs
-chmod 0755 /usr/local/ups/etc/certs
-cp upsd.crt /usr/local/ups/etc/certs/0123abcd.0</pre><p>If you already have a file with that name in there, increment the
-0 until you get a unique filename that works.</p><p>If you have multiple client systems (like upsmon slaves), be sure
-to install this file on them as well.</p><p>We recommend making a directory under your existing confpath to
-keep everything in the same place.  Remember the path you created,
-since you will need to put it in upsmon.conf later.</p><p>It must not be writable by unprivileged users, since someone could
-insert a new client certificate and fool upsmon into trusting a
-fake upsd.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_create_the_combined_file_for_upsd"></a>Create the combined file for upsd</h5></div></div></div><p>To do so, use the below commands:</p><pre class="literallayout">cat upsd.crt upsd.key &gt; upsd.pem
-chown root:nut upsd.pem
-chmod 0640 upsd.pem</pre><p>This file must be kept secure, since anyone possessing it could
-pretend to be upsd and harvest authentication data if they get a
-hold of port 3493.</p><p>Having it be owned by <span class="emphasis"><em>root</em></span> and readable by group <span class="emphasis"><em>nut</em></span> allows upsd
-to read the file without being able to change the contents.  This
-is done to minimize the impact if someone should break into upsd. NUT reads the
-key and certificate files after dropping privileges and forking.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_note_on_certification_authorities_cas_and_signed_keys"></a>Note on certification authorities (CAs) and signed keys</h5></div></div></div><p>There are probably other ways to handle this, involving keys which have
-been signed by a CA you recognize.  Contact your local SSL guru.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_install_the_server_side_certificate"></a>Install the server-side certificate</h5></div></div></div><p>Install the certificate with the following command:</p><pre class="literallayout">mv upsd.pem &lt;upsd certfile path&gt;</pre><p>Example:</p><pre class="literallayout">mv upsd.pem /usr/local/ups/etc/upsd.pem</pre><p>After that, edit your upsd.conf and tell it where to find it:</p><pre class="literallayout">CERTFILE /usr/local/ups/etc/upsd.pem</pre></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_clean_up_the_temporary_files"></a>Clean up the temporary files</h5></div></div></div><pre class="literallayout">rm -f upsd.crt upsd.key</pre></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_restart_upsd"></a>Restart upsd</h5></div></div></div><p>It should come back up without any complaints.  If it says something
-about keys or certificates, then you probably missed a step.</p><p>If you run upsd as a separate user id (like nutsrv), make sure that
-user can read the upsd.pem file.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_point_upsmon_at_the_certificates"></a>Point upsmon at the certificates</h5></div></div></div><p>Edit your upsmon.conf, and tell it where the CERTPATH is:</p><pre class="literallayout">CERTPATH &lt;path&gt;</pre><p>Example:</p><pre class="literallayout">CERTPATH /usr/local/ups/etc/certs</pre></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_recommended_make_upsmon_verify_all_connections_with_certificates"></a>Recommended: make upsmon verify all connections with certificates</h5></div></div></div><p>Put this in upsmon.conf:</p><pre class="literallayout">CERTVERIFY 1</pre><p>Without this, there is no guarantee that the upsd is the right host.
-Enabling this greatly reduces the risk of man in the middle attacks.</p><p>This effectively forces the use of SSL, so don’t use this unless
-all of your upsd hosts are ready for SSL and have their certificates
-in order.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_recommended_force_upsmon_to_use_ssl"></a>Recommended: force upsmon to use SSL</h5></div></div></div><p>Again in upsmon.conf:</p><pre class="literallayout">FORCESSL 1</pre><p>If you don’t use <code class="literal">CERTVERIFY 1</code>, then this will at least make sure
-that nobody can sniff your sessions without a large effort.  Setting
-this will make upsmon drop connections if the remote upsd doesn’t
-support SSL, so don’t use it unless all of them have it running.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_nss_backend_usage"></a>NSS backend usage</h4></div></div></div><p>This section describes how to enable NUT SSL support using
-<a class="ulink" href="http://www.mozilla.org/projects/security/pki/nss/" target="_top">Mozilla NSS</a>.</p><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_install_nss"></a>Install NSS</h5></div></div></div><p>Install <a class="ulink" href="http://www.mozilla.org/projects/security/pki/nss/" target="_top">Mozilla NSS</a> as
-usual, either from source or binary packages. If using binary packages, be sure
-to include the developer libraries, and nss-tools (for <code class="literal">certutil</code>).</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_recompile_and_install_nut_2"></a>Recompile and install NUT</h5></div></div></div><p>Recompile NUT from source, starting with <code class="literal">configure --with-nss</code>.</p><p>Then install everything as usual.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_create_certificate_and_key_for_the_host"></a>Create certificate and key for the host</h5></div></div></div><p>NSS (package generally called libnss3-tools) will install a tool called
-<code class="literal">certutil</code>.
-It will be used to generate certificates and manage certificate database.</p><p>Certificates should be signed by a certification authorities (CAs).
-Following commands are typical samples, contact your SSL guru or security officer
-to follow your company procedures.</p><div class="itemizedlist"><p class="title"><strong>Generate a server certificate for upsd:</strong></p><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-Create a directory where store the certificate database: <code class="literal">mkdir cert_db</code>
+daisy-chained devices are available from <code class="literal">device.1</code> (master) to <code class="literal">device.N</code>
+(slaves).
+</li></ul></div><p>That way, client applications that are unaware of the daisychain support,
+will only see the whole daisychain, as it would normally seem, and not
+nothing at all.</p><p>Moreover, this solution is generic, and not specific to the ePDU use case
+currently considered. It thus support both the current NUT scope, along with
+other use cases (parallel / serial UPS setups), and potential evolution and
+technology change (hybrid chain with UPS and PDU for example).</p><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_devices_status_handling"></a>Devices status handling</h5></div></div></div><p>To be clarified…</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_devices_alarms_handling"></a>Devices alarms handling</h5></div></div></div><p>Devices (master and slaves) alarms are published in <code class="literal">device.X.ups.alarm</code>,
+which may evolve into <code class="literal">device.X.alarm</code>. If any of the devices has an alarm,
+the main <code class="literal">ups.status</code> will publish an <code class="literal">ALARM</code> flag. This flag is be cleared
+once all devices have no alarms anymore.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>ups.alarm behavior is not yet defined (all devices alarms vs. list of
+device(s) that have alarms vs. nothing?)</p></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_example"></a>Example</h5></div></div></div><p>Here is an example excerpt of three PDUs, connected in daisychain mode, with
+one master and two slaves:</p><pre class="literallayout">device.count: 3
+device.mfr: EATON
+device.model: EATON daisychain PDU
+device.1.mfr: EATON
+device.1.model: EPDU MI 38U-A IN: L6-30P 24A 1P OUT: 36XC13:6XC19
+device.2.mfr: EATON
+device.2.model: EPDU MI 38U-A IN: L6-30P 24A 1P OUT: 36XC13:6XC19
+device.3.mfr: EATON
+device.3.model: EPDU MI 38U-A IN: L6-30P 24A 1P OUT: 36XC13:6XC19
+...
+device.3.ups.alarm: high current critical!
+device.3.ups.status: ALARM
+...
+input.voltage: ??? (proposal: range or list or average?)
+device.1.input.voltage: 237.75
+device.2.input.voltage: 237.75
+device.3.input.voltage: 237.75
+...
+outlet.1.status: ?? (proposal: "on, off, off)
+device.1.outlet.1.status: on
+device.2.outlet.1.status: off
+device.3.outlet.1.status: off
+...
+ups.status: ALARM</pre></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_information_for_developers"></a>Information for developers</h4></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>these details are dedicated to the <code class="literal">snmp-ups</code> driver!</p></div><p>In order to enable daisychain support for a range of devices, developers
+have to do two things:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Add a <code class="literal">device.count</code> entry in a mapping file (see <code class="literal">*-mib.c</code>)
 </li><li class="listitem">
-Create the certificate database : <code class="literal">certutil -N -d cert_db</code>
+Modify mapping entries to include a format string for the daisychain index
+</li></ul></div><p>Optionally, if there is support for outlets and / or outlet-groups, there
+is already a template formatting string. So you have to tag such templates
+with multiple definitions, to point if the daisychain index is the first
+or second formatting string.</p><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_base_support"></a>Base support</h5></div></div></div><p>In order to enable daisychain support on a mapping structure, the following
+steps have to be done:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
+Add a "device.count" entry in the mapping file: snmp-ups will determine
+if the daisychain support has to be enabled (if more than 1 device).
+To achieve this, use one of the following type of declarations:
+</p><p class="simpara">a) point at an OID which provides the number of devices:</p><pre class="literallayout">{ "device.count", 0, 1, ".1.3.6.1.4.1.13742.6.3.1.0", "1",
+        SU_FLAG_STATIC, NULL },</pre><p class="simpara">b) point at a template OID to guesstimate the number of devices, by walking
+through this template, until it fails:</p><pre class="literallayout">{ "device.count", 0, 1, ".1.3.6.1.4.1.534.6.6.7.1.2.1.2.%i", "1",
+        SU_FLAG_STATIC, NULL, NULL },</pre></li><li class="listitem"><p class="simpara">
+Modify all entries so that OIDs include the formatting string for the
+daisychain index. For example, if you have the following entry:
+</p><pre class="literallayout">{ "device.model", ST_FLAG_STRING, SU_INFOSIZE,
+        ".1.3.6.1.4.1.534.6.6.7.1.2.1.2.0", ... },</pre><p class="simpara">And if the last "0" of the the 4th field represents the index of the device
+in the daisychain, then you would have to adapt it the following way:</p><pre class="literallayout">{ "device.model", ST_FLAG_STRING, SU_INFOSIZE,
+        ".1.3.6.1.4.1.534.6.6.7.1.2.1.2.%i", ... },</pre></li></ul></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_templates_with_multiple_definitions"></a>Templates with multiple definitions</h5></div></div></div><p>If there exist already templates in the mapping structure, such as for
+single outlets and outlet-groups, you also need to specify the position
+of the daisychain device index in the OID strings for all entries in the
+mapping table, to indicate where the daisychain insertion point is exactly.</p><p>For example, using the following entry:</p><pre class="literallayout">{ "outlet.%i.current", 0, 0.001, ".1.3.6.1.4.1.534.6.6.7.6.4.1.3.0.%i",
+        NULL, SU_OUTLET, NULL, NULL },</pre><p>You would have to translate it to:</p><pre class="literallayout">{ "outlet.%i.current", 0, 0.001, ".1.3.6.1.4.1.534.6.6.7.6.4.1.3.%i.%i",
+        NULL, SU_OUTLET | SU_TYPE_DAISY_1, NULL, NULL },</pre><p>SU_TYPE_DAISY_1 indicates that the daisychain index is the 1st specifier
+("%i") in the string. If it is the second one, use SU_TYPE_DAISY_2.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_devices_alarms_handling_2"></a>Devices alarms handling</h5></div></div></div><p>Two functions are available to handle alarms on daisychain devices in your
+driver:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+device_alarm_init(): clear the current alarm buffer
 </li><li class="listitem">
-Import the CA certificate:
-        <code class="literal">certutil -A -d cert_db -n "My Root CA" -t "TC,," -a -i rootca.crt</code>
-</li><li class="listitem">
-Create a server certificate request (here called <span class="emphasis"><em>My nut server</em></span>):
-        <code class="literal">certutil -R -d cert_db -s "CN=My nut server,O=MyCompany,ST=MyState,C=US" -a -o server.req</code>
-</li><li class="listitem">
-Make your CA sign the certificate (produces server.crt)
-</li><li class="listitem">
-Import the signed certificate into server database:
-        <code class="literal">certutil -A -d cert_db -n "My nut server" -a -i server.crt -t ",,"</code>
-</li><li class="listitem">
-Display the content of certificate server:
-        <code class="literal">certutil -L -d cert_db</code>
-</li></ul></div><p>Clients and servers in the same host could share the same certificate to authenticate them
-or use different ones in same or different databases.
-The same operation can be done in same or different databases to generate
-other certificates.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_create_a_self_signed_ca_certificate"></a>Create a self-signed CA certificate</h5></div></div></div><p>NSS provides a way to create self-signed certificate which can acting as
-CA certificate, and to sign other certificates with this CA certificate.
-This method can be used to provide a CA certification chain without using
-an "official" certificate authority.</p><div class="itemizedlist"><p class="title"><strong>Generate a self-signed CA certificate:</strong></p><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-Create a directory where store the CA certificate database: <code class="literal">mkdir CA_db</code>
-</li><li class="listitem">
-Create the certificate database:
-        <code class="literal">certutil -N -d CA_db</code>
-</li><li class="listitem">
-Generate a certificate for CA:
-        <code class="literal">certutil -S -d CA_db -n "My Root CA" -s "CN=My CA,O=MyCompany,ST=MyState,C=US" -t "CT,," -x -2</code>
-(Do not forget to answer <span class="emphasis"><em>Yes</em></span> to the question <span class="emphasis"><em>Is this a CA certificate [y/N]?</em></span>)
-</li><li class="listitem">
-Extract the CA certificate to be able to import it in upsd (or upsmon) certificate database:
-        <code class="literal">certutil -L -d CA_db -n "My Root CA" -a -o rootca.crt</code>
-</li><li class="listitem">
-Sign a certificate request with the CA certificate (simulate a real CA signature):
-        <code class="literal">certutil -C -d CA_db -c "My Root CA" -a -i server.req -o server.crt -2 -6</code>
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_install_the_server_side_certificate_2"></a>Install the server-side certificate</h5></div></div></div><p>Just copy the database directory (just the directory and included 3
-database .db files) to the right place, such as <code class="literal">/usr/local/ups/etc/</code>:</p><pre class="literallayout">mv cert_db /usr/local/ups/etc/</pre></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_upsd_required_certificate_database_and_self_certificate"></a>upsd (required): certificate database and self certificate</h5></div></div></div><p>Edit the upsd.conf to tell where find the certificate database:</p><pre class="literallayout">CERTPATH /usr/local/ups/etc/cert_db</pre><p>Also tell which is the certificate to send to clients to authenticate itself
-and the password to decrypt private key associated to certificate:</p><pre class="literallayout">CERTIDENT 'certificate name' 'database password'</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>Generally, the certificate name is the server domain name, but is not
-a hard rule. The certificate can be named as useful.</p></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_upsd_optional_client_authentication"></a>upsd (optional): client authentication</h5></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>This functionality is disabled by default. To activate it, recompile
-NUT with <code class="literal">WITH_CLIENT_CERTIFICATE_VALIDATION</code> defined:</p></div><pre class="literallayout">make CFLAGS="-DWITH_CLIENT_CERTIFICATE_VALIDATION"</pre><p>UPSD can accept three levels of client authentication. Just specify it with
-the directive <code class="literal">CERTREQUEST</code> with the corresponding value in the upsd.conf file:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-NO: no client authentication.
-</li><li class="listitem">
-REQUEST: a certificate is request to the client but it is not strictly validated.
-If the client does not send any certificate, the connection is closed.
-</li><li class="listitem">
-REQUIRE: a certificate is requested to the client and if it is not valid
-(no validation chain) the connection is closed.
-</li></ul></div><p>Like CA certificates, you can add many <span class="emphasis"><em>trusted</em></span> client and CA certificates
-in server’s certificate databases.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_upsmon_required_upsd_authentication"></a>upsmon (required): upsd authentication</h5></div></div></div><p>In order for upsmon to securely connect to upsd, it must authenticate it.
-You must associate an upsd host name to security rules in upsmon.conf
-with the directive <span class="emphasis"><em>CERTHOST</em></span>.</p><p><span class="emphasis"><em>CERTHOST</em></span> associates a hostname to a certificate name. It also determines
-whether a SSL connection is mandatory, and if the server certificate must be
-validated.</p><pre class="literallayout">CERTHOST 'hostname' 'certificate name' 'certverify' 'forcessl'</pre><p>If the flag <code class="literal">forcessl</code> is set to <code class="literal">1</code>, and upsd answers that it can not
-connect with SSL, the connection closes.
-If the flag <code class="literal">certverify</code> is set to <code class="literal">1</code> and the connection is done in SSL,
-upsd’s certificate is verified and its name must be the specified
-<span class="emphasis"><em>certificate name</em></span>.</p><p>To prevent security leaks, you should set all <code class="literal">certverify</code> and <code class="literal">forcessl</code>
-flags to <code class="literal">1</code> (force SSL connection and validate all certificates for all
-peers).</p><p>You can specify <code class="literal">CERTVERIFY</code> and <code class="literal">FORCESSL</code> directive (to <code class="literal">1</code> or <code class="literal">0</code>) to
-define a default security rule to apply to all host not specified with a
-dedicated <code class="literal">CERTHOST</code> directive.</p><p>If a host is not specified in a <code class="literal">CERTHOST</code> directive, its expected certificate
-name is its hostname.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_upsmon_optional_certificate_database_and_self_certificate"></a>upsmon (optional): certificate database and self certificate</h5></div></div></div><p>Like upsd, upsmon may need to authenticate itself (upsd’s <code class="literal">CERTREQUEST</code>
-directive set to <code class="literal">REQUEST</code> or <code class="literal">REQUIRE</code>).
-It must access to a certificate (and its private key) in a certificate database
-configuring <code class="literal">CERTPATH</code> and <code class="literal">CERTIDENT</code> in upsmon.conf in the same way than upsd.</p><pre class="literallayout">CERTPATH /usr/local/ups/etc/cert_db
-CERTIDENT 'certificate name' 'database password'</pre></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_restart_upsd_2"></a>Restart upsd</h4></div></div></div><p>It should come back up without any complaints.  If it says something
-about keys or certificates, then you probably missed a step.</p><p>If you run upsd as a separate user ID (like nutsrv), make sure that
-user can read files in the certificate directory. NUT reads the keys and
-certificates after forking and dropping privileges.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_restart_upsmon"></a>Restart upsmon</h4></div></div></div><p>You should see something like this in the syslog from upsd:</p><pre class="literallayout">foo upsd[1234]: Client mon@localhost logged in to UPS [myups] (SSL)</pre><p>If upsd or upsmon give any error messages, or the <code class="literal">(SSL)</code> is missing,
-then something isn’t right.</p><p>If in doubt about upsmon, start it with -D so it will stay in
-the foreground and print debug messages.  It should print something
-like this every couple of seconds:</p><pre class="literallayout">polling ups: myups@localhost [SSL]</pre><p>Obviously, if the <code class="literal">[SSL]</code> isn’t there, something’s broken.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_recommended_sniff_the_connection_to_see_it_for_yourself"></a>Recommended: sniff the connection to see it for yourself</h4></div></div></div><p>Using tcpdump, Wireshark (Ethereal), or another network sniffer tool,
-tell it to monitor port 3493/tcp and see what happens.  You should only
-see <code class="literal">STARTTLS</code> go out, <code class="literal">OK STARTTLS</code> come back, and the rest will be
-certificate data and then seemingly random characters.</p><p>If you see any plaintext besides that (USERNAME, PASSWORD, etc.)
-then something is not working.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_potential_problems"></a>Potential problems</h4></div></div></div><p>If you specify a certificate expiration date, you will eventually
-see things like this in your syslog:</p><pre class="literallayout">Oct 29 07:27:25 rktoy upsmon[3789]: Poll UPS [for750@rktoy] failed -
-SSL error: error:14090086:SSL routines:SSL3_GET_SERVER_CERTIFICATE: certificate verify failed</pre><p>You can verify that it is expired by using openssl to display the date:</p><pre class="literallayout">openssl x509 -enddate -noout -in &lt;certfile&gt;</pre><p>It’ll display a date like this:</p><pre class="literallayout">notAfter=Oct 28 20:05:32 2002 GMT</pre><p>If that’s after the current date, you need to generate another cert/key
-pair using the procedure above.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_conclusion"></a>Conclusion</h4></div></div></div><p>SSL support should be considered stable but purposely under-documented
-since various bits of the implementation or configuration may change in
-the future. In other words, if you use this and it stops working after
-an upgrade, come back to this file to find out what changed.</p><p>This is why the other documentation doesn’t mention any of these
-directives yet.  SSL support is a treat for those of you that RTFM.</p><p>There are also potential licensing issues for people who ship binary
-packages since NUT is GPL and OpenSSL is not compatible with it.  You
-can still build and use it yourself, but you can’t distribute the
-results of it.  Or maybe you can.  It depends on what you consider
-"essential system software", and some other legal junk that we’re not
-going to touch.</p><p>Other packages have solved this by explicitly stating that an exception
-has been granted.  That is (purposely) impossible here, since NUT is the
-combined effort of many people, and all of them would have to agree to a
-license change.  This is actually a feature, since it means nobody can
-unilaterally run off with the source - not even the NUT team.</p><p>Note that the replacement of OpenSSL by Mozilla Network Security Services
-(NSS) should avoid the above licensing issues.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_chrooting_and_other_forms_of_paranoia"></a>9.6. chrooting and other forms of paranoia</h3></div></div></div><p>It has been possible to run the drivers and upsd in a chrooted jail for
-some time, but it involved a number of evil hacks.  From the 1.3 series,
-a much saner chroot behavior exists, using BIND 9 as an inspiration.</p><p>The old way involved creating an entire tree, complete with libraries, a
-shell (!), and many auxiliary files.  This was hard to maintain and
-could have become an interesting playground for an intruder.  The new
-way is minimal, and leaves little in the way of usable materials within
-the jail.</p><p>This document assumes that you already have created at least one user
-account for the software to use.  If you’re still letting it fall back
-on "nobody", stop right here and go figure that out first.  It also
-assumes that you have everything else configured and running happily all
-by itself.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_generalities_2"></a>Generalities</h4></div></div></div><p>Essentially, you need to create your configuration directory and state
-path in their own little world, plus a special device or two.</p><p>For the purposes of this example, the chroot jail is /chroot/nut.  The
-programs have been built with the default prefix, so they are using
-/usr/local/ups.  First, create the confpath and bring over a few files.</p><pre class="literallayout">mkdir -p /chroot/nut/usr/local/ups/etc
-cd /chroot/nut/usr/local/ups/etc
-cp -a /usr/local/ups/etc/upsd.users .
-cp -a /usr/local/ups/etc/upsd.conf .
-cp -a /usr/local/ups/etc/ups.conf .</pre><p>We’re using <span class="emphasis"><em>cp -a</em></span> to maintain the permissions on those files.</p><p>Now bring over your state path, maintaining the same permissions as
-before.</p><pre class="literallayout">mkdir -p /chroot/nut/var/state
-cp -a /var/state/ups /chroot/nut/var/state</pre><p>Next we must put /etc/localtime inside the jail, or you may get very
-strange readings in your syslog.  You’ll know you have this problem if
-upsd shows up as UTC in the syslog while the rest of the system doesn’t.</p><pre class="literallayout">mkdir -p /chroot/nut/etc
-cp /etc/localtime /chroot/nut/etc</pre><p>Note that this is not "cp -a", since we want to copy the <span class="strong"><strong>content</strong></span>, not
-the symlink that it may be on some systems.</p><p>Finally, create a tiny bit of /dev so the programs can enter the
-background properly - they redirect fds into the bit bucket to make sure
-nothing else grabs 0-2.</p><pre class="literallayout">mkdir -p /chroot/nut/dev
-cp -a /dev/null /chroot/nut/dev</pre><p>Try to start your driver(s) and make sure everything fires up as before.</p><pre class="literallayout">upsdrvctl -r /chroot/nut -u nutdev start</pre><p>Once your drivers are running properly, try starting upsd.</p><pre class="literallayout">upsd -r /chroot/nut -u nutsrv</pre><p>Check your syslog.  If nothing is complaining, try running clients like
-upsc and upsmon.  If they seem happy, then you’re done.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_symlinks"></a>symlinks</h4></div></div></div><p>After you do this, you will have two copies of many things, like the
-confpath and the state path.  I recommend deleting the <span class="emphasis"><em>real</em></span>
-/var/state/ups, replacing it with a symlink to
-/chroot/nut/var/state/ups.  That will let other programs reference the
-.pid files without a lot of hassle.</p><p>You can also do this with your confpath and point /usr/local/ups/etc at
-/chroot/nut/usr/local/ups/etc unless you’re worried about something
-hurting the files inside that directory.  In that case, you should
-maintain a <span class="emphasis"><em>master</em></span> copy and push it into the chroot path after
-making changes.</p><p>upsdrvctl itself does not chroot, so the ups.conf still needs to be in
-the usual confpath.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_upsmon"></a>upsmon</h4></div></div></div><p>This has not yet been applied to upsmon, since it can be quite
-complicated when there are notifiers that need to be run.  One
-possibility would be for upsmon to have three instances:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-privileged root parent that listens for a shutdown command
-</li><li class="listitem">
-unprivileged child that listens for notify events
-</li><li class="listitem">
-unprivileged chrooted child that does network I/O
-</li></ul></div><p>This one is messy, and may not happen for some time, if ever.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_config_files"></a>Config files</h4></div></div></div><p>You may now set chroot= and user= in the global section of ups.conf.</p><p>upsd chroots before opening any config files, so there is no way to
-add support for that in upsd.conf at the present time.</p></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2016-03-09 14:27:49 -- Network UPS Tools 2.7.4</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s08.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="apa.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+device_alarm_commit(const int device_number): commit the current alarm
+buffer to "device.&lt;device_number&gt;.ups.alarm", and increase the count of
+alarms. If the current alarms buffer is empty, the count of alarm is
+decreased, and the variable "device.&lt;device_number&gt;.ups.alarm" is removed
+from publication. Once the alarm count reaches "0", the main (device.0)
+ups.status will also remove the "ALARM" flag.
+</li></ul></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>when implementing a new driver, the following functions have to be
+called:
+* "alarm_init()" at the beginning of the main update loop, for the whole
+daisychain. This will set the alarm count to "0", and reinitialize all
+alarms,
+* "device_alarm_init()" at the beginning of the per-device update loop.
+This will only clear the alarms for the current device,
+* "device_alarm_commit()" at the end of the per-device update loop.
+This will flush the current alarms for the current device,
+* also "device_alarm_init()" at the end of the per-device update loop.
+This will clear the current alarms, and ensure that this buffer will not
+be considered by other subsequent devices,
+- "alarm_commit()" at the end of the main update loop, for the whole
+daisychain. This will take care of publishing or not the "ALARM" flag
+in the main ups.status (device.0, root collection).</p></div></div></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
+		Last updated 2022-02-04 20:20:34 -- Network UPS Tools 2.7.4.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s08.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s10.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

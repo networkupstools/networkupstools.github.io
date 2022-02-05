@@ -1,9 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
     "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
-<meta name="generator" content="AsciiDoc 8.6.9" />
+<meta name="generator" content="AsciiDoc 9.0.0rc2" />
 <title>TRIPPLITE_USB(8)</title>
 <style type="text/css">
 /* Shared CSS for AsciiDoc xhtml11 and html5 backends */
@@ -435,7 +436,7 @@ thead, p.table.header {
 p.table {
   margin-top: 0;
 }
-/* Because the table frame attribute is overriden by CSS in most browsers. */
+/* Because the table frame attribute is overridden by CSS in most browsers. */
 div.tableblock > table[frame="void"] {
   border-style: none;
 }
@@ -759,9 +760,9 @@ the devices supported by tripplite_usb have product ID 0001, and the newer
 units (such as those with "LCD" in the model name) with product ID 2001 require
 the <a href="usbhid-ups.html">usbhid-ups(8)</a> driver instead.  Please report success or failure to
 the nut-upsuser mailing list.  A key piece of information is the protocol
-number, returned in <code>ups.debug.0</code>.  Also, be sure to turn on debugging (<em>-DDD</em>)
+number, returned in <code>ups.firmware.aux</code>.  Also, be sure to turn on debugging (<em>-DDD</em>)
 for more informative log messages.  If your Tripp Lite UPS uses a serial port,
-you may wish to investigate the <a href="tripplite.html">tripplite(8)</a> or <a href="tripplite_su.html">tripplite_su(8)</a>
+you may wish to investigate the <a href="tripplite.html">tripplite(8)</a> or <a href="tripplitesu.html">tripplitesu(8)</a>
 driver.</p></div>
 <div class="paragraph"><p>This driver has been tested with the following models:</p></div>
 <div class="ulist"><ul>
@@ -825,6 +826,11 @@ Protocol 2001
 Protocol 3003
 </p>
 </li>
+<li>
+<p>
+Protocol 3005
+</p>
+</li>
 </ul></div>
 <div class="paragraph"><p>On the other hand, if the web page for your UPS on the Tripp-Lite website says
 "HID-compliant USB port also enables direct integration with built-in power
@@ -867,6 +873,17 @@ problems.
 <p>
 This regular expression is used to match the USB bus (as seen in
 <code>/proc/bus/usb/devices</code> or lsusb(8); including leading zeroes).
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>device</strong>
+</dt>
+<dd>
+<p>
+This regular expression is used to match the USB device (as seen in
+<code>/proc/bus/usb/devices</code> or lsusb(8); including leading zeroes).
+Note that device numbers are not guaranteed by the OS to be stable across
+re-boots or device re-plugging.
 </p>
 </dd>
 <dt class="hdlist1">
@@ -962,14 +979,13 @@ so certain events may confuse the driver. If you observe any strange behavior,
 please re-run the driver with <code>-DDD</code> to increase the verbosity.</p></div>
 <div class="paragraph"><p>So far, the Tripp Lite UPSes do not seem to have a serial number or other
 globally unique identifier accessible through USB. Thus, when monitoring
-several Tripp Lite USB UPSes, you should use either the <em>bus</em> or <em>product</em>
-configuration options to uniquely specify which UPS a given driver instance
-should control.</p></div>
+several Tripp Lite USB UPSes, you should use either the <em>bus</em>, <em>device</em> or
+<em>product</em> configuration options to uniquely specify which UPS a given driver
+instance should control.</p></div>
 <div class="paragraph"><p>For instance, you can easily monitor an OMNIVS1000 and a SMART1500RM2U at the
 same time, since they have different USB Product ID strings. If you have two
-SMART1500RM2U units, you would have to find which USB bus number each unit is
-on (via lsusb(8)), which may result in ambiguities if the available USB ports
-are on the same bus.</p></div>
+SMART1500RM2U units, you would have to find which USB bus and device number
+each unit is on (via lsusb(8)).</p></div>
 <div class="paragraph"><p>Some of the SMART*2U models have an ID number, but because this ID is not
 exposed as a USB string descriptor, there is no easy way to use this ID to
 distinguish between multiple UPS units on a single machine. The UPS would need
@@ -1013,7 +1029,7 @@ Feldman (<a href="http://www.bradleyloritheo.com">http://www.bradleyloritheo.com
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-03-09 14:05:25 CET -- Network UPS Tools 2.7.4
+Last updated 2022-02-04 21:16:21 CET -- Network UPS Tools 2.7.4.1
 </div>
 </div>
 </body>

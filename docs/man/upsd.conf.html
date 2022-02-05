@@ -1,9 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
     "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
-<meta name="generator" content="AsciiDoc 8.6.9" />
+<meta name="generator" content="AsciiDoc 9.0.0rc2" />
 <title>UPSD.CONF(5)</title>
 <style type="text/css">
 /* Shared CSS for AsciiDoc xhtml11 and html5 backends */
@@ -435,7 +436,7 @@ thead, p.table.header {
 p.table {
   margin-top: 0;
 }
-/* Because the table frame attribute is overriden by CSS in most browsers. */
+/* Because the table frame attribute is overridden by CSS in most browsers. */
 div.tableblock > table[frame="void"] {
   border-style: none;
 }
@@ -769,6 +770,34 @@ to make upsd wait longer.
 <div class="paragraph"><p>Most users should leave this at the default value.</p></div>
 </dd>
 <dt class="hdlist1">
+"TRACKINGDELAY <em>seconds</em>"
+</dt>
+<dd>
+<p>
+When instant commands and variables setting status tracking is enabled, status
+execution information are kept during this amount of time, and then cleaned up.
+This defaults to 3600 (1 hour).
+</p>
+</dd>
+<dt class="hdlist1">
+"ALLOW_NO_DEVICE <em>Boolean</em>"
+</dt>
+<dd>
+<p>
+Normally upsd requires that at least one device section is defined in ups.conf
+when the daemon starts, to serve its data.  For automatically managed services
+it may be preferred to have upsd always running, and reload the configuration
+when power devices become defined.
+</p>
+<div class="paragraph"><p>Boolean values <em>true</em>, <em>yes</em>, <em>on</em> and <em>1</em> mean that the server would not
+refuse to start with zero device sections found in ups.conf.</p></div>
+<div class="paragraph"><p>Boolean values <em>false</em>, <em>no</em>, <em>off</em> and <em>0</em> mean that the server should refuse
+to start if zero device sections were found in ups.conf. This is the default,
+unless the calling environment sets a same-named variable to enforce a value
+for the current run. One way this can happen is somebody un-commenting it in
+the <em>nut.conf</em> file used by init-scripts and service unit method scripts.</p></div>
+</dd>
+<dt class="hdlist1">
 "STATEPATH <em>path</em>"
 </dt>
 <dd>
@@ -782,22 +811,25 @@ than the default that was compiled into the program.
 </dt>
 <dd>
 <p>
-Bind a listening port to the interface specified by its Internet
-address.  This may be useful on hosts with multiple interfaces.
-You should not rely exclusively on this for security, as it can be
-subverted on many systems.
+Bind a listening port to the interface specified by its Internet address or
+name.  This may be useful on hosts with multiple interfaces.
+You should not rely exclusively on this for security, as it can be subverted
+on many systems.
 </p>
-<div class="paragraph"><p>Listen on TCP port <em>port</em> instead of the default value which was
-compiled into the code.  This overrides any value you may have set
-with <em>configure --with-port</em>.  If you don&#8217;t change it with configure
-or this value, upsd will listen on port 3493 for this interface.</p></div>
+<div class="paragraph"><p>Optionally listen on TCP port <em>port</em> instead of the default value which was
+compiled into the code.  This overrides any value you may have set with
+<em>configure --with-port</em>.  If you don&#8217;t change it with configure or this value,
+upsd will listen on port 3493 for this interface.</p></div>
 <div class="paragraph"><p>Multiple LISTEN addresses may be specified.  The default is to bind to
 127.0.0.1 if no LISTEN addresses are specified (and ::1 if IPv6 support is
 compiled in).</p></div>
+<div class="paragraph"><p>To listen on all available interfaces, you may also use <em>0.0.0.0</em> for IPv4 and
+and <em>::</em> for IPv6.</p></div>
 <div class="literalblock">
 <div class="content">
 <pre><code>LISTEN 127.0.0.1
 LISTEN 192.168.50.1
+LISTEN myhostname.mydomain
 LISTEN ::1
 LISTEN 2001:0db8:1234:08d3:1319:8a2e:0370:7344</code></pre>
 </div></div>
@@ -836,7 +868,7 @@ NUT user manual for more information on the SSL support in NUT.
 <p>
 When compiled with SSL support with NSS backend, you can enter the
 certificate path here.
-Certificates are stored in a dedicated database (splitted in 3 files).
+Certificates are stored in a dedicated database (data split in 3 files).
 Specify the path of the database directory.
 </p>
 </dd>
@@ -897,7 +929,7 @@ Possible values are :
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-03-09 14:05:25 CET -- Network UPS Tools 2.7.4
+Last updated 2022-02-04 21:16:21 CET -- Network UPS Tools 2.7.4.1
 </div>
 </div>
 </body>
