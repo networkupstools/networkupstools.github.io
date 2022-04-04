@@ -748,8 +748,8 @@ asciidoc.install();
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="paragraph"><p><strong>upsmon</strong> -h</p></div>
-<div class="paragraph"><p><strong>upsmon</strong> -c <em>command</em></p></div>
-<div class="paragraph"><p><strong>upsmon</strong> [-D] [-K] [-p] [-u <em>user</em>]</p></div>
+<div class="paragraph"><p><strong>upsmon</strong> -c <em>command</em> [-P <em>pid</em>]</p></div>
+<div class="paragraph"><p><strong>upsmon</strong> [-D] [-F | -B] [-K] [-p] [-u <em>user</em>]</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -813,13 +813,40 @@ reread <a href="upsmon.conf.html">upsmon.conf(5)</a> configuration file.  See
 </dl></div>
 </dd>
 <dt class="hdlist1">
+<strong>-P</strong> <em>pid</em>
+</dt>
+<dd>
+<p>
+Send the command signal above using specified PID number, rather than
+consulting the PID file.  This can help define service units which
+start main <code>upsmon</code> as a foreground process so it does not have to
+rely on a PID file.
+</p>
+</dd>
+<dt class="hdlist1">
 <strong>-D</strong>
 </dt>
 <dd>
 <p>
-Raise the debugging level.  upsmon will run in the foreground and prints
-information on stdout about the monitoring process.  Use this multiple
-times for more details.
+Raise the debugging level.  upsmon will run in the foreground by default,
+and will print information on stdout about the monitoring process.
+Use this option multiple times for more details.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>-F</strong>
+</dt>
+<dd>
+<p>
+upsmon will run in the foreground, regardless of debugging settings.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>-B</strong>
+</dt>
+<dd>
+<p>
+upsmon will run in the background, regardless of debugging settings.
 </p>
 </dd>
 <dt class="hdlist1">
@@ -1309,7 +1336,7 @@ systems would shut down at this point, without actually disrupting their work.</
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-02-05 14:57:18 UTC -- Network UPS Tools 2.7.4.1
+Last updated 2022-04-04 12:00:53 UTC -- Network UPS Tools 2.7.4.1
 </div>
 </div>
 </body>

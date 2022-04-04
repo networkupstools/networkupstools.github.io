@@ -910,6 +910,46 @@ Possible values are :
 </li>
 </ul></div>
 </dd>
+<dt class="hdlist1">
+"DISABLE_WEAK_SSL <em>BOOLEAN</em>"
+</dt>
+<dd>
+<p>
+Tell upsd to disable older/weak SSL/TLS protocols and ciphers.
+With relatively recent versions of OpenSSL or NSS it will be restricted
+to TLSv1.2 or better.
+Unless you have really ancient clients, you probably want to enable this.
+Currently disabled by default to ensure compatibility with existing setups.
+</p>
+</dd>
+<dt class="hdlist1">
+"DEBUG_MIN <em>INTEGER</em>"
+</dt>
+<dd>
+<p>
+Optionally specify a minimum debug level for <code>upsd</code> data daemon, e.g. for
+troubleshooting a deployment, without impacting foreground or background
+running mode directly. Command-line option <code>-D</code> can only increase this
+verbosity level.
+</p>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">if the running daemon receives a <code>reload</code> command, presence of the
+<code>DEBUG_MIN NUMBER</code> value in the configuration file can be used to tune
+debugging verbosity in the running service daemon (it is recommended to
+comment it away or set the minimum to explicit zero when done, to avoid
+huge journals and I/O system abuse). Keep in mind that for this run-time
+tuning, the <code>DEBUG_MIN</code> value <strong>present</strong> in <strong>reloaded</strong> configuration files
+is applied instantly and overrides any previously set value, from file
+or CLI options, regardless of older logging level being higher or lower
+than the newly found number; a missing (or commented away) value however
+does not change the previously active logging verbosity.</td>
+</tr></table>
+</div>
+</dd>
 </dl></div>
 </div>
 </div>
@@ -929,7 +969,7 @@ Possible values are :
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-02-05 14:57:18 UTC -- Network UPS Tools 2.7.4.1
+Last updated 2022-04-04 12:00:53 UTC -- Network UPS Tools 2.7.4.1
 </div>
 </div>
 </body>

@@ -830,8 +830,8 @@ this option should be used for specific needs only.
 <dd>
 <p>
 Raise the debugging level.  Use this multiple times to see more details.
-Running a driver in debug mode will prevent it from backgrounding after
-startup.  It will keep on logging information to the console until it
+Running a driver in debug mode will (by default) prevent it from backgrounding
+after startup.  It will keep on logging information to the console until it
 receives a SIGINT (usually Ctrl-C) or SIGTERM signal.
 </p>
 <div class="paragraph"><p>The level of debugging needed depends both on the driver and the
@@ -847,6 +847,7 @@ either too limited or too verbose to be of any use.</p></div>
 <p>
 Dump the data tree (in upsc-like format) to stdout after running the driver
 update loop for <em>update_count</em> times and exit.
+By default this prevents the driver process from backgrounding after startup.
 Note that the driver banner will be printed too, so when using this option in
 scripts, don&#8217;t forget to trim the first line.
 </p>
@@ -859,6 +860,24 @@ scripts, don&#8217;t forget to trim the first line.
 Raise log level threshold.  Use this multiple times to log more details.
 </p>
 <div class="paragraph"><p>The debugging comment above also applies here.</p></div>
+</dd>
+<dt class="hdlist1">
+<strong>-F</strong>
+</dt>
+<dd>
+<p>
+Enforce running the driver as a foreground process, regardless of debugging
+or data-dumping settings.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>-B</strong>
+</dt>
+<dd>
+<p>
+Enforce running the driver as a background process, regardless of debugging
+or data-dumping settings.
+</p>
 </dd>
 <dt class="hdlist1">
 <strong>-i</strong> <em>interval</em>
@@ -928,6 +947,16 @@ you can set this option to <code>root</code> to bypass permission errors, especi
 USB-based drivers. However, you will want to remove this option later in order
 to avoid permission conflicts between the driver and the unprivileged copy of
 <a href="upsd.html">upsd(8)</a>.</p></div>
+</dd>
+<dt class="hdlist1">
+<strong>-g</strong> <em>groupname</em>
+</dt>
+<dd>
+<p>
+Override the unprivileged group name that the driver may use after startup
+to set permissions for the filesystem socket so <code>upsd</code> may still access it
+if the run-time <code>user</code> of the driver normally would deny that access.
+</p>
 </dd>
 <dt class="hdlist1">
 <strong>-x</strong> <em>var</em>=<em>val</em>
@@ -1063,7 +1092,7 @@ The NUT (Network UPS Tools) home page: <a href="http://www.networkupstools.org/"
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-02-05 14:57:18 UTC -- Network UPS Tools 2.7.4.1
+Last updated 2022-04-04 12:00:53 UTC -- Network UPS Tools 2.7.4.1
 </div>
 </div>
 </body>

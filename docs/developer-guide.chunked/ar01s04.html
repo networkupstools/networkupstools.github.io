@@ -527,7 +527,21 @@ a mapping of HID variables to NUT variables.
 </li></ul></div><p>Moreover, subdrivers might have to provide additional functionality,
 such as custom implementations of specific instant commands (load.off,
 shutdown.restart), and conversions of manufacturer specific data
-formats.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_writing_a_subdriver"></a>Writing a subdriver</h4></div></div></div><p>In preparation for writing a subdriver for a device that is currently
+formats.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_usage_macros_in_drivers_hidtypes_h"></a>Usage macros in drivers/hidtypes.h</h4></div></div></div><p>The <code class="literal">drivers/hidtypes.h</code> header provides a number of macro names
+for entries in the standard usage tables for Power Device
+<code class="literal">USAGE_POW_&lt;SOMETHING&gt;</code> and Battery System <code class="literal">USAGE_BAT_&lt;SOMETHING&gt;</code>
+data pages.</p><p>If NUT codebase would ever need to refresh those macros, here is
+some background information (based on NUT issue #1189 and PR #1290):</p><p>These data were parsed from (a very slightly updated version of)
+<a class="ulink" href="https://github.com/abend0c1/hidrdd/blob/master/rd.conf" target="_top">https://github.com/abend0c1/hidrdd/blob/master/rd.conf</a> file, which
+incorporates the complete USB-IF usage definitions for Power Device
+and Battery System pages (among many others), so we didn’t have to
+extract the names and values from the USB-IF standards documents
+(did check it all by eye though).</p><p>The file was processed with the following chain of commands:</p><pre class="screen">:; grep -e '^0084' -e '^0085' rd.conf \
+   | sed 's/,.*$//;s/ *$//' \
+   | sed 's/ /_/g;s/_/ /' \
+   | tr '[:lower:]' '[:upper:]' \
+   | sed 's/\(0085.... \)/\1USAGE_BAT_/;s/\(0084.... \)/\1USAGE_POW_/;s/\([A-Z_]*\)_PAGE/PAGE_\1/' \
+   | awk '{print "#define "$2" 0x"$1}'</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_writing_a_subdriver"></a>Writing a subdriver</h4></div></div></div><p>In preparation for writing a subdriver for a device that is currently
 unsupported, run usbhid-ups with the following command line:</p><pre class="literallayout">drivers/usbhid-ups -DD -u root -x explore -x vendorid=XXXX -x port=auto -s ups</pre><p>(substitute your device’s 4-digit VendorID instead of "XXXX").
 This will produce a bunch of debugging information, including a number
 of lines starting with "Path:" that describe the device’s usage tree.
@@ -571,7 +585,16 @@ mge-hid.c/h
 powercom-hid.c/h
 </li><li class="listitem">
 tripplite-hid.c/h
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_shutting_down_the_ups"></a>Shutting down the UPS</h4></div></div></div><p>It is desirable to support shutting down the UPS. Usually (for
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_fixing_report_descriptors"></a>Fixing report descriptors</h4></div></div></div><p>It is a fact of life that fellow developers make mistakes, and firmware
+authors do too. In some cases there are inconsistencies about bytes seen
+on the wire vs. their logical values, such value range and signedness if
+interpreting them according to standard.</p><p>NUT drivers now include a way to detect and fix up known issues in such
+flawed USB report descriptors, side-stepping the standard similarly where
+deemed needed. A pointer to such hook method is part of the <code class="literal">subdriver_t</code>
+structure detailing each <code class="literal">usbhid-ups</code> subdriver nuances, defaulting to
+a <code class="literal">fix_report_desc()</code> trivial implementation.</p><p>For some practical examples, see e.g. <code class="literal">apc_fix_report_desc()</code> method in the
+<code class="literal">drivers/apc-hid.c</code> file, and <code class="literal">cps_fix_report_desc()</code> in <code class="literal">drivers/cps-hid.c</code>
+file.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_shutting_down_the_ups"></a>Shutting down the UPS</h4></div></div></div><p>It is desirable to support shutting down the UPS. Usually (for
 devices that follow the HID Power Device Class specification), this
 requires sending the UPS two commands. One for shutting down the UPS
 (with an <span class="emphasis"><em>offdelay</em></span>) and one for restarting it (with an <span class="emphasis"><em>ondelay</em></span>),
@@ -2145,4 +2168,4 @@ If you need to edit the current status call this function with one of the NUT st
 </li><li class="listitem">
 <code class="literal">nutdrv_qx_ablerex.</code>{<code class="literal">c</code>,<code class="literal">h</code>}
 </li></ul></div></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2022-02-05 17:17:11 -- Network UPS Tools 2.7.4.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s03.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s05.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2022-04-04 12:12:23 -- Network UPS Tools 2.7.4.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s03.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s05.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
