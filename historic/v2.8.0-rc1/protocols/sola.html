@@ -1,0 +1,1929 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<title>Network UPS Tools - Phoenixtec UPS Communication Protocol</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="generator" content="AsciiDoc 9.0.0rc2" />
+<meta name="description" content="Power Devices support" />
+<meta name="keywords" content="NUT, Network UPS Tools, Eaton, APC, Free Software, UPS, Uninterruptible Power Supplies, PDU, Power Distributions Units, Solar Controllers, power, power devices, control, monitor, Linux, Unix, Windows, Mac OS X" />
+<meta name="format-detection" content="telephone=no" />
+<link rel="stylesheet" href="../css/xhtml11.css" type="text/css" />
+<link rel="stylesheet" href="../css/web-layout.css" type="text/css" />
+<link rel="shortcut icon" href="../faviconut.ico" />
+<link rel="icon" type="image/png" href="../faviconut.png" />
+<script type="text/javascript" src="../scripts/asciidoc.js"></script>
+<script type="text/javascript">
+/*<![CDATA[*/
+asciidoc.install(2);
+/*]]>*/
+</script>
+<!--[if lte IE 7]>
+<link rel="stylesheet" href="../css/ie-overrides.css" type="text/css" />
+<![endif]-->
+<!--[if lte IE 6]>
+<script type="text/javascript" src="../scripts/filter_png.js"></script>
+<![endif]-->
+</head>
+<body>
+<div id="layout-banner-box">
+<div id="layout-banner">
+  <div id="layout-logo"><img src="../images/nut-logo.png" alt="NUT logo" /></div>
+  <div id="layout-title">Network UPS Tools</div>
+  <div id="layout-description">Power Devices support</div>
+</div>
+</div>
+<div id="layout-menu-box">
+  <ul id="layout-menu">
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="../download.html">Download</a></li>
+    <li><a href="../projects.html">Related projects</a></li>
+    <li><a href="../stable-hcl.html">Compatibility</a></li>
+    <li><a href="../features.html">Features</a></li>
+    <li><a href="../documentation.html">Documentation</a></li>
+    <li><a href="../support.html">Support</a></li>
+    <li>* <a href="https://alioth-lists.debian.net/pipermail/nut-upsuser/">NUT UPS User archive</a></li>
+    <li>* <a href="https://alioth-lists.debian.net/pipermail/nut-upsdev/">NUT UPS Dev archive</a></li>
+    <li><a href="/historic/index.html">Sub-sites for historic releases</a></li>
+    <li><a href="https://github.com/networkupstools/nut/">GitHub</a></li>
+  </ul>
+  <!-- div id="sponsor"><span>Hosted by<br/></span>
+    <a href="http://sponsor.com"><img src="../images/sponsor-logo.png" alt="Sponsor" /></a>
+  </div -->
+</div>
+<div id="layout-content-box">
+<div id="layout-content">
+<div id="header">
+<h1>Phoenixtec UPS Communication Protocol</h1>
+</div>
+<div id="toc">
+  <div id="toctitle">Table of Contents</div>
+  <noscript><p><b>JavaScript must be enabled in your browser to display the table of contents.</b></p></noscript>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_ups_communication_protocol">UPS Communication Protocol</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>As Used On The Following SOLA/ Best Power UPS Models:</p></div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong><a href="http://www.solaaust.com.au">SOLA Australia</a></strong>
+</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="ulist"><ul>
+<li>
+<p>
+SOLA 320
+</p>
+</li>
+<li>
+<p>
+SOLA 325
+</p>
+</li>
+<li>
+<p>
+SOLA 520
+</p>
+</li>
+<li>
+<p>
+SOLA 525
+</p>
+</li>
+<li>
+<p>
+SOLA 610
+</p>
+</li>
+<li>
+<p>
+SOLA 620
+</p>
+</li>
+</ul></div>
+</div></div>
+</dd>
+<dt class="hdlist1">
+<strong><a href="http://www.bestpower.com">BEST Power</a></strong>
+</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="ulist"><ul>
+<li>
+<p>
+Patriot Pro
+</p>
+</li>
+<li>
+<p>
+Patriot Pro II
+</p>
+</li>
+<li>
+<p>
+Fortress
+</p>
+</li>
+<li>
+<p>
+Fortress.TeleCom
+</p>
+</li>
+<li>
+<p>
+Best 610
+</p>
+</li>
+<li>
+<p>
+Axxium
+</p>
+</li>
+</ul></div>
+</div></div>
+</dd>
+</dl></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_general">General</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>This document contains specific information regarding the RS232C communication protocol for UPS models built for Best Power and SOLA.
+The protocol provides features to allow the user to:</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Monitor charger status.
+</p>
+</li>
+<li>
+<p>
+Monitor battery status and condition.
+</p>
+</li>
+<li>
+<p>
+Monitor inverter status.
+</p>
+</li>
+<li>
+<p>
+Monitor UPS status.
+</p>
+</li>
+<li>
+<p>
+Monitor the utility status.
+</p>
+</li>
+<li>
+<p>
+Shut off power to the UPS load
+</p>
+</li>
+<li>
+<p>
+Turn off power to the UPS load and allow the power to return after a user-selected amount of time
+</p>
+</li>
+</ol></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img src="../images/note.png" alt="Note" />
+</td>
+<td class="content"><code>&lt;cr&gt;</code> as used in this document is the IBM PC ASCII code for Carriage Return.
+It has the HEX code of <code>0D</code>.</td>
+</tr></table>
+</div>
+<div class="paragraph"><p>The connected computer will control information exchange through a query command followed by <code>&lt;cr&gt;</code>.
+The UPS is case sensitive to commands received from the connected computer.
+The UPS will respond with information followed by a <code>&lt;cr&gt;</code> or a specific action will take place without a serial response.</p></div>
+<div class="paragraph"><p>Some data/functions will be different depending on whether the UPS is a standby or on-line (double-conversion) system.</p></div>
+<div class="paragraph"><p>UPS data will be provided at a rate of 2400 baud and consist of 8 data bits, 1 stop bit, and no parity bit.
+All the information is provided in ASCII format.</p></div>
+<div class="paragraph"><p>Standby UPS systems following this specification will be capable of performing a UPS test.
+This test will be short term, user specified term, or to a low battery warning.</p></div>
+<div class="paragraph"><p>All system will respond to inverter shut down and output shut down after a specified delay and for specified time.
+They will also permit cancellation of the shut down sequence.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_hardware">Hardware</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>The DB9S (Female) Communication Port on the UPS must conform to Best Power&#8217;s BestPort Communication Port Specification.
+Reference document number: EPS-0059.</p></div>
+<div class="paragraph"><p>For the communications described in this document, the following pins a functionality are required:</p></div>
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="middle">Pin </th>
+<th align="left" valign="middle">Function</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="middle"><p class="table">1</p>
+<p class="table">(6 on 610)</p></td>
+<td align="left" valign="middle"><p class="table"><strong>RS-232 Receive Data</strong></p>
+<p class="table">Receives incoming RS-232 communication data at 2400 baud, 8 bits, no parity and 1 stop bit.</p></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table">2</p>
+<p class="table">(9 on 610)</p></td>
+<td align="left" valign="middle"><p class="table"><strong>RS-232 Transmit Data</strong></p>
+<p class="table">Sends outgoing RS-232 communication data at 2400 baud, 8 bits, no parity and 1 stop bit.</p></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table">4</p>
+<p class="table">(7 on 610)</p></td>
+<td align="left" valign="middle"><p class="table"><strong>Common</strong></p>
+<p class="table">The signal ground for all signal pins.</p></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table">6</p>
+<p class="table">(NC on 610)</p></td>
+<td align="left" valign="middle"><div><div class="paragraph"><p><strong>Reserved <em>or</em> Plug and Play Sense</strong></p></div>
+<div class="paragraph"><p>UPS Models that support Microsoft Plug and Play (PnP) compatibility use this pin to sense the PnP request from the PC.</p></div>
+<div class="paragraph"><p>Currently, models that have PnP support are the Patriot Pro, Patriot Pro II, SOLA 320, SOLA 325, Fortress 520 Series, SOLA 520, Fortress.TeleCom and SOLA 525.</p></div>
+<div class="paragraph"><p>The 610 series, Axxium, SOLA 620 do not support Plug and Play compatibility.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img src="../images/note.png" alt="Note" />
+</td>
+<td class="content">If a new UPS is to support Plug and Play, Best Power software engineers must assign the unique numerical identifiers for the PnP sequence, as well as provide the text identifier for the UPS having the PnP feature.</td>
+</tr></table>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_cabling">CABLING</h3>
+<div class="paragraph"><p>Best Power&#8217;s INT-0062 (SOLA&#8217;s 0999-3400M3) cable shall be used to connect a PC&#8217;s DB9P (Male) serial port to the DB9S (Female) port (BestPort) on all models except the 610 series.</p></div>
+<div class="paragraph"><p>The cable used on the 610 series is part number A4D0044. (SOLA&#8217;s 0999-3403M3)</p></div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_communication_protocol_command_definitions">COMMUNICATION PROTOCOL COMMAND DEFINITIONS</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_status_inquiry_1">Status Inquiry #1</h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<em>Computer Sends:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>Q&lt;cr&gt;</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>UPS Responds:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+UPS status stream with the format <code>(MMM.MNNN.NPPP.PQQQRR.RS.SSTT.TU&lt;cr&gt;</code>
+</p>
+</td>
+</tr>
+</table></div>
+<div class="paragraph"><p>Where:</p></div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>(</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Start Byte
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>MMM.M</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Input Voltage
+</p>
+<div class="paragraph"><p><code>M</code> is an integer number ranging from <code>0</code> to <code>9</code> and the unit is Volts.</p></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>NNN.N</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Input Fault Voltage
+</p>
+<div class="paragraph"><p><code>N</code> is an integer number ranging from <code>0</code> to <code>9</code> and the unit is Volts.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img src="../images/note.png" alt="Note" />
+</td>
+<td class="content">
+<div class="paragraph"><p>For Offline UPS Models, its purpose is to identify a short duration voltage glitch which has caused an offline UPS to transfer to Inverter mode.
+If this occurs, the measured input voltage will appear normal at the query prior to the glitch and will still appear normal during the next query.
+The Input Fault Voltage will hold the glitch voltage until the next query.
+After the query, the Input Fault Voltage will be the same as the Input Voltage, until the next glitch occurs.</p></div>
+<div class="paragraph"><p>For Online UPS Models, its purpose is to identify a short duration utility failure which has caused the online UPS to transfer to Battery mode.
+If this occurs, the measured input voltage will appear normal at the query prior to the utility failure and will still appear normal during the next query.
+The Input Fault voltage will hold the utility failure voltage until the next query.
+After the query, the Input Fault Voltage will be the same as the Input Voltage, until the next utility fail occurs.</p></div>
+</td>
+</tr></table>
+</div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>PPP.P</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Output Voltage
+</p>
+<div class="paragraph"><p><code>P</code> is an integer number ranging from <code>0</code> to <code>9</code> and the unit is Volts.</p></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>QQQ</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Output Load
+</p>
+<div class="paragraph"><p>For Offline UPS Models, <code>QQQ</code> is a percent of maximum VA, not an absolute value.</p></div>
+<div class="paragraph"><p>For Online UPS Models, <code>QQQ</code> is maximum of W% or VA%, where W% is a percent of the maximum real power and VA% is a percent of maximum VA.</p></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>RR.R</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Input Frequency
+</p>
+<div class="paragraph"><p><code>R</code> is an integer number ranging from <code>0</code> to <code>9</code> and the unit is Hertz.</p></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>SS.S</code> or <code>SSSS</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Battery voltage
+</p>
+<div class="paragraph"><p><code>S</code> is an integer number ranging from <code>0</code> to <code>9</code>.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img src="../images/note.png" alt="Note" />
+</td>
+<td class="content">
+<div class="paragraph"><p>For Online UPS models with battery string voltages of less than 100 volts, the battery voltage reported is provided in the form of <code>SS.S</code>.
+Otherwise, it is provided in the form <code>SSSS</code>.</p></div>
+<div class="paragraph"><p>For Offline UPS Models, the actual battery voltage is provided in the form <code>SS.S</code>.</p></div>
+<div class="paragraph"><p>The type of UPS indicated in the UPS status byte (<strong><code>Q</code></strong> response string: Status bit 3), determines which Battery Voltage reading is provided.</p></div>
+</td>
+</tr></table>
+</div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>TT.T</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Temperature
+</p>
+<div class="paragraph"><p><code>T</code> is an integer number ranging from <code>0</code> to <code>9</code> and the unit is Degrees Centigrade.</p></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>&lt;U&gt;</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+UPS Status
+</p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph"><p><code>&lt;U&gt;</code> is one byte of binary information decoded as <code>&lt;b7b6b5b4b3b2b1b0&gt;</code>, where <code>bn</code> is a binary number, either <strong><code>0</code></strong> or a <strong><code>1</code></strong>.</p></div>
+<div class="paragraph"><p>The table below defines the bits as they are decoded:</p></div>
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<thead>
+<tr>
+<th align="center" valign="middle">Bit <code>n</code>:       </th>
+<th align="left" valign="middle">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>7</code></p></td>
+<td align="left" valign="middle"><p class="table">A <strong><code>1</code></strong> indicates that there has been a Utility Failure (Immediate)</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>6</code></p></td>
+<td align="left" valign="middle"><p class="table">A <strong><code>1</code></strong> indicates that the UPS Battery is Low</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>5</code></p></td>
+<td align="left" valign="middle"><p class="table">A <strong><code>1</code></strong> indicates that Bypass or Boost (offline UPS) is Active</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>4</code></p></td>
+<td align="left" valign="middle"><p class="table">A <strong><code>1</code></strong> indicates that the UPS has Failed</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>3</code></p></td>
+<td align="left" valign="middle"><p class="table">A <strong><code>1</code></strong> indicates that the UPS Type is Offline (Standby).</p>
+<p class="table">A <strong><code>0</code></strong> indicates that the UPS Type is Online.</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>2</code></p></td>
+<td align="left" valign="middle"><p class="table">A <strong><code>1</code></strong> indicates that a UPS Test is in Progress</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>1</code></p></td>
+<td align="left" valign="middle"><p class="table">A <strong><code>1</code></strong> indicates that a Shutdown is in Progress</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>0</code></p></td>
+<td align="left" valign="middle"><p class="table">Reserved (Always <strong><code>0</code></strong>)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>&lt;cr&gt;</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Stop Byte
+</p>
+</td>
+</tr>
+</table></div>
+<div class="sect3">
+<h4 id="_example">Example</h4>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<em>Computer Sends:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>Q&lt;cr&gt;</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>UPS Responds:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>(208.4140.0208.403459.939.635.0U&lt;cr&gt;</code>
+</p>
+</td>
+</tr>
+</table></div>
+<div class="paragraph"><p><code>U</code> represents the byte equivalent of <code>00110000</code></p></div>
+<div class="paragraph"><p>Decodes to:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+Input voltage = 208.4 Volts
+</p>
+</li>
+<li>
+<p>
+Input Fault Voltage =140.0 Volts
+</p>
+</li>
+<li>
+<p>
+Output Voltage = 208.4 Volts
+</p>
+</li>
+<li>
+<p>
+Output Load = 34%
+</p>
+</li>
+<li>
+<p>
+Input Frequency = 59.9 Hertz
+</p>
+</li>
+<li>
+<p>
+Battery voltage = 39.6 Volts
+</p>
+</li>
+<li>
+<p>
+Temperature = 35.0 Degrees of Centigrade
+</p>
+</li>
+<li>
+<p>
+Utility Power has not failed
+</p>
+</li>
+<li>
+<p>
+The Battery is not low
+</p>
+</li>
+<li>
+<p>
+The UPS Bypass is active
+</p>
+</li>
+<li>
+<p>
+The UPS has failed
+</p>
+</li>
+<li>
+<p>
+The UPS Type is Online
+</p>
+</li>
+<li>
+<p>
+UPS Test is not in progress
+</p>
+</li>
+<li>
+<p>
+UPS Shutdown is not in progress
+</p>
+</li>
+</ul></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_status_inquiry_2">Status Inquiry #2</h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<em>Computer Sends:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>Q1&lt;cr&gt;</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>UPS Responds:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+UPS status stream with the format <code>(MMM.M NNN.N PPP.P QQQ RR.R S.SS TT.T b7b6b5b4b3b2b1b0&lt;cr&gt;</code>
+</p>
+</td>
+</tr>
+</table></div>
+<div class="paragraph"><p>Note that a single space character separates each parameter. One space follows the Temperature data (precedes the status bytes.)</p></div>
+<div class="paragraph"><p>The binary Status code (from the <strong><code>Q</code></strong> response) is modified to 8 bytes ASCII code to avoid any confusion between the binary code and the ASCII control code.</p></div>
+<div class="paragraph"><p>Where:</p></div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>(</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Start Byte
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>MMM.M</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Input Voltage
+</p>
+<div class="paragraph"><p><code>M</code> is an integer number ranging from <code>0</code> to <code>9</code> and the unit is Volts.</p></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>NNN.N</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Input Fault Voltage
+</p>
+<div class="paragraph"><p><code>N</code> is an integer number ranging from <code>0</code> to <code>9</code> and the unit is Volts.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img src="../images/note.png" alt="Note" />
+</td>
+<td class="content">
+<div class="paragraph"><p>For Offline UPS Models, its purpose is to identify a short duration voltage glitch which has caused an offline UPS to transfer to Inverter mode.
+If this occurs, the measured input voltage will appear normal at the query prior to the glitch and will still appear normal during the next query.
+The Input Fault Voltage will hold the glitch voltage until the next query.
+After the query, the Input Fault Voltage will be the same as the Input Voltage, until the next glitch occurs.</p></div>
+<div class="paragraph"><p>For Online UPS Models, its purpose is to identify a short duration utility failure which has caused the online UPS to transfer to Battery mode.
+If this occurs, the measured input voltage will appear normal at the query prior to the utility failure and will still appear normal during the next query.
+The Input Fault voltage will hold the utility failure voltage until the next query.
+After the query, the Input Fault Voltage will be the same as the Input Voltage, until the next utility fail occurs.</p></div>
+</td>
+</tr></table>
+</div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>PPP.P</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Output Voltage
+</p>
+<div class="paragraph"><p><code>P</code> is an integer number ranging from <code>0</code> to <code>9</code> and the unit is Volts.</p></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>QQQ</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Output Load
+</p>
+<div class="paragraph"><p>For Offline UPS Models, <code>QQQ</code> is a percent of maximum VA, not an absolute value.</p></div>
+<div class="paragraph"><p>For Online UPS Models, <code>QQQ</code> is maximum of W% or VA%, where W% is a percent of the maximum real power and VA% is a percent of maximum VA.</p></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>RR.R</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Input Frequency
+</p>
+<div class="paragraph"><p><code>R</code> is an integer number ranging from <code>0</code> to <code>9</code> and the unit is Hertz.</p></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>SS.S</code> or <code>SSSS</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Battery voltage
+</p>
+<div class="paragraph"><p><code>S</code> is an integer number ranging from <code>0</code> to <code>9</code>.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img src="../images/note.png" alt="Note" />
+</td>
+<td class="content">
+<div class="paragraph"><p>For Online UPS models with battery string voltages of less than 100 volts, the battery voltage reported is provided in the form of <code>SS.S</code>.
+Otherwise, it is provided in the form <code>SSSS</code>.</p></div>
+<div class="paragraph"><p>For Offline UPS Models, the actual battery voltage is provided in the form <code>SS.S</code>.</p></div>
+<div class="paragraph"><p>The type of UPS indicated in the UPS status byte (<strong><code>Q1</code></strong> response string: Status Byte 3), determines which Battery Voltage reading is provided.</p></div>
+</td>
+</tr></table>
+</div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>TT.T</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Temperature
+</p>
+<div class="paragraph"><p><code>T</code> is an integer number ranging from <code>0</code> to <code>9</code> and the unit is Degrees Centigrade.</p></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>b7b6b5b4b3b2b1b0</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+UPS Status Bytes
+</p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph"><p><code>bn</code> is a binary number, either <strong><code>0</code></strong> or a <strong><code>1</code></strong>.</p></div>
+<div class="paragraph"><p>The table below defines the bytes as they are decoded:</p></div>
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<thead>
+<tr>
+<th align="center" valign="middle">Byte <code>n</code>       </th>
+<th align="left" valign="middle">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>7</code></p></td>
+<td align="left" valign="middle"><p class="table">A <strong><code>1</code></strong> indicates that there has been a Utility Failure (Immediate)</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>6</code></p></td>
+<td align="left" valign="middle"><p class="table">A <strong><code>1</code></strong> indicates that the UPS Battery is Low</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>5</code></p></td>
+<td align="left" valign="middle"><p class="table">A <strong><code>1</code></strong> indicates that Bypass or Boost (offline UPS) is Active</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>4</code></p></td>
+<td align="left" valign="middle"><p class="table">A <strong><code>1</code></strong> indicates that the UPS has Failed</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>3</code></p></td>
+<td align="left" valign="middle"><p class="table">A <strong><code>1</code></strong> indicates that the UPS Type is Offline (Standby).</p>
+<p class="table">A <strong><code>0</code></strong> indicates that the UPS Type is Online.</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>2</code></p></td>
+<td align="left" valign="middle"><p class="table">A <strong><code>1</code></strong> indicates that a UPS Test is in Progress</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>1</code></p></td>
+<td align="left" valign="middle"><p class="table">A <strong><code>1</code></strong> indicates that a Shutdown is in Progress</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>0</code></p></td>
+<td align="left" valign="middle"><p class="table">Reserved (Always <strong><code>0</code></strong>)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>&lt;cr&gt;</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Stop Byte
+</p>
+</td>
+</tr>
+</table></div>
+<div class="sect3">
+<h4 id="_example_2">Example</h4>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<em>Computer Sends:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>Q1&lt;cr&gt;</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>UPS Responds:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>(208.4 140.0 208.4 034 59.9 39.6 35.0 00110000&lt;cr&gt;</code>
+</p>
+</td>
+</tr>
+</table></div>
+<div class="paragraph"><p>Decodes to:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+Input voltage = 208.4 Volts
+</p>
+</li>
+<li>
+<p>
+Input Fault Voltage =140.0 Volts
+</p>
+</li>
+<li>
+<p>
+Output Voltage = 208.4 Volts
+</p>
+</li>
+<li>
+<p>
+Output Load = 34%
+</p>
+</li>
+<li>
+<p>
+Input Frequency = 59.9 Hertz
+</p>
+</li>
+<li>
+<p>
+Battery voltage = 39.6 Volts
+</p>
+</li>
+<li>
+<p>
+Temperature = 35.0 Degrees of Centigrade
+</p>
+</li>
+<li>
+<p>
+Utility Power has not failed
+</p>
+</li>
+<li>
+<p>
+The Battery is not low
+</p>
+</li>
+<li>
+<p>
+The UPS Bypass is active
+</p>
+</li>
+<li>
+<p>
+The UPS has failed
+</p>
+</li>
+<li>
+<p>
+The UPS Type is Online
+</p>
+</li>
+<li>
+<p>
+UPS Test is not in progress
+</p>
+</li>
+<li>
+<p>
+UPS Shutdown is not in progress
+</p>
+</li>
+</ul></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_10_seconds_test">10 Seconds Test</h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<em>Computer Sends:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>T&lt;cr&gt;</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>UPS Responds:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+with a Test for 10 seconds and return to utility
+</p>
+</td>
+</tr>
+</table></div>
+<div class="paragraph"><p>If battery low occur during testing, UPS will return to utility immediately.</p></div>
+<div class="paragraph"><p>This command is available in all Best Power/Sola UPS models.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_test_until_low_battery">Test Until Low Battery</h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<em>Computer Sends:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>TL&lt;cr&gt;</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>UPS Responds:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+with a Test that lasts until a Low Battery condition exists and then the UPS returns to utility power.
+</p>
+</td>
+</tr>
+</table></div>
+<div class="paragraph"><p>This command is available in all Best Power/Sola UPS models.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_test_for_specified_time_period">Test for specified time period</h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<em>Computer Sends:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>T&lt;n&gt;&lt;cr&gt;</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>UPS Responds:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+with a Test that lasts for the specified number of minutes
+</p>
+</td>
+</tr>
+</table></div>
+<div class="paragraph"><p>Where <strong><code>&lt;n&gt;</code></strong> is the number of minutes (<code>01</code> - <code>99</code>) the test should continue for.</p></div>
+<div class="paragraph"><p>During the test, the UPS will return to utility immediately if a Low Battery condition occurs.</p></div>
+<div class="paragraph"><p>This command is available in all Best Power/Sola UPS models.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_shutdown_command">Shutdown Command</h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<em>Computer Sends:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>S&lt;n&gt;&lt;cr&gt;</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>UPS Responds:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+by shutting the UPS output off in <strong><code>&lt;n&gt;</code></strong> minutes.
+</p>
+</td>
+</tr>
+</table></div>
+<div class="paragraph"><p>Where <strong><code>&lt;n&gt;</code></strong> is the number of minutes (see below) to wait before turning off the UPS output.</p></div>
+<div class="paragraph"><p>The UPS output will turn off in <strong><code>&lt;n&gt;</code></strong> minutes, even if utility power is present.</p></div>
+<div class="paragraph"><p>If a Low Battery condition occurs before <strong><code>&lt;n&gt;</code></strong> minutes, the UPS output is turned off immediately.</p></div>
+<div class="paragraph"><p>After UPS shuts down, the UPS must not restart even though the input power is restored or is still present unless the user turns the unit on again.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img src="../images/note.png" alt="Note" />
+</td>
+<td class="content">Best/SOLA 610 and Patriot Pro/SOLA 320 Models will restart after a 10 second delay upon the return of AC input power.</td>
+</tr></table>
+</div>
+<div class="paragraph"><p><strong><code>&lt;n&gt;</code></strong> is a number ranging from <code>.2</code>, <code>.3</code>, &#8230;, <code>01</code>, <code>02</code>, &#8230;, to <code>99</code>.</p></div>
+<div class="paragraph"><p>The Cancel Shutdown command (<strong><code>C</code></strong>) may be used to cancel the shutdown of the UPS output during the countdown period defined by <strong><code>&lt;n&gt;</code></strong> minutes (shutdown waiting status).</p></div>
+<div class="sect3">
+<h4 id="_example_3">Example</h4>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<em>Computer Sends:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>S.3&lt;cr&gt;</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>UPS Responds:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+by shutting the output off in <strong><code>.3</code></strong> minutes (18 seconds)
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_shutdown_and_restore_command">Shutdown and Restore Command</h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<em>Computer Sends:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>S&lt;n&gt;R&lt;m&gt;&lt;cr&gt;</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>UPS Responds:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+by shutting the UPS output off in <strong><code>&lt;n&gt;</code></strong> minutes and then waiting for <strong><code>&lt;m&gt;</code></strong> minutes before turning on the UPS output again.
+</p>
+</td>
+</tr>
+</table></div>
+<div class="paragraph"><p>The UPS output will turn off in <strong><code>&lt;n&gt;</code></strong> minutes, even if utility power is present.</p></div>
+<div class="paragraph"><p><strong><code>&lt;n&gt;</code></strong> is a number ranging from <code>.2</code>, <code>.3</code>, &#8230;, <code>01</code>, <code>02</code>, &#8230;, to <code>99</code>.</p></div>
+<div class="paragraph"><p>If a Low Battery condition occurs before <strong><code>&lt;n&gt;</code></strong> minutes, the UPS output is turned off immediately.</p></div>
+<div class="paragraph"><p><strong><code>&lt;m&gt;</code></strong> is a number ranging from <code>0001</code> to <code>9999</code>.</p></div>
+<div class="paragraph"><p>If <strong><code>&lt;m&gt;</code></strong> minutes expires and the utility power has not returned, the UPS must wait until utility power is restored before turning on the UPS output again.</p></div>
+<div class="paragraph"><p>The Cancel Shutdown command (<strong><code>C</code></strong>) may be used to cancel the shutdown of the UPS output during the countdown period defined by <strong><code>&lt;n&gt;</code></strong> minutes (shutdown waiting status).</p></div>
+<div class="paragraph"><p>The Cancel Shutdown command (<strong><code>C</code></strong>) may be used to cancel the delay before turning on the UPS output defined by the countdown period <strong><code>&lt;m&gt;</code></strong> minutes (restore waiting status).
+The UPS output must remain off for at least 10 additional seconds before turning on (if utility power is present).</p></div>
+</div>
+<div class="sect2">
+<h3 id="_cancel_shutdown_command">Cancel Shutdown Command</h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<em>Computer Sends:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>C&lt;cr&gt;</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>UPS Responds:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+by canceling the <strong><code>S&lt;n&gt;&lt;cr&gt;</code></strong> or <strong><code>S&lt;n&gt;R&lt;m&gt;&lt;cr&gt;</code></strong> command sequence (if in progress).
+</p>
+</td>
+</tr>
+</table></div>
+<div class="paragraph"><p>The Cancel Shutdown command may be used to cancel the shutdown of the UPS output during the countdown period defined by <strong><code>&lt;n&gt;</code></strong> minutes (shutdown waiting status).</p></div>
+<div class="paragraph"><p>The Cancel Shutdown command may be used to cancel the delay before turning on the UPS output defined by the countdown period <strong><code>&lt;m&gt;</code></strong> minutes (restore waiting status).
+The UPS output must remain off for at least 10 additional seconds before turning on (if utility power is present).</p></div>
+</div>
+<div class="sect2">
+<h3 id="_cancel_test_command">Cancel Test Command</h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<em>Computer Sends:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>CT&lt;cr&gt;</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>UPS Responds:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+by canceling all test activity and connecting the utility power to the UPS output immediately.
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_ups_runtime_remaining_inquiry">UPS Runtime Remaining Inquiry</h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<em>Computer Sends:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>RT&lt;cr&gt;</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>UPS Responds:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+with the calculated battery runtime remaining <code>TTT&lt;cr&gt;</code>
+</p>
+<div class="paragraph"><p>Where <code>T</code> is an integer value from <code>0</code> to <code>9</code> and the unit are in minutes.</p></div>
+</td>
+</tr>
+</table></div>
+<div class="paragraph"><p>This command provides the number of minutes the UPS can run on battery before a low battery shutdown occurs.</p></div>
+<div class="paragraph"><p>This command is not available on the Best/SOLA 610 model series.
+It is also not available on Patriot Pro/SOLA 320 model series.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_set_the_quantity_of_attached_battery_packs">Set the Quantity of Attached Battery Packs</h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<em>Computer Sends:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>BP&lt;n&gt;</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>UPS Responds:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+by understanding that there are now <strong><code>&lt;n&gt;</code></strong> battery packs assumed to be connected to the UPS
+</p>
+</td>
+</tr>
+</table></div>
+<div class="paragraph"><p>Where <strong><code>&lt;n&gt;</code></strong> is an integer ranging from <code>0</code> to <code>5</code>.</p></div>
+<div class="paragraph"><p>This command is only available on the Axxium/SOLA 620 model series.</p></div>
+<div class="sect3">
+<h4 id="_examples">Examples</h4>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<em>Computer Sends:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>BP0&lt;cr&gt;</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>UPS Responds:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+by understanding that there is no attached battery pack
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>Computer Sends:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>BP3&lt;cr&gt;</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>UPS Responds:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+by understanding that there are <strong><code>3</code></strong> attached battery packs
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_attached_battery_packs_inquiry">Attached Battery Packs Inquiry</h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<em>Computer Sends:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>BP?&lt;cr&gt;</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>UPS Responds:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>&lt;nn&gt;&lt;cr&gt;</code>
+</p>
+</td>
+</tr>
+</table></div>
+<div class="paragraph"><p>Where <code>&lt;nn&gt;</code> represents the number of battery packs the UPS currently understands it has.</p></div>
+<div class="paragraph"><p>A leading <code>O</code> (zero) is always supplied, assuming that less than <code>10</code> (ten) battery packs are connected.</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>00</code> &#8594; No attached battery packs
+</p>
+</li>
+<li>
+<p>
+<code>01</code> &#8594; One attached battery pack
+</p>
+</li>
+<li>
+<p>
+<code>02</code> &#8594; Two attached battery packs
+</p>
+</li>
+<li>
+<p>
+<code>03</code> &#8594; Three attached battery packs
+</p>
+</li>
+<li>
+<p>
+<code>04</code> &#8594; Four attached battery packs
+</p>
+</li>
+<li>
+<p>
+<code>05</code> &#8594; Five attached battery packs
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>This command is only available on the Axxium/SOLA 620 model series.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_ups_id_inquiry">UPS ID Inquiry</h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<em>Computer Sends:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>ID&lt;cr&gt;</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>UPS Responds:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+with the UPS Identification stream with the format: <code>AAA,BBBB,CCC,DDD,EE.E,FF.F</code>
+</p>
+</td>
+</tr>
+</table></div>
+<div class="paragraph"><p>Where:</p></div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>AAA</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+is the three-character identification for the UPS model as define by Best Power and listed in the table below:
+</p>
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<thead>
+<tr>
+<th align="center" valign="middle">Identifier     </th>
+<th align="left" valign="middle">UPS Model</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>PRO</code></p></td>
+<td align="left" valign="middle"><p class="table">Patriot Pro U or E models</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>320</code></p></td>
+<td align="left" valign="middle"><p class="table">SOLA 320 A models</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>FOR</code></p></td>
+<td align="left" valign="middle"><p class="table">Fortress 520 Series U or E models</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>520</code></p></td>
+<td align="left" valign="middle"><p class="table">SOLA 520 A models</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>PR2</code></p></td>
+<td align="left" valign="middle"><p class="table">Patriot Pro II U or E models</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>325</code></p></td>
+<td align="left" valign="middle"><p class="table">SOLA 325 A models</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>FTC</code></p></td>
+<td align="left" valign="middle"><p class="table">Fortress TeleCom U or E models</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>525</code></p></td>
+<td align="left" valign="middle"><p class="table">SOLA 525 A models</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>AX1</code></p></td>
+<td align="left" valign="middle"><p class="table">Axxium U or E models</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>620</code></p></td>
+<td align="left" valign="middle"><p class="table">SOLA 620 A models</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>BBBB</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+is the output power in VA (volt amperes).
+<code>B</code> is an integer number ranging from <code>0</code> to <code>9</code>.
+</p>
+<div class="paragraph"><p>Example: <code>1500</code> represents a 1.5KVA UPS</p></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>CCC</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+is the Nominal Input Voltage.
+<code>C</code> is an integer number ranging from <code>0</code> to <code>9</code>.
+The unit is Volts AC.
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>DDD</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+is the Nominal Output Voltage.
+<code>D</code> is an integer number ranging from <code>0</code> to <code>9</code>.
+The unit is Volts AC.
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>EE.E</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+is the Battery Voltage that will cause the UPS to shut itself off.
+<code>E</code> is an integer number ranging from <code>0</code> to <code>9</code>.
+Then unit is Volts DC and a decimal point is present.
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>FF.F</code> or <code>FFF.F</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+is the Battery Voltage at full charge.
+<code>F</code> is an integer number ranging from <code>0</code> to <code>9</code>.
+Then unit is Volts DC.
+</p>
+<div class="paragraph"><p>Typically, for 700VA, 1KVA and 1.5KVA units, the format is <code>FF.F</code>.
+For 2KVA and 3KVA units, the format is <code>FFF.F</code>.</p></div>
+</td>
+</tr>
+</table></div>
+<div class="paragraph"><p>This command is not available on the Best/SOLA 610 model series.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_shutdown_set_command">Shutdown Set Command</h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<em>Computer Sends:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>SS&lt;n&gt;&lt;cr&gt;</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>UPS Responds:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+by setting the shutdown mode functionality of Pin 1 and Pin 7 on the UPS DB9 communication port (Per Best Power&#8217;s EPS-0059)
+</p>
+</td>
+</tr>
+</table></div>
+<div class="paragraph"><p>Where:</p></div>
+<div class="paragraph"><p><strong><code>&lt;n&gt;</code></strong> is an integer number ranging from <code>0</code> to <code>6</code>.</p></div>
+<div class="paragraph"><p>The following table summarizes the effects on Pin 1 and Pin 7 functionality:</p></div>
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="middle">Shutdown Set # mode    </th>
+<th align="left" valign="middle">LEDs on UPS    </th>
+<th align="left" valign="middle">Pin 1 Functionality                                            </th>
+<th align="left" valign="middle">Pin 7 Functionality</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="middle"><p class="table"><code>0</code> Default</p></td>
+<td align="left" valign="middle"><p class="table">LEDs OFF</p></td>
+<td align="left" valign="middle"><p class="table">Shut off after 2 minutes on battery, even if input power returns during the 2 minutes. Restart after a 12 second delay following shutdown, once input power returns.</p></td>
+<td align="left" valign="middle"><p class="table">Emergency Power Off (EPO) immediately under any condition (normal input power or on battery). UPS will not restart.</p></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code>1</code></p></td>
+<td align="left" valign="middle"><p class="table">LED 1</p></td>
+<td align="left" valign="middle"><p class="table">Shut off after 2 minutes on battery, even if input power returns during the 2 minutes. UPS will not restart when normal input power returns.</p></td>
+<td align="left" valign="middle"><p class="table">Shut off after 2 minutes on battery, even if input power returns during the 2 minutes. UPS will not restart when normal input power returns.</p></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code>2</code></p></td>
+<td align="left" valign="middle"><p class="table">LED 2</p></td>
+<td align="left" valign="middle"><p class="table">Shut off after 1 minute on battery.
+<span class="footnote" id="_footnote_note1"><br />[Shutdown occurs in each case even if input power returns during the "<code>n</code>" minutes. In each case, a restart will occur after a 12 second delay following shutdown, once input power returns.]<br /></span></p></td>
+<td align="left" valign="middle"><p class="table">Shut off after 1 minute on battery.
+<span class="footnote" id="_footnote_note2"><br />[Shutdown occurs in each case even if input power returns during the "<code>n</code>" minutes. In each case, a restart will not occur following shutdown, once input power returns.]<br /></span></p></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code>3</code></p></td>
+<td align="left" valign="middle"><p class="table">LED 3</p></td>
+<td align="left" valign="middle"><p class="table">Shut off after 3 minutes on battery. <span class="footnoteref"><br /><a href="#_footnote_note1">[note1]</a><br /></span></p></td>
+<td align="left" valign="middle"><p class="table">Shut off after 3 minutes on battery. <span class="footnoteref"><br /><a href="#_footnote_note2">[note2]</a><br /></span></p></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code>4</code></p></td>
+<td align="left" valign="middle"><p class="table">LED 4</p></td>
+<td align="left" valign="middle"><p class="table">Shut off after 5 minutes on battery. <span class="footnoteref"><br /><a href="#_footnote_note1">[note1]</a><br /></span></p></td>
+<td align="left" valign="middle"><p class="table">Shut off after 5 minutes on battery. <span class="footnoteref"><br /><a href="#_footnote_note2">[note2]</a><br /></span></p></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code>5</code></p></td>
+<td align="left" valign="middle"><p class="table">LED 5</p></td>
+<td align="left" valign="middle"><p class="table">Shut off after 10 minutes on battery. <span class="footnoteref"><br /><a href="#_footnote_note1">[note1]</a><br /></span></p></td>
+<td align="left" valign="middle"><p class="table">Shut off after 10 minutes on battery. <span class="footnoteref"><br /><a href="#_footnote_note2">[note2]</a><br /></span></p></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table"><code>6</code></p></td>
+<td align="left" valign="middle"><p class="table">LED 6</p></td>
+<td align="left" valign="middle"><p class="table">Shut off after 20 minutes on battery. <span class="footnoteref"><br /><a href="#_footnote_note1">[note1]</a><br /></span></p></td>
+<td align="left" valign="middle"><p class="table">Shut off after 20 minutes on battery. <span class="footnoteref"><br /><a href="#_footnote_note2">[note2]</a><br /></span></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="paragraph"><p>This command is not available on the Best/SOLA 610 model series.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_shutdown_set_inquiry_command">Shutdown Set Inquiry Command</h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<em>Computer Sends:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>SS?&lt;cr&gt;</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>UPS Responds:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+by reporting the current value set as the Shutdown mode as <code>&lt;n&gt;&lt;cr&gt;</code>
+</p>
+</td>
+</tr>
+</table></div>
+<div class="paragraph"><p>Where <code>&lt;n&gt;</code> is an integer number between <code>0</code> and <code>6</code> representing the functionality listed on the table above.</p></div>
+<div class="paragraph"><p>This command is not available on the Best/SOLA 610 model series.</p></div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_command_summary">COMMAND SUMMARY</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Below is a summary of all the commands listed in this document:</p></div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<strong><code>Q</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Status Inquiry
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>Q1</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Status Inquiry (typically used by CheckUPS)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>T</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+10 Seconds Test
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>TL</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Test until Low Battery occurs
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>T&lt;n&gt;</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Test for a Specified Time Period
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>S&lt;n&gt;</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Shutdown Command
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>S&lt;n&gt;R&lt;n&gt;</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Shutdown and Restore Command
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>C</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Cancel Shutdown Command
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>CT</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Cancel Test Command
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>RT</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+UPS Runtime Remaining Inquiry
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>BP&lt;n&gt;</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Set the Quantity of Attached Battery Packs
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>BP?</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Attached Battery Packs Inquiry
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>ID</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+UPS ID Inquiry
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>SS&lt;n&gt;</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Shutdown Set Command
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>SS?</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Shutdown Set Inquiry Command
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+</div>
+</div>
+<div id="footnotes"><hr /></div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2022-04-04 12:12:52 UTC
+</div>
+<div id="footer-badges">
+<a href="https://github.com/networkupstools/nut">
+  <img style="border:0;height:20"
+    src="https://img.shields.io/github/checks-status/networkupstools/nut/master"
+    alt="Latest GitHub checks status: master branch"/>
+</a>
+<!--
+<a href="https://travis-ci.org/github/networkupstools/nut">
+  <img style="border:0;height:20"
+    src="https://api.travis-ci.org/networkupstools/nut.svg?branch=master"
+    alt="Latest Travis CI build status: master branch"/>
+</a>
+-->
+<a href="https://ci.networkupstools.org/job/nut/job/nut/job/master/">
+  <img style="border:0;height:20"
+    src="https://ci.networkupstools.org/buildStatus/icon?job=nut%2Fnut%2Fmaster"
+    alt="Latest NUT CI build status: master branch"/>
+</a>
+<a href="https://ci.networkupstools.org/job/nut/job/nut/job/fightwarn/">
+  <img style="border:0;height:20"
+    src="https://ci.networkupstools.org/buildStatus/icon?job=nut%2Fnut%2Ffightwarn&subject=Fightwarn%20Branch"
+    alt="Latest NUT CI build status: fightwarn branch"/>
+</a>
+<!--
+<a href="https://github.com/networkupstools/nut/releases">
+  <img style="border:0;height:20"
+    src="https://img.shields.io/github/v/release/networkupstools/nut"
+    alt="Latest GitHub drafted NUT source release"/>
+</a>
+-->
+<a href="https://github.com/networkupstools/nut/releases">
+  <img style="border:0;height:20"
+    src="https://img.shields.io/github/v/tag/networkupstools/nut?sort=semver"
+    alt="Latest Git-tagged NUT source release"/>
+</a>
+<!-- Maintainer note: for the counter below to work, a git tag
+     is not sufficient -- a release must be drafted and published
+     at https://github.com/networkupstools/nut/releases
+     Counter URL may also be .../latest/BRANCHNAME -->
+<a href="https://github.com/networkupstools/nut">
+  <img style="border:0;height:20"
+    src="https://img.shields.io/github/commits-since/networkupstools/nut/latest.svg"
+    alt="Commits on master branch since latest release on GitHub"/>
+</a>
+<a href="http://www.methods.co.nz/asciidoc/">
+  <img style="border:0;width:88px;height:31px"
+    src="../images/asciidoc.png"
+    alt="Powered by AsciiDoc"/>
+</a>
+<a href="https://validator.w3.org/check?uri=referer">
+  <img style="border:0;width:88px;height:31px"
+    src="https://www.w3.org/Icons/valid-xhtml11-blue"
+    alt="Valid XHTML 1.1"/>
+</a>
+<a href="https://jigsaw.w3.org/css-validator/check?uri=referer">
+  <img style="border:0;width:88px;height:31px"
+    src="https://jigsaw.w3.org/css-validator/images/vcss-blue"
+    alt="Valid CSS!"/>
+</a>
+<a href="https://www.gandi.net/">
+  <img style="border:0;height:38px;"
+       src="../images/gandi-ar21.svg"
+       alt="DNS, redirection and related services Hoster"/>
+</a>
+<a href="https://fosshost.org/">
+  <img style="border:0;width:112px;height:38px;"
+       src="../images/ci/fosshost.org_Host_Light_38px.png"
+       alt="Dedicated Hosting for NUT CI"/>
+</a>
+</div>
+</div>
+</div>
+</div>
+<!-- Google Analytics integration -->
+<script type="text/javascript">
+
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-9664272-1']);
+        _gaq.push(['_trackPageview']);
+
+        (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+
+</script>
+</body>
+</html>
