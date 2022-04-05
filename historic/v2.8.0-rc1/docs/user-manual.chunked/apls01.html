@@ -70,25 +70,32 @@ by looking at the contents of the <code class="literal">/usr/share/lxc/templates
 e.g. a script named <code class="literal">lxc-debian</code> for the "debian" template. You can see
 further options for each "template" by invoking its help action, e.g.:</p></div><p>+</p><pre class="screen">:; lxc-create -t debian -h</pre><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
 Install containers like this:
-</p><pre class="screen">:; lxc-create -n jenkins-debian11-mips64el -P /srv/libvirt/rootfs -t debian --     -r bullseye -a mips64el</pre><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><p class="simpara">
+</p><pre class="screen">:; lxc-create -n jenkins-debian11-mips64el -P /srv/libvirt/rootfs -t debian -- \
+    -r bullseye -a mips64el</pre><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><p class="simpara">
 to specify a particular mirror (not everyone hosts everything —    so if you get something like
    <code class="literal">"E: Invalid Release file, no entry for main/binary-mips/Packages"</code>
    then see <a class="ulink" href="https://www.debian.org/mirror/list" target="_top">https://www.debian.org/mirror/list</a> for details, and double-check
    the chosen site to verify if the distro version of choice is hosted with
    your arch of choice):
-</p><pre class="screen">:; MIRROR="http://ftp.br.debian.org/debian/"    lxc-create -n jenkins-debian10-mips -P /srv/libvirt/rootfs -t debian --     -r buster -a mips</pre></li><li class="listitem"><p class="simpara">
+</p><pre class="screen">:; MIRROR="http://ftp.br.debian.org/debian/" \
+   lxc-create -n jenkins-debian10-mips -P /srv/libvirt/rootfs -t debian -- \
+    -r buster -a mips</pre></li><li class="listitem"><p class="simpara">
 …or for EOLed distros, use the archive, e.g.:
-</p><pre class="screen">:; MIRROR="http://archive.debian.org/debian-archive/debian/"    lxc-create -n jenkins-debian8-s390x -P /srv/libvirt/rootfs -t debian --     -r jessie -a s390x</pre></li><li class="listitem"><p class="simpara">
+</p><pre class="screen">:; MIRROR="http://archive.debian.org/debian-archive/debian/" \
+   lxc-create -n jenkins-debian8-s390x -P /srv/libvirt/rootfs -t debian -- \
+    -r jessie -a s390x</pre></li><li class="listitem"><p class="simpara">
 …Alternatively, other distributions can be used (as supported by your
    LXC scripts, typically in <code class="literal">/usr/share/debootstrap/scripts</code>), e.g. Ubuntu:
-</p><pre class="screen">:; lxc-create -n jenkins-ubuntu1804-s390x -P /srv/libvirt/rootfs -t ubuntu --     -r bionic -a s390x</pre></li><li class="listitem"><p class="simpara">
+</p><pre class="screen">:; lxc-create -n jenkins-ubuntu1804-s390x -P /srv/libvirt/rootfs -t ubuntu -- \
+    -r bionic -a s390x</pre></li><li class="listitem"><p class="simpara">
 For distributions with a different packaging mechanism from that on the
    LXC host system, you may need to install corresponding tools (e.g. <code class="literal">yum4</code>,
    <code class="literal">rpm</code> and <code class="literal">dnf</code> on Debian hosts for installing CentOS and related guests).
    You may also need to pepper with symlinks to taste (e.g. <code class="literal">yum =&gt; yum4</code>),
    or find a <code class="literal">pacman</code> build to install Arch Linux or derivative, etc.
    Otherwise, you risk seeing something like this:
-</p><pre class="screen">root@debian:~# lxc-create -n jenkins-centos7-x86-64 -P /srv/libvirt/rootfs     -t centos -- -R 7 -a x86_64
+</p><pre class="screen">root@debian:~# lxc-create -n jenkins-centos7-x86-64 -P /srv/libvirt/rootfs \
+    -t centos -- -R 7 -a x86_64
 Host CPE ID from /etc/os-release:
 'yum' command is missing
 lxc-create: jenkins-centos7-x86-64: lxccontainer.c: create_run_template: 1616 Failed to create container from template
@@ -105,7 +112,10 @@ Add the "name,IP" line for this container to <code class="literal">/etc/lxc/dnsm
 new host reservation!</p></div></li><li class="listitem"><p class="simpara">
 Convert a pure LXC container to be managed by LIBVIRT-LXC (and edit config
   markup on the fly — e.g. fix the LXC <code class="literal">dir:/</code> URL schema):
-</p><pre class="screen">:; virsh -c lxc:///system domxml-from-native lxc-tools     /srv/libvirt/rootfs/jenkins-debian11-armhf/config     | sed -e 's,dir:/srv,/srv,'     &gt; /tmp/x &amp;&amp; virsh define /tmp/x</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>You may want to tune the default generic 64MB RAM allocation, so your
+</p><pre class="screen">:; virsh -c lxc:///system domxml-from-native lxc-tools \
+    /srv/libvirt/rootfs/jenkins-debian11-armhf/config \
+    | sed -e 's,dir:/srv,/srv,' \
+    &gt; /tmp/x &amp;&amp; virsh define /tmp/x</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>You may want to tune the default generic 64MB RAM allocation, so your
    launched QEMU containers are not OOM-killed as they exceeded their memory
    cgroup limit. In practice they do not eat that much resident memory, just
    want to have it addressable by VMM, I guess (swap is not very used either),
@@ -129,11 +139,18 @@ Note that generated XML might not conform to current LXC schema so it
 Monitor deployed container rootfs’es with:
 </p><pre class="screen">:; du -ks /srv/libvirt/rootfs/*</pre><p class="simpara">(should have non-trivial size for deployments without fatal infant errors)</p></li><li class="listitem"><p class="simpara">
 Mass-edit/review libvirt configurations with:
-</p><pre class="screen">:; virsh list --all | awk '{print $2}'    | grep jenkins | while read X ; do      virsh edit --skip-validate $X ; done</pre><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+</p><pre class="screen">:; virsh list --all | awk '{print $2}' \
+   | grep jenkins | while read X ; do \
+     virsh edit --skip-validate $X ; done</pre><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 …or avoid <code class="literal">--skip-validate</code> when markup is initially good :)
 </li></ul></div></li><li class="listitem"><p class="simpara">
 Mass-define network interfaces:
-</p><pre class="screen">:; virsh list --all | awk '{print $2}'    | grep jenkins | while read X ; do      virsh dumpxml "$X" | grep "bridge='lxcbr0'"      || virsh attach-interface --domain "$X" --config         --type bridge --source lxcbr0 ;    done</pre></li><li class="listitem"><p class="simpara">
+</p><pre class="screen">:; virsh list --all | awk '{print $2}' \
+   | grep jenkins | while read X ; do \
+     virsh dumpxml "$X" | grep "bridge='lxcbr0'" \
+     || virsh attach-interface --domain "$X" --config \
+        --type bridge --source lxcbr0 ; \
+   done</pre></li><li class="listitem"><p class="simpara">
 Verify that unique MAC addresses were defined (e.g. <code class="literal">00:16:3e:00:00:01</code>
   tends to pop up often, while <code class="literal">52:54:00:xx:xx:xx</code> are assigned to other
   containers); edit the domain definitions to randomize, if needed:
@@ -147,10 +164,35 @@ Populate with <code class="literal">abuild</code> account, as well as with the <
   <code class="literal">sudo</code> ability, reporting of assigned IP addresses on the console,
   and SSH server access complete with envvar passing from CI clients
   by virtue of <code class="literal">ssh -o SendEnv='*' container-name</code>:
-</p><pre class="screen">:; for ALTROOT in /srv/libvirt/rootfs/*/rootfs/ ; do     echo "=== $ALTROOT :" &gt;&amp;2;     grep eth0 "$ALTROOT/etc/issue" || ( echo 'S{NAME} S{VERSION_ID} n l@b ; Current IP(s): 4{eth0} 4{eth1} 4{eth2} 4{eth3}' &gt;&gt; "$ALTROOT/etc/issue" ) ;     grep eth0 "$ALTROOT/etc/issue.net" || ( echo 'S{NAME} S{VERSION_ID} n l@b ; Current IP(s): 4{eth0} 4{eth1} 4{eth2} 4{eth3}' &gt;&gt; "$ALTROOT/etc/issue.net" ) ;     groupadd -R "$ALTROOT" -g 399 abuild ;     useradd -R "$ALTROOT" -u 399 -g abuild -M -N -s /bin/bash abuild     || useradd -R "$ALTROOT" -u 399 -g 399 -M -N -s /bin/bash abuild     || { if ! grep -w abuild "$ALTROOT/etc/passwd" ; then             echo 'abuild:x:399:399::/home/abuild:/bin/bash'             &gt;&gt; "$ALTROOT/etc/passwd" ;             echo "USERADDed manually: passwd" &gt;&amp;2 ;          fi ;          if ! grep -w abuild "$ALTROOT/etc/shadow" ; then             echo 'abuild:!:18889:0:99999:7:::' &gt;&gt; "$ALTROOT/etc/shadow" ;             echo "USERADDed manually: shadow" &gt;&amp;2 ;          fi ;        } ;     if [ -s "$ALTROOT/etc/ssh/sshd_config" ]; then         grep 'AcceptEnv *' "$ALTROOT/etc/ssh/sshd_config" || (             ( echo ""; echo "# For CI: Allow passing any envvars:"; echo 'AcceptEnv *' )             &gt;&gt; "$ALTROOT/etc/ssh/sshd_config"         ) ;     fi ;    done</pre><p class="simpara">Note that for some reason, in some of those other-arch distros <code class="literal">useradd</code>
+</p><pre class="screen">:; for ALTROOT in /srv/libvirt/rootfs/*/rootfs/ ; do \
+    echo "=== $ALTROOT :" &gt;&amp;2; \
+    grep eth0 "$ALTROOT/etc/issue" || ( echo '\S{NAME} \S{VERSION_ID} \n \l@\b ; Current IP(s): \4{eth0} \4{eth1} \4{eth2} \4{eth3}' &gt;&gt; "$ALTROOT/etc/issue" ) ; \
+    grep eth0 "$ALTROOT/etc/issue.net" || ( echo '\S{NAME} \S{VERSION_ID} \n \l@\b ; Current IP(s): \4{eth0} \4{eth1} \4{eth2} \4{eth3}' &gt;&gt; "$ALTROOT/etc/issue.net" ) ; \
+    groupadd -R "$ALTROOT" -g 399 abuild ; \
+    useradd -R "$ALTROOT" -u 399 -g abuild -M -N -s /bin/bash abuild \
+    || useradd -R "$ALTROOT" -u 399 -g 399 -M -N -s /bin/bash abuild \
+    || { if ! grep -w abuild "$ALTROOT/etc/passwd" ; then \
+            echo 'abuild:x:399:399::/home/abuild:/bin/bash' \
+            &gt;&gt; "$ALTROOT/etc/passwd" ; \
+            echo "USERADDed manually: passwd" &gt;&amp;2 ; \
+         fi ; \
+         if ! grep -w abuild "$ALTROOT/etc/shadow" ; then \
+            echo 'abuild:!:18889:0:99999:7:::' &gt;&gt; "$ALTROOT/etc/shadow" ; \
+            echo "USERADDed manually: shadow" &gt;&amp;2 ; \
+         fi ; \
+       } ; \
+    if [ -s "$ALTROOT/etc/ssh/sshd_config" ]; then \
+        grep 'AcceptEnv \*' "$ALTROOT/etc/ssh/sshd_config" || ( \
+            ( echo ""; echo "# For CI: Allow passing any envvars:"; echo 'AcceptEnv *' ) \
+            &gt;&gt; "$ALTROOT/etc/ssh/sshd_config" \
+        ) ; \
+    fi ; \
+   done</pre><p class="simpara">Note that for some reason, in some of those other-arch distros <code class="literal">useradd</code>
 fails to find the group anyway; then we have to "manually" add them.</p></li><li class="listitem"><p class="simpara">
 Let the host know names/IPs of containers you assigned:
-</p><pre class="screen">:; grep -v '#' /etc/lxc/dnsmasq-hosts.conf | while IFS=, read N I ; do     getent hosts "$N" &gt;&amp;2 || echo "$I $N" ;    done &gt;&gt; /etc/hosts</pre></li></ul></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_further_setup_of_the_containers"></a>Further setup of the containers</h4></div></div></div><p>See NUT <code class="literal">docs/config-prereqs.txt</code> about dependency package installation
+</p><pre class="screen">:; grep -v '#' /etc/lxc/dnsmasq-hosts.conf | while IFS=, read N I ; do \
+    getent hosts "$N" &gt;&amp;2 || echo "$I $N" ; \
+   done &gt;&gt; /etc/hosts</pre></li></ul></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_further_setup_of_the_containers"></a>Further setup of the containers</h4></div></div></div><p>See NUT <code class="literal">docs/config-prereqs.txt</code> about dependency package installation
 for Debian-based Linux systems.</p><p>It may be wise to not install e.g. documentation generation tools (or at
 least not the full set for HTML/PDF generation) in each environment, in
 order to conserve space and run-time stress.</p><p>Still, if there are significant version outliers (such as using an older
@@ -159,13 +201,23 @@ to ensure non-regression — that when adapting Makefile rule definitions
 to modern tools, we do not lose ability to build with older ones.</p><p>For this, <code class="literal">chroot</code> from the host system can be used, e.g. to improve the
 interactive usability for a population of Debian(-compatible) containers
 (and to use its networking, while the operating environment in containers
-may be not yet configured or still struggling to access the Internet):</p><pre class="screen">:; for ALTROOT in /srv/libvirt/rootfs/*/rootfs/ ; do     echo "=== $ALTROOT :" ;     chroot "$ALTROOT" apt-get install         sudo bash vim mc p7zip p7zip-full pigz pbzip2 git    ; done</pre><p>Similarly for <code class="literal">yum</code>-managed systems (CentOS and relatives), though specific
+may be not yet configured or still struggling to access the Internet):</p><pre class="screen">:; for ALTROOT in /srv/libvirt/rootfs/*/rootfs/ ; do \
+    echo "=== $ALTROOT :" ; \
+    chroot "$ALTROOT" apt-get install \
+        sudo bash vim mc p7zip p7zip-full pigz pbzip2 git \
+   ; done</pre><p>Similarly for <code class="literal">yum</code>-managed systems (CentOS and relatives), though specific
 package names can differ, and additional package repositories may need to
 be enabled first (see link:config-prereqs.txt for details).</p><p>Note that technically <code class="literal">(sudo) chroot ...</code> can also be used from the CI worker
 account on the host system to build in the prepared filesystems without the
 overhead of running containers and several copies of Jenkins <code class="literal">agent.jar</code>.</p><p>Also note that set-up of some packages, including the <code class="literal">ca-certificates</code> and
 the JDK/JRE, require that the <code class="literal">/proc</code> filesystem is usable in the chroot.
-This can be achieved with e.g.:</p><pre class="screen">:; for ALTROOT in /srv/libvirt/rootfs/*/rootfs/ ; do     for D in proc ; do       echo "=== $ALTROOT/$D :" ;       mkdir -p "$ALTROOT/$D" ;       mount -o bind,rw "/$D" "$ALTROOT/$D" ;     done ;    done</pre><p>TODO: Test and document a working NAT and firewall setup for this, to allow
+This can be achieved with e.g.:</p><pre class="screen">:; for ALTROOT in /srv/libvirt/rootfs/*/rootfs/ ; do \
+    for D in proc ; do \
+      echo "=== $ALTROOT/$D :" ; \
+      mkdir -p "$ALTROOT/$D" ; \
+      mount -o bind,rw "/$D" "$ALTROOT/$D" ; \
+    done ; \
+   done</pre><p>TODO: Test and document a working NAT and firewall setup for this, to allow
 SSH access to the containers via dedicated TCP ports exposed on the host.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_troubleshooting"></a>Troubleshooting</h4></div></div></div><p>Q: Container won’t start, its <code class="literal">virsh console</code> says something like:</p><p>+</p><pre class="screen">Failed to create symlink /sys/fs/cgroup/net_cls: Operation not permitted</pre><p>A: According to <a class="ulink" href="https://bugzilla.redhat.com/show_bug.cgi?id=1770763" target="_top">https://bugzilla.redhat.com/show_bug.cgi?id=1770763</a>
 (skip to the end for summary) this can happen when a newer Linux host system
 with cgroupsv2 runs an older guest distro that only knows about cgroupsv1,
@@ -285,4 +337,4 @@ Conflicts with: <code class="literal">^ci-debian-altroot--.*$</code> assuming th
 </li></ul></div><p>Also, the "executors" count should be reduced to the amount of compilers
 in that system (usually 2) and so avoid extra stress of scheduling too many
 emulated-CPU builds at once.</p></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2022-04-05 22:41:02 -- Network UPS Tools 2.7.4.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apl.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="apl.html">Up</a></td><td width="40%" align="right"> </td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2022-04-05 23:12:01 -- Network UPS Tools 2.8.0-rc1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apl.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="apl.html">Up</a></td><td width="40%" align="right"> </td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

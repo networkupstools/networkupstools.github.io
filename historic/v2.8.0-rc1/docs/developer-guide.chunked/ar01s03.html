@@ -83,7 +83,11 @@ locally to avoid much typing to re-run those scenarios during development.</p><p
 existing code on their workstations or to ensure support for new
 compilers and C standard revisions, e.g. save a local file like this
 to call the common script with pre-sets:</p><pre class="literallayout">$ cat _fightwarn-gcc10-gnu17.sh
-#!/bin/sh</pre><pre class="literallayout">BUILD_TYPE=default-all-errors   CFLAGS="-Wall -Wextra -Werror -pedantic -std=gnu17"     CXXFLAGS="-Wall -Wextra -Werror -std=gnu++17"   CC=gcc-10 CXX=g++-10            ./ci_build.sh</pre><p>…and then execute it to prepare a workspace, after which you can go
+#!/bin/sh</pre><pre class="literallayout">BUILD_TYPE=default-all-errors \
+CFLAGS="-Wall -Wextra -Werror -pedantic -std=gnu17" \
+CXXFLAGS="-Wall -Wextra -Werror -std=gnu++17" \
+CC=gcc-10 CXX=g++-10 \
+        ./ci_build.sh</pre><p>…and then execute it to prepare a workspace, after which you can go
 fixing bugs file-by-file running a <code class="literal">make</code> after each save to confirm
 your solutions and uncover the next issue to address :-)</p><p>Helpfully, the NUT CI farm build logs report the configuration used for
 each executed stage, so if some build combination fails — you can just
@@ -95,7 +99,12 @@ is a reasonable set of warnings which NUT codebase actively tries to
 be clean about (and checks in CI), detailed in the next section.</p><p>For the <code class="literal">ci_build.sh</code> usage like above, one can instead pass the setting
 via <code class="literal">BUILD_WARNOPT=...</code>, and require that all emitted warnings are fatal
 for their build, e.g.:</p><pre class="literallayout">$ cat _fightwarn-clang9-gnu11.sh
-#!/bin/sh</pre><pre class="literallayout">BUILD_TYPE=default-all-errors   BUILD_WARNOPT=hard BUILD_WARNFATAL=yes  CFLAGS="-std=gnu11"     CXXFLAGS="-std=gnu++11"         CC=clang-9 CXX=clang++-9 CPP=clang-cpp          ./ci_build.sh</pre><p>Finally, for refactoring effort geared particularly for fighting the
+#!/bin/sh</pre><pre class="literallayout">BUILD_TYPE=default-all-errors \
+BUILD_WARNOPT=hard BUILD_WARNFATAL=yes \
+CFLAGS="-std=gnu11" \
+CXXFLAGS="-std=gnu++11" \
+CC=clang-9 CXX=clang++-9 CPP=clang-cpp \
+        ./ci_build.sh</pre><p>Finally, for refactoring effort geared particularly for fighting the
 warnings which exist in current codebase, the script contains some
 presets (which would evolve along with codebase quality improvements)
 as <code class="literal">BUILD_TYPE=fightwarn-gcc</code>, <code class="literal">BUILD_TYPE=fightwarn-clang</code> or plain
@@ -119,7 +128,8 @@ there are builds of system shell that just fail under stress. If you are
 seeing random failures of <code class="literal">./configure</code> script in different spots with
 the same inputs, try telling <code class="literal">./ci_build.sh</code> to loop configuring until
 success (instead of quickly failing), and/or tell <code class="literal">./configure</code> to use
-another shell at least for the system call-outs, with options like these:</p><pre class="literallayout">SHELL=/bin/bash CONFIG_SHELL=/bin/bash CI_SHELL_IS_FLAKY=true   ./ci_build.sh</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_jenkins_ci"></a>Jenkins CI</h4></div></div></div><p>Since mid-2021, the NUT CI farm is implemented by several virtual servers
+another shell at least for the system call-outs, with options like these:</p><pre class="literallayout">SHELL=/bin/bash CONFIG_SHELL=/bin/bash CI_SHELL_IS_FLAKY=true \
+./ci_build.sh</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_jenkins_ci"></a>Jenkins CI</h4></div></div></div><p>Since mid-2021, the NUT CI farm is implemented by several virtual servers
 courteously provided by <a class="ulink" href="http://fosshost.org" target="_top">http://fosshost.org</a></p><p>These run various operating systems as build agents, and a Jenkins instance
 to orchestrate the builds of NUT branches and pull requests on those agents.</p><p>This is driven by <code class="literal">Jenkinsfile-dynamatrix</code> and a Jenkins Shared Library called
 <a class="ulink" href="https://github.com/networkupstools/jenkins-dynamatrix" target="_top">jenkins-dynamatrix</a>
@@ -158,10 +168,15 @@ includes the command which was executed by CI worker and can be reproduced
 locally by the developer, e.g.:</p><pre class="screen">22:26:01  FINISHED with exit-code 2 cmd:  (
 22:26:01  [ -x ./ci_build.sh ] || exit
 22:26:01
-22:26:01  eval BUILD_TYPE="default-alldrv" BUILD_WARNOPT="hard"     BUILD_WARNFATAL="yes" MAKE="make"  CC=gcc-10 CXX=g++-10     CPP=cpp-10 CFLAGS='-std=gnu99 -m64' CXXFLAGS='-std=gnu++11 -m64'     LDFLAGS='-m64' ./ci_build.sh
+22:26:01  eval BUILD_TYPE="default-alldrv" BUILD_WARNOPT="hard" \
+    BUILD_WARNFATAL="yes" MAKE="make"  CC=gcc-10 CXX=g++-10 \
+    CPP=cpp-10 CFLAGS='-std=gnu99 -m64' CXXFLAGS='-std=gnu++11 -m64' \
+    LDFLAGS='-m64' ./ci_build.sh
 22:26:01  )</pre><p>or for autotools-driven scenarios (which prep, configure, build and test
 in separate stages — so for reproducing a failed build you should also
-look at its configuration step separately):</p><pre class="screen">22:28:18  FINISHED with exit-code 0 cmd:  ( [ -x configure ] || exit;     eval  CC=clang-9 CXX=clang++-9 CPP=clang-cpp-9 CFLAGS='-std=c11 -m64'     CXXFLAGS='-std=c++11 -m64' LDFLAGS='-m64' time ./configure )</pre><p>To re-run such scenario locally, you can copy the line from <code class="literal">eval</code> (but
+look at its configuration step separately):</p><pre class="screen">22:28:18  FINISHED with exit-code 0 cmd:  ( [ -x configure ] || exit; \
+    eval  CC=clang-9 CXX=clang++-9 CPP=clang-cpp-9 CFLAGS='-std=c11 -m64' \
+    CXXFLAGS='-std=c++11 -m64' LDFLAGS='-m64' time ./configure )</pre><p>To re-run such scenario locally, you can copy the line from <code class="literal">eval</code> (but
 without the <code class="literal">eval</code> keyword itself) up to and including the executed script
 or tool, into your shell. Depending on locally available compilers, you
 may have to tweak the <code class="literal">CC</code>, <code class="literal">CXX</code> and <code class="literal">CPP</code> arguments; note that a <code class="literal">CPP</code>
@@ -279,7 +294,7 @@ body, referring to the macro defined in <code class="literal">common.h</code>.</
                 return;
         }</pre></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_miscellaneous_coding_style_tools"></a>3.6. Miscellaneous coding style tools</h3></div></div></div><p>You can go a long way towards converting your source code to the NUT
 coding style by piping it through the following command:</p><pre class="literallayout">indent -kr -i8 -T FILE -l1000 -nhnl</pre><p>This next command does a reasonable job of converting most C++ style
-comments (but not URLs and DOCTYPE strings):</p><pre class="literallayout">sed 's#(^|[ t])//[ t]*(.*)[ t]*#/* 2 */#'</pre><p>Emacs users can adjust how tabs are displayed. For example, it is
+comments (but not URLs and DOCTYPE strings):</p><pre class="literallayout">sed 's#\(^\|[ \t]\)//[ \t]*\(.*\)[ \t]*#/* \2 */#'</pre><p>Emacs users can adjust how tabs are displayed. For example, it is
 possible to set a tab stop to be 3 spaces, rather than the usual 8.
 (Note that in the saved file, one indentation level will still
 correspond to one tab stop; the difference is only how the file is
@@ -297,7 +312,7 @@ file:</p><pre class="screen">;; NUT style
 
 ;; apply NUT style to all C source files in all subdirectories of nut/
 
-(setq auto-mode-alist (cons '(".*/nut/.*\.[ch]$". nut-c-mode)
+(setq auto-mode-alist (cons '(".*/nut/.*\\.[ch]$". nut-c-mode)
                        auto-mode-alist))</pre><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_finishing_touches"></a>Finishing touches</h4></div></div></div><p>We like code that uses const and static liberally.  If you don’t need to
 expose a function or global variable to the outside world, static is
 your friend.  If nobody should edit the contents of some buffer that’s
@@ -522,4 +537,4 @@ distribution’s list of build dependencies for NUT can reduce the amount of
 trial-and-error when installing dependencies. For instance, in Debian, you can
 run <code class="literal">apt-get build-dep nut</code> to install all of the auto* tools as well as any
 development libraries and headers.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2022-04-05 22:41:02 -- Network UPS Tools 2.7.4.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s02.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s04.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2022-04-05 23:12:01 -- Network UPS Tools 2.8.0-rc1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s02.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s04.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

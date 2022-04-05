@@ -238,7 +238,7 @@ ssize_t ser_get_line(int fd, void *buf, size_t buflen,
                                char endchar, const char *ignset,
                                time_t d_sec, useconds_t d_usec)
 </li></ul></div><p>This is the reading function you should use if your UPS tends to send
-responses like "OKr" or "1234n".  It reads up to buflen bytes and
+responses like "OK\r" or "1234\n".  It reads up to buflen bytes and
 stores them in buf, but it will return immediately if it encounters
 endchar.  The endchar will not be stored in the buffer.  It will also
 return if it manages to collect a full buffer before reaching the
@@ -248,8 +248,8 @@ to the buffer.  If you don’t need to ignore any characters, just pass it
 an empty string — <code class="literal">""</code>.</p><p>The buffer is always cleared and is always <code class="literal">null</code>-terminated.  It does
 this by reading at most <code class="literal">(buflen - 1)</code> bytes.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>any other data which is read after the endchar in the serial
 buffer will be lost forever.  As a result, you should not use this
-unless your UPS uses a polled protocol.</p></div><p>Let’s say your endchar is <code class="literal">n</code> and your UPS sends <code class="literal">"OKn1234nabcdn"</code>.
-This function will <code class="literal">read()</code> all of that, find the first <code class="literal">n</code>, and stop
+unless your UPS uses a polled protocol.</p></div><p>Let’s say your endchar is <code class="literal">\n</code> and your UPS sends <code class="literal">"OK\n1234\nabcd\n"</code>.
+This function will <code class="literal">read()</code> all of that, find the first <code class="literal">\n</code>, and stop
 there.  Your driver will get <code class="literal">"OK"</code>, and the rest is gone forever.</p><p>This also means that you should not "pipeline" commands to the UPS.
 Send a query, then read the response, then send the next query.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 ssize_t ser_get_line_alert(int fd, void *buf, size_t buflen,
@@ -363,23 +363,23 @@ system.  If the driver is calling read() multiple times, consider adding
 a call to usleep before going into the ser_read_* call.  That will give
 it a chance to accumulate so you get the whole thing with one call to
 read without looping back for more.</p><p>This is not a request to save CPU time, even though it may do that.  The
-important part here is making the strace/ktrace output easier to read.</p><pre class="literallayout">write(4, "Q1r", 3)                     = 3
+important part here is making the strace/ktrace output easier to read.</p><pre class="literallayout">write(4, "Q1\r", 3)                     = 3
 nanosleep({0, 300000000}, NULL)         = 0
 select(5, [4], NULL, NULL, {3, 0})      = 1 (in [4], left {3, 0})
 read(4, "(120.0 084.0 120.0   0 60.0 22.6"..., 64) = 47</pre><p>Without that delay, that turns into a mess of selects and reads.
 The select returns almost instantly, and read gets a tiny chunk of the
-data.  Add the delay and you get a nice four-line status poll.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_canonical_input_mode_processing"></a>4.20. Canonical input mode processing</h3></div></div></div><p>If your UPS uses "n" and/or "r" as endchar, consider the use of
+data.  Add the delay and you get a nice four-line status poll.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_canonical_input_mode_processing"></a>4.20. Canonical input mode processing</h3></div></div></div><p>If your UPS uses "\n" and/or "\r" as endchar, consider the use of
 Canonical Input Mode Processing instead of the ser_get_line* functions.</p><p>Using a serial port in this mode means that select() will wait until
 a full line is received (or times out). This relieves you from waiting
 between sending a command and reading the reply. Another benefit is,
 that you no longer have to worry about the case that your UPS sends
-"OKn1234nabcdn". This will be broken up cleanly in "OKn", "1234n"
-and "abcdn" on consecutive reads, without risk of losing data (which
+"OK\n1234\nabcd\n". This will be broken up cleanly in "OK\n", "1234\n"
+and "abcd\n" on consecutive reads, without risk of losing data (which
 is an often forgotten side effect of the ser_get_line* functions).</p><p>Currently, an example how this works can be found in the safenet and
-upscode2 drivers. The first uses a single "r" as endchar, while the
-latter accepts either "n", "nr" or "rn" as line termination. You
+upscode2 drivers. The first uses a single "\r" as endchar, while the
+latter accepts either "\n", "\n\r" or "\r\n" as line termination. You
 can define other termination characters as well, but can’t undefine
-"r" and "n" (so if you need these as data, this is not for you).</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_adding_the_driver_into_the_tree"></a>4.21. Adding the driver into the tree</h3></div></div></div><p>In order to build your new driver, it needs to be added to
+"\r" and "\n" (so if you need these as data, this is not for you).</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_adding_the_driver_into_the_tree"></a>4.21. Adding the driver into the tree</h3></div></div></div><p>In order to build your new driver, it needs to be added to
 <code class="literal">drivers/Makefile.am</code>. At the moment, there are several driver list variables
 corresponding to the general protocol of the driver (<code class="literal">SERIAL_DRIVERLIST</code>,
 <code class="literal">SNMP_DRIVERLIST</code>, etc.). If your driver does not fit into one of these
@@ -387,7 +387,7 @@ categories, please discuss it on the nut-upsdev mailing list.</p><p>There are al
 files, and any additional linker flags. If your driver uses the C math
 library, be sure to add <code class="literal">-lm</code>, since this flag is not always included by
 default on embedded systems.</p><p>When you add a driver to one of these lists, pay attention to the backslash
-continuation characters (<code class="literal">\</code>) at the end of the lines.</p><p>The <code class="literal">automake</code> program converts the <code class="literal">Makefile.am</code> files into <code class="literal">Makefile.in</code>
+continuation characters (<code class="literal">\\</code>) at the end of the lines.</p><p>The <code class="literal">automake</code> program converts the <code class="literal">Makefile.am</code> files into <code class="literal">Makefile.in</code>
 files to be processed by <code class="literal">./configure</code>. See the discussion in <a class="xref" href="ar01s03.html#building" title="3.14. Building the Code">Section 3.14, “Building the Code”</a>
 about automating the rebuild process for these files.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="contact-closure"></a>4.22. Contact closure hardware information</h3></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Two NUT websites</h3><p>This version of the page reflects NUT release <span class="emphasis"><em>v2.8.0-rc1</em></span>
 with codebase commited 86af0b98c at 2022-04-01T02:02:27+02:00</p><p>Options, features and capabilities in current development (and future
@@ -545,11 +545,17 @@ some background information (based on NUT issue #1189 and PR #1290):</p><p>These
 incorporates the complete USB-IF usage definitions for Power Device
 and Battery System pages (among many others), so we didn’t have to
 extract the names and values from the USB-IF standards documents
-(did check it all by eye though).</p><p>The file was processed with the following chain of commands:</p><pre class="screen">:; grep -e '^0084' -e '^0085' rd.conf    | sed 's/,.*$//;s/ *$//'    | sed 's/ /_/g;s/_/ /'    | tr '[:lower:]' '[:upper:]'    | sed 's/(0085.... )/1USAGE_BAT_/;s/(0084.... )/1USAGE_POW_/;s/([A-Z_]*)_PAGE/PAGE_1/'    | awk '{print "#define "$2" 0x"$1}'</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_writing_a_subdriver"></a>Writing a subdriver</h4></div></div></div><p>In preparation for writing a subdriver for a device that is currently
+(did check it all by eye though).</p><p>The file was processed with the following chain of commands:</p><pre class="screen">:; grep -e '^0084' -e '^0085' rd.conf \
+   | sed 's/,.*$//;s/ *$//' \
+   | sed 's/ /_/g;s/_/ /' \
+   | tr '[:lower:]' '[:upper:]' \
+   | sed 's/\(0085.... \)/\1USAGE_BAT_/;s/\(0084.... \)/\1USAGE_POW_/;s/\([A-Z_]*\)_PAGE/PAGE_\1/' \
+   | awk '{print "#define "$2" 0x"$1}'</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_writing_a_subdriver"></a>Writing a subdriver</h4></div></div></div><p>In preparation for writing a subdriver for a device that is currently
 unsupported, run usbhid-ups with the following command line:</p><pre class="literallayout">drivers/usbhid-ups -DD -u root -x explore -x vendorid=XXXX -x port=auto -s ups</pre><p>(substitute your device’s 4-digit VendorID instead of "XXXX").
 This will produce a bunch of debugging information, including a number
 of lines starting with "Path:" that describe the device’s usage tree.
-This information forms the initial basis for a new subdriver.</p><p>You should save this information to a file, e.g.:</p><pre class="literallayout">drivers/usbhid-ups -DD -u root -x explore -x vendorid=XXXX              -x port=auto -s ups 2&gt;&amp;1 | tee /tmp/info</pre><p>You can create an initial "stub" subdriver for your device by using
+This information forms the initial basis for a new subdriver.</p><p>You should save this information to a file, e.g.:</p><pre class="literallayout">drivers/usbhid-ups -DD -u root -x explore -x vendorid=XXXX \
+        -x port=auto -s ups 2&gt;&amp;1 | tee /tmp/info</pre><p>You can create an initial "stub" subdriver for your device by using
 script scripts/subdriver/gen-usbhid-subdriver.sh. Note: this only creates
 a "stub" and needs to be further customized to be useful (see
 "Customization" below).</p><p>Use the script as follows:</p><pre class="literallayout">scripts/subdriver/gen-usbhid-subdriver.sh &lt; /tmp/info</pre><p>where /tmp/info is the file where you previously saved the debugging
@@ -826,12 +832,12 @@ Make sure not to collide with other subdrivers' vars and flags.
 <span class="strong"><strong><code class="literal">accepted</code></strong></span> (optional)
 </span></dt><dd>
 String to match if the driver is expecting a reply from the UPS on instcmd/setvar in case of success.
-This comparison is done after the answer we got back from the UPS has been processed to get the value we are searching, so you don’t have to include the trailing carriage return (<code class="literal">r</code>) and you can decide at which index of the answer the value should start or end setting the appropriate <code class="literal">from</code> and <code class="literal">to</code> in the <code class="literal">item_t</code> (see <a class="link" href="ar01s04.html#_mapping_an_idiom_to_nut" title="Mapping an idiom to NUT">Mapping an idiom to NUT</a>).
+This comparison is done after the answer we got back from the UPS has been processed to get the value we are searching, so you don’t have to include the trailing carriage return (<code class="literal">\r</code>) and you can decide at which index of the answer the value should start or end setting the appropriate <code class="literal">from</code> and <code class="literal">to</code> in the <code class="literal">item_t</code> (see <a class="link" href="ar01s04.html#_mapping_an_idiom_to_nut" title="Mapping an idiom to NUT">Mapping an idiom to NUT</a>).
 </dd><dt><span class="term">
 <span class="strong"><strong><code class="literal">rejected</code></strong></span> (optional)
 </span></dt><dd>
 String to match if the driver is expecting a reply from the UPS in case of error.
-Note that this comparison is done on the answer we got back from the UPS before it has been processed, so include also the trailing carriage return (<code class="literal">r</code>) and whatever character is expected.
+Note that this comparison is done on the answer we got back from the UPS before it has been processed, so include also the trailing carriage return (<code class="literal">\r</code>) and whatever character is expected.
 </dd><dt><span class="term">
 <span class="strong"><strong><code class="literal">testing</code></strong></span>
 </span></dt><dd><p class="simpara">
@@ -848,14 +854,14 @@ Command to match.
 <span class="strong"><strong><code class="literal">answer</code></strong></span>
 </span></dt><dd><p class="simpara">
 Answer for that command.
-</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>If <code class="literal">answer</code> contains inner <code class="literal">0</code>s, in order to preserve them, <code class="literal">answer_len</code> as well as an <code class="literal">item_t</code>'s <code class="literal">preprocess_answer()</code> function must be set.</p></div></dd><dt><span class="term">
+</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>If <code class="literal">answer</code> contains inner <code class="literal">\0</code>s, in order to preserve them, <code class="literal">answer_len</code> as well as an <code class="literal">item_t</code>'s <code class="literal">preprocess_answer()</code> function must be set.</p></div></dd><dt><span class="term">
 <span class="strong"><strong><code class="literal">answer_len</code></strong></span>
 </span></dt><dd><p class="simpara">
 Answer length:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 if set to <code class="literal">-1</code> → auto calculate answer length (treat <code class="literal">answer</code> as a null-terminated string),
 </li><li class="listitem">
-otherwise → use the provided length (if reasonable) and preserve inner <code class="literal">0</code>s (treat <code class="literal">answer</code> as a sequence of bytes till the <code class="literal">item_t</code>'s <code class="literal">preprocess_answer()</code> function gets called).
+otherwise → use the provided length (if reasonable) and preserve inner <code class="literal">\0</code>s (treat <code class="literal">answer</code> as a sequence of bytes till the <code class="literal">item_t</code>'s <code class="literal">preprocess_answer()</code> function gets called).
 </li></ul></div></dd></dl></div><p class="simpara">For more information, see <a class="link" href="ar01s04.html#_mapping_an_idiom_to_nut" title="Mapping an idiom to NUT">Mapping an idiom to NUT</a>.</p></dd></dl></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_mapping_an_idiom_to_nut"></a>Mapping an idiom to NUT</h4></div></div></div><p>If you understand the idiom spoken by your device, you can easily map it to NUT variables and instant commands, filling <code class="literal">qx2nut</code> with an array of <code class="literal">item_t</code> data structure:</p><pre class="screen">typedef struct item_t {
         const char      *info_type;
         const int       info_flags;
@@ -907,7 +913,7 @@ Command sent to the UPS to get answer, or to execute an instant command, or to s
 <span class="strong"><strong><code class="literal">answer</code></strong></span>
 </span></dt><dd><p class="simpara">
 Answer from the UPS, filled at runtime.
-</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>If you expect a non-valid C string (e.g.: inner <code class="literal">0</code>s) or need to perform actions before the answer is used (and treated as a null-terminated string), you should set a <code class="literal">preprocess_answer()</code> function.</p></div></dd><dt><span class="term">
+</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>If you expect a non-valid C string (e.g.: inner <code class="literal">\0</code>s) or need to perform actions before the answer is used (and treated as a null-terminated string), you should set a <code class="literal">preprocess_answer()</code> function.</p></div></dd><dt><span class="term">
 <span class="strong"><strong><code class="literal">answer_len</code></strong></span>
 </span></dt><dd>
 Expected minimum length of the answer.
@@ -964,10 +970,10 @@ Return <code class="literal">-1</code> in case of errors, else <code class="lite
 If <code class="literal">QX_FLAG_SETVAR</code>/<code class="literal">QX_FLAG_CMD</code> is set then the item is processed before the command is sent to the UPS so that you can fill it with the value provided by the user.
 </p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>In this case <code class="literal">value</code> must be filled with the command to be sent to the UPS.</p></div></li><li class="listitem"><p class="simpara">
 Otherwise the function will be used to process the value we got from the answer of the UPS before it’ll get stored in a NUT variable.
-</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>In this case <code class="literal">value</code> must be filled with the processed value already compliant to NUT standards.</p></div></li></ul></div></dd></dl></div><div class="important" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Important</h3><p>You must provide an <code class="literal">item_t</code> with <code class="literal">QX_FLAG_SETVAR</code> and its boundaries set for both <code class="literal">ups.delay.start</code> and <code class="literal">ups.delay.shutdown</code> to map the driver variables <code class="literal">ondelay</code> and <code class="literal">offdelay</code>, as they will be used in the shutdown sequence.</p></div><div class="tip" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Tip</h3><p>In order to keep the data flow at minimum you should keep together the items in <code class="literal">qx2nut</code> that need data from the same query (i.e. <code class="literal">command</code>): doing so the driver will send the query only once and then every <code class="literal">item_t</code> processed after the one that got the answer, provided that it’s filled with the same <code class="literal">command</code> and that the answer wasn’t <code class="literal">NULL</code>, will get that <code class="literal">answer</code>.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_examples"></a>Examples</h4></div></div></div><p>The following examples are from the <code class="literal">voltronic</code> subdriver.</p><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_simple_vars"></a>Simple vars</h5></div></div></div><p>We know that when the UPS is queried for status with <code class="literal">QGSr</code>, it replies with something like <code class="literal">(234.9 50.0 229.8 50.0 000.0 000 369.1 ---.- 026.5 ---.- 018.8 100000000001r</code> and we want to access the output voltage (the third token, in this case <code class="literal">229.8</code>).</p><pre class="screen">&gt; [QGSr]
-&lt; [(234.9 50.0 229.8 50.0 000.0 000 369.1 ---.- 026.5 ---.- 018.8 100000000001r]
+</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>In this case <code class="literal">value</code> must be filled with the processed value already compliant to NUT standards.</p></div></li></ul></div></dd></dl></div><div class="important" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Important</h3><p>You must provide an <code class="literal">item_t</code> with <code class="literal">QX_FLAG_SETVAR</code> and its boundaries set for both <code class="literal">ups.delay.start</code> and <code class="literal">ups.delay.shutdown</code> to map the driver variables <code class="literal">ondelay</code> and <code class="literal">offdelay</code>, as they will be used in the shutdown sequence.</p></div><div class="tip" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Tip</h3><p>In order to keep the data flow at minimum you should keep together the items in <code class="literal">qx2nut</code> that need data from the same query (i.e. <code class="literal">command</code>): doing so the driver will send the query only once and then every <code class="literal">item_t</code> processed after the one that got the answer, provided that it’s filled with the same <code class="literal">command</code> and that the answer wasn’t <code class="literal">NULL</code>, will get that <code class="literal">answer</code>.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_examples"></a>Examples</h4></div></div></div><p>The following examples are from the <code class="literal">voltronic</code> subdriver.</p><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_simple_vars"></a>Simple vars</h5></div></div></div><p>We know that when the UPS is queried for status with <code class="literal">QGS\r</code>, it replies with something like <code class="literal">(234.9 50.0 229.8 50.0 000.0 000 369.1 ---.- 026.5 ---.- 018.8 100000000001\r</code> and we want to access the output voltage (the third token, in this case <code class="literal">229.8</code>).</p><pre class="screen">&gt; [QGS\r]
+&lt; [(234.9 50.0 229.8 50.0 000.0 000 369.1 ---.- 026.5 ---.- 018.8 100000000001\r]
    0123456789012345678901234567890123456789012345678901234567890123456789012345
-   0         1         2         3         4         5         6         7</pre><p>Here’s the <code class="literal">item_t</code>:</p><pre class="screen">{ "output.voltage", 0, NULL, "QGSr", "", 76, '(', "", 12, 16, "%.1f", 0, NULL, NULL, NULL },</pre><div class="horizontal"><table class="horizontal" cellpadding="4px" style="border: none;"><colgroup><col /><col /></colgroup><tbody valign="top"><tr><td style="" valign="top">
+   0         1         2         3         4         5         6         7</pre><p>Here’s the <code class="literal">item_t</code>:</p><pre class="screen">{ "output.voltage", 0, NULL, "QGS\r", "", 76, '(', "", 12, 16, "%.1f", 0, NULL, NULL, NULL },</pre><div class="horizontal"><table class="horizontal" cellpadding="4px" style="border: none;"><colgroup><col /><col /></colgroup><tbody valign="top"><tr><td style="" valign="top">
 <p>
 <code class="literal">info_type</code>
 </p>
@@ -997,7 +1003,7 @@ Otherwise the function will be used to process the value we got from the answer 
 </p>
 </td><td style="" valign="top">
 <p>
-<code class="literal">QGSr</code>
+<code class="literal">QGS\r</code>
 </p>
 </td></tr><tr><td style="" valign="top">
 <p>
@@ -1089,10 +1095,10 @@ Because of that we need to provide a floating point specifier.</p>
 <p>
 <code class="literal">NULL</code>
 </p>
-</td></tr></tbody></table></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_mandatory_vars"></a>Mandatory vars</h5></div></div></div><p>Also from <code class="literal">QGSr</code>, we want to process the 9th status bit <code class="literal">10000000</code><span class="strong"><strong><code class="literal">0</code></strong></span><code class="literal">001</code> that tells us whether the UPS is shutting down or not.</p><pre class="screen">&gt; [QGSr]
-&lt; [(234.9 50.0 229.8 50.0 000.0 000 369.1 ---.- 026.5 ---.- 018.8 100000000001r]
+</td></tr></tbody></table></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_mandatory_vars"></a>Mandatory vars</h5></div></div></div><p>Also from <code class="literal">QGS\r</code>, we want to process the 9th status bit <code class="literal">10000000</code><span class="strong"><strong><code class="literal">0</code></strong></span><code class="literal">001</code> that tells us whether the UPS is shutting down or not.</p><pre class="screen">&gt; [QGS\r]
+&lt; [(234.9 50.0 229.8 50.0 000.0 000 369.1 ---.- 026.5 ---.- 018.8 100000000001\r]
    0123456789012345678901234567890123456789012345678901234567890123456789012345
-   0         1         2         3         4         5         6         7</pre><p>Here’s the <code class="literal">item_t</code>:</p><pre class="screen">{ "ups.status", 0, NULL, "QGSr", "", 76, '(', "", 71, 71, "%s", QX_FLAG_QUICK_POLL, NULL, NULL, voltronic_status },</pre><div class="horizontal"><table class="horizontal" cellpadding="4px" style="border: none;"><colgroup><col /><col /></colgroup><tbody valign="top"><tr><td style="" valign="top">
+   0         1         2         3         4         5         6         7</pre><p>Here’s the <code class="literal">item_t</code>:</p><pre class="screen">{ "ups.status", 0, NULL, "QGS\r", "", 76, '(', "", 71, 71, "%s", QX_FLAG_QUICK_POLL, NULL, NULL, voltronic_status },</pre><div class="horizontal"><table class="horizontal" cellpadding="4px" style="border: none;"><colgroup><col /><col /></colgroup><tbody valign="top"><tr><td style="" valign="top">
 <p>
 <code class="literal">info_type</code>
 </p>
@@ -1122,7 +1128,7 @@ Because of that we need to provide a floating point specifier.</p>
 </p>
 </td><td style="" valign="top">
 <p>
-<code class="literal">QGSr</code>
+<code class="literal">QGS\r</code>
 </p>
 </td></tr><tr><td style="" valign="top">
 <p>
@@ -1215,10 +1221,10 @@ Since this item is mandatory to run the driver, if a problem arises in <code cla
 <code class="literal">voltronic_status</code>
 </p>
 <p>This function will be called <span class="strong"><strong>after</strong></span> the <code class="literal">command</code> has been sent to the UPS and we got back the <code class="literal">answer</code> and stored the <code class="literal">value</code> in order to process it to NUT standards: in this case we will convert the binary <code class="literal">value</code> to a NUT status.</p>
-</td></tr></tbody></table></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_settable_vars"></a>Settable vars</h5></div></div></div><p>So your UPS reports its battery type when queried for <code class="literal">QBTr</code>; we are expecting an answer like <code class="literal">(01r</code> and we know that the values can be mapped as follows: <code class="literal">00</code> → "Li", <code class="literal">01</code> → "Flooded" and <code class="literal">02</code> → "AGM".</p><pre class="screen">&gt; [QBTr]
-&lt; [(01r]        &lt;- 00="Li", 01="Flooded" or 02="AGM"
+</td></tr></tbody></table></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_settable_vars"></a>Settable vars</h5></div></div></div><p>So your UPS reports its battery type when queried for <code class="literal">QBT\r</code>; we are expecting an answer like <code class="literal">(01\r</code> and we know that the values can be mapped as follows: <code class="literal">00</code> → "Li", <code class="literal">01</code> → "Flooded" and <code class="literal">02</code> → "AGM".</p><pre class="screen">&gt; [QBT\r]
+&lt; [(01\r]       &lt;- 00="Li", 01="Flooded" or 02="AGM"
    0123
-   0</pre><p>Here’s the <code class="literal">item_t</code>:</p><pre class="screen">{ "battery.type", ST_FLAG_RW, voltronic_e_batt_type, "QBTr", "", 4, '(', "", 1, 2, "%s",
+   0</pre><p>Here’s the <code class="literal">item_t</code>:</p><pre class="screen">{ "battery.type", ST_FLAG_RW, voltronic_e_batt_type, "QBT\r", "", 4, '(', "", 1, 2, "%s",
   QX_FLAG_SEMI_STATIC | QX_FLAG_ENUM, NULL, NULL, voltronic_p31b },</pre><div class="horizontal"><table class="horizontal" cellpadding="4px" style="border: none;"><colgroup><col /><col /></colgroup><tbody valign="top"><tr><td style="" valign="top">
 <p>
 <code class="literal">info_type</code>
@@ -1250,7 +1256,7 @@ Since this item is mandatory to run the driver, if a problem arises in <code cla
 </p>
 </td><td style="" valign="top">
 <p>
-<code class="literal">QBTr</code>
+<code class="literal">QBT\r</code>
 </p>
 </td></tr><tr><td style="" valign="top">
 <p>
@@ -1343,10 +1349,10 @@ Filled at runtime
 <code class="literal">voltronic_p31b</code>
 </p>
 <p>This function will be called <span class="strong"><strong>after</strong></span> the <code class="literal">command</code> has been sent to the UPS and we got back the <code class="literal">answer</code> and stored the <code class="literal">value</code> in order to process it to NUT standards: in this case we will check if the value is in the range and then publish the human readable form of it (i.e. <code class="literal">Li</code>, <code class="literal">Flooded</code> or <code class="literal">AGM</code>).</p>
-</td></tr></tbody></table></div><p>We also know that we can change battery type with the <code class="literal">PBTnnr</code> command; we are expecting either <code class="literal">(ACKr</code> if the command succeeded or <code class="literal">(NAKr</code> if the command is rejected.</p><pre class="screen">&gt; [PBTnnr]              nn = 00/01/02
-&lt; [(ACKr]
+</td></tr></tbody></table></div><p>We also know that we can change battery type with the <code class="literal">PBTnn\r</code> command; we are expecting either <code class="literal">(ACK\r</code> if the command succeeded or <code class="literal">(NAK\r</code> if the command is rejected.</p><pre class="screen">&gt; [PBTnn\r]             nn = 00/01/02
+&lt; [(ACK\r]
    01234
-   0</pre><p>Here’s the <code class="literal">item_t</code>:</p><pre class="screen">{ "battery.type", 0, voltronic_e_batt_type, "PBT%02.0fr", "", 5, '(', "", 1, 4, NULL,
+   0</pre><p>Here’s the <code class="literal">item_t</code>:</p><pre class="screen">{ "battery.type", 0, voltronic_e_batt_type, "PBT%02.0f\r", "", 5, '(', "", 1, 4, NULL,
   QX_FLAG_SETVAR | QX_FLAG_ENUM, NULL, NULL, voltronic_p31b_set },</pre><div class="horizontal"><table class="horizontal" cellpadding="4px" style="border: none;"><colgroup><col /><col /></colgroup><tbody valign="top"><tr><td style="" valign="top">
 <p>
 <code class="literal">info_type</code>
@@ -1378,7 +1384,7 @@ Filled at runtime
 </p>
 </td><td style="" valign="top">
 <p>
-<code class="literal">PBT%02.0fr</code>
+<code class="literal">PBT%02.0f\r</code>
 </p>
 </td></tr><tr><td style="" valign="top">
 <p>
@@ -1394,7 +1400,7 @@ Filled at runtime
 </p>
 </td><td style="" valign="top">
 <p>
-<code class="literal">5</code> ← either <code class="literal">(NAKr</code> or <code class="literal">(ACKr</code>
+<code class="literal">5</code> ← either <code class="literal">(NAK\r</code> or <code class="literal">(ACK\r</code>
 </p>
 </td></tr><tr><td style="" valign="top">
 <p>
@@ -1470,10 +1476,10 @@ Not used for <code class="literal">QX_FLAG_SETVAR</code>
 <code class="literal">voltronic_p31b_set</code>
 </p>
 <p>This function will be called <span class="strong"><strong>before</strong></span> the <code class="literal">command</code> is sent to the UPS so that we can fill <code class="literal">command</code> with the value provided by the user: in this case the function will simply translate the human readable form of battery type (i.e. <code class="literal">Li</code>, <code class="literal">Flooded</code> or <code class="literal">AGM</code>) to the UPS compliant type (i.e. <code class="literal">00</code>, <code class="literal">01</code> and <code class="literal">02</code>) and then fill <code class="literal">value</code> (the second argument passed to the <code class="literal">preprocess</code> function).</p>
-</td></tr></tbody></table></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_instant_commands_3"></a>Instant commands</h5></div></div></div><p>We know that we have to send to the UPS <code class="literal">Tnnr</code> or <code class="literal">T.nr</code> in order to start a battery test lasting <code class="literal">nn</code> minutes or <code class="literal">.n</code> minutes: we are expecting either <code class="literal">(ACKr</code> on success or <code class="literal">(NAKr</code> if the command is rejected.</p><pre class="screen">&gt; [Tnnr]
-&lt; [(ACKr]
+</td></tr></tbody></table></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_instant_commands_3"></a>Instant commands</h5></div></div></div><p>We know that we have to send to the UPS <code class="literal">Tnn\r</code> or <code class="literal">T.n\r</code> in order to start a battery test lasting <code class="literal">nn</code> minutes or <code class="literal">.n</code> minutes: we are expecting either <code class="literal">(ACK\r</code> on success or <code class="literal">(NAK\r</code> if the command is rejected.</p><pre class="screen">&gt; [Tnn\r]
+&lt; [(ACK\r]
    01234
-   0</pre><p>Here’s the <code class="literal">item_t</code>:</p><pre class="screen">{ "test.battery.start", 0, NULL, "T%sr", "", 5, '(', "", 1, 4, NULL, QX_FLAG_CMD, NULL, NULL, voltronic_process_command },</pre><div class="horizontal"><table class="horizontal" cellpadding="4px" style="border: none;"><colgroup><col /><col /></colgroup><tbody valign="top"><tr><td style="" valign="top">
+   0</pre><p>Here’s the <code class="literal">item_t</code>:</p><pre class="screen">{ "test.battery.start", 0, NULL, "T%s\r", "", 5, '(', "", 1, 4, NULL, QX_FLAG_CMD, NULL, NULL, voltronic_process_command },</pre><div class="horizontal"><table class="horizontal" cellpadding="4px" style="border: none;"><colgroup><col /><col /></colgroup><tbody valign="top"><tr><td style="" valign="top">
 <p>
 <code class="literal">info_type</code>
 </p>
@@ -1503,7 +1509,7 @@ Not used for <code class="literal">QX_FLAG_SETVAR</code>
 </p>
 </td><td style="" valign="top">
 <p>
-<code class="literal">T%sr</code>
+<code class="literal">T%s\r</code>
 </p>
 </td></tr><tr><td style="" valign="top">
 <p>
@@ -1519,7 +1525,7 @@ Filled at runtime
 </p>
 </td><td style="" valign="top">
 <p>
-<code class="literal">5</code> ← either <code class="literal">(NAKr</code> or <code class="literal">(ACKr</code>
+<code class="literal">5</code> ← either <code class="literal">(NAK\r</code> or <code class="literal">(ACK\r</code>
 </p>
 </td></tr><tr><td style="" valign="top">
 <p>
@@ -1720,10 +1726,10 @@ Not used for <code class="literal">QX_FLAG_ABSENT</code>
 <code class="literal">voltronic_process_setvar</code>
 </p>
 <p>This function will be called, in setvar, before the driver stores the value in the NUT var: here it’s used to truncate the user-provided value to the nearest settable interval.</p>
-</td></tr></tbody></table></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_information_not_yet_available_in_nut"></a>Information not yet available in NUT</h5></div></div></div><p>If your UPS reports some data items that are not yet available as NUT variables and you need to process them, you can add them in <code class="literal">item_t</code> data structure adding the <code class="literal">QX_FLAG_NONUT</code> flag to its <code class="literal">qxflags</code>: the info will then be printed to the logs.</p><p>So we know that the UPS reports actual input/output phase angles when queried for <code class="literal">QPDr</code>:</p><pre class="screen">&gt; [QPDr]
-&lt; [(000 120r]   &lt;- Input Phase Angle -- Output Phase Angle
+</td></tr></tbody></table></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_information_not_yet_available_in_nut"></a>Information not yet available in NUT</h5></div></div></div><p>If your UPS reports some data items that are not yet available as NUT variables and you need to process them, you can add them in <code class="literal">item_t</code> data structure adding the <code class="literal">QX_FLAG_NONUT</code> flag to its <code class="literal">qxflags</code>: the info will then be printed to the logs.</p><p>So we know that the UPS reports actual input/output phase angles when queried for <code class="literal">QPD\r</code>:</p><pre class="screen">&gt; [QPD\r]
+&lt; [(000 120\r]  &lt;- Input Phase Angle -- Output Phase Angle
    012345678
-   0</pre><p>Here’s the <code class="literal">item_t</code> for input phase angle:</p><pre class="screen">{ "input_phase_angle", 0, NULL, "QPDr", "", 9,  '(', "", 1, 3, "%03.0f",
+   0</pre><p>Here’s the <code class="literal">item_t</code> for input phase angle:</p><pre class="screen">{ "input_phase_angle", 0, NULL, "QPD\r", "", 9, '(', "", 1, 3, "%03.0f",
   QX_FLAG_STATIC | QX_FLAG_NONUT, NULL, NULL, voltronic_phase },</pre><div class="horizontal"><table class="horizontal" cellpadding="4px" style="border: none;"><colgroup><col /><col /></colgroup><tbody valign="top"><tr><td style="" valign="top">
 <p>
 <code class="literal">info_type</code>
@@ -1755,7 +1761,7 @@ Not used for <code class="literal">QX_FLAG_ABSENT</code>
 </p>
 </td><td style="" valign="top">
 <p>
-<code class="literal">QPDr</code>
+<code class="literal">QPD\r</code>
 </p>
 </td></tr><tr><td style="" valign="top">
 <p>
@@ -1849,7 +1855,7 @@ Here instead it’s used by the <code class="literal">preprocess</code> function
 <code class="literal">voltronic_phase</code>
 </p>
 <p>This function will be called <span class="strong"><strong>after</strong></span> the <code class="literal">command</code> has been sent to the UPS so that we can parse the value we got back and check it.</p>
-</td></tr></tbody></table></div><p>Here’s the <code class="literal">item_t</code> for output phase angle:</p><pre class="screen">{ "output_phase_angle", ST_FLAG_RW, voltronic_e_phase, "QPDr",  "", 9, '(', "", 5, 7, "%03.0f",
+</td></tr></tbody></table></div><p>Here’s the <code class="literal">item_t</code> for output phase angle:</p><pre class="screen">{ "output_phase_angle", ST_FLAG_RW, voltronic_e_phase, "QPD\r", "", 9, '(', "", 5, 7, "%03.0f",
   QX_FLAG_SEMI_STATIC | QX_FLAG_ENUM | QX_FLAG_NONUT, NULL, NULL, voltronic_phase },</pre><div class="horizontal"><table class="horizontal" cellpadding="4px" style="border: none;"><colgroup><col /><col /></colgroup><tbody valign="top"><tr><td style="" valign="top">
 <p>
 <code class="literal">info_type</code>
@@ -1884,7 +1890,7 @@ Since <code class="literal">QX_FLAG_NONUT</code> is set the driver will print th
 </p>
 </td><td style="" valign="top">
 <p>
-<code class="literal">QPDr</code>
+<code class="literal">QPD\r</code>
 </p>
 </td></tr><tr><td style="" valign="top">
 <p>
@@ -1980,10 +1986,10 @@ Here instead it’s used by the <code class="literal">preprocess</code> function
 </p>
 <p>This function will be called <span class="strong"><strong>after</strong></span> the <code class="literal">command</code> has been sent to the UPS so that we can parse the value we got back and check it.
 Here it’s used also to store a var that will then be used to check the value in setvar’s preprocess function.</p>
-</td></tr></tbody></table></div><p>If you need also to change some values in the UPS you can add a <code class="literal">ups.conf</code> var/flag in the subdriver’s own <code class="literal">makevartable</code> and then process it adding to its <code class="literal">qxflags</code> both <code class="literal">QX_FLAG_NONUT</code> and <code class="literal">QX_FLAG_SETVAR</code>: this item will be processed only once in <code class="literal">QX_WALKMODE_INIT</code>.</p><p>The driver will check if the var/flag is defined in <code class="literal">ups.conf</code>: if so, it’ll then call <code class="literal">setvar</code> passing to this item the defined value, if any, and then it’ll print the results in the logs.</p><p>We know we can set output phase angle sending <code class="literal">PPDnnnr</code> to the UPS:</p><pre class="screen">&gt; [PPDnr]               n = (000, 120, 180 or 240)
-&lt; [(ACKr]
+</td></tr></tbody></table></div><p>If you need also to change some values in the UPS you can add a <code class="literal">ups.conf</code> var/flag in the subdriver’s own <code class="literal">makevartable</code> and then process it adding to its <code class="literal">qxflags</code> both <code class="literal">QX_FLAG_NONUT</code> and <code class="literal">QX_FLAG_SETVAR</code>: this item will be processed only once in <code class="literal">QX_WALKMODE_INIT</code>.</p><p>The driver will check if the var/flag is defined in <code class="literal">ups.conf</code>: if so, it’ll then call <code class="literal">setvar</code> passing to this item the defined value, if any, and then it’ll print the results in the logs.</p><p>We know we can set output phase angle sending <code class="literal">PPDnnn\r</code> to the UPS:</p><pre class="screen">&gt; [PPDn\r]              n = (000, 120, 180 or 240)
+&lt; [(ACK\r]
    01234
-   0</pre><p>Here’s the <code class="literal">item_t</code></p><pre class="screen">{ "output_phase_angle", 0, voltronic_e_phase, "PPD%03.0fr", "", 5, '(', "", 1, 4, NULL,
+   0</pre><p>Here’s the <code class="literal">item_t</code></p><pre class="screen">{ "output_phase_angle", 0, voltronic_e_phase, "PPD%03.0f\r", "", 5, '(', "", 1, 4, NULL,
   QX_FLAG_SETVAR | QX_FLAG_ENUM | QX_FLAG_NONUT, NULL, NULL, voltronic_phase_set },</pre><div class="horizontal"><table class="horizontal" cellpadding="4px" style="border: none;"><colgroup><col /><col /></colgroup><tbody valign="top"><tr><td style="" valign="top">
 <p>
 <code class="literal">info_type</code>
@@ -2018,7 +2024,7 @@ The value provided by the user will be automagically checked by the core nutdrv_
 </p>
 </td><td style="" valign="top">
 <p>
-<code class="literal">PPD%03.0fr</code>
+<code class="literal">PPD%03.0f\r</code>
 </p>
 </td></tr><tr><td style="" valign="top">
 <p>
@@ -2034,7 +2040,7 @@ Filled at runtime
 </p>
 </td><td style="" valign="top">
 <p>
-<code class="literal">5</code> ← either <code class="literal">(NAKr</code> or <code class="literal">(ACKr</code>
+<code class="literal">5</code> ← either <code class="literal">(NAK\r</code> or <code class="literal">(ACK\r</code>
 </p>
 </td></tr><tr><td style="" valign="top">
 <p>
@@ -2177,4 +2183,4 @@ If you need to edit the current status call this function with one of the NUT st
 </li><li class="listitem">
 <code class="literal">nutdrv_qx_ablerex.</code>{<code class="literal">c</code>,<code class="literal">h</code>}
 </li></ul></div></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2022-04-05 22:41:02 -- Network UPS Tools 2.7.4.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s03.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s05.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2022-04-05 23:12:01 -- Network UPS Tools 2.8.0-rc1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s03.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s05.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
