@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>2. NUT design document</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><link rel="home" href="index.html" title="Network UPS Tools Developer Guide" /><link rel="up" href="index.html" title="Network UPS Tools Developer Guide" /><link rel="prev" href="ar01s01.html" title="1. Introduction" /><link rel="next" href="ar01s03.html" title="3. Information for developers" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ar01s01.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ar01s03.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="design"></a>2. NUT design document</h2></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Two NUT websites</h3><p>This version of the page reflects NUT release <span class="emphasis"><em>v2.8.0-rc2</em></span>
+with codebase commited f28ec588e at 2022-04-10T12:11:35+00:00</p><p>Options, features and capabilities in current development (and future
+releases) are detailed on the main site and may differ from ones
+described here.</p></div><p>This software is designed around a layered scheme with drivers, a
+server and clients.   These layers communicate with text-based
+protocols for easier maintenance and diagnostics.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_the_layering"></a>2.1. The layering</h3></div></div></div><p><span class="inlinemediaobject"><img src="images/nut_layering.png" alt="NUT layering" /></span></p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_how_information_gets_around"></a>2.2. How information gets around</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_from_the_equipment"></a>From the equipment</h4></div></div></div><p>DRIVERS talk to the EQUIPMENT and receive updates.  For most hardware this
+is polled (DRIVER asks EQUIPMENT about a variable), but forced updates are
+also possible.  The exact method is not important, as it is abstracted
+by the driver.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_from_the_driver"></a>From the driver</h4></div></div></div><p>The core of all DRIVERS maintains internal storage for every variable
+that is known along with the auxiliary data for those variables.  It
+sends updates to this data to any process which connects to the Unix
+domain socket.</p><p>The DRIVERS will also provide a full atomic copy of their internal
+knowledge upon receiving the "DUMPALL" command on the socket.  The dump
+is in the same format as updates, and is followed by "DUMPDONE".  When
+"DUMPDONE" has been received, the view is complete.</p><p>The SERVER will connect to the socket of each DRIVER and will request a
+dump at that time.  It retains this data in local storage for later use.
+It continues to listen on the socket for additional updates.</p><p>This protocol is documented in sock-protocol.txt.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_from_the_server"></a>From the server</h4></div></div></div><p>The SERVER’s internal storage maintains a complete copy of the data
+which is in the DRIVER, so it is capable of answering any request
+immediately.  When a request for data arrives from a CLIENT, the SERVER
+looks through the internal storage for that UPS and returns the
+requested data if it is available.</p><p>The format for requests from the CLIENT is documented in protocol.txt.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_instant_commands"></a>2.3. Instant commands</h3></div></div></div><p>Instant commands is the term given to a set of actions that result in
+something happening to the UPS.  Some of the common ones are
+test.battery.start to initiate a battery test and test.panel.start to
+test the front panel of the UPS.</p><p>They are passed to the SERVER from a CLIENT using an authenticated
+network connection.  The SERVER first checks to make sure that the instant
+command is valid for the DRIVER.  If it’s supported, a message is sent
+via a socket to the DRIVER containing the command and any auxiliary
+information.</p><p>At this point, there is no confirmation to the SERVER of the command’s
+execution.  This is (still) planned for a future release.  This has been
+delayed since returning a response involves some potentially interesting
+timing issues.  Remember that upsd services clients in a round-robin
+fashion, so all queries must be lightweight and speedy.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_setting_variables"></a>2.4. Setting variables</h3></div></div></div><p>Some variables in the DRIVER or EQUIPMENT can be changed, and carry the
+FLAG_RW flag.  Upon receiving a SET command from the CLIENT, the SERVER
+first verifies that it is valid for that DRIVER in terms of writability
+and data type.  If those checks pass, it then sends the SET command
+through the socket, much like the instant command design.</p><p>The DRIVER is expected to commit the value to the EQUIPMENT and update
+its internal representation of that variable.</p><p>Like the instant commands, there is currently no acknowledgement of the
+command’s completion from the DRIVER.  This, too, is planned for a future
+release.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_example_data_path"></a>2.5. Example data path</h3></div></div></div><p>Here’s the path a piece of data might take through this architecture.
+The event is a UPS going on battery, and the final result is a pager
+delivering the alpha message to the admin.</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem">
+EQUIPMENT reports on battery by setting flag in status register
+</li><li class="listitem">
+DRIVER notices this flag and stores it in the ups.status variable as
+   OB.  This update gets pushed out to any listeners via the sockets.
+</li><li class="listitem">
+SERVER upsd sees activity on the socket, reads it, parses it, and
+   commits the new data to its local version of the status variable.
+</li><li class="listitem">
+CLIENT upsmon does a routine poll of SERVER for "ups.status" and
+   gets "OB".
+</li><li class="listitem">
+CLIENT upsmon then invokes its NOTIFYCMD which is upssched.
+</li><li class="listitem">
+upssched starts up a daemon to handle a timer which will expire about
+   30 seconds into the future.
+</li><li class="listitem">
+30 seconds later, the timer expires since the UPS is still on battery,
+   and upssched calls the CMDSCRIPT upssched-cmd.
+</li><li class="listitem">
+upssched-cmd parses the args and calls sendmail.
+</li><li class="listitem">
+Avian carriers, smoke signals, SMTP, and some magic result in the
+   message getting from the pager company’s gateway to a transmitter
+   and then to the admin’s pager.
+</li></ol></div><p>This scenario requires some configuration, obviously:</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem">
+There’s a UPS driver running.
+   (Whatever applies for the hardware)
+</li><li class="listitem"><p class="simpara">
+upsd has a valid UPS entry in ups.conf for this UPS.
+</p><pre class="literallayout">[myups]
+        driver = nutupsdrv
+        port = /dev/ttySx</pre></li><li class="listitem"><p class="simpara">
+upsd has a valid user for upsmon in upsd.users.
+</p><pre class="literallayout">[monuser]
+        password = somepass
+        upsmon primary</pre></li><li class="listitem"><p class="simpara">
+upsmon is set to monitor this UPS in upsmon.conf.
+</p><pre class="literallayout">MONITOR myups@localhost 1 monuser somepass primary</pre></li><li class="listitem"><p class="simpara">
+upsmon is set to EXEC the NOTIFYCMD for the ONBATT condition in
+   upsmon.conf.
+</p><pre class="literallayout">NOTIFYFLAG ONBATT EXEC</pre></li><li class="listitem"><p class="simpara">
+upsmon calls upssched as the NOTIFYCMD in upsmon.conf.
+</p><pre class="literallayout">NOTIFYCMD /path/to/upssched</pre></li><li class="listitem"><p class="simpara">
+upssched has a 30 second timer for ONBATT in upssched.conf.
+</p><pre class="literallayout">AT ONBATT * START-TIMER upsonbatt 30</pre></li><li class="listitem"><p class="simpara">
+upssched calls upssched-cmd as the CMDSCRIPT in upssched.conf.
+</p><pre class="literallayout">CMDSCRIPT /path/to/upssched-cmd</pre></li><li class="listitem">
+upssched-cmd knows what to do with "upsonbatt" as its first argument
+   (A quick case..esac construct, see the examples)
+</li></ol></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_history"></a>2.6. History</h3></div></div></div><p>The oldest versions of this software (1998) had no separation between
+the driver and the network server and only supported the latest APC
+Smart-UPS hardware as a result.  The network protocol used brittle
+binary structs.  This had numerous bad implications for compatibility
+and portability.</p><p>After the driver and server were separated, data was shared through the
+state file concept.  Status was written into a static array (the "info
+array") by drivers, and that array was stored on disk.  upsd would
+periodically read that file into a local copy of that array.</p><p>Shared memory mode was added a bit later, and that removed some of the
+lag from the status updates.  Unfortunately, it didn’t have any locking
+originally, and the possibility for corruption due to races existed.</p><p>mmap() support was added at some point after that, and became the
+default.  The drivers and upsd would mmap() the file into memory and
+read or write from it.  Locking was done using the state file as the
+token, so contention problems were avoided.  This method was relatively
+quick, but it involved at least 3 copies of the data (driver, disk/mmap,
+server) and a whole lot of locking and unlocking.  It could occasionally
+delay the driver or server when waiting for a lock.</p><p>In April 2003, the entire state management subsystem was removed and
+replaced with a single local socket.  The drivers listen for
+connections and push updates asynchronously to any listeners.  They also
+recognize a few commands.  Drivers also dampen updates, and only push
+them out when something actually changes.</p><p>As a result, upsd no longer has to poll any files on the disk, and can
+just select() all of its fds and wait for activity.  When one of them is
+active, it reads the fd and parses the results.  Updates from the
+hardware now get to upsd about as fast as they possibly can.</p><p>Drivers used to call setinfo() to change the local array, and then would
+call writeinfo() to push the array onto the disk, or into the
+mmap/shared memory space.  This introduced a lag since many drivers poll
+quite a few variables during an update.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
+		Last updated 2022-04-10 14:03:35 -- Network UPS Tools 2.8.0-rc2</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s01.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s03.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

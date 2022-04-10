@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>8. NUT outlets management and PDU notes</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><link rel="home" href="index.html" title="Network UPS Tools User Manual" /><link rel="up" href="index.html" title="Network UPS Tools User Manual" /><link rel="prev" href="ar01s07.html" title="7. Advanced usage and scheduling notes" /><link rel="next" href="ar01s09.html" title="9. NUT daisychain support notes" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ar01s07.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ar01s09.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="outlet_management"></a>8. NUT outlets management and PDU notes</h2></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Two NUT websites</h3><p>This version of the page reflects NUT release <span class="emphasis"><em>v2.8.0-rc2</em></span>
+with codebase commited f28ec588e at 2022-04-10T12:11:35+00:00</p><p>Options, features and capabilities in current development (and future
+releases) are detailed on the main site and may differ from ones
+described here.</p></div><p>NUT supports advanced outlets management for any kind of device that proposes
+it. This chapter introduces how to manage outlets in general, and how to take
+advantage of the provided features.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_introduction_2"></a>8.1. Introduction</h3></div></div></div><p>Outlets are the core of Power Distribution Units. They allow you to turn on,
+turn off or cycle the load on each outlet.</p><p>Some UPS models also provide manageable outlets (Eaton, MGE, Powerware,
+Tripplite, …) that help save power in various ways, and manage loads more
+intelligently.</p><p>Finally, some devices can be managed in a PDU-like way. Consider blade systems:
+the blade chassis can be controlled remotely to turn on, turn off or
+cycle the power on individual blade servers.</p><p>NUT allows you to control all these devices!</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_nut_outlet_data_collection"></a>8.2. NUT outlet data collection</h3></div></div></div><p>NUT provides a complete and uniform integration of outlets related data,
+through the <span class="emphasis"><em>outlet</em></span> collection.</p><p>First, there is a special outlet, called <span class="emphasis"><em>main outlet</em></span>.
+You can access it through <span class="emphasis"><em>outlet.{id, desc, …}</em></span> without any index.</p><p>Any modification through the <span class="emphasis"><em>main outlet</em></span> will affect <span class="strong"><strong>all</strong></span> outlets.
+For example, calling the command <span class="emphasis"><em>outlet.load.cycle</em></span> will cycle all outlets.</p><p>Next, outlets index starts from <span class="strong"><strong>1</strong></span>. Index <span class="emphasis"><em>0</em></span> is implicitly reserved to
+the <span class="emphasis"><em>main outlet</em></span>. So the first outlet is <span class="emphasis"><em>outlet.1.*</em></span>.</p><p>For a complete list of outlet data and commands, refer to the
+<a class="link" href="apc.html" title="C. NUT command and variable naming scheme">NUT command and variable naming scheme</a>.</p><p>An example upsc output (data/epdu-managed.dev) is available in the source
+archive.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>The variables supported depend on the exact device type.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_outlets_on_pdu"></a>8.3. Outlets on PDU</h3></div></div></div><p>Smart Power Distribution Units provide at least various meters, related to
+current, power and voltage.</p><p>Some more advanced devices also provide control through the <span class="emphasis"><em>load.off</em></span>,
+<span class="emphasis"><em>load.on</em></span> and <span class="emphasis"><em>load.cycle</em></span> commands.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_outlets_on_ups"></a>8.4. Outlets on UPS</h3></div></div></div><p>Some advanced Uninterruptible Power Supplies provide smart outlet management.</p><p>This allows to program a limited backup time to non-critical loads in order
+to keep the maximum of the battery reserve for critical equipment.</p><p>This also allows the same remote electrical management of devices provided
+by PDUs, which can be very interesting in Data Centers.</p><p>For example, on small setup, you can plug printers, USB devices, hubs, (…)
+into managed outlets. Depending on your UPS’s capabilities, you will be able
+to turn off those loads:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+after some minutes of back-up time using <span class="emphasis"><em>outlet.n.delay.start</em></span>,
+</li><li class="listitem">
+when reaching a percentage battery charge using
+<span class="emphasis"><em>outlet.n.autoswitch.charge.low</em></span>.
+</li></ul></div><p>This will ensure a maximum runtime for the computer.</p><p>On bigger systems, with bigger UPSs, this is the same thing with servers
+instead of small devices.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>If you need the scheduling function and your device doesn’t support
+it, you can still use
+<a class="link" href="ar01s07.html" title="7. Advanced usage and scheduling notes">NUT scheduling features</a>.</p></div><div class="warning" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Warning</h3><p>don’t plug the UPS’s communication cable (USB or network) on a
+managed outlet. Otherwise, all computers will be stopped as soon as the
+communication is lost.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_other_type_of_devices"></a>8.5. Other type of devices</h3></div></div></div><p>As mentioned in the introduction, some other devices can be considered and
+managed like PDUs. This is the case in most blade systems, where the blade
+chassis offers power management services.</p><p>This way, you can control remotely each blade server as if it were a PDU
+outlet.</p><p>This category of devices is generally called Remote Power Controls — or "RPC" in NUT.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
+		Last updated 2022-04-10 14:03:34 -- Network UPS Tools 2.8.0-rc2</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s07.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s09.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

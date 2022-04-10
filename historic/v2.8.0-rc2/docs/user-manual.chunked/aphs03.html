@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>H.3. Other configuration options</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><link rel="home" href="index.html" title="Network UPS Tools User Manual" /><link rel="up" href="aph.html" title="H. Configure options" /><link rel="prev" href="aphs02.html" title="H.2. Optional features" /><link rel="next" href="aphs04.html" title="H.4. Installation directories" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="aphs02.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="aphs04.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_other_configuration_options"></a>H.3. Other configuration options</h3></div></div></div><pre class="literallayout">--with-port=PORT</pre><p>Change the TCP port used by the network code.  Default is 3493.</p><p>Ancient versions of upsd used port 3305.  NUT 2.0 and up use a
+substantially different network protocol and are not able to
+communicate with anything older than the 1.4 series.</p><p>If you have to monitor a mixed environment, use the last 1.4 version,
+as it contains compatibility code for both the old "REQ" and the new
+"GET" versions of the protocol.</p><pre class="literallayout">--with-user=&lt;username&gt;
+--with-group=&lt;groupname&gt;</pre><p>Programs started as root will setuid() to &lt;username&gt; for somewhat
+safer operation.  You can override this with -u &lt;user&gt; in several
+programs, including upsdrvctl (and all drivers by extension), upsd,
+and upsmon.  The "user" directive in ups.conf overrides this at run
+time for the drivers.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>upsmon does not totally drop root because it may need to
+initiate a shutdown.  There is always at least a stub process
+remaining with root powers.  The network code runs in another
+(separate) process as the new user.</p></div><p>The &lt;groupname&gt; is used for the permissions of some files,
+particularly the hotplugging rules for USB. The idea is that the
+device files for any UPS devices should be readable and writable by
+members of that group.</p><p>The default value for both the username and groupname is "nobody".
+This was done since it’s slightly better than staying around as
+root.  Running things as nobody is not a good idea, since it’s a
+hack for NFS access.  You should create at least one separate user
+for this software.</p><p>If you use one of the --with-user and --with-group options, then
+you have to use the other one too.</p><p>See the INSTALL.nut document and the FAQ for more on this topic.</p><pre class="literallayout">--with-logfacility=FACILITY</pre><p>Change the facility used when writing to the log file.  Read the man
+page for openlog to get some idea of what’s available on your system.
+Default is LOG_DAEMON.</p></div><div xmlns="" class="navfooter nut_footer"><hr />
+		Last updated 2022-04-10 14:03:34 -- Network UPS Tools 2.8.0-rc2</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="aphs02.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="aph.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="aphs04.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
