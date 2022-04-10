@@ -330,7 +330,21 @@ the symptoms for the problem look like this:</p><pre class="literallayout"># Plu
 [  115.984222] hid-generic 0003:0463:FFFF.000B: hiddev96,hidraw2: USB HID v1.10 Device [EATON 5E] on usb-0000:00:14.0-6/input0
 [  126.825756] hid-generic 0003:0463:FFFF.000B: usb_submit_urb(ctrl) failed: -1
 [  126.825775] hid-generic 0003:0463:FFFF.000B: timeout initializing reports
-[  132.527809] usb 1-6: USB disconnect, device number 10</pre></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_why_doesn_8217_t_my_package_work"></a>34. Why doesn’t my package work?</h2></div></div></div><p>Or a variation like…</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_i_can_8217_t_run_this_because_there_8217_s_no_package_for_it_why_isn_8217_t_this_in_a_package_yet"></a>35. I can’t run this because there’s no package for it.  Why isn’t this in a package yet?</h2></div></div></div><p>Sorry, can’t help you there.  All official releases are source code
+[  132.527809] usb 1-6: USB disconnect, device number 10</pre><p>A similar report on the driver side may look like:</p><pre class="literallayout">usbhid-ups[4554]: libusb_get_report: Input/output error
+upsd[4591]: Data for UPS [eaton] is stale - check driver
+usbhid-ups[4554]: Can't claim USB device [0463:ffff]: No such file or directory
+upsd[4591]: Can't connect to UPS [eaton] (usbhid-ups-eaton): No such file or directory
+upsmon[5148]: Poll UPS [eaton@localhost] failed - Driver not connected
+upsmon[5148]: Communications with UPS eaton@localhost lost</pre><p>Other similar looking issues may include improper setup of udev, upower
+and similar frameworks to hand over the device from the OS to a driver
+daemon; competition with other software probing USB devices (ModemManager
+was mentioned in this context), including running several copies of the
+NUT drivers trying to use same port (e.g. one started by services and
+another manually as you tried to debug the problems).</p><p>Software quirks aside, please do test with a different USB cable and/or port
+on the computer. These were known to cause grief beyond what can be fixed
+with a few key words ;)</p><p>Finally, sometimes the issue is on the OS side (and/or USB chipset), to
+the point that the USB driver can not be unloaded and re-attached until
+you power cycle the system.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_why_doesn_8217_t_my_package_work"></a>34. Why doesn’t my package work?</h2></div></div></div><p>Or a variation like…</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_i_can_8217_t_run_this_because_there_8217_s_no_package_for_it_why_isn_8217_t_this_in_a_package_yet"></a>35. I can’t run this because there’s no package for it.  Why isn’t this in a package yet?</h2></div></div></div><p>Sorry, can’t help you there.  All official releases are source code
 and are posted on <a class="ulink" href="http://www.networkupstools.org/" target="_top">http://www.networkupstools.org/</a> along with PGP
 signatures for verification.</p><p>This means all packages have been built by a third party.  If you
 have an issue that’s related to packaging, you will need to seek
@@ -481,4 +495,4 @@ then
         /sbin/upsdrvctl shutdown</pre><pre class="literallayout">sleep 120</pre><pre class="literallayout">        # uh oh, we never got shut down! (power race?)
         reboot
 fi</pre></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2022-04-10 12:03:59 -- Network UPS Tools 2.7.4.1</div></body></html>
+		Last updated 2022-04-10 12:19:36 -- Network UPS Tools 2.7.4.1</div></body></html>
