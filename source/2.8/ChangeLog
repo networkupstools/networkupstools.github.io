@@ -1,3 +1,147 @@
+2022-04-10  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* docs/FAQ.txt, docs/nut.dict: docs/FAQ.txt: add more reasons and
+	  symptoms that a running driver disappears
+	* docs/FAQ.txt, docs/nut.dict: docs/FAQ.txt: suggest checking Linux
+	  USB HID Quirk [#630]
+	* ci_build.sh: ci_build.sh: use "gmake" for "./ci_build.sh
+	  spellcheck" if available and no particular MAKE was requested
+	* docs/FAQ.txt, docs/nut.dict: docs/FAQ.txt: suggest how to pick
+	  drivers for bogus vendor IDs
+	* drivers/usbhid-ups.c: drivers/usbhid-ups.c: bump version for #1356
+	  and #1359
+	* drivers/tripplite_usb.c: drivers/tripplite_usb.c: bump version for
+	  #584
+	* drivers/mge-hid.c: drivers/mge-hid.c: bump version for #1357
+
+2022-04-09  Stuart Henderson <sthen@users.noreply.github.com>
+
+	* drivers/usbhid-ups.c: reinstate handling for STATUS(ONLINE) in
+	  usbhid-ups  The recent onlinedischarge changes removed support for
+	  some STATUS(ONLINE) cases, affecting at least CP1300EPFCLCD - this
+	  brings them back.
+
+2022-04-08  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* NEWS: NEWS: note Liebert/Phoenixtec vs MGE HID handling of VendorID
+	  0x06da
+	* drivers/mge-hid.c: drivers/mge-hid.c: mge_claim(): test that
+	  VendorID==PHOENIXTEC 0x06da has also Vendor or Product containing
+	  "AEG"
+	* data/driver.list.in: data/driver.list.in: update for "PowerWalker
+	  VFI 2000 TGS" via "usbhid-ups" [#564]
+	* docs/man/usbhid-ups.txt: docs/man/usbhid-ups.txt: update for "some
+	  PowerWalker models"
+
+2022-04-08  Jim Klimov <jimklimov@gmail.com>
+
+	* NEWS: NEWS: tripplite_usb recognizes "3005" protocol for NUT v2.7.5
+
+2022-04-08  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* NEWS, docs/nut.dict: NEWS: improve PowerWalker VFI 2000 TGS support
+	  in NUT v2.7.5
+	* drivers/liebert-hid.c, drivers/mge-hid.c: drivers/liebert-hid.c:
+	  get PowerWalker VFI 2000 TGS working, read values correctly  This
+	  reverts commit c38b45a56a9d1283657d62a9fa1ed1af5daa1ba2 which added
+	  such support into mge-hid.c (at risk to proper support of earlier
+	  handled devices by various vendors), and transplants the new lines
+	  into liebert-hid.c  See issue #560 for a HID walk from the device
+	  in question; data like that may help expand liebert-hid.c later
+	  (its table seems to map a lot less field names than mge-hid.c, but
+	  not sure if "true" Liebert/Phoenixtec HID devices support the
+	  rest).
+
+2022-04-07  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* drivers/usbhid-ups.c: drivers/usbhid-ups.c: instcmd(): do not risk
+	  NULL-dereference debugging about "using Path" with a NULL hidpath
+	  (just in case) [#1346]
+	* drivers/usbhid-ups.c: drivers/usbhid-ups.c: instcmd(): do not risk
+	  NULL-dereference debugging about "using Path" too early [#1346]
+	* drivers/usbhid-ups.c: drivers/usbhid-ups.c: instcmd(): wrap some
+	  long lines
+
+2022-04-07  Jim Klimov <jimklimov@gmail.com>
+
+	* docs/nut.dict: docs/nut.dict: update spellchecker
+	* docs/nut.dict: docs/nut.dict: update spellchecker
+
+2022-04-05  Jim Klimov <jimklimov@gmail.com>
+
+	* docs/man/upsmon.conf.txt: docs/man/upsmon.conf.txt: fix markup
+	  (pluses make emphasis and xmllint goes upset)
+
+2022-04-04  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* INSTALL.nut: INSTALL.nut: add another perspective on packages vs
+	  source builds; refer to config-prereqs.txt
+	* INSTALL.nut: INSTALL.nut: trim trailing spaces
+	* README: README: trim trailing spaces
+	* README: README: clarify use of github
+	* docs/config-prereqs.txt, docs/nut.dict: docs/config-prereqs.txt:
+	  clarify pre-installation of python and perl
+	* docs/config-prereqs.txt: docs/config-prereqs.txt: clarify that non-
+	  GNU makes should work well
+
+2022-04-02  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* scripts/python/app/NUT-Monitor: scripts/python/app/NUT-Monitor: fix
+	  typo, thank CI
+	* UPGRADING: UPGRADING: detail the Py2/Py3 packages
+	* UPGRADING: UPGRADING: make note of systemd and Py2/3 changes on top
+	  for packagers to see
+	* NEWS: NEWS: detail the split of NUT-Monitor and new wrapper script
+	* scripts/python/app/README: scripts/python/app/README: update with
+	  sections; list Desktop menu integration and Kudos
+	* scripts/python/app/.gitignore, scripts/python/app/NUT-Monitor,
+	  scripts/python/app/nut-monitor.desktop: Introduce new NUT-Monitor
+	  name-holder as a wrapping script to pick usable implementation
+	* scripts/python/app/.gitignore: GitIgnore newly named variants of
+	  NUT-Monitor-py2gtk2 and NUT-Monitor-py3qt5
+	* scripts/python/app/README: scripts/python/app/README: document how
+	  to get localized UI in dev/testing
+	* scripts/python/app/README: scripts/python/app/README: document how
+	  to run UI app in-place
+	* m4/nut_check_python.m4: m4/nut_check_python.m4: extend list of some
+	  python interpreter filenames
+	* configure.ac, scripts/python/Makefile.am, scripts/python/app/{NUT-
+	  Monitor.in => NUT-Monitor-py2gtk2.in}, scripts/python/app/nut-
+	  monitor-py2gtk2.desktop, scripts/python/app/nut-monitor.desktop,
+	  scripts/python/app/{ => ui}/gui-1.3.glade, scripts/python/app/{ =>
+	  ui}/gui-1.3.glade.h: Rename NUT-Monitor UI app to NUT-Monitor-
+	  py2gtk2
+	* configure.ac, scripts/python/Makefile.am, scripts/python/app/{NUT-
+	  Monitor.in => NUT-Monitor-py3qt5.in}, scripts/python/app/nut-
+	  monitor-py3qt5.desktop, scripts/python/app/nut-monitor.desktop:
+	  Rename modernized NUT-Monitor UI app to NUT-Monitor-py3qt5
+
+2022-02-21  Luke Dashjr <luke-jr+git@utopios.org>
+
+	* scripts/python/Makefile.am, scripts/python/README,
+	  scripts/python/app/NUT-Monitor.in, scripts/python/app/README,
+	  scripts/python/app/gui-1.3.glade,
+	  scripts/python/app/gui-1.3.glade.h, scripts/python/app/nut-
+	  monitor.desktop, scripts/python/app/ui/aboutdialog1.ui,
+	  scripts/python/app/ui/dialog1.ui, scripts/python/app/ui/dialog2.ui,
+	  scripts/python/app/ui/window1.ui: NUT-Monitor: Port to
+	  Python3+PyQt5
+
+2022-02-13  Luke Dashjr <luke-jr+git@utopios.org>
+
+	* scripts/python/app/NUT-Monitor.in: NUT-Monitor: Run py2to3-3.10
+
+2022-04-01  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* scripts/python/README: scripts/python/README: clarify that
+	  `test_nutclient.py` requires an `upsd` running
+	* scripts/python/module/PyNUT.py.in:
+	  scripts/python/module/PyNUT.py.in: fix typo (fallout of #840)
+	* docs/config-prereqs.txt: docs/config-prereqs.txt: fix typos in
+	  OpenIndiana chapter
+	* NEWS, docs/net-protocol.txt, docs/nut.dict, server/netcmds.h: Add
+	  "PROTVER" as alias to "NETVER" for NUT v2.8.0  Closes: #1347
+
 2022-03-31  Jim Klimov <jimklimov+nut@gmail.com>
 
 	* Makefile.am, docs/Makefile.am, docs/man/Makefile.am:
@@ -807,6 +951,17 @@
 	  snmp-subdriver.sh: generate "standard MIB items" into new MIB
 	  mappings  Kudos to @aquette for the catch in PR review
 
+2022-02-21  Luke Dashjr <luke-jr+git@utopios.org>
+
+	* scripts/python/Makefile.am, scripts/python/README,
+	  scripts/python/app/NUT-Monitor.in, scripts/python/app/README,
+	  scripts/python/app/gui-1.3.glade,
+	  scripts/python/app/gui-1.3.glade.h, scripts/python/app/nut-
+	  monitor.desktop, scripts/python/app/ui/aboutdialog1.ui,
+	  scripts/python/app/ui/dialog1.ui, scripts/python/app/ui/dialog2.ui,
+	  scripts/python/app/ui/window1.ui: NUT-Monitor: Port to
+	  Python3+PyQt5
+
 2022-02-19  Jim Klimov <jimklimov+nut@gmail.com>
 
 	* drivers/snmp-ups.c: drivers/snmp-ups.c: su_setOID(): uncomment the
@@ -1036,6 +1191,10 @@
 	  "-d" option to pass debug level to drivers  Closes: #1036  (Note:
 	  that issue discusses other possible improvements around this
 	  subject, which are synergetic with this one)
+
+2022-02-13  Luke Dashjr <luke-jr+git@utopios.org>
+
+	* scripts/python/app/NUT-Monitor.in: NUT-Monitor: Run py2to3-3.10
 
 2022-02-13  Nick Briggs <nicholas.h.briggs@gmail.com>
 
@@ -10038,6 +10197,8 @@
 	  comments
 	* drivers/nutdrv_qx.c: Update nutdrv_qx.c  drivers/nutdrv_qx.c:
 	  rectify indentations
+	* drivers/tripplite_usb.c: Update tripplite_usb.c
+	  drivers/tripplite_usb.c: drop trailing whitespace
 	* docs/acknowledgements.txt: Update acknowledgements.txt  Acknowledge
 	  a vendor contribution from EVER Power Systems
 	* drivers/ever-hid.c: Update ever-hid.c  Small whitespace fixes
@@ -12311,6 +12472,27 @@
 	  invasive than touching all the places of the driver that expect a
 	  closing CR and all the qx2nut tables of the various protocols.
 	  Close https://github.com/networkupstools/nut/issues/441
+
+2018-07-25  mbastiaan <35669404+mbastiaan@users.noreply.github.com>
+
+	* drivers/tripplite_usb.c: input_voltage_nominal, added case 6
+	  SMX500RT1U 230V requires case 6.
+	* drivers/tripplite_usb.c: Update tripplite_usb.c  Incremented driver
+	  version for pull request #584
+	* data/driver.list.in: Update driver.list.in  Added new line for
+	  SMX500RT1U with product ID 0001. Updated line for other product IDs
+
+2018-07-24  mbastiaan <35669404+mbastiaan@users.noreply.github.com>
+
+	* drivers/tripplite_usb.c: Update tripplite_usb.c  Added
+	  battery.charge status for 3005 protocol. Tested on SMX500RT1U,
+	  charge level seems ok-ish considering how it's calculated and the
+	  voltage jumping up and down.
+
+2018-06-17  Links <help.markus+gitk@gmail.com>
+
+	* drivers/mge-hid.c: get PowerWalker VFI 2000 TGS working, read
+	  values correctly
 
 2018-03-17  Steve Gilbert <stevegilbert23@gmail.com>
 
