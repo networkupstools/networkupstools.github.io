@@ -738,25 +738,6 @@ asciidoc.install();
 <h1>APCSMART(8)</h1>
 </div>
 <div id="content">
-<div id="preamble">
-<div class="sectionbody">
-<div class="admonitionblock">
-<table><tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">
-<div class="title">Two NUT websites</div>
-<div class="paragraph"><p>This version of the page reflects NUT release <em>v2.7.4</em>
-with codebase commited 0b4bfddb at 2016-03-09T14:24:11+01:00</p></div>
-<div class="paragraph"><p>Options, features and capabilities in current development (and future
-releases) are detailed on the main site and may differ from ones
-described here.</p></div>
-</td>
-</tr></table>
-</div>
-</div>
-</div>
 <div class="sect1">
 <h2 id="_name">NAME</h2>
 <div class="sectionbody">
@@ -766,6 +747,21 @@ described here.</p></div>
 <div class="sect1">
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<div class="title">Two NUT websites</div>
+<div class="paragraph"><p>This version of the page reflects NUT release <em>v2.7.4</em>
+with codebase commited 0b4bfddbc at 2016-03-09T14:24:11+01:00</p></div>
+<div class="paragraph"><p>Options, features and capabilities in current development (and future
+releases) are detailed on the main site and may differ from ones
+described here.</p></div>
+</td>
+</tr></table>
+</div>
 <div class="paragraph"><p><strong>apcsmart</strong> -h</p></div>
 <div class="paragraph"><p><strong>apcsmart</strong> -a <em>UPS_NAME</em> [-x option=value &#8230;]</p></div>
 <div class="admonitionblock">
@@ -841,7 +837,7 @@ Smart-UPS 900I
     a new APC UPS - that uses cable with RJ45 on the one end, and DB-9 on the
     other - then you have such model. Your only option to support it through
     <strong>NUT</strong> is to purchase a "legacy communications card" - part #AP9620 (google
-    <em>AP9620</em> for more details). Or if that&#8217;s not an option, rely on official
+    'AP9620' for more details). Or if that&#8217;s not an option, rely on official
     software.
 </p>
 </dd>
@@ -881,7 +877,7 @@ you will need either apcsmart or usbhid-ups driver.</p></div>
 <h2 id="_cabling">CABLING</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>This driver expects to see a 940-0024C cable or a clone by default. You
-can switch to the 940-0095B dual-mode cable support with the <em>cable=</em>
+can switch to the 940-0095B dual-mode cable support with the 'cable='
 definition described below.</p></div>
 <div class="paragraph"><p>If your 940-xx24X cable is broken or missing, use this diagram to build
 a clone:</p></div>
@@ -910,7 +906,7 @@ wiring.</td>
 <div class="paragraph"><p>By default the driver works in canonical mode, but it proved to be a problem in
 Windows systems. Furthermore there&#8217;s a possibility of some obscure serial cards
 or serial-USB converters that could cause problems as well. You can use
-<em>ttymode=</em> option to force non-canonical discipline in <a href="ups.conf.html">ups.conf(5)</a>:</p></div>
+'ttymode=' option to force non-canonical discipline in <a href="ups.conf.html">ups.conf(5)</a>:</p></div>
 <div class="paragraph"><p><strong>ttymode</strong>=raw</p></div>
 <div class="paragraph"><p>Alternatively, you can also provide it on the command line using:</p></div>
 <div class="paragraph"><p>-x <strong>ttymode</strong>=raw</p></div>
@@ -958,7 +954,7 @@ behaviour quite a bit, depending on the model.</p></div>
         The behaviour here is as expected - the power is cut off after the
         EEPROM defined grace period. The UPS will wake up when the power
         returns, after the EEPROM defined delay AND if the EEPROM defined min.
-        battery charge level is met. The delay is counted from the power&#8217;s
+        battery charge level is met. The delay is counted from the power's
         return.
 </p>
 </dd>
@@ -969,12 +965,12 @@ behaviour quite a bit, depending on the model.</p></div>
 </dt>
 <dd>
 <p>
-    This is a trick to make UPS power down even if it&#8217;s running on mains.
+    This is a trick to make UPS power down even if it's running on mains.
     Immediately before issuing <strong>S</strong>, "simulate power failure" is issued. The
     remaining behaviour is as in <strong>S</strong> case.
 </p>
 <div class="paragraph"><p>The name came from APC CS models, where such trick was used to power down
-UPSes in consistent fashion using only <strong>S</strong>. It&#8217;s better to use <strong>@nnn</strong>
+UPSes in consistent fashion using only <strong>S</strong>. It's better to use <strong>@nnn</strong>
 command if your UPS supports it (and is not too old, see below).</p></div>
 </dd>
 <dt class="hdlist1">
@@ -982,7 +978,7 @@ command if your UPS supports it (and is not too old, see below).</p></div>
 </dt>
 <dd>
 <p>
-    This is basic command used to hibernate UPS regardless if it&#8217;s
+    This is basic command used to hibernate UPS regardless if it's
     running on batteries or on mains. The option takes 3 digits argument which
     can be used to specify additional wakeup delay (in 6 minute units).
 </p>
@@ -995,9 +991,9 @@ command if your UPS supports it (and is not too old, see below).</p></div>
 <dd>
 <p>
         The behaviour is - unfortunately - similary primitive to <strong>S</strong>. The UPS
-        unconditionally wakes up after nnn*6 minutes - <strong>it doesn&#8217;t care if the
+        unconditionally wakes up after nnn*6 minutes - <strong>it doesn't care if the
         power returned !</strong> If nnn = 000, then UPS will do precisely nothing. On
-        those models you&#8217;re better specifying nnn &gt; 0, if you can estimate
+        those models you're better specifying nnn &gt; 0, if you can estimate
         the kind of power problems that might be happening in your environment.
         Another thing to consider with "old" models - you might lose the
         connection with the UPS, until it wakes up (with <strong>S</strong>, the serial
@@ -1011,7 +1007,7 @@ command if your UPS supports it (and is not too old, see below).</p></div>
 <p>
         All the usual variables defined in EEPROM are respected (see <strong>S</strong>).
         Additionally, if nnn &gt; 0, the nnn*6 minutes are added to EEPROM
-        defined delay. UPS will not power up if it&#8217;s running on batteries,
+        defined delay. UPS will not power up if it's running on batteries,
         contrary to what "old" models used to do - the combined delay is counted
         from the moment of power return.
 </p>
@@ -1080,7 +1076,7 @@ trigger it (<strong>awd</strong> option, or argument to one of the supported ins
 </dd>
 </dl></div>
 <div class="paragraph"><p>Keep in mind that <strong>sdtype</strong> and <strong>advorder</strong> are mutually exclusive. If <strong>advorder</strong>
-is provided, <strong>sdtype</strong> is ignored. If <strong>advorder</strong> is set to <em>no</em>, <strong>sdtype</strong> is
+is provided, <strong>sdtype</strong> is ignored. If <strong>advorder</strong> is set to 'no', <strong>sdtype</strong> is
 used instead.</p></div>
 <div class="paragraph"><p>If nothing is provided, <strong>NUT</strong> will assume <strong>sdtype</strong>=0 - which is generally fine
 for anything not too ancient or not too quirky.</p></div>
@@ -1145,16 +1141,16 @@ issue hard hibernate (<strong>@</strong>)
 <td class="icon">
 <div class="title">Note</div>
 </td>
-<td class="content">Hard hibernate&#8217;s additional wakeup delay can be provided by <strong>awd</strong>.</td>
+<td class="content">Hard hibernate's additional wakeup delay can be provided by <strong>awd</strong>.</td>
 </tr></table>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_advorder">ADVORDER</h3>
-<div class="paragraph"><p>The argument is either a word <em>no</em>, or a string of 1 - 5 digits in [0 - 4]
+<div class="paragraph"><p>The argument is either a word 'no', or a string of 1 - 5 digits in [0 - 4]
 range. Each digit maps to the one of shutdown methods supported by APC UPSes.
 Methods listed in this way are tried in order, until one of them succedes.</p></div>
-<div class="paragraph"><p>If <strong>advorder</strong> is undefined or set to <em>no</em>, <strong>sdtype</strong> is used instead.</p></div>
+<div class="paragraph"><p>If <strong>advorder</strong> is undefined or set to 'no', <strong>sdtype</strong> is used instead.</p></div>
 <div class="paragraph"><p>The mapping is as follows:</p></div>
 <div class="hdlist"><table>
 <tr>
@@ -1218,7 +1214,7 @@ instant poweroff (<strong>Z</strong>)
 <td class="icon">
 <div class="title">Note</div>
 </td>
-<td class="content">Hard hibernate&#8217;s additional wakeup delay can be provided by <strong>awd</strong>.</td>
+<td class="content">Hard hibernate's additional wakeup delay can be provided by <strong>awd</strong>.</td>
 </tr></table>
 </div>
 </div>
@@ -1320,7 +1316,7 @@ executes "instant poweroff"
 <div class="paragraph"><p>All the above commands must be issued 2nd time to have any effect (no less than 3
 seconds, and no more than 15 seconds after the initial call). Those commands are
 mostly useful for manual testing, when your machine is not powered by the UPS
-you&#8217;re testing.</p></div>
+you're testing.</p></div>
 <div class="paragraph"><p>Other supported commands:</p></div>
 <div class="ulist"><ul>
 <li>
@@ -1415,7 +1411,7 @@ new features, which is maintained by Michal Soltys &lt;<a href="mailto:soltys@zi
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-02-04 19:57:44 CET -- Network UPS Tools 2.7.4
+Last updated 2022-04-12 14:44:19 UTC -- Network UPS Tools 2.7.4
 </div>
 </div>
 </body>
