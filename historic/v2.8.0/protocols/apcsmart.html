@@ -1,0 +1,1445 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<title>Network UPS Tools - APC&#8217;s smart protocol</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="generator" content="AsciiDoc 9.0.0rc2" />
+<meta name="description" content="Power Devices support" />
+<meta name="keywords" content="NUT, Network UPS Tools, Eaton, APC, Free Software, UPS, Uninterruptible Power Supplies, PDU, Power Distributions Units, Solar Controllers, power, power devices, control, monitor, Linux, Unix, Windows, Mac OS X" />
+<meta name="format-detection" content="telephone=no" />
+<link rel="stylesheet" href="../css/xhtml11.css" type="text/css" />
+<link rel="stylesheet" href="../css/web-layout.css" type="text/css" />
+<link rel="shortcut icon" href="../faviconut.ico" />
+<link rel="icon" type="image/png" href="../faviconut.png" />
+<script type="text/javascript" src="../scripts/asciidoc.js"></script>
+<script type="text/javascript">
+/*<![CDATA[*/
+asciidoc.install(2);
+/*]]>*/
+</script>
+<!--[if lte IE 7]>
+<link rel="stylesheet" href="../css/ie-overrides.css" type="text/css" />
+<![endif]-->
+<!--[if lte IE 6]>
+<script type="text/javascript" src="../scripts/filter_png.js"></script>
+<![endif]-->
+</head>
+<body>
+<div id="layout-banner-box">
+<div id="layout-banner">
+  <div id="layout-logo"><img src="../images/nut-logo.png" alt="NUT logo" /></div>
+  <div id="layout-title">Network UPS Tools</div>
+  <div id="layout-description">Power Devices support</div>
+</div>
+</div>
+<div id="layout-menu-box">
+  <ul id="layout-menu">
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="../download.html">Download</a></li>
+    <li><a href="../projects.html">Related projects</a></li>
+    <li><a href="../stable-hcl.html">Compatibility</a></li>
+    <li><a href="../features.html">Features</a></li>
+    <li><a href="../documentation.html">Documentation</a></li>
+    <li><a href="../support.html">Support</a></li>
+    <li>* <a href="https://alioth-lists.debian.net/pipermail/nut-upsuser/">NUT UPS User archive</a></li>
+    <li>* <a href="https://alioth-lists.debian.net/pipermail/nut-upsdev/">NUT UPS Dev archive</a></li>
+    <li><a href="/historic/index.html">Sub-sites for historic releases</a></li>
+    <li><a href="https://github.com/networkupstools/nut/">GitHub</a></li>
+  </ul>
+  <!-- div id="sponsor"><span>Hosted by<br/></span>
+    <a href="http://sponsor.com"><img src="../images/sponsor-logo.png" alt="Sponsor" /></a>
+  </div -->
+</div>
+<div id="layout-content-box">
+<div id="layout-content">
+<div id="header">
+<h1>APC&#8217;s smart protocol</h1>
+</div>
+<div id="toc">
+  <div id="toctitle">Table of Contents</div>
+  <noscript><p><b>JavaScript must be enabled in your browser to display the table of contents.</b></p></noscript>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_description">Description</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Here&#8217;s the information on the elusive APC smart signalling protocol used by their higher end units (Back-UPS Pro, Smart-UPS, Matrix-UPS, etc).
+What you see here has been collected from a variety of sources.
+Some people analyzed the chatter between PowerChute and their hardware.
+Others sent various characters to the UPS and figured out what the results meant.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_rs_232_differences">RS-232 differences</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Normal 9 pin serial connections have TxD on 3 and RxD on 2.
+APC&#8217;s smart serial ports put TxD on pin 1 and RxD on pin 2.
+This means you go nowhere if you use a normal straight through serial cable.
+In fact, you might even power down the load if you plug one of those cables in.
+This is due to the odd routing of pins - DTR and RTS from the PC usually wind up driving the on/off line.
+So, when you open the port, they go high and *poof* your computer dies.</p></div>
+<div class="paragraph"><p>Originally <a href="images/apcsmart_evilhack.jpg">this evil hack</a> was used to connect the UPS to the PC when this page was first being built.
+As you can see, I cheated and neglected the ground (only 2 wires!) and it still worked.
+This method can be used for playing around, but for professional systems this is obviously not a viable option.</p></div>
+<div class="paragraph"><p>That hack didn&#8217;t work out so well (damned cats), so it was retired quite awhile back.
+The most practical solution was to go out and BUY the DOS/Win version of Powerchute just for the black (smart) cable.
+I recommend doing the same thing if you actually care about this thing working properly.
+Of course, if you have one of the newer packages that came with PowerChute, you already have the cable you need.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_cable_hacking">Cable hacking</h2>
+<div class="sectionbody">
+<div class="imageblock" style="text-align:center;">
+<div class="content">
+<img src="images/apcsmart_cable_940-0024C.jpg" alt="Redrawn 940-0024C clone diagram (D. Stimits)" />
+</div>
+<div class="title">Figure 1. Redrawn 940-0024C clone diagram (D. Stimits)</div>
+</div>
+<div class="imageblock" style="text-align:center;">
+<div class="content">
+<img src="images/apcsmart_cable_mac-940-0024C.png" alt="Mac 940-0024C clone diagram (Miguel Howard)" />
+</div>
+<div class="title">Figure 2. Mac 940-0024C clone diagram (Miguel Howard)</div>
+</div>
+<div class="imageblock" style="text-align:center;">
+<div class="content">
+<img src="images/apcsmart_cable_940-0024C-orig.jpg" alt="Original 940-0024C diagram (Steve Draper)" />
+</div>
+<div class="title">Figure 3. Original 940-0024C diagram (Steve Draper)</div>
+</div>
+<div class="paragraph"><p>If you are handy with cable tools, check out these diagrams.
+They show how to clone the black "smart" cable that&#8217;s normally provided with APC models sold after 1996.
+The loopback pins (back to the PC) are used to keep PowerChute happy by allowing cable detection.
+If you use the NUT apcsmart or newapc drivers, those pins don&#8217;t matter.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_the_smart_protocol">The Smart Protocol</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Despite the lack of official information from APC, this table has been constructed.
+It&#8217;s standard RS-232 serial communications at 2400 bps/8N1.
+Don&#8217;t rush the UPS while transmitting or it may stop talking to you.
+This isn&#8217;t a problem with the normal single character queries, but it really does matter for multi-char things like "<strong><code>@000</code></strong>".
+Sprinkle a few calls to usleep() in your code and everything will work a lot better.</p></div>
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="center" valign="middle">Character      </th>
+<th align="left" valign="middle">Meaning                        </th>
+<th align="left" valign="middle">Typical results        </th>
+<th align="left" valign="middle">Other info</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>^A</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Model string</p></td>
+<td align="left" valign="middle"><p class="table"><code>SMART-UPS 700</code></p></td>
+<td align="left" valign="middle"><p class="table">Spotty support for this query on older models</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>^N</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Turn on UPS</p></td>
+<td align="left" valign="middle"><p class="table">n/a</p></td>
+<td align="left" valign="middle"><p class="table">Send twice with &gt; 1.5s delay between chars</p>
+<p class="table">Only on 3rd gen SmartUPS and Black Back-UPS Pros</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>^Z</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Capability string</p></td>
+<td align="left" valign="middle"><p class="table">(long string)</p></td>
+<td align="left" valign="middle"><p class="table">See <a href="#cap">"Capabilities" section</a> for more info</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>A</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Front panel test</p></td>
+<td align="left" valign="middle"><p class="table">Light show + "<code>OK</code>"</p></td>
+<td align="left" valign="middle"><p class="table">Also sounds the beeper for 2 seconds</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><a id="B"></a><strong>B</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Battery voltage</p></td>
+<td align="left" valign="middle"><p class="table"><code>27.87</code></p></td>
+<td align="left" valign="middle"><p class="table">This obviously varies a lot based on the current charge.</p>
+<p class="table">Compare this to the <a href="#g">nominal battery voltage</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>C</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Internal temperature</p></td>
+<td align="left" valign="middle"><p class="table"><code>036.0</code></p></td>
+<td align="left" valign="middle"><p class="table">Units are degrees C</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><a id="D"></a><strong>D</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Runtime calibration</p></td>
+<td align="left" valign="middle"><p class="table"><code>!</code>, then <code>$</code></p></td>
+<td align="left" valign="middle"><p class="table">Runs until battery is below 25% (35% for Matrix)</p>
+<p class="table">This updates the <strong><code>j</code></strong> values - only works at 100% battery charge</p>
+<p class="table">Can be aborted with a second "<strong><code>D</code></strong>"</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>E</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Automatic selftest intervals</p></td>
+<td align="left" valign="middle"><p class="table"><code>336</code></p></td>
+<td align="left" valign="middle"><div><div class="paragraph"><p>Writable variable</p></div>
+<div class="paragraph"><p>Values:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>336</code> (14 days)
+</p>
+</li>
+<li>
+<p>
+<code>168</code> (7 days)
+</p>
+</li>
+<li>
+<p>
+<code>ON</code> (at power on) (note extra space)
+</p>
+</li>
+<li>
+<p>
+<code>OFF</code> (never)
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>F</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Line frequency, Hz</p></td>
+<td align="left" valign="middle"><p class="table"><code>60.00</code></p></td>
+<td align="left" valign="middle"><p class="table">If this varies much, have a word with your local electrician</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>G</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Cause of transfer</p></td>
+<td align="left" valign="middle"><p class="table"><code>O</code></p></td>
+<td align="left" valign="middle"><div><div class="paragraph"><p>Writable variable</p></div>
+<div class="paragraph"><p>Values:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>R</code> (unacceptable utility voltage rate of change)
+</p>
+</li>
+<li>
+<p>
+<code>H</code> (high utility voltage)
+</p>
+</li>
+<li>
+<p>
+<code>L</code> (low utility voltage)
+</p>
+</li>
+<li>
+<p>
+<code>T</code> (line voltage notch or spike)
+</p>
+</li>
+<li>
+<p>
+<code>O</code> (no transfers yet since turnon)
+</p>
+</li>
+<li>
+<p>
+<code>S</code> (transfer due to <a href="#U"><strong><code>U</code></strong> command</a> or activation of UPS test)
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>I</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Measure-UPS: Alarm enable</p></td>
+<td align="left" valign="middle"><p class="table"><code>FF</code></p></td>
+<td align="left" valign="middle"><p class="table">(not yet decoded)(bitmapped table, coming soon)</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>J</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Measure-UPS: Alarm status</p></td>
+<td align="left" valign="middle"><p class="table"><code>0F,00</code></p></td>
+<td align="left" valign="middle"><p class="table">(not yet decoded)(bitmapped table, coming soon)</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><a id="K"></a><strong>K</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Shutdown with grace period</p></td>
+<td align="left" valign="middle"><p class="table"><code>OK</code></p></td>
+<td align="left" valign="middle"><p class="table">Send twice with &gt; 1.5s delay between chars</p>
+<p class="table">Older units may send "<code>*</code>" instead of "<code>OK</code>"</p>
+<p class="table">Also see <a href="#p">grace period</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>L</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Input line voltage</p></td>
+<td align="left" valign="middle"><p class="table"><code>118.3</code></p></td>
+<td align="left" valign="middle"><p class="table">Does not necessarily read <code>000.0</code> on line failure</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>M</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Maximum line voltage</p></td>
+<td align="left" valign="middle"><p class="table"><code>118.9</code></p></td>
+<td align="left" valign="middle"><p class="table">This is the max voltage since the last time this query was run</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>N</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Minimum line voltage</p></td>
+<td align="left" valign="middle"><p class="table"><code>118.9</code></p></td>
+<td align="left" valign="middle"><p class="table">Like the one above, this one also resets itself on every query</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>O</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Output voltage</p></td>
+<td align="left" valign="middle"><p class="table"><code>118.3</code></p></td>
+<td align="left" valign="middle"><p class="table">Also see <a href="#o">on battery output voltage</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>P</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Power load %</p></td>
+<td align="left" valign="middle"><p class="table"><code>023.5</code></p></td>
+<td align="left" valign="middle"><p class="table">Relative to the capacity of the UPS</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>Q</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Status flags</p></td>
+<td align="left" valign="middle"><p class="table"><code>08</code></p></td>
+<td align="left" valign="middle"><p class="table">See <a href="#status">status flags section</a> for more info</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><a id="R"></a><strong>R</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Turn dumb</p></td>
+<td align="left" valign="middle"><p class="table"><code>BYE</code></p></td>
+<td align="left" valign="middle"><p class="table">Only on 3rd gen Smart-UPS, Smart-UPS v/s, Back-UPS Pro</p>
+<p class="table">UPS must receive command to <a href="#Y">enter smart mode</a> continue communications after sending this</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><a id="S"></a><strong>S</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Soft shutdown</p></td>
+<td align="left" valign="middle"><p class="table"><code>OK</code></p></td>
+<td align="left" valign="middle"><p class="table">Command executes after <a href="#p">grace period</a></p>
+<p class="table">UPS goes online when power returns</p>
+<p class="table">Only works when on battery</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><a id="U"></a><strong>U</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Simulate power failure</p></td>
+<td align="left" valign="middle"><p class="table"><code>!</code>, then <code>$</code></p></td>
+<td align="left" valign="middle"><p class="table">See <a href="#async">async notifier section</a> for info on <code>!</code> and <code>$</code></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><a id="V"></a><strong>V</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Firmware revision</p></td>
+<td align="left" valign="middle"><p class="table"><code>GWD</code></p></td>
+<td align="left" valign="middle"><p class="table">Can be used to determine abilities of hardware</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>W</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Self test</p></td>
+<td align="left" valign="middle"><p class="table"><code>OK</code></p></td>
+<td align="left" valign="middle"><p class="table">Tests battery, like pushing the test button on the front panel</p>
+<p class="table">Also see <a href="#X">test results</a> entry</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><a id="X"></a><strong>X</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Self-test results</p></td>
+<td align="left" valign="middle"><p class="table"><code>OK</code></p></td>
+<td align="left" valign="middle"><div><div class="paragraph"><p>Values:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>OK</code> &#8594; good battery
+</p>
+</li>
+<li>
+<p>
+<code>BT</code> &#8594; failed due to insufficient capacity
+</p>
+</li>
+<li>
+<p>
+<code>NG</code> &#8594; failed due to overload
+</p>
+</li>
+<li>
+<p>
+<code>NO</code> &#8594; no results available (no test performed in last 5 minutes)
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><a id="Y"></a><strong>Y</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Enter smart mode</p></td>
+<td align="left" valign="middle"><p class="table"><code>SM</code></p></td>
+<td align="left" valign="middle"><p class="table">This must be sent before anything else on this page will work.</p>
+<p class="table">Also see <a href="#R">turn dumb command</a> to exit smart mode</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>Z</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Shutdown immediately</p></td>
+<td align="left" valign="middle"><p class="table">n/a</p></td>
+<td align="left" valign="middle"><p class="table">Send twice with &gt; 1.5s delay between chars</p>
+<p class="table">UPS switches the load off immediately (no grace period)</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>a</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Protocol info</p></td>
+<td align="left" valign="middle"><p class="table">(long string)</p></td>
+<td align="left" valign="middle"><div><div class="paragraph"><p>Returns three main sections:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+Protocol version
+</p>
+</li>
+<li>
+<p>
+Alert messages (aka <a href="#async">async notifiers</a>)
+</p>
+</li>
+<li>
+<p>
+Valid commands
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>Sections are separated with a period</p></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>b</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Firmware revision</p></td>
+<td align="left" valign="middle"><p class="table"><code>50.9.D</code></p></td>
+<td align="left" valign="middle"><div><div class="paragraph"><p>Decoding above info:</p></div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>50</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+SKU (variable length)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>9</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+firmware revision
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>D</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+country code (used in <a href="#cap">capability</a> decoding)
+</p>
+</td>
+</tr>
+</table></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><a id="c"></a><strong>c</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">UPS local id</p></td>
+<td align="left" valign="middle"><p class="table"><code>UPS_IDEN</code></p></td>
+<td align="left" valign="middle"><p class="table">Writable variable</p>
+<p class="table">Up to 8 letter identifier for keeping track of your hardware</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><a id="e"></a><strong>e</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Return threshold</p></td>
+<td align="left" valign="middle"><p class="table"><code>00</code></p></td>
+<td align="left" valign="middle"><div><div class="paragraph"><p>Writable variable</p></div>
+<div class="paragraph"><p>Minimum battery charge % to return from shutdown after power returns</p></div>
+<div class="paragraph"><p>Values:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>00</code> = 0% (UPS switches on immediately)
+</p>
+</li>
+<li>
+<p>
+<code>01</code> = 15%
+</p>
+</li>
+<li>
+<p>
+<code>02</code> = 25%
+</p>
+</li>
+<li>
+<p>
+<code>03</code> = 90%
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>This prevents excessive cycling during multiple power failures</p></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><a id="g"></a><strong>g</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Nominal battery voltage</p></td>
+<td align="left" valign="middle"><p class="table"><code>024</code></p></td>
+<td align="left" valign="middle"><p class="table">The battery voltage that&#8217;s expected to be present in the UPS normally</p>
+<p class="table">Compare to the <a href="#B">actual voltage</a> reading</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>f</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Battery level</p></td>
+<td align="left" valign="middle"><p class="table"><code>099.0</code></p></td>
+<td align="left" valign="middle"><p class="table">Percentage</p>
+<p class="table">It&#8217;s much easier to use this rather than doing math on the <a href="#B">current battery voltage</a> and the <a href="#g">nominal battery voltage</a></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>h</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Measure-UPS: Ambient humidity</p></td>
+<td align="left" valign="middle"><p class="table"><code>042.4</code></p></td>
+<td align="left" valign="middle"><p class="table">Percentage</p>
+<p class="table">Only works on models with the Measure-UPS SmartSlot card</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>i</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Measure-UPS: Dry contacts</p></td>
+<td align="left" valign="middle"><p class="table"><code>00</code></p></td>
+<td align="left" valign="middle"><div><div class="paragraph"><p>Bitmapped hex variable</p></div>
+<div class="paragraph"><p>Component values:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>10</code> = contact 1
+</p>
+</li>
+<li>
+<p>
+<code>20</code> = contact 2
+</p>
+</li>
+<li>
+<p>
+<code>40</code> = contact 3
+</p>
+</li>
+<li>
+<p>
+<code>80</code> = contact 4
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>j</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Estimated runtime</p></td>
+<td align="left" valign="middle"><p class="table"><code>0327:</code></p></td>
+<td align="left" valign="middle"><p class="table">Minutes</p>
+<p class="table">Must be <a href="#D">calibrated</a> to be effective</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>k</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Alarm delay</p></td>
+<td align="left" valign="middle"><p class="table"><code>0</code></p></td>
+<td align="left" valign="middle"><div><div class="paragraph"><p>Writable variable</p></div>
+<div class="paragraph"><p>Values:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> = 5 second delay after power failure
+</p>
+</li>
+<li>
+<p>
+<code>T</code> = 30 second delay
+</p>
+</li>
+<li>
+<p>
+<code>L</code> = alarm at low battery only
+</p>
+</li>
+<li>
+<p>
+<code>N</code> = alarm disabled
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>Does not affect low battery warning</p></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>l</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Low transfer voltage</p></td>
+<td align="left" valign="middle"><p class="table"><code>103</code></p></td>
+<td align="left" valign="middle"><p class="table">Writable variable</p>
+<p class="table">See <a href="#cap">capabilities</a> to get values for a UPS</p>
+<p class="table">UPS goes on battery after voltage drops below this point</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>m</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Manufacturing date</p></td>
+<td align="left" valign="middle"><p class="table"><code>11/29/96</code></p></td>
+<td align="left" valign="middle"><p class="table">Format may vary by country (<code>MM/DD/YY</code> vs <code>DD/MM/YY</code>)</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>n</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Serial number</p></td>
+<td align="left" valign="middle"><p class="table"><code>WS9643050926</code></p></td>
+<td align="left" valign="middle"><p class="table">Unique for each UPS</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><a id="o"></a><strong>o</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">On-battery voltage</p></td>
+<td align="left" valign="middle"><p class="table"><code>115</code></p></td>
+<td align="left" valign="middle"><p class="table">May be a writable variable on 220/230/240 VAC units</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><a id="p"></a><strong>p</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Shutdown grace delay</p></td>
+<td align="left" valign="middle"><p class="table"><code>020</code></p></td>
+<td align="left" valign="middle"><p class="table">Writable variable - seconds</p>
+<p class="table">See <a href="#cap">capabilities</a> to read values</p>
+<p class="table">Sets the delay before <a href="#S">soft shutdown</a> completes</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>q</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Low battery warning</p></td>
+<td align="left" valign="middle"><p class="table"><code>02</code></p></td>
+<td align="left" valign="middle"><p class="table">Writable variable - minutes</p>
+<p class="table">See <a href="#cap">capabilities</a> to read values</p>
+<p class="table">The UPS will report a low battery this many minutes before it runs out of power</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><a id="r"></a><strong>r</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Wakeup delay</p></td>
+<td align="left" valign="middle"><p class="table"><code>000</code></p></td>
+<td align="left" valign="middle"><p class="table">Writable variable - seconds</p>
+<p class="table">See <a href="#cap">capabilities</a> to read values</p>
+<p class="table">The UPS will wait this many seconds after reaching the <a href="#e">minimum charge</a> before returning online</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>s</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Sensitivity</p></td>
+<td align="left" valign="middle"><p class="table"><code>H</code></p></td>
+<td align="left" valign="middle"><div><div class="paragraph"><p>Writable variable</p></div>
+<div class="paragraph"><p>See <a href="#cap">capabilities</a> to read values</p></div>
+<div class="paragraph"><p>Meaning of values:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>H</code> &#8594; highest
+</p>
+</li>
+<li>
+<p>
+<code>M</code> &#8594; medium
+</p>
+</li>
+<li>
+<p>
+<code>L</code> &#8594; lowest
+</p>
+</li>
+<li>
+<p>
+<code>A</code> &#8594; autoadjust (Matrix only)
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>u</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Upper transfer voltage</p></td>
+<td align="left" valign="middle"><p class="table"><code>132</code></p></td>
+<td align="left" valign="middle"><p class="table">Writable variable</p>
+<p class="table">See <a href="#cap">capabilities</a> to read values</p>
+<p class="table">UPS goes on battery after voltage rises above this point</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>v</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Measure-UPS: Firmware</p></td>
+<td align="left" valign="middle"><p class="table"><code>4Kx</code></p></td>
+<td align="left" valign="middle"><p class="table">Firmware information for Measure-UPS board</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>t</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Measure-UPS: Ambient temperature</p></td>
+<td align="left" valign="middle"><p class="table"><code>80.5</code></p></td>
+<td align="left" valign="middle"><p class="table">Degrees C</p>
+<p class="table">Only works on models with the Measure-UPS SmartSlot card</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><a id="x"></a><strong>x</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Last battery change</p></td>
+<td align="left" valign="middle"><p class="table"><code>11/29/96</code></p></td>
+<td align="left" valign="middle"><p class="table">Writable variable</p>
+<p class="table">This holds whatever the user sets in it, much like the <a href="#c">UPS local id</a> variable</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>y</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Copyright notice</p></td>
+<td align="left" valign="middle"><p class="table"><code>&#169; APCC</code></p></td>
+<td align="left" valign="middle"><p class="table">Only works if <a href="#V">firmware letter</a> is later than <code>O</code></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>z</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Reset to factory settings</p></td>
+<td align="left" valign="middle"><p class="table"><code>CLEAR</code></p></td>
+<td align="left" valign="middle"><p class="table">Resets most variables to initial factory values except <a href="#c">identity</a> or <a href="#x">battery change date</a></p>
+<p class="table">Not on SmartUPS v/s or BackUPS Pro</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>-</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Capability cycle</p></td>
+<td align="left" valign="middle"><p class="table">(various)</p></td>
+<td align="left" valign="middle"><p class="table">Cycle through possible <a href="#cap">capability values</a></p>
+<p class="table">UPS sends <code>|</code> afterward to confirm change to PROM</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><a id="@"></a><strong>@</strong>nnn</code></p></td>
+<td align="left" valign="middle"><p class="table">Shutdown and return</p></td>
+<td align="left" valign="middle"><p class="table"><code>OK</code></p></td>
+<td align="left" valign="middle"><p class="table">UPS shuts down after <a href="#p">grace period</a> with delayed wakeup after <code>nnn</code> tenths of an hour plus any <a href="#r">wakeup delay</a> time</p>
+<p class="table">Some older models send <code>*</code> instead of <code>OK</code></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>0x7f</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Abort shutdown</p></td>
+<td align="left" valign="middle"><p class="table"><code>OK</code></p></td>
+<td align="left" valign="middle"><p class="table">Abort shutdown - use to abort <a href="#@"><strong><code>@</code></strong></a>, <a href="#S"><strong><code>S</code></strong></a>, <a href="#K"><strong><code>K</code></strong></a></p>
+<p class="table">Also known as the delete key in some places</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>~</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Register #1</p></td>
+<td align="left" valign="middle"><p class="table">n/a</p></td>
+<td align="left" valign="middle"><p class="table">See <a href="#reg1">register 1</a> table</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>'</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Register #2</p></td>
+<td align="left" valign="middle"><p class="table">n/a</p></td>
+<td align="left" valign="middle"><p class="table">See <a href="#reg2">register 2</a> table</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>7</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Dip switch positions</p></td>
+<td align="left" valign="middle"><p class="table">n/a</p></td>
+<td align="left" valign="middle"><p class="table">See <a href="#dipsw">dip switch</a> table</p>
+<p class="table">Only makes sense on models which actually have dip switches</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>8</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Register #3</p></td>
+<td align="left" valign="middle"><p class="table">n/a</p></td>
+<td align="left" valign="middle"><p class="table">See <a href="#reg3">register 3</a> table</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>9</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Line quality</p></td>
+<td align="left" valign="middle"><p class="table"><code>FF</code></p></td>
+<td align="left" valign="middle"><div><div class="paragraph"><p>Values</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>00</code> &#8594; unacceptable
+</p>
+</li>
+<li>
+<p>
+<code>FF</code> &#8594; acceptable
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>&gt;</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Battery packs</p></td>
+<td align="left" valign="middle"><p class="table">n/a</p></td>
+<td align="left" valign="middle"><p class="table">SmartCell models: returns number of connected packs</p>
+<p class="table">Non-SmartCell models: returns number set by user (use <strong><code>+</code></strong> and <strong><code>-</code></strong>)</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>[</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Measure-UPS: Upper temp limit</p></td>
+<td align="left" valign="middle"><p class="table"><code>NO,NO</code></p></td>
+<td align="left" valign="middle"><p class="table">Degrees C</p>
+<p class="table">Writable variable</p>
+<p class="table">Values: <code>55</code>, <code>50</code>, <code>45</code>, &#8230;, <code>05</code> for both</p>
+<p class="table">Use <strong><code>-</code></strong> to enumerate through left side, <strong><code>+</code></strong> to enumerate through right side</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>]</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Measure-UPS: Lower temp limit</p></td>
+<td align="left" valign="middle"><p class="table"><code>NO,NO</code></p></td>
+<td align="left" valign="middle"><p class="table">Degrees C</p>
+<p class="table">Writable variable</p>
+<p class="table">See <em>lower temp limit</em> above</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>{</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Measure-UPS: Upper humidity limit</p></td>
+<td align="left" valign="middle"><p class="table"><code>NO,NO</code></p></td>
+<td align="left" valign="middle"><p class="table">%</p>
+<p class="table">Writable variable</p>
+<p class="table">Values: <code>90</code>, <code>80</code>, <code>70</code>, &#8230;, <code>10</code> for both</p>
+<p class="table">Use <strong><code>-</code></strong> and <strong><code>+</code></strong> to change values</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>}</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Measure-UPS: Lower humidity limit</p></td>
+<td align="left" valign="middle"><p class="table"><code>NO,NO</code></p></td>
+<td align="left" valign="middle"><p class="table">%</p>
+<p class="table">Writable variable</p>
+<p class="table">Values: <code>90</code>, <code>80</code>, <code>70</code>, &#8230;, <code>10</code> for both</p>
+<p class="table">Use <strong><code>-</code></strong> and <strong><code>+</code></strong> to change values</p></td>
+</tr>
+<tr>
+<td colspan="4" align="center" valign="middle"><p class="table header">Matrix-UPS and Symmetra commands</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>^</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Run in bypass mode</p></td>
+<td align="left" valign="middle"><p class="table">n/a</p></td>
+<td align="left" valign="middle"><p class="table">If online, "<code>BYP</code>" response is received as bypass mode starts</p>
+<p class="table">If already in bypass, "<code>INV</code>" is received and UPS goes online</p>
+<p class="table">If UPS can&#8217;t transfer, "<code>ERR</code>" received</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>&lt;</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Number of bad battery packs</p></td>
+<td align="left" valign="middle"><p class="table"><code>000</code></p></td>
+<td align="left" valign="middle"><p class="table">Returns count of bad packs connected to the UPS</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>/</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Load current</p></td>
+<td align="left" valign="middle"><p class="table">n/a</p></td>
+<td align="left" valign="middle"><p class="table">True RMS load current drawn by UPS</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>\</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Apparent load power</p></td>
+<td align="left" valign="middle"><p class="table">n/a</p></td>
+<td align="left" valign="middle"><p class="table">Output load as percentage of full rated load</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>^V</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Output voltage selection</p></td>
+<td align="left" valign="middle"><p class="table">n/a</p></td>
+<td align="left" valign="middle"><div><div class="paragraph"><p>Writable variable</p></div>
+<div class="paragraph"><p>Values:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>A</code> &#8594; Automatic (based on input tap)
+</p>
+</li>
+<li>
+<p>
+<code>M</code> &#8594; 208 VAC
+</p>
+</li>
+<li>
+<p>
+<code>I</code> &#8594; 240 VAC
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>^L</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Front panel language</p></td>
+<td align="left" valign="middle"><p class="table">n/a</p></td>
+<td align="left" valign="middle"><div><div class="paragraph"><p>Writable variable</p></div>
+<div class="paragraph"><p>Values:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>E</code> &#8594; English
+</p>
+</li>
+<li>
+<p>
+<code>F</code> &#8594; French
+</p>
+</li>
+<li>
+<p>
+<code>G</code> &#8594; German
+</p>
+</li>
+<li>
+<p>
+<code>S</code> &#8594; Spanish
+</p>
+</li>
+<li>
+<p>
+Also <code>1</code>, <code>2</code>, <code>3</code>, <code>4</code> &#8594; unknown
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>w</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Run time conservation</p></td>
+<td align="left" valign="middle"><p class="table">n/a</p></td>
+<td align="left" valign="middle"><div><div class="paragraph"><p>Writable variable</p></div>
+<div class="paragraph"><p>Values:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>NO</code> &#8594; disabled
+</p>
+</li>
+<li>
+<p>
+<code>02</code> &#8594; leave 2 minutes of runtime in battery
+</p>
+</li>
+<li>
+<p>
+<code>05</code> &#8594; leave 5 minutes
+</p>
+</li>
+<li>
+<p>
+<code>08</code> &#8594; leave 8 minutes
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="dipsw">Dip switch information</h2>
+<div class="sectionbody">
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="center" valign="middle">Bit    </th>
+<th align="center" valign="middle">Switch </th>
+<th align="left" valign="middle">Option when bit=1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center" valign="middle"><p class="table">0</p></td>
+<td align="center" valign="middle"><p class="table">4</p></td>
+<td align="left" valign="middle"><p class="table">Low battery alarm changed from 2 to 5 mins. Autostartup disabled on SU370ci and 400</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">1</p></td>
+<td align="center" valign="middle"><p class="table">3</p></td>
+<td align="left" valign="middle"><p class="table">Audible alarm delayed 30 seconds</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">2</p></td>
+<td align="center" valign="middle"><p class="table">2</p></td>
+<td align="left" valign="middle"><p class="table">Output transfer set to 115 VAC (from 120 VAC) or to 240 VAC (from 230 VAC)</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">3</p></td>
+<td align="center" valign="middle"><p class="table">1</p></td>
+<td align="left" valign="middle"><p class="table">UPS desensitized - input voltage range expanded</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">4 - 7</p></td>
+<td align="center" valign="middle"><p class="table">-</p></td>
+<td align="left" valign="middle"><p class="table">Unused at this time</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="status">Status flags</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Some common things you&#8217;ll see:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>08</code> = on line, battery OK
+</p>
+</li>
+<li>
+<p>
+<code>10</code> = on battery, battery OK
+</p>
+</li>
+<li>
+<p>
+<code>50</code> = on battery, battery low
+</p>
+</li>
+</ul></div>
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<thead>
+<tr>
+<th align="center" valign="middle">Bit    </th>
+<th align="left" valign="middle">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center" valign="middle"><p class="table">0</p></td>
+<td align="left" valign="middle"><p class="table"><strong><code>1</code></strong> = runtime calibration occurring</p>
+<p class="table">Not reported by Smart UPS v/s and BackUPS Pro</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">1</p></td>
+<td align="left" valign="middle"><p class="table"><strong><code>1</code></strong> = SmartTrim</p>
+<p class="table">Not reported by 1st and 2nd generation SmartUPS models</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">2</p></td>
+<td align="left" valign="middle"><p class="table"><strong><code>1</code></strong> = SmartBoost</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">3</p></td>
+<td align="left" valign="middle"><p class="table"><strong><code>1</code></strong> = on line</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">4</p></td>
+<td align="left" valign="middle"><p class="table"><strong><code>1</code></strong> = on battery</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">5</p></td>
+<td align="left" valign="middle"><p class="table"><strong><code>1</code></strong> = overloaded output</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">6</p></td>
+<td align="left" valign="middle"><p class="table"><strong><code>1</code></strong> = battery low</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">7</p></td>
+<td align="left" valign="middle"><p class="table"><strong><code>1</code></strong> = replace battery</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="async">Alert messages</h2>
+<div class="sectionbody">
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<thead>
+<tr>
+<th align="center" valign="middle">Character      </th>
+<th align="left" valign="middle">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>!</code></p></td>
+<td align="left" valign="middle"><p class="table">Line Fail - sent when the UPS goes on-battery, repeated every 30 seconds until low battery condition reached.
+Sometimes occurs more than once in the first 30 seconds.</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>$</code></p></td>
+<td align="left" valign="middle"><p class="table">Return from line fail - UPS back on line power, only sent if a <strong><code>!</code></strong> has been sent.</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>%</code></p></td>
+<td align="left" valign="middle"><p class="table">Low battery - Sent to indicate low battery, but not on SmartUPS v/s or BackUPS Pro models</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>+</code></p></td>
+<td align="left" valign="middle"><p class="table">Return from low battery - Sent when the battery has been recharged to some level only if a % has been sent previously</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>?</code></p></td>
+<td align="left" valign="middle"><p class="table">Abnormal condition - sent for conditions such as "shutdown due to overload" or "shutdown due to low battery capacity".
+Also occurs within 10 minutes of turnon.</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>=</code></p></td>
+<td align="left" valign="middle"><p class="table">Return from abnormal condition - Sent when the UPS returns from an abnormal condition where <strong><code>?</code></strong> was sent, but not a turn-on.
+Not implemented on SmartUPS v/s or BackUPS Pro models.</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>*</code></p></td>
+<td align="left" valign="middle"><p class="table">About to turn off - Sent when the UPS is about to switch off the load. No commands are processed after this character is sent.
+Not implemented on SmartUPS v/s, BackUPS Pro, or 3rd generation SmartUPS models.</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>#</code></p></td>
+<td align="left" valign="middle"><p class="table">Replace battery - Sent when the UPS detects that the battery needs to be replaced.
+Sent every 5 hours until a new battery test is run or the UPS is shut off.
+Not implemented on SmartUPS v/s or BackUPS Pro models.</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>&amp;</code></p></td>
+<td align="left" valign="middle"><p class="table">Check alarm register for fault (Measure-UPS) - sent to signal that temp or humidity out of set limits.
+Also sent when one of the contact closures changes states.
+Sent every 2 minutes, stops when the alarm conditions are reset.
+Only sent for alarms enabled with <strong><code>I</code></strong>.
+Cause of alarm may be determined with <strong><code>J</code></strong>.
+Not on SmartUPS v/s or BackUPS Pro.</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>|</code></p></td>
+<td align="left" valign="middle"><p class="table">Variable change in EEPROM - Sent whenever any EEPROM variable is changed.
+Only supported on Matrix UPS and 3rd generation SmartUPS models.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="reg1">Register 1</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>All bits are valid on the Matrix UPS.
+SmartUPS models only support bits 6 and 7.
+Other models do not respond.</p></div>
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<thead>
+<tr>
+<th align="center" valign="middle">Bit    </th>
+<th align="left" valign="middle">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center" valign="middle"><p class="table">0</p></td>
+<td align="left" valign="middle"><p class="table">In wakeup mode (typically lasts &lt; 2s)</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">1</p></td>
+<td align="left" valign="middle"><p class="table">In bypass mode due to internal fault - see register 2 or 3</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">2</p></td>
+<td align="left" valign="middle"><p class="table">Going to bypass mode due to command</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">3</p></td>
+<td align="left" valign="middle"><p class="table">In bypass mode due to command</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">4</p></td>
+<td align="left" valign="middle"><p class="table">Returning from bypass mode</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">5</p></td>
+<td align="left" valign="middle"><p class="table">In bypass mode due to manual bypass control</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">6</p></td>
+<td align="left" valign="middle"><p class="table">Ready to power load on user command</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">7</p></td>
+<td align="left" valign="middle"><p class="table">Ready to power load on user command or return of line power</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="reg2">Register 2</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Matrix UPS models report bits 0 - 5.
+SmartUPS models only support bits 4 and 6.
+SmartUPS v/s and BackUPS Pro report bits 4, 6, 7.
+Unused bits are set to <strong><code>0</code></strong>.
+Other models do not respond.</p></div>
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<thead>
+<tr>
+<th align="center" valign="middle">Bit    </th>
+<th align="left" valign="middle">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center" valign="middle"><p class="table">0</p></td>
+<td align="left" valign="middle"><p class="table">Fan failure in electronics, UPS in bypass</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">1</p></td>
+<td align="left" valign="middle"><p class="table">Fan failure in isolation unit</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">2</p></td>
+<td align="left" valign="middle"><p class="table">Bypass supply failure</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">3</p></td>
+<td align="left" valign="middle"><p class="table">Output voltage select failure, UPS in bypass</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">4</p></td>
+<td align="left" valign="middle"><p class="table">DC imbalance, UPS in bypass</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">5</p></td>
+<td align="left" valign="middle"><p class="table">Command sent to stop bypass with no battery connected - UPS still in bypass</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">6</p></td>
+<td align="left" valign="middle"><p class="table">Relay fault in SmartTrim or SmartBoost</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">7</p></td>
+<td align="left" valign="middle"><p class="table">Bad output voltage</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="reg3">Register 3</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>All bits are valid on the Matrix UPS and 3rd generation SmartUPS models.
+SmartUPS v/s and BackUPS Pro models report bits 0 - 5.
+All others report 0 - 4.
+State change of bits 1, 2, 5, 6, 7 are reported asynchronously with <strong><code>?</code></strong> and <strong><code>=</code></strong> messages.</p></div>
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<thead>
+<tr>
+<th align="center" valign="middle">Bit    </th>
+<th align="left" valign="middle">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center" valign="middle"><p class="table">0</p></td>
+<td align="left" valign="middle"><p class="table">Output unpowered due to shutdown by low battery</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">1</p></td>
+<td align="left" valign="middle"><p class="table">Unable to transfer to battery due to overload</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">2</p></td>
+<td align="left" valign="middle"><p class="table">Main relay malfunction - UPS turned off</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">3</p></td>
+<td align="left" valign="middle"><p class="table">In sleep mode from <strong><code>@</code></strong> (maybe others)</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">4</p></td>
+<td align="left" valign="middle"><p class="table">In shutdown mode from <strong><code>S</code></strong></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">5</p></td>
+<td align="left" valign="middle"><p class="table">Battery charger failure</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">6</p></td>
+<td align="left" valign="middle"><p class="table">Bypass relay malfunction</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">7</p></td>
+<td align="left" valign="middle"><p class="table">Normal operating temperature exceeded</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="cap">Capabilities</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Upon sending a <strong><code>^Z</code></strong>, your UPS will probably spit back something like this (truncated here for the example):</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>#uD43132135138129uM43229234239224uA43110112114108 ....</code></pre>
+</div></div>
+<div class="paragraph"><p>It looks bizarre and ugly, but is easily parsed.
+The <code>#</code> is some kind of marker/ident character.
+Skip it.
+The rest fits this form:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+Command character - use this to select the value
+</p>
+</li>
+<li>
+<p>
+Locale - use <strong><code>b</code></strong> to find out what yours is, <code>4</code> applies to all
+</p>
+</li>
+<li>
+<p>
+Number of choices - <code>4</code> means there are 4 possibilities coming up
+</p>
+</li>
+<li>
+<p>
+Choice length - <code>3</code> means they are all 3 chars long
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>Then it&#8217;s followed by the choices, and it starts over.</p></div>
+<div class="paragraph"><p>Matrix-UPS models have <code>##</code> between each grouping for some reason.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_acknowledgements">Acknowledgements</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Large parts of this data were contributed or corrected by Steven Freed.
+This guy is some sort of APC UPS god.
+Many thanks.</p></div>
+</div>
+</div>
+</div>
+<div id="footnotes"><hr /></div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2022-04-14 15:23:39 UTC
+</div>
+<div id="footer-badges">
+<a href="https://github.com/networkupstools/nut">
+  <img style="border:0;height:20"
+    src="https://img.shields.io/github/checks-status/networkupstools/nut/master"
+    alt="Latest GitHub checks status: master branch"/>
+</a>
+<!--
+<a href="https://travis-ci.org/github/networkupstools/nut">
+  <img style="border:0;height:20"
+    src="https://api.travis-ci.org/networkupstools/nut.svg?branch=master"
+    alt="Latest Travis CI build status: master branch"/>
+</a>
+-->
+<a href="https://ci.networkupstools.org/job/nut/job/nut/job/master/">
+  <img style="border:0;height:20"
+    src="https://ci.networkupstools.org/buildStatus/icon?job=nut%2Fnut%2Fmaster"
+    alt="Latest NUT CI build status: master branch"/>
+</a>
+<a href="https://ci.networkupstools.org/job/nut/job/nut/job/fightwarn/">
+  <img style="border:0;height:20"
+    src="https://ci.networkupstools.org/buildStatus/icon?job=nut%2Fnut%2Ffightwarn&subject=Fightwarn%20Branch"
+    alt="Latest NUT CI build status: fightwarn branch"/>
+</a>
+<!--
+<a href="https://github.com/networkupstools/nut/releases">
+  <img style="border:0;height:20"
+    src="https://img.shields.io/github/v/release/networkupstools/nut"
+    alt="Latest GitHub drafted NUT source release"/>
+</a>
+-->
+<a href="https://github.com/networkupstools/nut/releases">
+  <img style="border:0;height:20"
+    src="https://img.shields.io/github/v/tag/networkupstools/nut?sort=semver"
+    alt="Latest Git-tagged NUT source release"/>
+</a>
+<!-- Maintainer note: for the counter below to work, a git tag
+     is not sufficient -- a release must be drafted and published
+     at https://github.com/networkupstools/nut/releases
+     Counter URL may also be .../latest/BRANCHNAME -->
+<a href="https://github.com/networkupstools/nut">
+  <img style="border:0;height:20"
+    src="https://img.shields.io/github/commits-since/networkupstools/nut/latest.svg"
+    alt="Commits on master branch since latest release on GitHub"/>
+</a>
+<a href="http://www.methods.co.nz/asciidoc/">
+  <img style="border:0;width:88px;height:31px"
+    src="../images/asciidoc.png"
+    alt="Powered by AsciiDoc"/>
+</a>
+<a href="https://validator.w3.org/check?uri=referer">
+  <img style="border:0;width:88px;height:31px"
+    src="https://www.w3.org/Icons/valid-xhtml11-blue"
+    alt="Valid XHTML 1.1"/>
+</a>
+<a href="https://jigsaw.w3.org/css-validator/check?uri=referer">
+  <img style="border:0;width:88px;height:31px"
+    src="https://jigsaw.w3.org/css-validator/images/vcss-blue"
+    alt="Valid CSS!"/>
+</a>
+<a href="https://www.gandi.net/">
+  <img style="border:0;height:38px;"
+       src="../images/gandi-ar21.svg"
+       alt="DNS, redirection and related services Hoster"/>
+</a>
+<a href="https://fosshost.org/">
+  <img style="border:0;width:112px;height:38px;"
+       src="../images/ci/fosshost.org_Host_Light_38px.png"
+       alt="Dedicated Hosting for NUT CI"/>
+</a>
+</div>
+</div>
+</div>
+</div>
+<!-- Google Analytics integration -->
+<script type="text/javascript">
+
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-9664272-1']);
+        _gaq.push(['_trackPageview']);
+
+        (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+
+</script>
+</body>
+</html>

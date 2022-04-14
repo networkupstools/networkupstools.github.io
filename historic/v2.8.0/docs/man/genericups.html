@@ -1,0 +1,1319 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<meta name="generator" content="AsciiDoc 9.0.0rc2" />
+<title>GENERICUPS(8)</title>
+<style type="text/css">
+/* Shared CSS for AsciiDoc xhtml11 and html5 backends */
+
+/* Default font. */
+body {
+  font-family: Georgia,serif;
+}
+
+/* Title font. */
+h1, h2, h3, h4, h5, h6,
+div.title, caption.title,
+thead, p.table.header,
+#toctitle,
+#author, #revnumber, #revdate, #revremark,
+#footer {
+  font-family: Arial,Helvetica,sans-serif;
+}
+
+body {
+  margin: 1em 5% 1em 5%;
+}
+
+a {
+  color: blue;
+  text-decoration: underline;
+}
+a:visited {
+  color: fuchsia;
+}
+
+em {
+  font-style: italic;
+  color: navy;
+}
+
+strong {
+  font-weight: bold;
+  color: #083194;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #527bbd;
+  margin-top: 1.2em;
+  margin-bottom: 0.5em;
+  line-height: 1.3;
+}
+
+h1, h2, h3 {
+  border-bottom: 2px solid silver;
+}
+h2 {
+  padding-top: 0.5em;
+}
+h3 {
+  float: left;
+}
+h3 + * {
+  clear: left;
+}
+h5 {
+  font-size: 1.0em;
+}
+
+div.sectionbody {
+  margin-left: 0;
+}
+
+hr {
+  border: 1px solid silver;
+}
+
+p {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+ul, ol, li > p {
+  margin-top: 0;
+}
+ul > li     { color: #aaa; }
+ul > li > * { color: black; }
+
+.monospaced, code, pre {
+  font-family: "Courier New", Courier, monospace;
+  font-size: inherit;
+  color: navy;
+  padding: 0;
+  margin: 0;
+}
+pre {
+  white-space: pre-wrap;
+}
+
+#author {
+  color: #527bbd;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+#email {
+}
+#revnumber, #revdate, #revremark {
+}
+
+#footer {
+  font-size: small;
+  border-top: 2px solid silver;
+  padding-top: 0.5em;
+  margin-top: 4.0em;
+}
+#footer-text {
+  float: left;
+  padding-bottom: 0.5em;
+}
+#footer-badges {
+  float: right;
+  padding-bottom: 0.5em;
+}
+
+#preamble {
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+}
+div.imageblock, div.exampleblock, div.verseblock,
+div.quoteblock, div.literalblock, div.listingblock, div.sidebarblock,
+div.admonitionblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+div.admonitionblock {
+  margin-top: 2.0em;
+  margin-bottom: 2.0em;
+  margin-right: 10%;
+  color: #606060;
+}
+
+div.content { /* Block element content. */
+  padding: 0;
+}
+
+/* Block element titles. */
+div.title, caption.title {
+  color: #527bbd;
+  font-weight: bold;
+  text-align: left;
+  margin-top: 1.0em;
+  margin-bottom: 0.5em;
+}
+div.title + * {
+  margin-top: 0;
+}
+
+td div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content + div.title {
+  margin-top: 0.0em;
+}
+
+div.sidebarblock > div.content {
+  background: #ffffee;
+  border: 1px solid #dddddd;
+  border-left: 4px solid #f0f0f0;
+  padding: 0.5em;
+}
+
+div.listingblock > div.content {
+  border: 1px solid #dddddd;
+  border-left: 5px solid #f0f0f0;
+  background: #f8f8f8;
+  padding: 0.5em;
+}
+
+div.quoteblock, div.verseblock {
+  padding-left: 1.0em;
+  margin-left: 1.0em;
+  margin-right: 10%;
+  border-left: 5px solid #f0f0f0;
+  color: #888;
+}
+
+div.quoteblock > div.attribution {
+  padding-top: 0.5em;
+  text-align: right;
+}
+
+div.verseblock > pre.content {
+  font-family: inherit;
+  font-size: inherit;
+}
+div.verseblock > div.attribution {
+  padding-top: 0.75em;
+  text-align: left;
+}
+/* DEPRECATED: Pre version 8.2.7 verse style literal block. */
+div.verseblock + div.attribution {
+  text-align: left;
+}
+
+div.admonitionblock .icon {
+  vertical-align: top;
+  font-size: 1.1em;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #527bbd;
+  padding-right: 0.5em;
+}
+div.admonitionblock td.content {
+  padding-left: 0.5em;
+  border-left: 3px solid #dddddd;
+}
+
+div.exampleblock > div.content {
+  border-left: 3px solid #dddddd;
+  padding-left: 0.5em;
+}
+
+div.imageblock div.content { padding-left: 0; }
+span.image img { border-style: none; vertical-align: text-bottom; }
+a.image:visited { color: white; }
+
+dl {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+dt {
+  margin-top: 0.5em;
+  margin-bottom: 0;
+  font-style: normal;
+  color: navy;
+}
+dd > *:first-child {
+  margin-top: 0.1em;
+}
+
+ul, ol {
+    list-style-position: outside;
+}
+ol.arabic {
+  list-style-type: decimal;
+}
+ol.loweralpha {
+  list-style-type: lower-alpha;
+}
+ol.upperalpha {
+  list-style-type: upper-alpha;
+}
+ol.lowerroman {
+  list-style-type: lower-roman;
+}
+ol.upperroman {
+  list-style-type: upper-roman;
+}
+
+div.compact ul, div.compact ol,
+div.compact p, div.compact p,
+div.compact div, div.compact div {
+  margin-top: 0.1em;
+  margin-bottom: 0.1em;
+}
+
+tfoot {
+  font-weight: bold;
+}
+td > div.verse {
+  white-space: pre;
+}
+
+div.hdlist {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+div.hdlist tr {
+  padding-bottom: 15px;
+}
+dt.hdlist1.strong, td.hdlist1.strong {
+  font-weight: bold;
+}
+td.hdlist1 {
+  vertical-align: top;
+  font-style: normal;
+  padding-right: 0.8em;
+  color: navy;
+}
+td.hdlist2 {
+  vertical-align: top;
+}
+div.hdlist.compact tr {
+  margin: 0;
+  padding-bottom: 0;
+}
+
+.comment {
+  background: yellow;
+}
+
+.footnote, .footnoteref {
+  font-size: 0.8em;
+}
+
+span.footnote, span.footnoteref {
+  vertical-align: super;
+}
+
+#footnotes {
+  margin: 20px 0 20px 0;
+  padding: 7px 0 0 0;
+}
+
+#footnotes div.footnote {
+  margin: 0 0 5px 0;
+}
+
+#footnotes hr {
+  border: none;
+  border-top: 1px solid silver;
+  height: 1px;
+  text-align: left;
+  margin-left: 0;
+  width: 20%;
+  min-width: 100px;
+}
+
+div.colist td {
+  padding-right: 0.5em;
+  padding-bottom: 0.3em;
+  vertical-align: top;
+}
+div.colist td img {
+  margin-top: 0.3em;
+}
+
+@media print {
+  #footer-badges { display: none; }
+}
+
+#toc {
+  margin-bottom: 2.5em;
+}
+
+#toctitle {
+  color: #527bbd;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-top: 1.0em;
+  margin-bottom: 0.1em;
+}
+
+div.toclevel0, div.toclevel1, div.toclevel2, div.toclevel3, div.toclevel4 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+div.toclevel2 {
+  margin-left: 2em;
+  font-size: 0.9em;
+}
+div.toclevel3 {
+  margin-left: 4em;
+  font-size: 0.9em;
+}
+div.toclevel4 {
+  margin-left: 6em;
+  font-size: 0.9em;
+}
+
+span.aqua { color: aqua; }
+span.black { color: black; }
+span.blue { color: blue; }
+span.fuchsia { color: fuchsia; }
+span.gray { color: gray; }
+span.green { color: green; }
+span.lime { color: lime; }
+span.maroon { color: maroon; }
+span.navy { color: navy; }
+span.olive { color: olive; }
+span.purple { color: purple; }
+span.red { color: red; }
+span.silver { color: silver; }
+span.teal { color: teal; }
+span.white { color: white; }
+span.yellow { color: yellow; }
+
+span.aqua-background { background: aqua; }
+span.black-background { background: black; }
+span.blue-background { background: blue; }
+span.fuchsia-background { background: fuchsia; }
+span.gray-background { background: gray; }
+span.green-background { background: green; }
+span.lime-background { background: lime; }
+span.maroon-background { background: maroon; }
+span.navy-background { background: navy; }
+span.olive-background { background: olive; }
+span.purple-background { background: purple; }
+span.red-background { background: red; }
+span.silver-background { background: silver; }
+span.teal-background { background: teal; }
+span.white-background { background: white; }
+span.yellow-background { background: yellow; }
+
+span.big { font-size: 2em; }
+span.small { font-size: 0.6em; }
+
+span.underline { text-decoration: underline; }
+span.overline { text-decoration: overline; }
+span.line-through { text-decoration: line-through; }
+
+div.unbreakable { page-break-inside: avoid; }
+
+
+/*
+ * xhtml11 specific
+ *
+ * */
+
+div.tableblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+div.tableblock > table {
+  border: 3px solid #527bbd;
+}
+thead, p.table.header {
+  font-weight: bold;
+  color: #527bbd;
+}
+p.table {
+  margin-top: 0;
+}
+/* Because the table frame attribute is overridden by CSS in most browsers. */
+div.tableblock > table[frame="void"] {
+  border-style: none;
+}
+div.tableblock > table[frame="hsides"] {
+  border-left-style: none;
+  border-right-style: none;
+}
+div.tableblock > table[frame="vsides"] {
+  border-top-style: none;
+  border-bottom-style: none;
+}
+
+
+/*
+ * html5 specific
+ *
+ * */
+
+table.tableblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+thead, p.tableblock.header {
+  font-weight: bold;
+  color: #527bbd;
+}
+p.tableblock {
+  margin-top: 0;
+}
+table.tableblock {
+  border-width: 3px;
+  border-spacing: 0px;
+  border-style: solid;
+  border-color: #527bbd;
+  border-collapse: collapse;
+}
+th.tableblock, td.tableblock {
+  border-width: 1px;
+  padding: 4px;
+  border-style: solid;
+  border-color: #527bbd;
+}
+
+table.tableblock.frame-topbot {
+  border-left-style: hidden;
+  border-right-style: hidden;
+}
+table.tableblock.frame-sides {
+  border-top-style: hidden;
+  border-bottom-style: hidden;
+}
+table.tableblock.frame-none {
+  border-style: hidden;
+}
+
+th.tableblock.halign-left, td.tableblock.halign-left {
+  text-align: left;
+}
+th.tableblock.halign-center, td.tableblock.halign-center {
+  text-align: center;
+}
+th.tableblock.halign-right, td.tableblock.halign-right {
+  text-align: right;
+}
+
+th.tableblock.valign-top, td.tableblock.valign-top {
+  vertical-align: top;
+}
+th.tableblock.valign-middle, td.tableblock.valign-middle {
+  vertical-align: middle;
+}
+th.tableblock.valign-bottom, td.tableblock.valign-bottom {
+  vertical-align: bottom;
+}
+
+
+/*
+ * manpage specific
+ *
+ * */
+
+body.manpage h1 {
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  border-top: 2px solid silver;
+  border-bottom: 2px solid silver;
+}
+body.manpage h2 {
+  border-style: none;
+}
+body.manpage div.sectionbody {
+  margin-left: 3em;
+}
+
+@media print {
+  body.manpage div#toc { display: none; }
+}
+
+
+</style>
+<script type="text/javascript">
+/*<![CDATA[*/
+var asciidoc = {  // Namespace.
+
+/////////////////////////////////////////////////////////////////////
+// Table Of Contents generator
+/////////////////////////////////////////////////////////////////////
+
+/* Author: Mihai Bazon, September 2002
+ * http://students.infoiasi.ro/~mishoo
+ *
+ * Table Of Content generator
+ * Version: 0.4
+ *
+ * Feel free to use this script under the terms of the GNU General Public
+ * License, as long as you do not remove or alter this notice.
+ */
+
+ /* modified by Troy D. Hanson, September 2006. License: GPL */
+ /* modified by Stuart Rackham, 2006, 2009. License: GPL */
+
+// toclevels = 1..4.
+toc: function (toclevels) {
+
+  function getText(el) {
+    var text = "";
+    for (var i = el.firstChild; i != null; i = i.nextSibling) {
+      if (i.nodeType == 3 /* Node.TEXT_NODE */) // IE doesn't speak constants.
+        text += i.data;
+      else if (i.firstChild != null)
+        text += getText(i);
+    }
+    return text;
+  }
+
+  function TocEntry(el, text, toclevel) {
+    this.element = el;
+    this.text = text;
+    this.toclevel = toclevel;
+  }
+
+  function tocEntries(el, toclevels) {
+    var result = new Array;
+    var re = new RegExp('[hH]([1-'+(toclevels+1)+'])');
+    // Function that scans the DOM tree for header elements (the DOM2
+    // nodeIterator API would be a better technique but not supported by all
+    // browsers).
+    var iterate = function (el) {
+      for (var i = el.firstChild; i != null; i = i.nextSibling) {
+        if (i.nodeType == 1 /* Node.ELEMENT_NODE */) {
+          var mo = re.exec(i.tagName);
+          if (mo && (i.getAttribute("class") || i.getAttribute("className")) != "float") {
+            result[result.length] = new TocEntry(i, getText(i), mo[1]-1);
+          }
+          iterate(i);
+        }
+      }
+    }
+    iterate(el);
+    return result;
+  }
+
+  var toc = document.getElementById("toc");
+  if (!toc) {
+    return;
+  }
+
+  // Delete existing TOC entries in case we're reloading the TOC.
+  var tocEntriesToRemove = [];
+  var i;
+  for (i = 0; i < toc.childNodes.length; i++) {
+    var entry = toc.childNodes[i];
+    if (entry.nodeName.toLowerCase() == 'div'
+     && entry.getAttribute("class")
+     && entry.getAttribute("class").match(/^toclevel/))
+      tocEntriesToRemove.push(entry);
+  }
+  for (i = 0; i < tocEntriesToRemove.length; i++) {
+    toc.removeChild(tocEntriesToRemove[i]);
+  }
+
+  // Rebuild TOC entries.
+  var entries = tocEntries(document.getElementById("content"), toclevels);
+  for (var i = 0; i < entries.length; ++i) {
+    var entry = entries[i];
+    if (entry.element.id == "")
+      entry.element.id = "_toc_" + i;
+    var a = document.createElement("a");
+    a.href = "#" + entry.element.id;
+    a.appendChild(document.createTextNode(entry.text));
+    var div = document.createElement("div");
+    div.appendChild(a);
+    div.className = "toclevel" + entry.toclevel;
+    toc.appendChild(div);
+  }
+  if (entries.length == 0)
+    toc.parentNode.removeChild(toc);
+},
+
+
+/////////////////////////////////////////////////////////////////////
+// Footnotes generator
+/////////////////////////////////////////////////////////////////////
+
+/* Based on footnote generation code from:
+ * http://www.brandspankingnew.net/archive/2005/07/format_footnote.html
+ */
+
+footnotes: function () {
+  // Delete existing footnote entries in case we're reloading the footnodes.
+  var i;
+  var noteholder = document.getElementById("footnotes");
+  if (!noteholder) {
+    return;
+  }
+  var entriesToRemove = [];
+  for (i = 0; i < noteholder.childNodes.length; i++) {
+    var entry = noteholder.childNodes[i];
+    if (entry.nodeName.toLowerCase() == 'div' && entry.getAttribute("class") == "footnote")
+      entriesToRemove.push(entry);
+  }
+  for (i = 0; i < entriesToRemove.length; i++) {
+    noteholder.removeChild(entriesToRemove[i]);
+  }
+
+  // Rebuild footnote entries.
+  var cont = document.getElementById("content");
+  var spans = cont.getElementsByTagName("span");
+  var refs = {};
+  var n = 0;
+  for (i=0; i<spans.length; i++) {
+    if (spans[i].className == "footnote") {
+      n++;
+      var note = spans[i].getAttribute("data-note");
+      if (!note) {
+        // Use [\s\S] in place of . so multi-line matches work.
+        // Because JavaScript has no s (dotall) regex flag.
+        note = spans[i].innerHTML.match(/\s*\[([\s\S]*)]\s*/)[1];
+        spans[i].innerHTML =
+          "[<a id='_footnoteref_" + n + "' href='#_footnote_" + n +
+          "' title='View footnote' class='footnote'>" + n + "</a>]";
+        spans[i].setAttribute("data-note", note);
+      }
+      noteholder.innerHTML +=
+        "<div class='footnote' id='_footnote_" + n + "'>" +
+        "<a href='#_footnoteref_" + n + "' title='Return to text'>" +
+        n + "</a>. " + note + "</div>";
+      var id =spans[i].getAttribute("id");
+      if (id != null) refs["#"+id] = n;
+    }
+  }
+  if (n == 0)
+    noteholder.parentNode.removeChild(noteholder);
+  else {
+    // Process footnoterefs.
+    for (i=0; i<spans.length; i++) {
+      if (spans[i].className == "footnoteref") {
+        var href = spans[i].getElementsByTagName("a")[0].getAttribute("href");
+        href = href.match(/#.*/)[0];  // Because IE return full URL.
+        n = refs[href];
+        spans[i].innerHTML =
+          "[<a href='#_footnote_" + n +
+          "' title='View footnote' class='footnote'>" + n + "</a>]";
+      }
+    }
+  }
+},
+
+install: function(toclevels) {
+  var timerId;
+
+  function reinstall() {
+    asciidoc.footnotes();
+    if (toclevels) {
+      asciidoc.toc(toclevels);
+    }
+  }
+
+  function reinstallAndRemoveTimer() {
+    clearInterval(timerId);
+    reinstall();
+  }
+
+  timerId = setInterval(reinstall, 500);
+  if (document.addEventListener)
+    document.addEventListener("DOMContentLoaded", reinstallAndRemoveTimer, false);
+  else
+    window.onload = reinstallAndRemoveTimer;
+}
+
+}
+asciidoc.install();
+/*]]>*/
+</script>
+<meta name="format-detection" content="telephone=no" />
+</head>
+<body class="article">
+<div id="header">
+<h1>GENERICUPS(8)</h1>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_name">NAME</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>genericups - Driver for contact-closure UPS equipment</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_note_about_historic_nut_release">NOTE ABOUT HISTORIC NUT RELEASE</h2>
+<div class="sectionbody">
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<div class="title">Two NUT websites</div>
+<div class="paragraph"><p>This version of the page reflects NUT release <em>v2.8.0</em>
+with codebase commited c25b30bac at 2022-04-14T17:14:08+02:00</p></div>
+<div class="paragraph"><p>Options, features and capabilities in current development (and future
+releases) are detailed on the main site and may differ from ones
+described here.</p></div>
+</td>
+</tr></table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_note">NOTE</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>This man page only documents the specific features of the genericups
+driver.  For information about the core driver, see <a href="nutupsdrv.html">nutupsdrv(8)</a>.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_supported_hardware">SUPPORTED HARDWARE</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>This driver supports hardware from many different manufacturers as it only
+uses the very simplest of signaling schemes.  Contact closure refers to a
+kind of interface where basic high/low signals are provided to indicate
+status.  This kind of UPS can only report line power and battery status.</p></div>
+<div class="paragraph"><p>This means that you will only get the essentials in ups.status: OL, OB,
+and LB (some UPSes may also support RB and BYPASS).  Anything else requires
+a smarter UPS.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_cabling">CABLING</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Cabling is different for every kind of UPS.  See the table below for
+information on what is known to work with a given UPS type.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_extra_arguments">EXTRA ARGUMENTS</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>This driver supports the following settings in the <a href="ups.conf.html">ups.conf(5)</a>:</p></div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+upstype=<em>type</em>
+</dt>
+<dd>
+<p>
+Required.  Configures the driver for a specific kind of UPS.  See the
+<a href="#_ups_types">UPS Types</a> section below for more information on which entries
+are available.
+</p>
+</dd>
+<dt class="hdlist1">
+mfr=<em>string</em>
+</dt>
+<dd>
+<p>
+Optional.  The very nature of a generic UPS driver sometimes means that
+the stock manufacturer data has no relation to the actual hardware that is
+attached.  With the <code>mfr</code> setting, you can change the value that is seen by
+clients that monitor this UPS.
+</p>
+</dd>
+<dt class="hdlist1">
+model=<em>string</em>
+</dt>
+<dd>
+<p>
+Optional.  This is like <code>mfr</code> above, but it overrides the model string
+instead.
+</p>
+</dd>
+<dt class="hdlist1">
+serial=<em>string</em>
+</dt>
+<dd>
+<p>
+Optional.  This is like <code>mfr</code> above and intended to record the identification
+string of the UPS. It is titled "serial" because usually this string is
+referred to as the serial number.
+</p>
+</dd>
+<dt class="hdlist1">
+sdtime=<em>value</em>
+</dt>
+<dd>
+<p>
+Optional.  The driver will sleep for this many seconds after setting the
+shutdown signal.  This is necessary for some hardware which requires a
+sustained level to activate the shutdown sequence.
+</p>
+<div class="paragraph"><p>The default behavior of the driver is to exit immediately.  If this
+doesn&#8217;t reliably trigger a shutdown in your UPS hardware, use this
+setting to give it more time to react.</p></div>
+</dd>
+</dl></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">very large values for <code>sdtime</code> may create warnings from upsdrvctl if
+it gets tired of waiting for the driver to return.</td>
+</tr></table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_custom_configurations">CUSTOM CONFIGURATIONS</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>You may override the values for CP, OL, LB, and SD by defining them in
+the <a href="ups.conf.html">ups.conf(5)</a> after the upstype setting.</p></div>
+<div class="paragraph"><p>For example, to set the cable power to DTR and the low battery value to
+DCD, it would look like this:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>CP = DTR</code></pre>
+</div></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>LB = DCD</code></pre>
+</div></div>
+<div class="paragraph"><p>Recognized values for input lines are CTS, DCD, and RNG.  Recognized
+values for output lines are DTR, RTS, and ST.  See below for more about
+what these signals mean.</p></div>
+<div class="paragraph"><p>These values may be negated for active low signals.  That is, "LB=-DCD"
+recognizes a low battery condition when DCD is not held high.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_type_information">TYPE INFORMATION</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>The essence of a UPS definition in this driver is how it uses the serial
+lines that are available.  These are the abbreviations you will see below:</p></div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+OL
+</dt>
+<dd>
+<p>
+On line (no power failure) (opposite of OB - on battery)
+</p>
+</dd>
+<dt class="hdlist1">
+LB
+</dt>
+<dd>
+<p>
+Low battery
+</p>
+</dd>
+<dt class="hdlist1">
+RB
+</dt>
+<dd>
+<p>
+Replace battery
+</p>
+</dd>
+<dt class="hdlist1">
+BYPASS
+</dt>
+<dd>
+<p>
+Battery bypass active or no battery installed
+</p>
+</dd>
+<dt class="hdlist1">
+SD
+</dt>
+<dd>
+<p>
+Shutdown load
+</p>
+</dd>
+<dt class="hdlist1">
+CP
+</dt>
+<dd>
+<p>
+Cable power (must be present for cable to have valid reading)
+</p>
+</dd>
+<dt class="hdlist1">
+CTS
+</dt>
+<dd>
+<p>
+Clear to Send.  Received from the UPS.
+</p>
+</dd>
+<dt class="hdlist1">
+RTS
+</dt>
+<dd>
+<p>
+Ready to Send.  Sent by the PC.
+</p>
+</dd>
+<dt class="hdlist1">
+DCD
+</dt>
+<dd>
+<p>
+Data Carrier Detect.  Received from the UPS.
+</p>
+</dd>
+<dt class="hdlist1">
+RNG
+</dt>
+<dd>
+<p>
+Ring indicate.  Received from the UPS.
+</p>
+</dd>
+<dt class="hdlist1">
+DTR
+</dt>
+<dd>
+<p>
+Data Terminal Ready.  Sent by the PC.
+</p>
+</dd>
+<dt class="hdlist1">
+DSR
+</dt>
+<dd>
+<p>
+Data Set Ready.  Received from the UPS.
+</p>
+</dd>
+<dt class="hdlist1">
+ST
+</dt>
+<dd>
+<p>
+Send a BREAK on the transmit data line
+</p>
+</dd>
+<dt class="hdlist1">
+NULL
+</dt>
+<dd>
+<p>
+Disable this signal.  Disabled signal will always be low except for OL
+       which will always be high.
+</p>
+</dd>
+<dt class="hdlist1">
+none
+</dt>
+<dd>
+<p>
+Alias to <code>NULL</code> which matches some other documentation.
+</p>
+</dd>
+</dl></div>
+<div class="paragraph"><p>A "-" in front of a signal name (like -RNG) means that the indicated
+condition is signaled with an active low signal.  For example, [LB=-RNG]
+means the battery is low when the ring indicate line goes low, and that
+the battery is OK when that line is held high.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ups_types">UPS TYPES</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>0 = UPSonic LAN Saver 600</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>[CP=DTR+RTS] [OL=-CTS] [LB=DCD] [SD=DTR]</code></pre>
+</div></div>
+<div class="paragraph"><p>1 = APC Back-UPS/Back-UPS Pro/Smart-UPS with 940-0095A/C cable</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>[CP=DTR] [OL=-RNG] [LB=DCD] [SD=RTS]</code></pre>
+</div></div>
+<div class="paragraph"><p>2 = APC Back-UPS/Back-UPS Pro/Smart-UPS with 940-0020B cable</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>[CP=RTS] [OL=-CTS] [LB=DCD] [SD=DTR+RTS]</code></pre>
+</div></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>Type 2 has also been reported to work with the 940-0020C cable.</code></pre>
+</div></div>
+<div class="paragraph"><p>3 = PowerTech Comp1000 with DTR cable power</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>[CP=DTR] [OL=CTS] [LB=DCD] [SD=DTR+RTS]</code></pre>
+</div></div>
+<div class="paragraph"><p>4 = Generic RUPS Model</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>[CP=RTS] [OL=CTS] [LB=-DCD] [SD=-RTS]</code></pre>
+</div></div>
+<div class="paragraph"><p>5 = Tripp Lite UPS with Lan2.2 interface (black 73-0844 cable)</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>[CP=DTR] [OL=CTS] [LB=-DCD] [SD=DTR+RTS]</code></pre>
+</div></div>
+<div class="paragraph"><p>6 = Best Patriot with INT51 cable</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>[CP=DTR] [OL=CTS] [LB=-DCD] [SD=RTS]</code></pre>
+</div></div>
+<div class="paragraph"><p>7 = CyberPower Power99
+    Also Upsonic Power Guardian PG-500, Belkin Belkin Home Office,
+    F6H350-SER, F6H500-SER, F6H650-SER, Eaton Management Card Contact - Config3
+    with cable 66033 (shutdown does not work)</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>[CP=RTS] [OL=CTS] [LB=-DCD] [SD=DTR]</code></pre>
+</div></div>
+<div class="paragraph"><p>8 = Nitram Elite 500</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>[CP=DTR] [OL=CTS] [LB=-DCD] [SD=???]</code></pre>
+</div></div>
+<div class="paragraph"><p>9 = APC Back-UPS/Back-UPS Pro/Smart-UPS with 940-0023A cable</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>[CP=none] [OL=-DCD] [LB=CTS] [SD=RTS]</code></pre>
+</div></div>
+<div class="paragraph"><p>10 = Victron Lite with crack cable</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>[CP=RTS] [OL=CTS] [LB=-DCD] [SD=DTR]</code></pre>
+</div></div>
+<div class="paragraph"><p>11 = Powerware 3115</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>[CP=DTR] [OL=-CTS] [LB=-DCD] [SD=ST]</code></pre>
+</div></div>
+<div class="paragraph"><p>12 = APC Back-UPS Office with 940-0119A cable</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>[CP=RTS] [OL=-CTS] [LB=DCD] [SD=DTR]</code></pre>
+</div></div>
+<div class="paragraph"><p>13 = RPT Repoteck RPT-800A/RPT-162A</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>[CP=DTR+RTS] [OL=DCD] [LB=-CTS] [SD=ST]</code></pre>
+</div></div>
+<div class="paragraph"><p>14 = Online P-series</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>[CP=DTR] [OL=DCD] [LB=-CTS] [SD=RTS]</code></pre>
+</div></div>
+<div class="paragraph"><p>15 = Powerware 5119, 5125</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>[CP=DTR] [OL=CTS] [LB=-DCD] [SD=ST]</code></pre>
+</div></div>
+<div class="paragraph"><p>16 = Nitram Elite 2002</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>[CP=DTR+RTS] [OL=CTS] [LB=-DCD] [SD=???]</code></pre>
+</div></div>
+<div class="paragraph"><p>17 = PowerKinetics 9001</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>[CP=DTR] [OL=CTS] [LB=-DCD] [SD=???]</code></pre>
+</div></div>
+<div class="paragraph"><p>18 = TrippLite Omni 450LAN with Martin&#8217;s cabling</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>[CP=DTR] [OL=CTS] [LB=DCD] [SD=none]</code></pre>
+</div></div>
+<div class="paragraph"><p>19 = Fideltronic Ares Series</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>[CP=DTR] [OL=CTS] [LB=-DCD] [SD=RTS]</code></pre>
+</div></div>
+<div class="paragraph"><p>20 = Powerware 5119 RM</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>[CP=DTR] [OL=-CTS] [LB=DCD] [SD=ST]</code></pre>
+</div></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>Check docs/cables/powerware.txt</code></pre>
+</div></div>
+<div class="paragraph"><p>21 = Generic RUPS 2000 (Megatec M2501 cable)</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>[CP=RTS] [OL=CTS] [LB=-DCD] [SD=RTS+DTR]</code></pre>
+</div></div>
+<div class="paragraph"><p>22 = Gamatronic All models with alarm interface
+     (also CyberPower SL series)</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>[CP=RTS] [OL=CTS] [LB=-DCD] [SD=DTR]</code></pre>
+</div></div>
+<div class="paragraph"><p>23 = Generic FTTx (Fiber to the x) battery backup
+     with 4-wire telemetry interface</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>[CP=RTS] [OL=CTS] [LB=-DCD] [RB=-RNG] [BYPASS=-DSR] [SD=none]</code></pre>
+</div></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_similar_models">SIMILAR MODELS</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Many different UPS companies make models with similar interfaces.  The
+RUPS cable seems to be especially popular in the "power strip" variety of
+UPS found in office supply stores.  If your UPS works with an entry in the
+table above, but the model or manufacturer information don&#8217;t match,
+don&#8217;t despair.  You can fix that easily by using the mfr and model
+variables documented above in your <a href="ups.conf.html">ups.conf(5)</a>.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_testing_compatibility">TESTING COMPATIBILITY</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>If your UPS isn&#8217;t listed above, you can try going through the list until
+you find one that works.  There is a lot of cable and interface reuse in
+the UPS world, and you may find a match.</p></div>
+<div class="paragraph"><p>To do this, first make sure nothing important is plugged into the
+outlets on the UPS, as you may inadvertently switch it off.  Definitely
+make sure that the computer you&#8217;re using is not plugged into that UPS.
+Plug in something small like a lamp so you know when power is being
+supplied to the outlets.</p></div>
+<div class="paragraph"><p>Now, you can either attempt to make an educated guess based on the
+documentation your manufacturer has provided (if any), or just start
+going down the list.</p></div>
+<div class="sect2">
+<h3 id="_step_1">Step 1</h3>
+<div class="paragraph"><p>Pick a driver to try from the list (genericups -h) and go to step 2.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_step_2">Step 2</h3>
+<div class="paragraph"><p>Start the driver with the type you want to try -</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>genericups -x upstype=n /dev/port</code></pre>
+</div></div>
+<div class="paragraph"><p>Let upsd sync up (watch the syslog), and then run upsc to see what it
+found.  If the STATUS is right (should be OL for on line), continue to
+<a href="#_step_3">Step 3</a>, otherwise go back to step 1.</p></div>
+<div class="paragraph"><p>Alternatively, you can run genericups in debug mode -</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>genericups -DDDDD -x upstype=n /dev/port</code></pre>
+</div></div>
+<div class="paragraph"><p>In this mode it will be running in the foreground and continuously
+display the line and battery status of the UPS.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_step_3">Step 3</h3>
+<div class="paragraph"><p>Disconnect the UPS from the wall/mains power.  This is easiest if you
+have a switched outlet in between it and the wall, but you can also just
+pull the plug to test.  The lamp should stay lit, and the status should
+switch to "OB".  If the lamp went out or the status didn&#8217;t go to "OB"
+within about 15 seconds, go to <a href="#_step_1">Step 1</a>.  Otherwise, continue
+to <a href="#_step_4">Step 4</a>.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_step_4">Step 4</h3>
+<div class="paragraph"><p>At this point, we know that OL and OB work.  If nothing else beyond
+this point works, you at least know what your OL/OB value should be.</p></div>
+<div class="paragraph"><p>Wait for the UPS to start complaining about a low battery.  Depending on
+the size of your UPS battery and the lamp&#8217;s bulb, this could take
+awhile.  It should start complaining audibly at some point.  When this
+happens, STATUS should show "OB LB" within 15 seconds.  If not, go to
+<a href="#_step_1">Step 1</a>, otherwise continue to <a href="#_step_5">Step 5</a>.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_step_5">Step 5</h3>
+<div class="paragraph"><p>So far: OL works, OB works, and LB works.</p></div>
+<div class="paragraph"><p>With the UPS running on battery, run the genericups driver with the -k
+switch to shut it down.</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>genericups -x upstype=n -k /dev/port</code></pre>
+</div></div>
+<div class="paragraph"><p>If the UPS turns off the lamp, you&#8217;re done.  At this point, you have
+verified that the shutdown sequence actually does what you want.  You
+can start using the genericups driver with this type number for normal
+operations.</p></div>
+<div class="paragraph"><p>You should use your findings to add a section to your ups.conf.
+Here is a quick example:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>[myups]
+        driver = genericups
+        port = /dev/ttyS0
+        upstype = 1</code></pre>
+</div></div>
+<div class="paragraph"><p>Change the port and upstype values to match your system.</p></div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_new_support">NEW SUPPORT</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>If the above testing sequence fails, you will probably need to create a
+new entry to support your hardware.  All UPS types are determined from the
+table in the genericups.h file in the source tree.</p></div>
+<div class="paragraph"><p>On a standard 9 pin serial port, there are 6 lines that are used as the
+standard "high/low" signal levels.  4 of them are incoming (to the PC,
+from the UPS), and the other 2 are outgoing (to the UPS, from the PC).
+The other 3 are the receive/transmit lines and the ground.</p></div>
+<div class="paragraph"><p>Be aware that many manufacturers remap pins within the cable.  If you have
+any doubts, a quick check with a multimeter should confirm whether the
+cable is straight-through or not.  Another thing to keep in mind is that
+some cables have electronics in them to do special things.  Some have
+resistors and transistors on board to change behavior depending on what&#8217;s
+being supplied by the PC.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_specific_model_notes">SPECIFIC MODEL NOTES</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>These have been contributed by users of this driver.</p></div>
+<div class="paragraph"><p>The Centralion CL series may power down the load if the driver starts up
+with the UPS running on battery as the default line settings contain the
+shutdown sequence.  - Neil Muller</p></div>
+<div class="paragraph"><p>The Tripp-Lite Internet Office 700 must be used with the black 73-0844
+cable instead of the gray 73-0743 cable.  This entry should work with any
+of their models with the Lan 2.2 interface - see the sticker by the DB9
+connector on the UPS.  - Stephen Brown</p></div>
+<div class="paragraph"><p>Type 5 should work with the Tripp-Lite Lan 2.1 interface and the 73-0724
+cable.  This was tested with the OmniSmart 675 PNP on Red Hat 7.2.  - Q
+Giese</p></div>
+<div class="paragraph"><p>Types 7 and 10 should both work with the PhoenixTec A1000.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_bugs">BUGS</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>There is no way to reliably detect a contact-closure UPS.  This means the
+driver will start up happily even if no UPS is detected.  It also means
+that if the connection between the UPS and computer is interrupted, you
+may not be able to sense this in software.</p></div>
+<div class="paragraph"><p>Most contact-closure UPSes will not power down the load if the line power
+is present.  This can create a race when using secondary <a href="upsmon.html">upsmon(8)</a>
+systems.  See the <a href="upsmon.html">upsmon(8)</a> man page for more information.</p></div>
+<div class="paragraph"><p>The solution to both of these problems is to upgrade to a smart protocol
+UPS of some kind that allows detection and proper load cycling on command.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_see_also">SEE ALSO</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_the_core_driver">The core driver</h3>
+<div class="paragraph"><p><a href="nutupsdrv.html">nutupsdrv(8)</a></p></div>
+</div>
+<div class="sect2">
+<h3 id="_internet_resources">Internet resources:</h3>
+<div class="paragraph"><p>The NUT (Network UPS Tools) home page: <a href="http://www.networkupstools.org/">http://www.networkupstools.org/</a></p></div>
+</div>
+</div>
+</div>
+</div>
+<div id="footnotes"><hr /></div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2022-04-14 15:23:26 UTC -- Network UPS Tools 2.8.0
+</div>
+</div>
+</body>
+</html>

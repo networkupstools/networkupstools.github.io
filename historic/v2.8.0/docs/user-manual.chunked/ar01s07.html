@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>7. Advanced usage and scheduling notes</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><link rel="home" href="index.html" title="Network UPS Tools User Manual" /><link rel="up" href="index.html" title="Network UPS Tools User Manual" /><link rel="prev" href="ar01s06.html" title="6. Configuration notes" /><link rel="next" href="ar01s08.html" title="8. NUT outlets management and PDU notes" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ar01s06.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ar01s08.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="Advanced_usage_scheduling_notes"></a>7. Advanced usage and scheduling notes</h2></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Two NUT websites</h3><p>This version of the page reflects NUT release <span class="emphasis"><em>v2.8.0</em></span>
+with codebase commited c25b30bac at 2022-04-14T17:14:08+02:00</p><p>Options, features and capabilities in current development (and future
+releases) are detailed on the main site and may differ from ones
+described here.</p></div><p>upsmon can call out to a helper script or program when the device changes
+state.  The example upsmon.conf has a full list of which state changes
+are available — ONLINE, ONBATT, LOWBATT, and more.</p><p>There are two options, that will be presented in details:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+the simple approach: create your own helper, and manage all events and actions
+yourself,
+</li><li class="listitem">
+the advanced approach: use the NUT provided helper, called <span class="emphasis"><em>upssched</em></span>.
+</li></ul></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_the_simple_approach_using_your_own_script"></a>7.1. The simple approach, using your own script</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_how_it_works_relative_to_upsmon"></a>How it works relative to upsmon</h4></div></div></div><p>Your command will be called with the full text of the message as one argument.</p><p>For the default values, refer to the sample upsmon.conf file.</p><p>The environment string NOTIFYTYPE will contain the type string of whatever
+caused this event to happen — ONLINE, ONBATT, LOWBATT, …</p><p>Making this some sort of shell script might be a good idea, but the helper can
+be in any programming or scripting language.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>Remember that your helper must be <span class="strong"><strong>executable</strong></span>. If you are using a script,
+make sure the execution flags are set.</p></div><p>For more information, refer to <a class="ulink" href="../man/upsmon.html" target="_top">upsmon(8)</a> and
+<a class="ulink" href="../man/upsmon.conf.html" target="_top">upsmon.conf(5)</a> manual pages.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_setting_up_everything"></a>Setting up everything</h4></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
+Set EXEC flags on various things in <a class="ulink" href="../man/upsmon.conf.html" target="_top">upsmon.conf(5)</a>:
+</p><pre class="literallayout">NOTIFYFLAG ONBATT EXEC
+NOTIFYFLAG ONLINE EXEC</pre><p class="simpara">If you want other things like WALL or SYSLOG to happen, just add them:</p><pre class="literallayout">NOTIFYFLAG ONBATT EXEC+WALL+SYSLOG</pre><p class="simpara">You get the idea.</p></li><li class="listitem"><p class="simpara">
+Tell upsmon where your script is
+</p><pre class="literallayout">NOTIFYCMD /path/to/my/script</pre></li><li class="listitem"><p class="simpara">
+Make a simple script like this at that location:
+</p><pre class="literallayout">#! /bin/bash
+echo "$*" | sendmail -F"ups@mybox" bofh@pager.example.com</pre></li><li class="listitem">
+Restart upsmon, pull the plug, and see what happens.
+</li></ul></div><p>That approach is bare-bones, but you should get the text content of the
+alert in the body of the message, since upsmon passes the alert text
+(from NOTIFYMSG) as an argument.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_using_more_advanced_features"></a>Using more advanced features</h4></div></div></div><p>Your helper script will be run with a few environment variables set.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
+UPSNAME: the name of the system that generated the change.
+</p><p class="simpara">This will be one of your identifiers from the MONITOR lines in upsmon.conf.</p></li><li class="listitem">
+NOTIFYTYPE: this will be ONLINE, ONBATT, or whatever event took place which
+made upsmon call your script.
+</li></ul></div><p>You can use these to do different things based on which system has
+changed state.  You could have it only send pages for an important
+system while totally ignoring a known trouble spot, for example.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_suppressing_notify_storms"></a>Suppressing notify storms</h4></div></div></div><p>upsmon will call your script every time an event happens that has the EXEC flag
+set.  This means a quick power failure that lasts mere seconds might generate a
+notification storm.  To suppress this sort of annoyance, use upssched as your
+NOTIFYCMD program, and configure it to call your command after a timer has
+elapsed.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_the_advanced_approach_using_upssched"></a>7.2. The advanced approach, using upssched</h3></div></div></div><p>upssched is a helper for upsmon that will invoke commands for you at some
+interval relative to a UPS event.  It can be used to send pages, mail out
+notices about things, or even shut down the box early.</p><p>There will be examples scattered throughout.  Change them to suit your
+pathnames, UPS locations, and so forth.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_how_upssched_works_relative_to_upsmon"></a>How upssched works relative to upsmon</h4></div></div></div><p>When an event occurs, upsmon will call whatever you specify as a <span class="emphasis"><em>NOTIFYCMD</em></span>
+in your upsmon.conf, if you also enable the <span class="emphasis"><em>EXEC</em></span> in your <span class="emphasis"><em>NOTIFYFLAGS</em></span>.  In
+this case, we want upsmon to call upssched as the notifier, since it will
+be doing all the work for us.  So, in the upsmon.conf:</p><pre class="literallayout">NOTIFYCMD /usr/local/ups/sbin/upssched</pre><p>Then we want upsmon to actually <span class="emphasis"><em>use</em></span> it for the notify events, so again
+in the upsmon.conf we set the flags:</p><pre class="literallayout">NOTIFYFLAG ONLINE SYSLOG+EXEC
+NOTIFYFLAG ONBATT SYSLOG+WALL+EXEC
+NOTIFYFLAG LOWBATT SYSLOG+WALL+EXEC
+... and so on.</pre><p>For the purposes of this document I will only use those three, but you can set
+the flags for any of the valid notify types.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_setting_up_your_upssched_conf"></a>Setting up your upssched.conf</h4></div></div></div><p>Once upsmon has been configured with the NOTIFYCMD and EXEC flags, you’re
+ready to deal with the upssched.conf details.  In this file, you specify
+just what will happen when a given event occurs on a particular UPS.</p><p>First you need to define the name of the script or program that will
+handle timers that trigger.  This is your CMDSCRIPT, and needs to be above
+any AT defines.  There’s an example provided with the program, so we’ll
+use that here:</p><pre class="literallayout">CMDSCRIPT /usr/local/ups/bin/upssched-cmd</pre><p>Then you have to define the variables PIPEFN and LOCKFN; the former
+sets the file name of the FIFO that will pass communications between
+processes to start and stop timers, while the latter sets the file name
+for a temporary file created by upssched in order to avoid a race condition
+under some circumstances. Please see the relevant comments in upssched.conf
+for additional information and advice about these variables.</p><p>Now you can tell your CMDSCRIPT what to do when it is called by upsmon.</p><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_the_big_picture"></a>The big picture</h5></div></div></div><p>The design in a nutshell is:</p><pre class="literallayout">upsmon ---&gt; calls upssched ---&gt; calls your CMDSCRIPT</pre><p>Ultimately, the CMDSCRIPT does the actual useful work,  whether that’s
+initiating an early shutdown with <span class="emphasis"><em>upsmon -c fsd</em></span>, sending a page by
+calling sendmail, or opening a subspace channel to V’ger.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_establishing_timers"></a>Establishing timers</h5></div></div></div><p>Let’s say that you want to receive a notification when any UPS has been running
+on battery for 30 seconds.  Create a handler that starts a 30 second timer
+for an ONBATT condition.</p><pre class="literallayout">AT ONBATT * START-TIMER onbattwarn 30</pre><p>This means "when any UPS (the *) goes on battery, start a timer called
+onbattwarn that will trigger in 30 seconds".  We’ll come back to the
+onbattwarn part in a moment.  Right now we need to make sure that we
+don’t trigger that timer if the UPS happens to come back before the
+time is up.  In essence, if it goes back on line, we need to cancel it.
+So, let’s tell upssched that.</p><pre class="literallayout">AT ONLINE * CANCEL-TIMER onbattwarn</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>Timers are pure in-memory mechanisms, specific to upssched.  Conversely
+to other mechanisms found in NUT, such as upsmon→POWERDOWNFLAG, there is no
+file created on the filesystem.</p></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_executing_commands_immediately"></a>Executing commands immediately</h5></div></div></div><p>As an example, consider the scenario where a UPS goes onto battery power.
+However, the users are not informed until 60 seconds later — using a timer as
+described above. Whilst this may let the <span class="strong"><strong>logged in</strong></span> users know that the UPS
+is on battery power, it does not inform any users subsequently logging in. To
+enable this we could, at the same time, create a file which is read and
+displayed to any user trying to login whilst the UPS is on battery power. If
+the UPS comes back onto utility power within 60 seconds, then we can cancel
+the timer and remove the file, as described above. However, if the UPS comes
+back onto utility power say 5 minutes later then we do not want to use any
+timers but we still want to remove the file. To do this we could use:</p><pre class="literallayout">AT ONLINE * EXECUTE ups-back-on-power</pre><p>This means that when upsmon detects that the UPS is back on utility power it
+will signal upssched. Upssched will see the above command and simply pass
+<span class="emphasis"><em>ups-back-on-power</em></span> as an argument directly to CMDSCRIPT. This occurs
+immediately, there are no timers involved.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_writing_the_command_script_handler"></a>Writing the command script handler</h4></div></div></div><p>OK, now that upssched knows how the timers are supposed to work, let’s
+give it something to do when one actually triggers.  The name of the
+example timer is onbattwarn, so that’s the argument that will be passed
+into your CMDSCRIPT when it triggers.  This means we need to do some
+shell script writing to deal with that input.</p><pre class="screen">        #! /bin/sh
+
+        case $1 in
+                onbattwarn)
+                        # Send a notification mail
+                        echo "The UPS has been on battery for awhile" \
+                        | mail -s"UPS monitor" bofh@pager.example.com
+                        # Create a flag-file on the filesystem, for your own processing
+                        /usr/bin/touch /some/path/ups-on-battery
+                        ;;
+                ups-back-on-power)
+                        # Delete the flag-file on the filesystem
+                        /bin/rm -f /some/path/ups-on-battery
+                        ;;
+                *)
+                        logger -t upssched-cmd "Unrecognized command: $1"
+                        ;;
+        esac</pre><p>This is a very simple script example, but it shows how you can test for
+the presence of a given trigger.  With multiple ATs creating various timer
+names, you will need to test for each possibility and handle it according
+to your desires.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>You can invoke just about anything from inside the CMDSCRIPT.  It doesn’t
+need to be a shell script, either — that’s just an example.  If you want to
+write a program that will parse argv[1] and deal with the  possibilities, that
+will work too.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_early_shutdowns"></a>Early Shutdowns</h4></div></div></div><p>One thing that gets requested a lot is early shutdowns in upsmon.  With
+upssched, you can now have this functionality.  Just set a timer for some
+length of time at ONBATT which will invoke a shutdown command if it elapses.
+Just be sure to cancel this timer if you go back ONLINE before then.</p><p>The best way to do this is to use the upsmon callback feature.  You can
+make upsmon set the "forced shutdown" (FSD) flag on the upsd so your
+secondary systems shut down early too.  Just do something like this
+in your CMDSCRIPT:</p><pre class="literallayout">/sbin/upsmon -c fsd</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>the path to <code class="literal">upsmon</code> must be provided. The default for an installation
+built from sources is <code class="literal">/usr/local/ups</code> (so <code class="literal">/usr/local/ups/sbin/upsmon</code>),
+while packaged installations will generally comply to
+<a class="ulink" href="http://refspecs.linuxfoundation.org/fhs.shtml" target="_top">FHS — Filesystem Hierarchy Standard</a>
+(so <code class="literal">/sbin/upsmon</code>).</p></div><p>It’s not a good idea to call your system’s shutdown routine directly
+from the CMDSCRIPT, since there’s no synchronization with the secondary
+systems hooked to the same UPS.  FSD is the primary’s way of saying
+"we’re shutting down <span class="strong"><strong>now</strong></span> like it or not, so you’d better get ready".</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_background"></a>Background</h4></div></div></div><p>This program was written primarily to fulfill the requests of users for
+the early shutdown scenario.  The "outboard" design of the program
+(relative to upsmon) was intended to reduce the load on the average
+system.  Most people don’t have the requirement of shutting down after n
+seconds on battery, since the usual OB+LB testing is sufficient.</p><p>This program was created separately so those people don’t have to spend
+CPU time and RAM on something that will never be used in their
+environments.</p><p>The design of the timer handler is also geared towards minimizing impact.
+It will come and go from the process list as necessary.  When a new timer
+is started, a process will be forked to actually watch the clock and
+eventually start the CMDSCRIPT.  When a timer triggers, it is removed from
+the queue.  Canceling a timer will also remove it from the queue.  When
+no timers are present in the queue, the background process exits.</p><p>This means that you will only see upssched running when one of two things
+is happening:</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem">
+There’s a timer of some sort currently running
+</li><li class="listitem">
+upsmon just called it, and you managed to catch the brief instance
+</li></ol></div><p>The final optimization handles the possibility of trying to cancel a timer
+when there’s none running.  If there’s no process already running, there
+are no timers to cancel, and furthermore there is no need to start a
+clock-watcher.  As a result, it skips that step and exits sooner.</p></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
+		Last updated 2022-04-14 15:23:28 -- Network UPS Tools 2.8.0</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s06.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s08.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

@@ -1,0 +1,4407 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<title>Network UPS Tools - Voltronic Power UPS Protocol</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="generator" content="AsciiDoc 9.0.0rc2" />
+<meta name="description" content="Power Devices support" />
+<meta name="keywords" content="NUT, Network UPS Tools, Eaton, APC, Free Software, UPS, Uninterruptible Power Supplies, PDU, Power Distributions Units, Solar Controllers, power, power devices, control, monitor, Linux, Unix, Windows, Mac OS X" />
+<meta name="format-detection" content="telephone=no" />
+<link rel="stylesheet" href="../css/xhtml11.css" type="text/css" />
+<link rel="stylesheet" href="../css/web-layout.css" type="text/css" />
+<link rel="shortcut icon" href="../faviconut.ico" />
+<link rel="icon" type="image/png" href="../faviconut.png" />
+<script type="text/javascript" src="../scripts/asciidoc.js"></script>
+<script type="text/javascript">
+/*<![CDATA[*/
+asciidoc.install(2);
+/*]]>*/
+</script>
+<!--[if lte IE 7]>
+<link rel="stylesheet" href="../css/ie-overrides.css" type="text/css" />
+<![endif]-->
+<!--[if lte IE 6]>
+<script type="text/javascript" src="../scripts/filter_png.js"></script>
+<![endif]-->
+</head>
+<body>
+<div id="layout-banner-box">
+<div id="layout-banner">
+  <div id="layout-logo"><img src="../images/nut-logo.png" alt="NUT logo" /></div>
+  <div id="layout-title">Network UPS Tools</div>
+  <div id="layout-description">Power Devices support</div>
+</div>
+</div>
+<div id="layout-menu-box">
+  <ul id="layout-menu">
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="../download.html">Download</a></li>
+    <li><a href="../projects.html">Related projects</a></li>
+    <li><a href="../stable-hcl.html">Compatibility</a></li>
+    <li><a href="../features.html">Features</a></li>
+    <li><a href="../documentation.html">Documentation</a></li>
+    <li><a href="../support.html">Support</a></li>
+    <li>* <a href="https://alioth-lists.debian.net/pipermail/nut-upsuser/">NUT UPS User archive</a></li>
+    <li>* <a href="https://alioth-lists.debian.net/pipermail/nut-upsdev/">NUT UPS Dev archive</a></li>
+    <li><a href="/historic/index.html">Sub-sites for historic releases</a></li>
+    <li><a href="https://github.com/networkupstools/nut/">GitHub</a></li>
+  </ul>
+  <!-- div id="sponsor"><span>Hosted by<br/></span>
+    <a href="http://sponsor.com"><img src="../images/sponsor-logo.png" alt="Sponsor" /></a>
+  </div -->
+</div>
+<div id="layout-content-box">
+<div id="layout-content">
+<div id="header">
+<h1>Voltronic Power UPS Protocol</h1>
+<span id="author">Daniele Pezzini</span><br />
+<span id="email"><tt>&lt;<a href="mailto:hyouko@gmail.com">hyouko@gmail.com</a>&gt;</tt></span><br />
+<span id="revision">version 1.3,</span>
+March 2015
+</div>
+<div id="toc">
+  <div id="toctitle">Table of Contents</div>
+  <noscript><p><b>JavaScript must be enabled in your browser to display the table of contents.</b></p></noscript>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_communication">Communication</h2>
+<div class="sectionbody">
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>RS232C</strong>
+</dt>
+<dd>
+<p>
+9 pins female D-type connector - only 3 wires: TX, RX (crossed) and GND
+</p>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Baud rate
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+2400 bps
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Data length
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+8 bits
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Stop bit
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+1 bit
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Parity
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+none
+</p>
+</td>
+</tr>
+</table></div>
+</dd>
+<dt class="hdlist1">
+<strong>USB</strong>
+</dt>
+<dd>
+<p>
+Serial over USB with <em>cypress</em> protocol
+</p>
+</dd>
+</dl></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_accepted_queries_and_commands">Accepted queries and commands</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>All commands, queries and UPS&#8217;s replies are terminated by <code>&lt;cr&gt;</code></p></div>
+<div class="paragraph"><p>Command beginning with <strong><code>Q</code></strong> &#8594; query</p></div>
+<div class="sect2">
+<h3 id="ups-replies">UPS replies</h3>
+<div class="paragraph"><p><strong><code>(ACK</code></strong> &#8594; Command accepted</p></div>
+<div class="paragraph"><p><strong><code>(NAK</code></strong> &#8594; Command/Query rejected or invalid</p></div>
+</div>
+<div class="sect2">
+<h3 id="_ups_status">UPS status</h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<a id="qgs"></a><strong><code>QGS</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Query UPS for status
+</p>
+<div class="listingblock">
+<div class="title">Reply</div>
+<div class="content">
+<pre><code>(MMM.M NN.N PPP.P QQ.Q RRR.R SSS TTT.T UUU.U VVV.V XXX.X YYY.Y b11..b0</code></pre>
+</div></div>
+<div class="listingblock">
+<div class="title">e.g.</div>
+<div class="content">
+<pre><code>(234.9 50.0 229.8 50.0 000.0 000 369.1 ---.- 026.5 ---.- 018.8 100000000001</code></pre>
+</div></div>
+<div class="paragraph"><p>Where:</p></div>
+<div class="openblock">
+<div class="content">
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>MMM.M</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Input voltage
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>NN.N</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Input frequency (Hz)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>PPP.P</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Output voltage
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>QQ.Q</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Output frequency (Hz)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>RRR.R</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Output current (Ampère)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>SSS</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Load level (%)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>TTT.T</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+* unknown *
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>UUU.U</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+* unknown *
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>VVV.V</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Battery voltage (Volt) [or <code>VV.VV</code>]
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>XXX.X</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+* unknown *
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>YYY.Y</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+UPS temperature (° Celsius)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<a id="bit-qgs"></a><code>bit11..b0</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+&#8594; 12 bit status - <strong><code>1</code></strong> means:
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<thead>
+<tr>
+<th align="center" valign="middle">bit#   </th>
+<th align="left" valign="middle">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>11</code></p></td>
+<td rowspan="2" align="left" valign="middle"><div><div class="paragraph"><p>UPS Type:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>00</code> &#8594; standby
+</p>
+</li>
+<li>
+<p>
+<code>01</code> &#8594; line-interactive
+</p>
+</li>
+<li>
+<p>
+<code>10</code> &#8594; on-line
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>10</code></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>9</code></p></td>
+<td align="left" valign="middle"><p class="table"><a href="#battery-mode">Battery Mode</a> (= mains absent)</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>8</code></p></td>
+<td align="left" valign="middle"><p class="table">Battery Low</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>7</code></p></td>
+<td align="left" valign="middle"><p class="table"><a href="#bypass-mode">Bypass</a>/<a href="#eco-mode">ECO Mode</a> active,</p>
+<p class="table"><strong><code>0</code></strong> &#8594; <a href="#bypass-mode">Bypass</a>/<a href="#eco-mode">ECO Mode</a> inactive or without output</p>
+<p class="table"><strong><a href="#qpi-protocol">P00</a></strong>/<strong><a href="#qpi-protocol">P08</a></strong>: <a href="#avr-mode">AVR Mode</a> on/off</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>6</code></p></td>
+<td align="left" valign="middle"><p class="table">Fault found</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>5</code></p></td>
+<td align="left" valign="middle"><p class="table">* unknown *</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>4</code></p></td>
+<td align="left" valign="middle"><p class="table">Test in progress</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>3</code></p></td>
+<td align="left" valign="middle"><p class="table">Shutdown Active (also as a consequence of <strong><a href="#shutdown-management"><code>Sn</code></a></strong>/<strong><a href="#shutdown-management"><code>SnRm</code></a></strong> commands, while <strong><code>n</code></strong> minutes pass)</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>2</code></p></td>
+<td align="left" valign="middle"><p class="table">Beeper Off/muted,</p>
+<p class="table"><strong><code>0</code></strong> &#8594; Beeper On/enabled</p>
+<p class="table">(changed through <strong><a href="#buzzer-control"><code>BZON</code></a></strong>/<strong><a href="#buzzer-control"><code>BZOFF</code></a></strong>)</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>1</code></p></td>
+<td align="left" valign="middle"><p class="table">* unknown *</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>0</code></p></td>
+<td align="left" valign="middle"><p class="table">* unknown *</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+</table></div>
+</div></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>QS</code></strong>
+<br />
+<strong><code>Q1</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Query UPS for status (short) (old)
+</p>
+<div class="listingblock">
+<div class="title">Reply</div>
+<div class="content">
+<pre><code>(MMM.M NNN.N PPP.P QQQ RR.R SS.S TT.T b7..b0</code></pre>
+</div></div>
+<div class="listingblock">
+<div class="title">e.g.</div>
+<div class="content">
+<pre><code>(209.7 209.7 219.7 020 50.0 41.8 23.3 00000001</code></pre>
+</div></div>
+<div class="listingblock">
+<div class="title">Alternative reply</div>
+<div class="content">
+<pre><code>(MMM.M NNN.N PPP.P QQQ RR.R S.SS TT.T b7..b0</code></pre>
+</div></div>
+<div class="listingblock">
+<div class="title">e.g.</div>
+<div class="content">
+<pre><code>(002.9 000.0 000.0 000 00.0 2.02 21.0 10000001</code></pre>
+</div></div>
+<div class="paragraph"><p>Where:</p></div>
+<div class="openblock">
+<div class="content">
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>MMM.M</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Input voltage
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>NNN.N</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Fault voltage
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>PPP.P</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Output voltage
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>QQQ</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Load level (%)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>RR.R</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Output frequency (Hz)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>SS.S</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Battery voltage [or <code>S.SS</code>]
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>TT.T</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+UPS temperature (° Celsius)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>b7..b0#</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+&#8594; 8 bit status - <strong><code>1</code></strong> means:
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<thead>
+<tr>
+<th align="center" valign="middle">bit#   </th>
+<th align="left" valign="middle">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>7</code></p></td>
+<td align="left" valign="middle"><p class="table">Utility Fail (Immediate)</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>6</code></p></td>
+<td align="left" valign="middle"><p class="table">Battery Low</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>5</code></p></td>
+<td align="left" valign="middle"><p class="table">Bypass/Boost or Buck Active</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>4</code></p></td>
+<td align="left" valign="middle"><p class="table">UPS Failed</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>3</code></p></td>
+<td align="left" valign="middle"><p class="table">UPS Type is Standby</p>
+<p class="table"><strong><code>0</code></strong> is Online</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>2</code></p></td>
+<td align="left" valign="middle"><p class="table">Test in progress</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>1</code></p></td>
+<td align="left" valign="middle"><p class="table">Shutdown Active</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>0</code></p></td>
+<td align="left" valign="middle"><p class="table">Beeper On</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+</table></div>
+</div></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>QBV</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Query UPS for battery information
+</p>
+<div class="listingblock">
+<div class="title">Reply</div>
+<div class="content">
+<pre><code>(MM.M NN PP QQQ RRR</code></pre>
+</div></div>
+<div class="listingblock">
+<div class="title">e.g.</div>
+<div class="content">
+<pre><code>(026.5 02 01 068 255</code></pre>
+</div></div>
+<div class="paragraph"><p>Where:</p></div>
+<div class="openblock">
+<div class="content">
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>MM.M</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Battery voltage
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>NN</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Number of batteries (that make a battery pack)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>PP</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Number of battery packs in parallel
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>QQQ</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Battery capacity (%)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>RRR</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Remaining backup time (minutes)
+</p>
+</td>
+</tr>
+</table></div>
+</div></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>QLDL</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Query for last seen minimum and maximum load level
+</p>
+<div class="listingblock">
+<div class="title">Reply</div>
+<div class="content">
+<pre><code>(MMM NNN</code></pre>
+</div></div>
+<div class="listingblock">
+<div class="title">e.g.</div>
+<div class="content">
+<pre><code>(022 025</code></pre>
+</div></div>
+<div class="paragraph"><p>Where:</p></div>
+<div class="openblock">
+<div class="content">
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>MMM</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Last seen minimum load level (%)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>NNN</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Last seen maximum load level (%)
+</p>
+</td>
+</tr>
+</table></div>
+</div></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>QMOD</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Query UPS for actual operational mode (&#8594; see <a href="#operational-modes"><em>Operational Modes</em></a>)
+</p>
+<div class="paragraph"><p>Possible replies:</p></div>
+<div class="openblock">
+<div class="content">
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>(P</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<a href="#power-on-mode">Power On Mode</a>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>(S</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<a href="#standby-mode">Standby Mode</a>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>(Y</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<a href="#bypass-mode">Bypass Mode</a>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>(L</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<a href="#line-mode">Line Mode</a>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>(B</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<a href="#battery-mode">Battery Mode</a>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>(T</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<a href="#battery-test-mode">Battery Test Mode</a>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>(F</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<a href="#fault-mode">Fault Mode</a>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>(E</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<a href="#eco-mode">ECO Mode</a>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>(C</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<a href="#converter-mode">Converter Mode</a>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>(D</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<a href="#shutdown-mode">Shutdown Mode</a>
+</p>
+</td>
+</tr>
+</table></div>
+</div></div>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_rated_information">Rated information</h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<strong><code>QMD</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Query UPS for rated information #1
+</p>
+<div class="listingblock">
+<div class="title">Reply</div>
+<div class="content">
+<pre><code>(MMMMMMMMMMMMMMM NNNNNNN PP Q/R SSS TTT UU VV.V</code></pre>
+</div></div>
+<div class="listingblock">
+<div class="title">e.g.</div>
+<div class="content">
+<pre><code>(#######OLHVT1K0 ###1000 80 1/1 230 230 02 12.0</code></pre>
+</div></div>
+<div class="paragraph"><p>Where:</p></div>
+<div class="openblock">
+<div class="content">
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>M..M</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+UPS model (15 characters, filled with spaces or <code>#</code>)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>N..N</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+UPS rated VA (7 characters, filled with spaces or <code>#</code>)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>PP</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Output power factor (%)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>Q/R</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Input phases/Output phases
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>SSS</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Rated input voltage
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>TTT</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Rated output voltage
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>UU</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Number of batteries (that make a battery pack)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>VV.V</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Rated voltage (as <strong>per battery</strong>)
+</p>
+</td>
+</tr>
+</table></div>
+</div></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>QRI</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Query UPS for rated information #2
+</p>
+<div class="listingblock">
+<div class="title">Reply</div>
+<div class="content">
+<pre><code>(MMM.M NNN PPP.P QQ.Q</code></pre>
+</div></div>
+<div class="listingblock">
+<div class="title">e.g.</div>
+<div class="content">
+<pre><code>(230.0 004 024.0 50.0</code></pre>
+</div></div>
+<div class="paragraph"><p>Where:</p></div>
+<div class="openblock">
+<div class="content">
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>MMM.M</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Rated output voltage
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>NNN</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Rated output current (Ampère)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>PPP.P</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Rated battery voltage (as <strong>per battery pack</strong>) [or <code>PP.PP</code>]
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>QQ.Q</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Rated output frequency (Hz)
+</p>
+</td>
+</tr>
+</table></div>
+</div></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>I</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Query UPS for rated information #3 (old)
+</p>
+<div class="listingblock">
+<div class="title">Reply</div>
+<div class="content">
+<pre><code>#MMMMMMMMMMMMMMM NNNNNNNNNN PPPPPPPPPP</code></pre>
+</div></div>
+<div class="listingblock">
+<div class="title">e.g.</div>
+<div class="content">
+<pre><code>#                OLHVT1K0   00322.02</code></pre>
+</div></div>
+<div class="paragraph"><p>Where:</p></div>
+<div class="openblock">
+<div class="content">
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>M..M</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+UPS manufacturer (15 characters fixed length, filled with spaces)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>N..N</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+UPS model (10 characters fixed length, filled with spaces)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>P..P</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+UPS firmware version (10 characters fixed length, filled with spaces)
+</p>
+</td>
+</tr>
+</table></div>
+</div></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>F</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Query UPS for rated information #4 (old)
+</p>
+<div class="listingblock">
+<div class="title">Reply</div>
+<div class="content">
+<pre><code>#MMM.M NNN PPP.P QQ.Q</code></pre>
+</div></div>
+<div class="listingblock">
+<div class="title">e.g.</div>
+<div class="content">
+<pre><code>#220.0 004 036.0 50.0</code></pre>
+</div></div>
+<div class="paragraph"><p>Where:</p></div>
+<div class="openblock">
+<div class="content">
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>MMM.M</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Rating voltage
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>NNN</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Rating current (Ampère)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>PPP.P</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Battery voltage (as <strong>per battery pack</strong>) [or <code>PP.PP</code>]
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>QQ.Q</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Nominal frequency (Hz)
+</p>
+</td>
+</tr>
+</table></div>
+</div></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>QID</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Query UPS for serial number
+</p>
+<div class="listingblock">
+<div class="title">Reply</div>
+<div class="content">
+<pre><code>(NNNNNNNNNNNNNNNNNNN</code></pre>
+</div></div>
+<div class="listingblock">
+<div class="title">e.g.</div>
+<div class="content">
+<pre><code>(0000000000000000000</code></pre>
+</div></div>
+<div class="paragraph"><p>Where:</p></div>
+<div class="openblock">
+<div class="content">
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>N..N</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+UPS serial number (not fixed length)
+</p>
+</td>
+</tr>
+</table></div>
+</div></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>QVFW</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Query UPS for firmware version
+</p>
+<div class="listingblock">
+<div class="title">Reply</div>
+<div class="content">
+<pre><code>(VERFW:NNNNN.NN</code></pre>
+</div></div>
+<div class="listingblock">
+<div class="title">e.g.</div>
+<div class="content">
+<pre><code>(VERFW:00322.02</code></pre>
+</div></div>
+<div class="paragraph"><p>Where:</p></div>
+<div class="openblock">
+<div class="content">
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>N..N</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+UPS firmware version
+</p>
+</td>
+</tr>
+</table></div>
+</div></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>QMF</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Query UPS for manufacturer
+</p>
+<div class="listingblock">
+<div class="title">Reply</div>
+<div class="content">
+<pre><code>(NNNNNNNN</code></pre>
+</div></div>
+<div class="listingblock">
+<div class="title">e.g.</div>
+<div class="content">
+<pre><code>(####BOH</code></pre>
+</div></div>
+<div class="paragraph"><p>Where:</p></div>
+<div class="openblock">
+<div class="content">
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>N..N</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+UPS manufacturer (not fixed length, filled with spaces or <code>#</code>)
+</p>
+</td>
+</tr>
+</table></div>
+</div></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>QPAR</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Query UPS for master/slave for UPSes in parallel
+</p>
+<div class="paragraph"><p>Possible replies:</p></div>
+<div class="openblock">
+<div class="content">
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>(001</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Master
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>(002</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Slave
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>(003</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Slave
+</p>
+</td>
+</tr>
+</table></div>
+</div></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<a id="qpi-protocol"></a><strong><code>QPI</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Query UPS for the protocol to use
+</p>
+<div class="listingblock">
+<div class="title">Reply</div>
+<div class="content">
+<pre><code>(PINN</code></pre>
+</div></div>
+<div class="paragraph"><p>Where:</p></div>
+<div class="openblock">
+<div class="content">
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>NN</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Protocol used by UPS
+</p>
+</td>
+</tr>
+</table></div>
+</div></div>
+<div class="paragraph"><p>Known replies:</p></div>
+<div class="openblock">
+<div class="content">
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>(PI00</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+e.g.
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>(PI01</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+e.g. Galleon 1KVA-3KVA-ISO TX
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>(PI02</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+e.g. Galleon 6KVA/10KVA-ISO TX
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>(PI03</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+3-phase input/1-phase output (e.g. Galleon 3-phase in/1-phase out 10KVA/15KVA/20KVA)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>(PI08</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+e.g.
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>(PI09</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+2-phase input/output (e.g. Galleon 2-phase in/2-phase out 6KVA/10KVA)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>(PI10</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+3-phase input/output (e.g. Galleon 3-phase in/3-phase out 10KVA/15KVA/20KVA)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>(PI13</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+e.g.
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>(PI14</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+e.g.
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>(PI31</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+e.g.
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>(PI98</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Old models &#8594; <a href="megatec.html">megatec</a> with <a href="#ups-replies"><strong><code>(ACK</code></strong>/<strong><code>(NAK</code></strong> replies</a>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>(PI99</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+e.g.
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>(NAK</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Old models &#8594; <a href="megatec.html">megatec</a> with <a href="#ups-replies"><strong><code>(ACK</code></strong>/<strong><code>(NAK</code></strong> replies</a>
+</p>
+</td>
+</tr>
+</table></div>
+</div></div>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_error_warning_status">Error/Warning status</h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<strong><code>QWS</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Query UPS for warning status
+</p>
+<div class="listingblock">
+<div class="title">Reply</div>
+<div class="content">
+<pre><code>(b1b2..b63b64</code></pre>
+</div></div>
+<div class="listingblock">
+<div class="title">e.g.</div>
+<div class="content">
+<pre><code>(0000000100000000000000000000000000000000000000000000000000000000</code></pre>
+</div></div>
+<div class="paragraph"><p>Each bit set to <strong><code>1</code></strong> corresponds to an error/warning. <strong><code>0</code></strong> means no warning/error &#8594; see <a href="#warnings"><em>Warnings</em></a></p></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<a id="qfs-fault"></a><strong><code>QFS</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Query UPS for fault status
+</p>
+<div class="listingblock">
+<div class="title">Reply</div>
+<div class="content">
+<pre><code>(MM NNN.N PP.P QQQ.Q RR.R SSS.S TTT UUU.U WWW.W VVV.V XXX.X YYY.Y ZZZZZZZZ</code></pre>
+</div></div>
+<div class="listingblock">
+<div class="title">e.g.</div>
+<div class="content">
+<pre><code>(11 234.9 50.0 229.8 50.0 000.0 000 369.1 ---.- 026.5 ---.- 018.8 10000000</code></pre>
+</div></div>
+<div class="paragraph"><p>Where:</p></div>
+<div class="openblock">
+<div class="content">
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>NN</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Type of fault found (&#8594; see <a href="#fault-handler"><em>Fault Handler</em></a>)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>N..Z</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Short status
+</p>
+</td>
+</tr>
+</table></div>
+</div></div>
+<div class="listingblock">
+<div class="title">Alternative reply</div>
+<div class="content">
+<pre><code>(OK</code></pre>
+</div></div>
+<div class="paragraph"><p>&#8594; No fault</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img src="../images/note.png" alt="Note" />
+</td>
+<td class="content">
+<div class="paragraph"><p>Use this query only if a fault is found in <a href="#bit-qgs">12bit status</a> of <a href="#qgs"><strong><code>QGS</code></strong></a> otherwise you&#8217;ll get a fake reply, such as:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>(14 212.1 50.0 005.6 49.9 006 010.6 343.8 ---.- 026.2 021.8 01101100</code></pre>
+</div></div>
+</td>
+</tr></table>
+</div>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="shutdown-management">Shutdown management</h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<strong><code>SON</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Turn UPS On
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>SOFF</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Turn UPS Off
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>Sn</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Shutdown in <strong><code>n</code></strong> (<code>.2</code>&#8594;<code>.9</code>, <code>01</code>&#8594;<code>99</code>) minutes and then turn on when mains returns
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>SnRm</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Shutdown in <strong><code>n</code></strong> (<code>.2</code>&#8594;<code>.9</code>, <code>01</code>&#8594;<code>99</code>) minutes and then turn on after <strong><code>m</code></strong> (<code>0001</code>..<code>9999</code>) minutes
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>SnR0000</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Shutdown in <strong><code>n</code></strong> (<code>.2</code>&#8594;<code>.9</code>, <code>01</code>&#8594;<code>99</code>) minutes and stay off
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>CS</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Cancel Shutdown
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="battery-test">Battery test</h3>
+<div class="paragraph"><p>Tests are doable in <a href="#operational-modes">Line Mode/Converter Mode/ECO Mode</a></p></div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<strong><code>T</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Invoke a quick battery self-test
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>Tn</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Invoke a battery self-test lasting <strong><code>n</code></strong> (<code>.2</code>&#8594;<code>.9</code>, <code>01</code>&#8594;<code>99</code>) minutes
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>TL</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Invoke a battery deep discharge test
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>CT</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Cancel Battery Test
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="outlet-management">Outlet management</h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<strong><code>QSKn</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Query UPS for status of outlet <strong><code>n</code></strong> (<code>1</code>..<code>4</code>)
+</p>
+<div class="paragraph"><p>Possible replies:</p></div>
+<div class="openblock">
+<div class="content">
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>(1</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Outlet <strong><code>n</code></strong> is ON
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>(0</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Outlet <strong><code>n</code></strong> is OFF
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>(NAK</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Outlet n is not switchable
+</p>
+</td>
+</tr>
+</table></div>
+</div></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>SKONn</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Start outlet <strong><code>n</code></strong> (<code>1</code>..<code>4</code>)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>SKOFFn</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Stop outlet <strong><code>n</code></strong> (<code>1</code>..<code>4</code>)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>QSKTn</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Query UPS for outlet <strong><code>n</code></strong> (<code>1</code>..<code>4</code>) <a href="#programmable-outlets-control">delay time on battery mode</a>
+</p>
+<div class="paragraph"><p>Possible replies:</p></div>
+<div class="openblock">
+<div class="content">
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>(NNN</code>
+<br />
+</td>
+<td class="hdlist2">
+<div class="listingblock">
+<div class="title">e.g.</div>
+<div class="content">
+<pre><code>(023</code></pre>
+</div></div>
+<div class="paragraph"><p>Where:</p></div>
+<div class="openblock">
+<div class="content">
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>NNN</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Backup time for outlet <strong><code>n</code></strong> before the UPS shutdown the load when on battery mode (minutes)
+</p>
+</td>
+</tr>
+</table></div>
+</div></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>(NAK</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Backup time for outlet <strong><code>n</code></strong> before the UPS shutdown the load when on battery mode not set in UPS
+</p>
+</td>
+</tr>
+</table></div>
+</div></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>PSKxn</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Set outlet <strong><code>x</code></strong> (<code>1</code>..<code>4</code>) delay time on battery mode to <strong><code>n</code></strong> (<code>000</code>&#8230;<code>999</code>) minutes
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="capability-options">Capability options</h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<strong><code>QFLAG</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Query UPS for capability flag
+</p>
+<div class="listingblock">
+<div class="title">Reply</div>
+<div class="content">
+<pre><code>(EmmmmDnnnnn</code></pre>
+</div></div>
+<div class="listingblock">
+<div class="title">e.g.</div>
+<div class="content">
+<pre><code>(EpbrashcDoegfl</code></pre>
+</div></div>
+<div class="paragraph"><p>Where:</p></div>
+<div class="openblock">
+<div class="content">
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>m..m</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Enabled options
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>n..n</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Disabled options
+</p>
+</td>
+</tr>
+</table></div>
+</div></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<a id="reset-to-default"></a><strong><code>PF</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Set all capability options and their limits to safe default values (<strong>Doable only in <a href="#standby-mode">Standby Mode</a></strong>)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>PEX</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Enable <strong><code>X</code></strong> option
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>PDX</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Disable <strong><code>X</code></strong> option
+</p>
+</td>
+</tr>
+</table></div>
+<div class="hdlist"><div class="title">Available options</div><table>
+<tr>
+<td class="hdlist1">
+<strong><code>P</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Alarm at <a href="#bypass-mode">Bypass Mode</a> (&#8594; the alarm will beep only if <a href="#alarm-control">Alarm Control</a>, if available, is enabled)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>B</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Alarm at <a href="#battery-mode">Battery Mode</a> (&#8594; the alarm will beep only if <a href="#alarm-control">Alarm Control</a>, if available, is enabled)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>R</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Auto reboot (&#8594; the UPS will auto recover when AC is recovering)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<a id="bypass-when-off"></a><strong><code>O</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<a href="#bypass-mode">Bypass</a> when the UPS is Off (&#8594; the bypass will work only if <a href="#bypass-forbidding">Bypass Forbidding</a> is disabled)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<a id="alarm-control"></a><strong><code>A</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Alarm Control (BEEP!)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>S</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Battery deep discharge protection
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>V</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<a href="#converter-mode">Converter Mode</a>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>E</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<a href="#eco-mode">ECO Mode</a> (&#8594; not influenced by <a href="#bypass-forbidding">Bypass Forbidding</a>)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>G</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Green power function (Energy Saving &#8594; Auto Off when there is no load)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>D</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Battery Open Status Check (&#8594; the UPS will check on startup if the battery is connected or not)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>H</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+* unknown/unused *
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>C</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Cold Start (&#8594; the UPS can be turned on also if AC is not connected to the UPS)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<a id="bypass-forbidding"></a><strong><code>F</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<a href="#bypass-mode">Bypass</a> not allowed (Bypass Forbidding &#8594; the UPS won&#8217;t transfer to bypass under any conditions)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>T</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+* unknown/unused *
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<a id="programmable-outlets-control"></a><strong><code>J</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Programmable outlets control (<a href="#outlet-management">&#8594; on battery, the UPS will cut off outlets when set time arrives</a>)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>K</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+* unknown/unused *
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>I</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+* unknown/unused *
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>L</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Site fault detection
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>M</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+* unknown/unused *
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>N</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<a href="#advanced-eco-mode">Advanced ECO Mode</a> (&#8594; not influenced by <a href="#bypass-forbidding">Bypass Forbidding</a>)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<a id="constant-phase-angle"></a><strong><code>Q</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Constant Phase Angle Function (<a href="#phase-angle-management">Output and input phase angles are not equal</a>)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>W</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Limited runtime on <a href="#battery-mode">battery mode</a>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>Z</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+* unknown/unused *
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_voltage_frequency_limits_management">Voltage/Frequency limits management</h3>
+<div class="paragraph" id="eco-mode-limits"><p>for <a href="#eco-mode">ECO Mode</a>:</p></div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<strong><code>QHE</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Query UPS for voltage range for ECO mode (Reset by <a href="#reset-to-default"><strong><code>PF</code></strong></a>)
+</p>
+<div class="listingblock">
+<div class="title">Reply</div>
+<div class="content">
+<pre><code>(MMM NNN</code></pre>
+</div></div>
+<div class="listingblock">
+<div class="title">e.g.</div>
+<div class="content">
+<pre><code>(242 218</code></pre>
+</div></div>
+<div class="paragraph"><p>Where:</p></div>
+<div class="openblock">
+<div class="content">
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>MMM</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Maximum voltage
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>NNN</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Minimum voltage
+</p>
+</td>
+</tr>
+</table></div>
+</div></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>HELn</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Change minimum voltage for ECO Mode to <strong><code>n</code></strong> (3 digit integer, <code>NNN</code>) Volt
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>HEHn</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Change maximum voltage for ECO Mode to <strong><code>n</code></strong> (3 digit integer, <code>NNN</code>) Volt
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>QFRE</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Query UPS for frequency range for ECO mode (Reset by <a href="#reset-to-default"><strong><code>PF</code></strong></a>)
+</p>
+<div class="listingblock">
+<div class="title">Reply</div>
+<div class="content">
+<pre><code>(MM.M NN.N</code></pre>
+</div></div>
+<div class="listingblock">
+<div class="title">e.g.</div>
+<div class="content">
+<pre><code>(53.0 47.0</code></pre>
+</div></div>
+<div class="paragraph"><p>Where:</p></div>
+<div class="openblock">
+<div class="content">
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>MM.M</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Maximum frequency (Hz)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>NN.N</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Minimum frequency (Hz)
+</p>
+</td>
+</tr>
+</table></div>
+</div></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>FRELn</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Set minimum frequency for ECO Mode to <strong><code>n</code></strong> (3 digit decimal number, <code>NN.N</code>) Hz
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>FREHn</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Set maximum frequency for ECO Mode to <strong><code>n</code></strong> (3 digit decimal number, <code>NN.N</code>) Hz
+</p>
+</td>
+</tr>
+</table></div>
+<div class="paragraph" id="bypass-mode-limits"><p>for <a href="#bypass-mode">Bypass Mode</a>:</p></div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<strong><code>QBYV</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Query UPS for voltage range for Bypass mode (Reset by <a href="#reset-to-default"><strong><code>PF</code></strong></a>)
+</p>
+<div class="listingblock">
+<div class="title">Reply</div>
+<div class="content">
+<pre><code>(MMM NNN</code></pre>
+</div></div>
+<div class="listingblock">
+<div class="title">e.g.</div>
+<div class="content">
+<pre><code>(264 170</code></pre>
+</div></div>
+<div class="paragraph"><p>Where:</p></div>
+<div class="openblock">
+<div class="content">
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>MMM</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Maximum voltage
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>NNN</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Minimum voltage
+</p>
+</td>
+</tr>
+</table></div>
+</div></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>PLVn</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Change minimum voltage for Bypass Mode to <strong><code>n</code></strong> (3 digit integer, <code>NNN</code>) Volt
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>PHVn</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Change maximum voltage for Bypass Mode to <strong><code>n</code></strong> (3 digit integer, <code>NNN</code>) Volt
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>QBYF</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Query UPS for frequency range for Bypass mode (Reset by <a href="#reset-to-default"><strong><code>PF</code></strong></a>)
+</p>
+<div class="listingblock">
+<div class="title">Reply</div>
+<div class="content">
+<pre><code>(MM.M NN.N</code></pre>
+</div></div>
+<div class="listingblock">
+<div class="title">e.g.</div>
+<div class="content">
+<pre><code>(53.0 47.0</code></pre>
+</div></div>
+<div class="paragraph"><p>Where:</p></div>
+<div class="openblock">
+<div class="content">
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>MM.M</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Maximum frequency (Hz)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>NN.N</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Minimum frequency (Hz)
+</p>
+</td>
+</tr>
+</table></div>
+</div></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>PSFn</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Change minimum frequency for Bypass Mode to <strong><code>n</code></strong> (3 digit decimal number, <code>NN.N</code>) Hz
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>PGFn</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Change maximum frequency for Bypass Mode to <strong><code>n</code></strong> (3 digit decimal number, <code>NN.N</code>) Hz
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_battery_management">Battery management</h3>
+<div class="paragraph"><p>Changing these options will change the UPS&#8217;s estimation on battery charge/runtime</p></div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<strong><code>RE0</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Query UPS for battery low voltage
+</p>
+<div class="listingblock">
+<div class="title">Reply</div>
+<div class="content">
+<pre><code>#NN</code></pre>
+</div></div>
+<div class="listingblock">
+<div class="title">e.g.</div>
+<div class="content">
+<pre><code>#20</code></pre>
+</div></div>
+<div class="paragraph"><p>Where:</p></div>
+<div class="openblock">
+<div class="content">
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>NN</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Battery low voltage
+</p>
+</td>
+</tr>
+</table></div>
+</div></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>W0En</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Set battery low voltage to <strong><code>n</code></strong> (2 digit integer, <code>NN</code>) Volt
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>BATNn</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Set number of batteries (that make a battery pack) to <strong><code>n</code></strong> (<code>1</code>..<code>9</code>)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>BATGNn</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Set number of battery packs in parallel to <strong><code>n</code></strong> (<code>01</code>..<code>99</code>)
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="buzzer-control">Buzzer control</h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<strong><code>BZOFF</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Disable alarm (BEEP!)
+</p>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img src="../images/note.png" alt="Note" />
+</td>
+<td class="content">Accepted only if the UPS is buzzing</td>
+</tr></table>
+</div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>BZON</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Enable alarm (BEEP!)
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="phase-angle-management">Phase angle management</h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<strong><code>QPD</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Query UPS for input/output phase angle
+</p>
+<div class="listingblock">
+<div class="title">Reply</div>
+<div class="content">
+<pre><code>(MMM NNN</code></pre>
+</div></div>
+<div class="listingblock">
+<div class="title">e.g.</div>
+<div class="content">
+<pre><code>(000 120</code></pre>
+</div></div>
+<div class="paragraph"><p>Where:</p></div>
+<div class="openblock">
+<div class="content">
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>MMM</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Input phase angle
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>NNN</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Output phase angle
+</p>
+</td>
+</tr>
+</table></div>
+</div></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>PPDn</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Set <a href="#constant-phase-angle">output phase angle</a> to <strong><code>n</code></strong> (<code>000</code>, <code>120</code>, <code>180</code> or <code>240</code>)°
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_multi_phase_queries">Multi-phase queries</h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<strong><code>Q3PV</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Query UPS for multi-phase input voltage
+</p>
+<div class="listingblock">
+<div class="title">Reply</div>
+<div class="content">
+<pre><code>(MMM.M NNN.N PPP.P QQQ.Q RRR.R SSS.S</code></pre>
+</div></div>
+<div class="listingblock">
+<div class="title">e.g.</div>
+<div class="content">
+<pre><code>(104.4 090.9 102.3 240.0 260.2 190.0</code></pre>
+</div></div>
+<div class="paragraph"><p>Where:</p></div>
+<div class="openblock">
+<div class="content">
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>MMM.M</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Input Voltage L1
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>NNN.N</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Input Voltage L2
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>PPP.P</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Voltage L3
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>QQQ.Q</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Input Voltage L1-L2
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>RRR.R</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Input Voltage L2-L3
+</p>
+<div class="paragraph"><p><a href="#qpi-protocol"><strong>P09</strong></a>: Input Voltage L1-L3</p></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>SSS.S</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Input Voltage L1-L3
+</p>
+<div class="paragraph"><p><a href="#qpi-protocol"><strong>P09</strong></a>: Input Voltage L2-L3</p></div>
+</td>
+</tr>
+</table></div>
+</div></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>Q3OV</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Query UPS for multi-phase output voltage
+</p>
+<div class="listingblock">
+<div class="title">Reply</div>
+<div class="content">
+<pre><code>(MMM.M NNN.N PPP.P QQQ.Q RRR.R SSS.S</code></pre>
+</div></div>
+<div class="listingblock">
+<div class="title">e.g.</div>
+<div class="content">
+<pre><code>(104.4 090.9 102.3 240.0 260.2 190.0</code></pre>
+</div></div>
+<div class="paragraph"><p>Where:</p></div>
+<div class="openblock">
+<div class="content">
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>MMM.M</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Output Voltage L1
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>NNN.N</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Output Voltage L2
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>PPP.P</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Output Voltage L3
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>QQQ.Q</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Output Voltage L1-L2
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>RRR.R</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Output Voltage L2-L3
+</p>
+<div class="paragraph"><p><a href="#qpi-protocol"><strong>P09</strong></a>: Output Voltage L1-L3</p></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>SSS.S</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Output Voltage L1-L3
+</p>
+<div class="paragraph"><p><a href="#qpi-protocol"><strong>P09</strong></a>: Output Voltage L2-L3</p></div>
+</td>
+</tr>
+</table></div>
+</div></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>Q3PC</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Query UPS for multi-phase input current
+</p>
+<div class="listingblock">
+<div class="title">Reply</div>
+<div class="content">
+<pre><code>(MMM NNN PPP</code></pre>
+</div></div>
+<div class="listingblock">
+<div class="title">e.g.</div>
+<div class="content">
+<pre><code>(002 011 003</code></pre>
+</div></div>
+<div class="paragraph"><p>Where:</p></div>
+<div class="openblock">
+<div class="content">
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>MMM</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Input Current L1 (Ampère)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>NNN</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Input Current L2 (Ampère)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>PPP</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Input Current L3 (Ampère)
+</p>
+</td>
+</tr>
+</table></div>
+</div></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>Q3OC</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Query UPS for multi-phase output current
+</p>
+<div class="listingblock">
+<div class="title">Reply</div>
+<div class="content">
+<pre><code>(MMM NNN PPP</code></pre>
+</div></div>
+<div class="listingblock">
+<div class="title">e.g.</div>
+<div class="content">
+<pre><code>(004 003 012</code></pre>
+</div></div>
+<div class="paragraph"><p>Where:</p></div>
+<div class="openblock">
+<div class="content">
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>MMM</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Output Current L1 (Ampère)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>NNN</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Output Current L2 (Ampère)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>PPP</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Output Current L3 (Ampère)
+</p>
+</td>
+</tr>
+</table></div>
+</div></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>Q3LD</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Query UPS for multi-phase load level
+</p>
+<div class="listingblock">
+<div class="title">Reply</div>
+<div class="content">
+<pre><code>(MMM NNN PPP</code></pre>
+</div></div>
+<div class="listingblock">
+<div class="title">e.g.</div>
+<div class="content">
+<pre><code>(002 042 012</code></pre>
+</div></div>
+<div class="paragraph"><p>Where:</p></div>
+<div class="openblock">
+<div class="content">
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>MMM</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Output Load Level L1 (%)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>NNN</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Output Load Level L2 (%)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>PPP</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Output Load Level L3 (%)
+</p>
+</td>
+</tr>
+</table></div>
+</div></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>Q3YV</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Query UPS for multi-phase bypass voltage
+</p>
+<div class="listingblock">
+<div class="title">Reply</div>
+<div class="content">
+<pre><code>(MMM.M NNN.N PPP.P QQQ.Q RRR.R SSS.S</code></pre>
+</div></div>
+<div class="listingblock">
+<div class="title">Reply for P09 UPSes</div>
+<div class="content">
+<pre><code>(MMM.M NNN.N PPP.P</code></pre>
+</div></div>
+<div class="listingblock">
+<div class="title">e.g.</div>
+<div class="content">
+<pre><code>(104.4 090.9 102.3 240.0 260.2 190.0</code></pre>
+</div></div>
+<div class="paragraph"><p>Where:</p></div>
+<div class="openblock">
+<div class="content">
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>MMM.M</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Output Bypass Voltage L1
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>NNN.N</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Output Bypass Voltage L2
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>PPP.P</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Output Bypass Voltage L3
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>QQQ.Q</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Output Bypass Voltage L1-L2
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>RRR.R</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Output Bypass Voltage L2-L3
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>SSS.S</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Output Bypass Voltage L1-L3
+</p>
+</td>
+</tr>
+</table></div>
+</div></div>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_queries_commands_limited_to_a_href_qpi_protocol_p31_a_upses">Queries/commands limited to <a href="#qpi-protocol">P31</a> UPSes</h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<strong><code>QBT</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Query UPS for battery type
+</p>
+<div class="listingblock">
+<div class="title">Reply</div>
+<div class="content">
+<pre><code>(NN</code></pre>
+</div></div>
+<div class="listingblock">
+<div class="title">e.g.</div>
+<div class="content">
+<pre><code>(02</code></pre>
+</div></div>
+<div class="paragraph"><p>Where:</p></div>
+<div class="openblock">
+<div class="content">
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>NN</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Battery type:
+</p>
+<div class="openblock">
+<div class="content">
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>00</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Li
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>01</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Flooded
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>02</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+AGM
+</p>
+</td>
+</tr>
+</table></div>
+</div></div>
+</td>
+</tr>
+</table></div>
+</div></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>PBTn</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Set battery type to <strong><code>n</code></strong> (<code>00</code> &#8594; Li, <code>01</code> &#8594; Flooded or <code>02</code> &#8594; AGM)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>QGR</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Query UPS for device grid working range
+</p>
+<div class="listingblock">
+<div class="title">Reply</div>
+<div class="content">
+<pre><code>(NN</code></pre>
+</div></div>
+<div class="listingblock">
+<div class="title">e.g.</div>
+<div class="content">
+<pre><code>(00</code></pre>
+</div></div>
+<div class="paragraph"><p>Where:</p></div>
+<div class="openblock">
+<div class="content">
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>NN</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Device grid working range:
+</p>
+<div class="openblock">
+<div class="content">
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>00</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Appliance
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>01</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+UPS
+</p>
+</td>
+</tr>
+</table></div>
+</div></div>
+</td>
+</tr>
+</table></div>
+</div></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>PGRn</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Set device grid working range to <strong><code>n</code></strong> (<code>00</code> &#8594; Appliance or <code>01</code> &#8594; UPS)
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="not-supported">Old/Megatec commands not supported</h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<strong><code>M</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Manufacturer, from <a href="voltronic-qs.html">Voltronic Power QS protocol</a>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>Q</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Beeper Toggle
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>C</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Cancel Shutdown
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_unknown">Unknown</h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<strong><code>QBDR</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+* unknown * - Query UPS for baud rate??
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="warnings">Warnings</h2>
+<div class="sectionbody">
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="right" valign="top">#      </th>
+<th align="left" valign="top">Corresponding Warning                                                                  </th>
+<th align="left" valign="top">Type                   </th>
+<th align="center" valign="top">Level</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="right" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">Battery disconnected</p></td>
+<td align="left" valign="top"><p class="table">Battery event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">2</p></td>
+<td align="left" valign="top"><p class="table">Neutral not connected</p></td>
+<td align="left" valign="top"><p class="table">Input event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">3</p></td>
+<td align="left" valign="top"><p class="table">Site fault</p></td>
+<td align="left" valign="top"><p class="table">Input event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">4</p></td>
+<td align="left" valign="top"><p class="table">Phase sequence incorrect</p></td>
+<td align="left" valign="top"><p class="table">Input event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">5</p></td>
+<td align="left" valign="top"><p class="table">Phase sequence incorrect in bypass</p></td>
+<td align="left" valign="top"><p class="table">Bypass event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">6</p></td>
+<td align="left" valign="top"><p class="table">Input frequency unstable in bypass</p></td>
+<td align="left" valign="top"><p class="table">Bypass event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">7</p></td>
+<td align="left" valign="top"><p class="table">Battery overcharged</p></td>
+<td align="left" valign="top"><p class="table">Battery event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">8</p></td>
+<td align="left" valign="top"><p class="table">Low battery</p></td>
+<td align="left" valign="top"><p class="table">Battery event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">9</p></td>
+<td align="left" valign="top"><p class="table">Overload alarm</p></td>
+<td align="left" valign="top"><p class="table">Load event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">10</p></td>
+<td align="left" valign="top"><p class="table">Fan alarm</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">11</p></td>
+<td align="left" valign="top"><p class="table">EPO enabled</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">12</p></td>
+<td align="left" valign="top"><p class="table">Unable to turn on UPS</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">13</p></td>
+<td align="left" valign="top"><p class="table">Over temperature alarm</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">14</p></td>
+<td align="left" valign="top"><p class="table">Charger alarm</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">15</p></td>
+<td align="left" valign="top"><p class="table">Remote auto shutdown</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">3</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">16</p></td>
+<td align="left" valign="top"><p class="table">L1 input fuse not working</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">17</p></td>
+<td align="left" valign="top"><p class="table">L2 input fuse not working</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">18</p></td>
+<td align="left" valign="top"><p class="table">L3 input fuse not working</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">19</p></td>
+<td align="left" valign="top"><p class="table">Positive PFC abnormal in L1</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">20</p></td>
+<td align="left" valign="top"><p class="table">Negative PFC abnormal in L1</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">21</p></td>
+<td align="left" valign="top"><p class="table">Positive PFC abnormal in L2</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">22</p></td>
+<td align="left" valign="top"><p class="table">Negative PFC abnormal in L2</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">23</p></td>
+<td align="left" valign="top"><p class="table">Positive PFC abnormal in L3</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">24</p></td>
+<td align="left" valign="top"><p class="table">Negative PFC abnormal in L3</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">25</p></td>
+<td align="left" valign="top"><p class="table">Abnormal in CAN-bus communication</p></td>
+<td align="left" valign="top"><p class="table">Parallel system event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">26</p></td>
+<td align="left" valign="top"><p class="table">Abnormal in synchronous signal circuit</p></td>
+<td align="left" valign="top"><p class="table">Parallel system event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">27</p></td>
+<td align="left" valign="top"><p class="table">Abnormal in synchronous pulse signal circuit</p></td>
+<td align="left" valign="top"><p class="table">Parallel system event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">28</p></td>
+<td align="left" valign="top"><p class="table">Abnormal in host signal circuit</p></td>
+<td align="left" valign="top"><p class="table">Parallel system event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">29</p></td>
+<td align="left" valign="top"><p class="table">Male connector of parallel cable not connected well</p></td>
+<td align="left" valign="top"><p class="table">Parallel system event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">30</p></td>
+<td align="left" valign="top"><p class="table">Female connector of parallel cable not connected well</p></td>
+<td align="left" valign="top"><p class="table">Parallel system event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">31</p></td>
+<td align="left" valign="top"><p class="table">Parallel cable not connected well</p></td>
+<td align="left" valign="top"><p class="table">Parallel system event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">32</p></td>
+<td align="left" valign="top"><p class="table">Battery connection not consistent in parallel systems</p></td>
+<td align="left" valign="top"><p class="table">Parallel system event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">33</p></td>
+<td align="left" valign="top"><p class="table">AC connection not consistent in parallel systems</p></td>
+<td align="left" valign="top"><p class="table">Parallel system event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">34</p></td>
+<td align="left" valign="top"><p class="table">Bypass connection not consistent in parallel systems</p></td>
+<td align="left" valign="top"><p class="table">Parallel system event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">35</p></td>
+<td align="left" valign="top"><p class="table">UPS model types not consistent in parallel systems</p></td>
+<td align="left" valign="top"><p class="table">Parallel system event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">36</p></td>
+<td align="left" valign="top"><p class="table">Capacity of UPSs not consistent in parallel systems</p></td>
+<td align="left" valign="top"><p class="table">Parallel system event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">37</p></td>
+<td align="left" valign="top"><p class="table">Auto restart setting not consistent in parallel systems</p></td>
+<td align="left" valign="top"><p class="table">Parallel system event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">38</p></td>
+<td align="left" valign="top"><p class="table">Battery cell over charge</p></td>
+<td align="left" valign="top"><p class="table">Parallel system event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">39</p></td>
+<td align="left" valign="top"><p class="table">Battery protection setting not consistent in parallel systems</p></td>
+<td align="left" valign="top"><p class="table">Parallel system event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">40</p></td>
+<td align="left" valign="top"><p class="table">Battery detection setting not consistent in parallel systems</p></td>
+<td align="left" valign="top"><p class="table">Parallel system event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">41</p></td>
+<td align="left" valign="top"><p class="table">Bypass not allowed setting not consistent in parallel systems</p></td>
+<td align="left" valign="top"><p class="table">Parallel system event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">42</p></td>
+<td align="left" valign="top"><p class="table">Converter setting not consistent in parallel systems</p></td>
+<td align="left" valign="top"><p class="table">Parallel system event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">43</p></td>
+<td align="left" valign="top"><p class="table">High loss point for frequency in bypass mode not consistent in parallel systems</p></td>
+<td align="left" valign="top"><p class="table">Parallel system event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">44</p></td>
+<td align="left" valign="top"><p class="table">Low loss point for frequency in bypass mode not consistent in parallel systems</p></td>
+<td align="left" valign="top"><p class="table">Parallel system event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">45</p></td>
+<td align="left" valign="top"><p class="table">High loss point for voltage in bypass mode not consistent in parallel systems</p></td>
+<td align="left" valign="top"><p class="table">Parallel system event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">46</p></td>
+<td align="left" valign="top"><p class="table">Low loss point for voltage in bypass mode not consistent in parallel systems</p></td>
+<td align="left" valign="top"><p class="table">Parallel system event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">47</p></td>
+<td align="left" valign="top"><p class="table">High loss point for frequency in AC mode not consistent in parallel systems</p></td>
+<td align="left" valign="top"><p class="table">Parallel system event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">48</p></td>
+<td align="left" valign="top"><p class="table">Low loss point for frequency in AC mode not consistent in parallel systems</p></td>
+<td align="left" valign="top"><p class="table">Parallel system event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">49</p></td>
+<td align="left" valign="top"><p class="table">High loss point for voltage in AC mode not consistent in parallel systems</p></td>
+<td align="left" valign="top"><p class="table">Parallel system event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">50</p></td>
+<td align="left" valign="top"><p class="table">Low loss point for voltage in AC mode not consistent in parallel systems</p></td>
+<td align="left" valign="top"><p class="table">Parallel system event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">51</p></td>
+<td align="left" valign="top"><p class="table">Warning for locking in bypass mode after 3 consecutive overloads within 30 min</p></td>
+<td align="left" valign="top"><p class="table">Parallel system event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">52</p></td>
+<td align="left" valign="top"><p class="table">Warning for three-phase AC input current unbalance</p></td>
+<td align="left" valign="top"><p class="table">Parallel system event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">53</p></td>
+<td align="left" valign="top"><p class="table">Warning for a three-phase input current unbalance detected in battery mode</p></td>
+<td align="left" valign="top"><p class="table">Parallel system event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">54</p></td>
+<td align="left" valign="top"><p class="table">Warning for Inverter inter-current unbalance</p></td>
+<td align="left" valign="top"><p class="table">Parallel system event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">55</p></td>
+<td align="left" valign="top"><p class="table">Programmable outlets cut off pre-alarm</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">56</p></td>
+<td align="left" valign="top"><p class="table">Warning for Battery replace</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">57</p></td>
+<td align="left" valign="top"><p class="table">Abnormal warning on input phase angle</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">58</p></td>
+<td align="left" valign="top"><p class="table">Warning!! Cover of maintain switch is open</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table">62</p></td>
+<td align="left" valign="top"><p class="table">EEPROM operation error</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="fault-handler">Fault handler</h2>
+<div class="sectionbody">
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="right" valign="top">#      </th>
+<th align="left" valign="top">Corresponding Fault                                    </th>
+<th align="left" valign="top">Type                   </th>
+<th align="center" valign="top">Level</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="right" valign="top"><p class="table"><code>01</code></p></td>
+<td align="left" valign="top"><p class="table">Bus voltage not within default setting</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>02</code></p></td>
+<td align="left" valign="top"><p class="table">Bus voltage over maximum value</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>03</code></p></td>
+<td align="left" valign="top"><p class="table">Bus voltage below minimum value</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>04</code></p></td>
+<td align="left" valign="top"><p class="table">Bus voltage differences out of acceptable range</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>05</code></p></td>
+<td align="left" valign="top"><p class="table">Bus voltage of slope rate drops too fast</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>06</code></p></td>
+<td align="left" valign="top"><p class="table">Over current in PFC input inductor</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>11</code></p></td>
+<td align="left" valign="top"><p class="table">Inverter voltage not within default setting</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>12</code></p></td>
+<td align="left" valign="top"><p class="table">Inverter voltage over maximum value</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>13</code></p></td>
+<td align="left" valign="top"><p class="table">Inverter voltage below minimum value</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>14</code></p></td>
+<td align="left" valign="top"><p class="table">Inverter short-circuited</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>15</code></p></td>
+<td align="left" valign="top"><p class="table">L2 phase inverter short-circuited</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>16</code></p></td>
+<td align="left" valign="top"><p class="table">L3 phase inverter short-circuited</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>17</code></p></td>
+<td align="left" valign="top"><p class="table">L1L2 inverter short-circuited</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>18</code></p></td>
+<td align="left" valign="top"><p class="table">L2L3 inverter short-circuited</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>19</code></p></td>
+<td align="left" valign="top"><p class="table">L3L1 inverter short-circuited</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>1A</code></p></td>
+<td align="left" valign="top"><p class="table">L1 inverter negative power out of acceptable range</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>1B</code></p></td>
+<td align="left" valign="top"><p class="table">L2 inverter negative power out of acceptable range</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>1C</code></p></td>
+<td align="left" valign="top"><p class="table">L3 inverter negative power out of acceptable range</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>21</code></p></td>
+<td align="left" valign="top"><p class="table">Battery SCR short-circuited</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>22</code></p></td>
+<td align="left" valign="top"><p class="table">Line SCR short-circuited</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>23</code></p></td>
+<td align="left" valign="top"><p class="table">Inverter relay open fault</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>24</code></p></td>
+<td align="left" valign="top"><p class="table">Inverter relay short-circuited</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>25</code></p></td>
+<td align="left" valign="top"><p class="table">Input and output wires oppositely connected</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>26</code></p></td>
+<td align="left" valign="top"><p class="table">Battery oppositely connected</p></td>
+<td align="left" valign="top"><p class="table">Battery event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>27</code></p></td>
+<td align="left" valign="top"><p class="table">Battery voltage is too high</p></td>
+<td align="left" valign="top"><p class="table">Battery event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>28</code></p></td>
+<td align="left" valign="top"><p class="table">Battery voltage too low</p></td>
+<td align="left" valign="top"><p class="table">Battery event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>29</code></p></td>
+<td align="left" valign="top"><p class="table">Failure for battery fuse being open-circuited</p></td>
+<td align="left" valign="top"><p class="table">Battery event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>31</code></p></td>
+<td align="left" valign="top"><p class="table">CAN-bus communication fault</p></td>
+<td align="left" valign="top"><p class="table">Parallel system event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>32</code></p></td>
+<td align="left" valign="top"><p class="table">Host signal circuit fault</p></td>
+<td align="left" valign="top"><p class="table">Parallel system event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>33</code></p></td>
+<td align="left" valign="top"><p class="table">Synchronous signal circuit fault</p></td>
+<td align="left" valign="top"><p class="table">Parallel system event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>34</code></p></td>
+<td align="left" valign="top"><p class="table">Synchronous pulse signal circuit fault</p></td>
+<td align="left" valign="top"><p class="table">Parallel system event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>35</code></p></td>
+<td align="left" valign="top"><p class="table">Parallel cable disconnected</p></td>
+<td align="left" valign="top"><p class="table">Parallel system event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>36</code></p></td>
+<td align="left" valign="top"><p class="table">Load unbalanced</p></td>
+<td align="left" valign="top"><p class="table">Load event</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>41</code></p></td>
+<td align="left" valign="top"><p class="table">Over temperature fault</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>42</code></p></td>
+<td align="left" valign="top"><p class="table">Communication failure between CPUs in control board</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>43</code></p></td>
+<td align="left" valign="top"><p class="table">Overload fault</p></td>
+<td align="left" valign="top"><p class="table">Load event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>44</code></p></td>
+<td align="left" valign="top"><p class="table">Fan failure</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>45</code></p></td>
+<td align="left" valign="top"><p class="table">Charger failure</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>46</code></p></td>
+<td align="left" valign="top"><p class="table">Model fault</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>47</code></p></td>
+<td align="left" valign="top"><p class="table">MCU communication fault</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_p31_upses">P31 UPSes</h3>
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="right" valign="top">#      </th>
+<th align="left" valign="top">Corresponding Fault                            </th>
+<th align="left" valign="top">Type                   </th>
+<th align="center" valign="top">Level</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="right" valign="top"><p class="table"><code>01</code></p></td>
+<td align="left" valign="top"><p class="table">Fan failure</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>02</code></p></td>
+<td align="left" valign="top"><p class="table">Over temperature fault</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>03</code></p></td>
+<td align="left" valign="top"><p class="table">Battery voltage is too high</p></td>
+<td align="left" valign="top"><p class="table">Battery event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>04</code></p></td>
+<td align="left" valign="top"><p class="table">Battery voltage too low</p></td>
+<td align="left" valign="top"><p class="table">Battery event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>05</code></p></td>
+<td align="left" valign="top"><p class="table">Inverter relay short-circuited</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>06</code></p></td>
+<td align="left" valign="top"><p class="table">Inverter voltage over maximum value</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>07</code></p></td>
+<td align="left" valign="top"><p class="table">Overload fault</p></td>
+<td align="left" valign="top"><p class="table">Load event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>08</code></p></td>
+<td align="left" valign="top"><p class="table">Bus voltage exceeds its upper limit</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>09</code></p></td>
+<td align="left" valign="top"><p class="table">Bus soft start fail</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>10</code></p></td>
+<td align="left" valign="top"><p class="table">* unknown *</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>51</code></p></td>
+<td align="left" valign="top"><p class="table">Over current fault</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>52</code></p></td>
+<td align="left" valign="top"><p class="table">Bus voltage below its under limit</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>53</code></p></td>
+<td align="left" valign="top"><p class="table">Inverter soft start fail</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>54</code></p></td>
+<td align="left" valign="top"><p class="table">Self test fail</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>55</code></p></td>
+<td align="left" valign="top"><p class="table">Output DC voltage exceeds its upper limit</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>56</code></p></td>
+<td align="left" valign="top"><p class="table">Battery open fault</p></td>
+<td align="left" valign="top"><p class="table">Battery event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>57</code></p></td>
+<td align="left" valign="top"><p class="table">Current sensor fault</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>58</code></p></td>
+<td align="left" valign="top"><p class="table">Battery short</p></td>
+<td align="left" valign="top"><p class="table">Battery event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+<tr>
+<td align="right" valign="top"><p class="table"><code>59</code></p></td>
+<td align="left" valign="top"><p class="table">Inverter voltage below its lower limit</p></td>
+<td align="left" valign="top"><p class="table">UPS internal event</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="operational-modes">Operational modes</h2>
+<div class="sectionbody">
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<a id="power-on-mode"></a><strong>Power On Mode</strong>
+</dt>
+<dd>
+<p>
+The UPS is going On.
+</p>
+</dd>
+<dt class="hdlist1">
+<a id="shutdown-mode"></a><strong>Shutdown Mode</strong>
+</dt>
+<dd>
+<p>
+The UPS is shutting down.
+</p>
+</dd>
+<dt class="hdlist1">
+<a id="standby-mode"></a><strong>Standby Mode</strong>
+</dt>
+<dd>
+<p>
+The UPS has powered off output power, but the battery can still be charged.
+</p>
+</dd>
+<dt class="hdlist1">
+<a id="line-mode"></a><strong>Line Mode</strong>
+</dt>
+<dd>
+<p>
+When the input voltage/frequency are within acceptable range, the UPS will provide pure and stable AC power to output.
+The UPS will also charge the battery under this mode.
+</p>
+</dd>
+<dt class="hdlist1">
+<a id="battery-mode"></a><strong>Battery Mode</strong>
+</dt>
+<dd>
+<p>
+When the input voltage is beyond the acceptable range or as a consequence of a power failure, UPS will backup power from battery.
+</p>
+</dd>
+<dt class="hdlist1">
+<a id="eco-mode"></a><strong>ECO Mode</strong>
+</dt>
+<dd>
+<p>
+(Efficiency Corrective Optimizer)
+When the <a href="#eco-mode-limits">input voltage/frequency are within acceptable range</a>, the UPS will bypass voltage to output for energy saving.
+PFC and INVERTER are still active at this mode.
+</p>
+</dd>
+<dt class="hdlist1">
+<a id="advanced-eco-mode"></a><strong>Advanced ECO Mode</strong>
+</dt>
+<dd>
+<p>
+(Advanced Efficiency Corrective Optimizer)
+When the <a href="#eco-mode-limits">input voltage/frequency are within acceptable range</a>, the UPS will bypass voltage to output for energy saving.
+PFC and INVERTER are off at this mode.
+</p>
+</dd>
+<dt class="hdlist1">
+<a id="bypass-mode"></a><strong>Bypass Mode</strong>
+</dt>
+<dd>
+<p>
+When <a href="#bypass-mode-limits">input voltage/frequency are within acceptable range</a> but UPS is overload, the UPS will enter Bypass Mode or Bypass Mode can be set by front panel or <a href="#bypass-when-off">you can set the UPS to enter Bypass Mode when the UPS is off</a>: the UPS will bypass voltage to output.
+</p>
+</dd>
+<dt class="hdlist1">
+<a id="converter-mode"></a><strong>Converter Mode</strong>
+</dt>
+<dd>
+<p>
+(Frequency Converter Mode)
+When input frequency is within 40 Hz to 70 Hz, the UPS can be set at a constant output frequency, 50 Hz or 60 Hz.
+The UPS will still charge battery under this mode.
+</p>
+</dd>
+<dt class="hdlist1">
+<a id="battery-test-mode"></a><strong>Battery Test Mode</strong>
+</dt>
+<dd>
+<p>
+The UPS is performing a <a href="#battery-test">battery test</a>.
+</p>
+</dd>
+<dt class="hdlist1">
+<a id="fault-mode"></a><strong>Fault Mode</strong>
+</dt>
+<dd>
+<p>
+The UPS is in Fault Mode when a fault is found and no output power is supplied by the UPS.
+</p>
+</dd>
+<dt class="hdlist1">
+<a id="avr-mode"></a><strong>AVR Mode</strong>
+</dt>
+<dd>
+<p>
+The UPS bypasses voltage to output regulating input voltage to the appropriate level.
+</p>
+</dd>
+</dl></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_revision_history">Revision History</h2>
+<div class="sectionbody">
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="center" valign="middle">Rev.   </th>
+<th align="center" valign="middle">Date           </th>
+<th align="left" valign="middle">Description                                                                    </th>
+<th align="left" valign="middle">Author</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center" valign="middle"><p class="table">1.0</p></td>
+<td align="center" valign="middle"><p class="table">04/2013</p></td>
+<td align="left" valign="middle"><p class="table">Initial release</p></td>
+<td align="left" valign="middle"><p class="table">Daniele Pezzini</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">1.1</p></td>
+<td align="center" valign="middle"><p class="table">10/2013</p></td>
+<td align="left" valign="middle"><p class="table">Add some unused <a href="#capability-options">capability options</a> (<strong><code>M</code></strong>, <strong><code>Z</code></strong>)</p></td>
+<td align="left" valign="middle"><p class="table">Daniele Pezzini</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">1.2</p></td>
+<td align="center" valign="middle"><p class="table">01/2014</p></td>
+<td align="left" valign="middle"><p class="table">Fix typos, add description of <a href="#not-supported">not supported <strong><code>M</code></strong> command</a></p></td>
+<td align="left" valign="middle"><p class="table">Daniele Pezzini</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">1.3</p></td>
+<td align="center" valign="middle"><p class="table">03/2015</p></td>
+<td align="left" valign="middle"><p class="table">Add <a href="#qpi-protocol"><strong>P13</strong></a> protocol</p></td>
+<td align="left" valign="middle"><p class="table">Daniele Pezzini</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div id="footnotes"><hr /></div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2022-04-14 15:23:51 UTC
+</div>
+<div id="footer-badges">
+<a href="https://github.com/networkupstools/nut">
+  <img style="border:0;height:20"
+    src="https://img.shields.io/github/checks-status/networkupstools/nut/master"
+    alt="Latest GitHub checks status: master branch"/>
+</a>
+<!--
+<a href="https://travis-ci.org/github/networkupstools/nut">
+  <img style="border:0;height:20"
+    src="https://api.travis-ci.org/networkupstools/nut.svg?branch=master"
+    alt="Latest Travis CI build status: master branch"/>
+</a>
+-->
+<a href="https://ci.networkupstools.org/job/nut/job/nut/job/master/">
+  <img style="border:0;height:20"
+    src="https://ci.networkupstools.org/buildStatus/icon?job=nut%2Fnut%2Fmaster"
+    alt="Latest NUT CI build status: master branch"/>
+</a>
+<a href="https://ci.networkupstools.org/job/nut/job/nut/job/fightwarn/">
+  <img style="border:0;height:20"
+    src="https://ci.networkupstools.org/buildStatus/icon?job=nut%2Fnut%2Ffightwarn&subject=Fightwarn%20Branch"
+    alt="Latest NUT CI build status: fightwarn branch"/>
+</a>
+<!--
+<a href="https://github.com/networkupstools/nut/releases">
+  <img style="border:0;height:20"
+    src="https://img.shields.io/github/v/release/networkupstools/nut"
+    alt="Latest GitHub drafted NUT source release"/>
+</a>
+-->
+<a href="https://github.com/networkupstools/nut/releases">
+  <img style="border:0;height:20"
+    src="https://img.shields.io/github/v/tag/networkupstools/nut?sort=semver"
+    alt="Latest Git-tagged NUT source release"/>
+</a>
+<!-- Maintainer note: for the counter below to work, a git tag
+     is not sufficient -- a release must be drafted and published
+     at https://github.com/networkupstools/nut/releases
+     Counter URL may also be .../latest/BRANCHNAME -->
+<a href="https://github.com/networkupstools/nut">
+  <img style="border:0;height:20"
+    src="https://img.shields.io/github/commits-since/networkupstools/nut/latest.svg"
+    alt="Commits on master branch since latest release on GitHub"/>
+</a>
+<a href="http://www.methods.co.nz/asciidoc/">
+  <img style="border:0;width:88px;height:31px"
+    src="../images/asciidoc.png"
+    alt="Powered by AsciiDoc"/>
+</a>
+<a href="https://validator.w3.org/check?uri=referer">
+  <img style="border:0;width:88px;height:31px"
+    src="https://www.w3.org/Icons/valid-xhtml11-blue"
+    alt="Valid XHTML 1.1"/>
+</a>
+<a href="https://jigsaw.w3.org/css-validator/check?uri=referer">
+  <img style="border:0;width:88px;height:31px"
+    src="https://jigsaw.w3.org/css-validator/images/vcss-blue"
+    alt="Valid CSS!"/>
+</a>
+<a href="https://www.gandi.net/">
+  <img style="border:0;height:38px;"
+       src="../images/gandi-ar21.svg"
+       alt="DNS, redirection and related services Hoster"/>
+</a>
+<a href="https://fosshost.org/">
+  <img style="border:0;width:112px;height:38px;"
+       src="../images/ci/fosshost.org_Host_Light_38px.png"
+       alt="Dedicated Hosting for NUT CI"/>
+</a>
+</div>
+</div>
+</div>
+</div>
+<!-- Google Analytics integration -->
+<script type="text/javascript">
+
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-9664272-1']);
+        _gaq.push(['_trackPageview']);
+
+        (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+
+</script>
+</body>
+</html>
