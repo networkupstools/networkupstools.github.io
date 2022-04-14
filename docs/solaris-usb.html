@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>NUT USB setup in modern Solaris-like systems (OpenSolaris descendants)</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div xml:lang="en" class="article" lang="en"><div class="titlepage"><div><div><h2 class="title"><a id="idm1"></a>NUT USB setup in modern Solaris-like systems (OpenSolaris descendants)</h2></div></div><hr /></div><div class="toc"><p><strong>Table of Contents</strong></p><dl class="toc"><dt><span class="section"><a href="#_change_the_os_driver_binding_use_ugen">1. Change the OS driver binding: use UGEN</a></span></dt><dt><span class="section"><a href="#_libusb_version_and_binary">2. libusb version and binary</a></span></dt></dl></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Two NUT websites</h3><p>This version of the page reflects NUT release <span class="emphasis"><em>v2.8.0</em></span>
+with codebase commited c25b30bac at 2022-04-14T17:14:08+02:00</p><p>Options, features and capabilities in current development (and future
+releases) are detailed on the main site and may differ from ones
+described here.</p></div><p>Local-media device setup for use with NUT has some nuances with
+numerous descendants of the OpenSolaris project, including both
+the commercial Sun/Oracle Solaris 11 and illumos-based open source
+distributions such as OpenIndiana and OmniOS. Recommendations
+below may also apply to other related operating systems, possibly
+to older releases as well.</p><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_change_the_os_driver_binding_use_ugen"></a>1. Change the OS driver binding: use UGEN</h2></div></div></div><p>Like other hardware, USB devices are interfaced to the operating
+system by OS drivers, and often there are several suitable drivers
+with different capabilities. In Solaris and related systems, this
+mapping is detailed in the <code class="literal">/etc/driver_aliases</code> file and properly
+managed by dedicated tools. By default, USB devices can be captured
+by the generic USB HID driver, or none at all; however an "UGEN"
+driver can behave better with the libusb library used on Solaris.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>Operations below would need running as <code class="literal">root</code> or elevating
+the privileges (via <code class="literal">pfexec</code>, <code class="literal">sudo</code>, etc.)</p></div><p>Connect the power device using its USB port to your computer.</p><p>Run <code class="literal">prtconf -v | less</code> to see the details of device connections,
+and search for its probable strings (vendor, model, serial number).</p><p>Two examples follow:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
+In this example, no suitable driver was attached "out of the box":
+</p><pre class="screen">:; prtconf -v
+...
+ input (driver not attached)
+    Hardware properties:
+        name='driver-minor' type=int items=1
+            value=00000000
+        name='driver-major' type=int items=1
+            value=00000002
+        name='low-speed' type=boolean
+        name='usb-product-name' type=string items=1
+            value='Eaton 9PX'
+        name='usb-vendor-name' type=string items=1
+            value='EATON'
+        name='usb-serialno' type=string items=1
+            value='G202E02032'
+        name='usb-raw-cfg-descriptors' type=byte items=34
+            value=09.02.22.00.01.01.00.a0.0a.09.04.00.00.01.03.00.00.00.09.21.10.01.21.01.22.10.0d.07.05.81.03.08.00.14
+        name='usb-dev-descriptor' type=byte items=18
+            value=12.01.10.01.00.00.00.08.63.04.ff.ff.00.01.01.02.04.01
+        name='usb-release' type=int items=1
+            value=00000110
+        name='usb-num-configs' type=int items=1
+            value=00000001
+        name='usb-revision-id' type=int items=1
+            value=00000100
+        name='usb-product-id' type=int items=1
+            value=0000ffff
+        name='usb-vendor-id' type=int items=1
+            value=00000463
+        name='compatible' type=string items=9
+            value='usb463,ffff.100' + 'usb463,ffff' + 'usbif463,class3.0.0' + 'usbif463,class3.0' + 'usbif463,class3' + 'usbif,class3.0.0' + 'usbif,class3.0' + 'usbif,class3' + 'usb,device'
+        name='reg' type=int items=1
+            value=00000002
+        name='assigned-address' type=int items=1
+            value=00000003</pre></li><li class="listitem"><p class="simpara">
+In the following example, a "hid power" driver was attached, giving
+some usability to the device although not enough for NUT to interact
+well (at least, according to the helpful notes in the
+<a class="ulink" href="https://web.archive.org/web/20140126045707/http://barbz.com.au/blog/?p=407" target="_top">https://web.archive.org/web/20140126045707/http://barbz.com.au/blog/?p=407</a>
+blog entry):
+</p><pre class="screen">:; prtconf -v
+...
+ input, instance #1
+   Driver properties:
+        name='pm-components' type=string items=3 dev=none
+            value='NAME= hid1 Power' + '0=USB D3 State' + '3=USB D0 State'
+   Hardware properties:
+        name='driver-minor' type=int items=1
+            value=00000000
+        name='driver-major' type=int items=1
+            value=00000002
+        name='low-speed' type=boolean
+        name='usb-product-name' type=string items=1
+            value='USB to Serial'
+        name='usb-vendor-name' type=string items=1
+            value='INNO TECH'
+        name='usb-serialno' type=string items=1
+            value='20100826'
+        name='usb-raw-cfg-descriptors' type=byte items=34
+            value=09.02.22.00.01.01.03.80.32.09.04.00.00.01.03.00.00.04.09.21.00.01.00.01.22.1b.00.07.05.81.03.08.00.20
+        name='usb-dev-descriptor' type=byte items=18
+            value=12.01.10.01.00.00.00.08.65.06.61.51.02.00.01.02.03.01
+        name='usb-release' type=int items=1
+            value=00000110
+        name='usb-num-configs' type=int items=1
+            value=00000001
+        name='usb-revision-id' type=int items=1
+            value=00000002
+        name='usb-product-id' type=int items=1
+            value=00005161
+        name='usb-vendor-id' type=int items=1
+            value=00000665
+        name='compatible' type=string items=9
+            value='usb665,5161.2' + 'usb665,5161' + 'usbif665,class3.0.0' + 'usbif665,class3.0' + 'usbif665,class3' + 'usbif,class3.0.0' + 'usbif,class3.0' + 'usbif,class3' + 'usb,device'
+        name='reg' type=int items=1
+            value=00000003
+        name='assigned-address' type=int items=1
+            value=00000005
+   Device Minor Nodes:
+        dev=(108,2)
+           dev_path=/pci@0,0/pci8086,7270@1d/hub@1/input@3:hid_0_1
+                spectype=chr type=minor
+                dev_link=/dev/usb/hid0</pre></li></ul></div><p>You can also check with <code class="literal">cfgadm</code> if the device is at least somehow visible
+(if not, there can be hardware issues in play). For example, if there is a
+physical link but no recognized driver was attached, the device would show
+up as "unconfigured":</p><pre class="screen">:; cfgadm | grep usb-
+usb8/1                 usb-input    connected    unconfigured ok</pre><p>If you conclude that a change is needed, you would need to unload
+the existing copy of the "ugen" driver and set it up to handle the
+device patterns that you find in <span class="emphasis"><em>compatible</em></span> values from <code class="literal">prtconf</code>.
+For example, to monitor the devices from listings above, you would run:</p><pre class="screen">:; rem_drv ugen
+:; add_drv -i '"usb463,ffff.100"' -m '* 0666 root sys' ugen</pre><p>or</p><pre class="screen">:; rem_drv ugen
+:; add_drv -i '"usb665,5161.2"' -m '* 0666 root sys' ugen</pre><p>Note that there are many patterns in the <span class="emphasis"><em>compatible</em></span> line which
+allow for narrower or wider catchment. It is recommended to match
+with the narrowest fit, to avoid potential conflict with other
+devices from same vendor (especially if the declared identifiers
+are for a generic USB chipset).</p><p>Also note that the <code class="literal">add_drv</code> definition above lists the POSIX access
+metadata for the device node files that would be generated when the
+device is plugged in and detected. In the examples above, it would
+be owned by <code class="literal">root:sys</code> but accessible for reads and writes (<code class="literal">0666</code>)
+to anyone on the system. On shared systems you may want to constrain
+this access to the account that the NUT driver would run as.</p><p>After proper driver binding, <code class="literal">cfgadm</code> should expose the details:</p><pre class="screen"># cfgadm -lv
+...
+usb8/1                         connected    configured   ok
+    Mfg: EATON  Product: Eaton 9PX  NConfigs: 1  Config: 0  &lt;no cfg str descr&gt;
+    unavailable  usb-input    n        /devices/pci@0,0/pci103c,1309@1d,2:1
+...</pre><p>Usually the driver mapping should set up the "friendly" device nodes
+under <code class="literal">/dev/</code> tree as well (symlinks to real entries in <code class="literal">/devices/</code>)
+so for NUT drivers you would specify a <code class="literal">port=/dev/usb/463.ffff/0</code> for
+your new driver section in <code class="literal">ups.conf</code>.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>As detailed in <a class="ulink" href="config-notes.txt" target="_top">config-notes.txt</a>, the "natively USB" drivers
+(including <code class="literal">usbhid-ups</code> and <code class="literal">nutdrv_qx</code>) match the device by ID and/or
+strings it reports, and so effectively require but ignore the <code class="literal">port</code>
+option — so it is commonly configured as <code class="literal">port=auto</code>.
+Drivers used for SHUT or serial protocols do need the device path.</p></div><p>For some serial-to-USB converter chips however it was noted that while
+the device driver is attached, and the <code class="literal">/device/...</code> path is exposed
+in the <code class="literal">dmesg</code> output (saved to <code class="literal">/var/adm/messages</code>) the <code class="literal">/dev/...</code>
+symlinks are not created. In this case you can pass the low-level
+name of the character-device node as the "port" option, e.g.:</p><pre class="screen">./mge-shut -s 9px-ser -DDDDD -d2 -u root \
+    -x port=/devices/pci@0,0/pci103c,1309@1a,2/device@1:0</pre></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_libusb_version_and_binary"></a>2. libusb version and binary</h2></div></div></div><p>Until NUT release 2.7.4 the only option to build NUT drivers for
+USB connectivity was to use libusb-0.1 or a distribution’s variant
+of it; the original Sun Solaris releases and later related systems
+provided their customized version for example (packaged originally
+as <code class="literal">SUNWlibusbugen</code>, <code class="literal">SUNWugen{,u}</code> and <code class="literal">SUNWusb{,s,u,vc}</code>).</p><p>However, libusb-0.1 consuming programs had some stability issues
+reported when running with long-term connections to devices (such
+as an UPS), especially when using USB hubs and chips where hardware
+vendors had cut a few corners too many, which were addressed in a
+newer rewrite of the library as libusb-1.0.</p><p>Subsequently just as at least the illumos-based distributions evolved to
+include the new library and certain patches for it, and the library
+itself matured, the NUT project also added an ability to build with
+libusb-1.0 either directly or using its 0.1-compat API (available since
+NUT 2.8.0 release).</p><p>If your "standard" build of NUT has problems connecting to your USB UPS
+(libusb binary variant should be visible in driver debug messages),
+consider re-building NUT from source with the other option using the
+recent library build as available for your distribution.</p><p>In this context, note the OpenIndiana libusb-1 package pull requests
+with code which was successfully used when developing this documentation:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<a class="ulink" href="https://github.com/OpenIndiana/oi-userland/pull/5382" target="_top">https://github.com/OpenIndiana/oi-userland/pull/5382</a>
+</li><li class="listitem">
+(TO CHECK) <a class="ulink" href="https://github.com/OpenIndiana/oi-userland/pull/5277" target="_top">https://github.com/OpenIndiana/oi-userland/pull/5277</a>
+</li></ul></div><p>Binaries from builds made in OpenIndiana using the recipe from
+<a class="ulink" href="https://github.com/OpenIndiana/oi-userland/pull/5382" target="_top">PR #5382</a>
+above were successfully directly used on contemporary OmniOS CE as well.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
+		Last updated 2022-04-14 15:30:07 -- Network UPS Tools 2.8.0</div></body></html>
