@@ -17,67 +17,83 @@ functions documentation referenced in the same file.</p><p>Clients like upsc are
 upsclient functions.
 <a class="ulink" href="http://www.networkupstools.org/projects.html" target="_top">Other programs</a> not included
 in this package may also use this library, such as wmnut.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_high_level_library_libnutclient"></a>High level library: libnutclient</h5></div></div></div><p><code class="literal">libnutclient</code> provides a high-level interface representing devices, variables
-and commands with an object-oriented API in C++ and C.</p><p>For more information, refer to the <a class="ulink" href="../man/libnutclient.html" target="_top">libnutclient(3)</a> manual page.</p><pre class="literallayout">#include &lt;iostream&gt;
-#include &lt;unistd.h&gt;
-#include &lt;stdlib.h&gt;</pre><pre class="literallayout">#include &lt;nutclient.h&gt;</pre><pre class="literallayout">using namespace nut;
-using namespace std;</pre><pre class="literallayout">/* argv[1] is the mandatory NUT device name (@localhost),
- *    used to list variables from
- * argv[2] is an optional command. When provided, it will be
- *    executed and possibly with status tracking enabled
- */
-int main(int argc, char **argv)
-{
-  Client *client;
-  try
+and commands with an object-oriented API in C++ and C.</p><p>For more information, refer to the <a class="ulink" href="../man/libnutclient.html" target="_top">libnutclient(3)</a> manual page.</p><pre class="screen">  #include &lt;iostream&gt;
+  #include &lt;unistd.h&gt;
+  #include &lt;stdlib.h&gt;
+
+  #include &lt;nutclient.h&gt;
+
+  using namespace nut;
+  using namespace std;
+
+  /* argv[1] is the mandatory NUT device name (@localhost),
+   *    used to list variables from
+   * argv[2] is an optional command. When provided, it will be
+   *    executed and possibly with status tracking enabled
+   */
+  int main(int argc, char **argv)
   {
-    // Connection
-    client = new TcpClient("localhost", 3493);</pre><pre class="literallayout">if (argc &gt;= 2)
-{
-  // Reading data from device
-  Device mydev = client-&gt;getDevice(argv[1]);
-  cout &lt;&lt; "Description: " &lt;&lt; mydev.getDescription() &lt;&lt; endl;
-  Variable var = mydev.getVariable("device.model");
-  cout &lt;&lt; "Model: " &lt;&lt;  var.getValue()[0] &lt;&lt; endl;</pre><pre class="literallayout">if (argc &gt;= 3)
-{
-  // Authenticate to NUT server
-  const char *user = getenv("NUT_USER");
-  const char *password = getenv("NUT_PASSWD");
-  client-&gt;authenticate(user ? user : "", password ? password : "");</pre><pre class="literallayout">// Enable command tracking, if available
-if (client-&gt;hasFeature(Client::TRACKING))
-{
-  cout &lt;&lt; "Server can do command tracking" &lt;&lt; std::endl;
-  client-&gt;setFeature(Client::TRACKING, true);
-}
-else
-{
-  std::cout &lt;&lt; "Server can't do command tracking" &lt;&lt; std::endl;
-}</pre><pre class="literallayout">// Perform an asynchronous command
-TrackingID id = mydev.executeCommand(argv[2]);
-TrackingResult result;
-do
-{
-  sleep(1);
-  result = client-&gt;getTrackingResult(id);
-}
-while (result == PENDING);</pre><pre class="literallayout">        // Display result of command
-        const char *output = "&lt;UNRECOGNIZED&gt;";
-        switch (result)
+    Client *client;
+    try
+    {
+      // Connection
+      client = new TcpClient("localhost", 3493);
+
+      if (argc &gt;= 2)
+      {
+        // Reading data from device
+        Device mydev = client-&gt;getDevice(argv[1]);
+        cout &lt;&lt; "Description: " &lt;&lt; mydev.getDescription() &lt;&lt; endl;
+        Variable var = mydev.getVariable("device.model");
+        cout &lt;&lt; "Model: " &lt;&lt;  var.getValue()[0] &lt;&lt; endl;
+
+        if (argc &gt;= 3)
         {
-          case SUCCESS: output = "SUCCESS"; break;
-          case FAILURE: output = "FAILURE"; break;
-          case UNKNOWN: output = "UNKNOWN"; break;
+          // Authenticate to NUT server
+          const char *user = getenv("NUT_USER");
+          const char *password = getenv("NUT_PASSWD");
+          client-&gt;authenticate(user ? user : "", password ? password : "");
+
+          // Enable command tracking, if available
+          if (client-&gt;hasFeature(Client::TRACKING))
+          {
+            cout &lt;&lt; "Server can do command tracking" &lt;&lt; std::endl;
+            client-&gt;setFeature(Client::TRACKING, true);
+          }
+          else
+          {
+            std::cout &lt;&lt; "Server can't do command tracking" &lt;&lt; std::endl;
+          }
+
+          // Perform an asynchronous command
+          TrackingID id = mydev.executeCommand(argv[2]);
+          TrackingResult result;
+          do
+          {
+            sleep(1);
+            result = client-&gt;getTrackingResult(id);
+          }
+          while (result == PENDING);
+
+          // Display result of command
+          const char *output = "&lt;UNRECOGNIZED&gt;";
+          switch (result)
+          {
+            case SUCCESS: output = "SUCCESS"; break;
+            case FAILURE: output = "FAILURE"; break;
+            case UNKNOWN: output = "UNKNOWN"; break;
+          }
+          cout &lt;&lt; "Command sent, result=" &lt;&lt; output &lt;&lt; endl;
         }
-        cout &lt;&lt; "Command sent, result=" &lt;&lt; output &lt;&lt; endl;
       }
     }
-  }
-  catch (NutException &amp;ex)
-  {
-    cerr &lt;&lt; "Unexpected problem : " &lt;&lt; ex.str() &lt;&lt; endl;
-  }
-  delete client;
-  return 0;
-}</pre></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_configuration_helpers_2"></a>Configuration helpers</h4></div></div></div><p>NUT provides helper scripts to ease the configuration step of your program, by
+    catch (NutException &amp;ex)
+    {
+      cerr &lt;&lt; "Unexpected problem : " &lt;&lt; ex.str() &lt;&lt; endl;
+    }
+    delete client;
+    return 0;
+  }</pre></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_configuration_helpers_2"></a>Configuration helpers</h4></div></div></div><p>NUT provides helper scripts to ease the configuration step of your program, by
 detecting the right compilation and link flags.</p><p>For more information, refer to a
 <a class="link" href="apc.html" title="C. NUT libraries complementary information">Appendix B: NUT libraries complementary information</a>.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_python_3"></a>8.2. Python</h3></div></div></div><p>The PyNUT module, contributed by David Goncalves, can be used for connecting a
 Python script to <code class="literal">upsd</code>. Note that this code (and the accompanying NUT-Monitor
@@ -104,21 +120,27 @@ NUT source code. These operate in a similar fashion to the Python bindings,
 with the addition of access to single variables, and additional interpretation
 of the results. The Perl class instance encapsulates a single UPS, where the
 Python class instance represents a connection to the server (which may service
-multiple UPS units).</p><pre class="literallayout">use UPS::Nut;</pre><pre class="literallayout">$ups = new UPS::Nut( NAME =&gt; "myups",
-                     HOST =&gt; "somemachine.somewhere.com",
-                     PORT =&gt; "3493",
-                     USERNAME =&gt; "upsuser",
-                     PASSWORD =&gt; "upspasswd",
-                     TIMEOUT =&gt; 30,
-                     DEBUG =&gt; 1,
-                     DEBUGOUT =&gt; "/some/file/somewhere",
-                   );
-if ($ups-&gt;Status() =~ /OB/) {
-   print "Oh, no!  Power failure!\n";
-}</pre><pre class="literallayout">tie %other_ups, 'UPS::Nut',
-    NAME =&gt; "myups",
-    HOST =&gt; "somemachine.somewhere.com",
-    ... # same options as new();
-;</pre><pre class="literallayout">print $other_ups{MFR}, " ", $other_ups{MODEL}, "\n";</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_java_2"></a>8.4. Java</h3></div></div></div><p>The NUT Java support has been externalized.
+multiple UPS units).</p><pre class="screen"> use UPS::Nut;
+
+ $ups = new UPS::Nut( NAME =&gt; "myups",
+                      HOST =&gt; "somemachine.somewhere.com",
+                      PORT =&gt; "3493",
+                      USERNAME =&gt; "upsuser",
+                      PASSWORD =&gt; "upspasswd",
+                      TIMEOUT =&gt; 30,
+                      DEBUG =&gt; 1,
+                      DEBUGOUT =&gt; "/some/file/somewhere",
+                    );
+ if ($ups-&gt;Status() =~ /OB/) {
+    print "Oh, no!  Power failure!\n";
+ }
+
+ tie %other_ups, 'UPS::Nut',
+     NAME =&gt; "myups",
+     HOST =&gt; "somemachine.somewhere.com",
+     ... # same options as new();
+ ;
+
+ print $other_ups{MFR}, " ", $other_ups{MODEL}, "\n";</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_java_2"></a>8.4. Java</h3></div></div></div><p>The NUT Java support has been externalized.
 It is available at <a class="ulink" href="https://github.com/networkupstools/jnut" target="_top">https://github.com/networkupstools/jnut</a></p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2022-04-12 15:33:05 -- Network UPS Tools 2.7.4.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s07.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s09.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2022-04-17 02:43:23 -- Network UPS Tools 2.7.4.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s07.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s09.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

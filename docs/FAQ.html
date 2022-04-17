@@ -83,8 +83,8 @@ much bigger setup.  Imagine a data room with a bunch of machines
 all drawing power from the same UPS.  The rest of them just run
 upsmon.</p><p>Besides, if upsmon were rolled into upsd, upsd would get even
 bigger than it is now.  You’d have one less process, but the
-RAM consumption would be pretty close to now.</p><p>See the "Data Room" section in docs/config-notes.txt for more configuration
-ideas and explanations.</p><p><span class="strong"><strong>Answer 2</strong></span></p><p>If this really bothers you, roll up your sleeves and use the
+RAM consumption would be pretty close to now.</p><p>See the "Data Room" section in <a class="ulink" href="docs/config-notes.txt" target="_top">docs/config-notes.txt</a> for
+more configuration ideas and explanations.</p><p><span class="strong"><strong>Answer 2</strong></span></p><p>If this really bothers you, roll up your sleeves and use the
 sockdebug code to write a "upsmon" type program that sits on top of
 the state sockets.  It won’t work over the network, but it means
 you don’t need upsd.  It also means only one host can monitor the
@@ -143,11 +143,21 @@ bottom of your shutdown scripts.</p><p>Your machine obeys and shuts down, and st
 remembers the <span class="emphasis"><em>last state</em></span> when the UPS restarts.</p><p>One solution is to change your shutdown scripts so you never reach
 that point.  You <span class="strong"><strong>want</strong></span> the system to die without reaching the
 part where the kernel tells it to shut down.  A possible script
-might look like this:</p><pre class="literallayout"># other shutdown stuff here (mount -o remount,ro ...)</pre><pre class="literallayout">if (test -f /etc/killpower)
-then
-        /sbin/upsdrvctl shutdown</pre><pre class="literallayout">sleep 600       # this should never return</pre><pre class="literallayout">        # uh oh, we never got shut down! (power race?)
-        reboot
-fi</pre><pre class="literallayout">halt -p</pre><p>The other solution is to change your BIOS setting to "always power
+might look like this:</p><pre class="screen">        # other shutdown stuff here (mount -o remount,ro ...)
+        # `upsmon -K` if available on still mounted filesystems
+        # at this point is more portable than the `test` below
+
+        if (test -f /etc/killpower)
+        then
+                /sbin/upsdrvctl shutdown
+
+                sleep 600       # this should never return
+
+                # uh oh, we never got shut down! (power race?)
+                reboot
+        fi
+
+        halt -p</pre><p>The other solution is to change your BIOS setting to "always power
 on" instead of "last state", assuming that’s possible.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_my_system_has_an_atx_power_supply_it_will_power_off_just_fine_but_it_doesn_8217_t_turn_back_on_what_can_i_do_to_fix_this"></a>17. My system has an ATX power supply.  It will power off just fine, but it doesn’t turn back on.  What can I do to fix this?</h2></div></div></div><p>This depends on how clueful your motherboard manufacturer is, and
 isn’t a matter of the OS.  You have to do one of the following
 things depending on what’s supported:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
@@ -168,9 +178,13 @@ Teach a monkey to watch the machine and press the power button
 an enemy.  Let them worry about it.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_my_mac_won_8217_t_power_back_up_by_itself_into_linux_after_the_ups_shuts_down_what_can_i_do_about_this"></a>18. My Mac won’t power back up by itself into Linux after the UPS shuts down.  What can I do about this?</h2></div></div></div><p>This is about the same situation as the ATX question above, only
 worse.  Earlier Macs apparently supported a hack where you could
 cat some magic characters at /dev/adb to enable "server mode".
-This would instruct the system to reboot while unattended.</p><p>From Usenet post &lt;<a class="ulink" href="mailto:6boftzxz51.fsf@ecc-office.sp.cs.cmu.edu" target="_top">6boftzxz51.fsf@ecc-office.sp.cs.cmu.edu</a>&gt;:</p><pre class="literallayout"># Send packet over the ADB bus to the PowerMac CUDA chip
-# telling it to reboot automatically when power is restored
-# after a power failure.</pre><pre class="literallayout">cat /etc/local/autoboot.adb &gt; /dev/adb</pre><pre class="literallayout">autoboot.adb contains these three bytes (in hex):  01 13 01</pre><p>Later PowerPC Macs with a PMU and the appropriate kernel driver can achieve the
+This would instruct the system to reboot while unattended.</p><p>From Usenet post &lt;<a class="ulink" href="mailto:6boftzxz51.fsf@ecc-office.sp.cs.cmu.edu" target="_top">6boftzxz51.fsf@ecc-office.sp.cs.cmu.edu</a>&gt;:</p><pre class="screen">        # Send packet over the ADB bus to the PowerMac CUDA chip
+        # telling it to reboot automatically when power is restored
+        # after a power failure.
+
+        cat /etc/local/autoboot.adb &gt; /dev/adb
+
+    # autoboot.adb contains these three bytes (in hex):  01 13 01</pre><p>Later PowerPC Macs with a PMU and the appropriate kernel driver can achieve the
 same effect with the following command:</p><pre class="literallayout">echo server_mode=1 &gt; /proc/pmu/options</pre><p>The following pages have some slightly more kludgy answers which involve the
 use of <code class="literal">setpci</code>, and are highly model-specific:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 <a class="ulink" href="https://www.mythic-beasts.com/support/servers/colo/macminicolo_howto" target="_top">https://www.mythic-beasts.com/support/servers/colo/macminicolo_howto</a>
@@ -214,17 +228,17 @@ files.  Instead, put nutsrv in a group ("nut" in this example), then
 make the files owned by root.nut, with mode 0640.</p><p>Once the config files are ready, start upsd:</p><pre class="literallayout"># upsd -u nutsrv</pre><p>Check your syslog to be sure everything’s happy, then be sure to
 update your startup scripts so it uses this procedure on your next
 boot.</p><p>If you like this, you’ll probably also find the chroot process to
-be useful and interesting.  See security.txt for more details.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_what_8217_s_the_point_of_that_emphasis_security_domains_emphasis_concept_above"></a>21. What’s the point of that <span class="emphasis"><em>security domains</em></span> concept above?</h2></div></div></div><p>The point is limiting your losses.  If someone should happen to
+be useful and interesting.  See <a class="ulink" href="security.txt" target="_top">security.txt</a> for more details.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_what_8217_s_the_point_of_that_emphasis_security_domains_emphasis_concept_above"></a>21. What’s the point of that <span class="emphasis"><em>security domains</em></span> concept above?</h2></div></div></div><p>The point is limiting your losses.  If someone should happen to
 break into upsd in that environment, they should only gain access
 to that one user account.  Direct access to the serial device is
 not possible, since that is owned by another user.</p><p>There is also the possibility of running the drivers and upsd in a
-chroot jail.  See the chroot.txt provided in the source
-distribution for an example implementation.</p><p>Why give would-be vandals any sort of help?</p><p>Put it this way — I <span class="strong"><strong>wrote</strong></span> good chunks of this stuff, and I still
+chroot jail.  See the chroot option in <a class="ulink" href="security.txt" target="_top">security.txt</a>, <code class="literal">upsd</code>
+and driver documentation.</p><p>Why give would-be vandals any sort of help?</p><p>Put it this way — I <span class="strong"><strong>wrote</strong></span> good chunks of this stuff, and I still
 run the programs this way locally.  You should definitely consider
 using this technique.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_how_can_i_make_upsmon_shut_down_my_system_after_some_fixed_interval"></a>22. How can I make upsmon shut down my system after some fixed interval?</h2></div></div></div><p>You probably don’t want to do this, since it doesn’t maximize your
 runtime on battery.  Assuming you have a good reason for it (see
-the next entry), then look at scheduling.txt or the upssched(8) man
-page for some ideas.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_why_doesn_8217_t_upsmon_shut_down_my_system_i_pulled_the_plug_and_nothing_happened"></a>23. Why doesn’t upsmon shut down my system?  I pulled the plug and nothing happened.</h2></div></div></div><p>Wait.  upsmon doesn’t consider a UPS to be critical until it’s both
+the next entry), then look at <a class="ulink" href="scheduling.txt" target="_top">scheduling.txt</a> or the
+<a class="ulink" href="man/upssched.html" target="_top">upssched(8)</a> man page for some ideas.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_why_doesn_8217_t_upsmon_shut_down_my_system_i_pulled_the_plug_and_nothing_happened"></a>23. Why doesn’t upsmon shut down my system?  I pulled the plug and nothing happened.</h2></div></div></div><p>Wait.  upsmon doesn’t consider a UPS to be critical until it’s both
 <span class="emphasis"><em>on battery</em></span> and <span class="emphasis"><em>low battery</em></span> at the same time.  This is by design.
 Nearly every UPS supports the notion of detecting the low battery
 all by itself.  When the voltage drops below a certain point, it
@@ -235,7 +249,7 @@ and corresponding runtime and then shutdown early?  If anything, I’d
 rather have a few more minutes running on battery during which the
 power might return.  Once the power’s back, it’s business as usual
 with no visible interruption in service.</p><p>If you purposely shut down early, you guarantee an interruption in
-service by bringing down the box.</p><p>See upssched.txt for information on how you can shutdown early if
+service by bringing down the box.</p><p>See <a class="ulink" href="upssched.txt" target="_top">upssched.txt</a> for information on how you can shutdown early if
 this is what you really want to do.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_the_cgi_programs_report_emphasis_access_to_that_host_is_not_authorized_emphasis_8201_8212_8201_what_8217_s_going_on"></a>24. The CGI programs report <span class="emphasis"><em>access to that host is not authorized</em></span> —  what’s going on?</h2></div></div></div><p>Those programs need to see a host in your hosts.conf before they
 will attempt communications.  This keeps people from feeding it
 random "host=" settings, which would annoy others with outgoing
@@ -495,9 +509,16 @@ for a race when feeding multiple systems.  This is due to the design of most
 contact closure UPSes.  Typically, the "kill power" line only functions when
 running on battery.  As a result, if the line power returns during the shutdown
 process, there is no way to power down the load.</p><p>The workaround is to force your systems to reboot after some interval. This way,
-they won’t be stuck in the halted state with the UPS running on line power.</p><p>Implement this by modifying your shutdown script like this:</p><pre class="literallayout">if (test -f /etc/killpower)
-then
-        /sbin/upsdrvctl shutdown</pre><pre class="literallayout">sleep 120</pre><pre class="literallayout">        # uh oh, we never got shut down! (power race?)
-        reboot
-fi</pre></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2022-04-12 15:33:26 -- Network UPS Tools 2.7.4.1</div></body></html>
+they won’t be stuck in the halted state with the UPS running on line power.</p><p>Implement this by modifying your shutdown script like this:</p><pre class="screen">        # `upsmon -K` if available on still mounted filesystems
+        # at this point is more portable than the `test` below
+
+        if (test -f /etc/killpower)
+        then
+                /sbin/upsdrvctl shutdown
+
+                sleep 120
+
+                # uh oh, we never got shut down! (power race?)
+                reboot
+        fi</pre></div></div><div xmlns="" class="navfooter nut_footer"><hr />
+		Last updated 2022-04-17 02:43:33 -- Network UPS Tools 2.7.4.1</div></body></html>

@@ -12,28 +12,28 @@ background or not.</p><p>The <code class="literal">upslog_with_errno()</code> ro
 expansion of <code class="literal">errno</code>. The <code class="literal">upslogx()</code> just prints the message.</p><p><code class="literal">fatal_with_errno()</code> and <code class="literal">fatalx()</code> work the same way, but they
 also <code class="literal">exit(EXIT_FAILURE)</code> afterwards. Don’t call <code class="literal">exit()</code> directly.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_debugging_information"></a>Debugging information</h4></div></div></div><p>The <code class="literal">upsdebug_with_errno()</code>, <code class="literal">upsdebugx()</code>, <code class="literal">upsdebug_hex()</code> and
 <code class="literal">upsdebug_ascii()</code> routines use the global <code class="literal">nut_debug_level</code>, so you
-don’t have to mess around with `printf()`s and `if`s yourself.
+don’t have to mess around with <code class="literal">printf()</code>'s and <code class="literal">if</code>'s yourself.
 Use them.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_memory_allocation"></a>Memory allocation</h4></div></div></div><p><code class="literal">xmalloc()</code>, <code class="literal">xcalloc()</code>, <code class="literal">xrealloc()</code> and <code class="literal">xstrdup()</code> all check the
 results of the base calls before continuing, so you don’t have to.
-Don’t use the raw calls directly.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_config_file_parsing"></a>Config file parsing</h4></div></div></div><p>The configuration parser, called parseconf, is now up to its fourth
+Don’t use the raw calls directly.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_config_file_parsing"></a>Config file parsing</h4></div></div></div><p>The configuration parser, called <code class="literal">parseconf</code>, is now up to its fourth
 major version.  It has multiple entry points, and can handle many
 different jobs.  It’s usually used for parsing files, but it can also
-take input a line at a time or even a character at a time.</p><p>You must initialize a context buffer with pconf_init before using any
-other parseconf function.  pconf_encode is the only exception, since it
-operates on a buffer you supply and is an auxiliary function.</p><p>Escaping special characters and quoting multiple-word elements is all
+take input a line at a time or even a character at a time.</p><p>You must initialize a context buffer with <code class="literal">pconf_init()</code> before using any
+other <code class="literal">parseconf</code> function.  <code class="literal">pconf_encode()</code> is the only exception, since
+it operates on a buffer you supply and is an auxiliary function.</p><p>Escaping special characters and quoting multiple-word elements is all
 handled by the state machine.  Using the same code for all config files
 avoids code duplication.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>this does not apply to drivers.  Driver authors should use the
-<code class="literal">upsdrv_makevartable()</code> scheme to pick up values from ups.conf.
+<code class="literal">upsdrv_makevartable()</code> scheme to pick up values from <span class="emphasis"><em>ups.conf</em></span> file.
 Drivers should not have their own config files.</p></div><p>Drivers may have their own data files, such as lists of hardware,
 mapping tables, or similar.  The difference between a data file and a
 config file is that users should never be expected to edit a data file
 under normal circumstances.  This technique might be used to add more
-hardware support to a driver without recompiling.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_lt_time_h_gt_vs_lt_sys_time_h_gt"></a>&lt;time.h&gt; vs. &lt;sys/time.h&gt;</h4></div></div></div><p>This is already handled by autoconf, so just include "timehead.h" and you
-will get the right headers on every system.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_device_drivers_8201_8212_8201_main_c"></a>3.2. Device drivers — main.c</h3></div></div></div><p>The device drivers use main.c as their core.</p><p>To write a new driver, you create a file with a series of support
+hardware support to a driver without recompiling.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_lt_time_h_gt_vs_lt_sys_time_h_gt"></a>&lt;time.h&gt; vs. &lt;sys/time.h&gt;</h4></div></div></div><p>This is already handled by autoconf, so just <code class="literal">#include "timehead.h"</code> and
+you will get the right headers on every system.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_device_drivers_8201_8212_8201_main_c"></a>3.2. Device drivers — main.c</h3></div></div></div><p>The device drivers use <code class="literal">main.c</code> as their core.</p><p>To write a new driver, you create a file with a series of support
 functions that will be called by main.  These all have names that start
 with <code class="literal">upsdrv_</code>, and they will be called at different times by main
 depending on what needs to happen.</p><p>See the <a class="link" href="ar01s04.html" title="4. Creating a new driver to support another device">driver documentation</a> for information on writing
-drivers, and also refer to the skeletal driver in skel.c.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_portability"></a>3.3. Portability</h3></div></div></div><p>Avoid things that will break on other systems.  All the world is not an
+drivers, and also refer to the skeletal driver in <code class="literal">skel.c</code>.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_portability"></a>3.3. Portability</h3></div></div></div><p>Avoid things that will break on other systems.  All the world is not an
 x86 Linux box.</p><p>There are still older systems out there that don’t do C++ style comments.</p><pre class="screen">/* Comments look like this. */
 // Not like this.</pre><p>Newer versions of gcc allow you to declare a variable inside a function
 after code, somewhat like the way C++ operates, like this:</p><pre class="screen">function do_stuff(void)
@@ -45,7 +45,7 @@ after code, somewhat like the way C++ operates, like this:</p><pre class="screen
         a = do_something_else();
 }</pre><p>While this will compile and run on these newer versions, it will fail
 miserably for anyone on an older system.  That means you must not use
-it.  gcc only warns about this with -pedantic.</p><p>Another feature that does not work on some compilers (e.g. conforming
+it.  <code class="literal">gcc</code> only warns about this with <code class="literal">-pedantic</code> flag.</p><p>Another feature that does not work on some compilers (e.g. conforming
 to "ANSI C"/C89/C90 standard) is initial variable declaration inside a
 <span class="emphasis"><em>for loop</em></span> block, like this:</p><pre class="screen">function do_stuff(void)
 {
@@ -186,9 +186,8 @@ party dependencies and a large matrix of <code class="literal">CFLAGS</code> and
 last known to work or to not (yet) work on operating systems available
 to that CI solution.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>The cloud Travis CI offering became effectively defunct for
 open-source projects in mid-2021, so the <code class="literal">.travis.yml</code> file in NUT
-codebase is not actively maintained.</p></div><p>+
-Local private deployments of Travis CI are possible, so if anybody does
-use it and has updated markup to share, they are welcome to post PRs.</p><p>The NUT project on GitHub has integration with Travis CI to test a large
+codebase is not actively maintained.</p><p>Local private deployments of Travis CI are possible, so if anybody does
+use it and has updated markup to share, they are welcome to post PRs.</p></div><p>The NUT project on GitHub has integration with Travis CI to test a large
 set of compiler and option combinations, covering different versions of
 gcc and clang, C standards, and requiring to pass builds at least in a
 mode without warnings (and checking the other cases where any warnings
@@ -243,11 +242,11 @@ find ways to drop out of them when we can’t go any further.  There’s
 another way to program this involving a big else chunk and a bunch of
 braces, and it can be hard to follow.  You can read this from top to
 bottom and have a pretty good idea of what’s going on without having to
-track too much { } nesting and indenting.</p><p>We don’t really care for pretentiousVariableNamingSchemes, but you can
+track too much <code class="literal">{ }</code> nesting and indenting.</p><p>We don’t really care for <code class="literal">pretentiousVariableNamingSchemes</code>, but you can
 probably get away with it in your own driver that we will never have to
 touch.  If your function or variable names start pushing important code
 off the right margin of the screen, expect them to meet the byte
-chainsaw sooner or later.</p><p>All types defined with typedef should end in "_t", because this is
+chainsaw sooner or later.</p><p>All types defined with typedef should end in <code class="literal">_t</code>, because this is
 easier to read, and it enables tools (such as indent and emacs) to
 display the source code correctly.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_indenting_with_tabs_vs_spaces"></a>Indenting with tabs vs. spaces</h4></div></div></div><p>Another thing to notice is that the indenting happens with tabs instead
 of spaces.  This lets everyone have their personal tab-width setting
@@ -257,7 +256,9 @@ the people out there.</p><p>Note that tabs apply only to <span class="strong"><s
 non-tab character has appeared on the line must be done by spaces in
 order for it to remain at the same alignment when someone views tabs at
 a different widths.</p><p>One common example for this is multi-line if condition:</p><pre class="screen">        if (something &amp;&amp;
-            something_else) {</pre><p>Another example is tables of definitions that are better aligned with
+            something_else) {</pre><p>which may be written without mixing tabs and spaces to indent, as:</p><pre class="screen">        if (something
+        &amp;&amp;  something_else
+        ) {</pre><p>Another example is tables of definitions that are better aligned with
 (non-leading) spaces at least between names and values not too many
 characters wide; it still helps to align the columns with spaces at
 offsets divisible by 4 or 8 (consistently for the whole table):</p><pre class="screen">#define SHORT_MACRO                         1   /* flag comment */
@@ -269,11 +270,11 @@ need, it will be grudgingly reformatted before being included.</p><p>When in dou
 kernel — Documentation/CodingStyle.  He’s done a far better job of
 explaining this.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_line_breaks"></a>Line breaks</h4></div></div></div><p>It is better to have lines that are longer than 80 characters than to
 wrap lines in random places. This makes it easier to work with tools
-such as "grep", and it also lets each developer choose their own
+such as <code class="literal">grep</code>, and it also lets each developer choose their own
 window size and tab setting without being stuck to one particular
 choice.</p><p>Of course, this does not mean that lines should be made unnecessarily
 long when there is a better alternative (see the note on
-pretentiousVariableNamingSchemes above).  Certainly there should not
+<code class="literal">pretentiousVariableNamingSchemes</code> above).  Certainly there should not
 be more than one statement per line. Please do not use</p><pre class="screen">if (condition) break;</pre><p>but use the following:</p><pre class="screen">if (condition) {
         break;
 }</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_un_used_variables_and_function_arguments"></a>Un-used variables and function arguments</h4></div></div></div><p>Whenever a function needs to satisfy a particular API, it can end up
@@ -296,7 +297,7 @@ possible to set a tab stop to be 3 spaces, rather than the usual 8.
 (Note that in the saved file, one indentation level will still
 correspond to one tab stop; the difference is only how the file is
 rendered on screen). It is even possible to set this on a
-per-directory basis, by putting something like this into your .emacs
+per-directory basis, by putting something like this into your <code class="literal">.emacs</code>
 file:</p><pre class="screen">;; NUT style
 
 (defun nut-c-mode ()
@@ -310,10 +311,10 @@ file:</p><pre class="screen">;; NUT style
 ;; apply NUT style to all C source files in all subdirectories of nut/
 
 (setq auto-mode-alist (cons '(".*/nut/.*\\.[ch]$". nut-c-mode)
-                       auto-mode-alist))</pre><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_finishing_touches"></a>Finishing touches</h4></div></div></div><p>We like code that uses const and static liberally.  If you don’t need to
-expose a function or global variable to the outside world, static is
+                       auto-mode-alist))</pre><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_finishing_touches"></a>Finishing touches</h4></div></div></div><p>We like code that uses <code class="literal">const</code> and <code class="literal">static</code> liberally.  If you don’t need
+to expose a function or global variable to the outside world, <code class="literal">static</code> is
 your friend.  If nobody should edit the contents of some buffer that’s
-behind a pointer, const keeps them honest.</p><p>We always compile with -Wall, so things like const and static help you
+behind a pointer, <code class="literal">const</code> keeps them honest.</p><p>We always compile with <code class="literal">-Wall</code>, so things like <code class="literal">const</code> and <code class="literal">static</code> help you
 find implementation flaws.  Functions that attempt to modify a constant
 or access something outside their scope will throw a warning or even
 fail to compile in some cases.  This is what we want.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_switch_case_fall_through"></a>Switch case fall-through</h4></div></div></div><p>While C standards allow to write <code class="literal">switch</code> statements to "fall through"
@@ -358,9 +359,10 @@ suspected area and then exit cleanly.  valgrind will tell you if you’ve
 done anything dodgy like freeing regions twice, reading uninitialized
 memory, or if you’ve leaked memory anywhere.</p><p>For more information, refer to the <a class="ulink" href="http://valgrind.kde.org" target="_top">Valgrind</a>
 project.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_conclusion"></a>Conclusion</h4></div></div></div><p>The summary: please be kind to our eyes.  There’s a lot of stuff in here,
-and many people have put a lot of time and energy to improve it.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_submitting_patches"></a>3.7. Submitting patches</h3></div></div></div><p>Small patches that arrive in unified format (diff -u) as plain text
-attachments with no HTML and a brief summary at the top are the easiest
-to handle.</p><p>If a patch is sent to the nut-upsdev mailing list, it stands a better
+and many people have put a lot of time and energy to improve it.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_submitting_patches"></a>3.7. Submitting patches</h3></div></div></div><p>Current preference for suggesting changes is to open a pull request on
+GitHub for the <a class="ulink" href="https://github.com/networkupstools/nut/" target="_top">https://github.com/networkupstools/nut/</a> project.</p><p>For some cases, small patches that arrive by mailing list in unified
+format (<code class="literal">diff -u</code>) as plain text attachments with no HTML and a brief
+summary at the top are easy to handle, but sadly also easy to overlook.</p><p>If a patch is sent to the nut-upsdev mailing list, it stands a better
 chance of being seen immediately. However, it is likely to be dropped
 if any issues cannot be resolved quickly. If your code might not work
 for others, or if it is a large change, your best bet is to submit a
@@ -382,12 +384,17 @@ source code for your driver.  Otherwise, we will be forced to write a
 skeletal man page that will probably miss many of the finer points of
 the driver and hardware.</p><p>The same remark goes for device entries: if you add support for new models,
 please remember to also complete the hardware compatibility list, present
-in data/driver.list.in. This will be used to generate both textual, static
-HTML and dynamic searchable HTML for the website.</p><p>Finally, don’t forget about fame and glory: if you added or substantially
+in <a class="ulink" href="data/driver.list.in" target="_top">data/driver.list.in</a>. This will be used to generate both textual,
+static HTML and dynamic searchable HTML for the website.</p><p>Finally, don’t forget about fame and glory: if you added or substantially
 updated a driver, your copyright belongs in the heading comment (along
 with existing ones). For vendor backed (or sponsored) contributions we
-welcome an entry in the docs/acknowledgements.txt file as well, to track
-and know the industry players who help make NUT better and more useful.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_source_code_management"></a>3.10. Source code management</h3></div></div></div><p>We currently use a Git repository hosted at GitHub to track changes to
+welcome an entry in the <a class="ulink" href="docs/acknowledgements.txt" target="_top">docs/acknowledgements.txt</a> file as well,
+to track and know the industry players who help make NUT better and more
+useful.</p><p>It is nice to update the <a class="ulink" href="NEWS" target="_top">NEWS</a> file for significant development
+to be seen as part of next release, as well as to update the
+<a class="ulink" href="UPGRADING" target="_top">UPGRADING</a> file for potentially breaking changes and similar
+heads-up notes for third-party teams (distribution packagers, clients
+and bindings, etc.)</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_source_code_management"></a>3.10. Source code management</h3></div></div></div><p>We currently use a Git repository hosted at GitHub to track changes to
 the NUT source code. This allows you to clone the repository (or fork,
 in GitHub parlance), make changes, and post them online for peer review
 prior to integration.</p><p>To obtain permission to commit directly to the common upstream NUT repository,
@@ -492,12 +499,11 @@ stash pop</code> to apply your saved changes.</p><p>Here is an example workflow:
         # Publish your branch to your GitHub repository:
 
         git push username my-new-feature</pre><p>If you are new to Git, but are familiar with SVN, the
-<a class="ulink" href="http://git-scm.com/course/svn.html" target="_top">following link</a> may be of use.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="building"></a>3.14. Building the Code</h3></div></div></div><p>For a developer, the NUT build process starts with <code class="literal">./autogen.sh</code>. This script
-generates the <code class="literal">./configure</code> script that end users typically invoke to build
-NUT. If you are making a number of changes to the NUT source tree, configuring
-with the <code class="literal">--enable-maintainer-mode</code> flag will ensure that after you change
-<code class="literal">Makefile.am</code>, the <code class="literal">Makefile.in</code> and <code class="literal">Makefile</code> get regenerated. At a
-minimum, you will need:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<a class="ulink" href="http://git-scm.com/course/svn.html" target="_top">following link</a> may be of use.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="building"></a>3.14. Building the Code</h3></div></div></div><p>For a developer, the NUT build process starts with <code class="literal">./autogen.sh</code>.</p><p>This script generates the <code class="literal">./configure</code> script that end users typically
+invoke to build NUT. If you are making a number of changes to the NUT
+source tree, configuring with the <code class="literal">--enable-maintainer-mode</code> flag will
+ensure that after you change a <code class="literal">Makefile.am</code>, nearby <code class="literal">Makefile.in</code> and
+<code class="literal">Makefile</code> get regenerated. At a minimum, you will need at least:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 autoconf
 </li><li class="listitem">
 automake
@@ -507,31 +513,36 @@ libtool
 Python
 </li><li class="listitem">
 Perl
-</li></ul></div><p>After running <code class="literal">./autogen.sh</code>, you can pass your local configuration options to
-<code class="literal">./configure</code> and run <code class="literal">make</code> from the top-level directory. To avoid the need
-for root privileges when testing new NUT code, you may wish to use
-<code class="literal">--prefix=$HOME/local/nut --with-statepath=/tmp</code>. You can also keep
-compilation times down by only building the driver you are currently working
-on: <code class="literal">--with-drivers=driver1,dummy-ups</code>.</p><p>Before pushing your commits upstream, please run <code class="literal">make distcheck-light</code>.
+</li></ul></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>See the <a class="ulink" href="config-prereqs.txt" target="_top">config-prereqs.txt</a> for better detailed package lists for
+different operating systems.</p><p>See <code class="literal">ci_build.sh</code> for automating many practical scenarios, for easier
+iterations.</p></div><p>Even if you do not use your distribution’s packages of NUT, installing the
+distribution’s list of build dependencies for NUT can reduce the amount of
+trial-and-error when installing dependencies. For instance, in Debian, you
+can run <code class="literal">apt-get build-dep nut</code> to install all of the auto* tools as well
+as any development libraries and headers.</p><p>After running <code class="literal">./autogen.sh</code>, you can pass your local configuration
+options to <code class="literal">./configure</code> and run <code class="literal">make</code> from the top-level directory.
+To avoid the need for root privileges when testing new NUT code, you
+may wish to use <code class="literal">--prefix=$HOME/local/nut --with-statepath=/tmp</code>.
+You can also keep compilation times down by only building the driver
+which you are currently working on: <code class="literal">--with-drivers=driver1,dummy-ups</code>.</p><p>Before pushing your commits upstream, please run <code class="literal">make distcheck-light</code>.
 This checks that the Makefiles are not broken, that all the relevant files
 are distributed, and that there are no compilation or installation errors.
 Note that unless you specifically pass <code class="literal">--with-doc=skip</code> to <code class="literal">configure</code>,
 this requires all of the dependencies necessary to build the documentation
-to be locally installed on your system, including asciidoc, a2x, xsltproc,
-dblatex and any additional XSL stylesheets.</p><p>Running <code class="literal">make distcheck-light</code> is especially important if you have added or
-removed files, or updated configure.ac or some Makefile.am.  Remember: simply
-adding a file to Git does not mean it will be distributed. To distribute a
-file, you must update the corresponding Makefile.am.</p><p>There is also <code class="literal">make distcheck</code>, which runs an even stricter set of
-tests than <code class="literal">make distcheck-light</code>, but will not work unless you have all the
-optional libraries and features installed.</p><p>Finally note, that since 2017 the GitHub upstream project is monitored by
-Travis CI (in addition to multi-platform buildbots which occasionally do not
-work). This means that if your posted improvements are based on current NUT
+to be locally installed on your system, including <code class="literal">asciidoc</code>, <code class="literal">a2x</code>,
+<code class="literal">xsltproc</code>, <code class="literal">dblatex</code> and any additional XSL stylesheets.</p><p>Running <code class="literal">make distcheck-light</code> is especially important if you have added or
+removed files, or updated <code class="literal">configure.ac</code> or some <code class="literal">Makefile.am</code> file.
+Remember: simply adding a file to Git does not mean it will be distributed.
+To distribute a file, you must update the corresponding <code class="literal">Makefile.am</code> with
+<code class="literal">EXTRA_DIST</code> entry and possibly other recipe handling.</p><p>There is also <code class="literal">make distcheck</code>, which runs an even stricter set of
+tests than <code class="literal">make distcheck-light</code>, but will not work unless you have all
+of the optional third-party libraries and features installed.</p><p>Finally note, that since 2017 the GitHub upstream project is monitored
+by Travis CI (in addition to earlier multi-platform buildbots which
+occasionally do not work), replaced since 2021 by a dedicated NUT CI farm.
+This means that if your posted improvements are based on current NUT
 "master" branch, the resulting pull request should get tested for a number of
 scenarios automatically. If your code adds a substantial feature, consider
-extending the <code class="literal">.travis.yml</code> and/or <code class="literal">ci_build.sh</code> scripts in the workspace
-root to add another <code class="literal">BUILD_TYPE</code> to the matrix of tests run in parallel.</p><p>Even if you do not use your distribution’s packages of NUT, installing the
-distribution’s list of build dependencies for NUT can reduce the amount of
-trial-and-error when installing dependencies. For instance, in Debian, you can
-run <code class="literal">apt-get build-dep nut</code> to install all of the auto* tools as well as any
-development libraries and headers.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2022-04-12 15:33:05 -- Network UPS Tools 2.7.4.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s02.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s04.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+extending the <code class="literal">Jenkinsfile-dynamatrix</code> and/or <code class="literal">ci_build.sh</code> scripts in the
+workspace root to add another <code class="literal">BUILD_TYPE</code> to the matrix of tests run in
+parallel.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
+		Last updated 2022-04-17 02:43:23 -- Network UPS Tools 2.7.4.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s02.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s04.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

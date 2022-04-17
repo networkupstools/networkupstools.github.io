@@ -765,17 +765,18 @@ asciidoc.install();
 <code>UPSCONN_t</code> state structure, and the pointer <em>query</em> to an array of
 <em>numq</em> query elements.  It builds a properly-formatted request from
 those elements and transmits it to <a href="upsd.html">upsd(8)</a>.</p></div>
-<div class="paragraph"><p>Upon success, the response will be split into separate components.  A
-pointer to those components will be returned in <em>answer</em>.  The
-number of usable answer components will be returned in <em>numa</em>.</p></div>
+<div class="paragraph"><p>Upon success, the response will be split into separate components.
+A pointer to those components will be returned in <em>answer</em>.
+The number of usable answer components will be returned in <em>numa</em>.</p></div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_uses">USES</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>This function implements the "GET" command in the protocol.  As a
-result, you can use it to request many different things from the server.
-Some examples are:</p></div>
+<div class="paragraph"><p>This function implements the "GET" command in the protocol.
+As a result, you can use it to request many different things
+from the server.</p></div>
+<div class="paragraph"><p>Some examples are:</p></div>
 <div class="ulist"><ul>
 <li>
 <p>
@@ -815,16 +816,14 @@ GET CMDDESC &lt;ups&gt; &lt;cmd&gt;
 <div class="sectionbody">
 <div class="paragraph"><p>To generate a request for <code>GET NUMLOGINS su700</code>, you would populate
 query and numq as follows:</p></div>
-<div class="literalblock">
+<div class="listingblock">
 <div class="content">
-<pre><code>size_t numq;
-const char *query[2];</code></pre>
-</div></div>
-<div class="literalblock">
-<div class="content">
-<pre><code>query[0] = "NUMLOGINS";
-query[1] = "su700";
-numq = 2;</code></pre>
+<pre><code>        size_t numq;
+        const char *query[2];
+
+        query[0] = "NUMLOGINS";
+        query[1] = "su700";
+        numq = 2;</code></pre>
 </div></div>
 <div class="paragraph"><p>All escaping of special characters and quoting of elements with spaces
 is handled for you inside this function.</p></div>
@@ -833,28 +832,26 @@ is handled for you inside this function.</p></div>
 <div class="sect1">
 <h2 id="_answer_formatting">ANSWER FORMATTING</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>The raw response from upsd to the above query would be <code>NUMLOGINS su700 1</code>.
-Since this is split up for you, the values work out like this:</p></div>
-<div class="literalblock">
+<div class="paragraph"><p>The raw response from <code>upsd</code> to the above query would be <code>NUMLOGINS su700 1</code>.</p></div>
+<div class="paragraph"><p>Since this is split up for you, the values work out like this:</p></div>
+<div class="listingblock">
 <div class="content">
-<pre><code>size_t numa;</code></pre>
+<pre><code>        size_t numa;
+
+        numa = 3;
+        answer[0] = "NUMLOGINS"
+        answer[1] = "su700"
+        answer[2] = "1"</code></pre>
 </div></div>
-<div class="literalblock">
-<div class="content">
-<pre><code>numa = 3;
-answer[0] = "NUMLOGINS"
-answer[1] = "su700"
-answer[2] = "1"</code></pre>
-</div></div>
-<div class="paragraph"><p>Notice that the value which you seek typically starts at answer[numq].</p></div>
+<div class="paragraph"><p>Notice that the value which you seek typically starts at <code>answer[numq]</code>.</p></div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_error_checking">ERROR CHECKING</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>This function will check your query against the response from
-<a href="upsd.html">upsd(8)</a>.  For example, if you send "VAR" "su700" "ups.status", it
-will expect to see those at the beginning of the response.</p></div>
+<a href="upsd.html">upsd(8)</a>.  For example, if you send "VAR" "su700" "ups.status",
+it will expect to see those at the beginning of the response.</p></div>
 <div class="paragraph"><p>If the results from <strong>upsd</strong> do not pass this case-insensitive test
 against your request, this function will return an error.   When this
 happens, <a href="upscli_upserror.html">upscli_upserror(3)</a> will return <em>UPSCLI_ERR_PROTOCOL</em>.</p></div>
@@ -872,8 +869,8 @@ must not rely on previous addresses.  You must only use the addresses
 which were returned by the most recent call.  You also must not attempt
 to use more than <em>numa</em> elements in <em>answer</em>.  Such behavior is
 undefined, and may yield bogus data or a crash.</p></div>
-<div class="paragraph"><p>The array will be deleted after calling <a href="upscli_disconnect.html">upscli_disconnect(3)</a>.  Any
-access after that point is also undefined.</p></div>
+<div class="paragraph"><p>The array will be deleted after calling <a href="upscli_disconnect.html">upscli_disconnect(3)</a>.
+Any access after that point is also undefined.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -881,10 +878,11 @@ access after that point is also undefined.</p></div>
 <div class="sectionbody">
 <div class="paragraph"><p>The <strong>upscli_get()</strong> function returns 0 on success, or -1 if an
 error occurs.</p></div>
-<div class="paragraph"><p>If <strong>upsd</strong> disconnects, you may need to handle or ignore <code>SIGPIPE</code> in order to
-prevent your program from terminating the next time that the library writes to
-the disconnected socket. The following code in your initialization function
-will allow the <strong>upscli_get()</strong> call to return an error in that case:</p></div>
+<div class="paragraph"><p>If <strong>upsd</strong> disconnects, you may need to handle or ignore <code>SIGPIPE</code>
+in order to prevent your program from terminating the next time that
+the library writes to the disconnected socket.</p></div>
+<div class="paragraph"><p>The following code in your initialization function will allow the
+<strong>upscli_get()</strong> call to return an error in that case:</p></div>
 <div class="literalblock">
 <div class="content">
 <pre><code>#include &lt;signal.h&gt;
@@ -905,7 +903,7 @@ signal (SIGPIPE, SIG_IGN);
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-04-12 15:32:07 UTC -- Network UPS Tools 2.7.4.1
+Last updated 2022-04-17 02:42:18 UTC -- Network UPS Tools 2.7.4.1
 </div>
 </div>
 </body>
