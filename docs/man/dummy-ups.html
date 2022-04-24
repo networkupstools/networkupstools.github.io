@@ -756,7 +756,8 @@ asciidoc.install();
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>This program is a multi-purpose UPS emulation tool.
-Its behavior depends on the running mode: "dummy" or "repeater".</p></div>
+Its general behavior depends on the running mode: "dummy" ("dummy-once"
+or "dummy-loop"), or "repeater".</p></div>
 <div class="sect2">
 <h3 id="_dummy_mode">Dummy Mode</h3>
 <div class="paragraph"><p>In this mode, <strong>dummy-ups</strong> looks like a standard NUT device driver to
@@ -766,6 +767,15 @@ It is both interactive, controllable through the <a href="upsrw.html">upsrw(1)</
 through script files. It can be configured, launched and used as any other
 "real" NUT driver. This mode is mostly useful for development and testing
 purposes.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">See below about the differences of <code>dummy-once</code> vs. <code>dummy-loop</code>
+modes&#8201;&#8212;&#8201;the former may be more suitable for "interactive" uses and tests.</td>
+</tr></table>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_repeater_mode">Repeater Mode</h3>
@@ -784,26 +794,80 @@ SNMP or other protocols every few seconds.</p></div>
 <div class="sectionbody">
 <div class="paragraph"><p>The <code>port</code> specification in <code>ups.conf</code> depends on the running mode, and allows
 the driver to select the right mode of operation.</p></div>
+<div class="paragraph"><p>Since NUT v2.8.0, the <code>mode</code> specification in <code>ups.conf</code> allows users to
+override the mode of operation which would be otherwise guessed by the driver.</p></div>
 <div class="sect2">
 <h3 id="_dummy_mode_2">Dummy Mode</h3>
 <div class="paragraph"><p>In this context, <code>port</code> in the <code>ups.conf</code> block defines a file name for the
 <strong>dummy-ups</strong> to read data from. This can either be an absolute or a relative
 path name. In the latter case the NUT sysconfig directory (i.e. <code>/etc/nut</code>,
 <code>/usr/local/ups/etc</code>, &#8230;) is prepended.</p></div>
+<div class="paragraph"><p>Since NUT v2.8.0 two aspects of this mode are differentiated:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>dummy-once</code> reads the specified file once to the end (interrupting for
+  <code>TIMER</code> lines, etc.) and does not re-process it until the filesystem
+  timestamp of the data file is changed; this reduces run-time stress if
+  you test with a lot of dummy devices, and allows use/test cases to
+  <code>upsrw</code> variables into the driver instance&#8201;&#8212;&#8201;and they remain in memory
+  until the driver is restarted (or the file is touched or modified);
+</p>
+<div class="paragraph"><p>Since NUT v2.8.0 <code>dummy-once</code> is assigned by default to files with a <code>*.dev</code>
+  naming pattern.</p></div>
+</li>
+<li>
+<p>
+<code>dummy-loop</code> reads the specified file again and again, with a short sleep
+  between the processing cycles; for sequence files using a <code>TIMER</code> keyword
+  (see below), or for use/test cases which modify file contents with external
+  means, this allows an impression of a device whose state changes over time.
+</p>
+<div class="paragraph"><p>Before NUT v2.8.0 this was the only aspect, so a simple <code>dummy</code> mode value
+  maps to this behavior for backwards compatibility.</p></div>
+<div class="paragraph"><p>Since NUT v2.8.0 <code>dummy-loop</code> is assigned by default to files with a <code>*.seq</code>
+  naming pattern, and <code>dummy</code> is assigned by default to files with other
+  naming patterns that the driver could not classify.</p></div>
+</li>
+</ul></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<div class="paragraph"><p>Said defaulting based on filename pattern can break third-party
+test scripts which earlier expected <code>*.dev</code> files to work as a
+looping sequence with a <code>TIMER</code> keywords to change values slowly.
+Now such files should get processed to the end once.</p></div>
+<div class="paragraph"><p>Specify <code>mode=dummy-loop</code> driver option or rename the data file
+used in the <code>port</code> option for legacy behavior.</p></div>
+<div class="paragraph"><p>Use/Test-cases which modified such files content externally should
+not be impacted.</p></div>
+</td>
+</tr></table>
+</div>
 <div class="paragraph"><p>For instance:</p></div>
 <div class="literalblock">
 <div class="content">
-<pre><code>[dummy]
+<pre><code>[dummy1]
         driver = dummy-ups
         port = evolution500.seq
-        desc = "dummy-ups in dummy mode"</code></pre>
+        desc = "dummy-ups in dummy-loop mode"</code></pre>
+</div></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>[dummy2]
+        driver = dummy-ups
+        port = epdu-managed.dev
+        desc = "dummy-ups in dummy-once mode"</code></pre>
 </div></div>
 <div class="paragraph"><p>This file is generally named <code>something.dev</code> or <code>something.seq</code>. It contains
 a list of all valid variables and associated values (you can later use <code>upsrw</code>
 only to modify values of these variables), and has the same format as an
 <a href="upsc.html">upsc(8)</a> dump (<code>&lt;varname&gt;: &lt;value&gt;</code>). So you can easily create
 definition files from an existing UPS using <code>upsc &gt; file.dev</code>.</p></div>
-<div class="paragraph"><p>Note that the Network UPS project provides a
+<div class="paragraph"><p>Note that the Network UPS project provides an extensive
 <a href="https://networkupstools.org/ddl/index.html">DDL (Devices Dumps Library)</a>
 with files which can be used for modelling real devices.
 Entries for the DDL library are best prepared with the
@@ -814,12 +878,21 @@ data points from other NUT clients as well.</p></div>
 available: <code>device.*</code>, <code>driver.*</code>, <code>ups.mfr</code>, <code>ups.model</code>, <code>ups.status</code>
 as filled by the driver itself.</p></div>
 <div class="paragraph"><p>Some sample definition files are available in the <code>data</code> directory of the
-NUT source tree, and generally in the sysconfig directory of your system
-distribution.</p></div>
-<div class="paragraph"><p>Since <strong>dummy-ups</strong> will loop on reading this file, you can dynamically modify
-it with some external process to "interact" with the driver. This will avoid
-message spam into your system log files, if you are using NUT default
-configuration.</p></div>
+NUT source tree, and generally in the sysconfig or share directory of your
+system distribution.</p></div>
+<div class="paragraph"><p>Since <strong>dummy-ups</strong> will usually loop on reading this file, you can dynamically
+modify it with some external process to "interact" with the driver.
+This will avoid message spam into your system log files, if you are
+using NUT default configuration.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">By default since NUT v2.8.0, it will not loop on files in <code>dummy-once</code>
+mode, e.g. those with a <code>.dev</code> extension, unless their timestamp changes.</td>
+</tr></table>
+</div>
 <div class="paragraph"><p>You can also use the <code>TIMER &lt;seconds&gt;</code> instruction to create scheduled event
 sequences (such files are traditionally named with the <code>.seq</code> extension).
 For example, the following sequence will loop on switching <code>ups.status</code>
@@ -833,9 +906,9 @@ TIMER 60
 ups.status: OB LB
 TIMER 60</code></pre>
 </div></div>
-<div class="paragraph"><p>It is wise to end the script with a <code>TIMER</code> keyword. Otherwise <strong>dummy-ups</strong>
-will directly go back to the beginning of the file and, in particular, forget
-any values you could have just set with <code>upsrw</code>.</p></div>
+<div class="paragraph"><p>It is wise to end the script for <code>dummy-loop</code> mode with a <code>TIMER</code> keyword.
+Otherwise <code>dummy-ups</code> will directly go back to the beginning of the file
+and, in particular, forget any values you could have just set with <code>upsrw</code>.</p></div>
 <div class="paragraph"><p>Note that to avoid CPU overload with an infinite loop, the driver "sleeps"
 a bit between file-reading cycles (currently this delay is hardcoded to one
 second), independently of (and/or in addition to) any <code>TIMER</code> keywords.</p></div>
@@ -875,7 +948,8 @@ You can do this by either editing the definition file, or use the
 <a href="upsrw.html">upsrw(1)</a> and <a href="upscmd.html">upscmd(1)</a> commands.</p></div>
 <div class="paragraph"><p>Note that in simulation mode, new variables can be added on the fly, but only
 by adding these to the definition file (and waiting for it to be re-read).
-Conversely, if you need to remove variable (such as transient ones, like
+That is, the driver should not allow to define a new variable via <code>upsrw</code>.</p></div>
+<div class="paragraph"><p>Conversely, if you need to remove a variable (such as transient ones, like
 <code>ups.alarm</code>), simply update these by setting an empty value. As a result,
 they will get removed from the data.</p></div>
 <div class="paragraph"><p>In repeater mode, the driver acts according to the capabilities of the UPS,
@@ -886,14 +960,15 @@ and so supports the same instant commands and settable values.</p></div>
 <h2 id="_background">BACKGROUND</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>Dummy Mode was originally written in one evening to replace the previous
-dummycons testing driver, which was too limited, and required a terminal for
-interaction.</p></div>
+<em>dummycons</em> testing driver, which was too limited, and required a terminal
+for interaction.</p></div>
 <div class="paragraph"><p><strong>dummy-ups</strong> is useful for NUT client development, and other testing purposes.</p></div>
-<div class="paragraph"><p>It also helps the NUT Quality Assurance effort, by automating some tests on the
-NUT framework.</p></div>
+<div class="paragraph"><p>It also helps the NUT Quality Assurance effort, by automating some tests on
+the NUT framework.</p></div>
 <div class="paragraph"><p>It now offers a repeater mode. This will help in building the Meta UPS approach,
 which allows one to build a virtual device, composed of several other devices
-(either UPS, PDUs).</p></div>
+(either UPS, PDUs), or perhaps represent the same device which supports
+several communication protocols and different media (Serial, USB, SNMP&#8230;)</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -901,6 +976,21 @@ which allows one to build a virtual device, composed of several other devices
 <div class="sectionbody">
 <div class="paragraph"><p>Instant commands are not yet supported in Dummy Mode, and data need name/value
 checking enforcement, as well as boundaries or enumeration definition.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_caveats">CAVEATS</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>If you use service management frameworks like systemd or SMF to manage
+the dependencies between driver instances and the data server, and some
+of these drivers are <code>dummy-ups</code> in repeater mode representing data
+from another driver running on the same system, then you may have to
+set up special dependencies (e.g. with systemd "drop-in" snippet files)
+to allow your <code>nut-server</code> to start after the "real" device drivers and
+before such repeater drivers (without a responding server, they would fail
+to start anyway). This may also need special care in <code>upsd.conf</code> and/or
+<code>ups.conf</code> files to not block the system start-up for too long while the
+repeater driver has not started.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -917,6 +1007,14 @@ checking enforcement, as well as boundaries or enumeration definition.</p></div>
 <a href="ups.conf.html">ups.conf(5)</a>,
 <a href="nutupsdrv.html">nutupsdrv(8)</a></p></div>
 <div class="sect2">
+<h3 id="_clone_driver">Clone driver:</h3>
+<div class="paragraph"><p>The "repeater" mode of <em>dummy-ups</em> driver is in some ways similar to the
+<em>clone</em> driver, which sits on top of another driver socket, and allows
+users to group clients to a particular outlet of a device and deal with
+this output as if it were a normal UPS.</p></div>
+<div class="paragraph"><p><a href="clone.html">clone(8)</a></p></div>
+</div>
+<div class="sect2">
 <h3 id="_internet_resources">Internet Resources:</h3>
 <div class="paragraph"><p>The NUT (Network UPS Tools) home page: <a href="http://www.networkupstools.org/">http://www.networkupstools.org/</a></p></div>
 </div>
@@ -926,7 +1024,7 @@ checking enforcement, as well as boundaries or enumeration definition.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-04-12 15:32:07 UTC -- Network UPS Tools 2.7.4.1
+Last updated 2022-04-24 14:43:48 UTC -- Network UPS Tools 2.7.4.1
 </div>
 </div>
 </body>
