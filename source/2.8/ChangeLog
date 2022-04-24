@@ -1,5 +1,563 @@
+2022-04-24  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* docs/nut-qa.txt, docs/nut.dict: docs/nut-qa.txt: mention "make
+	  check-NIT-devel" helper target
+	* docs/man/victronups.txt: docs/man/victronups.txt: update link to
+	  cable pinout  Closes: #1371
+	* configure.ac: configure.ac: fix enableval vs withval
+	* ci_build.sh: ci_build.sh: disable check-NIT by default in CI runs
+	  for now
+
+2022-04-23  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* drivers/main.c: drivers/main.c: simplify detection of PROGNAME="lt-
+	  DRIVERNAME" making it more reliable for some platforms
+
+2022-04-18  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* drivers/cyberpower-mib.c: drivers/cyberpower-mib.c: update
+	  cyberpower_power_status[] with new values [#1377]
+
+2022-04-23  Jim Klimov <jimklimov@gmail.com>
+
+	* data/driver.list.in: Update driver.list.in
+
+2022-04-23  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* configure.ac: configure.ac: fix nut_enable_check_NIT
+	* ci_build.sh: ci_build.sh: "--enable-check-NIT" and "--enable-
+	  maintainer-mode" for developer builds without a BUILD_TYPE
+	* ci_build.sh: ci_build.sh: "--enable-check-NIT" for CI builds
+	* tests/NIT/nit.sh: tests/NIT/nit.sh: fix renaming typo
+	* tests/NIT/nit.sh: tests/NIT/nit.sh: remove mktemp-ed TESTDIR when
+	  we exit
+	* tests/NIT/nit.sh: tests/NIT/nit.sh: refactor with TESTDIR
+	* clients/upssched.c, common/common.c, drivers/clone-outlet.c,
+	  drivers/clone.c, drivers/dstate.c, include/common.h,
+	  server/sockdebug.c, server/sstate.c: check_unix_socket_filename()
+	  to meaningfully abort when our paths are too long
+	* docs/man/clone.txt, docs/man/dummy-ups.txt: docs/man/clone.txt +
+	  dummy-ups.txt: clarify the dependency caveats  Clone drivers do not
+	  require to run after upsd, but may need to start after the "real"
+	  driver whose socket thay leech onto.
+	* tests/NIT/nit.sh: tests/NIT/nit.sh: limit how long we wait for
+	  UPS1/UPS2 to begin responding
+	* configure.ac, docs/configure.txt, docs/nut-qa.txt,
+	  tests/NIT/Makefile.am: tests/NIT/Makefile.am + configure.ac:
+	  introduce --enable-check-NIT
+	* docs/man/dummy-ups.txt: docs/man/dummy-ups.txt: re-wrap long lines
+	  and reword
+	* docs/man/dummy-ups.txt: docs/man/dummy-ups.txt: highlight that
+	  upsrw can not define new variables
+	* docs/man/dummy-ups.txt: docs/man/dummy-ups.txt: update notes for
+	  dummy-once mode ability to re-read file only if it changes
+	* docs/man/dummy-ups.txt: docs/man/dummy-ups.txt: update notes for
+	  dummy-once mode
+	* docs/man/clone.txt, docs/man/dummy-ups.txt: docs/man/dummy-ups.txt
+	  + clone.txt: cross-link two man pages to remind about similar use-
+	  cases
+
+2022-04-22  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* tests/NIT/nit.sh: tests/NIT/nit.sh:
+	  testcase_sandbox_upsc_query_timer(): do not waste time if we did
+	  get the answer we want
+	* tests/NIT/nit.sh: tests/NIT/nit.sh:
+	  testcase_sandbox_upsc_query_timer(): for slower testers out there,
+	  wait one more cycle
+	* tests/NIT/nit.sh: tests/NIT/nit.sh: ignore message from NSS builds
+	  Those tend to add lines like Init SSL without certificate database
+	  so we should better grep for expected char sequence
+
+2022-04-22  Paweł Rapkiewicz <pawel.rapkiewicz@gmail.com>
+
+	* data/driver.list.in, drivers/ever-hid.c, scripts/upower/95-upower-
+	  hid.hwdb: Confirm support for ECO Pro AVR CDS series EVER UPS  This
+	  commit confirms that EVER UPS line 'ECO Pro AVR CDS' is supported
+	  by NUT, from nowon, nut-scanner will recognize EVER Ups as follows:
+	  [nutdev1] driver = "usbhid-ups" port = "auto" vendorid = "2E51"
+	  productid = "0000" product = "ECO PRO AVR CDS" serial =
+	  "XXXXXXXXXXXXXXXXXXXXXXXXX" vendor = "EVER" bus = "003"
+
+2022-04-22  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* tests/NIT/nit.sh: tests/NIT/nit.sh: add
+	  testgroup_sandbox_cppnit_simple_admin() to troubleshoot dummy-ups
+	  data propagation
+	* tests/NIT/nit.sh: tests/NIT/nit.sh:
+	  testcase_sandbox_start_drivers_after_upsd(): wait for UPS1 and UPS2
+	  to respond
+	* tests/cpputest-client.cpp: tests/cpputest-client.cpp: allow up to
+	  10 seconds for SET VAR to propagate into read-back value
+	* tests/.gitignore: GitIgnore tests/cppnit binary and logs
+	* docs/nut.dict: Update nut.dict
+	* tests/NIT/nit.sh: tests/NIT/nit.sh: refactor test cases into
+	  smaller routines and groups, and allow to select NIT_CASE
+	  optionally
+	* tests/NIT/nit.sh: tests/NIT/nit.sh: refactor stop_daemons()
+	* Makefile.am, tests/Makefile.am, tests/NIT/Makefile.am:
+	  tests/NIT/Makefile.am: extend with check-NIT-devel for iterating
+	* drivers/dstate.c: drivers/dstate.c: log start of processing in
+	  sock_arg()
+	* drivers/dstate.c: drivers/dstate.c: whitespace fix
+	* tests/NIT/nit.sh: tests/NIT/nit.sh: allow to tweak NUT_DEBUG_MIN
+	* tests/cpputest-client.cpp: tests/cpputest-client.cpp: trace values
+	  read back after setting
+	* tests/cpputest-client.cpp: tests/cpputest-client.cpp: rename "s1"
+	  original value reading
+	* scripts/python/Makefile.am: scripts/python/Makefile.am: clean *.pyc
+	  and __pycache__/ if present
+
+2022-04-21  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* drivers/dummy-ups.c: drivers/dummy-ups.c: fix dummy-once mode for
+	  relative path in port
+	* tests/NIT/nit.sh: tests/NIT/nit.sh: name the "dummy.seq" so it
+	  loops by default
+	* drivers/main.c: drivers/main.c: better fix for handling of libtool-
+	  named binaries
+	* tests/NIT/nit.sh: tests/NIT/nit.sh: if "Error: Driver not
+	  connected" retry with UPSD started after drivers are running
+	* drivers/main.c: drivers/main.c: fix the handling of libtool-named
+	  binaries
+	* tests/NIT/nit.sh: tests/NIT/nit.sh: "sed -i" requires an extension
+	  (may be empty, in BSD must be a separate CLI token, in others must
+	  be same token - not empty is ok for all)
+	* tests/NIT/nit.sh: tests/NIT/nit.sh: "sed -i" requires an extension
+	  (may be empty, in BSD must be a separate CLI token)
+	* drivers/dummy-ups.c: drivers/dummy-ups.c: cover exhaustive
+	  case(enum) with pragmas for diametral warnings
+	* tests/NIT/nit.sh: tests/NIT/nit.sh: extend with mode=... for dummy-
+	  ups [#1385]
+	* NEWS, UPGRADING, docs/man/dummy-ups.txt, drivers/dummy-ups.c:
+	  dummy-ups: do re-read a "dummy-once" file, though only if it
+	  changes while the driver runs  r the commit message for your
+	  changes. Lines starting
+	* NEWS, UPGRADING, docs/man/dummy-ups.txt, drivers/dummy-ups.c:
+	  dummy-ups: separate MODE_DUMMY_ONCE from MODE_DUMMY_LOOP  Closes:
+	  #1385
+	* docs/man/dummy-ups.txt: docs/man/dummy-ups.txt: small rewording
+	* drivers/dummy-ups.c: drivers/dummy-ups.c: refactor "mode" from
+	  random defines to an enum
+	* common/str.c, include/str.h: include/str.h, common/str.c: add
+	  str_ends_with()
+	* tests/NIT/nit.sh: tests/NIT/nit.sh: make sure ups.status is not
+	  pre-defined empty in test sandbox
+	* tests/cpputest-client.cpp: tests/cpputest-client.cpp:
+	  test_auth_user(): bail out if "ups.status" reply is empty
+	* tests/NIT/nit.sh: tests/NIT/nit.sh: report DEBUG_SLEEP mode more
+	  usefully
+	* tests/NIT/nit.sh: tests/NIT/nit.sh: spell out 127.0.0.1 and ::1 if
+	  detected supported on local system - do not rely on ping CLI alone
+	* tests/NIT/nit.sh: tests/NIT/nit.sh: spell out 127.0.0.1 and ::1 if
+	  detected supported on local system
+
+2022-04-20  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* tests/NIT/nit.sh: tests/NIT/nit.sh: report issues more usefully for
+	  troubleshooting CI
+	* tests/NIT/Makefile.am: tests/NIT/Makefile.am: use more portable
+	  clumsier code
+	* drivers/main.c: drivers/main.c: accept "lt-PROGNAME" to run
+	  libtool-wrapped builds during development
+	* tests/NIT/nit.sh: tests/NIT/nit.sh: Avoid dummies with TIMER flip-
+	  flops for cppnit if we can
+	* tests/Makefile.am: tests/Makefile.am: do not run "cppnit" as part
+	  of TESTS, only give a recipe to build it
+	* clients/nutclient.h, tests/Makefile.am, tests/NIT/nit.sh,
+	  tests/cpputest-client.cpp: NutActiveClientTest: introduce C++
+	  NutActiveClientTest for NIT and similar uses
+	* tests/NIT/nit.sh: tests/NIT/nit.sh: log OVERALL results before
+	  DEBUG_SLEEP
+	* tests/NIT/nit.sh: tests/NIT/nit.sh: refactor upsd.users passwords
+	  as shell vars to ease reuse
+	* tests/NIT/nit.sh: tests/NIT/nit.sh: check that test_nutclient.py
+	  was generated before running it; export NUT_PORT just once
+	* tests/NIT/nit.sh: tests/NIT/nit.sh: embed weak randomization of
+	  NUT_PORT  At least this little magic is better than a hardcoded
+	  number: if several CI executors run `make check` at once on same
+	  host, they now have a decent chance to not collide (not guaranteed
+	  though)
+	* tests/NIT/nit.sh: tests/NIT/nit.sh: let caller customize NUT_PORT
+	* Makefile.am, configure.ac, tests/Makefile.am, tests/NIT/.gitignore,
+	  tests/NIT/Makefile.am: Add tests/NIT/Makefile.am for
+	  straightforward integration of the test suite
+	* configure.ac, tests/Makefile.am: configure.ac: fix detection of
+	  cppunit on some platforms  Note for posterity: CFLAGS go before
+	  source, LDFLAGS+LIBS after source, in g++ cmdline
+	* Makefile.am: Makefile.am: fix "make check-docs" and siblings from
+	  root dir
+	* Makefile.am: Makefile.am: let "make check-NIT" from root dir
+	* tests/NIT/README, tests/NIT/nit.sh: tests/NIT: warn in
+	  docs/comments that starting pwd should be the BUILDDIR
+	* tests/Makefile.am: tests/Makefile.am: help check-NIT pass in
+	  distcheck (cleaner)
+	* tests/NIT/README, tests/NIT/nit.sh: tests/NIT/README: update a bit
+	* tests/Makefile.am: tests/Makefile.am: help check-NIT pass in
+	  distcheck
+	* docs/nut-qa.txt: docs/nut-qa.txt: mention NUT NIT and update links
+	  to Ubuntu QART
+	* tests/NIT/nit.sh: tests/NIT/nit.sh: make some debug noise optional
+	* tests/NIT/nit.sh: tests/NIT/nit.sh: typo fix for SRCDIR
+	* tests/NIT/nit.sh: tests/NIT/nit.sh: sanity checks for BUILDDIR
+	* tests/NIT/nit.sh: tests/NIT/nit.sh: bail out quickly if got no
+	  daemons to run
+	* tests/Makefile.am: tests/Makefile.am: call NIT suite
+	* tests/NIT/nit.sh: tests/NIT/nit.sh: document DEBUG_SLEEP a bit
+
+2022-04-19  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* tests/NIT/.gitignore, tests/NIT/README, tests/NIT/nit.sh: NIT: NUT
+	  Integration Tests (usable PoC) [another take at issue #3]
+	* clients/upsrw.c, docs/man/upsrw.txt: upsrw: accept "-l" for listing
+	  Closes: #1382
+	* scripts/python/module/test_nutclient.py.in: test_nutclient.py.in:
+	  allow to override NUT_PORT, NUT_USER, NUT_PASS
+	* conf/ups.conf.sample: conf/ups.conf.sample: update with info from
+	  docs/man/ups.conf.txt
+
+2022-04-18  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* clients/nutclient.cpp: clients/nutclient.{cpp,h}:
+	  deviceMaster()/devicePrimary(): add fallback handling with the
+	  other keyword [#840, #1374]
+	* clients/nutclient.cpp, clients/nutclient.h,
+	  clients/nutclientmem.cpp, clients/nutclientmem.h,
+	  docs/man/libnutclient_misc.txt: clients/nutclient{mem}.{cpp,h}
+	  docs/man/libnutclient_misc.txt: add PRIMARY handling [#840]
+	  Closes: #1374
+	* clients/nutclient.cpp, clients/nutclient.h,
+	  docs/man/libnutclient_tcp.txt: clients/nutclient.{cpp,h}
+	  docs/man/libnutclient_tcp.txt: fix timeout from long to time_t
+	  Closes: #1376
+	* clients/upsc.c, clients/upsclient.c, clients/upsclient.h,
+	  clients/upscmd.c, clients/upsimage.c, clients/upslog.c,
+	  clients/upsmon.h, clients/upsrw.c, clients/upsset.c,
+	  clients/upsstats.c, docs/man/upscli_connect.txt, drivers/dummy-
+	  ups.c: clients/upsclient.{c,h} and many clients + dummy-ups: fix
+	  port from int to uint16_t  Closes: #1379
+	* docs/man/libnutclient_variables.txt:
+	  docs/man/libnutclient_variables.txt: fix English
+	* clients/upsclient.h: clients/upsclient.h: fix whitespace
+	* clients/upsclient.c, clients/upsclient.h,
+	  docs/man/upscli_readline.txt, docs/man/upscli_sendline.txt:
+	  clients/upsclient.{c,h} docs/man/upscli_{read,send}line.txt: fix
+	  timeout from long to time_t  Closes: #1373
+	* clients/nutclient.cpp, clients/nutclient.h,
+	  docs/man/libnutclient_tcp.txt, docs/nut.dict:
+	  clients/nutclient.{cpp,h}: fix port type from unsigned short to
+	  uint16_t  Closes: #1375
+	* docs/man/Makefile.am: docs/man/Makefile.am: `$(<F)` is not POSIX
+	  compliant, while `$(@F)` is, go figure [#1362 follow-up]
+
+2022-04-17  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* docs/man/Makefile.am: docs/man/Makefile.am: abstract filenames into
+	  LINKMAN_INCLUDE_GENERATED macro
+
+2022-04-16  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* docs/man/Makefile.am: docs/man/Makefile.am: DOCBUILD_BEGIN: work
+	  around older BSD make not seeing sources not present in builddir
+	  It seems to resolve single-source documents well, but fails to find
+	  the upsd.txt which depends on linkman*-names.txt and build a proper
+	  relative path to it.
+	* docs/man/Makefile.am: docs/man/Makefile.am: ensure linkman-
+	  drivertool*names.txt are in builddir
+	* docs/man/Makefile.am: docs/man/Makefile.am: ensure linkman-
+	  drivertool*names.txt are in A2X_OUTDIR
+	* docs/man/Makefile.am: docs/man/Makefile.am: avoid spurious
+	  regeneration of linkman-drivertool*names.txt whenever we reference
+	  them
+	* docs/man/Makefile.am: docs/man/Makefile.am: generate linkman-
+	  drivertool*names.txt independent of current dir being srcdir
+	* ci_build.sh: ci_build.sh: "cat" the "git diff"
+
+2022-04-15  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* docs/man/libnutclient_general.txt, docs/man/libnutclient_misc.txt,
+	  docs/man/libnutclient_tcp.txt, docs/man/libnutclient_variables.txt,
+	  docs/man/libupsclient-config.txt, docs/nut.dict:
+	  docs/man/libnutclient*.txt: wrap long lines, minor rephrase, bullet
+	  points
+	* docs/man/libnutclient_commands.txt,
+	  docs/man/libnutclient_devices.txt:
+	  docs/man/libnutclient_devices.txt, libnutclient_commands.txt:
+	  synopsis for strarr
+	* docs/man/libnutclient_devices.txt:
+	  docs/man/libnutclient_devices.txt: wrap long lines, minor rephrase,
+	  bullet points
+	* docs/man/libnutclient_commands.txt:
+	  docs/man/libnutclient_commands.txt: wrap long lines, minor
+	  rephrase, bullet points; added optional param arg in API
+	* docs/man/upscli_strerror.txt: docs/man/upscli_strerror.txt: fix
+	  return type modifier to const
+	* docs/man/upscli_add_host_cert.txt, docs/man/upscli_cleanup.txt,
+	  docs/man/upscli_disconnect.txt, docs/man/upscli_fd.txt,
+	  docs/man/upscli_get.txt, docs/man/upscli_init.txt,
+	  docs/man/upscli_list_next.txt, docs/man/upscli_readline.txt,
+	  docs/man/upscli_sendline.txt, docs/man/upscli_splitaddr.txt:
+	  docs/man/upscli*.txt: wrap long lines, minor rephrase
+	* docs/man/nutscan_init.txt, docs/man/nutscan_new_device.txt,
+	  docs/man/nutscan_scan_usb.txt: docs/man/nutscan*.txt: document
+	  methods with (void) arg list as such
+	* docs/man/Makefile.am, docs/man/index.txt, docs/man/nutscan.txt,
+	  docs/man/nutscan_add_device_to_device.txt,
+	  docs/man/nutscan_add_option_to_device.txt,
+	  docs/man/nutscan_cidr_to_ip.txt,
+	  docs/man/nutscan_display_parsable.txt,
+	  docs/man/nutscan_display_ups_conf.txt,
+	  docs/man/nutscan_free_device.txt,
+	  docs/man/nutscan_get_serial_ports_list.txt,
+	  docs/man/nutscan_init.txt, docs/man/nutscan_new_device.txt,
+	  docs/man/nutscan_scan_avahi.txt,
+	  docs/man/nutscan_scan_eaton_serial.txt,
+	  docs/man/nutscan_scan_ipmi.txt, docs/man/nutscan_scan_nut.txt,
+	  docs/man/nutscan_scan_snmp.txt, docs/man/nutscan_scan_usb.txt,
+	  docs/man/nutscan_scan_xml_http.txt,
+	  docs/man/nutscan_scan_xml_http_range.txt:
+	  docs/man/nutscan_scan_xml_http_range.txt: document the method which
+	  got extended from original nutscan_scan_xml_http() doing just a
+	  local broadcast
+	* docs/man/nutscan_scan_ipmi.txt: docs/man/nutscan_scan_ipmi.txt:
+	  document the method which now is implemented
+	* docs/man/nutscan.txt, docs/man/nutscan_add_device_to_device.txt,
+	  docs/man/nutscan_add_option_to_device.txt,
+	  docs/man/nutscan_cidr_to_ip.txt, docs/man/nutscan_free_device.txt,
+	  docs/man/nutscan_get_serial_ports_list.txt,
+	  docs/man/nutscan_init.txt, docs/man/nutscan_new_device.txt,
+	  docs/man/nutscan_scan_avahi.txt,
+	  docs/man/nutscan_scan_eaton_serial.txt,
+	  docs/man/nutscan_scan_nut.txt, docs/man/nutscan_scan_snmp.txt,
+	  docs/man/nutscan_scan_usb.txt, docs/man/nutscan_scan_xml_http.txt:
+	  docs/man/nutscan*.txt: wrap long lines, minor rephrase, fix
+	  timeouts to useconds_t
+	* docs/nut.dict: docs/nut.dict: spellcheck drivertool
+	* docs/man/apcsmart-old.txt, docs/man/apcsmart.txt,
+	  docs/man/asem.txt, docs/man/bcmxcp_usb.txt, docs/man/liebert-
+	  esp2.txt, docs/man/macosx-ups.txt, docs/man/microsol-apc.txt,
+	  docs/man/nut.conf.txt, docs/man/nutdrv_atcl_usb.txt,
+	  docs/man/nutdrv_qx.txt, docs/man/nutdrv_siemens_sitop.txt,
+	  docs/man/oneac.txt, docs/man/optiups.txt, docs/man/upscode2.txt,
+	  docs/man/usbhid-ups.txt: docs/man/*.txt: reformat AUTHOR(S) and
+	  INTERNET RESOURCES blocks to common style
+	* docs/man/upsdrvsvcctl.txt: docs/man/upsdrvsvcctl.txt: list Jim
+	  Klimov as the AUTHOR
+	* docs/man/nut-driver-enumerator.txt: docs/man/nut-driver-
+	  enumerator.txt: list Jim Klimov as the AUTHOR
+	* docs/man/snmp-ups.txt: docs/man/snmp-ups.txt: list AUTHORS as a
+	  bulleted list and add Jim Klimov
+	* docs/man/snmp-ups.txt: docs/man/snmp-ups.txt: wrap long lines and
+	  reword a bit
+	* docs/man/optiups.txt: docs/man/optiups.txt: wrap long lines
+	* docs/man/phoenixcontact_modbus.txt:
+	  docs/man/phoenixcontact_modbus.txt: wrap long lines
+	* docs/man/belkinunv.txt: docs/man/belkinunv.txt: add link to
+	  protocol description copy on NUT site
+	* docs/support.txt: docs/support.txt: mention github instead of
+	  subversion
+	* docs/man/.gitignore, docs/man/Makefile.am, docs/man/index.txt,
+	  docs/man/nutupsdrv.txt, docs/man/upsd.txt: docs/man/index.txt,
+	  upsd.txt, nutupsdrv.txt: generate the up-to-date list of drivers,
+	  current for each iteration
+	* docs/man/index.txt, docs/man/nutupsdrv.txt, docs/man/upsd.txt:
+	  docs/man/upsd.txt, nutupsdrv.txt, index.txt: move common
+	  nutupsdrv[8] from the bulk of driver list
+	* docs/man/nutupsdrv.txt, docs/man/upsd.txt: docs/man/upsd.txt,
+	  nutupsdrv.txt: generate current list of drivers
+	* docs/man/index.txt: docs/man/index.txt: generate current list of
+	  drivers, separate "Driver Control" title
+	* docs/man/nutupsdrv.txt, docs/man/upsd.txt: docs/man/upsd.txt,
+	  nutupsdrv.txt: reformat lists of drivers and tools to bullet lists
+	* docs/Makefile.am: docs/Makefile.am: DOCBUILD_BEGIN: symlink images/
+	  ONLY for PDF generation
+	* ci_build.sh: ci_build.sh: add notes to Consider `--enable-
+	  maintainer-mode`
+	* .gitignore: GitIgnore IDEA metadata files
+	* docs/.gitignore: GitIgnore more intermediate XML files from docs
+	  generation
+
+2022-04-14  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* docs/man/nutscan_display_parsable.txt,
+	  docs/man/nutscan_display_ups_conf.txt,
+	  docs/man/nutscan_free_device.txt,
+	  docs/man/nutscan_get_serial_ports_list.txt: docs/man/nutscan*.txt:
+	  fix formatting and typos
+	* docs/man/upscli_get.txt, docs/man/upscli_init.txt,
+	  docs/man/upscli_list_start.txt: docs/man/upscli*.txt: fix sample
+	  source formatting
+	* docs/man/upsmon.txt: docs/man/upsmon.txt: reword a dangling
+	  sentence
+	* docs/man/tripplite_usb.txt: docs/man/tripplite_usb.txt: fix
+	  formatting
+	* docs/man/riello_ser.txt: docs/man/riello_ser.txt: fix formatting
+	* docs/man/riello_usb.txt: docs/man/riello_usb.txt: fix formatting
+	* docs/man/snmp-ups.txt: docs/man/snmp-ups.txt: fix sample source
+	  formatting
+	* docs/man/socomec_jbus.txt: docs/man/socomec_jbus.txt: fix
+	  formatting and typos
+	* docs/man/Makefile.am, docs/nut.dict: docs/man/Makefile.am: list the
+	  socomec_jbus.txt
+	* docs/man/pijuice.txt: docs/man/pijuice.txt: fix formatting
+	* docs/man/nutdrv_qx.txt: docs/man/nutdrv_qx.txt: fix formatting
+	* docs/man/nutdrv_atcl_usb.txt: docs/man/nutdrv_atcl_usb.txt: fix
+	  formatting
+	* docs/man/nut.conf.txt: docs/man/nut.conf.txt: fix sample source
+	  formatting
+	* docs/man/mge-utalk.txt: docs/man/mge-utalk.txt: fix formatting
+	* docs/man/liebert-esp2.txt: docs/man/liebert-esp2.txt: fix
+	  formatting
+	* docs/man/clone.txt: docs/man/clone.txt: fix sample source
+	  formatting
+	* docs/man/bestups.txt, docs/man/blazer-common.txt,
+	  docs/man/masterguard.txt: docs/man/blazer-common.txt,
+	  masterguard.txt, bestups.txt: fix formatting [#1361]
+	* docs/man/adelsystem_cbi.txt: docs/man/adelsystem_cbi.txt: fix
+	  formatting
+	* docs/sock-protocol.txt: docs/sock-protocol.txt: fix formatting
+	* docs/snmp-subdrivers.txt: docs/snmp-subdrivers.txt: small typo
+	* docs/packager-guide.txt: docs/packager-guide.txt: reshuffle known
+	  names
+	* docs/nut-qa.txt: docs/nut-qa.txt: list a few more tools we use
+	* TODO, docs/nut-qa.txt: Fix remaining links to asciidoc.org
+	* docs/nut-names.txt: docs/nut-names.txt: fix table formatting
+	* docs/new-clients.txt: docs/new-clients.txt: fix sample source
+	  formatting
+	* docs/net-protocol.txt: docs/net-protocol.txt: fix version table
+	  formatting
+	* docs/FAQ.txt: docs/FAQ.txt: fix formatting, extend some notes
+	* docs/nut.dict: Update nut.dict
+	* docs/developers.txt: docs/developers.txt: fix formatting, extend
+	  some notes
+	* docs/developer-guide.txt: docs/developer-guide.txt: fix formatting;
+	  update URL to evolution500.seq
+	* docs/design.txt: docs/design.txt: fix formatting; note FIXMEs for
+	  documenting TRACKING support
+	* docs/daisychain.txt: docs/daisychain.txt: fix formatting
+	* drivers/snmp-ups.h: drivers/snmp-ups.h: update comment to clarify
+	  the meaning of SU_TYPE_DAISY_1 and SU_TYPE_DAISY_2
+	* docs/configure.txt: docs/configure.txt: fix formatting, add titles,
+	  extend some notes
+	* docs/configure.txt: docs/configure.txt: add a section on modbus
+	  drivers
+	* docs/configure.txt: docs/configure.txt: link to powerman project
+	* docs/configure.txt: docs/configure.txt: fix formatting, add driver
+	  type titles, extend some notes
+	* docs/config-prereqs.txt: docs/config-prereqs.txt: fix formatting,
+	  extend some notes
+
+2022-04-14  Jim Klimov <jimklimov@gmail.com>
+
+	* docs/Makefile.am: docs/Makefile.am: A2X_COMMON_OPTS: use "--
+	  attribute=..." consistently
+	* docs/Makefile.am: docs/Makefile.am: have "images/" in A2X_OUTDIR
+	  (fallout of #1152)  Closes: #1365
+
+2022-04-14  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* docs/solaris-usb.txt: docs/solaris-usb.txt: drop suggestions about
+	  building special libusb-1.0/0.1 branches
+	* docs/solaris-usb.txt: docs/solaris-usb.txt: fix formatting, extend
+	  some notes
+	* docs/solaris-usb.txt: docs/solaris-usb.txt: add a NOTE for USB
+	  drivers ignoring port option [#1368]
+	* docs/config-notes.txt: docs/config-notes.txt: fix formatting,
+	  extend some notes and warnings, and service-driven life-cycle
+	* docs/config-notes.txt: docs/config-notes.txt: document
+	  ALLOW_NO_DEVICE for upsd.conf [#766, #837]
+	* docs/config-notes.txt: docs/config-notes.txt: reformat and extend
+	  the NOTE for USB drivers ignoring port option [#1368]
+	* ci_build.sh, docs/ci-farm-lxc-setup.txt, docs/nut.dict: docs/ci-
+	  farm-lxc-setup.txt: fix formatting, extend on Jenkins agent setup
+	* ci_build.sh: ci_build.sh: use "gmake" for "./ci_build.sh
+	  spellcheck" if available and no particular MAKE was requested -
+	  fall back to "make" if "gmake" is not available
+
+2022-04-13  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* docs/asciidoc.txt: docs/asciidoc.txt: update link to the Asciidoc
+	  Manual (and project now on github)
+
+2022-04-12  Jim Klimov <jimklimov@gmail.com>
+
+	* Makefile.am: Makefile.am: define dependencies between recipes for
+	  dist* and package; tarball, sig and checksum filenames
+
 2022-04-10  Jim Klimov <jimklimov+nut@gmail.com>
 
+	* docs/daisychain.txt, docs/man/adelsystem_cbi.txt,
+	  docs/man/al175.txt, docs/man/apcsmart-old.txt,
+	  docs/man/apcsmart.txt, docs/man/apcupsd-ups.txt, docs/man/asem.txt,
+	  docs/man/bcmxcp.txt, docs/man/bcmxcp_usb.txt, docs/man/belkin.txt,
+	  docs/man/belkinunv.txt, docs/man/bestfcom.txt,
+	  docs/man/bestfortress.txt, docs/man/bestuferrups.txt,
+	  docs/man/bestups.txt, docs/man/blazer-common.txt,
+	  docs/man/clone.txt, docs/man/dummy-ups.txt, docs/man/etapro.txt,
+	  docs/man/everups.txt, docs/man/gamatronic.txt,
+	  docs/man/generic_modbus.txt, docs/man/genericups.txt,
+	  docs/man/hosts.conf.txt, docs/man/huawei-ups2000.txt,
+	  docs/man/isbmex.txt, docs/man/ivtscd.txt,
+	  docs/man/libnutclient.txt, docs/man/libnutclient_commands.txt,
+	  docs/man/libnutclient_devices.txt,
+	  docs/man/libnutclient_general.txt, docs/man/libnutclient_misc.txt,
+	  docs/man/libnutclient_tcp.txt, docs/man/libnutclient_variables.txt,
+	  docs/man/libupsclient-config.txt, docs/man/liebert-esp2.txt,
+	  docs/man/liebert.txt, docs/man/macosx-ups.txt,
+	  docs/man/masterguard.txt, docs/man/metasys.txt, docs/man/mge-
+	  shut.txt, docs/man/mge-utalk.txt, docs/man/microdowell.txt,
+	  docs/man/microsol-apc.txt, docs/man/netxml-ups.txt, docs/man/nut-
+	  driver-enumerator.txt, docs/man/nut-ipmipsu.txt, docs/man/nut-
+	  recorder.txt, docs/man/nut-scanner.txt, docs/man/nut.conf.txt,
+	  docs/man/nutdrv_atcl_usb.txt, docs/man/nutdrv_siemens_sitop.txt,
+	  docs/man/nutscan.txt, docs/man/nutscan_add_device_to_device.txt,
+	  docs/man/nutscan_add_option_to_device.txt,
+	  docs/man/nutscan_cidr_to_ip.txt,
+	  docs/man/nutscan_display_parsable.txt,
+	  docs/man/nutscan_display_ups_conf.txt,
+	  docs/man/nutscan_free_device.txt,
+	  docs/man/nutscan_get_serial_ports_list.txt,
+	  docs/man/nutscan_init.txt, docs/man/nutscan_new_device.txt,
+	  docs/man/nutscan_scan_avahi.txt,
+	  docs/man/nutscan_scan_eaton_serial.txt,
+	  docs/man/nutscan_scan_ipmi.txt, docs/man/nutscan_scan_nut.txt,
+	  docs/man/nutscan_scan_snmp.txt, docs/man/nutscan_scan_usb.txt,
+	  docs/man/nutscan_scan_xml_http.txt, docs/man/nutupsdrv.txt,
+	  docs/man/oneac.txt, docs/man/optiups.txt,
+	  docs/man/phoenixcontact_modbus.txt, docs/man/pijuice.txt,
+	  docs/man/powercom.txt, docs/man/powerman-pdu.txt,
+	  docs/man/powerpanel.txt, docs/man/rhino.txt,
+	  docs/man/richcomm_usb.txt, docs/man/riello_ser.txt,
+	  docs/man/riello_usb.txt, docs/man/safenet.txt, docs/man/skel.txt,
+	  docs/man/snmp-ups.txt, docs/man/socomec_jbus.txt,
+	  docs/man/solis.txt, docs/man/tripplite.txt,
+	  docs/man/tripplite_usb.txt, docs/man/tripplitesu.txt,
+	  docs/man/ups.conf.txt, docs/man/upsc.txt,
+	  docs/man/upscli_add_host_cert.txt, docs/man/upscli_cleanup.txt,
+	  docs/man/upscli_connect.txt, docs/man/upscli_disconnect.txt,
+	  docs/man/upscli_get.txt, docs/man/upscli_init.txt,
+	  docs/man/upscli_list_next.txt, docs/man/upscli_list_start.txt,
+	  docs/man/upscli_readline.txt, docs/man/upscli_sendline.txt,
+	  docs/man/upscli_splitname.txt, docs/man/upsclient.txt,
+	  docs/man/upscmd.txt, docs/man/upscode2.txt, docs/man/upsd.conf.txt,
+	  docs/man/upsd.txt, docs/man/upsd.users.txt, docs/man/upsdrvctl.txt,
+	  docs/man/upsdrvsvcctl.txt, docs/man/upsimage.cgi.txt,
+	  docs/man/upslog.txt, docs/man/upsmon.conf.txt, docs/man/upsmon.txt,
+	  docs/man/upsrw.txt, docs/man/upssched.conf.txt,
+	  docs/man/upssched.txt, docs/man/upsset.cgi.txt,
+	  docs/man/upsset.conf.txt, docs/man/upsstats.cgi.txt,
+	  docs/man/upsstats.html.txt, docs/man/usbhid-ups.txt,
+	  docs/man/victronups.txt, docs/nut-names.txt, docs/packager-
+	  guide.txt: docs/man: be sure to keep a blank line after SYNOPSIS
+	  and other titles [#1362]
+	* docs/FAQ.txt: docs/FAQ.txt: clarify about nutdrv_qx
+	* UPGRADING: UPGRADING: detail about "OBSOLETION WARNING" for
+	  "Megatec Q*"
+	* docs/man/bestups.txt, docs/man/blazer-common.txt,
+	  docs/man/masterguard.txt, drivers/bestups.c, drivers/blazer.c,
+	  drivers/masterguard.c: Report deprecation messages when starting
+	  older Qx drivers  And document similarly in their man pages
+	  (bestups, blazer, masterguard)
 	* docs/FAQ.txt, docs/nut.dict: docs/FAQ.txt: add more reasons and
 	  symptoms that a running driver disappears
 	* docs/FAQ.txt, docs/nut.dict: docs/FAQ.txt: suggest checking Linux
