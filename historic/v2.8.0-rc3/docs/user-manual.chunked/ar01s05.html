@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>5. Installation instructions</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><link rel="home" href="index.html" title="Network UPS Tools User Manual" /><link rel="up" href="index.html" title="Network UPS Tools User Manual" /><link rel="prev" href="ar01s04.html" title="4. Download information" /><link rel="next" href="ar01s06.html" title="6. Configuration notes" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ar01s04.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ar01s06.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_installation_instructions"></a>5. Installation instructions</h2></div></div></div><p>This chapter describes the various methods for installing Network UPS Tools.</p><p>Whenever it is possible, prefer <a class="link" href="ar01s05.html#Installing_packages" title="5.2. Installing from packages">installing from packages</a>.
+Packagers have done an excellent and hard work at improving NUT integration into
+their system.  On the other hand, distributions and appliances tend to package
+"official releases" of projects such as NUT, and so do not deliver latest and
+greatest fixes, new drivers, bugs and other features.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="Installing_source"></a>5.1. Installing from source</h3></div></div></div><p>These are the essential steps for compiling and installing this software.</p><p>The NUT <a class="ulink" href="../packager-guide.chunked/index.html" target="_top">Packager Guide</a>, which presents the best
+practices for installing and integrating NUT, is also a good reading.</p><p>The <a class="ulink" href="config-prereqs.txt" target="_top">Prerequisites for building NUT on different OSes</a>
+document suggests prerequisite packages with tools and dependencies
+available and needed to build and test as much as possible of NUT on
+numerous platforms, written from perspective of CI testing (if you
+are interested in getting updated drivers for a particular device,
+you might select a sub-set of those suggestions).</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Keep in mind that…</h3><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+the paths shown below are the default values you get by just calling
+configure by itself.  If you have used --prefix or similar, things will be
+different.  Also, if you didn’t install this program from source yourself, the
+paths will probably have a number of differences.
+</li><li class="listitem"><p class="simpara">
+by default, your system probably won’t find the man pages, since they
+install to /usr/local/ups/man.  You can fix this by editing your MANPATH, or
+just do this:
+</p><pre class="literallayout">man -M /usr/local/ups/man &lt;man page&gt;</pre></li><li class="listitem">
+if your favorite system offers up to date binary packages, you should always
+prefer these over a source installation. Along with the known advantages of such
+systems for installation, upgrade and removal, there are many integration issues
+that have been addressed.
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_prepare_your_system"></a>Prepare your system</h4></div></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_system_user_creation"></a>System User creation</h5></div></div></div><p>Create at least one system user and a group for running this software. You
+might call them "ups" and "nut".  The exact names aren’t important as
+long as you are consistent.</p><p>The process for doing this varies from one system to the next, and
+explaining how to add users is beyond the scope of this document.</p><p>For the purposes of this document, the user name and group name
+will be <span class="emphasis"><em>ups</em></span> and <span class="emphasis"><em>nut</em></span> respectively.</p><p>Be sure the new user is a member of the new group!  If you forget to
+do this, you will have problems later on when you try to start upsd.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_build_and_install"></a>Build and install</h4></div></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="Configuration"></a>Configuration</h5></div></div></div><p>Configure the source tree for your system.  Add the <span class="emphasis"><em>--with-user</em></span> and
+<span class="emphasis"><em>--with-group</em></span> switch to set the user name and group that you created
+above.</p><pre class="literallayout">./configure --with-user=ups --with-group=nut</pre><p>If you need any other switches for configure, add them here.  For example:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+to build and install USB drivers, add <span class="emphasis"><em>--with-usb</em></span> (note that you
+  need to install libusb development package or files).
+</li><li class="listitem">
+to build and install SNMP drivers, add <span class="emphasis"><em>--with-snmp</em></span> (note that
+  you need to install libsnmp development package or files).
+</li><li class="listitem">
+to build and install CGI scripts, add <span class="emphasis"><em>--with-cgi</em></span>.
+</li></ul></div><p>See <a class="link" href="aph.html" title="H. Configure options">Configure options</a> from the User Manual,
+docs/configure.txt or <span class="emphasis"><em>./configure --help</em></span> for all the available
+options.</p><p>If you alter paths with additional switches, be sure to use those
+new paths while reading the rest of the steps.</p><p>Reference: <a class="link" href="aph.html" title="H. Configure options">Configure options</a> from the
+User Manual.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_build_the_programs"></a>Build the programs</h5></div></div></div><pre class="literallayout">make</pre><p>This will build the NUT client and server programs and the
+selected drivers. It will also build any other features that were
+selected during <a class="link" href="ar01s05.html#Configuration" title="Configuration">configuration</a> step above.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_installation"></a>Installation</h5></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>you should now gain privileges for installing software if necessary:</p><pre class="literallayout">su</pre></div><p>Install the files to a system level directory:</p><pre class="literallayout">make install</pre><p>This will install the compiled programs and man pages, as well as
+some data files required by NUT. Any optional features selected
+during configuration will also be installed.</p><p>This will also install sample versions of the NUT configuration
+files. Sample files are installed with names like ups.conf.sample
+so they will not overwrite any existing real config files you may
+have created.</p><p>If you are packaging this software, then you will probably want to
+use the DESTDIR variable to redirect the build into another place,
+i.e.:</p><pre class="literallayout">make DESTDIR=/tmp/package install
+make DESTDIR=/tmp/package install-conf</pre></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="StatePath"></a>State path creation</h5></div></div></div><p>Create the state path directory for the driver(s) and server to use
+for storing UPS status data and other auxiliary files, and make it
+group-writable by the group of the system user you created.</p><pre class="literallayout">mkdir -p /var/state/ups
+chmod 0770 /var/state/ups
+chown root:nut /var/state/ups</pre></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="Ownership"></a>Ownership and permissions</h5></div></div></div><p>Set ownership data and permissions on your serial or USB ports
+that go to your UPS hardware.  Be sure to limit access to just
+the user you created earlier.</p><p>These examples assume the second serial port (ttyS1) on a typical
+Slackware system.  On FreeBSD, that would be cuaa1.  Serial ports
+vary greatly, so yours may be called something else.</p><pre class="literallayout">chmod 0660 /dev/ttyS1
+chown root:nut /dev/ttyS1</pre><p>The setup for USB ports is slightly more complicated. Device files
+for USB devices, such as /proc/bus/usb/002/001, are usually
+created "on the fly" when a device is plugged in, and disappear
+when the device is disconnected.  Moreover, the names of these
+device files can change randomly. To set up the correct
+permissions for the USB device, you may need to set up (operating
+system dependent) hotplugging scripts.  Sample scripts and
+information are provided in the scripts/hotplug and
+scripts/udev directories. For most users, the hotplugging scripts
+will be installed automatically by "make install".</p><p>(If you want to try if a driver works without setting up
+hotplugging, you can add the "-u root" option to upsd, upsmon, and
+drivers; this should allow you to follow the below
+instructions. However, don’t forget to set up the correct
+permissions later!).</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>if you are using something like udev or devd, make sure
+these permissions stay set across a reboot.  If they revert to the
+old values, your drivers may fail to start.</p></div><p>You are now ready to configure NUT, and start testing and using it.</p><p>You can jump directly to the <a class="link" href="ar01s06.html" title="6. Configuration notes">NUT configuration</a>.</p></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="Installing_packages"></a>5.2. Installing from packages</h3></div></div></div><p>This chapter describes the specific installation steps when using
+binary packages that exist on various major systems.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="Debian"></a>Debian, Ubuntu and other derivatives</h4></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>NUT is packaged and well maintained in these systems.
+The official Debian packager is part of the NUT Team.</p></div><p>Using your preferred method (apt-get, aptitude, Synaptic, …), install
+the <span class="emphasis"><em>nut</em></span> package, and optionally the following:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<span class="emphasis"><em>nut-cgi</em></span>, if you need the CGI (HTML) option,
+</li><li class="listitem">
+<span class="emphasis"><em>nut-snmp</em></span>, if you need the snmp-ups driver,
+</li><li class="listitem">
+<span class="emphasis"><em>nut-xml</em></span>, for the netxml-ups driver,
+</li><li class="listitem">
+<span class="emphasis"><em>nut-powerman-pdu</em></span>, to control the PowerMan daemon (PDU management)
+</li><li class="listitem">
+<span class="emphasis"><em>nut-dev</em></span>, if you need the development files.
+</li></ul></div><p>Configuration files are located in /etc/nut.
+<a class="ulink" href="../man/nut.conf.html" target="_top">nut.conf(5)</a> must be edited to be able to invoke /etc/init.d/nut</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>Ubuntu users can access the APT URL installation by clicking on <a class="ulink" href="apt://nut" target="_top">this link</a>.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="Mandriva"></a>Mandriva</h4></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>NUT is packaged and well maintained in these systems.
+The official Mandriva packager is part of the NUT Team.</p></div><p>Using your preferred method (urpmi, RPMdrake, …), install one of the two below
+packages:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<span class="emphasis"><em>nut-server</em></span> if you have a <span class="emphasis"><em>standalone</em></span> or <span class="emphasis"><em>netserver</em></span> installation,
+</li><li class="listitem">
+<span class="emphasis"><em>nut</em></span> if you have a <span class="emphasis"><em>netclient</em></span> installation.
+</li></ul></div><p>Optionally, you can also install the following:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<span class="emphasis"><em>nut-cgi</em></span>, if you need the CGI (HTML) option,
+</li><li class="listitem">
+<span class="emphasis"><em>nut-devel</em></span>, if you need the development files.
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="SUSE"></a>SUSE / openSUSE</h4></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>NUT is packaged and well maintained in these systems.
+The official SUSE packager is part of the NUT Team.</p></div><p>Install the <span class="emphasis"><em>nut-classic</em></span> package, and optionally the following:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<span class="emphasis"><em>nut-drivers-net</em></span>, if you need the snmp-ups or the netxml-ups drivers,
+</li><li class="listitem">
+<span class="emphasis"><em>nut-cgi</em></span>, if you need the CGI (HTML) option,
+</li><li class="listitem">
+<span class="emphasis"><em>nut-devel</em></span>, if you need the development files,
+</li></ul></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>SUSE and openSUSE users can use the
+<a class="ulink" href="http://software.opensuse.org/search?baseproject=ALL&amp;p=1&amp;q=nut" target="_top">one-click install method</a>
+to install NUT.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="RedHat"></a>Red Hat, Fedora and CentOS</h4></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>NUT is packaged and well maintained in these systems.
+The official Red Hat packager is part of the NUT Team.</p></div><p>Using your preferred method (yum, Add/Remove Software, …), install one of the
+two below packages:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<span class="emphasis"><em>nut</em></span> if you have a <span class="emphasis"><em>standalone</em></span> or <span class="emphasis"><em>netserver</em></span> installation,
+</li><li class="listitem">
+<span class="emphasis"><em>nut-client</em></span> if you have a <span class="emphasis"><em>netclient</em></span> installation.
+</li></ul></div><p>Optionally, you can also install the following:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<span class="emphasis"><em>nut-cgi</em></span>, if you need the CGI (HTML) option,
+</li><li class="listitem">
+<span class="emphasis"><em>nut-xml</em></span>, if you need the netxml-ups driver,
+</li><li class="listitem">
+<span class="emphasis"><em>nut-devel</em></span>, if you need the development files.
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="FreeBSD"></a>FreeBSD</h4></div></div></div><p>You can either install NUT as a binary package or as a port.</p><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_binary_package"></a>Binary package</h5></div></div></div><p>To install NUT as a package execute:</p><pre class="literallayout"># pkg install nut</pre></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_port"></a>Port</h5></div></div></div><p>The port is located under <code class="literal">sysutils/nut</code>.
+Use <code class="literal">make config</code> to select configuration options, e.g. to build the optional CGI scripts.
+To install it, use:</p><pre class="literallayout"># make install clean</pre></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_usb_ups_on_freebsd"></a>USB UPS on FreeBSD</h5></div></div></div><p>For USB UPS devices the NUT package/port installs devd rules in <code class="literal">/usr/local/etc/devd/nut-usb.conf</code> to set USB device permissions. <span class="emphasis"><em>devd</em></span> needs to be restarted  for these rules to apply:</p><pre class="literallayout"># service devd restart</pre><p>(Re-)connect the device after restarting <span class="emphasis"><em>devd</em></span> and check that the USB device has the proper
+permissions. Check the last entries of the system message buffer. You should
+find an entry like</p><pre class="literallayout"># dmesg | tail
+[...]
+ugen0.2: &lt;INNO TECH USB to Serial&gt; at usbus0</pre><p>The device file must be owned by group <code class="literal">uucp</code> and must be group
+read-/writable. In the example from above this would be</p><pre class="literallayout"># ls -Ll /dev/ugen0.2
+crw-rw----  1 root  uucp  0xa5 Mar 12 10:33 /dev/ugen0.2</pre><p>If the permissions are not correct, verify that your device is registered in
+<code class="literal">/usr/local/etc/devd/nut-usb.conf</code>. The vendor and product id can be found
+using:</p><pre class="literallayout"># usbconfig -u 0 -a 2 dump_device_desc</pre><p>where <code class="literal">-u</code> specifies the USB bus number and <code class="literal">-a</code> specifies the USB device index.</p><p>You are now ready to configure NUT, and start testing and using it.</p><p>You can jump directly to the
+<a class="link" href="ar01s06.html" title="6. Configuration notes">NUT configuration</a>.</p></div></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
+		Last updated 2022-04-24 16:05:03 -- Network UPS Tools 2.8.0-rc3</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s04.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s06.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

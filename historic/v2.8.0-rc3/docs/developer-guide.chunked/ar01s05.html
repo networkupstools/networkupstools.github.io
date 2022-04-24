@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>5. Driver/server socket protocol</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><link rel="home" href="index.html" title="Network UPS Tools Developer Guide" /><link rel="up" href="index.html" title="Network UPS Tools Developer Guide" /><link rel="prev" href="ar01s04.html" title="4. Creating a new driver to support another device" /><link rel="next" href="ar01s06.html" title="6. NUT configuration management with Augeas" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="ar01s04.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="ar01s06.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="sock-protocol"></a>5. Driver/server socket protocol</h2></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Two NUT websites</h3><p>This version of the page reflects NUT release <span class="emphasis"><em>v2.8.0-rc3</em></span>
+with codebase commited b065dfa32 at 2022-04-24T17:21:04+02:00</p><p>Options, features and capabilities in current development (and future
+releases) are detailed on the main site and may differ from ones
+described here.</p></div><p>Here’s a brief explanation of the text-based protocol which is used
+between the drivers and server.</p><p>The drivers may send things on the socket at any time.  They will send
+out changes to their local storage immediately, without any sort of
+prompting from the server.  As a result, the server must always check on
+any driver sockets for activity.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_formatting"></a>5.1. Formatting</h3></div></div></div><p>All parsing on either side of the socket is done by parseconf, so the
+same rules about escaping characters and "quoting multi-word elements"
+apply here.  Values which may contain odd characters are typically
+sent through pconf_encode to apply \ characters where necessary.</p><p>The "" construct is used throughout to force a multi-word value to stay
+together on its way to the other end.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_commands_used_by_the_drivers"></a>5.2. Commands used by the drivers</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_setinfo"></a>SETINFO</h4></div></div></div><pre class="literallayout">SETINFO &lt;varname&gt; "&lt;value&gt;"</pre><pre class="literallayout">SETINFO ups.status "OB LB"</pre><p>There is no "ADDINFO" — if a given variable does not exist, it is
+created upon receiving the first SETINFO command.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_delinfo"></a>DELINFO</h4></div></div></div><pre class="literallayout">DELINFO &lt;varname&gt;</pre><pre class="literallayout">DELINFO ups.temperature</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_addenum"></a>ADDENUM</h4></div></div></div><pre class="literallayout">ADDENUM &lt;varname&gt; "&lt;value&gt;"</pre><pre class="literallayout">ADDENUM input.transfer.low "95"</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_delenum"></a>DELENUM</h4></div></div></div><pre class="literallayout">DELENUM &lt;varname&gt; "&lt;value&gt;"</pre><pre class="literallayout">DELENUM input.transfer.low "98"</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_addrange"></a>ADDRANGE</h4></div></div></div><pre class="literallayout">ADDRANGE &lt;varname&gt; &lt;minvalue&gt; &lt;maxvalue&gt;</pre><pre class="literallayout">ADDRANGE input.transfer.low 95 100</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_delrange"></a>DELRANGE</h4></div></div></div><pre class="literallayout">DELRANGE &lt;varname&gt; &lt;minvalue&gt; &lt;maxvalue&gt;</pre><pre class="literallayout">DELRANGE input.transfer.low 95 100</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_setaux"></a>SETAUX</h4></div></div></div><pre class="literallayout">SETAUX &lt;varname&gt; &lt;numeric value&gt;</pre><pre class="literallayout">SETAUX ups.id 8</pre><p>This overrides any previous value.  The auxiliary value is presently
+used as a length byte for read-write variables that are strings.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_setflags"></a>SETFLAGS</h4></div></div></div><pre class="literallayout">SETFLAGS &lt;varname&gt; &lt;flag&gt;...</pre><pre class="literallayout">SETFLAGS ups.id RW STRING</pre><p>Note that this command takes a variable number of arguments, as multiple
+flags are supported.  Also note that they are not crammed together in
+"", since "RW STRING" would mean something completely different.</p><p>This also replaces any previous flags for a given variable.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_addcmd"></a>ADDCMD</h4></div></div></div><pre class="literallayout">ADDCMD &lt;cmdname&gt;</pre><pre class="literallayout">ADDCMD load.off</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_delcmd"></a>DELCMD</h4></div></div></div><pre class="literallayout">DELCMD &lt;cmdname&gt;</pre><pre class="literallayout">DELCMD load.on</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_dumpdone"></a>DUMPDONE</h4></div></div></div><pre class="literallayout">DUMPDONE</pre><p>This is only used to tell the server that every possible item has been
+transmitted in response to its DUMPALL request.  Once this has been
+received by the server, it can be sure that it knows everything that the
+driver does.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_pong"></a>PONG</h4></div></div></div><pre class="literallayout">PONG</pre><p>This is sent in response to a PING from the server.  It is only used as
+a sanity check to make sure that the driver has not gotten stuck
+somewhere.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_dataok"></a>DATAOK</h4></div></div></div><pre class="literallayout">DATAOK</pre><p>This means that the driver is able to communicate with the UPS, and the
+data should be treated as usable.  It is always sent at the end of the
+dump if the data is not stale.  It may also be sent at other times.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_datastale"></a>DATASTALE</h4></div></div></div><pre class="literallayout">DATASTALE</pre><p>This is sent by the driver to inform any listeners that the data is no
+longer usable.  This usually means that the driver is unable to get any
+sort of meaningful response from the UPS.  You must not rely on any
+status information once this has been sent.</p><p>This will be sent in the beginning of a dump if the data is stale, and
+may be repeated.  It is cleared by DATAOK.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_tracking"></a>TRACKING</h4></div></div></div><pre class="literallayout">TRACKING &lt;id&gt; &lt;value&gt;</pre><p>This is sent in response to an INSTCMD or SET VAR that includes a TRACKING,
+upon completion of request execution by the driver. &lt;value&gt; is the integer
+return value from the driver handlers instcmd and setvar (see
+drivers/upshandler.h). The server is in charge of translating these codes into
+strings, as per docs/net-protocol.txt GET TRACKING.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_commands_sent_by_the_server"></a>5.3. Commands sent by the server</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_ping"></a>PING</h4></div></div></div><pre class="literallayout">PING</pre><p>This is sent to check on the health of a driver.  The server should only
+send this when it hasn’t heard anything valid from a driver recently.
+Some drivers have very little to say in terms of updates, and this may
+be the only communications they have with the server on a normal basis.</p><p>If a driver does not respond with the PONG within a few seconds at the
+most, it should be treated as dead/unavailable.  Data stored in the
+server must not be passed on to the clients when this happens.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_instcmd_2"></a>INSTCMD</h4></div></div></div><pre class="literallayout">INSTCMD &lt;cmdname&gt; [&lt;cmdparam&gt;] [TRACKING &lt;id&gt;]</pre><pre class="literallayout">INSTCMD panel.test.start
+INSTCMD load.off 10
+INSTCMD load.on 10 TRACKING 1bd31808-cb49-4aec-9d75-d056e6f018d2</pre><p>NOTE:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+&lt;cmdparam&gt; is an additional and optional parameter for the command,
+</li><li class="listitem">
+"TRACKING &lt;id&gt;" can be provided to track commands execution status, if
+TRACKING was set to ON on upsd. In this case, driver will later return
+the execution status, using TRACKING.
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_set_2"></a>SET</h4></div></div></div><pre class="literallayout">SET &lt;varname&gt; "&lt;value&gt;" [TRACKING &lt;id&gt;]</pre><pre class="literallayout">SET ups.id "Data room"
+SET ups.id "Data room" TRACKING 2dedb58a-3b91-4fab-831f-c8af4b90760a</pre><p>NOTE:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+"TRACKING &lt;id&gt;" can be provided to track commands execution status, if
+TRACKING was set to ON on upsd. In this case, driver will later return
+the execution status, using TRACKING.
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_dumpall"></a>DUMPALL</h4></div></div></div><pre class="literallayout">DUMPALL</pre><p>The server uses this to request a complete copy of everything the driver
+knows.  This is returned in the form of the same commands (SETINFO,
+etc.) that would be used if they were being updated normally.  As a
+result, the same parsing happens either way.</p><p>The server can tell when it has a full copy of the data by waiting for
+DUMPDONE.  That special response from the driver is sent once the entire
+set has been transmitted.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_design_notes"></a>5.4. Design notes</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_requests"></a>Requests</h4></div></div></div><p>There is no way to request just one variable.  This was done on purpose
+to limit the complexity of the drivers.  Their job is to send out
+updates and handle a few simple requests.  DUMPALL is provided to give
+the server a known foundation.</p><p>To track a limited set of variables, a server just needs to do DUMPALL,
+then only have handlers that remember values for the variables that
+matter.  Anything else should be ignored.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_access_security"></a>Access/Security</h4></div></div></div><p>There are no access controls in the drivers.  Anything that can connect
+to their sockets can make requests, including SET and INSTCMD if
+supported by the driver and hardware.  These sockets must be kept
+secure.  If your operating system does not honor permissions or modes on
+sockets, then you must store them in a directory with suitable
+permissions to limit access.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_command_limitations"></a>Command limitations</h4></div></div></div><p>As parseconf is used to handle decoding and chunking of the data, there
+are some limits on what may be used.  These default to 32 arguments of
+512 characters each, which should be more than enough for everything
+which is currently needed by the software.</p><p>These limits are strictly for sanity purposes, and may be raised if
+necessary.  parseconf itself can handle vast numbers of arguments and
+characters, with some speed penalty as things get really big.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_re_establishing_communications"></a>Re-establishing communications</h4></div></div></div><p>If the server loses its connection to the driver and later reconnects,
+it must flush any local storage and start again with DUMPALL.  The
+driver may have changed the internal state considerably during that
+time, and anything other approach could leave old elements behind.</p></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
+		Last updated 2022-04-24 16:05:03 -- Network UPS Tools 2.8.0-rc3</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s04.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s06.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

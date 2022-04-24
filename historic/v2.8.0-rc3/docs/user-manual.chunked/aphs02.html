@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>H.2. Optional features</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><link rel="home" href="index.html" title="Network UPS Tools User Manual" /><link rel="up" href="aph.html" title="H. Configure options" /><link rel="prev" href="aphs01.html" title="H.1. Driver selection" /><link rel="next" href="aphs03.html" title="H.3. Other configuration options" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="aphs01.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="aphs03.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_optional_features"></a>H.2. Optional features</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_cgi_client_interface"></a>CGI client interface</h4></div></div></div><pre class="literallayout">--with-cgi (default: no)</pre><p>Build and install the optional CGI programs, HTML files, and sample
+CGI configuration files. This is not enabled by default, as they
+are only useful on web servers. See <a class="ulink" href="data/html/README" target="_top">data/html/README</a> for additional
+information on how to set up CGI programs.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_pretty_documentation_and_man_pages"></a>Pretty documentation and man pages</h4></div></div></div><pre class="literallayout">--with-doc=&lt;output-format(s)&gt;  (default: no)</pre><p>Build and install NUT documentation file(s).</p><p>This feature requires AsciiDoc 8.6.3 or newer (see <a class="ulink" href="https://asciidoc.org" target="_top">https://asciidoc.org</a>).</p><p>The possible documentation type values are:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<code class="literal">html-single</code> for single page HTML,
+</li><li class="listitem">
+<code class="literal">html-chunked</code> for multi-paged HTML,
+</li><li class="listitem">
+<code class="literal">pdf</code> for a PDF file, and
+</li><li class="listitem">
+<code class="literal">man</code> for the usual manpages.
+</li></ul></div><p>Other values understood for this option are listed below:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+If the <code class="literal">--with-doc</code> argument is passed without a list, or specifies
+  just <code class="literal">=yes</code> or <code class="literal">=all</code>, it enables all supported formats with a <code class="literal">=yes</code>
+  to require them.
+</li><li class="listitem">
+An (explicit!) <code class="literal">--with-doc=auto</code> argument tries to enable all supported
+  formats with an <code class="literal">=auto</code> but should not fail the build if something
+  can not be generated.
+</li><li class="listitem">
+A <code class="literal">--with-doc=no</code> quietly skips generation of all types of documentation,
+  including manpages.
+</li><li class="listitem">
+<code class="literal">--with-doc=skip</code> is used to configure some of the <code class="literal">make distcheck*</code>
+  scenarios to re-use man page files built and distributed by the main
+  build and not waste time on re-generation of those.
+</li></ul></div><p>Multiple documentation format values can be specified, separated with comma.
+Each such value can be suffixed with <code class="literal">=yes</code> to require building of this one
+documentation format (abort configuration if tools are missing), <code class="literal">=auto</code> to
+detect and enable if we can build it on this system (and not abort if we
+can not), and <code class="literal">=no</code> (or <code class="literal">=skip</code>) to explicitly skip generation of this
+document format even if we do have the tools to build it.</p><p>If a document format is mentioned in the list without a suffix, then it is
+treated as a <code class="literal">=yes</code> requirement.</p><p>Verbose output can be enabled using: <code class="literal">ASCIIDOC_VERBOSE=-v make</code></p><p>Example valid formats of this flag:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<code class="literal">--with-doc</code> without an argument, effectively same as <code class="literal">--with-doc=yes</code>
+</li><li class="listitem">
+<code class="literal">--with-doc=</code> is a valid empty list, effectively same as <code class="literal">--with-doc=no</code>
+</li><li class="listitem">
+<code class="literal">--with-doc=auto</code>
+</li><li class="listitem">
+<code class="literal">--with-doc=pdf,html-chunked</code>
+</li><li class="listitem">
+<code class="literal">--with-doc=man=no,pdf=auto,html-single</code>
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_development_files"></a>Development files</h4></div></div></div><pre class="literallayout">--with-dev (default: no)</pre><p>Build and install the upsclient and nutclient library and header files, to
+build further projects against NUT (such as wmNUT client and many others).</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_options_for_developers"></a>Options for developers</h4></div></div></div><pre class="literallayout">--enable-check-NIT (default: no)</pre><p>Add <code class="literal">make check-NIT</code> to default activity of <code class="literal">make check</code> to run the
+NUT Integration Testing suite. This is potentially dangerous (e.g. due
+to port conflicts when running many such tests in same environment),
+so not active by default.</p><pre class="literallayout">--enable-maintainer-mode (default: no)</pre><p>Use maintainer mode to keep <code class="literal">Makefile.in</code> and <code class="literal">Makefile</code> in sync with
+ever-changing <code class="literal">Makefile.am</code> content after Git updates or editing.</p><pre class="literallayout">--enable-cppcheck (default: no)</pre><p>Activate recipes for static analysis with <code class="literal">cppcheck</code> tools (if available).</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_i_want_it_all"></a>I want it all!</h4></div></div></div><pre class="literallayout">--with-all (no default)</pre><p>Build and install all of the above (the serial, USB, SNMP, XML/HTTP and
+PowerMan drivers, the CGI programs and HTML files, and the upsclient
+library).</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_networking_transport_security"></a>Networking transport security</h4></div></div></div><pre class="literallayout">--with-ssl (default: auto-detect)
+--with-nss (default: auto-detect)
+--with-openssl (default: auto-detect)</pre><p>Enable SSL support, using either Mozilla NSS or OpenSSL.</p><p>If both are present, and nothing was specified, OpenSSL support will
+be preferred.</p><p>Read <a class="ulink" href="docs/security.txt" target="_top">docs/security.txt</a> for instructions on SSL support.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>Currently the two implementations differ in supported features.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_networking_access_security"></a>Networking access security</h4></div></div></div><pre class="literallayout">--with-wrap (default: auto-detect)</pre><p>Enable libwrap (tcp-wrappers) support.</p><p>Refer to <a class="ulink" href="../man/upsd.html" target="_top">upsd(8)</a> man page for more information.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_networking_ipv6"></a>Networking IPv6</h4></div></div></div><pre class="literallayout">--with-ipv6 (default: auto-detect)</pre><p>Enable IPv6 support.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_avahi_mdns"></a>AVAHI/mDNS</h4></div></div></div><pre class="literallayout">--with-avahi (default: auto-detect)</pre><p>Build and install Avahi support, to publish NUT server availability
+using mDNS protocol.  This requires Avahi development files for the
+Core and Client parts.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_libltdl"></a>LibLTDL</h4></div></div></div><pre class="literallayout">--with-libltdl (default: auto-detect)</pre><p>Enable libltdl (Libtool dlopen abstraction) support.</p><p>This is required to build <code class="literal">nut-scanner</code> which loads third-party libraries
+dynamically, based on requested scanning options. This allows to build and
+package the tool without requiring all possible dependencies to be installed
+in each run-time environment.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
+		Last updated 2022-04-24 16:05:03 -- Network UPS Tools 2.8.0-rc3</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="aphs01.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="aph.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="aphs03.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
