@@ -1,0 +1,132 @@
+# From https://github.com/networkupstools/nut/issues/578
+
+# CyberPower OR500LCDRM1U - Inexpensive 1U rack mount UPS
+# https://www.cyberpowersystems.com/product/ups/or500lcdrm1u/
+
+# This UPS has the same ondelay/offdelay issue that other Cyberpower UPS's
+# have, the UPS expects minutes for those values, and rounds down.
+# So the default values of 20 and 30 get rounded down so the UPS shuts
+# off immediately.
+
+# The ondelay for this model doesn't work very well.
+# If you give it a value of 60 seconds, the UPS will power back
+# on the load after 60 seconds even if the mains power isn't back.
+# An ondelay=-1 disables the auto start behavior.
+# Setting an ondelay value of 0 seems to be the only useful value.
+# With ondelay=0 the UPS will start back up immediately if the power
+# is restored after the UPS shuts down, and it will restart the load
+# approximately 10 seconds after a shutdown if the power comes back
+# after the shutdown with delay command is sent.
+# I would suggest that if the default values are changed for cyberpower
+# models, that the ondelay be set to a default of 0, and the
+# offdelay be set to 60.
+
+# I've successfully tested the shutdown behavior with this UPS with
+# a FreeBSD system (pfSense firewall). The offdelay must be set greater
+# than 60 and the ondelay must be set to 0 for correct behavior.
+# (FreeBSD doesn't remount into a RO mode during shutdown, so delayed
+# shutdown is absolutely needed to prevent disk corruption).
+
+# One last note is that this system doesn't seem to have any nonvolatile
+# storage, any values set via upsrw are lost when the UPS is restarted.
+# So if you want to tweak certain settings you will need to have a way
+# to reset them any time the UPS resets.
+
+# :; upsc or500
+battery.charge: 100
+battery.charge.low: 10
+battery.charge.warning: 20
+battery.mfr.date: CPS
+battery.runtime: 4080
+battery.runtime.low: 300
+battery.type: PbAcid
+battery.voltage: 13.4
+battery.voltage.nominal: 12
+device.mfr: CPS
+device.model: UPS OR500
+device.type: ups
+driver.name: usbhid-ups
+driver.parameter.offdelay: 60
+driver.parameter.ondelay: 0
+driver.parameter.pollfreq: 30
+driver.parameter.pollinterval: 10
+driver.parameter.port: auto
+driver.parameter.synchronous: no
+driver.version: 2.7.4
+driver.version.data: CyberPower HID 0.4
+driver.version.internal: 0.41
+input.transfer.high: 140
+input.transfer.low: 90
+input.voltage: 121.0
+input.voltage.nominal: 120
+output.voltage: 121.0
+ups.beeper.status: enabled
+ups.delay.shutdown: 20
+ups.delay.start: 30
+ups.load: 12
+ups.mfr: CPS
+ups.model: UPS OR500
+ups.productid: 0601
+ups.realpower.nominal: 300
+ups.status: OL
+ups.test.result: Done and passed
+ups.timer.shutdown: -60
+ups.timer.start: -60
+ups.vendorid: 0764
+
+# :; upsrw or500
+# [battery.charge.low]
+# Remaining battery level when UPS switches to LB (percent)
+# Type: STRING
+# Maximum length: 10
+# Value: 10
+#
+# [battery.runtime.low]
+# Remaining battery runtime when UPS switches to LB (seconds)
+# Type: STRING
+# Maximum length: 10
+# Value: 300
+#
+# [input.transfer.high]
+# High voltage transfer point (V)
+# Type: STRING
+# Maximum length: 10
+# Value: 140
+#
+# [input.transfer.low]
+# Low voltage transfer point (V)
+# Type: STRING
+# Maximum length: 10
+# Value: 90
+#
+# [ups.delay.shutdown]
+# Interval to wait after shutdown with delay command (seconds)
+# Type: STRING
+# Maximum length: 10
+# Value: 20
+#
+# [ups.delay.start]
+# Interval to wait before (re)starting the load (seconds)
+# Type: STRING
+# Maximum length: 10
+# Value: 30
+
+# :; upscmd -l or500
+# Instant commands supported on UPS [or500]:
+#
+# beeper.disable - Disable the UPS beeper
+# beeper.enable - Enable the UPS beeper
+# beeper.mute - Temporarily mute the UPS beeper
+# beeper.off - Obsolete (use beeper.disable or beeper.mute)
+# beeper.on - Obsolete (use beeper.enable)
+# load.off - Turn off the load immediately
+# load.off.delay - Turn off the load with a delay (seconds)
+# load.on - Turn on the load immediately
+# load.on.delay - Turn on the load with a delay (seconds)
+# shutdown.return - Turn off the load and return when power is back
+# shutdown.stayoff - Turn off the load and remain off
+# shutdown.stop - Stop a shutdown in progress
+# test.battery.start.deep - Start a deep battery test
+# test.battery.start.quick - Start a quick battery test
+# test.battery.stop - Stop the battery test
+

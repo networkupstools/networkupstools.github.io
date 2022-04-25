@@ -1,0 +1,155 @@
+# From https://github.com/networkupstools/nut/issues/867 :
+# Manufacturer: nJoy
+# Device: Keen 600 USB
+# Website: https://www.njoy.ro/UPS/keen-600 No separate site for USB version.
+#
+# It doesn't report battery.charge nor battery.runtime
+# Shutdown sequence working, as I set AT ONBATT * START-TIMER shutdown 30
+# in upssched.conf. I guess AT LOWBATT won't work without reported charge.
+#
+# The usb-serial adapter is built into the UPS. I didn't install anything
+# extra manually, the driver is built into the kernel.
+#
+# See also nJoy__Keen-600__blazer_ser__2.7.4__02.dev
+#   and    nJoy__Keen-600__nutdrv_qx__2.7.4__01.dev
+
+# upsc on main power
+
+battery.voltage: 13.70
+battery.voltage.high: -1.08
+battery.voltage.low: -0.87
+device.type: ups
+driver.name: blazer_ser
+driver.parameter.pollinterval: 2
+driver.parameter.port: /dev/ttyUSB0
+driver.parameter.synchronous: no
+driver.version: 2.7.4
+driver.version.internal: 1.57
+input.frequency: 50.2
+input.voltage: 232.0
+input.voltage.fault: 0.0
+output.voltage: 229.0
+ups.beeper.status: enabled
+ups.delay.shutdown: 30
+ups.delay.start: 180
+ups.load: 12
+ups.status: OL
+ups.temperature: 25.0
+ups.type: offline / line interactive
+
+# :; cat /var/log/syslog | grep upsd
+#
+# upsdrvctl[12484]: Error: no UPS definitions found in ups.conf
+# upsdrvctl[12484]: Network UPS Tools - UPS driver controller 2.7.4
+# upsd[12485]: upsd disabled, please adjust the configuration to your needs
+# upsd[12485]: Then set MODE to a suitable value in /etc/nut/nut.conf to enable it
+# upsdrvctl[12622]: Supported UPS detected with megatec protocol
+# upsdrvctl[12622]: Rating information unavailable
+# upsdrvctl[12622]: Vendor information unavailable
+# upsdrvctl[12622]: No values provided for battery high/low voltages in ups.conf
+# upsdrvctl[12622]: Using 'guestimation' (low: -0.866667, high: -1.083333)!
+# upsdrvctl[12622]: Battery runtime will not be calculated (runtimecal not set)
+# upsdrvctl[12622]: Network UPS Tools - UPS driver controller 2.7.4
+# upsdrvctl[12643]: Network UPS Tools - UPS driver controller 2.7.4
+# upsdrvctl[12650]: Supported UPS detected with megatec protocol
+# upsdrvctl[12650]: Rating information unavailable
+# upsdrvctl[12650]: Vendor information unavailable
+# upsdrvctl[12650]: No values provided for battery high/low voltages in ups.conf
+# upsdrvctl[12650]: Using 'guestimation' (low: -0.866667, high: -1.083333)!
+# upsdrvctl[12650]: Battery runtime will not be calculated (runtimecal not set)
+# upsdrvctl[12650]: Network UPS Tools - UPS driver controller 2.7.4
+# upsdrvctl[12656]: Network UPS Tools - UPS driver controller 2.7.4
+# upsdrvctl[12661]: Supported UPS detected with megatec protocol
+# upsdrvctl[12661]: Rating information unavailable
+# upsdrvctl[12661]: Vendor information unavailable
+# upsdrvctl[12661]: No values provided for battery high/low voltages in ups.conf
+# upsdrvctl[12661]: Using 'guestimation' (low: -0.866667, high: -1.083333)!
+# upsdrvctl[12661]: Battery runtime will not be calculated (runtimecal not set)
+# upsdrvctl[12661]: Network UPS Tools - UPS driver controller 2.7.4
+# upsd[12669]: fopen /var/run/nut/upsd.pid: No such file or directory
+# upsd[12669]: listening on ::1 port 3493
+# upsd[12669]: listening on ::1 port 3493
+# upsd[12669]: listening on 127.0.0.1 port 3493
+# upsd[12669]: listening on 127.0.0.1 port 3493
+# upsd[12669]: Connected to UPS [ups]: blazer_ser-ups
+# upsd[12669]: Connected to UPS [ups]: blazer_ser-ups
+# upsd[12670]: Startup successful
+
+# :; cat /etc/nut/ups.conf
+#
+# [ups]
+#   driver = blazer_ser
+#   port = /dev/ttyUSB0
+
+# :; lsusb -vvv
+#
+# Bus 001 Device 003: ID 1a86:7523 QinHeng Electronics HL-340 USB-Serial adapter
+# Device Descriptor:
+#   bLength                18
+#   bDescriptorType         1
+#   bcdUSB               1.10
+#   bDeviceClass          255 Vendor Specific Class
+#   bDeviceSubClass         0
+#   bDeviceProtocol         0
+#   bMaxPacketSize0         8
+#   idVendor           0x1a86 QinHeng Electronics
+#   idProduct          0x7523 HL-340 USB-Serial adapter
+#   bcdDevice            2.64
+#   iManufacturer           0
+#   iProduct                2 USB Serial
+#   iSerial                 0
+#   bNumConfigurations      1
+#   Configuration Descriptor:
+#     bLength                 9
+#     bDescriptorType         2
+#     wTotalLength       0x0027
+#     bNumInterfaces          1
+#     bConfigurationValue     1
+#     iConfiguration          0
+#     bmAttributes         0x80
+#       (Bus Powered)
+#     MaxPower               98mA
+#     Interface Descriptor:
+#       bLength                 9
+#       bDescriptorType         4
+#       bInterfaceNumber        0
+#       bAlternateSetting       0
+#       bNumEndpoints           3
+#       bInterfaceClass       255 Vendor Specific Class
+#       bInterfaceSubClass      1
+#       bInterfaceProtocol      2
+#       iInterface              0
+#       Endpoint Descriptor:
+#         bLength                 7
+#         bDescriptorType         5
+#         bEndpointAddress     0x82  EP 2 IN
+#         bmAttributes            2
+#           Transfer Type            Bulk
+#           Synch Type               None
+#           Usage Type               Data
+#         wMaxPacketSize     0x0020  1x 32 bytes
+#         bInterval               0
+#       Endpoint Descriptor:
+#         bLength                 7
+#         bDescriptorType         5
+#         bEndpointAddress     0x02  EP 2 OUT
+#         bmAttributes            2
+#           Transfer Type            Bulk
+#           Synch Type               None
+#           Usage Type               Data
+#         wMaxPacketSize     0x0020  1x 32 bytes
+#         bInterval               0
+#       Endpoint Descriptor:
+#         bLength                 7
+#         bDescriptorType         5
+#         bEndpointAddress     0x81  EP 1 IN
+#         bmAttributes            3
+#           Transfer Type            Interrupt
+#           Synch Type               None
+#           Usage Type               Data
+#         wMaxPacketSize     0x0008  1x 8 bytes
+#         bInterval               1
+# can't get debug descriptor: Resource temporarily unavailable
+# Device Status:     0x0000
+#   (Bus Powered)
+

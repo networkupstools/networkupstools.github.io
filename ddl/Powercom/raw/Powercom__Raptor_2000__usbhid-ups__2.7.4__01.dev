@@ -1,0 +1,117 @@
+# Source: https://github.com/networkupstools/nut/issues/633#issuecomment-445472803
+
+# The beeper is broken identically to RPT-600AP, which behaves almost
+# identically -- probably the same USB chip, just different batteries.
+# Status is always disabled.
+
+# The device also disappears every now and then. The USB port appears
+# to reset until usbhid-ups is claimed, so I've written a udev rule:
+
+#   # This device resets itself after a second if no-one claims it.
+#   # so we claim it ASAP
+#   SUBSYSTEM=="usb", ACTION=="add", ATTR{idVendor}=="0d9f", ATTR{idProduct}=="0004", RUN+="/usr/bin/systemctl restart nut-driver"
+
+# :; upsc
+battery.charge: 74
+battery.charge.low: 10
+battery.charge.warning: 30
+battery.date: 2014/01/15
+battery.runtime: 592
+battery.type: PbAc
+device.mfr: POWERCOM Co.,LTD
+device.model: HID UPS Battery
+device.serial: 004-0D9F-000
+device.type: ups
+driver.name: usbhid-ups
+driver.parameter.pollfreq: 30
+driver.parameter.pollinterval: 2
+driver.parameter.port: auto
+driver.parameter.product: HID UPS Battery
+driver.parameter.productid: 0004
+driver.parameter.serial: 004-0D9F-000
+driver.parameter.synchronous: no
+driver.parameter.vendor: POWERCOM Co.,LTD
+driver.parameter.vendorid: 0D9F
+driver.version: 2.7.4
+driver.version.data: PowerCOM HID 0.5
+driver.version.internal: 0.41
+input.frequency: 50.0
+input.voltage: 220.0
+input.voltage.nominal: 240
+output.frequency: 50.0
+output.voltage: 220.0
+output.voltage.nominal: 240
+ups.date: 2014/01/15
+ups.delay.shutdown: 20
+ups.delay.start: 60
+ups.load: 11
+ups.mfr: POWERCOM Co.,LTD
+ups.model: HID UPS Battery
+ups.productid: 0004
+ups.serial: 004-0D9F-000
+ups.status: OL CHRG
+ups.test.result: Done and passed
+ups.timer.shutdown: 0
+ups.timer.start: 971220
+ups.vendorid: 0d9f
+
+# :; lsusb
+# Bus 001 Device 044: ID 0d9f:0004 Powercom Co., Ltd 
+# Device Descriptor:
+#   bLength                18
+#   bDescriptorType         1
+#   bcdUSB               1.10
+#   bDeviceClass            0 
+#   bDeviceSubClass         0 
+#   bDeviceProtocol         0 
+#   bMaxPacketSize0         8
+#   idVendor           0x0d9f Powercom Co., Ltd
+#   idProduct          0x0004 
+#   bcdDevice            0.02
+#   iManufacturer           3 POWERCOM Co.,LTD
+#   iProduct                1 HID UPS Battery
+#   iSerial                 2 004-0D9F-000
+#   bNumConfigurations      1
+#   Configuration Descriptor:
+#     bLength                 9
+#     bDescriptorType         2
+#     wTotalLength           34
+#     bNumInterfaces          1
+#     bConfigurationValue     1
+#     iConfiguration          0 
+#     bmAttributes         0xa0
+#       (Bus Powered)
+#       Remote Wakeup
+#     MaxPower              100mA
+#     Interface Descriptor:
+#       bLength                 9
+#       bDescriptorType         4
+#       bInterfaceNumber        0
+#       bAlternateSetting       0
+#       bNumEndpoints           1
+#       bInterfaceClass         3 Human Interface Device
+#       bInterfaceSubClass      0 
+#       bInterfaceProtocol      0 
+#       iInterface              0 
+#         HID Device Descriptor:
+#           bLength                 9
+#           bDescriptorType        33
+#           bcdHID               1.00
+#           bCountryCode            0 Not supported
+#           bNumDescriptors         1
+#           bDescriptorType        34 Report
+#           wDescriptorLength     996
+#          Report Descriptors: 
+#            ** UNAVAILABLE **
+#       Endpoint Descriptor:
+#         bLength                 7
+#         bDescriptorType         5
+#         bEndpointAddress     0x81  EP 1 IN
+#         bmAttributes            3
+#           Transfer Type            Interrupt
+#           Synch Type               None
+#           Usage Type               Data
+#         wMaxPacketSize     0x0008  1x 8 bytes
+#         bInterval             100
+# Device Status:     0x0001
+#   Self Powered

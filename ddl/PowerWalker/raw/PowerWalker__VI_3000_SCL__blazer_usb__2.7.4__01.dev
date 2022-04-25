@@ -1,0 +1,66 @@
+# Source: https://github.com/networkupstools/nut/issues/971
+# Vendor: https://powerwalker.com/?page=product&item=10121144&lang=en
+
+# Manufacturer: PowerWalker
+# Model: VI 3000 SCL
+
+# UPS sends a low battery signal that makes NUT issue a shutdown.
+# battery.charge.low and battery.runtime.low were only set as
+# failsafes during testing.
+
+# Protocol is mustek. NOTE THAT nutdrv_qx doesnt connect even
+# though it also detects it as mustek like blazer_usb, go figure.
+
+# UPS load value is always working correctly.
+# Temperature is only output when UPS is on battery, value seems correct.
+# Vendor detection has to be disabled! It doesnt give out information
+#  (fails) and causes the UPS to not answer all the time!
+# Runtime and chargetime based on Manufacturer datasheet,
+#  Min/Max Voltages measured. (Brand new unit)
+
+# UPS commands:
+#  beeper.toggle works, also gives out the correct value.
+#  load.on works
+#  load.off works
+#  shutdown.return works
+#  shutdown.stayoff doesnt work
+#  shutdown.stop works
+#  test.battery.start.deep doesnt work, responds with OK, but no action
+#  test.battery.start.quick sometimes works, always responds OK, test is sub 5 seconds
+#  test.battery.start value doesnt work, responds with OK, but no action
+#  test.battery.stop useless, because only the 5 second test works
+
+battery.charge: 59
+battery.charge.low: 5
+battery.runtime: 81983
+battery.runtime.low: 180
+battery.voltage: 24.50
+battery.voltage.high: 27.10
+battery.voltage.low: 20.10
+battery.voltage.nominal: 24.0
+device.type: ups
+driver.flag.novendor: enabled
+driver.name: blazer_usb
+driver.parameter.chargetime: 28800
+driver.parameter.idleload: 0.03
+driver.parameter.pollinterval: 2
+driver.parameter.port: auto
+driver.parameter.runtimecal: 42,100,240,50
+driver.parameter.synchronous: no
+driver.version: 2.7.4
+driver.version.internal: 0.12
+input.current.nominal: 13.0
+input.frequency: 50.1
+input.frequency.nominal: 50
+input.voltage: 228.5
+input.voltage.fault: 228.5
+input.voltage.nominal: 230
+output.voltage: 228.5
+ups.beeper.status: enabled
+ups.delay.shutdown: 30
+ups.delay.start: 180
+ups.load: 0
+ups.productid: 5161
+ups.status: OL
+ups.type: offline / line interactive
+ups.vendorid: 0665

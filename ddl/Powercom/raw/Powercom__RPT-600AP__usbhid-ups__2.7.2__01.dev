@@ -1,0 +1,178 @@
+# Source: https://github.com/networkupstools/nut/issues/633
+# Vendor: http://pcmups.com.tw/eA/html/product/show.php?num=226&root=13&kind=105&page=1&keyword=
+
+# Sometimes `ups.beeper.status: disabled` disappears from upsc output after
+# invoking `beeper.disable` or `beeper.enable` command, but the commands are
+# processed as expected. `ups.beeper.status` never shown as enabled in upsc
+# report.
+# When UPS in warning state, `beeper.disable` does not disable beeper.
+# Beeper could be disabled in this mode only by hardware button.
+
+# https://github.com/networkupstools/nut/issues/634
+# Setting battery charge works with config file (because `upsrw` errors out):
+# [RPT-600AP]
+#        driver = usbhid-ups
+#        port = auto
+#        vendorid = 0d9f
+#        ignorelb
+#        override.battery.charge.low = 70
+#        override.battery.charge.warning = 80
+
+# See also comments for Raptor 2000 with similar issues.
+
+# This UPS occasionally disconnects, and driver begins reporting "Data Stale"
+# As a workaround, in upsmon.conf declare:
+# ...
+# NOTIFYCMD "/home/user/bin/upsmon_notify.sh"
+# ...
+# NOTIFYFLAG ONLINE       SYSLOG+EXEC
+# NOTIFYFLAG ONBATT       SYSLOG+EXEC
+# NOTIFYFLAG LOWBATT      SYSLOG+EXEC
+# NOTIFYFLAG FSD  SYSLOG+EXEC
+# NOTIFYFLAG COMMOK       SYSLOG+WALL+EXEC
+# NOTIFYFLAG COMMBAD      SYSLOG+EXEC
+# NOTIFYFLAG SHUTDOWN     SYSLOG+EXEC
+# NOTIFYFLAG REPLBATT     SYSLOG+EXEC
+# NOTIFYFLAG NOCOMM       SYSLOG+EXEC
+# NOTIFYFLAG NOPARENT     SYSLOG+EXEC
+# ...
+
+# :; cat /home/user/bin/upsmon_notify.sh
+# #!/bin/bash
+# /usr/bin/logger -t NOTIFYCMD "${NOTIFYTYPE} ${UPSNAME}"
+# if [ "${NOTIFYTYPE}" = "COMMBAD" ]; then
+#   /usr/bin/logger -t NOTIFYCMD "Restarting upsdrvctl..."
+#   /sbin/upsdrvctl stop 
+#   /sbin/upsdrvctl -D start
+# fi
+
+# :;  cat /etc/nut/ups.conf
+# maxretry = 3
+# [RPT-600AP]
+#    driver = usbhid-ups
+#    port = auto
+#    vendorid = 0d9f
+
+# :; upsc RPT-600AP
+battery.charge: 100
+battery.charge.low: 10
+battery.charge.warning: 30
+battery.date: 2014/01/15
+battery.runtime: 800
+battery.type: PbAc
+device.mfr: POWERCOM Co.,LTD
+device.model: HID UPS Battery
+device.serial: 004-0D9F-000
+device.type: ups
+driver.name: usbhid-ups
+driver.parameter.pollfreq: 30
+driver.parameter.pollinterval: 2
+driver.parameter.port: auto
+driver.parameter.vendorid: 0d9f
+driver.version: 2.7.2
+driver.version.data: PowerCOM HID 0.4
+driver.version.internal: 0.38
+input.frequency: 50.0
+input.voltage: 226.0
+input.voltage.nominal: 220
+output.frequency: 50.0
+output.voltage: 226.0
+output.voltage.nominal: 220
+ups.beeper.status: disabled
+ups.date: 2014/01/15
+ups.delay.shutdown: 20
+ups.delay.start: 60
+ups.load: 0
+ups.mfr: POWERCOM Co.,LTD
+ups.model: HID UPS Battery
+ups.productid: 0004
+ups.serial: 004-0D9F-000
+ups.status: OL
+ups.test.result: Done and passed
+ups.timer.shutdown: 0
+ups.timer.start: 740160
+ups.vendorid: 0d9f
+
+# :; upsrw RPT-600AP
+# [ups.delay.shutdown]
+# Interval to wait after shutdown with delay command (seconds)
+# Type: STRING
+# Maximum length: 8
+# Value: 20
+# [ups.delay.start]
+# Interval to wait before (re)starting the load (seconds)
+# Type: STRING
+# Maximum length: 8
+# Value: 60
+
+# :; upscmd -l RPT-600AP
+# Instant commands supported on UPS [RPT-600AP]:
+# beeper.disable - Disable the UPS beeper
+# beeper.enable - Enable the UPS beeper
+# beeper.toggle - Toggle the UPS beeper
+# load.on - Turn on the load immediately
+# load.on.delay - Turn on the load with a delay (seconds)
+# shutdown.return - Turn off the load and return when power is back
+# shutdown.stayoff - Turn off the load and remain off
+# test.battery.start.quick - Start a quick battery test
+
+# :; lsusb -d 0d9f:0004 -v
+# Bus 002 Device 002: ID 0d9f:0004 Powercom Co., Ltd 
+# Device Descriptor:
+#   bLength                18
+#   bDescriptorType         1
+#   bcdUSB               1.10
+#   bDeviceClass            0 (Defined at Interface level)
+#   bDeviceSubClass         0 
+#   bDeviceProtocol         0 
+#   bMaxPacketSize0         8
+#   idVendor           0x0d9f Powercom Co., Ltd
+#   idProduct          0x0004 
+#   bcdDevice            0.02
+#   iManufacturer           3 POWERCOM Co.,LTD
+#   iProduct                1 HID UPS Battery
+#   iSerial                 2 004-0D9F-000
+#   bNumConfigurations      1
+#   Configuration Descriptor:
+#     bLength                 9
+#     bDescriptorType         2
+#     wTotalLength           34
+#     bNumInterfaces          1
+#     bConfigurationValue     1
+#     iConfiguration          0 
+#     bmAttributes         0xa0
+#       (Bus Powered)
+#       Remote Wakeup
+#     MaxPower              100mA
+#     Interface Descriptor:
+#       bLength                 9
+#       bDescriptorType         4
+#       bInterfaceNumber        0
+#       bAlternateSetting       0
+#       bNumEndpoints           1
+#       bInterfaceClass         3 Human Interface Device
+#       bInterfaceSubClass      0 No Subclass
+#       bInterfaceProtocol      0 None
+#       iInterface              0 
+#         HID Device Descriptor:
+#           bLength                 9
+#           bDescriptorType        33
+#           bcdHID               1.00
+#           bCountryCode            0 Not supported
+#           bNumDescriptors         1
+#           bDescriptorType        34 Report
+#           wDescriptorLength     996
+#          Report Descriptors: 
+#            ** UNAVAILABLE **
+#       Endpoint Descriptor:
+#         bLength                 7
+#         bDescriptorType         5
+#         bEndpointAddress     0x81  EP 1 IN
+#         bmAttributes            3
+#           Transfer Type            Interrupt
+#           Synch Type               None
+#           Usage Type               Data
+#         wMaxPacketSize     0x0008  1x 8 bytes
+#         bInterval             100
+# Device Status:     0x0001
+#   Self Powered 

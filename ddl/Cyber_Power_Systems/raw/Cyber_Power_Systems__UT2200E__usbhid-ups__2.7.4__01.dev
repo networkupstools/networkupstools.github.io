@@ -1,0 +1,161 @@
+# From https://github.com/networkupstools/nut/issues/556
+
+# Description can be found here:
+# https://www.cyberpower.com/ww/en/product/sku/UT2200E
+
+# passed test.battery.start.quick
+# poweroff and poweron can add later
+
+# :; upsc cps1500avr@127.0.0.1
+battery.charge: 85
+battery.charge.low: 10
+battery.charge.warning: 20
+battery.mfr.date: CPS
+battery.runtime: 1566
+battery.runtime.low: 300
+battery.type: PbAcid
+battery.voltage: 23.8
+battery.voltage.nominal: 24
+device.mfr: CPS
+device.model: UT2200E
+device.type: ups
+driver.name: usbhid-ups
+driver.parameter.pollfreq: 30
+driver.parameter.pollinterval: 2
+driver.parameter.port: auto
+driver.parameter.synchronous: no
+driver.version: 2.7.4
+driver.version.data: CyberPower HID 0.4
+driver.version.internal: 0.41
+input.transfer.high: 0
+input.transfer.low: 0
+input.voltage: 223.0
+input.voltage.nominal: 230
+output.voltage: 229.0
+ups.beeper.status: enabled
+ups.delay.shutdown: 20
+ups.delay.start: 30
+ups.load: 12
+ups.mfr: CPS
+ups.model: UT2200E
+ups.productid: 0501
+ups.realpower.nominal: 1320
+ups.status: OL CHRG
+ups.test.result: Done and passed
+ups.timer.shutdown: -60
+ups.timer.start: -60
+ups.vendorid: 0764
+
+# :; lsusb -v -s 007:002
+#     Bus 007 Device 002: ID 0764:0501 Cyber Power System, Inc. CP1500 AVR UPS
+#     Device Descriptor:
+#     bLength 18
+#     bDescriptorType 1
+#     bcdUSB 1.10
+#     bDeviceClass 0
+#     bDeviceSubClass 0
+#     bDeviceProtocol 0
+#     bMaxPacketSize0 8
+#     idVendor 0x0764 Cyber Power System, Inc.
+#     idProduct 0x0501 CP1500 AVR UPS
+#     bcdDevice 0.01
+#     iManufacturer 3 CPS
+#     iProduct 1 UT2200E
+#     iSerial 0
+#     bNumConfigurations 1
+#     Configuration Descriptor:
+#     bLength 9
+#     bDescriptorType 2
+#     wTotalLength 0x0022
+#     bNumInterfaces 1
+#     bConfigurationValue 1
+#     iConfiguration 0
+#     bmAttributes 0x80
+#     (Bus Powered)
+#     MaxPower 50mA
+#     Interface Descriptor:
+#     bLength 9
+#     bDescriptorType 4
+#     bInterfaceNumber 0
+#     bAlternateSetting 0
+#     bNumEndpoints 1
+#     bInterfaceClass 3 Human Interface Device
+#     bInterfaceSubClass 0
+#     bInterfaceProtocol 0
+#     iInterface 0
+#     HID Device Descriptor:
+#     bLength 9
+#     bDescriptorType 33
+#     bcdHID 1.10
+#     bCountryCode 33 US
+#     bNumDescriptors 1
+#     bDescriptorType 34 Report
+#     wDescriptorLength 562
+#     Report Descriptors:
+#     ** UNAVAILABLE **
+#     Endpoint Descriptor:
+#     bLength 7
+#     bDescriptorType 5
+#     bEndpointAddress 0x81 EP 1 IN
+#     bmAttributes 3
+#     Transfer Type Interrupt
+#     Synch Type None
+#     Usage Type Data
+#     wMaxPacketSize 0x0008 1x 8 bytes
+#     bInterval 10
+
+# :; upsrw cps1500avr
+#     [battery.charge.low]
+#     Remaining battery level when UPS switches to LB (percent)
+#     Type: STRING
+#     Maximum length: 10
+#     Value: 10
+#
+#     [battery.runtime.low]
+#     Remaining battery runtime when UPS switches to LB (seconds)
+#     Type: STRING
+#     Maximum length: 10
+#     Value: 300
+#
+#     [input.transfer.high]
+#     High voltage transfer point (V)
+#     Type: STRING
+#     Maximum length: 10
+#     Value: 0
+#
+#     [input.transfer.low]
+#     Low voltage transfer point (V)
+#     Type: STRING
+#     Maximum length: 10
+#     Value: 0
+#
+#     [ups.delay.shutdown]
+#     Interval to wait after shutdown with delay command (seconds)
+#     Type: STRING
+#     Maximum length: 10
+#     Value: 20
+#
+#     [ups.delay.start]
+#     Interval to wait before (re)starting the load (seconds)
+#     Type: STRING
+#     Maximum length: 10
+#     Value: 30
+
+# :; upscmd -l cps1500avr
+#     Instant commands supported on UPS [cps1500avr]:
+#     beeper.disable - Disable the UPS beeper
+#     beeper.enable - Enable the UPS beeper
+#     beeper.mute - Temporarily mute the UPS beeper
+#     beeper.off - Obsolete (use beeper.disable or beeper.mute)
+#     beeper.on - Obsolete (use beeper.enable)
+#     load.off - Turn off the load immediately
+#     load.off.delay - Turn off the load with a delay (seconds)
+#     load.on - Turn on the load immediately
+#     load.on.delay - Turn on the load with a delay (seconds)
+#     shutdown.return - Turn off the load and return when power is back
+#     shutdown.stayoff - Turn off the load and remain off
+#     shutdown.stop - Stop a shutdown in progress
+#     test.battery.start.deep - Start a deep battery test
+#     test.battery.start.quick - Start a quick battery test
+#     test.battery.stop - Stop the battery test
+
