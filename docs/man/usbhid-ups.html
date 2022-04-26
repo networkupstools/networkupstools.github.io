@@ -1111,6 +1111,32 @@ If you do the same without mains present, it should do the same, but in
 this case, the outputs shall remain off until mains power is applied
 again.</p></div>
 </div>
+<div class="sect2">
+<h3 id="_ups_cuts_power_too_soon">UPS cuts power too soon</h3>
+<div class="paragraph"><p>Note that many Cyber Power Systems (CPS) models tend to divide <code>offdelay</code>
+by 60 and round down, so the minimum advisable value is 60 (seconds) to avoid
+powering off immediately after NUT sends the shutdown command to the UPS.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_ups_does_not_set_battery_charge_low_but_says_ok">UPS does not set battery.charge.low but says OK</h3>
+<div class="paragraph"><p>Note that many Cyber Power Systems (CPS) models tend to allow only certain
+values for <code>battery.charge.low</code> and anything outside of the set of allowed
+values are rounded or ignored.</p></div>
+<div class="paragraph"><p>A shell loop like this can help you map out the allowed values:</p></div>
+<div class="exampleblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>for i in `seq 90 -1 0`; do echo "set to $i"; \
+    upsrw -s battery.charge.low=$i -u * -p * cps-big; \
+    sleep 1; upsc cps-big battery.charge.low; echo ""; \
+done</code></pre>
+</div></div>
+</div></div>
+<div class="paragraph"><p>For example, for CPS PR1000LCDRTXL2U model, the only allowed values are
+<code>[60,55,50,45,40,35,30,25,20]</code> and in some cases, your UPS may effectively
+not support a value of 10 for the <code>battery.charge.low</code> setting.</p></div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -1161,7 +1187,7 @@ Arjen de Korte
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-04-23 11:56:07 UTC -- Network UPS Tools 2.7.4.1
+Last updated 2022-04-25 23:13:01 UTC -- Network UPS Tools 2.7.4.1
 </div>
 </div>
 </body>
