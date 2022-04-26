@@ -755,7 +755,7 @@ asciidoc.install();
 <td class="content">
 <div class="title">Two NUT websites</div>
 <div class="paragraph"><p>This version of the page reflects NUT release <em>v2.8.0</em>
-with codebase commited c25b30bac at 2022-04-14T17:14:08+02:00</p></div>
+with codebase commited ff16dabca at 2022-04-04T11:04:28+00:00</p></div>
 <div class="paragraph"><p>Options, features and capabilities in current development (and future
 releases) are detailed on the main site and may differ from ones
 described here.</p></div>
@@ -775,14 +775,16 @@ snmp-ups driver.  For information about the core driver, see
 <div class="sect1">
 <h2 id="_supported_hardware">SUPPORTED HARDWARE</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>The snmp-ups driver automatically detects and supports a wide range of devices by loading various MIBS, such as:</p></div>
+<div class="paragraph"><p>The snmp-ups driver automatically detects and supports a wide range of
+devices by loading various MIBS, such as:</p></div>
 <div class="dlist"><dl>
 <dt class="hdlist1">
 <strong>ietf</strong>
 </dt>
 <dd>
 <p>
-UPS that is RFC 1628 (UPS MIB) compliant, e.g. MGE UPS SYSTEMS, Liebert, perhaps others (default)
+UPS that is RFC 1628 (UPS MIB) compliant, e.g. MGE UPS SYSTEMS, Liebert,
+perhaps others (default)
 </p>
 </dd>
 <dt class="hdlist1">
@@ -790,7 +792,8 @@ UPS that is RFC 1628 (UPS MIB) compliant, e.g. MGE UPS SYSTEMS, Liebert, perhaps
 </dt>
 <dd>
 <p>
-MGE UPS SYSTEMS and MGE Office Protection Systems devices with SNMP cards (ref 66062, 66045, 66074 and 66244)
+MGE UPS SYSTEMS and MGE Office Protection Systems devices with SNMP cards
+(ref 66062, 66045, 66074 and 66244)
 </p>
 </dd>
 <dt class="hdlist1">
@@ -798,7 +801,8 @@ MGE UPS SYSTEMS and MGE Office Protection Systems devices with SNMP cards (ref 6
 </dt>
 <dd>
 <p>
-APC AP9605, AP9606, AP9617, and AP9618 APC network management cards, as well as any others supporting the APC POWERNET MIB
+APC AP9605, AP9606, AP9617, and AP9618 APC network management cards,
+as well as any others supporting the APC POWERNET MIB
 </p>
 </dd>
 <dt class="hdlist1">
@@ -878,7 +882,8 @@ HP/Compaq AF401A management card, perhaps others
 </dt>
 <dd>
 <p>
-Cyberpower RMCARD201. Should also support RMCARD100 (net version), RMCARD202 and RMCARD301
+Cyberpower RMCARD201. Should also support RMCARD100 (net version),
+RMCARD202 and RMCARD301
 </p>
 </dd>
 <dt class="hdlist1">
@@ -939,12 +944,14 @@ and exit the driver binary, intended for command-line usage like this:
 </dt>
 <dd>
 <p>
-Set MIB compliance (default=auto, allowed entries: refer to SUPPORTED HARDWARE above).
-With "auto", the driver will try a select set of SNMP objects until it finds
-one that the device responds to.  Note that since NUT 2.6.2, snmp-ups has a new
-method that uses sysObjectID (which is a pointer to the preferred MIB of the
-device) to detect supported devices.  This renders void the use of "mibs" option.
+Set MIB compliance (default=auto, allowed entries: refer to SUPPORTED
+HARDWARE above).
 </p>
+<div class="paragraph"><p>With "auto", the driver will try a select set of SNMP objects until it finds
+one that the device responds to.</p></div>
+<div class="paragraph"><p>Note that since NUT 2.6.2, snmp-ups has a new method that uses sysObjectID
+(which is a pointer to the preferred MIB of the device) to detect supported
+devices.  This renders void the <strong>requirement</strong> to use the "mibs" option.</p></div>
 </dd>
 <dt class="hdlist1">
 <strong>community</strong>=<em>name</em>
@@ -952,7 +959,8 @@ device) to detect supported devices.  This renders void the use of "mibs" option
 <dd>
 <p>
 Set community name (default = public).
-Note that a RW community name is required to change UPS settings (as for a powerdown).
+Note that a RW community name is required to change UPS settings and
+send commands (as for a powerdown).
 </p>
 </dd>
 <dt class="hdlist1">
@@ -996,8 +1004,8 @@ Convert from three phase line-to-line voltage to line-to-neutral voltage
 <p>
 Set polling interval for full updates, in seconds, to reduce SNMP network
 traffic relative to the quick updates performed every "pollinterval" (the
-latter option is described in <a href="ups.conf.html">ups.conf(5)</a>). The default value is 30 (in
-seconds).
+latter option is described in <a href="ups.conf.html">ups.conf(5)</a>).
+The default value is 30 (in seconds).
 </p>
 </dd>
 <dt class="hdlist1">
@@ -1105,34 +1113,48 @@ configuration time.  You can also force it to be built by using
 <div class="sectionbody">
 <div class="paragraph"><p>The hostname of the UPS is specified with the "port" value in
 <code>ups.conf</code>, and may include a non-standard (161) remote peer port:</p></div>
-<div class="literalblock">
+<div class="listingblock">
 <div class="content">
-<pre><code>[snmpv1]
-        driver = snmp-ups
-        port = snmp-ups.example.com
-        community = public
-        snmp_version = v1
-        pollfreq = 15
-        desc = "Example SNMP v1 device"</code></pre>
-</div></div>
-<div class="literalblock">
-<div class="content">
-<pre><code>[snmpv3]
-        driver = snmp-ups
-        port = 166.99.224.132:170
-        snmp_version = v3
-        secLevel = authPriv
-        secName = mysecurityname
-        authPassword = myauthenticationpassphrase
-        privPassword = myprivatepassphrase
-        desc = "Example SNMP v3 device, with the highest security level"</code></pre>
+<pre><code>        [snmpv1]
+                driver = snmp-ups
+                port = snmp-ups.example.com
+                community = public
+                snmp_version = v1
+                pollfreq = 15
+                desc = "Example SNMP v1 device"
+
+        [snmpv3]
+                driver = snmp-ups
+                port = 166.99.224.132:170
+                snmp_version = v3
+                secLevel = authPriv
+                secName = mysecurityname
+                authPassword = myauthenticationpassphrase
+                privPassword = myprivatepassphrase
+                desc = "Example SNMP v3 device, with the highest security level"</code></pre>
 </div></div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_authors">AUTHORS</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>Arnaud Quette, Dmitry Frolov</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+Arnaud Quette
+</p>
+</li>
+<li>
+<p>
+Dmitry Frolov
+</p>
+</li>
+<li>
+<p>
+Jim Klimov
+</p>
+</li>
+</ul></div>
 </div>
 </div>
 <div class="sect1">
@@ -1156,7 +1178,7 @@ configuration time.  You can also force it to be built by using
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-04-14 15:23:26 UTC -- Network UPS Tools 2.8.0
+Last updated 2022-04-26 22:12:35 UTC -- Network UPS Tools 2.8.0
 </div>
 </div>
 </body>

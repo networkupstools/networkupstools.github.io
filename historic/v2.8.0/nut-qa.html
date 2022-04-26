@@ -68,7 +68,7 @@ asciidoc.install();
 <td class="content">
 <div class="title">Two NUT websites</div>
 <div class="paragraph"><p>This version of the page reflects NUT release <em>v2.8.0</em>
-with codebase commited c25b30bac at 2022-04-14T17:14:08+02:00</p></div>
+with codebase commited ff16dabca at 2022-04-04T11:04:28+00:00</p></div>
 <div class="paragraph"><p>Options, features and capabilities in current development (and future
 releases) are detailed on the main site and may differ from ones
 described here.</p></div>
@@ -85,7 +85,7 @@ quality as high as it should be.</p></div>
 <h2 id="_documentation">Documentation</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>The documentation toolchain uses
-<a href="http://www.methods.co.nz/asciidoc/">AsciiDoc</a> to output both HTML pages and
+<a href="https://asciidoc.org/">AsciiDoc</a> to output both HTML pages and
 manual pages (troff). This single point of control fills many gaps,
 suppresses many redundancies, and optimizes documentation management in
 general.</p></div>
@@ -113,8 +113,9 @@ Documentation source files are spell checked, using
 <td class="icon">
 <img src="./images/note.png" alt="Note" />
 </td>
-<td class="content">A NUT dictionary is also available (docs/nut.dict), providing a glossary
-of terms related to power devices and management.</td>
+<td class="content">A NUT dictionary is also available (docs/nut.dict), providing a
+glossary of terms related to power devices and management, as well as
+partial terms, technical jargon and author names.</td>
 </tr></table>
 </div>
 </div>
@@ -191,7 +192,12 @@ track development and ease regression fixes.
 <li>
 <p>
 <a href="http://buildbot.networkupstools.org/public/nut/">Buildbot</a>
-  and the new dedicated Jenkins incarnation of the NUT CI Farm with "legacy UI"
+  for older take on multi-platform builds, and the
+</p>
+</li>
+<li>
+<p>
+new dedicated Jenkins incarnation of the NUT CI Farm with "legacy UI"
   for <a href="https://ci.networkupstools.org/job/nut/job/nut/job/master/">main branch</a>
   and <a href="https://ci.networkupstools.org/job/nut/job/nut/view/change-requests/">PRs</a>,
   also accessible at the slower but slicker-looking Blue Ocean user interface for
@@ -215,6 +221,11 @@ a project portal with trackers for bugs, feature request, patches and tasks
 </li>
 <li>
 <p>
+LGTM.COM automatically checking C/C++ and Python code
+</p>
+</li>
+<li>
+<p>
 Static code analysis:
 </p>
 <div class="ulist"><ul>
@@ -228,6 +239,11 @@ Static code analysis:
 status: <span class="image">
 <img src="https://scan.coverity.com/projects/8829/badge.svg" alt="Coverity Scan Build Status" />
 </span>
+</p>
+</li>
+<li>
+<p>
+cppcheck as part of NUT CI farm builds and reports
 </p>
 </li>
 </ul></div>
@@ -261,12 +277,32 @@ Lintian general QA checks,
 <li>
 <p>
 a runtime testing suite, which automates the inter-layer communication testing
-(driver&#8201;&#8212;&#8201;upsd&#8201;&#8212;&#8201;upsmon / clients), that is part of Ubuntu.
-<a href="http://bazaar.launchpad.net/~ubuntu-bugcontrol/qa-regression-testing/master/view/head:/scripts/test-nut.py">The NUT testing script</a>
-is available in the <a href="https://code.edge.launchpad.net/qa-regression-testing">Ubuntu QA Regression Testing suite</a>.
-It installs NUT, configures it with the dummy-ups driver, changes a few data and
-checks that these are well propagated with upsc.
+  (driver&#8201;&#8212;&#8201;upsd&#8201;&#8212;&#8201;upsmon / clients), that is part of Ubuntu.
+  <a href="https://git.launchpad.net/ubuntu/+source/nut/tree/debian/tests/test-nut.py">The NUT testing script</a>
+  is available in the <a href="https://code.edge.launchpad.net/qa-regression-testing">Ubuntu QA Regression Testing suite</a>.
 </p>
+<div class="literalblock">
+<div class="content">
+<pre><code>It installs NUT packages, configures it with the dummy-ups driver, changes
+a few data points and checks that these are well propagated with upsc.</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+similar approach is explored in NIT (NUT Integration Testing) suite,
+  which is part of the codebase and automated with <code>make check-NIT</code>;
+  it can also be added to default <code>make check</code> activities by running
+  <code>configure --enable-check-NIT</code>
+</p>
+<div class="ulist"><ul>
+<li>
+<p>
+Note that developers updating components which directly impact NIT runs
+    may benefit from <code>make check-NIT-devel</code> target, to rebuild the <code>upsd</code>,
+    <code>dummy-ups</code>, <code>cppnit</code> and other programs used in the test as they iterate.
+</p>
+</li>
+</ul></div>
 </li>
 <li>
 <p>
@@ -276,7 +312,7 @@ checks that these are well propagated with upsc.
 <li>
 <p>
 <a href="https://www.openhub.net/p/nut">Black Duck Open Hub</a> (formerly Ohloh.net)
-provides metrics on NUT source code base and activity.
+  provides metrics on NUT source code base and activity.
 </p>
 </li>
 </ul></div>
@@ -304,8 +340,8 @@ to protect NUT binaries.
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Version 2.8.0<br />
-Last updated 2022-04-14 15:23:28
+Version 2.8.0-rc3<br />
+Last updated 2022-04-26 22:12:38
 </div>
 <div id="footer-badges">
 <a href="https://github.com/networkupstools/nut">
