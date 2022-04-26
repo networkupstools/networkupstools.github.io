@@ -1,0 +1,54 @@
+# From https://github.com/networkupstools/nut/issues/1080 :
+
+# The UPS looks to be using working with the blazer_usb driver,
+# different status events are properly reported and my connected
+# Raspberry Pi shuts down as expected, but the UPS itself does
+# not shut down.
+
+# Later discussion in the ticket mentioned that nutdrv_qx worked
+# but did not detail to what extent, except a subsequent comment
+#   If I would be able to disable the beeper then I would
+#   have achieved all my goals: beeper.toggle command works,
+#   but the driver settings alarm_control = disabled and
+#   battery_alarm = disabled don't do anything..
+
+# The (v2.7.4) nut-scanner tool suggested nutdrv_atcl_usb driver
+# according to vendorid/productid which is used in many unrelated
+# devices, that driver did not support the (Qx) protocol here.
+
+# maxretry = 3
+# pollinterval = 5
+# [greencell]
+#   driver = "blazer_usb"
+#   port = "auto"
+#   langid_fix = 0x409
+
+battery.charge: 100
+battery.voltage: 13.60
+battery.voltage.high: 13.00
+battery.voltage.low: 10.40
+battery.voltage.nominal: 12.0
+device.type: ups
+driver.name: blazer_usb
+driver.parameter.langid_fix: 0x409
+driver.parameter.pollinterval: 5
+driver.parameter.port: auto
+driver.parameter.synchronous: no
+driver.version: 2.7.4
+driver.version.internal: 0.12
+input.current.nominal: 2.0
+input.frequency: 50.1
+input.frequency.nominal: 50
+input.voltage: 236.7
+input.voltage.fault: 236.7
+input.voltage.nominal: 230
+output.voltage: 236.7
+ups.beeper.status: enabled
+ups.delay.shutdown: 30
+ups.delay.start: 180
+ups.load: 3
+ups.productid: 0000
+ups.status: OL
+ups.type: offline / line interactive
+ups.vendorid: 0001
+

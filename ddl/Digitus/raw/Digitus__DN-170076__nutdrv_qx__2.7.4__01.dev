@@ -1,0 +1,95 @@
+# Source: https://github.com/networkupstools/nut/issues/948
+# Vendor: https://www.digitus.info/en/products/network-and-server-cabinets/power-supply/uninterruptible-power-supplies/dn-170076/
+
+# I've successfully tested the nutdrv_qx driver with the Digitus DN-170076 UPS,
+# connected via USB (it has a DB-9 serial interface as well).
+# Device manufacturer: Digitus (by ASSMANN Electronic GmbH, www.assmann.com)
+# Name: DN-170076 Line-Interactive UPS-System, capacity 2000VA/1200W
+# EAN 4016032441380
+
+# With this configuration:
+#  [digitus]
+#    driver = "nutdrv_qx"
+#    port = "auto"
+#    desc = "Digitus UPS 2000VA/1200W (via USB)"
+#    vendorid = "0001"
+#    productid = "0000"
+#    product = "MEC0003"
+#    vendor = "MEC"
+#    default.battery.voltage.low = 20.81
+#    default.battery.voltage.high = 27.40
+#
+# ...it is detected with Q1 protocol and basically works (except the
+# button.toggle command did not work with both blazer_usb and nutdrv_qx
+# with Q1 protocol). After adding
+#
+#    protocol = "megatec"
+#    novendor
+#
+# the button.toggle works and is displayed properly by upsc.
+
+# I did a shutdown test with modified settings, to shorten the shutdown time:
+#    override.battery.charge.low = 30
+#    default.battery.voltage.low = 25.20
+#    runtimecal=60,100,80,50
+
+# As UPS does not report battery.charge, battery.runtime on its own,
+# have to provide the default.battery.voltage.{low,high} values as
+# mentioned in the man page (otherwise the driver issues "No values
+# provided for battery high/low voltages in ups.conf"), and added
+# runtimecal setting too.
+
+# :; upscmd -l digitus
+#  Instant commands supported on UPS [digitus]:
+#  beeper.toggle - Toggle the UPS beeper            # works (with megatec protocol)
+#  load.off - Turn off the load immediately             # did not work, syslog tells 'instcmd: command [load.off] handled' but nothing happens
+#  load.on - Turn on the load immediately
+#  shutdown.return - Turn off the load and return when power is back
+#  shutdown.stayoff - Turn off the load and remain off
+#  shutdown.stop - Stop a shutdown in progress
+#  test.battery.start - Start a battery test
+#  test.battery.start.deep - Start a deep battery test
+#  test.battery.start.quick - Start a quick battery test      # works
+#  test.battery.stop - Stop the battery test
+
+# upsc reports the following (on main power):
+battery.charge: 97
+battery.voltage: 27.20
+battery.voltage.high: 27.40
+battery.voltage.low: 20.80
+battery.voltage.nominal: 24.0
+device.type: ups
+driver.flag.novendor: enabled
+driver.name: nutdrv_qx
+driver.parameter.chargetime: 28800
+driver.parameter.idleload: 10
+driver.parameter.pollfreq: 30
+driver.parameter.pollinterval: 2
+driver.parameter.port: auto
+driver.parameter.product: MEC0003
+driver.parameter.productid: 0000
+driver.parameter.protocol: megatec
+driver.parameter.runtimecal: 720,100,1440,50
+driver.parameter.synchronous: no
+driver.parameter.vendor: MEC
+driver.parameter.vendorid: 0001
+driver.version: 2.7.4
+driver.version.data: Megatec 0.06
+driver.version.internal: 0.28
+input.current.nominal: 8.0
+input.frequency: 50.0
+input.frequency.nominal: 50
+input.voltage: 225.4
+input.voltage.fault: 225.4
+input.voltage.nominal: 230
+output.voltage: 225.4
+ups.beeper.status: enabled
+ups.delay.shutdown: 30
+ups.delay.start: 180
+ups.load: 0
+ups.productid: 0000
+ups.status: OL
+ups.type: offline / line interactive
+ups.vendorid: 0001
+
+# See also Digitus__DN-170076__nutdrv_qx__2.7.4__02.dev

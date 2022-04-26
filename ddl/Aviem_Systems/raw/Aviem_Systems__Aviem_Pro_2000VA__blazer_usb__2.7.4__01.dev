@@ -1,0 +1,118 @@
+# Source: https://github.com/networkupstools/nut/issues/827
+
+# Manufacturer: Aviem Systems
+# Model: Aviem Pro 2000VA
+
+# :; cat /etc/nut/ups.conf
+# [aviem]
+#         driver = blazer_usb
+#         port = auto
+#         desc = "ServerUPS"
+#         offdelay = 120
+#         ondelay = 240
+
+# :; upsc
+battery.charge: 100
+battery.voltage: 27.70
+battery.voltage.high: 26.00
+battery.voltage.low: 20.80
+battery.voltage.nominal: 24.0
+device.type: ups
+driver.name: blazer_usb
+driver.parameter.offdelay: 120
+driver.parameter.ondelay: 240
+driver.parameter.pollinterval: 2
+driver.parameter.port: auto
+driver.parameter.synchronous: no
+driver.version: 2.7.4
+driver.version.internal: 0.12
+input.current.nominal: 9.0
+input.frequency: 49.6
+input.frequency.nominal: 50
+input.voltage: 230.8
+input.voltage.fault: 231.3
+input.voltage.nominal: 220
+output.voltage: 231.3
+ups.beeper.status: enabled
+ups.delay.shutdown: 120
+ups.delay.start: 14400
+ups.load: 10
+ups.productid: 5161
+ups.status: OL
+ups.type: offline / line interactive
+ups.vendorid: 0665
+
+# :; cat /var/log/syslog | grep upsd
+# upsdrvctl: Network UPS Tools - UPS driver controller 2.7.4
+# upsdrvctl: Supported UPS detected with megatec protocol
+# upsdrvctl: Vendor information unavailable
+# upsdrvctl: No values provided for battery high/low voltages in ups.conf
+# upsdrvctl: Using 'guestimation' (low: 20.800000, high: 26.000000)!
+# upsdrvctl: Battery runtime will not be calculated (runtimecal not set)
+# upsdrvctl: Network UPS Tools - UPS driver controller 2.7.4
+# upsd: fopen /var/run/nut/upsd.pid: No such file or directory
+# upsd: listening on ::1 port 3493
+# upsd: listening on ::1 port 3493
+# upsd: listening on 127.0.0.1 port 3493
+# upsd: listening on 127.0.0.1 port 3493
+# upsd: Connected to UPS [apc]: blazer_usb-apc
+# upsd: Connected to UPS [apc]: blazer_usb-apc
+# upsd: Startup successful
+
+# :; lsusb -vvv
+# Bus 001 Device 003: ID 0665:5161 Cypress Semiconductor USB to Serial
+# Device Descriptor:
+#   bLength                18
+#   bDescriptorType         1
+#   bcdUSB               1.10
+#   bDeviceClass            0 
+#   bDeviceSubClass         0 
+#   bDeviceProtocol         0 
+#   bMaxPacketSize0         8
+#   idVendor           0x0665 Cypress Semiconductor
+#   idProduct          0x5161 USB to Serial
+#   bcdDevice            0.02
+#   iManufacturer           1 INNO TECH
+#   iProduct                2 USB to Serial
+#   iSerial                 3 20100826
+#   bNumConfigurations      1
+#   Configuration Descriptor:
+#     bLength                 9
+#     bDescriptorType         2
+#     wTotalLength       0x0022
+#     bNumInterfaces          1
+#     bConfigurationValue     1
+#     iConfiguration          3 20100826
+#     bmAttributes         0x80
+#       (Bus Powered)
+#     MaxPower              100mA
+#     Interface Descriptor:
+#       bLength                 9
+#       bDescriptorType         4
+#       bInterfaceNumber        0
+#       bAlternateSetting       0
+#       bNumEndpoints           1
+#       bInterfaceClass         3 Human Interface Device
+#       bInterfaceSubClass      0 
+#       bInterfaceProtocol      0 
+#       iInterface              4 Sample HID
+#         HID Device Descriptor:
+#           bLength                 9
+#           bDescriptorType        33
+#           bcdHID               1.00
+#           bCountryCode            0 Not supported
+#           bNumDescriptors         1
+#           bDescriptorType        34 Report
+#           wDescriptorLength      27
+#          Report Descriptors: 
+#            ** UNAVAILABLE **
+#       Endpoint Descriptor:
+#         bLength                 7
+#         bDescriptorType         5
+#         bEndpointAddress     0x81  EP 1 IN
+#         bmAttributes            3
+#           Transfer Type            Interrupt
+#           Synch Type               None
+#           Usage Type               Data
+#         wMaxPacketSize     0x0008  1x 8 bytes
+#         bInterval              32
