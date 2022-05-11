@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>NUT USB setup in modern Solaris-like systems (OpenSolaris descendants)</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div xml:lang="en" class="article" lang="en"><div class="titlepage"><div><div><h2 class="title"><a id="idm1"></a>NUT USB setup in modern Solaris-like systems (OpenSolaris descendants)</h2></div></div><hr /></div><div class="toc"><p><strong>Table of Contents</strong></p><dl class="toc"><dt><span class="section"><a href="#_change_the_os_driver_binding_use_ugen">1. Change the OS driver binding: use UGEN</a></span></dt><dt><span class="section"><a href="#_libusb_version_and_binary">2. libusb version and binary</a></span></dt></dl></div><p>Local-media device setup for use with NUT has some nuances with
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>NUT USB setup in modern Solaris-like systems (OpenSolaris descendants)</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div xml:lang="en" class="article" lang="en"><div class="titlepage"><div><div><h2 class="title"><a id="idm1"></a>NUT USB setup in modern Solaris-like systems (OpenSolaris descendants)</h2></div></div><hr /></div><div class="toc"><p><strong>Table of Contents</strong></p><dl class="toc"><dt><span class="section"><a href="#_change_the_os_driver_binding_use_ugen">1. Change the OS driver binding: use UGEN</a></span></dt><dt><span class="section"><a href="#_libusb_version_and_binary">2. libusb version and binary</a></span></dt><dt><span class="section"><a href="#_troubleshooting_and_reconnecting">3. Troubleshooting and reconnecting</a></span></dt><dd><dl><dt><span class="section"><a href="#_recycle_the_usb_connection">3.1. Recycle the USB connection</a></span></dt><dt><span class="section"><a href="#_regular_auto_recovery_via_crontab">3.2. Regular auto-recovery via crontab</a></span></dt></dl></dd></dl></div><p>Local-media device setup for use with NUT has some nuances with
 numerous descendants of the OpenSolaris project, including both
 the commercial Sun/Oracle Solaris 11 and illumos-based open source
 distributions such as OpenIndiana and OmniOS. Recommendations
@@ -153,5 +153,120 @@ with code which was successfully used when developing this documentation:</p><di
 (TO CHECK) <a class="ulink" href="https://github.com/OpenIndiana/oi-userland/pull/5277" target="_top">https://github.com/OpenIndiana/oi-userland/pull/5277</a>
 </li></ul></div><p>Binaries from builds made in OpenIndiana using the recipe from
 <a class="ulink" href="https://github.com/OpenIndiana/oi-userland/pull/5382" target="_top">PR #5382</a>
-above were successfully directly used on contemporary OmniOS CE as well.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2022-04-17 02:43:33 -- Network UPS Tools 2.7.4.1</div></body></html>
+above were successfully directly used on contemporary OmniOS CE as well.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_troubleshooting_and_reconnecting"></a>3. Troubleshooting and reconnecting</h2></div></div></div><p>So… your setup worked nicely, and then one day you see the console flooded
+with messages like the following:</p><pre class="literallayout">Broadcast Message from nut (???) on n54l Mon May  9 12:05:59...
+Communications with UPS innotech@localhost lost</pre><pre class="literallayout">Broadcast Message from nut (???) on n54l Mon May  9 12:10:55...
+UPS innotech@localhost is unavailable</pre><p>Unfortunately, some devices "get stuck" on USB level (whether in the chips,
+in the OS driver layer, libusb or NUT driver) and their NUT drivers have
+to be restarted to regain monitoring, as opposed to intermittent losses
+of connectivity that software recovers from automatically.</p><p>As in all systems, you should stop all programs using the connection,
+including NUT driver instances that might have been started beside the
+wrapping service (SMF). It may be possible to just start the new driver
+instance at this point, but if it still does not see the device — you
+have to re-initialize the connection on the OS level.</p><p>As a symptom, attempts to start the NUT driver with elevated debug verbosity
+would not even see the device details:</p><pre class="screen">   0.000606     [D1] Saving PID 5187 into /var/run/nut/nutdrv_qx-innotech.pid
+   0.000727     [D1] upsdrv_initups...
+   0.012065     [D2] Checking device 1 of 2 (0665/5161)
+   0.012303     [D1] Failed to open device (0665/5161), skipping: Other error
+   0.012394     [D2] Checking device 2 of 2 (099A/610A)
+...
+   0.020364     [D2] Trying to match device
+   0.020586     [D3] match_function_regex: matching a device...
+   0.020839     [D2] match_function_regex: failed match of VendorID:  99a
+   0.021061     [D2] Device does not match - skipping
+   0.021371     [D2] libusb1: No appropriate HID device found
+Network UPS Tools - Generic Q* USB/Serial driver 0.32 (2.8.0-20-g535395363)
+USB communication driver (libusb 1.0) 0.43
+   0.021720     libusb1: Could not open any HID devices: insufficient permissions on everything
+   0.021821     No supported devices found. Please check your device availability with 'lsusb'
+and make sure you have an up-to-date version of NUT. If this does not help,
+try running the driver with at least 'subdriver', 'vendorid' and 'productid'
+options specified. Please refer to the man page for details about these options
+(man 8 nutdrv_qx).
+
+Driver failed to start (exit status=1)
+Network UPS Tools - UPS driver controller 2.8.0-20-g535395363
+[ May  9 03:10:01 Method "start" exited with status 1. ]</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>Details of the service instance life-cycle for the NUT driver may be
+seen in its SMF log, e.g. by <code class="literal">less /var/svc/log/*innotech*log</code>, and to see
+in-vivo debugs as the service starts in production mode, use <code class="literal">debug_min = 3</code>
+in the <code class="literal">/etc/nut/ups.conf</code> file (in global context or in driver section).</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_recycle_the_usb_connection"></a>3.1. Recycle the USB connection</h3></div></div></div><p>In case of Solaris/illumos systems, first stop the respective nut-driver
+instance, e.g.:</p><pre class="screen">:; svcadm disable -ts nut-driver:innotech
+
+:; ps -ef | grep -Ei 'nut|ups' ; svcs -p innotech
+    root 10522     1   0   May 06 ?           0:00 /usr/sbin/upsmon
+    root 16927     1   0   Feb 25 ?           1:20 /usr/lib/nut/bin/nutdrv_qx -a innotech
+     nut 10257     1   0   May 06 ?           0:39 /usr/sbin/upsd
+    root 16985 15379   0 11:27:36 pts/1       0:00 grep -Ei nut|ups
+     nut 10524 10522   0   May 06 ?           0:25 /usr/sbin/upsmon
+STATE          STIME    FMRI
+offline         11:26:49 svc:/system/power/nut-driver:innotech
+
+# In the ps listing above, a driver daemon is seen that was started as
+# the root user beside the actual service. It has to be stopped too:
+:; kill -9 16927</pre><p>To unconfigure and disconnect the USB link on the OS level, you will
+need its attachment point identifier. If you don’t know your system’s
+current layout (it can change with device re-enumeration due to hot
+plugging and/or reboots), you can execute <code class="literal">cfgadm -lv</code>, look for
+the "Information" field resembling your UPS brand, and make note of
+its "Ap_Id". You can also query a single device to confirm a guess
+or your earlier records:</p><pre class="screen">:; cfgadm -lv usb10/1
+
+Ap_Id                          Receptacle   Occupant     Condition
+Information
+When         Type         Busy     Phys_Id
+
+usb10/1                        connected    configured   ok
+Mfg: INNO TECH  Product: USB to Serial  NConfigs: 1  Config: 0  : 20100826
+unavailable  usb-input    n        /devices/pci@0,0/pci103c,1609@13:1</pre><p>Disconnect the device; note that if something (typically a program with
+an open connection) still has a hold on the device, the system would
+fail to complete the command:</p><pre class="screen">:; cfgadm -c disconnect usb10/1
+
+Disconnect the device: /devices/pci@0,0/pci103c,1609@13:1
+This operation will suspend activity on the USB device
+Continue (yes/no)? yes
+cfgadm: Hardware specific failure: Cannot issue devctl
+  to ap_id: /devices/pci@0,0/pci103c,1609@13:1</pre><p>If that is the case, run <code class="literal">ps</code> per above and make sure all NUT driver
+daemons are stopped (the data server <code class="literal">upsd</code> and client upsmon should
+be inconsequential in this regard).</p><p>Normally, the reconnection should work like this:</p><pre class="screen">:; cfgadm -c unconfigure usb10/1
+Unconfigure the device: /devices/pci@0,0/pci103c,1609@13:1
+This operation will suspend activity on the USB device
+Continue (yes/no)? yes
+
+:; cfgadm -c disconnect usb10/1
+Disconnect the device: /devices/pci@0,0/pci103c,1609@13:1
+This operation will suspend activity on the USB device
+Continue (yes/no)? yes
+
+:; cfgadm -lv usb10/1
+Ap_Id                          Receptacle   Occupant     Condition  Information
+When         Type         Busy     Phys_Id
+
+usb10/1                        disconnected unconfigured ok
+unavailable  unknown      n        /devices/pci@0,0/pci103c,1609@13:1
+
+:; cfgadm -c configure usb10/1
+cfgadm: Hardware specific failure: Cannot issue devctl
+  to ap_id: /devices/pci@0,0/pci103c,1609@13:1
+
+# Despite the error above, the device is seen now:
+:; cfgadm -lv usb10/1
+Ap_Id                          Receptacle   Occupant     Condition
+Information
+When         Type         Busy     Phys_Id
+
+usb10/1                        connected    configured   ok
+Mfg: INNO TECH  Product: USB to Serial  NConfigs: 1  Config: 0  : 20100826
+unavailable  usb-input    n        /devices/pci@0,0/pci103c,1609@13:1
+
+# ... and the driver can start:
+:; svcadm enable innotech</pre><p>When everything gets recovered, you should see it:</p><pre class="literallayout">Broadcast Message from nut (???) on n54l Mon May  9 12:12:30...
+Communications with UPS innotech@localhost established</pre><p>and <code class="literal">upsc innotech@localhost</code> would tell you what it sees :)</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_regular_auto_recovery_via_crontab"></a>3.2. Regular auto-recovery via crontab</h3></div></div></div><p>Additional tricks that can help involve <code class="literal">crontab</code> for regular automated
+checks if the device got lost. One is just an attempt to "clear" the
+service if its earlier startup failed (repetitively) so SMF gave up:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+* * * * svcadm clear innotech 2&gt;&amp;1 | grep -v <span class="emphasis"><em>is not in a maintenance</em></span>
+</li></ul></div><p>Another is more complicated and involves some custom scripting:</p><pre class="literallayout">0,5,10,15,20,25,30,35,40,45,50,55 * * * * MODE=optional /etc/nut/reset-ups-usb-solaris.sh</pre><p>…where the script would be a copy (customized to your device(s) and
+connection points!) of <code class="literal">reset-ups-usb-solaris.sh.sample</code> from either
+<code class="literal">scripts/Solaris/</code> directory in the NUT sources, or a copy which may be
+available in your system, e.g. under the <code class="literal">/usr/share/nut/solaris-init/</code>
+data directory.</p></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
+		Last updated 2022-05-11 20:49:41 -- Network UPS Tools 2.8.0.1</div></body></html>
