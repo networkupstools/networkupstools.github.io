@@ -510,5 +510,16 @@ and ccache is under <code class="literal">/opt/ooce</code> namespace, that would
 you may have to specify where <code class="literal">pkg-config</code> will look for them (note that
 library and binary paths can be architecture bitness-dependent):</p><pre class="screen">:; ./configure PKG_CONFIG_PATH="/opt/ooce/lib/amd64/pkgconfig" --with-cgi</pre><p>Note also that the minimal footprint nature of OmniOS CE precludes building
 any large scope easily, so avoid docs and "all drivers" unless you provide
-whatever they need to happen.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2022-05-05 11:46:22 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apks01.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="apk.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="apl.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+whatever they need to happen.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_macos_with_homebrew"></a>MacOS with homebrew</h4></div></div></div><p>Some CI tests happen on MacOS using a mix of their default xcode environment
+for compilers, and Homebrew community packaging for dependencies (including
+<code class="literal">bash</code> since the system one is too old for <code class="literal">ci_build.sh</code> script syntax).</p><p>See <code class="literal">.travis.yml</code> and <code class="literal">.circleci/config.yml</code> for practical details of the
+setup.</p><p>Currently known dependencies for basic build include:</p><pre class="screen"># Optional for a quick spin:
+:; HOMEBREW_NO_AUTO_UPDATE=1; export HOMEBREW_NO_AUTO_UPDATE
+
+# Required:
+:; brew install ccache bash libtool pkg-config gd libusb neon net-snmp openssl</pre><p>Note that ccache is installed in a different location than expected by default
+in the <code class="literal">ci_build.sh</code> script, so if your system allows to add the symbolic link
+to <code class="literal">/usr/local/opt/ccache/libexec</code> as <code class="literal">/usr/lib/ccache</code> — please do so as the
+easiest way out. Alternatively, to prepare building sessions with <code class="literal">ci_build.sh</code>
+you can:</p><pre class="screen">:; export CI_CCACHE_SYMLINKDIR="/usr/local/opt/ccache/libexec"</pre></div></div><div xmlns="" class="navfooter nut_footer"><hr />
+		Last updated 2022-05-13 14:53:52 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apks01.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="apk.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="apl.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
