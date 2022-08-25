@@ -74,9 +74,9 @@ complete environments):</p><pre class="screen">:; apt-get install \
     gcc-multilib g++-multilib \
     crossbuild-essential \
     gcc-10:armhf gcc-10-base:armhf \
-    qemu-user-static</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>For Jenkins agents, also need to <code class="literal">apt-get install openjdk-11-jdk-headless</code>
-(technically, needs at least JRE 8+). You may have to ensure <code class="literal">/proc</code> is mounted
-in the target chroot (or do this from the running container).</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_centos_7"></a>CentOS 7</h4></div></div></div><p>CentOS is another popular baseline among Linux distributions, being a free
+    qemu-user-static</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>For Jenkins agents, also need to <code class="literal">apt-get install openjdk-11-jdk-headless</code>.
+You may have to ensure that <code class="literal">/proc</code> is mounted in the target chroot
+(or do this from the running container).</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_centos_7"></a>CentOS 7</h4></div></div></div><p>CentOS is another popular baseline among Linux distributions, being a free
 derivative of the RedHat Linux, upon which many other distros are based as
 well. These systems typically use the RPM package manager, using directly
 <code class="literal">rpm</code> command, or <code class="literal">yum</code> or <code class="literal">dnf</code> front-ends depending on their generation.</p><p>For CentOS 7 it seems that not all repositories are equally good; some of
@@ -159,8 +159,7 @@ drivers in distro packaging of NUT. Resolution and doc PRs are welcome.</p></div
 be downloaded if needed. For more details, see
 <a class="ulink" href="https://unix.stackexchange.com/questions/475584/cannot-install-busybox-on-centos" target="_top">https://unix.stackexchange.com/questions/475584/cannot-install-busybox-on-centos</a></p></div><p>CentOS packaging for 64-bit systems delivers the directory for dispatching
 compiler symlinks as <code class="literal">/usr/lib64/ccache</code>. You can set it up same way as for
-other described environments by adding a symlink <code class="literal">/usr/lib/ccache</code>:</p><pre class="screen">:; ln -s ../lib64/ccache/ "$ALTROOT"/usr/lib/</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>For Jenkins agents, also need to <code class="literal">yum install java-11-openjdk-headless</code>
-(technically, needs at least JRE 8+).</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_freebsd_12_2"></a>FreeBSD 12.2</h4></div></div></div><p>Note that <code class="literal">PATH</code> for builds on BSD should include <code class="literal">/usr/local/...</code>:</p><pre class="screen">:; PATH=/usr/local/libexec/ccache:/usr/local/bin:/usr/bin:$PATH
+other described environments by adding a symlink <code class="literal">/usr/lib/ccache</code>:</p><pre class="screen">:; ln -s ../lib64/ccache/ "$ALTROOT"/usr/lib/</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>For Jenkins agents, also need to <code class="literal">yum install java-11-openjdk-headless</code>.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_freebsd_12_2"></a>FreeBSD 12.2</h4></div></div></div><p>Note that <code class="literal">PATH</code> for builds on BSD should include <code class="literal">/usr/local/...</code>:</p><pre class="screen">:; PATH=/usr/local/libexec/ccache:/usr/local/bin:/usr/bin:$PATH
 :; export PATH</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>You may want to reference <code class="literal">ccache</code> even before all that, as detailed
 below.</p></div><pre class="screen">:; pkg install \
     git python perl5 curl \
@@ -209,26 +208,35 @@ below.</p></div><pre class="screen">:; pkg install \
 :; ccache-update-links</pre><p>For compatibility with common setups on other operating systems, can symlink
 <code class="literal">/usr/local/libexec/ccache</code> as <code class="literal">/usr/lib/ccache</code> and possibly add dash-number
 suffixed symlinks to compiler tools (e.g. <code class="literal">gcc-10</code> beside <code class="literal">gcc10</code> installed
-by package).</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>For Jenkins agents, also need to <code class="literal">pkg install openjdk8</code> (or 11+) — and do note its further OS configuration suggestions for special filesystem
-mounts.</p></div><p>Due to BSD specific paths <span class="strong"><strong>when not using</strong></span> an implementation of <code class="literal">pkg-config</code>
+by package).</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>For Jenkins agents, also need to <code class="literal">pkg install openjdk11</code> (11 or 17
+required since summer 2022) — and do note its further OS configuration
+suggestions for special filesystem mounts.</p></div><p>Due to BSD specific paths <span class="strong"><strong>when not using</strong></span> an implementation of <code class="literal">pkg-config</code>
 or <code class="literal">pkgconf</code> (so guessing of flags is left to administrator — TBD in NUT
 <code class="literal">m4</code> scripts), better use this routine to test the config/build:</p><pre class="screen">:; ./configure --with-doc=all --with-all --with-cgi \
     --without-avahi --without-powerman --without-modbus \
     ### CPPFLAGS="-I/usr/local/include -I/usr/include" \
     ### LDFLAGS="-L/usr/local/lib -L/usr/lib"</pre><p>Note the lack of <code class="literal">pkg-config</code> also precludes <code class="literal">libcppunit</code> tests, although
-they also tend to mis-compile/mis-link with GCC (while CLANG seems okay).</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_openbsd_6_4"></a>OpenBSD 6.4</h4></div></div></div><p>Note that <code class="literal">PATH</code> for builds on BSD should include <code class="literal">/usr/local/...</code>:</p><pre class="screen">:; PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:$PATH
+they also tend to mis-compile/mis-link with GCC (while CLANG seems okay).</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_openbsd_6_5"></a>OpenBSD 6.5</h4></div></div></div><p>Note that <code class="literal">PATH</code> for builds on BSD should include <code class="literal">/usr/local/...</code>:</p><pre class="screen">:; PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:$PATH
 :; export PATH</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>You may want to reference <code class="literal">ccache</code> even before all that, as detailed
 below.</p></div><p>OpenBSD delivers many versions of numerous packages, you should specify
-your pick interactively or as part of package name (e.g. <code class="literal">autoconf-2.69p2</code>).</p><p>During builds, you may have to tell system dispatcher scripts which version
+your pick interactively or as part of package name (e.g. <code class="literal">autoconf-2.69p2</code>).</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>For the purposes of builds with Jenkins CI agents, since summer 2022 it
+requires JDK11 which was first delivered with OpenBSD 6.5. Earlier iterations
+used OpenBSD 6.4 and version nuances in this document may still reflect that.</p></div><p>During builds, you may have to tell system dispatcher scripts which version
 to use (which feels inconvenient, but on the up-side for CI — this system
 allows to test many versions of auto-tools in the same agent), e.g.:</p><pre class="screen">:; export AUTOCONF_VERSION=2.69 AUTOMAKE_VERSION=1.10</pre><p>To use the <code class="literal">ci_build.sh</code> don’t forget <code class="literal">bash</code> which is not part of OpenBSD
 base installation. It is not required for "legacy" builds arranged by just
-<code class="literal">autogen.sh</code> and <code class="literal">configure</code> scripts.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>The OpenBSD 6.4 <code class="literal">install64.iso</code> installation includes a set of packages
+<code class="literal">autogen.sh</code> and <code class="literal">configure</code> scripts.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>The OpenBSD 6.5 <code class="literal">install65.iso</code> installation includes a set of packages
 that seems to exceed whatever is available on network mirrors; for example,
 the CD image included <code class="literal">clang</code> program while it is not available to <code class="literal">pkg_add</code>,
-at least not via <a class="ulink" href="http://ftp.netbsd.hu/mirrors/openbsd/6.4/packages/amd64/" target="_top">http://ftp.netbsd.hu/mirrors/openbsd/6.4/packages/amd64/</a>
+at least not via <a class="ulink" href="http://ftp.netbsd.hu/mirrors/openbsd/6.5/packages/amd64/" target="_top">http://ftp.netbsd.hu/mirrors/openbsd/6.5/packages/amd64/</a>
 mirror. The <code class="literal">gcc</code> version on CD image differed notably from that in the
-networked repository (4.2.x vs 4.9.x)</p></div><pre class="screen">:; pkg_add \
+networked repository (4.2.x vs 4.9.x).
+You may have to echo a working base URL (part before "6.5/…" into the
+<code class="literal">/etc/installurl</code> file, since the old distribution is no longer served by
+default site.</p></div><pre class="screen"># Optionally, make the environment comfortable, e.g.:
+:; pkg_add sudo bash mc wget rsync
+
+:; pkg_add \
     git python curl \
     gmake autoconf automake libltdl libtool \
     valgrind \
@@ -238,11 +246,11 @@ networked repository (4.2.x vs 4.9.x)</p></div><pre class="screen">:; pkg_add \
 
 # NOTE: For python, you may eventually have to specify a variant like this
 # (numbers depending on default or additional packages of your distro):
-#   :; yum install python-2.7.15p0
+#   :; pkg_add python-2.7.15p0
 # and/or:
-#   :; yum install python-3.6.6p1
+#   :; pkg_add python-3.6.6p1
 # although you might succeed specifying shorter names and the packager
-# will offer a list of matching variants.
+# will offer a list of matching variants (as it does for "python" above).
 # NOTE: "perl" is not currently a package, but seemingly part of base OS.
 # You can find a list of what is (pre-)installed with:
 #   :; pkg_info | grep -Ei 'perl|python'
@@ -274,18 +282,31 @@ networked repository (4.2.x vs 4.9.x)</p></div><pre class="screen">:; pkg_add \
     lua
 
 :; pkg_add \
-    bash dash busybox ksh93</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>With OpenBSD 6.4, building against freeipmi failed: its libtool
+    dash ksh93</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>With OpenBSD 6.4, building against freeipmi failed: its libtool
 recipes referenced <code class="literal">-largp</code> which did not get installed in the system.
-Maybe some more packages are needed explicitly?</p><pre class="screen">:; pkg_add \
+Maybe some more packages are needed explicitly?
+Was not yet retried with OpenBSD 6.5.</p><pre class="screen">:; pkg_add \
     freeipmi</pre></div><p>Recommended:</p><pre class="screen">:; pkg_add ccache
 :; ( mkdir -p /usr/lib/ccache &amp;&amp; cd /usr/lib/ccache &amp;&amp; \
         for TOOL in cpp gcc g++ clang clang++ clang-cpp ; do \
             ln -s ../../local/bin/ccache "$TOOL" ; \
         done ; \
-   )</pre><p>For compatibility with common setups on other operating systems, can add
+   )
+
+:; ( cd /usr/bin &amp;&amp; for T in gcc g++ cpp ; do ln -s "$T" "$T-4.2.1" ; done )
+:; ( cd /usr/lib/ccache &amp;&amp; for T in gcc g++ cpp ; do ln -s "$T" "$T-4.2.1" ; done )
+
+:; ( cd /usr/bin &amp;&amp; for T in clang clang++ clang-cpp ; do ln -s "$T" "$T-7.0.1" ; done )
+:; ( cd /usr/lib/ccache &amp;&amp; for T in clang clang++ clang-cpp ; do ln -s "$T" "$T-7.0.1" ; done )</pre><p>For compatibility with common setups on other operating systems, can add
 dash-number suffixed symlinks to compiler tools (e.g. <code class="literal">gcc-4.2.1</code> beside
-<code class="literal">gcc</code> installed by package) into <code class="literal">/usr/lib/ccache</code>.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>For Jenkins agents, also need to <code class="literal">pkg_add jre</code> or <code class="literal">pkg_add jdk</code>
-(pick version 1.8 or 8, or 11+).</p></div><p>Due to BSD specific paths <span class="strong"><strong>when not using</strong></span> an implementation of <code class="literal">pkg-config</code>
+<code class="literal">gcc</code> installed by package) into <code class="literal">/usr/lib/ccache</code>.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>For Jenkins agents, also need to <code class="literal">pkg_add jdk</code> (if asked, pick version
+11 or 17); can request <code class="literal">pkg_add jdk%11</code>. You would likely have to update
+the trusted CA store to connect to NUT CI, see e.g. (raw!) download from
+<a class="ulink" href="https://gist.github.com/galan/ec8b5f92dd325a97e2f66e524d28aaf8" target="_top">https://gist.github.com/galan/ec8b5f92dd325a97e2f66e524d28aaf8</a>
+but ensure that you run it with <code class="literal">bash</code> and it does <code class="literal">wget</code> the certificates
+(maybe with <code class="literal">--no-check-certificate</code> option if the OS does not trust current
+internet infrastructure either), and revise the suggested certificate files
+vs. <a class="ulink" href="https://letsencrypt.org/certificates/" target="_top">https://letsencrypt.org/certificates/</a> and/or comments to that gist.</p></div><p>Due to BSD specific paths <span class="strong"><strong>when not using</strong></span> an implementation of <code class="literal">pkg-config</code>
 or <code class="literal">pkgconf</code> (so guessing of flags is left to administrator — TBD in NUT
 <code class="literal">m4</code> scripts), better use this routine to test the config/build:</p><pre class="screen">:; ./configure --with-doc=all --with-all --with-cgi \
     --without-avahi --without-powerman --without-modbus \
@@ -473,9 +494,9 @@ GCC baseline); but note that so far it conflicts with <code class="literal">libg
 not with GCC (they segfault at run-time with <code class="literal">ostream</code> issues); a CLANG
 build works for that however.</p><p>It also lacks out-of-the-box Tex suite and <code class="literal">dblatex</code> in particular, which
 <code class="literal">asciidoc</code> needs to build PDF documents. It may be possible to add these
-from third-party repositories (e.g. SFE) and/or build from sources.</p><p>No pre-packaged <code class="literal">cppcheck</code> was found, either.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>For Jenkins agents, also need to <code class="literal">pkg install developer/java/openjdk8</code>
-(or <code class="literal">pkg install runtime/java/openjdk11</code> for JRE 11 — currently the OS does
-not offer in-distro JDK version 11+).</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_omnios_ce_as_of_release_151036"></a>OmniOS CE (as of release 151036)</h4></div></div></div><p>Being a minimal-footprint system, OmniOS CE provides very few packages out
+from third-party repositories (e.g. SFE) and/or build from sources.</p><p>No pre-packaged <code class="literal">cppcheck</code> was found, either.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>For Jenkins agents, also need to <code class="literal">pkg install runtime/java/openjdk11</code>
+for JRE/JDK 11. Java 11 or 17 is required to run Jenkins agents after
+summer 2022.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_omnios_ce_as_of_release_151036"></a>OmniOS CE (as of release 151036)</h4></div></div></div><p>Being a minimal-footprint system, OmniOS CE provides very few packages out
 of the box. There are additional repositories supported by the project, as
 well as third-party repositories such as SFE. For some dependencies, it may
 happen that you would need to roll and install your own builds in accordance
@@ -495,9 +516,12 @@ with that project’s design goals.</p><p>Note you may need not just the "Core" 
 # (numbers depending on default or additional packages of your distro):
 #   :; pkg install runtime/python-37
 # You can find a list of what is available in remote repositories with:
-#   :; pkg info -r | grep -Ei 'perl|python'</pre><p>OmniOS lacks a pre-packaged libusb, however the binary build from contemporary
-OpenIndiana can be used (copy the header files and the library+symlinks for
-all architectures you would need).</p><p>You may need to set up <code class="literal">ccache</code> with the same <code class="literal">/usr/lib/ccache</code> dir used
+#   :; pkg info -r | grep -Ei 'perl|python'</pre><p>Your OmniOS version may lack a pre-packaged libusb, however the binary
+build from contemporary OpenIndiana can be used (copy the header files
+and the library+symlinks for all architectures you would need).</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>As of July 2022, a <code class="literal">libusb-1</code> package recipe was proposed for the
+<code class="literal">omnios-extra</code> repository (NUT itself and further dependencies may also
+appear there, per
+<a class="ulink" href="https://github.com/networkupstools/nut/issues/1498" target="_top">issue #1498</a>).</p></div><p>You may need to set up <code class="literal">ccache</code> with the same <code class="literal">/usr/lib/ccache</code> dir used
 in other OS recipes. Assuming your Build Essentials pulled GCC 9 version,
 and ccache is under <code class="literal">/opt/ooce</code> namespace, that would be like:</p><pre class="screen">:; mkdir -p /usr/lib/ccache
 :; cd /usr/lib/ccache
@@ -510,7 +534,9 @@ and ccache is under <code class="literal">/opt/ooce</code> namespace, that would
 you may have to specify where <code class="literal">pkg-config</code> will look for them (note that
 library and binary paths can be architecture bitness-dependent):</p><pre class="screen">:; ./configure PKG_CONFIG_PATH="/opt/ooce/lib/amd64/pkgconfig" --with-cgi</pre><p>Note also that the minimal footprint nature of OmniOS CE precludes building
 any large scope easily, so avoid docs and "all drivers" unless you provide
-whatever they need to happen.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_macos_with_homebrew"></a>MacOS with homebrew</h4></div></div></div><p>Some CI tests happen on MacOS using a mix of their default xcode environment
+whatever they need to happen.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>For Jenkins agents, also need to <code class="literal">pkg install runtime/java/openjdk11</code>
+for JRE/JDK 11. Java 11 or 17 is required to run Jenkins agents after
+summer 2022.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_macos_with_homebrew"></a>MacOS with homebrew</h4></div></div></div><p>Some CI tests happen on MacOS using a mix of their default xcode environment
 for compilers, and Homebrew community packaging for dependencies (including
 <code class="literal">bash</code> since the system one is too old for <code class="literal">ci_build.sh</code> script syntax).</p><p>See <code class="literal">.travis.yml</code> and <code class="literal">.circleci/config.yml</code> for practical details of the
 setup.</p><p>Currently known dependencies for basic build include:</p><pre class="screen"># Optional for a quick spin:
@@ -522,4 +548,4 @@ in the <code class="literal">ci_build.sh</code> script, so if your system allows
 to <code class="literal">/usr/local/opt/ccache/libexec</code> as <code class="literal">/usr/lib/ccache</code> — please do so as the
 easiest way out. Alternatively, to prepare building sessions with <code class="literal">ci_build.sh</code>
 you can:</p><pre class="screen">:; export CI_CCACHE_SYMLINKDIR="/usr/local/opt/ccache/libexec"</pre></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2022-05-13 14:53:52 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apks01.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="apk.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="apl.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2022-08-25 22:19:49 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apks01.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="apk.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="apl.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
