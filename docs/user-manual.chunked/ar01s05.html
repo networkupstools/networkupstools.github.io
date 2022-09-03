@@ -131,6 +131,36 @@ ugen0.2: &lt;INNO TECH USB to Serial&gt; at usbus0</pre><p>The device file must 
 read-/writable. In the example from above this would be</p><pre class="literallayout"># ls -Ll /dev/ugen0.2
 crw-rw----  1 root  uucp  0xa5 Mar 12 10:33 /dev/ugen0.2</pre><p>If the permissions are not correct, verify that your device is registered in
 <code class="literal">/usr/local/etc/devd/nut-usb.conf</code>. The vendor and product id can be found
-using:</p><pre class="literallayout"># usbconfig -u 0 -a 2 dump_device_desc</pre><p>where <code class="literal">-u</code> specifies the USB bus number and <code class="literal">-a</code> specifies the USB device index.</p><p>You are now ready to configure NUT, and start testing and using it.</p><p>You can jump directly to the
-<a class="link" href="ar01s06.html" title="6. Configuration notes">NUT configuration</a>.</p></div></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2022-08-31 20:46:12 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s04.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s06.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+using:</p><pre class="literallayout"># usbconfig -u 0 -a 2 dump_device_desc</pre><p>where <code class="literal">-u</code> specifies the USB bus number and <code class="literal">-a</code> specifies the USB device index.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="Windows"></a>Windows</h4></div></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_windows_binary_package"></a>Windows binary package</h5></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>NUT binary package built for Windows platform was last issued for
+a much older codebase (using NUT v2.6.5 as a baseline). While the current
+state of the codebase you are looking at aims to refresh the effort of
+delivering NUT on Windows, the aim at the moment is to help developers
+build and modernize it after a decade of blissful slumber, and packages
+are not being regularly produced yet. Functionality of such builds varies
+a lot depending on build environment used. This effort is generally
+tracked at <a class="ulink" href="https://github.com/orgs/networkupstools/projects/2/views/1" target="_top">https://github.com/orgs/networkupstools/projects/2/views/1</a>
+and help would be welcome!</p><p>It should currently be possible to build the codebase in native Windows
+with MSYS2/MinGW and cross-building from Linux with mingw (preferably
+in a Debian/Ubuntu container). Refer to
+<a class="ulink" href="config-prereqs.txt" target="_top">Prerequisites for building NUT on different OSes</a>
+and <a class="ulink" href="scripts/Windows/README" target="_top">scripts/Windows/README file</a> for respective
+build environment preparation instructions.</p><p>Note that to use NUT for Windows, non-system dependency DLL files must
+be located in same directory as each EXE file that uses them. This can be
+accomplished for FOSS libraries (copying them from the build environment)
+by calling <code class="literal">make install-win-bundle DESTDIR=/some/valid/location</code> easily.</p><p>Archives with binaries built by recent iterations of continuous integration
+jobs should be available for exploration on the respective CI platforms.</p></div><p><span class="strong"><strong>Information below may be currently obsolete, but the NUT project wishes
+it to become actual and factual again :)</strong></span></p><p>NUT binary package built for Windows platform comes in a <code class="literal">.msi</code> file.</p><p>If you are using Windows 95, 98 or Me, you should install
+<a class="ulink" href="http://www.microsoft.com/downloads/en/details.aspx?familyid=cebbacd8-c094-4255-b702-de3bb768148f&amp;displaylang=en" target="_top">Windows Installer 2.0</a>
+from Microsoft site.</p><p>If you are using Windows 2000 or NT 4.0, you can
+<a class="ulink" href="http://www.microsoft.com/downloads/en/details.aspx?FamilyID=4b6140f9-2d36-4977-8fa1-6f8a0f5dca8f&amp;DisplayLang=en" target="_top">download it here</a>.</p><p>Newer Windows releases should include the Windows Installer natively.</p><p>Run <code class="literal">NUT-Installer.msi</code> and follow the wizard indications.</p><p>If you plan to use an UPS which is locally connected to an USB port, you have to install
+<a class="ulink" href="https://sourceforge.net/projects/libusb-win32/files/" target="_top">libUSB-win32</a>
+on your system. Then you must install your device via libusb’s "Inf Wizard".</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>If you intend to build from source, relevant sources may be available at
+<a class="ulink" href="https://github.com/mcuee/libusb-win32" target="_top">https://github.com/mcuee/libusb-win32</a> and keep in mind that it is a variant of
+libusb-0.1. Current NUT supports libusb-1.0 as well, and that project should
+have Windows support out of the box (but it was not explored for NUT yet).</p></div><p>If you have selected default directory, all configuration files are located in
+<code class="literal">C:\Program Files\NUT\ups\etc</code></p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_building_for_windows"></a>Building for Windows</h5></div></div></div><p>For suggestions about setting up the NUT build environment variants
+for Windows, please see link:docs/config-prereqs.txt and/or
+link:scripts/Windows/README files. Note this is rather experimental
+at this point.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_runtime_configuration"></a>Runtime configuration</h4></div></div></div><p>You are now ready to configure NUT, and start testing and using it.</p><p>You can jump directly to the
+<a class="link" href="ar01s06.html" title="6. Configuration notes">NUT configuration</a>.</p></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
+		Last updated 2022-09-03 00:20:29 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s04.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s06.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

@@ -155,47 +155,59 @@ various places in your code.  Basically, don’t call them from any other
 function than from within upsdrv_updateinfo().  There is no need to call
 either of these regularly as was stated in previous versions of this
 document (that requirement has long gone).</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_serial_port_handling"></a>4.11. Serial port handling</h3></div></div></div><p>Drivers which use serial port functions should include serial.h and use
-these functions whenever possible:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-int ser_open(const char *port)
+these functions (and cross-platform data types) whenever possible:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+TYPE_FD
+</li></ul></div><p>Cross-platform data type to represent a serial-port connection.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+ERROR_FD_SER
+</li></ul></div><p>Macro value representing an invalid serial-port connection.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+VALID_FD_SER(TYPE_FD_SER fd)
+</li></ul></div><p>This macro evaluates to <code class="literal">true</code> if <code class="literal">fd</code> currently has a "valid" value
+(e.g. represents a connected device). You should invalidate the <code class="literal">fd</code>
+when you initialize the variable or close the connection, by assigning
+<code class="literal">fd = ERROR_FD</code>.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+INVALID_FD_SER(TYPE_FD_SER fd)
+</li></ul></div><p>This macro evaluates to <code class="literal">true</code> if <code class="literal">fd</code> does not currently have a
+"valid" value.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+TYPE_FD_SER ser_open(const char *port)
 </li></ul></div><p>This opens the port and locks it if possible, using one of fcntl, lockf,
 or uu_lock depending on what may be available.  If something fails, it
 calls fatal for you.  If it succeeds, it always returns the fd that was
 opened.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-int ser_open_nf(const char *port)
+TYPE_FD_SER ser_open_nf(const char *port)
 </li></ul></div><p>This is a non-fatal version of ser_open(), that does not call fatal if
 something fails.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-int ser_set_speed(int fd, const char *port, speed_t speed)
+int ser_set_speed(TYPE_FD_SER fd, const char *port, speed_t speed)
 </li></ul></div><p>This sets the speed of the port and also does some basic configuring
 with tcgetattr and tcsetattr.  If you have a special serial
 configuration (other than 8N1), then this may not be what you want.</p><p>The port name is provided again here so failures in tcgetattr() provide
 a useful error message.  This is the only place that will generate a
 message if someone passes a non-serial port /dev entry to your driver,
 so it needs the extra detail.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-int ser_set_speed_nf(int fd, const char *port, speed_t speed)
+int ser_set_speed_nf(TYPE_FD_SER fd, const char *port, speed_t speed)
 </li></ul></div><p>This is a non-fatal version of ser_set_speed(), that does not call fatal
 if something fails.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-int ser_set_dtr(int fd, int state)
+int ser_set_dtr(TYPE_FD_SER fd, int state)
 </li><li class="listitem">
-int ser_set_rts(int fd, int state)
+int ser_set_rts(TYPE_FD_SER fd, int state)
 </li></ul></div><p>These functions can be used to set the modem control lines to provide
 cable power on the RS232 interface. Use state = 0 to set the line to 0
 and any other value to set it to 1.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-int ser_get_dsr(int fd)
+int ser_get_dsr(TYPE_FD_SER fd)
 </li><li class="listitem">
-int ser_get_cts(int fd)
+int ser_get_cts(TYPE_FD_SER fd)
 </li><li class="listitem">
-int ser_get_dcd(int fd)
+int ser_get_dcd(TYPE_FD_SER fd)
 </li></ul></div><p>These functions read the state of the modem control lines. They will
 return 0 if the line is logic 0 and a non-zero value if the line is
 logic 1.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-int ser_close(int fd, const char *port)
+int ser_close(TYPE_FD_SER fd, const char *port)
 </li></ul></div><p>This function unlocks the port if possible and closes the fd.  You
 should call this in your upsdrv_cleanup handler.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-ssize_t ser_send_char(int fd, unsigned char ch)
+ssize_t ser_send_char(TYPE_FD_SER fd, unsigned char ch)
 </li></ul></div><p>This attempts to write one character and returns the return value from
 write.  You could call write directly, but using this function allows
 for future error handling in one place.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-ssize_t ser_send_pace(int fd, useconds_t d_usec,
+ssize_t ser_send_pace(TYPE_FD_SER fd, useconds_t d_usec,
                                 const char *fmt, …)
 </li></ul></div><p>If you need to send a formatted buffer with an intercharacter delay, use
 this function.  There are a number of UPS controllers which can’t take
@@ -203,35 +215,35 @@ commands at the full speed that would normally be possible at a given
 bit rate.  Adding a small delay usually turns a flaky UPS into a solid
 one.</p><p>The return value is the number of characters that was sent to the port,
 or -1 if something failed.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-ssize_t ser_send(int fd, const char *fmt, …)
+ssize_t ser_send(TYPE_FD_SER fd, const char *fmt, …)
 </li></ul></div><p>Like ser_send_pace, but without a delay.  Only use this if you’re sure
 that your UPS can handle characters at the full line rate.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-ssize_t ser_send_buf(int fd, const void *buf, size_t buflen)
+ssize_t ser_send_buf(TYPE_FD_SER fd, const void *buf, size_t buflen)
 </li></ul></div><p>This sends a raw buffer to the fd.  It is typically used for binary
 transmissions.  It returns the results of the call to write.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-ssize_t ser_send_buf_pace(int fd, useconds_t d_usec,
+ssize_t ser_send_buf_pace(TYPE_FD_SER fd, useconds_t d_usec,
                                     const void *buf, size_t buflen)
 </li></ul></div><p>This is just ser_send_buf with an intercharacter delay.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-ssize_t ser_get_char(int fd, void *ch, time_t d_sec, useconds_t d_usec)
+ssize_t ser_get_char(TYPE_FD_SER fd, void *ch, time_t d_sec, useconds_t d_usec)
 </li></ul></div><p>This will wait up to d_sec seconds + d_usec microseconds for one
 character to arrive, storing it at ch.  It returns 1 on success, -1
 if something fails and 0 on a timeout.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>the delay value must not be too large, or your driver will not get
 back to the usual idle loop in main in time to answer the PINGs from
 upsd.  That will cause an oscillation between staleness and normal
 behavior.</p></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-ssize_t ser_get_buf(int fd, void *buf, size_t buflen,
+ssize_t ser_get_buf(TYPE_FD_SER fd, void *buf, size_t buflen,
                               time_t d_sec, useconds_t d_usec)
 </li></ul></div><p>Like ser_get_char, but this one reads up to buflen bytes storing all of
 them in buf.  The buffer is zeroed regardless of success or failure.  It
 returns the number of bytes read, -1 on failure and 0 on a timeout.</p><p>This is essentially a single read() function with a timeout.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-ssize_t ser_get_buf_len(int fd, void *buf, size_t buflen,
+ssize_t ser_get_buf_len(TYPE_FD_SER fd, void *buf, size_t buflen,
                                   time_t d_sec, useconds_t d_usec)
 </li></ul></div><p>Like ser_get_buf, but this one waits for buflen bytes to arrive,
 storing all of them in buf.  The buffer is zeroed regardless of success
 or failure.  It returns the number of bytes read, -1 on failure
 and 0 on a timeout.</p><p>This should only be used for binary reads.  See ser_get_line for
 protocols that are terminated by characters like CR or LF.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-ssize_t ser_get_line(int fd, void *buf, size_t buflen,
+ssize_t ser_get_line(TYPE_FD_SER fd, void *buf, size_t buflen,
                                char endchar, const char *ignset,
                                time_t d_sec, useconds_t d_usec)
 </li></ul></div><p>This is the reading function you should use if your UPS tends to send
@@ -249,7 +261,7 @@ unless your UPS uses a polled protocol.</p></div><p>Let’s say your endchar is 
 This function will <code class="literal">read()</code> all of that, find the first <code class="literal">\n</code>, and stop
 there.  Your driver will get <code class="literal">"OK"</code>, and the rest is gone forever.</p><p>This also means that you should not "pipeline" commands to the UPS.
 Send a query, then read the response, then send the next query.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-ssize_t ser_get_line_alert(int fd, void *buf, size_t buflen,
+ssize_t ser_get_line_alert(TYPE_FD_SER fd, void *buf, size_t buflen,
                                      char endchar, const char *ignset,
                                      const char *alertset,
                                      void handler(char ch),
@@ -260,14 +272,14 @@ to the buffer, and this function will call your handler function,
 passing the character as an argument.</p><p>Implementation note: this function actually does all of the work, and
 ser_get_line is just a wrapper that sets an empty alertset and a NULL
 handler.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-ssize_t ser_flush_in(int fd, const char *ignset, int verbose)
+ssize_t ser_flush_in(TYPE_FD_SER fd, const char *ignset, int verbose)
 </li></ul></div><p>This function will drain the input buffer.  If verbose is set to a
 positive number, then it will announce the characters which have been
 read in the syslog.  You should not set verbose unless debugging is
 enabled, since it could be very noisy.</p><p>This function returns the number of characters which were read, so you
 can check for extra bytes by looking for a nonzero return value.  Zero
 will also be returned if the read fails for some reason.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-int ser_flush_io(int fd)
+int ser_flush_io(TYPE_FD_SER fd)
 </li></ul></div><p>This function drains both the in- and output buffers. Return zero on
 success.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 void ser_comm_fail(const char *fmt, …)
@@ -2238,4 +2250,4 @@ If you need to edit the current status call this function with one of the NUT st
 </li><li class="listitem">
 <code class="literal">nutdrv_qx_ablerex.</code>{<code class="literal">c</code>,<code class="literal">h</code>}
 </li></ul></div></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2022-08-30 02:49:06 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s03.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s05.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2022-09-03 00:20:29 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s03.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s05.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
