@@ -159,7 +159,80 @@ drivers in distro packaging of NUT. Resolution and doc PRs are welcome.</p></div
 be downloaded if needed. For more details, see
 <a class="ulink" href="https://unix.stackexchange.com/questions/475584/cannot-install-busybox-on-centos" target="_top">https://unix.stackexchange.com/questions/475584/cannot-install-busybox-on-centos</a></p></div><p>CentOS packaging for 64-bit systems delivers the directory for dispatching
 compiler symlinks as <code class="literal">/usr/lib64/ccache</code>. You can set it up same way as for
-other described environments by adding a symlink <code class="literal">/usr/lib/ccache</code>:</p><pre class="screen">:; ln -s ../lib64/ccache/ "$ALTROOT"/usr/lib/</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>For Jenkins agents, also need to <code class="literal">yum install java-11-openjdk-headless</code>.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_freebsd_12_2"></a>FreeBSD 12.2</h4></div></div></div><p>Note that <code class="literal">PATH</code> for builds on BSD should include <code class="literal">/usr/local/...</code>:</p><pre class="screen">:; PATH=/usr/local/libexec/ccache:/usr/local/bin:/usr/bin:$PATH
+other described environments by adding a symlink <code class="literal">/usr/lib/ccache</code>:</p><pre class="screen">:; ln -s ../lib64/ccache/ "$ALTROOT"/usr/lib/</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>For Jenkins agents, also need to <code class="literal">yum install java-11-openjdk-headless</code>.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_arch_linux"></a>Arch Linux</h4></div></div></div><p>Update the lower-level OS and package databases:</p><pre class="screen">:; pacman -Syu</pre><p>Install tools and prerequisites for NUT:</p><pre class="screen">:; pacman -S --needed \
+    base-devel \
+    autoconf automake libtool libltdl \
+    clang gcc \
+    ccache \
+    git \
+    vim python perl \
+    pkgconf \
+    cppcheck valgrind
+
+# For spell-checking, highly recommended if you would propose pull requests:
+:; pacman -S --needed \
+    aspell en-aspell
+
+# For man-page doc types generation:
+:; pacman -S --needed \
+    asciidoc
+
+# For other doc types (PDF, HTML) generation - massive packages (TEX, X11):
+:; pacman -S --needed \
+    source-highlight dblatex
+
+# For CGI graph generation - massive packages (X11):
+:; pacman -S --needed \
+    gd
+
+:; pacman -S --needed \
+    cppunit \
+    openssl nss \
+    augeas \
+    libusb \
+    neon \
+    net-snmp \
+    freeipmi \
+    avahi
+
+:; pacman -S --needed \
+    lua51
+
+:; pacman -S --needed \
+    bash dash busybox ksh93</pre><p>Recommended for NUT CI farm integration (matching specific toolkit versions
+in a build matrix), and note the unusual location of <code class="literal">/usr/lib/ccache/bin/</code>
+for symlinks:</p><pre class="screen">:; gcc --version
+gcc (GCC) 12.2.0
+...
+
+# Note: this distro delivers "gcc" et al as file names
+# so symlinks like this may erode after upgrades.
+# TODO: Rename and then link?..
+:; (cd /usr/bin \
+    &amp;&amp; for V in 12 12.2.0 ; do for T in gcc g++ cpp ; do \
+        ln -fsr $T $T-$V ; \
+    done; done)
+:; (cd /usr/lib/ccache/bin/ \
+    &amp;&amp; for V in 12 12.2.0 ; do for T in gcc g++ ; do \
+        ln -fsr /usr/bin/ccache $T-$V ; \
+    done; done)
+
+
+:; clang --version
+clang version 14.0.6
+...
+
+:; (cd /usr/bin &amp;&amp; ln -fs clang-14 clang++-14 &amp;&amp; ln -fs clang-14 clang-cpp-14)
+:; (cd /usr/lib/ccache/bin/ \
+    &amp;&amp; for V in 14 ; do for T in clang clang++ ; do \
+        ln -fsr /usr/bin/ccache $T-$V ; \
+    done; done)</pre><p>Also for CI build agents, a Java environment (JDK11+ since summer 2022) is
+required:</p><pre class="screen"># Search for available Java versions:
+:; pacman -Ss | egrep 'jre|jdk'
+
+# Pick one:
+:; pacman -S --needed \
+    jre11-openjdk-headless</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_freebsd_12_2"></a>FreeBSD 12.2</h4></div></div></div><p>Note that <code class="literal">PATH</code> for builds on BSD should include <code class="literal">/usr/local/...</code>:</p><pre class="screen">:; PATH=/usr/local/libexec/ccache:/usr/local/bin:/usr/bin:$PATH
 :; export PATH</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>You may want to reference <code class="literal">ccache</code> even before all that, as detailed
 below.</p></div><pre class="screen">:; pkg install \
     git python perl5 curl \
@@ -559,4 +632,4 @@ interaction with antivirus software which holds executable files open and
 so not writable by the linker. This may cause random steps in the <code class="literal">configure</code>
 script or later during the build to fail. If that happens to you, disable the
 antivirus completely or exempt at least the NUT build area from protection.</p></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2022-09-12 12:24:58 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apks01.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="apk.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="apks03.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2022-09-15 11:45:33 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apks01.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="apk.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="apks03.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
