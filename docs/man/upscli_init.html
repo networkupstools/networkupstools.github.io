@@ -762,7 +762,7 @@ asciidoc.install();
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>The <strong>upscli_init()</strong> function initialize upsclient module and set many
-SSL-related properties: <em>certverify</em> to 1 makes certificate verification
+TLS/SSL-related properties: <em>certverify</em> to 1 makes certificate verification
 required for all SSL connections and <em>certpath</em> is the location of
 certificate database.</p></div>
 <div class="paragraph"><p>If compiled with OpenSSL, certpath refers to directory containing
@@ -783,6 +783,14 @@ files.</p></div>
 <div class="paragraph"><p>If compiled with NSS and using SSL, you can specify <em>certname</em> the name
 of the certificate to send to upsd and <em>certpasswd</em> the password used
 to decrypt certificate private key.</p></div>
+<div class="paragraph"><p>If compiled with NSS, it would normally log either the infamous message
+"Init SSL without certificate database" if no <em>certpath</em> was provided,
+or "Init SSL with certificate database located at %s" otherwise.
+Since some programmatic consumers become confused by such extra text on
+the <code>stderr</code> of tools they call (such as monitoring systems doing <code>upsc</code>
+queries), you can export an environment variable <code>NUT_QUIET_INIT_SSL</code>
+with string values "true", "TRUE" or "1", to avoid logging these messages
+and just emit them as debug stream (at verbosity 1 or higher).</p></div>
 <div class="paragraph"><p>You can call <a href="upscli_add_host_cert.html">upscli_add_host_cert(3)</a> to register specific host
 security policy before initialize connections to them.</p></div>
 <div class="paragraph"><p>You must call <a href="upscli_cleanup.html">upscli_cleanup(3)</a> when exiting application.</p></div>
@@ -808,7 +816,7 @@ security policy before initialize connections to them.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-08-25 22:13:25 UTC -- Network UPS Tools 2.8.0.1
+Last updated 2022-09-26 08:42:34 UTC -- Network UPS Tools 2.8.0.1
 </div>
 </div>
 </body>
