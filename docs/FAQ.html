@@ -263,10 +263,16 @@ any of the user accounts which run inside the jail.</p></div><div class="section
 compile-time, then you may have some sort of firewall blocking the connection.</p><p>upsd listens on TCP port 3493 by default. If you do not specify a LISTEN
 directive in upsd.conf, upsd only listens on the loopback interface. See the
 upsd.conf man page for details.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_how_do_you_make_upsmon_reload_the_config_file"></a>26. How do you make upsmon reload the config file?</h2></div></div></div><p>Or a variation like…</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_how_do_you_make_upsd_reload_the_config_file"></a>27. How do you make upsd reload the config file?</h2></div></div></div><p>Either find the pid of the background process and send it a SIGHUP,
-or just start it again with <span class="emphasis"><em>-c reload</em></span>.</p><p>If you send the signals yourself instead of using -c, be sure you
+or just start it again with <span class="emphasis"><em>-c reload</em></span> (requires that the previously
+started daemon saves a PID file).</p><p>If you send the signals yourself instead of using -c, be sure you
 hit the right process.  There are usually two upsmon processes, and you
 should only send signals to one of them.  To be safe, read the pid
-file.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_i_just_bought_a_new_whizbang_ups_that_has_a_usb_connector_how_do_i_monitor_it"></a>28. I just bought a new WhizBang UPS that has a USB connector.  How do I monitor it?</h2></div></div></div><p>There are several driver to support USB models.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+file.</p><p>If your daemons are managed as systemd units, it is more idiomatic to
+use the framework commands, e.g. <code class="literal">systemctl reload nut-server</code> (upsd)
+or <code class="literal">systemctl reload nut-monitor</code> (upsmon). Note that the implementation
+of <code class="literal">nut-server.service</code> by default starts <code class="literal">upsd -F</code> and does not save a
+PID file; if your workflow requires to use plain <code class="literal">upsd -c reload</code>, you
+should customize the unit (with a drop-in file) to start <code class="literal">upsd -FF</code>.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_i_just_bought_a_new_whizbang_ups_that_has_a_usb_connector_how_do_i_monitor_it"></a>28. I just bought a new WhizBang UPS that has a USB connector.  How do I monitor it?</h2></div></div></div><p>There are several driver to support USB models.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 usbhid-ups supports various manufacturers complying to the HID Power Device Class (PDC) standard,
 </li><li class="listitem">
 tripplite_usb supports various older Tripp-Lite units (with USB ProductID 0001)
@@ -521,4 +527,4 @@ they won’t be stuck in the halted state with the UPS running on line power.</p
                 # uh oh, we never got shut down! (power race?)
                 reboot
         fi</pre></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2022-08-25 22:20:00 -- Network UPS Tools 2.8.0.1</div></body></html>
+		Last updated 2022-12-03 11:45:38 -- Network UPS Tools 2.8.0.1</div></body></html>
