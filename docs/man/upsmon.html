@@ -1256,6 +1256,53 @@ pressing event on the UPS manager system.</p></div>
 by starting another copy of the program with <code>-c fsd</code> command line argument.
 This is useful when you want to initiate a shutdown before the critical
 stage through some external means, such as <a href="upssched.html">upssched(8)</a>.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Warning</div>
+</td>
+<td class="content">Please note that by design, since we require power-cycling the
+load and don&#8217;t want some systems to be powered off while others remain
+running if the "wall power" returns at the wrong moment as usual, the "FSD"
+flag can not be removed from the data server unless its daemon is restarted.
+If we do take the first step in critical mode, then we normally intend to go
+all the way -- shut down all the servers gracefully, and power down the UPS.</td>
+</tr></table>
+</div>
+<div class="paragraph"><p>Keep in mind that some UPS devices and corresponding drivers would also latch
+or otherwise resurface the "FSD" state again even if "wall power" is available,
+but the remaining battery charge is below a threshold configured as "safe" in
+the device (usually if you manually power on the UPS after a long power outage).
+This is by design of respective UPS vendors, since in such situation they
+can not guarantee that if a new power outage happens, their UPS would safely
+shut down your systems again. So it is deemed better and safer to stay dark
+until batteries become sufficiently charged.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_simulating_power_failures">SIMULATING POWER FAILURES</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>To test a synchronized shutdown without pulling the plug on your UPS(es),
+you need only set the forced shutdown (FSD) flag on them.  You can do this
+by calling upsmon again to set the flag, i.e.:</p></div>
+<div class="paragraph"><p><code>upsmon -c fsd</code></p></div>
+<div class="paragraph"><p>After that, the primary and the secondary will do their usual shutdown
+sequence as if the battery had gone critical, while you can time how long
+it takes for them.  This is much easier on your UPS equipment, and it beats
+crawling under a desk to find the plug.</p></div>
+<div class="paragraph"><p>Note you can also use a dummy SHUTDOWNCMD setting to just report that the
+systems would shut down at this point, without actually disrupting their work.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Warning</div>
+</td>
+<td class="content">after such "dummy" experiments you may have to restart the NUT data
+server <code>upsd</code> to clear its "FSD" flag for the devices and clients involved,
+and make sure no files named by <code>POWERDOWNFLAG</code> option (e.g. <code>/etc/killpower</code>)
+remain on the <code>upsmon primary</code> systems under test.</td>
+</tr></table>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -1291,21 +1338,6 @@ values during a reload.</p></div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_simulating_power_failures">SIMULATING POWER FAILURES</h2>
-<div class="sectionbody">
-<div class="paragraph"><p>To test a synchronized shutdown without pulling the plug on your UPS(es),
-you need only set the forced shutdown (FSD) flag on them.  You can do this
-by calling upsmon again to set the flag, i.e.:</p></div>
-<div class="paragraph"><p><code>upsmon -c fsd</code></p></div>
-<div class="paragraph"><p>After that, the primary and the secondary will do their usual shutdown
-sequence as if the battery had gone critical, while you can time how long
-it takes for them.  This is much easier on your UPS equipment, and it beats
-crawling under a desk to find the plug.</p></div>
-<div class="paragraph"><p>Note you can also use a dummy SHUTDOWNCMD setting to just report that the
-systems would shut down at this point, without actually disrupting their work.</p></div>
-</div>
-</div>
-<div class="sect1">
 <h2 id="_files">FILES</h2>
 <div class="sectionbody">
 <div class="paragraph"><p><a href="upsmon.conf.html">upsmon.conf(5)</a></p></div>
@@ -1337,7 +1369,7 @@ systems would shut down at this point, without actually disrupting their work.</
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-09-02 23:45:18 UTC -- Network UPS Tools 2.8.0.1
+Last updated 2023-01-02 17:43:41 UTC -- Network UPS Tools 2.8.0.1
 </div>
 </div>
 </body>
