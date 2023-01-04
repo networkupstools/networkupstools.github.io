@@ -147,7 +147,7 @@ might look like this:</p><pre class="screen">        # other shutdown stuff here
         # `upsmon -K` if available on still mounted filesystems
         # at this point is more portable than the `test` below
 
-        if (test -f /etc/killpower)
+        if (test -f /etc/killpower || /sbin/upsmon -K)
         then
                 /sbin/upsdrvctl shutdown
 
@@ -500,9 +500,11 @@ send the URL to one of the mailing lists.</p><p>Posting an issue with attachment
 <a class="ulink" href="https://github.com/networkupstools/nut/issues" target="_top">https://github.com/networkupstools/nut/issues</a>
 can also be helpful.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_how_can_you_answer_questions_to_situations_that_nobody_8217_s_encountered_yet_isn_8217_t_this_a_frequently_asked_questions_file"></a>53. How can you answer questions to situations that nobody’s encountered yet?  Isn’t this a frequently asked questions file?</h2></div></div></div><p><span class="strong"><strong>Answer 1</strong></span></p><p>It’s a kind of Magic.</p><p><span class="strong"><strong>Answer 2</strong></span></p><p>It’s both that and a frequently <span class="strong"><strong>anticipated</strong></span> questions file, too.</p><p>The idea is to write it up in here so that nobody asks the mailing
 list when it finally does get released.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_my_ups_powers_up_immediately_after_a_power_failure_instead_of_waiting_for_the_batteries_to_recharge"></a>54. My UPS powers up immediately after a power failure instead of waiting for the batteries to recharge!</h2></div></div></div><p>Or a variation like…</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_my_ups_an_apc_as_it_happens_lacks_the_field_battery_charge_restart_8201_8212_8201_so_how_will_it_know_when_to_restart"></a>55. My UPS (an APC as it happens) lacks the field "battery.charge.restart" — so how will it know when to restart?</h2></div></div></div><p>You can rig up a little hack to handle this issue in software.</p><p>Essentially, you need to test for the POWERDOWNFLAG in your <span class="strong"><strong>startup</strong></span> scripts
-while the filesystems are still read-only.  If it’s there, you know your last
-shutdown was caused by a power failure and the UPS battery is probably still
-quite weak.</p><p>In this situation, your best bet is to sleep it off.  Pausing in your startup
+while the filesystems are still read-only (before <code class="literal">upsmon</code> daemon has started
+and removed it).  You can also query <code class="literal">upsmon -K</code> for presence of the file, to
+avoid hard-coding the path or parsing it from your <code class="literal">upsmon.conf</code> file.  If the
+flag is there, you know your last shutdown was caused by a power failure and
+the UPS battery is probably still quite weak.</p><p>In this situation, your best bet is to sleep it off.  Pausing in your startup
 script to let the batteries recharge with the filesystems in a safe state is
 recommended.  This way, if the power goes out again, you won’t face a situation
 where there’s not enough battery capacity left for upsmon to do its thing.</p><p>Exactly how long to wait is a function of your UPS hardware, and will require
@@ -518,7 +520,7 @@ process, there is no way to power down the load.</p><p>The workaround is to forc
 they won’t be stuck in the halted state with the UPS running on line power.</p><p>Implement this by modifying your shutdown script like this:</p><pre class="screen">        # `upsmon -K` if available on still mounted filesystems
         # at this point is more portable than the `test` below
 
-        if (test -f /etc/killpower)
+        if (test -f /etc/killpower || /sbin/upsmon -K)
         then
                 /sbin/upsdrvctl shutdown
 
@@ -527,4 +529,4 @@ they won’t be stuck in the halted state with the UPS running on line power.</p
                 # uh oh, we never got shut down! (power race?)
                 reboot
         fi</pre></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2022-12-03 11:45:38 -- Network UPS Tools 2.8.0.1</div></body></html>
+		Last updated 2023-01-04 23:44:12 -- Network UPS Tools 2.8.0.1</div></body></html>

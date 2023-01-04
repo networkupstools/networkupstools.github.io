@@ -769,6 +769,118 @@ riello_usb driver.  For information about the core driver, see
 </div>
 </div>
 <div class="sect1">
+<h2 id="_extra_arguments">EXTRA ARGUMENTS</h2>
+<div class="sectionbody">
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>port =</strong> <em>string</em>
+</dt>
+<dd>
+<p>
+Some <em>value</em> must be set, typically <strong>auto</strong>.
+</p>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">This could be a device filesystem path like <code>/dev/usb/hiddev0</code> but current
+use of libusb API precludes knowing and matching by such identifiers.  They may
+also be inherently unreliable (dependent on re-plugging and enumeration order).
+At this time the actual <em>value</em> is ignored, but some <em>port</em> must be there
+syntactically.</td>
+</tr></table>
+</div>
+</dd>
+</dl></div>
+<div class="paragraph"><p>It is possible to control multiple UPS units simultaneously by running several
+instances of this driver, provided they can be uniquely distinguished by setting
+some combination of the <strong>vendor</strong>, <strong>product</strong>, <strong>vendorid</strong>, <strong>productid</strong>, <strong>serial</strong>,
+<strong>bus</strong> and/or <strong>device</strong> options detailed below.</p></div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>vendorid =</strong> <em>regex</em>
+</dt>
+<dt class="hdlist1">
+<strong>productid =</strong> <em>regex</em>
+</dt>
+<dt class="hdlist1">
+<strong>vendor =</strong> <em>regex</em>
+</dt>
+<dt class="hdlist1">
+<strong>product =</strong> <em>regex</em>
+</dt>
+<dt class="hdlist1">
+<strong>serial =</strong> <em>regex</em>
+</dt>
+<dd>
+<p>
+Select a specific UPS, in case there is more than one connected via
+USB. Each option specifies an extended regular expression (see
+<strong>regex(7)</strong> for more information on regular expressions), which
+must match the UPS&#8217;s entire respective vendor/product/serial string
+(minus any surrounding whitespace), or the whole 4-digit
+hexadecimal code for <code>vendorid</code> and <code>productid</code>.
+</p>
+<div class="paragraph"><p>Try <strong>lsusb(8)</strong> or running this NUT driver with <strong>-DD</strong> command-line
+argument for finding out the strings to match.</p></div>
+<div class="paragraph"><p>Examples:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>-x vendor="Foo.Corporation.*"</code>
+</p>
+</li>
+<li>
+<p>
+<code>-x vendorid="051d*"</code> (APC)
+</p>
+</li>
+<li>
+<p>
+<code>-x product=".*(Smart|Back)-?UPS.*"</code>
+</p>
+</li>
+</ul></div>
+</dd>
+<dt class="hdlist1">
+<strong>bus =</strong> <em>regex</em>
+</dt>
+<dd>
+<p>
+Select a UPS on a specific USB bus or group of buses. The argument is
+a regular expression that must match the bus name where the UPS is
+connected (e.g. <code>bus="002"</code> or <code>bus="00[2-3]"</code>) as seen in
+<code>/proc/bus/usb/devices</code> or <strong>lsusb(8)</strong>; including leading zeroes.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>device =</strong> <em>regex</em>
+</dt>
+<dd>
+<p>
+Select a UPS on a specific USB device or group of devices. The argument is
+a regular expression that must match the device name where the UPS is
+connected (e.g. <code>device="001"</code> or <code>device="00[1-2]"</code>) as seen in
+<code>/proc/bus/usb/devices</code> or <strong>lsusb(8)</strong>; including leading zeroes.
+Note that device numbers are not guaranteed by the OS to be stable across
+re-boots or device re-plugging.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>usb_set_altinterface =</strong> <em>bAlternateSetting</em>
+</dt>
+<dd>
+<p>
+Force redundant call to <code>usb_set_altinterface()</code>, especially if needed
+for devices serving multiple USB roles where the UPS is not represented
+by the interface number <code>0</code> (default).
+</p>
+</dd>
+</dl></div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_author">AUTHOR</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>Massimo Zampieri</p></div>
@@ -791,7 +903,7 @@ riello_usb driver.  For information about the core driver, see
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-08-25 22:13:25 UTC -- Network UPS Tools 2.8.0.1
+Last updated 2023-01-04 23:43:06 UTC -- Network UPS Tools 2.8.0.1
 </div>
 </div>
 </body>
