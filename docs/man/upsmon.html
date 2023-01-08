@@ -1277,6 +1277,14 @@ This is by design of respective UPS vendors, since in such situation they
 can not guarantee that if a new power outage happens, their UPS would safely
 shut down your systems again. So it is deemed better and safer to stay dark
 until batteries become sufficiently charged.</p></div>
+<div class="paragraph"><p>When it is time to shut down, upsmon creates POWERDOWNFLAG to
+communicate to the operating system that the UPS should be commanded
+off late in the shutdown sequence.  This file is removed if present
+when upsmon starts, so that the next normal shutdown does not cause
+the UPS to be turned off.  (The file can&#8217;t in general be removed
+during shutdown because the filesystem might be read only.  If the
+file is in a RAM-backed filesystem, the it won&#8217;t be present and the
+check to remove it won&#8217;t fire.)</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -1316,6 +1324,15 @@ to the overall power value.</p></div>
 <div class="paragraph"><p>upsmon will alert you to a UPS that can&#8217;t be contacted for monitoring
 with a "NOCOMM" notifier by default every 300 seconds.  This can be
 changed with the NOCOMMWARNTIME setting.</p></div>
+<div class="paragraph"><p>Also upsmon normally reports polling failures for each device that are in place
+for each POLLFREQ loop (e.g. "Data stale" or "Driver not connected") to
+system log as configured.  If your devices are expected to be AWOL for an
+extended timeframe, you can use POLLFAIL_LOG_THROTTLE_MAX to reduce the
+stress on syslog traffic and storage, by posting these messages only once
+in every several loop cycles, and when the error condition has changed or
+cleared. A negative value means standard behavior, and a zero value means
+to never repeat the message (log only on start and end/change of the failure
+state).</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -1369,7 +1386,7 @@ values during a reload.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-01-02 17:43:41 UTC -- Network UPS Tools 2.8.0.1
+Last updated 2023-01-08 05:55:40 UTC -- Network UPS Tools 2.8.0.1
 </div>
 </div>
 </body>

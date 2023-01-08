@@ -886,9 +886,21 @@ Display the version of the program.
 <div class="paragraph"><p>upsd can reload its configuration files without shutting down the process
 if you send it a SIGHUP or start it again with <code>-c reload</code>.  This only works
 if the background process is able to read those files, and if the daemon did
-save a PID file when it started (e.g. service instances wrapped by systemd
-or SMF do not save them by default&#8201;&#8212;&#8201;use respective <code>reload</code>/<code>refresh</code>
-framework actions instead).</p></div>
+save a PID file when it started.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<div class="paragraph"><p>Service instances wrapped by systemd or SMF might not save them by default&#8201;&#8212;&#8201;use respective <code>reload</code>/<code>refresh</code> framework actions instead then), e.g.
+<code>systemctl reload nut-server</code></p></div>
+<div class="paragraph"><p>NUT releases after 2.8.0 define aliases for these units, so if your Linux
+distribution uses NUT-provided unit definitions, <code>systemctl reload upsd</code>
+may also work.</p></div>
+</td>
+</tr></table>
+</div>
 <div class="paragraph"><p>If you think that upsd can&#8217;t reload, check your syslog for error messages.
 If it&#8217;s complaining about not being able to read the files, then you need
 to adjust your system to make it possible.  Either change the permissions
@@ -1355,7 +1367,7 @@ or otherwise the built-in default <strong>STATEPATH</strong>.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-12-03 11:43:23 UTC -- Network UPS Tools 2.8.0.1
+Last updated 2023-01-08 05:55:40 UTC -- Network UPS Tools 2.8.0.1
 </div>
 </div>
 </body>
