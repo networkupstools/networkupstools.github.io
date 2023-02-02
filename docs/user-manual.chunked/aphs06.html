@@ -1,12 +1,67 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>H.6. Directories used by NUT at run-time</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><link rel="home" href="index.html" title="Network UPS Tools User Manual" /><link rel="up" href="aph.html" title="H. Configure options" /><link rel="prev" href="aphs05.html" title="H.5. Installation directories" /><link rel="next" href="aphs07.html" title="H.7. Things the compiler might need to find" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="aphs05.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="aphs07.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_directories_used_by_nut_at_run_time"></a>H.6. Directories used by NUT at run-time</h3></div></div></div><pre class="literallayout">--with-pidpath=PATH</pre><p>Changes the directory where NUT pid files are stored for processes running
-as <code class="literal">root</code>.  By default this is <code class="literal">/var/run</code>.  Certain programs like <code class="literal">upsmon</code>
-will leave files here.</p><pre class="literallayout">--with-altpidpath=PATH</pre><p>Programs that normally don’t have <code class="literal">root</code> powers, like the drivers and
-<code class="literal">upsd</code>, write their pid files here.  By default this is whatever the
-statepath (below) is, as those programs should be able to write there.</p><p>The <code class="literal">NUT_ALTPIDPATH</code> environment variable overrides this at run time.</p><pre class="literallayout">--with-statepath=PATH</pre><p>Change the default location of the state sockets created by the drivers
-to interact with the data server <code class="literal">upsd</code>. Default is <code class="literal">/var/state/ups</code>.</p><p>The <code class="literal">NUT_STATEPATH</code> environment variable overrides this at run time.</p><pre class="literallayout">--with-powerdownflag=FILEPATH</pre><p>Change the default location (full filename path) of the POWERDOWNFLAG
-created by <code class="literal">upsmon</code> (as <code class="literal">root</code>) to tell the late-shutdown integration
-that this machine should tell all UPSes for which it is a "primary" NUT
-server to cut power to the load. Default is <code class="literal">/etc/killpower</code> on POSIX
-systems and <code class="literal">"C:\\killpower"</code> (note the double backslashes) on Windows.</p></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2023-01-09 11:48:35 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="aphs05.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="aph.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="aphs07.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>H.6. Installation directories</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><link rel="home" href="index.html" title="Network UPS Tools User Manual" /><link rel="up" href="aph.html" title="H. Configure options" /><link rel="prev" href="aphs05.html" title="H.5. Other configuration options" /><link rel="next" href="aphs07.html" title="H.7. Directories used by NUT at run-time" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="aphs05.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="aphs07.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_installation_directories"></a>H.6. Installation directories</h3></div></div></div><pre class="literallayout">--prefix=PATH</pre><p>This is a fairly standard option with GNU autoconf, and it sets the
+base path for most of the other install directories.  The default
+is <code class="literal">/usr/local/ups</code>, which puts everything but the state sockets in one
+easy place, and does not conflict with usual distribution packaging.</p><p>If you like having things to be at more of a "system" level, setting
+the prefix to <code class="literal">/usr/local</code> or even <code class="literal">/usr</code> might be better.</p><pre class="literallayout">--exec_prefix=PATH</pre><p>This sets the base path for architecture dependent files. By
+default, it is the same as <code class="literal">&lt;prefix&gt;</code>.</p><pre class="literallayout">--sysconfdir=PATH</pre><p>Changes the location where NUT’s configuration files are stored.
+By default this path is <code class="literal">&lt;prefix&gt;/etc</code>.  Setting this to <code class="literal">/etc/nut</code> or
+<code class="literal">/etc/ups</code> might be useful. See also <code class="literal">--enable-inplace-runtime</code>.</p><p>The <code class="literal">NUT_CONFPATH</code> environment variable overrides this at run time.</p><pre class="literallayout">--sbindir=PATH
+--bindir=PATH</pre><p>Where executable files will be installed. Files that are normally
+executed by root (<code class="literal">upsd</code>, <code class="literal">upsmon</code>, <code class="literal">upssched</code>) go to <code class="literal">&lt;sbindir&gt;</code>,
+all others to <code class="literal">&lt;bindir&gt;</code>. The defaults are <code class="literal">&lt;exec_prefix&gt;/sbin</code> and
+<code class="literal">&lt;exec_prefix&gt;/bin</code> respectively.</p><p>See also <code class="literal">--with-drvpath</code> below.</p><pre class="literallayout">--with-drvpath=PATH</pre><p>The UPS drivers will be installed to this path.  By default they
+install to <code class="literal">&lt;exec_prefix&gt;/bin</code>, i.e. <code class="literal">/usr/local/ups/bin</code>.</p><p>You would want a location that remains mounted when most of the system
+is prepared to turn off, so some distributions package NUT drivers into
+<code class="literal">/lib/nut</code> or similar. See <a class="ulink" href="config-notes.txt" target="_top">config-notes.txt</a> detailing how to
+set up system shutdown.</p><p>The <code class="literal">driverpath</code> global directive in the <code class="literal">ups.conf</code> file overrides this
+at run time.</p><pre class="literallayout">--datadir=PATH</pre><p>Change the data directory, i.e., where architecture independent
+read-only data is installed.  By default this is <code class="literal">&lt;prefix&gt;/share</code>,
+i.e. <code class="literal">/usr/local/ups/share</code>.  At the moment, this directory only
+holds two files — the optional <code class="literal">cmdvartab</code> and <code class="literal">driver.list</code>.</p><pre class="literallayout">--mandir=PATH</pre><p>Sets the base directories for the man pages.  The default is
+<code class="literal">&lt;prefix&gt;/man</code>, i.e. <code class="literal">/usr/local/ups/man</code>.</p><pre class="literallayout">--includedir=PATH</pre><p>Sets the path for include files to be installed when <code class="literal">--with-dev</code> is
+selected. For example, <code class="literal">upsclient.h</code> is installed here. The default
+is <code class="literal">&lt;prefix&gt;/include</code>.</p><pre class="literallayout">--libdir=PATH</pre><p>Sets the installation path for libraries.  Depending on the build
+configuration, this can include the <code class="literal">libupsclient</code>, <code class="literal">libnutclient</code>,
+<code class="literal">libnutclientsub</code>, <code class="literal">libnutscan</code> and their pkg-config metadata (see
+<code class="literal">--with-pkgconfig-dir</code> option). The default is <code class="literal">&lt;exec_prefix&gt;/lib</code>.</p><pre class="literallayout">--with-pkgconfig-dir=PATH</pre><p>Where to install pkg-config <code class="literal">*.pc</code> files. This option only has an
+effect if <code class="literal">--with-dev</code> is selected, and causes a pkg-config file to
+be installed in the named location. The default is
+<code class="literal">&lt;exec_prefix&gt;/pkgconfig</code>.</p><p>Use <code class="literal">--without-pkgconfig-dir</code> to disable this feature altogether.</p><pre class="literallayout">--with-cgipath=PATH</pre><p>The CGI programs will be installed to this path.  By default, they
+install to <code class="literal">&lt;exec_prefix&gt;/cgi-bin</code>, which is usually
+<code class="literal">/usr/local/ups/cgi-bin</code>.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>If you set the prefix to something like <code class="literal">/usr</code>, you should set the
+<code class="literal">cgipath</code> to something else, because <code class="literal">/usr/cgi-bin</code> is pretty ugly and
+non-standard.</p></div><p>The CGI programs are not built or installed by default.  Use
+<code class="literal">./configure --with-cgi</code> to request that they are built and
+installed.</p><pre class="literallayout">--with-htmlpath=PATH</pre><p>HTML files will be installed to this path. By default, this is
+<code class="literal">&lt;prefix&gt;/html</code>. Note that HTML files are only installed if
+<code class="literal">--with-cgi</code> is selected.</p><pre class="literallayout">--with-hotplug-dir=PATH</pre><p>Where to install Linux 2.4 hotplugging rules. The default is to use
+<code class="literal">/etc/hotplug</code>, if that directory exists, and to not install it
+otherwise. Note that this installation directory is not a
+subdirectory of <code class="literal">&lt;prefix&gt;</code> by default. When installing NUT as a
+non-root user, you may have to override this option.</p><p>Use <code class="literal">--without-hotplug-dir</code> to disable this feature altogether.</p><pre class="literallayout">--with-udev-dir=PATH</pre><p>Where to install Linux 2.6 hotplugging rules, for kernels that have
+the "udev" mechanism. The default is to use <code class="literal">/etc/udev</code>, if that
+directory exists, and to not install it otherwise. Note that this
+installation directory is not a subdirectory of <code class="literal">&lt;prefix&gt;</code> by
+default. When installing NUT as a non-root user, you may have to
+override this option.</p><p>Use <code class="literal">--without-udev-dir</code> to disable this feature altogether.</p><pre class="literallayout">--with-systemdsystemunitdir=PATH</pre><p>Where to install Linux systemd unit definitions. Useless and harmless
+on other OSes, including Linux distributions without systemd, just adding
+a little noise to configure script output.</p><p>Use <code class="literal">--with-systemdsystemunitdir=auto</code> (default) to detect the settings
+using pkg-config if possible.</p><p>Use <code class="literal">--with-systemdsystemunitdir(=yes)</code> to require detection of these
+settings with pkg-config, or fail configuration if not possible.</p><p>Use <code class="literal">--with-systemdsystemunitdir=no</code> to disable this feature altogether.</p><pre class="literallayout">--with-systemdshutdowndir=PATH</pre><p>Where to install Linux systemd unit definitions for shutdown handling.
+Useless and harmless on other OSes, including Linux distributions
+without systemd, just adding a little noise to configure script output.</p><p>Use <code class="literal">--with-systemdshutdowndir</code> to detect the settings using pkg-config.</p><p>Use <code class="literal">--with-systemdshutdowndir=no</code> to disable this feature altogether.</p><pre class="literallayout">--with-systemdtmpfilesdir=PATH</pre><p>Where to install Linux systemd configuration for tmpfiles handling (the
+automatically created locations for PID, state and similar run-time files).
+Useless and harmless on other OSes, including Linux distributions
+without systemd, just adding a little noise to configure script output.</p><p>Use <code class="literal">--with-systemdtmpfilesdir</code> to detect the settings using pkg-config.</p><p>Use <code class="literal">--with-systemdtmpfilesdir=no</code> to disable this feature altogether.</p><pre class="literallayout">--with-libsystemd=(auto|yes|no)
+--with-libsystemd-includes=CFLAGS
+--with-libsystemd-libs=LDFLAGS</pre><p>If the build system provides <code class="literal">libsystemd</code> headers, NUT binaries can be
+built with tighter integration to this service management framework.
+In this case NUT daemons (<code class="literal">upsd</code>, <code class="literal">upsmon</code>, <code class="literal">upslog</code> and drivers) would
+report their life-cycle milestones (<code class="literal">READY</code>, <code class="literal">RELOADING</code>, <code class="literal">STOPPING</code>) and
+support the watchdog reports (if enabled in their respective units by
+end-user — not done by default since the numbers depends on monitoring
+system performance). Default: "auto" (integration enabled if detected).</p><pre class="literallayout">--with-augeas-lenses-dir=PATH</pre><p>Where to install Augeas configuration-management lenses.</p><p>Only useful and valid if you use Augeas to parse and modify configuration
+files. The default is to use <code class="literal">/usr/share/augeas/lenses</code>, if that directory
+exists, and to not install it otherwise.</p></div><div xmlns="" class="navfooter nut_footer"><hr />
+		Last updated 2023-01-23 02:45:14 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="aphs05.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="aph.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="aphs07.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

@@ -836,7 +836,7 @@ The default value is 30 (in seconds).
 <dd>
 <p>
 Maximum battery voltage that is reached after about 12 to 24 hours charging.
-If you want the driver to report a guesstimated <strong>battery.charge</strong>, you need to specify this (see <a href="#_battery_charge">BATTERY CHARGE</a>).
+If you want the driver to report a guesstimated <strong>battery.charge</strong>, you need to specify this (see <a href="#_battery_charge_guesstimation">BATTERY CHARGE GUESSTIMATION</a>).
 </p>
 </dd>
 <dt class="hdlist1">
@@ -845,7 +845,7 @@ If you want the driver to report a guesstimated <strong>battery.charge</strong>,
 <dd>
 <p>
 Minimum battery voltage just before the UPS automatically shuts down.
-If you want the driver to report a guesstimated <strong>battery.charge</strong>, you need to specify this (see <a href="#_battery_charge">BATTERY CHARGE</a>).
+If you want the driver to report a guesstimated <strong>battery.charge</strong>, you need to specify this (see <a href="#_battery_charge_guesstimation">BATTERY CHARGE GUESSTIMATION</a>).
 </p>
 </dd>
 <dt class="hdlist1">
@@ -1314,19 +1314,23 @@ Some <em>value</em> must be set, typically <strong>auto</strong>.
 <td class="icon">
 <div class="title">Note</div>
 </td>
-<td class="content">This could be a device filesystem path like <code>/dev/usb/hiddev0</code> but current
-use of libusb API precludes knowing and matching by such identifiers.  They may
-also be inherently unreliable (dependent on re-plugging and enumeration order).
-At this time the actual <em>value</em> is ignored, but some <em>port</em> must be there
-syntactically.</td>
+<td class="content">This could be a device filesystem path like <code>/dev/usb/hiddev0</code>
+but current use of libusb API precludes knowing and matching by such
+identifiers.  They may also be inherently unreliable (dependent on
+re-plugging and enumeration order). At this time the actual <em>value</em>
+is ignored, but syntactically some <em>port</em> configuration must still
+be there.</td>
 </tr></table>
 </div>
 </dd>
 </dl></div>
-<div class="paragraph"><p>It is possible to control multiple UPS units simultaneously by running several
-instances of this driver, provided they can be uniquely distinguished by setting
-some combination of the <strong>vendor</strong>, <strong>product</strong>, <strong>vendorid</strong>, <strong>productid</strong>, <strong>serial</strong>,
-<strong>bus</strong> and/or <strong>device</strong> options detailed below.</p></div>
+<div class="paragraph"><p>It is possible to control multiple UPS units simultaneously by running
+several instances of this driver, provided they can be uniquely
+distinguished by setting some combination of the <strong>vendor</strong>, <strong>product</strong>,
+<strong>vendorid</strong>, <strong>productid</strong>, <strong>serial</strong>, <strong>bus</strong> and/or <strong>device</strong> options detailed
+below.  For devices or operating systems that do not provide sufficient
+information, the <strong>allow_duplicates</strong> option can be of use (limited and
+risky!)</p></div>
 <div class="dlist"><dl>
 <dt class="hdlist1">
 <strong>vendorid =</strong> <em>regex</em>
@@ -1396,6 +1400,35 @@ connected (e.g. <code>device="001"</code> or <code>device="00[1-2]"</code>) as s
 Note that device numbers are not guaranteed by the OS to be stable across
 re-boots or device re-plugging.
 </p>
+</dd>
+<dt class="hdlist1">
+<strong>allow_duplicates</strong>
+</dt>
+<dd>
+<p>
+If you have several UPS devices which may not be uniquely identified by
+the options above (e.g. only VID:PID can be discovered there), this flag
+allows each driver instance where it is set to take the first match if
+available, or proceed to try another.
+</p>
+<div class="paragraph"><p>Normally the driver initialization would abort at this point claiming
+"Resource busy" or similar error, assuming that the otherwise properly
+matched device is unique&#8201;&#8212;&#8201;and some other process already handles it.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Warning</div>
+</td>
+<td class="content">
+<div class="paragraph"><p>This feature is inherently non-deterministic!
+The association of driver instance name to actual device
+may vary between runs!</p></div>
+<div class="paragraph"><p>If you only care to know that <strong>at least</strong> one of your no-name UPSes
+is online, this option can help.</p></div>
+<div class="paragraph"><p>If you must really know <strong>which</strong> one, it will not!</p></div>
+</td>
+</tr></table>
+</div>
 </dd>
 <dt class="hdlist1">
 <strong>usb_set_altinterface =</strong> <em>bAlternateSetting</em>
@@ -1770,7 +1803,7 @@ Take the UPS out of ECO Mode.
 </div>
 </div>
 <div class="sect1">
-<h2 id="_battery_charge">BATTERY CHARGE</h2>
+<h2 id="_battery_charge_guesstimation">BATTERY CHARGE GUESSTIMATION</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>Due to popular demand, this driver will report a guesstimated <strong>battery.charge</strong> and optionally <strong>battery.runtime</strong>, provided you specified a couple of the <a href="#_extra_arguments">EXTRA ARGUMENTS</a> listed above.</p></div>
 <div class="paragraph"><p>If you specify both <strong>battery.voltage.high</strong> and <strong>battery.voltage.low</strong> in <a href="ups.conf.html">ups.conf(5)</a>, but don&#8217;t enter <strong>runtimecal</strong>, it will guesstimate the state of charge by looking at the battery voltage alone.
@@ -1869,7 +1902,7 @@ While the old blazer drivers expected a <em>value</em> in minutes, the <strong>n
 </dt>
 <dd>
 <p>
-See <a href="#_battery_charge">BATTERY CHARGE</a>.
+See <a href="#_battery_charge_guesstimation">BATTERY CHARGE GUESSTIMATION</a>.
 </p>
 </dd>
 <dt class="hdlist1">
@@ -2496,7 +2529,7 @@ The NUT HCL: <a href="http://www.networkupstools.org/stable-hcl.html">http://www
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-01-04 23:43:06 UTC -- Network UPS Tools 2.8.0.1
+Last updated 2023-01-14 20:43:41 UTC -- Network UPS Tools 2.8.0.1
 </div>
 </div>
 </body>

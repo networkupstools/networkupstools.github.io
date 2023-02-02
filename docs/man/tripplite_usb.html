@@ -803,8 +803,8 @@ SMART3000RM2U
 </p>
 </li>
 </ul></div>
-<div class="paragraph"><p>If you have used Tripp Lite&#8217;s PowerAlert software to connect to your UPS, there
-is a good chance that <em>tripplite_usb</em> will work if it uses one of the
+<div class="paragraph"><p>If you have used Tripp Lite&#8217;s PowerAlert software to connect to your UPS,
+there is a good chance that <em>tripplite_usb</em> will work if it uses one of the
 following protocols:</p></div>
 <div class="ulist"><ul>
 <li>
@@ -833,10 +833,10 @@ Protocol 3005
 </p>
 </li>
 </ul></div>
-<div class="paragraph"><p>On the other hand, if the web page for your UPS on the Tripp-Lite website says
-"HID-compliant USB port also enables direct integration with built-in power
-management and auto-shutdown features of Windows and MAC OS X", then you should
-use the <a href="usbhid-ups.html">usbhid-ups(8)</a> driver instead.</p></div>
+<div class="paragraph"><p>On the other hand, if the web page for your UPS on the Tripp-Lite website
+says "HID-compliant USB port also enables direct integration with built-in
+power management and auto-shutdown features of Windows and MAC OS X", then
+you should use the <a href="usbhid-ups.html">usbhid-ups(8)</a> driver instead.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -857,19 +857,23 @@ Some <em>value</em> must be set, typically <strong>auto</strong>.
 <td class="icon">
 <div class="title">Note</div>
 </td>
-<td class="content">This could be a device filesystem path like <code>/dev/usb/hiddev0</code> but current
-use of libusb API precludes knowing and matching by such identifiers.  They may
-also be inherently unreliable (dependent on re-plugging and enumeration order).
-At this time the actual <em>value</em> is ignored, but some <em>port</em> must be there
-syntactically.</td>
+<td class="content">This could be a device filesystem path like <code>/dev/usb/hiddev0</code>
+but current use of libusb API precludes knowing and matching by such
+identifiers.  They may also be inherently unreliable (dependent on
+re-plugging and enumeration order). At this time the actual <em>value</em>
+is ignored, but syntactically some <em>port</em> configuration must still
+be there.</td>
 </tr></table>
 </div>
 </dd>
 </dl></div>
-<div class="paragraph"><p>It is possible to control multiple UPS units simultaneously by running several
-instances of this driver, provided they can be uniquely distinguished by setting
-some combination of the <strong>vendor</strong>, <strong>product</strong>, <strong>vendorid</strong>, <strong>productid</strong>, <strong>serial</strong>,
-<strong>bus</strong> and/or <strong>device</strong> options detailed below.</p></div>
+<div class="paragraph"><p>It is possible to control multiple UPS units simultaneously by running
+several instances of this driver, provided they can be uniquely
+distinguished by setting some combination of the <strong>vendor</strong>, <strong>product</strong>,
+<strong>vendorid</strong>, <strong>productid</strong>, <strong>serial</strong>, <strong>bus</strong> and/or <strong>device</strong> options detailed
+below.  For devices or operating systems that do not provide sufficient
+information, the <strong>allow_duplicates</strong> option can be of use (limited and
+risky!)</p></div>
 <div class="dlist"><dl>
 <dt class="hdlist1">
 <strong>vendorid =</strong> <em>regex</em>
@@ -939,6 +943,35 @@ connected (e.g. <code>device="001"</code> or <code>device="00[1-2]"</code>) as s
 Note that device numbers are not guaranteed by the OS to be stable across
 re-boots or device re-plugging.
 </p>
+</dd>
+<dt class="hdlist1">
+<strong>allow_duplicates</strong>
+</dt>
+<dd>
+<p>
+If you have several UPS devices which may not be uniquely identified by
+the options above (e.g. only VID:PID can be discovered there), this flag
+allows each driver instance where it is set to take the first match if
+available, or proceed to try another.
+</p>
+<div class="paragraph"><p>Normally the driver initialization would abort at this point claiming
+"Resource busy" or similar error, assuming that the otherwise properly
+matched device is unique&#8201;&#8212;&#8201;and some other process already handles it.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Warning</div>
+</td>
+<td class="content">
+<div class="paragraph"><p>This feature is inherently non-deterministic!
+The association of driver instance name to actual device
+may vary between runs!</p></div>
+<div class="paragraph"><p>If you only care to know that <strong>at least</strong> one of your no-name UPSes
+is online, this option can help.</p></div>
+<div class="paragraph"><p>If you must really know <strong>which</strong> one, it will not!</p></div>
+</td>
+</tr></table>
+</div>
 </dd>
 <dt class="hdlist1">
 <strong>usb_set_altinterface =</strong> <em>bAlternateSetting</em>
@@ -1025,8 +1058,8 @@ problems.
 </dt>
 <dd>
 <p>
-This variable is the same as the <em>offdelay</em> setting, but it can be changed at
-runtime by <a href="upsrw.html">upsrw(8)</a>.
+This variable is the same as the <em>offdelay</em> setting, but it can be
+changed at runtime by <a href="upsrw.html">upsrw(8)</a>.
 </p>
 </dd>
 <dt class="hdlist1">
@@ -1034,8 +1067,9 @@ runtime by <a href="upsrw.html">upsrw(8)</a>.
 </dt>
 <dd>
 <p>
-Some SMARTPRO models feature an ID that can be set and retrieved. If your UPS
-supports this feature, this variable will be listed in the output of <a href="upsrw.html">upsrw(8)</a>.
+Some SMARTPRO models feature an ID that can be set and retrieved.
+If your UPS supports this feature, this variable will be listed in
+the output of <a href="upsrw.html">upsrw(8)</a>.
 </p>
 </dd>
 <dt class="hdlist1">
@@ -1043,13 +1077,13 @@ supports this feature, this variable will be listed in the output of <a href="up
 </dt>
 <dd>
 <p>
-Some Tripp Lite units have a switchable outlet (usually outlet #1) which can be
-turned on and off by writing <em>1</em> or <em>0</em>, respectively, to <code>outlet.1.switch</code>
-with <a href="upsrw.html">upsrw(8)</a>.
-If your unit has multiple switchable outlets, substitute the outlet number for
-<em>1</em> in the variable name. Be sure to test this first - there is no other way to
-be certain that the number used by the driver matches the label on the unit.
+Some Tripp Lite units have a switchable outlet (usually outlet #1)
+which can be turned on and off by writing <em>1</em> or <em>0</em>, respectively,
+to <code>outlet.1.switch</code> with <a href="upsrw.html">upsrw(8)</a>.
 </p>
+<div class="paragraph"><p>If your unit has multiple switchable outlets, substitute the outlet
+number for <em>1</em> in the variable name. Be sure to test this first&#8201;&#8212;&#8201;there is no other way to be certain that the number used by the driver
+matches the label on the unit.</p></div>
 </dd>
 </dl></div>
 </div>
@@ -1110,7 +1144,7 @@ Feldman (<a href="http://www.bradleyloritheo.com">http://www.bradleyloritheo.com
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-01-04 23:43:06 UTC -- Network UPS Tools 2.8.0.1
+Last updated 2023-01-14 20:43:41 UTC -- Network UPS Tools 2.8.0.1
 </div>
 </div>
 </body>

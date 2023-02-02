@@ -1,7 +1,29 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>I.1. Changes from 2.8.0 to 2.8.1</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><link rel="home" href="index.html" title="Network UPS Tools User Manual" /><link rel="up" href="api.html" title="I. Upgrading notes" /><link rel="prev" href="api.html" title="I. Upgrading notes" /><link rel="next" href="apis02.html" title="I.2. Changes from 2.7.4 to 2.8.0" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="api.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="apis02.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_8_0_to_2_8_1"></a>I.1. Changes from 2.8.0 to 2.8.1</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 PLANNED: Keep track of any further API clean-up?
+</li><li class="listitem"><p class="simpara">
+Several improvements regarding simultaneous support of USB devices that
+  were previously deemed "identical" and so NUT driver instances did not
+  start for all of them:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Some more drivers should now use the common USB device matching logic
+    and the 7 <code class="literal">ups.conf</code> options for that [#1763], and man pages were
+    updated to reflect that [#1766];
 </li><li class="listitem">
+The <code class="literal">nut-scanner</code> tool should suggest these options in its generated
+    device configuration [#1790]: hopefully these would now suffice for
+    sufficiently unique combinations;
+</li><li class="listitem">
+The <code class="literal">nut-scanner</code> tool should also suggest sanity-check violations
+    as comments in its generated device configuration [#1810], e.g. bogus
+    or duplicate serial number values;
+</li><li class="listitem">
+The common USB matching logic was updated with an <code class="literal">allow_duplicates</code>
+    flag (caveat emptor!) which may help monitor several related no-name
+    devices on systems that do not discern "bus" and "device" values
+    (although without knowing reliably which one is which… sometimes it
+    is better than nothing) [#1756].
+</li></ul></div></li><li class="listitem">
 Work on NUT for Windows branch led to situation-specific definitions of
   what in POSIX code was all "file descriptors" (an <code class="literal">int</code> type). Now such
   entities are named <code class="literal">TYPE_FD</code>, <code class="literal">TYPE_FD_SER</code> or <code class="literal">TYPE_FD_SOCK</code> with some
@@ -39,6 +61,11 @@ An explicit <code class="literal">configure --with-nut-scanner</code> toggle was
 <code class="literal">configure</code> script, reference init-script and packaging templates updated
   to eradicate <code class="literal">@PIDPATH@/nut</code> ambiguity in favor of <code class="literal">@ALTPIDPATH@</code> for the
   unprivileged processes vs. <code class="literal">@PIDPATH@</code> for those running as root [#1719]
+</li><li class="listitem">
+The "layman report" of NUT configuration options displayed after the run
+  of <code class="literal">configure</code> script can now be retained and installed by using the
+  <code class="literal">--enable-keep_nut_report_feature</code> option; packagers are welcome to make
+  use of this, to better keep track of their deliveries [#1826, #1708]
 </li><li class="listitem"><p class="simpara">
 Renamed generated nut-common.tmpfiles(.in) ⇒ nut-common-tmpfiles.conf(.in)
   to install a /usr/lib/systemd-tmpfiles/*.conf pattern [#1755]
@@ -60,4 +87,4 @@ snmp-ups: some subdrivers (addressed using the driver parameter <code class="lit
   were renamed: <code class="literal">pw</code> is now <code class="literal">eaton_pw_nm2</code>, and <code class="literal">pxgx_ups</code> is <code class="literal">eaton_pxg_ups</code>
   [#1715]
 </li></ul></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2023-01-09 11:48:35 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="api.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="api.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="apis02.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2023-01-23 02:45:14 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="api.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="api.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="apis02.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
