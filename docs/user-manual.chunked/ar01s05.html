@@ -167,7 +167,7 @@ binaries would just consume disk space but not run.</p><div class="section"><div
 :; cd nut
 :; ./autogen.sh
 :; ./configure --enable-inplace-runtime # --maybe-some-other-options
-:; make -j 4 all check &amp;&amp; sudo make install</pre><p>Note that <code class="literal">make install</code> does not currently handle all the nuances that
+:; make -j 4 all &amp;&amp; make -j 4 check &amp;&amp; sudo make install</pre><p>Note that <code class="literal">make install</code> does not currently handle all the nuances that
 packaging installation scripts would, such as customizing filesystem
 object ownership, daemon restarts, etc. or even creating locations like
 <code class="literal">/var/state/ups</code> and <code class="literal">/var/run/nut</code> as part of the <code class="literal">make</code> target (but
@@ -184,7 +184,7 @@ symlinks) and to get them started:</p><pre class="literallayout">:; cd /tmp
 :; cd nut
 :; ./autogen.sh
 :; ./configure --enable-inplace-runtime # --maybe-some-other-options
-:; make -j 4 all check &amp;&amp; \
+:; make -j 4 all &amp;&amp; make -j 4 check &amp;&amp; \
     { sudo systemctl stop nut-monitor nut-server || true ; } &amp;&amp; \
     { sudo systemctl stop nut-driver.service || true ; } &amp;&amp; \
     { sudo systemctl stop nut-driver.target || true ; } &amp;&amp; \
@@ -216,8 +216,14 @@ the change from <code class="literal">udev.rules</code> to <code class="literal"
 local development branches of your own, you <span class="strong"><strong>may</strong></span> get away with shorter
 constructs to just restart the services after installing newly built files
 (if you know there were no changes to unit file definitions and dependencies),
-e.g.:</p><pre class="literallayout">...
-:; make -j 4 all check &amp;&amp; \
+e.g.:</p><pre class="literallayout">:; cd /tmp
+:; git clone https://github.com/networkupstools/nut
+:; cd nut
+:; git checkout -b issue-1234 ### your PR branch name, arbitrary
+:; ./autogen.sh
+:; ./configure --enable-inplace-runtime # --maybe-some-other-options
+### Iterate your code changes (e.g. PR draft), build and install with:
+:; make -j 4 all &amp;&amp; make -j 4 check &amp;&amp; \
     sudo make install &amp;&amp; \
     sudo systemctl daemon-reload &amp;&amp; \
     sudo systemd-tmpfiles --create &amp;&amp; \
@@ -318,4 +324,4 @@ for Windows, please see link:docs/config-prereqs.txt and/or
 link:scripts/Windows/README files. Note this is rather experimental
 at this point.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_runtime_configuration"></a>Runtime configuration</h4></div></div></div><p>You are now ready to configure NUT, and start testing and using it.</p><p>You can jump directly to the
 <a class="link" href="ar01s06.html" title="6. Configuration notes">NUT configuration</a>.</p></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2023-02-07 11:44:07 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s04.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s06.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2023-02-27 02:44:14 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s04.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s06.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
