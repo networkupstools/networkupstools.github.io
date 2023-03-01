@@ -66,12 +66,12 @@ time is up.  In essence, if it goes back on line, we need to cancel it.
 So, let’s tell upssched that.</p><pre class="literallayout">AT ONLINE * CANCEL-TIMER onbattwarn</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>Timers are pure in-memory mechanisms, specific to upssched.  Conversely
 to other mechanisms found in NUT, such as upsmon→POWERDOWNFLAG, there is no
 file created on the filesystem.</p></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_executing_commands_immediately"></a>Executing commands immediately</h5></div></div></div><p>As an example, consider the scenario where a UPS goes onto battery power.
-However, the users are not informed until 60 seconds later — using a timer as
+However, the users are not informed until 30 seconds later — using a timer as
 described above. Whilst this may let the <span class="strong"><strong>logged in</strong></span> users know that the UPS
 is on battery power, it does not inform any users subsequently logging in. To
 enable this we could, at the same time, create a file which is read and
 displayed to any user trying to login whilst the UPS is on battery power. If
-the UPS comes back onto utility power within 60 seconds, then we can cancel
+the UPS comes back onto utility power within 30 seconds, then we can cancel
 the timer and remove the file, as described above. However, if the UPS comes
 back onto utility power say 5 minutes later then we do not want to use any
 timers but we still want to remove the file. To do this we could use:</p><pre class="literallayout">AT ONLINE * EXECUTE ups-back-on-power</pre><p>This means that when upsmon detects that the UPS is back on utility power it
@@ -137,4 +137,4 @@ upsmon just called it, and you managed to catch the brief instance
 when there’s none running.  If there’s no process already running, there
 are no timers to cancel, and furthermore there is no need to start a
 clock-watcher.  As a result, it skips that step and exits sooner.</p></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2023-02-27 02:44:14 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s06.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s08.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2023-03-01 20:45:42 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s06.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s08.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
