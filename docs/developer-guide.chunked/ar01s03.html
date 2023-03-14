@@ -228,7 +228,21 @@ the maintainer team does not intend to spend much time on that.</p><p>Hopefully 
 would need to add more compilers and/or "difficulty levels" in the
 future.</p><p>Finally, note that such pre-set warnings can be mixed with options
 passed through <code class="literal">CFLAGS</code> or <code class="literal">CXXFLAGS</code> values to your local <code class="literal">configure</code>
-run, but it is up to your compiler how it interprets the resulting mix.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_coding_style"></a>3.5. Coding style</h3></div></div></div><p>This is how we do things:</p><pre class="screen">int open_subspace(char *ship, int privacy)
+run, but it is up to your compiler how it interprets the resulting mix.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_integrated_development_environments_ides_and_debugging_nut"></a>3.5. Integrated Development Environments (IDEs) and debugging NUT</h3></div></div></div><p>Much of NUT has been coded using classic editors of developers' preference,
+like <code class="literal">vi</code>, <code class="literal">nano</code>, Midnight Commander <code class="literal">mcedit</code>, NotePad++ and tools like
+<code class="literal">meld</code> or WinMerge for file comparison and merge.</p><p>Modern IDEs however do offer benefits, specifically for live debugging
+sessions in a more convenient fashion than with command-line <code class="literal">gdb</code> directly.
+They also simplify writing AsciiDoc files with real-time rendering support.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>Due to use of <code class="literal">libtool</code> wrappers in "autotools" driven projects,
+it may be tricky to attach the debugger (mixing the correct <code class="literal">LD_LIBRARY_PATH</code>
+or equivalent with a binary under a <code class="literal">.libs</code> subdirectory).</p></div><p>IDEs that were tested to work with NUT development and real-time debugger
+tracing include:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Sun NetBeans 8.2 on Solaris, Linux (including local and remote build
+  and debug ability);
+</li><li class="listitem">
+Apache NetBeans 17 on Windows with MSYS2 support (as MinGW toolkit);
+</li><li class="listitem">
+Visual Studio Code (VSCode) on Windows with MSYS2 support.
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_coding_style"></a>3.6. Coding style</h3></div></div></div><p>This is how we do things:</p><pre class="screen">int open_subspace(char *ship, int privacy)
 {
         if (!privacy)
                 return insecure_channel(ship);
@@ -294,7 +308,7 @@ body, referring to the macro defined in <code class="literal">common.h</code>.</
                 NUT_UNUSED_VARIABLE(signal_X);
                 /* We have explicitly got nothing to do if we catch signal X */
                 return;
-        }</pre></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_miscellaneous_coding_style_tools"></a>3.6. Miscellaneous coding style tools</h3></div></div></div><p>NUT codebase includes an <code class="literal">.editorconfig</code> file which should be supported
+        }</pre></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_miscellaneous_coding_style_tools"></a>3.7. Miscellaneous coding style tools</h3></div></div></div><p>NUT codebase includes an <code class="literal">.editorconfig</code> file which should be supported
 by most of the IDEs and text editors nowadays. Many support this format
 specification (at least partially) out of the box, possibly with some
 configuration toggle in the GUI. Others may need a plugin, see more at
@@ -368,7 +382,7 @@ suspected area and then exit cleanly.  valgrind will tell you if you’ve
 done anything dodgy like freeing regions twice, reading uninitialized
 memory, or if you’ve leaked memory anywhere.</p><p>For more information, refer to the <a class="ulink" href="http://valgrind.kde.org" target="_top">Valgrind</a>
 project.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_conclusion"></a>Conclusion</h4></div></div></div><p>The summary: please be kind to our eyes.  There’s a lot of stuff in here,
-and many people have put a lot of time and energy to improve it.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_submitting_patches"></a>3.7. Submitting patches</h3></div></div></div><p>Current preference for suggesting changes is to open a pull request on
+and many people have put a lot of time and energy to improve it.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_submitting_patches"></a>3.8. Submitting patches</h3></div></div></div><p>Current preference for suggesting changes is to open a pull request on
 GitHub for the <a class="ulink" href="https://github.com/networkupstools/nut/" target="_top">https://github.com/networkupstools/nut/</a> project.</p><p>For some cases, small patches that arrive by mailing list in unified
 format (<code class="literal">diff -u</code>) as plain text attachments with no HTML and a brief
 summary at the top are easy to handle, but sadly also easy to overlook.</p><p>If a patch is sent to the nut-upsdev mailing list, it stands a better
@@ -379,14 +393,14 @@ pull request or create an
 <a class="ulink" href="https://github.com/networkupstools/nut/issues" target="_top">issue on GitHub</a>.</p><p>The issue tracker allows us to track the patches over a longer period
 of time, and it is less likely that a patch will fall through the cracks.
 Posting a reminder to the developers (via the nut-upsdev list) about a
-patch on GitHub is fair game.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_patch_cohesion"></a>3.8. Patch cohesion</h3></div></div></div><p>Patches should have some kind of unifying element.  One patch set is one
+patch on GitHub is fair game.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_patch_cohesion"></a>3.9. Patch cohesion</h3></div></div></div><p>Patches should have some kind of unifying element.  One patch set is one
 message, and it should all touch similar things.  If you have to edit 6
 files to add support for neutrino detection in UPS hardware, that’s
 fine.</p><p>However, sending one huge patch that does massive separate changes all over
 the tree is not recommended.  That kind of patch has to be split up and
 evaluated separately, assuming the core developers care enough to do that
 instead of just dropping it.</p><p>If you have to make big changes in lots of places, send multiple
-patches — one per item.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_the_finishing_touches_manual_pages_and_device_entry_in_hcl"></a>3.9. The finishing touches: manual pages and device entry in HCL</h3></div></div></div><p>If you change something that involves an argument to a program or
+patches — one per item.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_the_finishing_touches_manual_pages_and_device_entry_in_hcl"></a>3.10. The finishing touches: manual pages and device entry in HCL</h3></div></div></div><p>If you change something that involves an argument to a program or
 configuration file parsing, the man page is probably now out of date.
 If you don’t update it, we have to, and we have enough to do as it is.</p><p>If you write a new driver, send in the man page when you send us the
 source code for your driver.  Otherwise, we will be forced to write a
@@ -403,7 +417,7 @@ useful.</p><p>It is nice to update the <a class="ulink" href="NEWS" target="_top
 to be seen as part of next release, as well as to update the
 <a class="ulink" href="UPGRADING" target="_top">UPGRADING</a> file for potentially breaking changes and similar
 heads-up notes for third-party teams (distribution packagers, clients
-and bindings, etc.)</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_source_code_management"></a>3.10. Source code management</h3></div></div></div><p>We currently use a Git repository hosted at GitHub to track changes to
+and bindings, etc.)</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_source_code_management"></a>3.11. Source code management</h3></div></div></div><p>We currently use a Git repository hosted at GitHub to track changes to
 the NUT source code. This allows you to clone the repository (or fork,
 in GitHub parlance), make changes, and post them online for peer review
 prior to integration.</p><p>To obtain permission to commit directly to the common upstream NUT repository,
@@ -439,7 +453,7 @@ has a <a class="ulink" href="https://github.com/blog/966-improved-subversion-cli
 interface to Git repositories</a> hosted on their servers. You can fork a copy
 of the NUT repository and commit to your fork with SVN.</p><p>Be aware that the examples in the GitHub blog post might result in a
 checkout that includes all of the current branches, as well as the trunk.
-You are most likely interested in a command line similar to the following:</p><pre class="literallayout">svn co https://github.com/networkupstools/nut/trunk nut-trunk-svn</pre></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_ignoring_generated_files"></a>3.11. Ignoring generated files</h3></div></div></div><p>The NUT repository generally only holds files which are not generated from
+You are most likely interested in a command line similar to the following:</p><pre class="literallayout">svn co https://github.com/networkupstools/nut/trunk nut-trunk-svn</pre></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_ignoring_generated_files"></a>3.12. Ignoring generated files</h3></div></div></div><p>The NUT repository generally only holds files which are not generated from
 other files. This prevents spurious differences from being recorded in the
 repository history.</p><p>If you add a driver, it is recommended that you add the driver executable
 name to the <code class="literal">.gitignore</code> file in that directory. Similarly, files generated
@@ -447,7 +461,7 @@ from <code class="literal">*.in</code> and <code class="literal">*.am</code> sou
 We try to include a number of generated files in the tarball releases with
 <code class="literal">make dist</code> hooks in order to minimize the number of dependencies for end
 users, but the assumption is that a developer can install the packages
-needed to regenerate those files.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_commit_message_formatting"></a>3.12. Commit message formatting</h3></div></div></div><p>From the <code class="literal">git commit</code> man page:</p><div class="blockquote"><blockquote class="blockquote"><p>Though not required, it’s a good idea to begin the commit message with a
+needed to regenerate those files.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_commit_message_formatting"></a>3.13. Commit message formatting</h3></div></div></div><p>From the <code class="literal">git commit</code> man page:</p><div class="blockquote"><blockquote class="blockquote"><p>Though not required, it’s a good idea to begin the commit message with a
 single short (less than 50 character) line summarizing the change, followed
 by a blank line and then a more thorough description. The text up to the
 first blank line in a commit message is treated as the commit title, and
@@ -462,7 +476,7 @@ commit.) For other commits, even though tools like gitk and GitHub’s
 repository viewers recognize Git hashes and create links automatically, it is
 best to add some context such as the commit title or a date.</p><p>You may notice that some older commits have <code class="literal">[[SVN:####]]</code> tags and Fossil-ID
 footers. These were lifted from the old SVN commit messages using reposurgeon,
-and should <span class="strong"><strong>not</strong></span> be used as a guide for future commits.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_repository_etiquette_and_quality_assurance"></a>3.13. Repository etiquette and quality assurance</h3></div></div></div><p>For developers who have commit access to the common upstream NUT repository:
+and should <span class="strong"><strong>not</strong></span> be used as a guide for future commits.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_repository_etiquette_and_quality_assurance"></a>3.14. Repository etiquette and quality assurance</h3></div></div></div><p>For developers who have commit access to the common upstream NUT repository:
 Please keep the Git "master" branch in working condition at all times.
 The "master" branch may be used to generate daily tarballs, it provides the
 baseline for new contributions, and occasionally is tagged for a new release.
@@ -472,7 +486,7 @@ and merge the changes back into "master" once they are complete.</p><p>To help k
 in various conditions, including older compilers, different C/C++ standard
 revisions, and an assortment of operating systems; a section below elaborates
 on this in more detail.</p><p>You are encouraged to use <code class="literal">git rebase -i</code> on your private Git branches to
-separate your changes into <a class="link" href="ar01s03.html#_patch_cohesion" title="3.8. Patch cohesion">logical changes</a>.</p><p>From there, you can generate patches for the issue tracker, or the nut-upsdev
+separate your changes into <a class="link" href="ar01s03.html#_patch_cohesion" title="3.9. Patch cohesion">logical changes</a>.</p><p>From there, you can generate patches for the issue tracker, or the nut-upsdev
 mailing list.</p><p>Note that once you rebase a branch, anyone else who has a copy of this branch
 will need to rebase on top of your rebased branch. Obviously, this hinders
 collaboration. In this case, we recommend that you rebase only in your private
@@ -508,7 +522,7 @@ stash pop</code> to apply your saved changes.</p><p>Here is an example workflow:
         # Publish your branch to your GitHub repository:
 
         git push username my-new-feature</pre><p>If you are new to Git, but are familiar with SVN, the
-<a class="ulink" href="http://git-scm.com/course/svn.html" target="_top">following link</a> may be of use.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="building"></a>3.14. Building the Code</h3></div></div></div><p>For a developer, the NUT build process starts with <code class="literal">./autogen.sh</code>.</p><p>This script generates the <code class="literal">./configure</code> script that end users typically
+<a class="ulink" href="http://git-scm.com/course/svn.html" target="_top">following link</a> may be of use.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="building"></a>3.15. Building the Code</h3></div></div></div><p>For a developer, the NUT build process starts with <code class="literal">./autogen.sh</code>.</p><p>This script generates the <code class="literal">./configure</code> script that end users typically
 invoke to build NUT. If you are making a number of changes to the NUT
 source tree, configuring with the <code class="literal">--enable-maintainer-mode</code> flag will
 ensure that after you change a <code class="literal">Makefile.am</code>, nearby <code class="literal">Makefile.in</code> and
@@ -560,4 +574,4 @@ scenarios automatically. If your code adds a substantial feature, consider
 extending the <code class="literal">Jenkinsfile-dynamatrix</code> and/or <code class="literal">ci_build.sh</code> scripts in the
 workspace root to add another <code class="literal">BUILD_TYPE</code> to the matrix of tests run in
 parallel.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2023-03-01 14:57:08 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s02.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s04.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2023-03-14 11:45:05 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s02.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s04.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
