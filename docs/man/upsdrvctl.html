@@ -820,6 +820,8 @@ use the username that was compiled into the binary.  This defaults to
 <dd>
 <p>
 Raise the debug level.  Use this multiple times for additional details.
+Note that this does not preclude the <code>upsdrvctl</code> tool from exiting after
+its job is done (however an explicit <strong>-F</strong> option does).
 </p>
 </dd>
 <dt class="hdlist1">
@@ -838,9 +840,10 @@ in foreground mode; you can specify <strong>-B</strong> additionally to avoid th
 <dd>
 <p>
 Driver will run in the foreground (not fork away from the <code>upsdrvctl</code>
-process), regardless of debugging settings. This may be counterproductive
-if you start "everything" (do not specify an <strong>ups</strong> argument) as the loop
-would never proceed beyond the first device in the list, so <code>upsdrvctl</code>
+process), regardless of debugging settings. It would also keep the tool
+program itself foregrounded with driver daemons running as its children
+(in case of a single driver startup, it would not even fork). It would
+also not wait for drivers to complete initialization, so <code>upsdrvctl</code>
 will warn about such situations.
 </p>
 </dd>
@@ -949,7 +952,7 @@ background.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-01-13 08:45:21 UTC -- Network UPS Tools 2.8.0.1
+Last updated 2023-03-29 11:43:39 UTC -- Network UPS Tools 2.8.0.1
 </div>
 </div>
 </body>
