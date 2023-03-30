@@ -67,7 +67,7 @@ writes the log (also deleted). Before re-trying the container creation, this
 file can be watched with e.g. <code class="literal">tail -F /var/cache/lxc/.../debootstrap.log</code></p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>You can find the list of LXC "template" definitions on your system
 by looking at the contents of the <code class="literal">/usr/share/lxc/templates/</code> directory,
 e.g. a script named <code class="literal">lxc-debian</code> for the "debian" template. You can see
-further options for each "template" by invoking its help action, e.g.:</p><pre class="screen">:; lxc-create -t debian -h</pre></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
+further options for each "template" by invoking its help action, e.g.:</p><pre class="screen">:; lxc-create -t debian -h</pre></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_initial_container_installation_for_various_guest_oses"></a>Initial container installation (for various guest OSes)</h5></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
 Install containers like this:
 </p><pre class="screen">:; lxc-create -P /srv/libvirt/rootfs \
     -n jenkins-debian11-mips64el -t debian -- \
@@ -81,11 +81,31 @@ to specify a particular mirror (not everyone hosts everything —    so if y
    lxc-create -P /srv/libvirt/rootfs \
     -n jenkins-debian10-mips -t debian -- \
     -r buster -a mips</pre></li><li class="listitem"><p class="simpara">
-…or for EOLed distros, use the archive, e.g.:
+…or for EOLed distros, use the Debian Archive server.
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: square; "><li class="listitem"><p class="simpara">
+Install the container with Debian Archive as the mirror like this:
 </p><pre class="screen">:; MIRROR="http://archive.debian.org/debian-archive/debian/" \
    lxc-create -P /srv/libvirt/rootfs \
     -n jenkins-debian8-s390x -t debian -- \
     -r jessie -a s390x</pre></li><li class="listitem"><p class="simpara">
+Note you may have to add trust to their (now expired) GPG keys for
+    packaging to verify signatures made at the time the key was valid,
+    by un-symlinking (if appropriate) the debootstrap script such as
+    <code class="literal">/usr/share/debootstrap/scripts/jessie</code>, commenting away the
+    <code class="literal">keyring /usr/share/keyrings/debian-archive-keyring.gpg</code> line and
+    setting <code class="literal">keyring /usr/share/keyrings/debian-archive-removed-keys.gpg</code>
+    instead. You may further have to edit <code class="literal">/usr/share/debootstrap/functions</code>
+    and/or <code class="literal">/usr/share/lxc/templates/lxc-debian</code> to honor that setting (the
+    <code class="literal">releasekeyring</code> was hard-coded in version I had installed), e.g. in the
+    latter file ensure such logic as below, and re-run the installation:
+</p><pre class="screen">...
+    # If debian-archive-keyring isn't installed, fetch GPG keys directly
+    releasekeyring="`grep -E '^keyring ' "/usr/share/debootstrap/scripts/$release" | sed -e 's,^keyring ,,' -e 's,[ #].*$,,'`" 2&gt;/dev/null
+    if [ -z $releasekeyring ]; then
+        releasekeyring=/usr/share/keyrings/debian-archive-keyring.gpg
+    fi
+    if [ ! -f $releasekeyring ]; then
+...</pre></li></ul></div></li><li class="listitem"><p class="simpara">
 …Alternatively, other distributions can be used (as supported by your
    LXC scripts, typically in <code class="literal">/usr/share/debootstrap/scripts</code>), e.g. Ubuntu:
 </p><pre class="screen">:; lxc-create -P /srv/libvirt/rootfs \
@@ -177,7 +197,7 @@ metadata) like this:</p><pre class="screen">:; pacman-key --keyserver keyserver.
 In the worst case, see <code class="literal">SigLevel = Never</code> for <code class="literal">pacman.conf</code> to not check
 package integrity (seems too tied into thinking that host OS is Arch)…</p><p>+
 It seems that pre-fetching the package databases with <code class="literal">pacman -Sy</code> on
-the host was also important.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
+the host was also important.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_initial_container_related_setup"></a>Initial container-related setup</h5></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
 Add the "name,IP" line for this container to <code class="literal">/etc/lxc/dnsmasq-hosts.conf</code>
   on the host, e.g.:
 </p><pre class="screen">jenkins-debian11-mips,10.0.3.245</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>Don’t forget to eventually <code class="literal">systemctl restart lxc-net</code> to apply the
@@ -210,7 +230,7 @@ Note that generated XML might not conform to current LXC schema, so it
    fails validation during save; this can be bypassed with <code class="literal">i</code> when it asks.
    One such case was however with indeed invalid contents, the "dir:" schema
    removed by example above.
-</li></ul></div></li></ul></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_shepherd_the_herd"></a>Shepherd the herd</h4></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
+</li></ul></div></li></ul></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_shepherd_the_herd"></a>Shepherd the herd</h4></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
 Monitor deployed container rootfs’es with:
 </p><pre class="screen">:; du -ks /srv/libvirt/rootfs/*</pre><p class="simpara">(should have non-trivial size for deployments without fatal infant errors)</p></li><li class="listitem"><p class="simpara">
 Mass-edit/review libvirt configurations with:
@@ -345,4 +365,4 @@ Another solution is to reduce the frequency of TXG sync from modern
    default of 5 sec to conservative 30-60 sec. Check how to set the
    <code class="literal">zfs_txg_timeout</code> on your platform.
 </li></ul></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2023-03-15 08:45:56 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apl.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="apl.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="apls02.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2023-03-30 11:46:02 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="apl.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="apl.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="apls02.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
