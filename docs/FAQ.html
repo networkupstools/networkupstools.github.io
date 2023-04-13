@@ -120,7 +120,7 @@ default value of MAXAGE (in upsd.conf) allows.  As a result, they
 are temporarily marked stale even though everything is fine.  This
 can happen with MGE Ellipse equipment — see the mge-shut or usbhid-ups man
 pages.  In such cases, you can raise the value of MAXAGE to avoid these
-warnings; try a value like 25 or 30.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_why_do_the_client_programs_say_emphasis_driver_not_connected_emphasis_when_i_try_to_run_them"></a>14. Why do the client programs say <span class="emphasis"><em>Driver not connected</em></span> when I try to run them?</h2></div></div></div><p>This means that upsd can’t connect to the driver for some reason.
+warnings; try a value like 25 or 30.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_why_do_the_client_programs_say_emphasis_driver_not_connected_emphasis_when_i_try_to_run_them"></a>14. Why do the client programs say <span class="emphasis"><em>Driver not connected</em></span> when I try to run them?</h2></div></div></div><p><span class="strong"><strong>Answer 1</strong></span></p><p>This means that upsd can’t connect to the driver for some reason.
 Your ups.conf entry might be wrong, or the driver might not be
 running.  Maybe your state path is not configured properly.</p><p>Check your syslog.  upsd will complain regularly if it can’t
 connect to a driver, and it should say why it can’t connect.</p><p>Note: if you jumped in with both feet and didn’t follow the INSTALL.nut
@@ -129,7 +129,12 @@ document, you probably started upsd by itself.  You have to run
 you might wrap your NUT drivers into individual services instances
 with <span class="emphasis"><em>upsdrvsvcctl resync</em></span> and then manage those with commands like
 <span class="emphasis"><em>upsdrvsvcctl stop</em></span> and <span class="emphasis"><em>upsdrvsvcctl start</em></span> (note that on other
-systems this tool may be not pre-installed via packaging).</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_why_don_8217_t_the_pathnames_in_your_documentation_match_the_package_i_installed"></a>15. Why don’t the pathnames in your documentation match the package I installed?</h2></div></div></div><p>Each distribution has conventions for where specific file types should be
+systems this tool may be not pre-installed via packaging).</p><p><span class="strong"><strong>Answer 2</strong></span></p><p>Some USB UPS devices have unreliable USB to serial interfaces.
+In that case, it’s advised to unplug / plug the device and try again.
+If that resolves the issue, you should consider resetting the USB hub the device
+is attached to before starting the nut driver, using usb_resetter script from
+<a class="ulink" href="https://github.com/netinvent/usb_resetter" target="_top">https://github.com/netinvent/usb_resetter</a>
+See scripts/usb_resetter for more information.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_why_don_8217_t_the_pathnames_in_your_documentation_match_the_package_i_installed"></a>15. Why don’t the pathnames in your documentation match the package I installed?</h2></div></div></div><p>Each distribution has conventions for where specific file types should be
 stored. The NUT project cannot possibly track all of these conventions, so the
 documentation assumes the default installation directory prefix of
 <code class="literal">/usr/local/ups</code> when describing file locations. The distributions tend not to
@@ -531,4 +536,4 @@ they won’t be stuck in the halted state with the UPS running on line power.</p
                 # uh oh, we never got shut down! (power race?)
                 reboot
         fi</pre></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2023-01-08 05:58:55 -- Network UPS Tools 2.8.0.1</div></body></html>
+		Last updated 2023-04-13 02:46:18 -- Network UPS Tools 2.8.0.1</div></body></html>
