@@ -862,12 +862,55 @@ Raise log level threshold.  Use this multiple times to log more details.
 <div class="paragraph"><p>The debugging comment above also applies here.</p></div>
 </dd>
 <dt class="hdlist1">
+<strong>-c</strong> <em>command</em>
+</dt>
+<dd>
+<p>
+Send <em>command</em> to the background process as a signal.  Valid commands
+are:
+</p>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>reload</strong>
+</dt>
+<dd>
+<p>
+reread configuration files, ignoring modified settings
+                   which can not be applied "on the fly"
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>reload-or-exit</strong>
+</dt>
+<dd>
+<p>
+reread configuration files, exiting the old
+                   driver process if it encounters modified settings
+                   which can not be applied "on the fly" (so caller like
+                   systemd can launch another copy of the driver)
+</p>
+</dd>
+</dl></div>
+</dd>
+<dt class="hdlist1">
+<strong>-P</strong> <em>pid</em>
+</dt>
+<dd>
+<p>
+Send the command signal above using specified PID number, rather than
+consulting the PID file.  This can help define service units which start
+each NUT driver as a foreground process so it does not create a PID file.
+See also <code>-FF</code> option as an alternative.
+</p>
+</dd>
+<dt class="hdlist1">
 <strong>-F</strong>
 </dt>
 <dd>
 <p>
 Enforce running the driver as a foreground process, regardless of debugging
 or data-dumping settings.
+Specify twice (<code>-FF</code> or <code>-F -F</code>) to save the PID file even in this mode.
 </p>
 </dd>
 <dt class="hdlist1">
@@ -1437,7 +1480,7 @@ information.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-08-25 22:13:25 UTC -- Network UPS Tools 2.8.0.1
+Last updated 2023-04-21 08:43:31 UTC -- Network UPS Tools 2.8.0.1
 </div>
 </div>
 </body>

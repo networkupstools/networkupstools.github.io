@@ -749,6 +749,7 @@ asciidoc.install();
 <div class="sectionbody">
 <div class="paragraph"><p><strong>upsdrvctl</strong> -h</p></div>
 <div class="paragraph"><p><strong>upsdrvctl</strong> [<em>OPTIONS</em>] {start | stop | shutdown} [<em>ups</em>]</p></div>
+<div class="paragraph"><p><strong>upsdrvctl</strong> [<em>OPTIONS</em>] -c COMMAND [<em>ups</em>]</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -845,6 +846,8 @@ program itself foregrounded with driver daemons running as its children
 (in case of a single driver startup, it would not even fork). It would
 also not wait for drivers to complete initialization, so <code>upsdrvctl</code>
 will warn about such situations.
+Specify twice (<code>-FF</code> or <code>-F -F</code>) to save the driver PID file even in
+this mode (not saved by default when staying in foreground).
 </p>
 </dd>
 <dt class="hdlist1">
@@ -862,10 +865,21 @@ as set by <strong>-D</strong> and passed-through by <strong>-d</strong> options.
 <div class="sect1">
 <h2 id="_commands">COMMANDS</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>upsdrvctl supports three commands - start, stop and shutdown.  They take
-an optional argument which is a UPS name from <a href="ups.conf.html">ups.conf(5)</a>.
-Without that argument, they operate on every UPS that is currently
-configured.</p></div>
+<div class="paragraph"><p>upsdrvctl supports three commands - start, stop and shutdown.
+It also supports passing requests to running drivers using
+<code>-c COMMAND</code> syntax, similar to that in some other daemons.</p></div>
+<div class="paragraph"><p>They all can take an optional argument which is a UPS name from
+<a href="ups.conf.html">ups.conf(5)</a>.  Without that argument, they operate on every
+UPS that is currently configured.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content"><code>upsdrvctl</code> can not manage devices not listed in <code>ups.conf</code>
+(such as test drivers started with <code>-s TMP</code> option).</td>
+</tr></table>
+</div>
 <div class="dlist"><dl>
 <dt class="hdlist1">
 <strong>start</strong>
@@ -918,6 +932,50 @@ It can be overridden by <code>NUT_IGNORE_NOWAIT</code> environment variable
 (e.g. used to work around certain issues with systemd otherwise).</td>
 </tr></table>
 </div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>-c</strong> <em>command</em>
+</dt>
+<dd>
+<p>
+Send <em>command</em> to the background process as a signal.  Valid commands
+are:
+</p>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>dump</strong>
+</dt>
+<dd>
+<p>
+tell the driver(s) to dump currently known state
+                   information to their <code>stdout</code> (if attached anywhere)
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>reload</strong>
+</dt>
+<dd>
+<p>
+reread configuration files, ignoring modified settings
+                   which can not be applied "on the fly"
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>reload-or-exit</strong>
+</dt>
+<dd>
+<p>
+reread configuration files, exiting the old
+                   driver process if it encounters modified settings
+                   which can not be applied "on the fly" (so caller like
+                   systemd can launch another copy of the driver)
+</p>
+</dd>
+</dl></div>
+</dd>
+</dl></div>
+<div class="paragraph"><p>If the <code>upsdrvctl</code> was launched to remain in memory and manage NUT driver
+processes, it can receive supported signals and pass them to those drivers.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -952,7 +1010,7 @@ background.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-03-29 11:43:39 UTC -- Network UPS Tools 2.8.0.1
+Last updated 2023-04-21 08:43:31 UTC -- Network UPS Tools 2.8.0.1
 </div>
 </div>
 </body>
