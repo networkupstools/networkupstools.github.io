@@ -768,7 +768,7 @@ actually coming from someone on the outside.  This is why you must
 secure it.</p></div>
 <div class="paragraph"><p>On Apache, you can use the .htaccess file or put the directives in your
 httpd.conf.  It looks something like this, assuming the .htaccess
-method:</p></div>
+method for older Apache releases:</p></div>
 <div class="literalblock">
 <div class="content">
 <pre><code>&lt;Files upsset.cgi&gt;
@@ -778,6 +778,20 @@ allow from your.network.addresses
 </div></div>
 <div class="paragraph"><p>You will probably have to set "AllowOverride Limit" for this directory
 in your server-level configuration file as well.</p></div>
+<div class="paragraph"><p>Modern Apache enjoys a more detailed syntax, like this:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>ScriptAlias /upsstats.cgi /usr/share/nut/cgi/upsstats.cgi
+ScriptAlias /upsset.cgi /usr/share/nut/cgi/upsset.cgi
+&lt;Directory "/usr/share/nut/cgi"&gt;
+      Options +Includes +ExecCGI
+      AllowOverride Limit
+      &lt;RequireAny&gt;
+          Require local
+          Require ip aa.bb.cc.dd/nn
+      &lt;/RequireAny&gt;
+&lt;/Directory&gt;</code></pre>
+</div></div>
 <div class="paragraph"><p>If this doesn&#8217;t make sense, then stop reading and leave this program
 alone.  It&#8217;s not something you absolutely need to have anyway.</p></div>
 <div class="paragraph"><p>Assuming you have all this done, and it actually works (test it!), then
@@ -804,7 +818,7 @@ web server, don&#8217;t blame me.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2022-08-25 22:13:25 UTC -- Network UPS Tools 2.8.0.1
+Last updated 2023-04-24 23:43:02 UTC -- Network UPS Tools 2.8.0.1
 </div>
 </div>
 </body>
