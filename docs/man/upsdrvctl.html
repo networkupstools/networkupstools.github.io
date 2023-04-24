@@ -961,6 +961,18 @@ reread configuration files, ignoring modified settings
 </p>
 </dd>
 <dt class="hdlist1">
+<strong>reload-or-error</strong>
+</dt>
+<dd>
+<p>
+reread configuration files, ignoring but counting
+                   changed values which require a driver restart (can not be
+                   changed on the fly), and return a success/fail code based
+                   on that count, so the caller can decide the fate of the
+                   currently running driver instance
+</p>
+</dd>
+<dt class="hdlist1">
 <strong>reload-or-exit</strong>
 </dt>
 <dd>
@@ -981,10 +993,17 @@ processes, it can receive supported signals and pass them to those drivers.</p><
 <div class="sect1">
 <h2 id="_environment_variables">ENVIRONMENT VARIABLES</h2>
 <div class="sectionbody">
+<div class="paragraph"><p><strong>NUT_DEBUG_LEVEL</strong> sets default debug verbosity if no <strong>-D</strong> arguments
+were provided on command line, but does not request that the daemon
+runs in foreground mode.</p></div>
 <div class="paragraph"><p><strong>NUT_CONFPATH</strong> is the path name of the directory that contains
-<code>upsd.conf</code> and other configuration files.  If this variable is not set,
-<strong>upsdrvctl</strong> the driver use a built-in default, which is often
+<code>ups.conf</code> and other configuration files.  If this variable is not set,
+<strong>upsdrvctl</strong> (and the drivers) use a built-in default, which is often
 <code>/usr/local/ups/etc</code>.</p></div>
+<div class="paragraph"><p><strong>NUT_ALTPIDPATH</strong> is the path name of the directory in which
+<strong>upsd</strong> and drivers store .pid files.  If this variable is not set,
+<strong>upsd</strong> and drivers use either <strong>NUT_STATEPATH</strong> if set, or ALTPIDPATH if set,
+or otherwise the built-in default <strong>STATEPATH</strong>.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -1010,7 +1029,7 @@ background.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-04-21 08:43:31 UTC -- Network UPS Tools 2.8.0.1
+Last updated 2023-04-24 11:54:54 UTC -- Network UPS Tools 2.8.0.1
 </div>
 </div>
 </body>

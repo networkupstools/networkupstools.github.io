@@ -242,7 +242,20 @@ Sun NetBeans 8.2 on Solaris, Linux (including local and remote build
 Apache NetBeans 17 on Windows with MSYS2 support (as MinGW toolkit);
 </li><li class="listitem">
 Visual Studio Code (VSCode) on Windows with MSYS2 support.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_coding_style"></a>3.6. Coding style</h3></div></div></div><p>This is how we do things:</p><pre class="screen">int open_subspace(char *ship, int privacy)
+</li></ul></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_ide_notes_on_windows"></a>IDE notes on Windows</h4></div></div></div><p>When working in a native Windows environment with
+<a class="ulink" href="https://www.msys2.org/" target="_top">MSYS2</a> (providing MinGW x64 among other things),
+make sure it is in the <code class="literal">PATH</code>: Control Panel ⇒ "Edit the system environment
+variables" ⇒ "Environment variables…" (button) ⇒ Edit or create New "Path"
+setting ⇒ Make sure <code class="literal">C:\msys64\mingw64\bin</code> is there (assuming you installed
+MSYS2 into <code class="literal">C:\msys64</code> by default). Restart the IDE (if already running) for
+it to acknowledge the system configuration change.</p><p>Otherwise, NetBeans for example claims there is no shell for it to run <code class="literal">make</code>,
+and fails to start the built programs due to lack of DLL files it linked
+against (such as <code class="literal">libssl</code> for networked part of the codebase).</p><p>You might still have to fiddle with DLL files built in other directories of
+the NUT project, when preparing to debug certain programs, e.g. for <code class="literal">dummy-ups</code>
+you may need to:
+````
+:; cp ./clients/.libs/libupsclient-6.dll ./drivers/.libs/
+````</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_coding_style"></a>3.6. Coding style</h3></div></div></div><p>This is how we do things:</p><pre class="screen">int open_subspace(char *ship, int privacy)
 {
         if (!privacy)
                 return insecure_channel(ship);
@@ -574,4 +587,4 @@ scenarios automatically. If your code adds a substantial feature, consider
 extending the <code class="literal">Jenkinsfile-dynamatrix</code> and/or <code class="literal">ci_build.sh</code> scripts in the
 workspace root to add another <code class="literal">BUILD_TYPE</code> to the matrix of tests run in
 parallel.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2023-03-14 11:45:05 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s02.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s04.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2023-04-24 11:56:45 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s02.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s04.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

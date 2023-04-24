@@ -880,6 +880,18 @@ reread configuration files, ignoring modified settings
 </p>
 </dd>
 <dt class="hdlist1">
+<strong>reload-or-error</strong>
+</dt>
+<dd>
+<p>
+reread configuration files, ignoring but counting
+                   changed values which require a driver restart (can not be
+                   changed on the fly), and return a success/fail code based
+                   on that count, so the caller can decide the fate of the
+                   currently running driver instance
+</p>
+</dd>
+<dt class="hdlist1">
 <strong>reload-or-exit</strong>
 </dt>
 <dd>
@@ -892,6 +904,8 @@ reread configuration files, exiting the old
 </dd>
 </dl></div>
 </dd>
+</dl></div>
+<div class="dlist"><dl>
 <dt class="hdlist1">
 <strong>-P</strong> <em>pid</em>
 </dt>
@@ -1052,12 +1066,16 @@ to start and where the hardware is attached.
 <div class="sect1">
 <h2 id="_environment_variables">ENVIRONMENT VARIABLES</h2>
 <div class="sectionbody">
+<div class="paragraph"><p><strong>NUT_DEBUG_LEVEL</strong> sets default debug verbosity if no <strong>-D</strong> arguments
+were provided on command line, but does not request that the daemon
+runs in foreground mode.</p></div>
 <div class="paragraph"><p><strong>NUT_CONFPATH</strong> is the path name of the directory that contains
-<code>upsd.conf</code> and other configuration files.  If this variable is not set,
-<strong>upsd</strong> uses a built-in default, which is often <code>/usr/local/ups/etc</code>.</p></div>
+<code>ups.conf</code> and other configuration files.  If this variable is not set,
+drivers use a built-in default, which is often <code>/usr/local/ups/etc</code>.</p></div>
 <div class="paragraph"><p><strong>NUT_STATEPATH</strong> is the path name of the directory in which
-<strong>upsd</strong> keeps state information.  If this variable is not set,
-<strong>upsd</strong> uses a built-in default, which is often <code>/var/state/ups</code>.
+<strong>upsd</strong> and drivers keep shared state information.  If this variable
+is not set, <strong>upsd</strong> and drivers use a built-in default, which is often
+<code>/var/state/ups</code>.
 The <strong>STATEPATH</strong> directive in <a href="upsd.conf.html">upsd.conf(5)</a> overrides this variable.</p></div>
 <div class="paragraph"><p><strong>NUT_ALTPIDPATH</strong> is the path name of the directory in which
 <strong>upsd</strong> and drivers store .pid files.  If this variable is not set,
@@ -1480,7 +1498,7 @@ information.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-04-21 08:43:31 UTC -- Network UPS Tools 2.8.0.1
+Last updated 2023-04-24 11:54:54 UTC -- Network UPS Tools 2.8.0.1
 </div>
 </div>
 </body>
