@@ -87,7 +87,12 @@ keeps the UPS off if the user has requested that with a configuration
 setting.</p><p>You should attempt the UPS shutdown command even if the UPS detection
 fails.  If the UPS does not shut down the load, then the user is
 vulnerable to a race if the power comes back on during the shutdown
-process.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_data_types"></a>4.7. Data types</h3></div></div></div><p>To be of any use, you must supply data in <code class="literal">ups.status</code>.  That is the
+process.</p><p>This method should not directly <code class="literal">exit()</code> the driver program (neither
+should it call <code class="literal">fatalx()</code> nor <code class="literal">fatal_with_errno()</code> methods).  It can
+<code class="literal">upslogx(LOG_ERR, ...)</code> or <code class="literal">upslog_with_errno(LOG_ERR, ...)</code>, and then
+<code class="literal">set_exit_flag(N)</code> if required (<code class="literal">-1</code> for <code class="literal">EXIT_FAILURE</code> and <code class="literal">-2</code> for
+<code class="literal">EXIT_SUCCESS</code> which would be handled in the standard driver loop or
+<code class="literal">forceshutdown()</code> method of <code class="literal">main.c</code>).</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_data_types"></a>4.7. Data types</h3></div></div></div><p>To be of any use, you must supply data in <code class="literal">ups.status</code>.  That is the
 minimum needed to let upsmon do its job.  Whenever possible, you should
 also provide anything else that can be monitored by the driver.  Some
 obvious things are the manufacturer name and model name, voltage data,
@@ -2257,4 +2262,4 @@ If you need to edit the current status call this function with one of the NUT st
 </li><li class="listitem">
 <code class="literal">nutdrv_qx_ablerex.</code>{<code class="literal">c</code>,<code class="literal">h</code>}
 </li></ul></div></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2023-04-24 11:56:45 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s03.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s05.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2023-04-25 02:45:45 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s03.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s05.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
