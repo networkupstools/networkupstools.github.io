@@ -8,11 +8,10 @@ any driver sockets for activity.</p><p>In terms of communications, each driver i
 a client which knows where to find such sockets, how they are named,
 and connects to all of them to send commands and receive data updates.</p><p>During development, it is possible to use tools like <code class="literal">socat</code> to connect
 to the socket (you may want to enable <code class="literal">NOBROADCAST</code> mode soon), e.g.</p><pre class="literallayout">socat - UNIX-CONNECT:/var/state/ups/dummy-ups-UPS1</pre><p>For more insight, NUT provides an optional tool of its own (not built
-by default), the <code class="literal">sockdebug</code>:</p><pre class="literallayout"># POSIX
-(cd server &amp;&amp; make sockdebug) &amp;&amp; \
-./server/sockdebug /var/state/ups/dummy-ups-UPS1</pre><pre class="literallayout"># WIN32
-(cd server &amp;&amp; make sockdebug.exe) &amp;&amp; \
-./server/sockdebug.exe dummy-ups-UPS1</pre><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_formatting"></a>5.1. Formatting</h3></div></div></div><p>All parsing on either side of the socket is done by parseconf, so the
+by default): the <code class="literal">sockdebug</code> which is built when <code class="literal">configure --with-dev</code>
+is in effect, or can be requested from the root directory of the build
+workspace:</p><pre class="literallayout">make sockdebug &amp;&amp; \
+./server/sockdebug dummy-ups-UPS1</pre><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_formatting"></a>5.1. Formatting</h3></div></div></div><p>All parsing on either side of the socket is done by parseconf, so the
 same rules about escaping characters and "quoting multi-word elements"
 apply here.  Values which may contain odd characters are typically
 sent through pconf_encode to apply \ characters where necessary.</p><p>The "" construct is used throughout to force a multi-word value to stay
@@ -90,4 +89,4 @@ characters, with some speed penalty as things get really big.</p></div><div clas
 it must flush any local storage and start again with DUMPALL.  The
 driver may have changed the internal state considerably during that
 time, and any other approach could leave old elements behind.</p></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2023-04-25 02:45:45 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s04.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s06.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2023-05-11 14:46:00 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s04.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s06.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
