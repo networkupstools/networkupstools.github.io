@@ -749,10 +749,16 @@ with a NUT driver using the socket protocol</p></div>
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="paragraph"><p><strong>sockdebug</strong> socketname</p></div>
-<div class="paragraph"><p>For example (WIN32 and POSIX builds):
-        sockdebug.exe dummy-ups-UPS1</p></div>
-<div class="paragraph"><p>For example (POSIX-compliant systems using an alternate state path):
-        sockdebug /var/state/ups/dummy-ups-UPS1</p></div>
+<div class="paragraph"><p>For example (WIN32 and POSIX builds):</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>sockdebug.exe dummy-ups-UPS1</code></pre>
+</div></div>
+<div class="paragraph"><p>For example (POSIX-compliant systems using an alternate state path):</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>sockdebug /var/state/ups/dummy-ups-UPS1</code></pre>
+</div></div>
 </div>
 </div>
 <div class="sect1">
@@ -793,6 +799,14 @@ dynamically constructed for tests by calling the driver program with a
 </p>
 </dd>
 </dl></div>
+<div class="paragraph"><p>On POSIX systems, if this argument only represents a base name and not a
+full path to the Unix socket file, the tool should first look for the file
+in the current directory, and then fall back to configured (built-in) state
+path or the value of <code>NUT_STATEPATH</code> environment variable, if set; e.g.:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>NUT_STATEPATH=/tmp ./server/sockdebug dummy-ups-UPS1</code></pre>
+</div></div>
 </div>
 </div>
 <div class="sect1">
@@ -815,7 +829,7 @@ dynamically constructed for tests by calling the driver program with a
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-05-11 14:43:31 UTC -- Network UPS Tools 2.8.0.1
+Last updated 2023-05-11 20:43:45 UTC -- Network UPS Tools 2.8.0.1
 </div>
 </div>
 </body>
