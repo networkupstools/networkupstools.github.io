@@ -229,12 +229,14 @@ would need to add more compilers and/or "difficulty levels" in the
 future.</p><p>Finally, note that such pre-set warnings can be mixed with options
 passed through <code class="literal">CFLAGS</code> or <code class="literal">CXXFLAGS</code> values to your local <code class="literal">configure</code>
 run, but it is up to your compiler how it interprets the resulting mix.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_integrated_development_environments_ides_and_debugging_nut"></a>3.5. Integrated Development Environments (IDEs) and debugging NUT</h3></div></div></div><p>Much of NUT has been coded using classic editors of developers' preference,
-like <code class="literal">vi</code>, <code class="literal">nano</code>, Midnight Commander <code class="literal">mcedit</code>, NotePad++ and tools like
-<code class="literal">meld</code> or WinMerge for file comparison and merge.</p><p>Modern IDEs however do offer benefits, specifically for live debugging
+like <code class="literal">vi</code>, <code class="literal">nano</code>, Midnight Commander <code class="literal">mcedit</code>, <code class="literal">gedit</code>/<code class="literal">pluma</code>, NotePad++
+and tools like <code class="literal">meld</code> or WinMerge for file comparison and merge.</p><p>Modern IDEs however do offer benefits, specifically for live debugging
 sessions in a more convenient fashion than with command-line <code class="literal">gdb</code> directly.
 They also simplify writing AsciiDoc files with real-time rendering support.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>Due to use of <code class="literal">libtool</code> wrappers in "autotools" driven projects,
 it may be tricky to attach the debugger (mixing the correct <code class="literal">LD_LIBRARY_PATH</code>
-or equivalent with a binary under a <code class="literal">.libs</code> subdirectory).</p></div><p>IDEs that were tested to work with NUT development and real-time debugger
+or equivalent with a binary under a <code class="literal">.libs</code> subdirectory; on some platforms
+you may be better off copying shared objects to the directory with the binary
+being tested).</p></div><p>IDEs that were tested to work with NUT development and real-time debugger
 tracing include:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 Sun NetBeans 8.2 on Solaris, Linux (including local and remote build
   and debug ability);
@@ -242,20 +244,241 @@ Sun NetBeans 8.2 on Solaris, Linux (including local and remote build
 Apache NetBeans 17 on Windows with MSYS2 support (as MinGW toolkit);
 </li><li class="listitem">
 Visual Studio Code (VSCode) on Windows with MSYS2 support.
-</li></ul></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_ide_notes_on_windows"></a>IDE notes on Windows</h4></div></div></div><p>When working in a native Windows environment with
+</li></ul></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_ide_notes_on_windows"></a>IDE notes on Windows</h4></div></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_general_settings_for_builds_on_windows"></a>General settings for builds on Windows</h5></div></div></div><p>When working in a native Windows environment with
 <a class="ulink" href="https://www.msys2.org/" target="_top">MSYS2</a> (providing MinGW x64 among other things),
-make sure it is in the <code class="literal">PATH</code>: Control Panel ⇒ "Edit the system environment
-variables" ⇒ "Environment variables…" (button) ⇒ Edit or create New "Path"
-setting ⇒ Make sure <code class="literal">C:\msys64\mingw64\bin</code> is there (assuming you installed
-MSYS2 into <code class="literal">C:\msys64</code> by default). Restart the IDE (if already running) for
-it to acknowledge the system configuration change.</p><p>Otherwise, NetBeans for example claims there is no shell for it to run <code class="literal">make</code>,
-and fails to start the built programs due to lack of DLL files it linked
-against (such as <code class="literal">libssl</code> for networked part of the codebase).</p><p>You might still have to fiddle with DLL files built in other directories of
+you may need to ensure certain environment variables are set before you start
+the IDE (shortcuts and wrappers that start your console apply them via shell).</p><p>Also note that if you set them system-wide for your user profile (or wrap the
+IDE start-up by a script to set them), it may compromise your ability to use
+other MSYS2 profiles and/or other builds of these toolkits (packaged by e.g.
+Git for Windows or PERL for Windows) generally, or in the same IDE session,
+respectively. You may want to do this in a dedicated user account.</p><p>Examples below assume you installed MSYS2 into <code class="literal">C:\msys64</code> (by default) and
+are using the "MinGW X64" profile for GCC builds (nuances may differ for
+32-bit, CLANG, UCRT and other profile variants):</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
+Make sure its tools are in the <code class="literal">PATH</code>:
+</p><p class="simpara">Control Panel ⇒ "Edit the system environment variables" ⇒
+  "Environment variables…" (button) ⇒
+  "Edit…" or create "New…" <code class="literal">Path</code> setting ("User variable" level suffices) ⇒</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Make sure <code class="literal">C:\msys64\mingw64\bin</code> and <code class="literal">C:\msys64\usr\bin</code> are both there.
+</li><li class="listitem">
+Depending on further installed toolkits, you may want to add
+   <code class="literal">C:\Program Files\Git\cmd</code> or <code class="literal">C:\Program Files\Microsoft VS Code\bin</code>
+   (preferably use deployment-dependent spellings without white-space like
+   <code class="literal">Progra~1</code> to err on the safe side of variable expansions later).
+</li></ul></div></li><li class="listitem"><p class="simpara">
+Make sure that MSYS2 (and tools which integrate with it) know its home:
+</p><p class="simpara">Open Environment variables window as above, and
+  "Edit…" or create "New…" <code class="literal">MSYS_HOME</code> setting ⇒
+  Set to <code class="literal">C:\msys64\mingw64\bin</code>
+* Restart the IDE (if already running) for it to acknowledge the system
+  configuration change.</p></li></ul></div><p>Otherwise, NetBeans for example claims there is no shell for it to run <code class="literal">make</code>
+or open Terminal pane windows, and fails to start the built programs due to
+lack of DLL files it linked against (such as <code class="literal">libssl</code> usually needed for any
+networked part of the codebase).</p><p>You might still have to fiddle with DLL files built in other directories of
 the NUT project, when preparing to debug certain programs, e.g. for <code class="literal">dummy-ups</code>
-you may need to:
+testing you may need to:
 ````
 :; cp ./clients/.libs/libupsclient-6.dll ./drivers/.libs/
-````</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_coding_style"></a>3.6. Coding style</h3></div></div></div><p>This is how we do things:</p><pre class="screen">int open_subspace(char *ship, int privacy)
+````</p><p>To ensure builds with debug symbols, you may add <code class="literal">CFLAGS</code> and <code class="literal">CXXFLAGS</code> set
+to <code class="literal">-g3 -gdwarf-2</code> or similar to <code class="literal">configure</code> options, or if that confuses
+the cross-build (it tends to assume those values are part of GCC path),
+you may have to hack them into your local copy of <code class="literal">configure.ac</code>, after the
+<code class="literal">AM_INIT_AUTOMAKE([subdir-objects])</code> line:
+````
+CFLAGS="$CFLAGS -g3 -gdwarf-2"
+CXXFLAGS="$CXXFLAGS -g3 -gdwarf-2"
+````
+…and re-run the <code class="literal">./autogen.sh</code> script.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_gdb_on_windows"></a>GDB on Windows</h5></div></div></div><p>Examples below assume that whichever IDE you are using, the primary goal is
+to debug some issues with NUT on that platform.</p><p>This may require you to craft a configuration file for the GNU Debugger,
+e.g. <code class="literal">C:\Users\abuild\.gdbinit</code> for the examples below. One is not required
+however, and may be missing.</p><p>Another thing to keep in mind is that with <code class="literal">libtool</code> involved, the actual
+binary for testing would be in a <code class="literal">.libs</code> subdirectory and you may have some
+fun with ensuring that DLLs are found to start them — see the notes above.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_netbeans_on_windows"></a>NetBeans on Windows</h5></div></div></div><p>If installing newer <a class="ulink" href="https://netbeans.apache.org/" target="_top">Apache NetBeans</a>
+releases you may need to enable the use of "NetBeans 8.2 Plugin Portal"
+(check under Tools/Plugins/Settings) and install the "C/C++" plugin only
+available there at the moment. In turn, that older build of a plugin package
+may require that your system provides the <code class="literal">unpack200</code> tool which was shipped
+with JDK11 or older (you may have to install that just to get the tool, or
+copy its binary from another system).</p><p>Under Tools/Options menu open the C/C++ tab and further its Build Tools sub-tab.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>NetBeans allows you to easily define different Tool Collections,
+including those associated with a different build host (accessible over SSH
+and source/build paths optionally shared over NFS or similar technology, or
+copied over). This allows you to run the IDE on your desktop while debugging
+a build running on a server or embedded system.</p></div><p>Make sure you have a MinGW Tool Collection for the "localhost" build host with
+such settings as:</p><p>| Family                  | GNU MinGW                                 |
+| Encoding                | UTF-8                                     |
+| Base Directory          | <code class="literal">C:\msys64\mingw64\bin</code>                   |
+| C Compiler              | <code class="literal">C:\msys64\mingw64\bin\gcc.exe</code>           |
+| C++ Compiler            | <code class="literal">C:\msys64\mingw64\bin\g++.exe</code>           |
+| Assembler               | <code class="literal">C:\msys64\mingw64\bin\as.exe</code>            |
+| Make Command            | <code class="literal">C:\msys64\usr\bin\make.exe</code>              |
+| Debugger Command        | <code class="literal">C:\msys64\mingw64\bin\gdb.exe</code>           |</p><p>In the Code Assistance sub-tab check that there are toolkit-specific and
+general include paths, e.g. both C and C++ Compiler settings might involve:</p><p>| <code class="literal">C:\msys64\mingw64\lib\gcc\x86_64-w64-mingw32\12.2.0\include</code>       |
+| <code class="literal">C:\msys64\mingw64\include</code>                                         |
+| <code class="literal">C:\msys64\mingw64\lib\gcc\x86_64-w64-mingw32\12.2.0\include-fixed</code> |
+| <code class="literal">C:\msys64\mingw64\x86_64-w64-mingw32\include</code>                      |</p><p>On top of that, C++ Compiler settings may include:</p><p>| <code class="literal">C:\msys64\mingw64\include\12.2.0</code>                                  |
+| <code class="literal">C:\msys64\mingw64\include\12.2.0\x86_64-w64-mingw32</code>               |
+| <code class="literal">C:\msys64\mingw64\include\12.2.0\backward</code>                         |</p><p>In the "Other" sub-tab, set default standards to C99 and C++11 to match common
+NUT codebase expectations.</p><p>Finally, open/create a "nut" project pointing to your git checkout workspace.</p><p>Next part of configuration regards build/debug configurations, which you can
+find on the toolbar or as File / Project Properties.</p><p>The main configuration for debugging a particular binary (and NUT has tons
+of those, good luck in case you want to debug several simultaneously) is
+in the <span class="strong"><strong>Run</strong></span> and <span class="strong"><strong>Debug</strong></span> categories. You may want to define different
+Configuration profiles to track the individual Run/Debug settings for
+different tested binaries, while the Build/Make settings would remain the same.
+Alternatively, you may set the <span class="strong"><strong>Make</strong></span> category’s "Build Result" as the path to
+the binary you would test, and use <code class="literal">${OUTPUT_PATH}</code> variable as its name in
+the "Run Command" (still likely need custom arguments) and "Symbol File" below.</p><p>When you investigate interactions of two or more programs, but only want to
+debug (step through) just one of them, you are advised to run each of the
+others from a dedicated terminal session, and just bump their debug verbosity.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+In the <span class="strong"><strong>Build</strong></span> category, set the Build Host (localhost) and Tool Collection
+  (MinGW). In expert part of the settings, un-check "platform-independent"
+  and revise that the <code class="literal">TOOLS_PATH=C:\msys64\mingw64\bin</code> while the
+  <code class="literal">UTILITIES_PATH=C:\msys64\usr\bin</code>.
+</li><li class="listitem"><p class="simpara">
+In the <span class="strong"><strong>Pre-Build</strong></span> category likely keep the Working Directory as <code class="literal">.</code> and
+  the <code class="literal">Pre-Build First</code> generally unchecked (so only enable it to reconfigure
+  the project, which takes time and is not needed for every rebuild iteration),
+  but you may still pre-set the Command line to something like the following
+  (on one line):
+</p><pre class="screen">bash -c "rm -f configure Makefile; ./autogen.sh &amp;&amp;
+    ./configure CC='${IDE_CC}' CXX='${IDE_CXX}'
+        --with-all=auto --with-docs=skip"</pre><p class="simpara">In some cases, NOT specifying the <code class="literal">CC</code>, <code class="literal">CXX</code> and the flags actually succeeds
+while passing their options fails the configuration ("Compiler can not create
+executables" etc.) probably due to path resolution issues between the native
+and MinGW environments.</p><p class="simpara">In practice, you may have an easier time using NUT <code class="literal">./ci_build.sh</code> helper or
+running a more specific <code class="literal">./autogen.sh &amp;&amp; ./configure ...</code> spell similar to
+the above example or customized otherwise, in the MinGW x64 console window
+to actually configure a NUT source code setup, than to maintain one via the IDE.
+Running (re-)builds with the IDE (as you just edit non-recipe sources and
+iterate with a debugger) using externally configured Makefiles works fine.</p></li><li class="listitem"><p class="simpara">
+In the <span class="strong"><strong>Make</strong></span> category you may want to customize for parallelized builds on
+  multi-CPU systems with something like:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Build Command: <code class="literal">${MAKE} -j 6 -f Makefile</code>
+</li><li class="listitem">
+Clean Command: <code class="literal">${MAKE} -f Makefile clean</code>
+</li></ul></div></li><li class="listitem"><p class="simpara">
+In the <span class="strong"><strong>Run</strong></span> category you should set the "Run Command" to point to your
+  binary (note the <code class="literal">.libs</code> sub-directory, and see comments above regarding
+  possibly needed copies of shared objects) and its arguments (all on one
+  line), e.g.:
+</p><pre class="screen">C:\Users\abuild\Desktop\nut\drivers\.libs\usbhid-ups.exe -s ups -x port=auto
+    -d1 -DDDDDD</pre><p class="simpara">Other useful settings may be to keep "Build First" checked, and if the
+"Internal Terminal" does not work for you as the debugged program’s console — set the "Console Type" to "External Terminal" of type "Command Window".
+Unfortunately, NetBeans on Windows may have issues running terminal tabs
+unless CygWin is installed.</p></li><li class="listitem">
+In the <span class="strong"><strong>Debug</strong></span> category you should set the "Symbol File" to point to your
+  tested binary (e.g. <code class="literal">C:\Users\abuild\Desktop\nut\drivers\.libs\usbhid-ups.exe</code>
+  to match the "Run Command" example above) and specify "Follow Fork Mode" as
+  "child" and "Detach On Fork" as "off". "Reverse Debugging" may be useful too
+  in some situations. Finally, select your "Gdb Init File" if you have one,
+  e.g. <code class="literal">C:\Users\abuild\.gdbinit</code>.
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_microsoft_vs_code"></a>Microsoft VS Code</h5></div></div></div><p>With this IDE you can benefit from numerous Extensions from its Marketplace,
+the ones found useful for NUT development and debugging include:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+AsciiDoc (by asciidoctor)
+</li><li class="listitem">
+EditorConfig for VS Code (by EditorConfig)
+</li><li class="listitem">
+C/C++ (by Microsoft)
+</li><li class="listitem">
+C/C++ Extension pack (by Microsoft)
+</li><li class="listitem">
+Makefile tool (by Microsoft)
+</li><li class="listitem">
+MSYS2/Cygwin/MinGW/Clang support (by okhlybov)
+</li><li class="listitem">
+Native Debug (GDB, LLDB … Debugger support; by WebFreak)
+</li></ul></div><p>Configurations are tracked locally in JSON files where you would need to add
+some entries. Examples below highlight the needed keys and values; your files
+may have others:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
+<code class="literal">.vscode/launch.json</code> (can create one via Run/Add Configuration… menu
+  defines ways to launch the debug session for a program:
+</p><pre class="screen">{
+    "configurations": [
+        {
+            "name": "CPPDBG GDB usbhid-ups",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "C:\\Users\\abuild\\Desktop\\nut\\drivers\\.libs\\usbhid-ups.exe",
+            "additionalSOLibSearchPath": "C:\\Users\\abuild\\Desktop\\nut\\.inst\\mingw64\\bin",
+            "stopAtConnect": true,
+            "args": ["-s", "ups", "-DDDDDD", "-d1", "-x", "port=auto"],
+            "stopAtEntry": false,
+            "cwd": "C:\\Users\\abuild\\Desktop\\nut",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "C:\\msys64\\mingw64\\bin\\gdb.exe",
+            "targetArchitecture": "x64",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Set Disassembly Flavor to Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "make usbhid-ups"
+        },
+        {
+            // Alternately with LLDB (clang), the rest looks like above:
+            "name": "CPPDBG LLDB usbhid-ups",
+            "MIMode": "lldb",
+            "miDebuggerPath": "C:\\msys64\\usr\\bin\\lldb.exe",
+        },
+        ...
+    ]
+}</pre></li><li class="listitem"><p class="simpara">
+<code class="literal">.vscode/tasks.json</code> defines other tasks, such as the <code class="literal">preLaunchTask</code>
+  mentioned above (assuming you have configured the build externally in
+  the MinGW x64 terminal session):
+</p><pre class="screen">{
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "make usbhid-ups",
+            "command": "C:\\msys64\\usr\\bin\\make usbhid-ups",
+            "options": {
+                "cwd": "${workspaceFolder}/drivers"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        ...
+    ]
+}</pre></li><li class="listitem"><p class="simpara">
+<code class="literal">.vscode/c_cpp_properties.json</code> defines general compiler settings, e.g.:
+</p><pre class="screen">{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "C:\\msys64\\mingw64\\include\\libusb-1.0",
+                "C:\\msys64\\mingw64\\include",
+                "C:\\msys64\\usr\\include"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "compilerPath": "C:\\msys64\\mingw64\\bin\\gcc.exe",
+            "cStandard": "c99",
+            "cppStandard": "c++11",
+            "intelliSenseMode": "windows-gcc-x64",
+            "configurationProvider": "ms-vscode.makefile-tools"
+        }
+    ],
+    "version": 4
+}</pre></li></ul></div></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_coding_style"></a>3.6. Coding style</h3></div></div></div><p>This is how we do things:</p><pre class="screen">int open_subspace(char *ship, int privacy)
 {
         if (!privacy)
                 return insecure_channel(ship);
@@ -587,4 +810,4 @@ scenarios automatically. If your code adds a substantial feature, consider
 extending the <code class="literal">Jenkinsfile-dynamatrix</code> and/or <code class="literal">ci_build.sh</code> scripts in the
 workspace root to add another <code class="literal">BUILD_TYPE</code> to the matrix of tests run in
 parallel.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2023-05-11 14:46:00 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s02.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s04.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2023-05-19 14:43:59 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s02.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s04.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
