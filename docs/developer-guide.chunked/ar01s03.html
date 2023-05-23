@@ -244,16 +244,24 @@ Sun NetBeans 8.2 on Solaris, Linux (including local and remote build
 Apache NetBeans 17 on Windows with MSYS2 support (as MinGW toolkit);
 </li><li class="listitem">
 Visual Studio Code (VSCode) on Windows with MSYS2 support.
-</li></ul></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_ide_notes_on_windows"></a>IDE notes on Windows</h4></div></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_general_settings_for_builds_on_windows"></a>General settings for builds on Windows</h5></div></div></div><p>When working in a native Windows environment with
+</li></ul></div><p>Some supporting maintenance and development is doable with IntelliJ IDEA,
+making some things easier to do than with a simple Notepad, but it does
+not handle C/C++ development as such.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_ide_notes_on_windows"></a>IDE notes on Windows</h4></div></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_general_settings_for_builds_on_windows"></a>General settings for builds on Windows</h5></div></div></div><p>When working in a native Windows environment with
 <a class="ulink" href="https://www.msys2.org/" target="_top">MSYS2</a> (providing MinGW x64 among other things),
 you may need to ensure certain environment variables are set before you start
-the IDE (shortcuts and wrappers that start your console apply them via shell).</p><p>Also note that if you set them system-wide for your user profile (or wrap the
-IDE start-up by a script to set them), it may compromise your ability to use
-other MSYS2 profiles and/or other builds of these toolkits (packaged by e.g.
-Git for Windows or PERL for Windows) generally, or in the same IDE session,
-respectively. You may want to do this in a dedicated user account.</p><p>Examples below assume you installed MSYS2 into <code class="literal">C:\msys64</code> (by default) and
+the IDE (shortcuts and wrappers that start your console apply them via shell).</p><div class="warning" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Warning</h3><p>If you set such environment variables system-wide for your user
+profile (or wrap the IDE start-up by a script to set them), it may compromise
+your ability to use <span class="strong"><strong>other</strong></span> MSYS2 profiles and/or other builds of these
+toolkits (packaged by e.g. Git for Windows or PERL for Windows projects)
+generally, or in the same IDE session, respectively.
+You may want to do this in a dedicated user account!</p></div><p>Examples below assume you installed MSYS2 into <code class="literal">C:\msys64</code> (by default) and
 are using the "MinGW X64" profile for GCC builds (nuances may differ for
-32-bit, CLANG, UCRT and other profile variants):</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
+32-bit, CLANG, UCRT and other profile variants).</p><p>Also keep in mind that not all dependencies and tools involved in a
+fully-fledged NUT build are easily available or usable on Windows (e.g.
+the spell checker). See the <a class="ulink" href="config-prereqs.txt" target="_top">config-prereqs.txt</a> for better detailed
+package lists for different operating systems including Windows, and feel
+welcome to post pull requests with suggestions about new tool-chains that
+might fare better than those already tried and documented.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
 Make sure its tools are in the <code class="literal">PATH</code>:
 </p><p class="simpara">Control Panel ⇒ "Edit the system environment variables" ⇒
   "Environment variables…" (button) ⇒
@@ -275,19 +283,12 @@ or open Terminal pane windows, and fails to start the built programs due to
 lack of DLL files it linked against (such as <code class="literal">libssl</code> usually needed for any
 networked part of the codebase).</p><p>You might still have to fiddle with DLL files built in other directories of
 the NUT project, when preparing to debug certain programs, e.g. for <code class="literal">dummy-ups</code>
-testing you may need to:
-````
-:; cp ./clients/.libs/libupsclient-6.dll ./drivers/.libs/
-````</p><p>To ensure builds with debug symbols, you may add <code class="literal">CFLAGS</code> and <code class="literal">CXXFLAGS</code> set
+testing you may need to:</p><pre class="screen">:; cp ./clients/.libs/libupsclient-6.dll ./drivers/.libs/</pre><p>To ensure builds with debug symbols, you may add <code class="literal">CFLAGS</code> and <code class="literal">CXXFLAGS</code> set
 to <code class="literal">-g3 -gdwarf-2</code> or similar to <code class="literal">configure</code> options, or if that confuses
 the cross-build (it tends to assume those values are part of GCC path),
 you may have to hack them into your local copy of <code class="literal">configure.ac</code>, after the
-<code class="literal">AM_INIT_AUTOMAKE([subdir-objects])</code> line:
-````
-CFLAGS="$CFLAGS -g3 -gdwarf-2"
-CXXFLAGS="$CXXFLAGS -g3 -gdwarf-2"
-````
-…and re-run the <code class="literal">./autogen.sh</code> script.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_gdb_on_windows"></a>GDB on Windows</h5></div></div></div><p>Examples below assume that whichever IDE you are using, the primary goal is
+<code class="literal">AM_INIT_AUTOMAKE([subdir-objects])</code> line:</p><pre class="screen">CFLAGS="$CFLAGS -g3 -gdwarf-2"
+CXXFLAGS="$CXXFLAGS -g3 -gdwarf-2"</pre><p>…and re-run the <code class="literal">./autogen.sh</code> script.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_gdb_on_windows"></a>GDB on Windows</h5></div></div></div><p>Examples below assume that whichever IDE you are using, the primary goal is
 to debug some issues with NUT on that platform.</p><p>This may require you to craft a configuration file for the GNU Debugger,
 e.g. <code class="literal">C:\Users\abuild\.gdbinit</code> for the examples below. One is not required
 however, and may be missing.</p><p>Another thing to keep in mind is that with <code class="literal">libtool</code> involved, the actual
@@ -296,27 +297,15 @@ fun with ensuring that DLLs are found to start them — see the notes above.
 releases you may need to enable the use of "NetBeans 8.2 Plugin Portal"
 (check under Tools/Plugins/Settings) and install the "C/C++" plugin only
 available there at the moment. In turn, that older build of a plugin package
-may require that your system provides the <code class="literal">unpack200</code> tool which was shipped
-with JDK11 or older (you may have to install that just to get the tool, or
-copy its binary from another system).</p><p>Under Tools/Options menu open the C/C++ tab and further its Build Tools sub-tab.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>NetBeans allows you to easily define different Tool Collections,
+may require that your system provides the <code class="literal">unpack200(.exe)</code> tool which
+was shipped with JDK11 or older (you may have to install that just to
+get the tool, or copy its binary from another system).</p><p>Under Tools/Options menu open the C/C++ tab and further its Build Tools sub-tab.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>NetBeans allows you to easily define different Tool Collections,
 including those associated with a different build host (accessible over SSH
 and source/build paths optionally shared over NFS or similar technology, or
 copied over). This allows you to run the IDE on your desktop while debugging
 a build running on a server or embedded system.</p></div><p>Make sure you have a MinGW Tool Collection for the "localhost" build host with
-such settings as:</p><p>| Family                  | GNU MinGW                                 |
-| Encoding                | UTF-8                                     |
-| Base Directory          | <code class="literal">C:\msys64\mingw64\bin</code>                   |
-| C Compiler              | <code class="literal">C:\msys64\mingw64\bin\gcc.exe</code>           |
-| C++ Compiler            | <code class="literal">C:\msys64\mingw64\bin\g++.exe</code>           |
-| Assembler               | <code class="literal">C:\msys64\mingw64\bin\as.exe</code>            |
-| Make Command            | <code class="literal">C:\msys64\usr\bin\make.exe</code>              |
-| Debugger Command        | <code class="literal">C:\msys64\mingw64\bin\gdb.exe</code>           |</p><p>In the Code Assistance sub-tab check that there are toolkit-specific and
-general include paths, e.g. both C and C++ Compiler settings might involve:</p><p>| <code class="literal">C:\msys64\mingw64\lib\gcc\x86_64-w64-mingw32\12.2.0\include</code>       |
-| <code class="literal">C:\msys64\mingw64\include</code>                                         |
-| <code class="literal">C:\msys64\mingw64\lib\gcc\x86_64-w64-mingw32\12.2.0\include-fixed</code> |
-| <code class="literal">C:\msys64\mingw64\x86_64-w64-mingw32\include</code>                      |</p><p>On top of that, C++ Compiler settings may include:</p><p>| <code class="literal">C:\msys64\mingw64\include\12.2.0</code>                                  |
-| <code class="literal">C:\msys64\mingw64\include\12.2.0\x86_64-w64-mingw32</code>               |
-| <code class="literal">C:\msys64\mingw64\include\12.2.0\backward</code>                         |</p><p>In the "Other" sub-tab, set default standards to C99 and C++11 to match common
+such settings as:</p><div class="informaltable"><table class="informaltable" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; "><colgroup><col class="col_1" /><col class="col_2" /></colgroup><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>Option name</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>Sample value</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>Family</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>GNU MinGW</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>Encoding</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>UTF-8</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>Base Directory</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">C:\msys64\mingw64\bin</code></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>C Compiler</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">C:\msys64\mingw64\bin\gcc.exe</code></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>C++ Compiler</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">C:\msys64\mingw64\bin\g++.exe</code></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>Assembler</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">C:\msys64\mingw64\bin\as.exe</code></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>Make Command</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">C:\msys64\usr\bin\make.exe</code></p></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p>Debugger Command</p></td><td style="" align="left" valign="top"><p><code class="literal">C:\msys64\mingw64\bin\gdb.exe</code></p></td></tr></tbody></table></div><p>In the Code Assistance sub-tab check that there are toolkit-specific and
+general include paths, e.g. both C and C++ Compiler settings might involve:</p><div class="informaltable"><table class="informaltable" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; "><colgroup><col class="col_1" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">C:\msys64\mingw64\lib\gcc\x86_64-w64-mingw32\12.2.0\include</code></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">C:\msys64\mingw64\include</code></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">C:\msys64\mingw64\lib\gcc\x86_64-w64-mingw32\12.2.0\include-fixed</code></p></td></tr><tr><td style="" align="left" valign="top"><p><code class="literal">C:\msys64\mingw64\x86_64-w64-mingw32\include</code></p></td></tr></tbody></table></div><p>On top of that, C++ Compiler settings may include:</p><div class="informaltable"><table class="informaltable" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; "><colgroup><col class="col_1" /></colgroup><tbody><tr><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">C:\msys64\mingw64\include\12.2.0</code></p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">C:\msys64\mingw64\include\12.2.0\x86_64-w64-mingw32</code></p></td></tr><tr><td style="" align="left" valign="top"><p><code class="literal">C:\msys64\mingw64\include\12.2.0\backward</code></p></td></tr></tbody></table></div><p>In the "Other" sub-tab, set default standards to C99 and C++11 to match common
 NUT codebase expectations.</p><p>Finally, open/create a "nut" project pointing to your git checkout workspace.</p><p>Next part of configuration regards build/debug configurations, which you can
 find on the toolbar or as File / Project Properties.</p><p>The main configuration for debugging a particular binary (and NUT has tons
 of those, good luck in case you want to debug several simultaneously) is
@@ -343,12 +332,12 @@ In the <span class="strong"><strong>Pre-Build</strong></span> category likely ke
         --with-all=auto --with-docs=skip"</pre><p class="simpara">In some cases, NOT specifying the <code class="literal">CC</code>, <code class="literal">CXX</code> and the flags actually succeeds
 while passing their options fails the configuration ("Compiler can not create
 executables" etc.) probably due to path resolution issues between the native
-and MinGW environments.</p><p class="simpara">In practice, you may have an easier time using NUT <code class="literal">./ci_build.sh</code> helper or
+and MinGW environments.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>In practice, you may have an easier time using NUT <code class="literal">./ci_build.sh</code> helper or
 running a more specific <code class="literal">./autogen.sh &amp;&amp; ./configure ...</code> spell similar to
 the above example or customized otherwise, in the MinGW x64 console window
 to actually configure a NUT source code setup, than to maintain one via the IDE.
 Running (re-)builds with the IDE (as you just edit non-recipe sources and
-iterate with a debugger) using externally configured Makefiles works fine.</p></li><li class="listitem"><p class="simpara">
+iterate with a debugger) using externally configured Makefiles works fine.</p></div></li><li class="listitem"><p class="simpara">
 In the <span class="strong"><strong>Make</strong></span> category you may want to customize for parallelized builds on
   multi-CPU systems with something like:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -478,7 +467,15 @@ may have others:</p><div class="itemizedlist"><ul class="itemizedlist" style="li
         }
     ],
     "version": 4
-}</pre></li></ul></div></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_coding_style"></a>3.6. Coding style</h3></div></div></div><p>This is how we do things:</p><pre class="screen">int open_subspace(char *ship, int privacy)
+}</pre></li></ul></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_intellij_idea"></a>IntelliJ IDEA</h5></div></div></div><p>It is worth mentioning IntelliJ IDEA as another free (as of Community Edition)
+and popular IDE, however it is of limited use for NUT development.</p><p>Its ecosystem does feature a good AsciiDoc plugin, Python and of course the
+Java/Groovy support, so IDEA is helpful for maintenance of NUT documentation,
+helper scripts and CI recipes.</p><p>It lacks however C/C++ language support (allegedly a different product in the
+IntelliJ portfolio is dedicated to that), so for the core NUT project sources
+it is just a fancy text editor (with <code class="literal">.editorconfig</code> support) without syntax
+highlighting or codebase cross-reference aids, build/run/debug support, etc.</p><p>Still, it is possible to run builds and tests in embedded or external terminal
+session — so it is not worse than editing with legacy tools, and navigation
+or code-base-wide search is arguably easier.</p></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_coding_style"></a>3.6. Coding style</h3></div></div></div><p>This is how we do things:</p><pre class="screen">int open_subspace(char *ship, int privacy)
 {
         if (!privacy)
                 return insecure_channel(ship);
@@ -810,4 +807,4 @@ scenarios automatically. If your code adds a substantial feature, consider
 extending the <code class="literal">Jenkinsfile-dynamatrix</code> and/or <code class="literal">ci_build.sh</code> scripts in the
 workspace root to add another <code class="literal">BUILD_TYPE</code> to the matrix of tests run in
 parallel.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2023-05-19 14:43:59 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s02.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s04.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2023-05-23 15:52:35 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s02.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s04.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
