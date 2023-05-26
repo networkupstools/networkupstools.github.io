@@ -1,19 +1,30 @@
+# DEVICE:URL: https://github.com/networkupstools/nut/issues/867
+# DEVICE:URL: link:https://www.njoy.ro/UPS/keen-600
+
+# DEVICE:COMMENT:
 # From https://github.com/networkupstools/nut/issues/867 :
-# Manufacturer: nJoy
-# Device: Keen 600 USB
-# Website: https://www.njoy.ro/UPS/keen-600 No separate site for USB version.
 #
-# It doesn't report battery.charge nor battery.runtime
-# Shutdown sequence working, as I set AT ONBATT * START-TIMER shutdown 30
-# in upssched.conf. I guess AT LOWBATT won't work without reported charge.
+# * Manufacturer: nJoy
+# * Device: Keen 600 USB
+# * Website: https://www.njoy.ro/UPS/keen-600
+# ** No separate site for USB version.
+#
+# It doesn't report `battery.charge` nor `battery.runtime`
+#
+# Shutdown sequence working, as I set `AT ONBATT * START-TIMER shutdown 30`
+# in `upssched.conf`. I guess `AT LOWBATT` won't work without reported charge.
 #
 # The usb-serial adapter is built into the UPS. I didn't install anything
 # extra manually, the driver is built into the kernel.
 #
-# See also nJoy__Keen-600__blazer_ser__2.7.4__02.dev
-#   and    nJoy__Keen-600__nutdrv_qx__2.7.4__03.dev
-
-# upsc on main power
+# [NOTE]
+# ======
+# In this report, we see `upsc` output when the device is on main power.
+#
+# See also `nJoy__Keen-600__blazer_ser__2.7.4__02.dev` (on battery)
+#   and    `nJoy__Keen-600__nutdrv_qx__2.7.4__03.dev`  (another driver)
+# ======
+# DEVICE:EOC
 
 battery.voltage: 13.70
 battery.voltage.high: -1.08
@@ -37,6 +48,7 @@ ups.status: OL
 ups.temperature: 25.0
 ups.type: offline / line interactive
 
+# DEVICE:COMMENT-BLOCK: Syslog of NUT startup
 # :; cat /var/log/syslog | grep upsd
 #
 # upsdrvctl[12484]: Error: no UPS definitions found in ups.conf
@@ -74,13 +86,17 @@ ups.type: offline / line interactive
 # upsd[12669]: Connected to UPS [ups]: blazer_ser-ups
 # upsd[12669]: Connected to UPS [ups]: blazer_ser-ups
 # upsd[12670]: Startup successful
+# DEVICE:EOC
 
+# DEVICE:COMMENT-BLOCK: Driver configuration
 # :; cat /etc/nut/ups.conf
 #
 # [ups]
 #   driver = blazer_ser
 #   port = /dev/ttyUSB0
+# DEVICE:EOC
 
+# DEVICE:COMMENT-BLOCK: `lsusb` listing
 # :; lsusb -vvv
 #
 # Bus 001 Device 003: ID 1a86:7523 QinHeng Electronics HL-340 USB-Serial adapter
@@ -152,4 +168,4 @@ ups.type: offline / line interactive
 # can't get debug descriptor: Resource temporarily unavailable
 # Device Status:     0x0000
 #   (Bus Powered)
-
+# DEVICE:EOC

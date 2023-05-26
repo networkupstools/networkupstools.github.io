@@ -83,7 +83,7 @@ asciidoc.install(2);
 <h2 id="_2_7_4">2.7.4</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_report_1">Report #1</h3><div style="clear:left"></div>
+<h3 id="_report_1_with_driver_blazer_ser_detailed_comments_available">Report #1 with driver blazer_ser (detailed comments available)</h3><div style="clear:left"></div>
 <div class="paragraph"><p>This device is known to work with driver <a href="../../docs/man/blazer_ser.html">blazer_ser</a>.
 It may also work with driver <a href="../../docs/man/nutdrv_qx.html">nutdrv_qx</a>.</p></div>
 <div class="paragraph"><p>You can grab a <a href="../../docs/man/dummy-ups.html">dummy-ups</a> compliant <code>.dev</code> file to simulate this device <a href="raw/nJoy__Keen-600__blazer_ser__2.7.4__01.dev">clicking here</a>.</p></div>
@@ -324,9 +324,207 @@ It may also work with driver <a href="../../docs/man/nutdrv_qx.html">nutdrv_qx</
 </tr>
 </table></div>
 </div>
+<div class="sect3">
+<h4 id="_about_this_device">About this device</h4>
+<div class="paragraph"><p>From <a href="https://github.com/networkupstools/nut/issues/867">https://github.com/networkupstools/nut/issues/867</a> :</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+Manufacturer: nJoy
+</p>
+</li>
+<li>
+<p>
+Device: Keen 600 USB
+</p>
+</li>
+<li>
+<p>
+Website: <a href="https://www.njoy.ro/UPS/keen-600">https://www.njoy.ro/UPS/keen-600</a>
+</p>
+<div class="ulist"><ul>
+<li>
+<p>
+No separate site for USB version.
+</p>
+</li>
+</ul></div>
+</li>
+</ul></div>
+<div class="paragraph"><p>It doesn&#8217;t report <code>battery.charge</code> nor <code>battery.runtime</code></p></div>
+<div class="paragraph"><p>Shutdown sequence working, as I set <code>AT ONBATT * START-TIMER shutdown 30</code>
+in <code>upssched.conf</code>. I guess <code>AT LOWBATT</code> won&#8217;t work without reported charge.</p></div>
+<div class="paragraph"><p>The usb-serial adapter is built into the UPS. I didn&#8217;t install anything
+extra manually, the driver is built into the kernel.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img src="../../images/note.png" alt="Note" />
+</td>
+<td class="content">
+<div class="paragraph"><p>In this report, we see <code>upsc</code> output when the device is on main power.</p></div>
+<div class="paragraph"><p>See also <code>nJoy__Keen-600__blazer_ser__2.7.4__02.dev</code> (on battery)
+  and    <code>nJoy__Keen-600__nutdrv_qx__2.7.4__03.dev</code>  (another driver)</p></div>
+</td>
+</tr></table>
+</div>
+<div class="paragraph"><p>See also:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<a href="https://github.com/networkupstools/nut/issues/867">https://github.com/networkupstools/nut/issues/867</a>
+</p>
+</li>
+<li>
+<p>
+<a href="https://www.njoy.ro/UPS/keen-600">https://www.njoy.ro/UPS/keen-600</a>
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>Further system data or configuration examples:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<strong>Syslog of NUT startup</strong>:
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>:; cat /var/log/syslog | grep upsd
+
+upsdrvctl[12484]: Error: no UPS definitions found in ups.conf
+upsdrvctl[12484]: Network UPS Tools - UPS driver controller 2.7.4
+upsd[12485]: upsd disabled, please adjust the configuration to your needs
+upsd[12485]: Then set MODE to a suitable value in /etc/nut/nut.conf to enable it
+upsdrvctl[12622]: Supported UPS detected with megatec protocol
+upsdrvctl[12622]: Rating information unavailable
+upsdrvctl[12622]: Vendor information unavailable
+upsdrvctl[12622]: No values provided for battery high/low voltages in ups.conf
+upsdrvctl[12622]: Using 'guestimation' (low: -0.866667, high: -1.083333)!
+upsdrvctl[12622]: Battery runtime will not be calculated (runtimecal not set)
+upsdrvctl[12622]: Network UPS Tools - UPS driver controller 2.7.4
+upsdrvctl[12643]: Network UPS Tools - UPS driver controller 2.7.4
+upsdrvctl[12650]: Supported UPS detected with megatec protocol
+upsdrvctl[12650]: Rating information unavailable
+upsdrvctl[12650]: Vendor information unavailable
+upsdrvctl[12650]: No values provided for battery high/low voltages in ups.conf
+upsdrvctl[12650]: Using 'guestimation' (low: -0.866667, high: -1.083333)!
+upsdrvctl[12650]: Battery runtime will not be calculated (runtimecal not set)
+upsdrvctl[12650]: Network UPS Tools - UPS driver controller 2.7.4
+upsdrvctl[12656]: Network UPS Tools - UPS driver controller 2.7.4
+upsdrvctl[12661]: Supported UPS detected with megatec protocol
+upsdrvctl[12661]: Rating information unavailable
+upsdrvctl[12661]: Vendor information unavailable
+upsdrvctl[12661]: No values provided for battery high/low voltages in ups.conf
+upsdrvctl[12661]: Using 'guestimation' (low: -0.866667, high: -1.083333)!
+upsdrvctl[12661]: Battery runtime will not be calculated (runtimecal not set)
+upsdrvctl[12661]: Network UPS Tools - UPS driver controller 2.7.4
+upsd[12669]: fopen /var/run/nut/upsd.pid: No such file or directory
+upsd[12669]: listening on ::1 port 3493
+upsd[12669]: listening on ::1 port 3493
+upsd[12669]: listening on 127.0.0.1 port 3493
+upsd[12669]: listening on 127.0.0.1 port 3493
+upsd[12669]: Connected to UPS [ups]: blazer_ser-ups
+upsd[12669]: Connected to UPS [ups]: blazer_ser-ups
+upsd[12670]: Startup successful</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+<strong>Driver configuration</strong>:
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>:; cat /etc/nut/ups.conf
+
+[ups]
+  driver = blazer_ser
+  port = /dev/ttyUSB0</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+<strong><code>lsusb</code> listing</strong>:
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>:; lsusb -vvv
+
+Bus 001 Device 003: ID 1a86:7523 QinHeng Electronics HL-340 USB-Serial adapter
+Device Descriptor:
+  bLength                18
+  bDescriptorType         1
+  bcdUSB               1.10
+  bDeviceClass          255 Vendor Specific Class
+  bDeviceSubClass         0
+  bDeviceProtocol         0
+  bMaxPacketSize0         8
+  idVendor           0x1a86 QinHeng Electronics
+  idProduct          0x7523 HL-340 USB-Serial adapter
+  bcdDevice            2.64
+  iManufacturer           0
+  iProduct                2 USB Serial
+  iSerial                 0
+  bNumConfigurations      1
+  Configuration Descriptor:
+    bLength                 9
+    bDescriptorType         2
+    wTotalLength       0x0027
+    bNumInterfaces          1
+    bConfigurationValue     1
+    iConfiguration          0
+    bmAttributes         0x80
+      (Bus Powered)
+    MaxPower               98mA
+    Interface Descriptor:
+      bLength                 9
+      bDescriptorType         4
+      bInterfaceNumber        0
+      bAlternateSetting       0
+      bNumEndpoints           3
+      bInterfaceClass       255 Vendor Specific Class
+      bInterfaceSubClass      1
+      bInterfaceProtocol      2
+      iInterface              0
+      Endpoint Descriptor:
+        bLength                 7
+        bDescriptorType         5
+        bEndpointAddress     0x82  EP 2 IN
+        bmAttributes            2
+          Transfer Type            Bulk
+          Synch Type               None
+          Usage Type               Data
+        wMaxPacketSize     0x0020  1x 32 bytes
+        bInterval               0
+      Endpoint Descriptor:
+        bLength                 7
+        bDescriptorType         5
+        bEndpointAddress     0x02  EP 2 OUT
+        bmAttributes            2
+          Transfer Type            Bulk
+          Synch Type               None
+          Usage Type               Data
+        wMaxPacketSize     0x0020  1x 32 bytes
+        bInterval               0
+      Endpoint Descriptor:
+        bLength                 7
+        bDescriptorType         5
+        bEndpointAddress     0x81  EP 1 IN
+        bmAttributes            3
+          Transfer Type            Interrupt
+          Synch Type               None
+          Usage Type               Data
+        wMaxPacketSize     0x0008  1x 8 bytes
+        bInterval               1
+can't get debug descriptor: Resource temporarily unavailable
+Device Status:     0x0000
+  (Bus Powered)</code></pre>
+</div></div>
+</li>
+</ul></div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_report_2">Report #2</h3><div style="clear:left"></div>
+<h3 id="_report_2_with_driver_blazer_ser_detailed_comments_available">Report #2 with driver blazer_ser (detailed comments available)</h3><div style="clear:left"></div>
 <div class="paragraph"><p>This device is known to work with driver <a href="../../docs/man/blazer_ser.html">blazer_ser</a>.
 It may also work with driver <a href="../../docs/man/nutdrv_qx.html">nutdrv_qx</a>.</p></div>
 <div class="paragraph"><p>You can grab a <a href="../../docs/man/dummy-ups.html">dummy-ups</a> compliant <code>.dev</code> file to simulate this device <a href="raw/nJoy__Keen-600__blazer_ser__2.7.4__02.dev">clicking here</a>.</p></div>
@@ -567,9 +765,32 @@ It may also work with driver <a href="../../docs/man/nutdrv_qx.html">nutdrv_qx</
 </tr>
 </table></div>
 </div>
+<div class="sect3">
+<h4 id="_about_this_device_2">About this device</h4>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img src="../../images/note.png" alt="Note" />
+</td>
+<td class="content">
+<div class="paragraph"><p>In this report, we see <code>upsc</code> output when the device is on battery.</p></div>
+<div class="paragraph"><p>See also <code>nJoy__Keen-600__blazer_ser__2.7.4__01.dev</code> (on main power; detailed description)
+  and    <code>nJoy__Keen-600__nutdrv_qx__2.7.4__03.dev</code>  (another driver)</p></div>
+</td>
+</tr></table>
+</div>
+<div class="paragraph"><p>See also:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<a href="https://github.com/networkupstools/nut/issues/867">https://github.com/networkupstools/nut/issues/867</a>
+</p>
+</li>
+</ul></div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_report_3">Report #3</h3><div style="clear:left"></div>
+<h3 id="_report_3_with_driver_nutdrv_qx_detailed_comments_available">Report #3 with driver nutdrv_qx (detailed comments available)</h3><div style="clear:left"></div>
 <div class="paragraph"><p>This device is known to work with driver <a href="../../docs/man/nutdrv_qx.html">nutdrv_qx</a>.</p></div>
 <div class="paragraph"><p>You can grab a <a href="../../docs/man/dummy-ups.html">dummy-ups</a> compliant <code>.dev</code> file to simulate this device <a href="raw/nJoy__Keen-600__nutdrv_qx__2.7.4__03.dev">clicking here</a>.</p></div>
 <div class="sect3">
@@ -809,6 +1030,29 @@ It may also work with driver <a href="../../docs/man/nutdrv_qx.html">nutdrv_qx</
 </tr>
 </table></div>
 </div>
+<div class="sect3">
+<h4 id="_about_this_device_3">About this device</h4>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img src="../../images/note.png" alt="Note" />
+</td>
+<td class="content">
+<div class="paragraph"><p>In this report, we see <code>upsc</code> output when the device is handled by another Qx driver.</p></div>
+<div class="paragraph"><p>See also <code>nJoy__Keen-600__blazer_ser__2.7.4__01.dev</code> (on main power; detailed description)
+  and    <code>nJoy__Keen-600__blazer_ser__2.7.4__02.dev</code> (on battery)</p></div>
+</td>
+</tr></table>
+</div>
+<div class="paragraph"><p>See also:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<a href="https://github.com/networkupstools/nut/issues/867">https://github.com/networkupstools/nut/issues/867</a>
+</p>
+</li>
+</ul></div>
+</div>
 </div>
 </div>
 </div>
@@ -816,8 +1060,8 @@ It may also work with driver <a href="../../docs/man/nutdrv_qx.html">nutdrv_qx</
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Version nut:v2.8.0-Windows-927-g1b22b5bbb ddl:v2.8.0-11-g751f130 web:v2.8.0-217-g9c226efc-master<br />
-Last updated 2023-05-26 11:52:10
+Version nut:v2.8.0-Windows-927-g1b22b5bbb ddl:v2.8.0-14-g5bf638c web:v2.8.0-221-g60bb12ba-master<br />
+Last updated 2023-05-26 13:00:23
 </div>
 <div id="footer-badges">
 <a href="https://github.com/networkupstools/nut">
