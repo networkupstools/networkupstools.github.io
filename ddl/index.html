@@ -809,6 +809,12 @@ There is a whole chapter dedicated to data capture and simulation.</p></div>
 <h3 id="comments">Comments</h3><div style="clear:left"></div>
 <div class="paragraph"><p>Comments are allowed as lines preceeded by a hash (<code>#</code>), and as lines with
 spaces followed by a hash (&#8216;<code>   # &lt;comment&gt;</code>&#8217;).</p></div>
+<div class="paragraph"><p>Formally, everything that is not an <code>upsc</code> key-value output, should be some
+form of a comment (or a blank line). Some comments may contain special markup
+as detailed below, allowing for further somewhat structured information to be
+passed in the DDL files. They are parsed for web-site representation by
+<a href="https://github.com/networkupstools/nut-website/blob/master/tools/nut-ddl.py.in">nut-ddl.py</a>
+and certain types of comments might be parsed by other tools as well.</p></div>
 <div class="sect3">
 <h4 id="rw-variablesinstant-commands">RW variables/instant commands</h4>
 <div class="paragraph"><p>Though not used by device simulation tools, you can add to your file some
@@ -1004,8 +1010,11 @@ Device comment
 <dd>
 <p>
 A special comment to express general thoughts about the whole device and
-to describe the way NUT supports it.
+to describe the way NUT supports it. At most one is allowed per file.
 </p>
+<div class="paragraph"><p>Keep in mind that each comment line is stripped of two leftmost characters
+(assuming the hash and space characters), and the rest is treated as usual
+asciidoc markup, e.g. keep blank lines to separate multiple paragraphs.</p></div>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
@@ -1025,6 +1034,61 @@ to describe the way NUT supports it.
 # This device is supported so badly by NUT that I had to burn my office down to the ground..
 # _At least_ *now* I don't have to stand the taste of that coffee anymore..
 # DEVICE:EOC</code></pre>
+</div></div>
+</div></div>
+</dd>
+<dt class="hdlist1">
+Device comment block
+</dt>
+<dd>
+<p>
+A way to pass otherwise unclassified blocks of information which benefits
+from pre-formatting, such as <code>ups.conf</code> device configuration section examples,
+or "console screenshots". It may include a title (recommended for readability).
+</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre><code># DEVICE:COMMENT-BLOCK: &lt;title&gt;
+# &lt;pre-formatted text&gt;
+# ...
+# &lt;pre-formatted text&gt;
+# DEVICE:EOC</code></pre>
+</div></div>
+<div class="paragraph"><p>e.g.:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code># DEVICE:COMMENT-BLOCK: Driver configuration
+# :; cat /etc/nut/ups.conf
+#
+# [ups]
+#   driver = blazer_ser
+#   port = /dev/ttyUSB0
+# DEVICE:EOC</code></pre>
+</div></div>
+</div></div>
+</dd>
+<dt class="hdlist1">
+Device information URL(s)
+</dt>
+<dd>
+<p>
+Further information about this device or report can be found at specified URL,
+e.g. vendor product page, NUT issue tracker or mailing list archive page where
+the report originated, etc. Many URLs may be listed, but only one per tag.
+</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre><code># DEVICE:URL:&lt;link&gt;</code></pre>
+</div></div>
+<div class="paragraph"><p>e.g.:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code># DEVICE:URL: https://github.com/networkupstools/nut/issues/867
+# DEVICE:URL: https://www.njoy.ro/UPS/keen-600</code></pre>
 </div></div>
 </div></div>
 </dd>
@@ -1134,8 +1198,8 @@ commands, i.e.:</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Version nut:v2.8.0-Windows-927-g1b22b5bbb ddl:v2.8.0-14-g5bf638c web:v2.8.0-221-g60bb12ba-master<br />
-Last updated 2023-05-26 13:09:12
+Version nut:v2.8.0-Windows-927-g1b22b5bbb ddl:v2.8.0-20-ge5032a2 web:v2.8.0-222-g2160bd61-master<br />
+Last updated 2023-05-26 15:26:47
 </div>
 <div id="footer-badges">
 <a href="https://github.com/networkupstools/nut">
