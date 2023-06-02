@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
-<meta name="generator" content="AsciiDoc 9.0.0rc2" />
+<meta name="generator" content="AsciiDoc 9.0.0rc1" />
 <title>RIELLO_USB(8)</title>
 <style type="text/css">
 /* Shared CSS for AsciiDoc xhtml11 and html5 backends */
@@ -784,19 +784,23 @@ Some <em>value</em> must be set, typically <strong>auto</strong>.
 <td class="icon">
 <div class="title">Note</div>
 </td>
-<td class="content">This could be a device filesystem path like <code>/dev/usb/hiddev0</code> but current
-use of libusb API precludes knowing and matching by such identifiers.  They may
-also be inherently unreliable (dependent on re-plugging and enumeration order).
-At this time the actual <em>value</em> is ignored, but some <em>port</em> must be there
-syntactically.</td>
+<td class="content">This could be a device filesystem path like <code>/dev/usb/hiddev0</code>
+but current use of libusb API precludes knowing and matching by such
+identifiers.  They may also be inherently unreliable (dependent on
+re-plugging and enumeration order). At this time the actual <em>value</em>
+is ignored, but syntactically some <em>port</em> configuration must still
+be there.</td>
 </tr></table>
 </div>
 </dd>
 </dl></div>
-<div class="paragraph"><p>It is possible to control multiple UPS units simultaneously by running several
-instances of this driver, provided they can be uniquely distinguished by setting
-some combination of the <strong>vendor</strong>, <strong>product</strong>, <strong>vendorid</strong>, <strong>productid</strong>, <strong>serial</strong>,
-<strong>bus</strong> and/or <strong>device</strong> options detailed below.</p></div>
+<div class="paragraph"><p>It is possible to control multiple UPS units simultaneously by running
+several instances of this driver, provided they can be uniquely
+distinguished by setting some combination of the <strong>vendor</strong>, <strong>product</strong>,
+<strong>vendorid</strong>, <strong>productid</strong>, <strong>serial</strong>, <strong>bus</strong> and/or <strong>device</strong> options detailed
+below.  For devices or operating systems that do not provide sufficient
+information, the <strong>allow_duplicates</strong> option can be of use (limited and
+risky!)</p></div>
 <div class="dlist"><dl>
 <dt class="hdlist1">
 <strong>vendorid =</strong> <em>regex</em>
@@ -868,6 +872,35 @@ re-boots or device re-plugging.
 </p>
 </dd>
 <dt class="hdlist1">
+<strong>allow_duplicates</strong>
+</dt>
+<dd>
+<p>
+If you have several UPS devices which may not be uniquely identified by
+the options above (e.g. only VID:PID can be discovered there), this flag
+allows each driver instance where it is set to take the first match if
+available, or proceed to try another.
+</p>
+<div class="paragraph"><p>Normally the driver initialization would abort at this point claiming
+"Resource busy" or similar error, assuming that the otherwise properly
+matched device is unique&#8201;&#8212;&#8201;and some other process already handles it.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Warning</div>
+</td>
+<td class="content">
+<div class="paragraph"><p>This feature is inherently non-deterministic!
+The association of driver instance name to actual device
+may vary between runs!</p></div>
+<div class="paragraph"><p>If you only care to know that <strong>at least</strong> one of your no-name UPSes
+is online, this option can help.</p></div>
+<div class="paragraph"><p>If you must really know <strong>which</strong> one, it will not!</p></div>
+</td>
+</tr></table>
+</div>
+</dd>
+<dt class="hdlist1">
 <strong>usb_set_altinterface =</strong> <em>bAlternateSetting</em>
 </dt>
 <dd>
@@ -903,7 +936,7 @@ by the interface number <code>0</code> (default).
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-01-04 23:43:06 UTC -- Network UPS Tools 2.8.0.1
+Last updated 2023-04-01 13:45:20 UTC -- Network UPS Tools 2.8.0.1
 </div>
 </div>
 </body>
