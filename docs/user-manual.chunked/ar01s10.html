@@ -6,26 +6,64 @@ level. This means that the more security you need, the more mechanisms you will
 have to apply.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>you may want to have a look at NUT Quality Assurance, since some
 topics are related to NUT security and reliability.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="verifySourceSig"></a>10.1. How to verify the NUT source code signature</h3></div></div></div><p>In order to verify the NUT source code signature for releases, perform the
 following steps:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-Retrieve the <a class="ulink" href="http://www.networkupstools.org/download.html" target="_top">NUT source code</a>
+Retrieve the <a class="ulink" href="https://www.networkupstools.org/download.html" target="_top">NUT source code</a>
   (nut-X.Y.Z.tar.gz) and the matching signature (nut-X.Y.Z.tar.gz.sig)
 </li><li class="listitem"><p class="simpara">
-Retrieve the <a class="ulink" href="http://www.networkupstools.org/source/nut-key.gpg" target="_top">NUT maintainer’s signature</a>:
-</p><pre class="literallayout">$ gpg --fetch-keys http://www.networkupstools.org/source/nut-key.gpg</pre></li></ul></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>As of NUT 2.7.3, a new release key is used. In order to verify a previous
-release, please use
-<a class="ulink" href="http://www.networkupstools.org/source/nut-old-key.gpg" target="_top">NUT old maintainer’s signature</a></p></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
+Retrieve the <a class="ulink" href="https://www.networkupstools.org/source/nut-key.gpg" target="_top">NUT
+maintainer’s signature keyring</a>:
+</p><pre class="literallayout">$ gpg --fetch-keys https://www.networkupstools.org/source/nut-key.gpg</pre></li></ul></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>As of NUT 2.8.0, a new release key is used, but the <code class="literal">nut-key.gpg</code> should
+be cumulative with older chain key files (includes them). You can view the key
+list in a downloaded copy of the URL above with:</p></div><p>+
+        $ gpg --with-colons --import-options import-show --dry-run --import &lt; nut-key.gpg</p><p>+
+and as of this writing, it should contain two key sets for various identities
+of "Arnaud Quette" and one set of "Jim Klimov".</p><p>Just in case, the previous key file used since NUT 2.7.3 release is stored as
+<a class="ulink" href="https://www.networkupstools.org/source/nut-key-2.7.3.gpg" target="_top">NUT
+old maintainer’s signature for 2.7.3-2.7.4 releases</a></p><p>In order to verify an even older release, please use
+<a class="ulink" href="https://www.networkupstools.org/source/nut-old-key.gpg" target="_top">NUT
+old maintainer’s signature since 2002 until 2.7.3 release</a></p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
 Launch the GPG checking using the following command:
 </p><pre class="literallayout">$ gpg --verify nut-X.Y.Z.tar.gz.sig</pre></li><li class="listitem"><p class="simpara">
-You should see a message mentioning a "Good signature", like:
-</p><pre class="literallayout">gpg: Signature made Wed Apr 15 15:55:30 2015 CEST using RSA key ID 55CA5976
-gpg: Good signature from "Arnaud Quette ..."
-...</pre></li></ul></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>the previously used maintainer’s signature would output:</p></div><p>+
+You should see a message mentioning a "Good signature", with formatting which
+  depends on your gpg version, like:
+</p><pre class="literallayout">gpg: Signature made Thu Jun  1 00:10:16 2023 CEST
+...
+gpg: Good signature from "Jim Klimov ..."
+...
+Primary key fingerprint: B834 59F7 76B9 0224 988F  36C0 DE01 84DA 7043 DCF7
+...</pre></li></ul></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>the previously used maintainer’s signatures would output (with markup of
+older gpg tools here):</p></div><p>+
+        gpg: Signature made Wed Apr 15 15:55:30 2015 CEST using RSA key ID 55CA5976
+        gpg: Good signature from "Arnaud Quette …"
+        …</p><p>+
+or:
         gpg: Signature made Thu Jul  5 16:15:05 2007 CEST using DSA key ID 204DDF1B
         gpg: Good signature from "Arnaud Quette …"
-        …</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_system_level_privileges_and_ownership"></a>10.2. System level privileges and ownership</h3></div></div></div><p>All configuration files should be protected so that the world can’t read them.
+        …</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_how_to_verify_the_nut_source_code_checksum"></a>10.2. How to verify the NUT source code checksum</h3></div></div></div><p>As a weaker but simpler alternative to verifying a <span class="strong"><strong>signature</strong></span>, you can verify
+just the accompanying checksums of the source archive file. This is useful
+primarily to check against bit-rot in original storage or in transit. As far
+as disclaimers go: ideally, you should cover all provided algorithms — e.g.
+MD5 and SHA256 — to minimize the chance that intentional malicious tampering
+on the wire goes undetected. A myriad tools can check that on various platforms;
+some examples follow:</p><pre class="literallayout"># Example original checksum to compare with, from NUT website:
+$ cat nut-2.8.0.tar.gz.sha256
+c3e5a708da797b7c70b653d37b1206a000fcb503b85519fe4cdf6353f792bfe5  nut-2.8.0.tar.gz</pre><pre class="literallayout"># Generate checksum of downloaded archive with perl (a NUT build dependency
+# generally, though you may have to install Digest::SHA module from CPAN):
+$ perl -MDigest::SHA=sha256_hex -le "print sha256_hex &lt;&gt;" nut-2.8.0.tar.gz
+c3e5a708da797b7c70b653d37b1206a000fcb503b85519fe4cdf6353f792bfe5</pre><pre class="literallayout"># Generate checksum of downloaded archive with openssl (another optional
+# NUT build dependency):
+$ openssl sha256 nut-2.8.0.tar.gz
+SHA256(nut-2.8.0.tar.gz)= c3e5a708da797b7c70b653d37b1206a000fcb503b85519fe4cdf6353f792bfe5</pre><pre class="literallayout"># Generate checksum of downloaded archive with coreutils:
+$ sha256sum nut-2.8.0.tar.gz
+c3e5a708da797b7c70b653d37b1206a000fcb503b85519fe4cdf6353f792bfe5  nut-2.8.0.tar.gz</pre><pre class="literallayout"># Auto-check downloaded checksum against downloaded archive with coreutils:
+$ sha256sum -c nut-2.8.0.tar.gz.sha256
+nut-2.8.0.tar.gz: OK</pre><pre class="literallayout"># Generate checksum of downloaded archive with GPG:
+$ gpg --print-md SHA256 nut-2.8.0.tar.gz
+nut-2.8.0.tar.gz: C3E5A708 DA797B7C 70B653D3 7B1206A0
+                  00FCB503 B85519FE 4CDF6353 F792BFE5</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_system_level_privileges_and_ownership"></a>10.3. System level privileges and ownership</h3></div></div></div><p>All configuration files should be protected so that the world can’t read them.
 Use the following commands to accomplish this:</p><pre class="literallayout">chown root:nut /etc/nut/*
 chmod 640 /etc/nut/*</pre><p>Finally, the <a class="link" href="ar01s05.html#StatePath" title="State path creation">state path</a> directory, which holds the
 communication between the driver(s) and <code class="literal">upsd</code>, should also be secured.</p><pre class="literallayout">chown root:nut /var/state/ups
-chmod 0770 /var/state/ups</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_nut_level_user_privileges"></a>10.3. NUT level user privileges</h3></div></div></div><p>Administrative commands such as setting variables and the instant commands
+chmod 0770 /var/state/ups</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_nut_level_user_privileges"></a>10.4. NUT level user privileges</h3></div></div></div><p>Administrative commands such as setting variables and the instant commands
 are powerful, and access to them needs to be restricted.</p><p>NUT provides an internal mechanism to do so, through
 <a class="ulink" href="../man/upsd.users.html" target="_top">upsd.users(5)</a>.</p><p>This file defines who may access instant commands and settings, and what
 is available.</p><p>During the initial
@@ -35,7 +73,7 @@ monitoring user for <code class="literal">upsmon</code>.</p><p>You can also crea
         actions = set
         instcmds = all</pre><p>For more information on how to restrict actions and instant commands, refer
 to <a class="ulink" href="../man/upsd.users.html" target="_top">upsd.users(5)</a> manual page.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>NUT administrative user definitions should be used in conjunction with
-<a class="link" href="ar01s10.html#TCP_Wrappers" title="TCP Wrappers">TCP Wrappers</a>.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_network_access_control"></a>10.4. Network access control</h3></div></div></div><p>If you are not using NUT on a standalone setup, you will need to enforce
+<a class="link" href="ar01s10.html#TCP_Wrappers" title="TCP Wrappers">TCP Wrappers</a>.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_network_access_control"></a>10.5. Network access control</h3></div></div></div><p>If you are not using NUT on a standalone setup, you will need to enforce
 network access to <code class="literal">upsd</code>.</p><p>There are various ways to do so.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_nut_listen_directive"></a>NUT LISTEN directive</h4></div></div></div><p><a class="ulink" href="../man/upsd.conf.html" target="_top">upsd.conf(5)</a>.</p><pre class="literallayout">LISTEN interface port</pre><p>Bind a listening port to the interface specified by its Internet address.
 This may be useful on hosts with multiple interfaces.  You should not rely
 exclusively on this for security, as it can be subverted on many systems.</p><p>Listen on TCP port <code class="literal">port</code> instead of the default value which was compiled into
@@ -67,7 +105,7 @@ UFW manual page, section APPLICATION INTEGRATION
 NUT username is allowed to connect from the client address through the
 <code class="literal">/etc/hosts.allow</code> and <code class="literal">/etc/hosts.deny</code> files.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>this will only be done for commands that require the user to be logged
 into the server.</p></div><p><code class="literal">hosts.allow</code>:</p><pre class="literallayout">upsd : admin@127.0.0.1/32
-upsd : observer@127.0.0.1/32 observer@192.168.1.0/24</pre><p><code class="literal">hosts.deny</code>:</p><pre class="literallayout">upsd : ALL</pre><p>Further details are described in hosts_access(5).</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_configuring_ssl"></a>10.5. Configuring SSL</h3></div></div></div><p>SSL is available as a build option (<code class="literal">--with-ssl</code>).</p><p>It encrypts sessions between upsd and clients, and can also be used to
+upsd : observer@127.0.0.1/32 observer@192.168.1.0/24</pre><p><code class="literal">hosts.deny</code>:</p><pre class="literallayout">upsd : ALL</pre><p>Further details are described in hosts_access(5).</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_configuring_ssl"></a>10.6. Configuring SSL</h3></div></div></div><p>SSL is available as a build option (<code class="literal">--with-ssl</code>).</p><p>It encrypts sessions between upsd and clients, and can also be used to
 authenticate servers.</p><p>This means that stealing port 3493 from upsd will no longer net you interesting
 passwords.</p><p>Several things must happen before this will work, however. This chapter will
 present these steps.</p><p>SSL is available via two back-end libraries : NSS and OpenSSL (historically).
@@ -220,7 +258,7 @@ has been granted.  That is (purposely) impossible here, since NUT is the
 combined effort of many people, and all of them would have to agree to a
 license change.  This is actually a feature, since it means nobody can
 unilaterally run off with the source — not even the NUT team.</p><p>Note that the replacement of OpenSSL by Mozilla Network Security Services
-(NSS) should avoid the above licensing issues.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_chrooting_and_other_forms_of_paranoia"></a>10.6. chrooting and other forms of paranoia</h3></div></div></div><p>It has been possible to run the drivers and upsd in a chrooted jail for
+(NSS) should avoid the above licensing issues.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_chrooting_and_other_forms_of_paranoia"></a>10.7. chrooting and other forms of paranoia</h3></div></div></div><p>It has been possible to run the drivers and upsd in a chrooted jail for
 some time, but it involved a number of evil hacks.  From the 1.3 series,
 a much saner chroot behavior exists, using BIND 9 as an inspiration.</p><p>The old way involved creating an entire tree, complete with libraries, a
 shell (!), and many auxiliary files.  This was hard to maintain and
@@ -266,4 +304,4 @@ unprivileged child that listens for notify events
 unprivileged chrooted child that does network I/O
 </li></ul></div><p>This one is messy, and may not happen for some time, if ever.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_config_files"></a>Config files</h4></div></div></div><p>You may now set <code class="literal">chroot=</code> and <code class="literal">user=</code> in the global section of <code class="literal">ups.conf</code>.</p><p>The <code class="literal">upsd</code> chroots before opening any config files, so there is no way to
 add support for that in <code class="literal">upsd.conf</code> at the present time.</p></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2023-06-18 14:50:10 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s09.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="apa.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2023-07-01 08:47:56 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s09.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="apa.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
