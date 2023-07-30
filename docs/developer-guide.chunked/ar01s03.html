@@ -710,7 +710,35 @@ commit.) For other commits, even though tools like gitk and GitHub’s
 repository viewers recognize Git hashes and create links automatically, it is
 best to add some context such as the commit title or a date.</p><p>You may notice that some older commits have <code class="literal">[[SVN:####]]</code> tags and Fossil-ID
 footers. These were lifted from the old SVN commit messages using reposurgeon,
-and should <span class="strong"><strong>not</strong></span> be used as a guide for future commits.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_repository_etiquette_and_quality_assurance"></a>3.14. Repository etiquette and quality assurance</h3></div></div></div><p>For developers who have commit access to the common upstream NUT repository:
+and should <span class="strong"><strong>not</strong></span> be used as a guide for future commits.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_commit_sign_off"></a>3.14. Commit sign-off</h3></div></div></div><p>Please also note that since 2023 we explicitly ask for contributions to be
+"Signed Off" according to "Developer Certificate of Origin" as represented
+in the <code class="literal">LICENSE-DCO</code> file in the root of NUT source tree (verbatim copy of
+Version 1.1 of DCO published at <a class="ulink" href="https://developercertificate.org/" target="_top">https://developercertificate.org/</a> web site).
+This is exactly the same one created and used by the Linux kernel developers.</p><p>This is a developer’s certification that he or she has the right to submit
+the patch for inclusion into the project. Simply submitting a contribution
+implies this agreement, however, please include a "Signed-off-by" tag in
+every patch (this tag is a conventional way to confirm that you agree to
+the DCO). In other words, this tag certifies that committer has the rights
+to submit this work under the same license as the project and agrees to the
+terms of a Developer Certificate of Origin.</p><p>Note that while git commit hook tricks are available to automatically sign
+off all commits, these signatures are intended to be a conscious (legally
+meaningful) act — hence they are not automated in git core with an easy
+configuration option.</p><p>For more details see:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<a class="ulink" href="https://github.com/networkupstools/nut/issues/1994" target="_top">https://github.com/networkupstools/nut/issues/1994</a>
+</li><li class="listitem">
+<a class="ulink" href="https://stackoverflow.com/questions/1962094/what-is-the-sign-off-feature-in-git-for" target="_top">https://stackoverflow.com/questions/1962094/what-is-the-sign-off-feature-in-git-for</a>
+</li><li class="listitem">
+<a class="ulink" href="https://stackoverflow.com/questions/15015894/git-add-signed-off-by-line-using-format-signoff-not-working" target="_top">https://stackoverflow.com/questions/15015894/git-add-signed-off-by-line-using-format-signoff-not-working</a>
+</li></ul></div><p>You are also encouraged to set up a PGP key, make its public part known, and
+use it to sign your git commits (in addition to the <code class="literal">Signed-Off-By</code> tag) by
+also passing a <code class="literal">-S</code> option or calling <code class="literal">git config commit.gpgsign true</code> once.
+Numerous public articles can walk you through this ordeal, including:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<a class="ulink" href="https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits" target="_top">https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits</a>
+</li><li class="listitem">
+<a class="ulink" href="https://docs.github.com/en/authentication/managing-commit-signature-verification/telling-git-about-your-signing-key" target="_top">https://docs.github.com/en/authentication/managing-commit-signature-verification/telling-git-about-your-signing-key</a>
+</li><li class="listitem">
+<a class="ulink" href="https://www.kernel.org/doc/html/v4.19/process/maintainer-pgp-guide.html" target="_top">https://www.kernel.org/doc/html/v4.19/process/maintainer-pgp-guide.html</a>
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_repository_etiquette_and_quality_assurance"></a>3.15. Repository etiquette and quality assurance</h3></div></div></div><p>For developers who have commit access to the common upstream NUT repository:
 Please keep the Git "master" branch in working condition at all times.
 The "master" branch may be used to generate daily tarballs, it provides the
 baseline for new contributions, and occasionally is tagged for a new release.
@@ -742,11 +770,11 @@ stash pop</code> to apply your saved changes.</p><p>Here is an example workflow:
         # Hack away
 
         git add changed-file.c
-        git commit
+        git commit -s
 
         # Fix a typo in a file or commit message:
 
-        git commit -a --amend
+        git commit -s -a --amend
 
         # Someone committed something to the central repository. Fetch it.
 
@@ -756,7 +784,7 @@ stash pop</code> to apply your saved changes.</p><p>Here is an example workflow:
         # Publish your branch to your GitHub repository:
 
         git push username my-new-feature</pre><p>If you are new to Git, but are familiar with SVN, the
-<a class="ulink" href="http://git-scm.com/course/svn.html" target="_top">following link</a> may be of use.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="building"></a>3.15. Building the Code</h3></div></div></div><p>For a developer, the NUT build process starts with <code class="literal">./autogen.sh</code>.</p><p>This script generates the <code class="literal">./configure</code> script that end users typically
+<a class="ulink" href="http://git-scm.com/course/svn.html" target="_top">following link</a> may be of use.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="building"></a>3.16. Building the Code</h3></div></div></div><p>For a developer, the NUT build process starts with <code class="literal">./autogen.sh</code>.</p><p>This script generates the <code class="literal">./configure</code> script that end users typically
 invoke to build NUT. If you are making a number of changes to the NUT
 source tree, configuring with the <code class="literal">--enable-maintainer-mode</code> flag will
 ensure that after you change a <code class="literal">Makefile.am</code>, nearby <code class="literal">Makefile.in</code> and
@@ -808,4 +836,4 @@ scenarios automatically. If your code adds a substantial feature, consider
 extending the <code class="literal">Jenkinsfile-dynamatrix</code> and/or <code class="literal">ci_build.sh</code> scripts in the
 workspace root to add another <code class="literal">BUILD_TYPE</code> to the matrix of tests run in
 parallel.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2023-07-01 08:47:55 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s02.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s04.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2023-07-30 11:09:03 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s02.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s04.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
