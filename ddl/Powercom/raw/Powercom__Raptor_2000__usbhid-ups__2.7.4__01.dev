@@ -1,15 +1,19 @@
-# Source: https://github.com/networkupstools/nut/issues/633#issuecomment-445472803
+# DEVICE:URL:REPORT: https://github.com/networkupstools/nut/issues/633#issuecomment-445472803
 
+# DEVICE:COMMENT:
 # The beeper is broken identically to RPT-600AP, which behaves almost
 # identically -- probably the same USB chip, just different batteries.
 # Status is always disabled.
-
+#
 # The device also disappears every now and then. The USB port appears
-# to reset until usbhid-ups is claimed, so I've written a udev rule:
-
+# to reset until `usbhid-ups` is claimed, so I've written an `udev` rule:
+#
+# ----
 #   # This device resets itself after a second if no-one claims it.
 #   # so we claim it ASAP
 #   SUBSYSTEM=="usb", ACTION=="add", ATTR{idVendor}=="0d9f", ATTR{idProduct}=="0004", RUN+="/usr/bin/systemctl restart nut-driver"
+# ----
+# DEVICE:EOC
 
 # :; upsc
 battery.charge: 74
@@ -55,6 +59,7 @@ ups.timer.shutdown: 0
 ups.timer.start: 971220
 ups.vendorid: 0d9f
 
+# DEVICE:COMMENT-BLOCK:LSUSB:
 # :; lsusb
 # Bus 001 Device 044: ID 0d9f:0004 Powercom Co., Ltd 
 # Device Descriptor:
@@ -115,3 +120,4 @@ ups.vendorid: 0d9f
 #         bInterval             100
 # Device Status:     0x0001
 #   Self Powered
+# DEVICE:EOC

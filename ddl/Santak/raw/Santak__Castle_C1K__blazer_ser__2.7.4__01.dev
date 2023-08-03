@@ -1,20 +1,26 @@
-# Source: https://github.com/networkupstools/nut/issues/1039
-# (also a trove on information on Q6 protocol research to add better support)
+# DEVICE:URL:REPORT: https://github.com/networkupstools/nut/issues/1039
 
+
+# DEVICE:COMMENT:
+# NOTE: the initial report https://github.com/networkupstools/nut/issues/1039
+# is also a trove on information on Q6 protocol research to add better support.
+#
 # I have a Castle C1K on hand, which is an online ("double conversion")
 # UPS with two built-in 12V batteries and 1kVA output capacity.
-# I can make it work by using blazer_ser driver.
-
+# I can make it work by using `blazer_ser` driver.
+#
 # Most things work. The battery voltage reports 2.28 because the
 # Castle C*K series it reports the battery voltage as the multiplier
-# of voltage of single piece of battery (2.28 * 12V = 27.36V),
+# of voltage of single piece of battery `(2.28 * 12V = 27.36V)`,
 # unlike the MT*-PRO series that reports the voltage directly.
-# This can be solved by setting flags in ups.conf:
 #
+# This can be solved by setting flags in ups.conf:
+# ----
 #   override.battery.voltage.nominal = 24
 #   override.battery.packs = 12
-#
-# ...in theory, but seems like it does not work
+# ----
+# ...in theory, but seems like it does not work.
+# DEVICE:EOC
 
 battery.voltage: 2.28
 battery.voltage.high: -1.08

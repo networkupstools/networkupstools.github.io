@@ -1,18 +1,24 @@
-# Source: https://github.com/networkupstools/nut/issues/762
-# Vendor: https://www.tensy.ru/podderzhka/dokumentatsiya/ibp-serii-dpk/
-# e.g. https://www.tensy.ru/attachments/get/25/rukovodstvo-dpk-1-3-kva-7ah.pdf
+# DEVICE:URL:REPORT: https://github.com/networkupstools/nut/issues/762
+# DEVICE:URL:VENDOR: https://www.tensy.ru/podderzhka/dokumentatsiya/ibp-serii-dpk/
+# DEVICE:URL:VENDOR: https://www.tensy.ru/attachments/get/25/rukovodstvo-dpk-1-3-kva-7ah.pdf
 
+# DEVICE:COMMENT:
 # EnergTechnology DPK1/1-3 aka Energy Technologies DPK1/1-3
-
+#
 # Shutdown sequence works, including shutdown of the UPS itself,
-# and automatical powering up after AC back
+# and automatically powering up after AC back.
+#
+# `upsrw` gives no output.
+# DEVICE:EOC
 
+# DEVICE:COMMENT-BLOCK:UPSCONF:
 # [dpk]
 #  driver = blazer_ser
 #  port = /dev/ttyS0
 #  desc = "DPK-1/1-3"
 #  offdelay = 60
 #  ondelay = 1
+# DEVICE:EOC
 
 battery.charge: 100
 battery.voltage: 109.44
@@ -48,6 +54,7 @@ ups.status: OL
 ups.temperature: 37.5
 ups.type: online
 
+# DEVICE:COMMENT-BLOCK:LOGS:
 # :; upsdrvctl start
 # Network UPS Tools - UPS driver controller 2.7.4
 # Network UPS Tools - Megatec/Q1 protocol serial driver 1.57 (2.7.4)
@@ -56,8 +63,9 @@ ups.type: online
 # No values provided for battery high/low voltages in ups.conf
 # Using 'guestimation' (low: 83.200000, high: 104.000000)!
 # Battery runtime will not be calculated (runtimecal not set)
+# DEVICE:EOC
 
-# :; upscmd -l dpk
+# DEVICE:COMMENT-BLOCK:FIXME:UPSCMD: dpk
 # Instant commands supported on UPS [dpk]:
 # beeper.toggle - Toggle the UPS beeper
 # load.off - Turn off the load immediately
@@ -69,5 +77,4 @@ ups.type: online
 # test.battery.start.deep - Start a deep battery test
 # test.battery.start.quick - Start a quick battery test
 # test.battery.stop - Stop the battery test
-
-# upsrw gives no output
+# DEVICE:EOC

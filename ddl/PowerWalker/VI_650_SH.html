@@ -87,9 +87,10 @@ asciidoc.install(2);
 <h2 id="_2_7_4_1">2.7.4.1</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_report_1_with_driver_usbhid_ups">Report #1 with driver usbhid-ups</h3><div style="clear:left"></div>
+<h3 id="_report_1_with_driver_usbhid_ups_detailed_comments_available">Report #1 with driver usbhid-ups (detailed comments available)</h3><div style="clear:left"></div>
 <div class="paragraph"><p>This device is known to work with driver <a href="../../docs/man/usbhid-ups.html">usbhid-ups</a>.</p></div>
 <div class="paragraph"><p>You can grab a <a href="../../docs/man/dummy-ups.html">dummy-ups</a> compliant <code>.dev</code> file to simulate this device <a href="raw/PowerWalker__VI_650_SH__usbhid-ups__2.7.4.1__01.dev">clicking here</a>.</p></div>
+<div class="paragraph"><p>Some more detailed comments are available <a href="#anchor-about-2.7.4.1-1">after</a> the "Known supported&#8230;" sections.</p></div>
 <div class="sect3">
 <h4 id="_known_supported_variables">Known supported variables</h4>
 <div class="paragraph"><p>This device is known to support the following variables (values are just examples):</p></div>
@@ -547,6 +548,85 @@ asciidoc.install(2);
 </tr>
 </table></div>
 </div>
+<div class="sect3">
+<h4 id="anchor-about-2.7.4.1-1">About this device</h4>
+<div class="paragraph"><p>Without the <code>overrides</code> and <code>ignorelb</code> posted in the <code>ups.conf</code> snippet,
+the UPS not reporting Low Battery for some reason (tried running on battery
+till the 1% <code>battery.charge</code>).</p></div>
+<div class="paragraph"><p>Charging status and <code>battery.voltage</code> is missing too (but they are present
+with Phoenixtec/Liebert HID 0.3), as you can see. The <code>ups.power.nominal</code> and
+<code>ups.realpower</code> values also looks strange.</p></div>
+<div class="paragraph"><p>Reported at:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<a href="https://github.com/networkupstools/nut/issues/483#issuecomment-590977267">https://github.com/networkupstools/nut/issues/483#issuecomment-590977267</a>
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>Further system data or configuration examples:</p></div>
+<div class="listingblock">
+<div class="title">Driver configuration</div>
+<div class="content">
+<pre><code>[pw]
+   driver = usbhid-ups
+   desc = "PowerWalker VI 650 SH"
+   port = auto
+   ignorelb
+   override.battery.charge.warning = 30
+   override.battery.charge.low = 15
+   override.battery.runtime.low = 180
+   override.ups.model = "PowerWalker VI 650 SH"</code></pre>
+</div></div>
+<div class="listingblock">
+<div class="title">Commands per <code>upscmd -l pw@localhost</code> listing</div>
+<div class="content">
+<pre><code># TODO: Convert to CMD:... markup
+:; upscmd -l pw@localhost
+Instant commands supported on UPS [pw]:
+beeper.disable - Disable the UPS beeper
+beeper.enable - Enable the UPS beeper
+beeper.mute - Temporarily mute the UPS beeper
+beeper.off - Obsolete (use beeper.disable or beeper.mute)
+beeper.on - Obsolete (use beeper.enable)
+load.off - Turn off the load immediately
+load.off.delay - Turn off the load with a delay (seconds)
+load.on - Turn on the load immediately
+load.on.delay - Turn on the load with a delay (seconds)
+shutdown.return - Turn off the load and return when power is back
+shutdown.stayoff - Turn off the load and remain off
+shutdown.stop - Stop a shutdown in progress
+test.battery.start.deep - Start a deep battery test
+test.battery.start.quick - Start a quick battery test
+test.battery.stop - Stop the battery test</code></pre>
+</div></div>
+<div class="listingblock">
+<div class="title">Variables per <code>upsrw pw@localhost</code> listing</div>
+<div class="content">
+<pre><code># TODO: Convert to RW:... and RO:... markup
+:; upsrw pw@localhost
+[output.voltage.nominal]
+Nominal output voltage (V)
+Type: ENUM
+Option: "200"
+Option: "208"
+Option: "220"
+Option: "230" SELECTED
+Option: "240"
+
+[ups.delay.shutdown]
+Interval to wait after shutdown with delay command (seconds)
+Type: STRING
+Maximum length: 10
+Value: 20
+
+[ups.delay.start]
+Interval to wait before (re)starting the load (seconds)
+Type: STRING
+Maximum length: 10
+Value: 30</code></pre>
+</div></div>
+</div>
 </div>
 </div>
 </div>
@@ -554,9 +634,10 @@ asciidoc.install(2);
 <h2 id="_2_7_4">2.7.4</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_report_1_with_driver_usbhid_ups_2">Report #1 with driver usbhid-ups</h3><div style="clear:left"></div>
+<h3 id="_report_1_with_driver_usbhid_ups_detailed_comments_available_2">Report #1 with driver usbhid-ups (detailed comments available)</h3><div style="clear:left"></div>
 <div class="paragraph"><p>This device is known to work with driver <a href="../../docs/man/usbhid-ups.html">usbhid-ups</a>.</p></div>
 <div class="paragraph"><p>You can grab a <a href="../../docs/man/dummy-ups.html">dummy-ups</a> compliant <code>.dev</code> file to simulate this device <a href="raw/PowerWalker__VI_650_SH__usbhid-ups__2.7.4__01.dev">clicking here</a>.</p></div>
+<div class="paragraph"><p>Some more detailed comments are available <a href="#anchor-about-2.7.4-1">after</a> the "Known supported&#8230;" sections.</p></div>
 <div class="sect3">
 <h4 id="_known_supported_variables_2">Known supported variables</h4>
 <div class="paragraph"><p>This device is known to support the following variables (values are just examples):</p></div>
@@ -816,6 +897,18 @@ asciidoc.install(2);
 </tr>
 </table></div>
 </div>
+<div class="sect3">
+<h4 id="anchor-about-2.7.4-1">About this device</h4>
+<div class="paragraph"><p>Here is the output from FreeNas 11.0-U3</p></div>
+<div class="paragraph"><p>Reported at:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<a href="https://github.com/networkupstools/nut/issues/483">https://github.com/networkupstools/nut/issues/483</a>
+</p>
+</li>
+</ul></div>
+</div>
 </div>
 </div>
 </div>
@@ -823,7 +916,7 @@ asciidoc.install(2);
 <h2 id="_2_7_3">2.7.3</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_report_1_with_driver_usbhid_ups_detailed_comments_available">Report #1 with driver usbhid-ups (detailed comments available)</h3><div style="clear:left"></div>
+<h3 id="_report_1_with_driver_usbhid_ups_detailed_comments_available_3">Report #1 with driver usbhid-ups (detailed comments available)</h3><div style="clear:left"></div>
 <div class="paragraph"><p>This device is known to work with driver <a href="../../docs/man/usbhid-ups.html">usbhid-ups</a>.</p></div>
 <div class="paragraph"><p>You can grab a <a href="../../docs/man/dummy-ups.html">dummy-ups</a> compliant <code>.dev</code> file to simulate this device <a href="raw/PowerWalker__VI_650_SH__usbhid-ups__2.7.3__01.dev">clicking here</a>.</p></div>
 <div class="paragraph"><p>Some more detailed comments are available <a href="#anchor-about-2.7.3-1">after</a> the "Known supported&#8230;" sections.</p></div>
@@ -1096,8 +1189,24 @@ asciidoc.install(2);
 </div>
 <div class="sect3">
 <h4 id="anchor-about-2.7.3-1">About this device</h4>
-<div class="paragraph"><p>Shutdown sequence tested on FreeNAS-9.10.2-U1 (86c7ef5) successfully. Emails from FreeNAS received notifying of On Batt and Shutdown.</p></div>
-<div class="paragraph"><p><a href="https://www.powerwalker.com/?page=product&amp;item=10120048&amp;lang=en">https://www.powerwalker.com/?page=product&amp;item=10120048&amp;lang=en</a></p></div>
+<div class="paragraph"><p>Shutdown sequence tested on FreeNAS-9.10.2-U1 (86c7ef5) successfully.
+Emails from FreeNAS received notifying of On Batt and Shutdown.</p></div>
+<div class="paragraph"><p>Reported at:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<a href="https://github.com/networkupstools/nut/issues/475">https://github.com/networkupstools/nut/issues/475</a>
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>Vendor/Manufacturer information:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<a href="https://www.powerwalker.com/?page=product&amp;item=10120048&amp;lang=en">https://www.powerwalker.com/?page=product&amp;item=10120048&amp;lang=en</a>
+</p>
+</li>
+</ul></div>
 </div>
 </div>
 </div>
@@ -1106,9 +1215,10 @@ asciidoc.install(2);
 <h2 id="_2_7_2">2.7.2</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_report_1_with_driver_usbhid_ups_3">Report #1 with driver usbhid-ups</h3><div style="clear:left"></div>
+<h3 id="_report_1_with_driver_usbhid_ups_detailed_comments_available_4">Report #1 with driver usbhid-ups (detailed comments available)</h3><div style="clear:left"></div>
 <div class="paragraph"><p>This device is known to work with driver <a href="../../docs/man/usbhid-ups.html">usbhid-ups</a>.</p></div>
 <div class="paragraph"><p>You can grab a <a href="../../docs/man/dummy-ups.html">dummy-ups</a> compliant <code>.dev</code> file to simulate this device <a href="raw/PowerWalker__VI_650_SH__usbhid-ups__2.7.2__01.dev">clicking here</a>.</p></div>
+<div class="paragraph"><p>Some more detailed comments are available <a href="#anchor-about-2.7.2-1">after</a> the "Known supported&#8230;" sections.</p></div>
 <div class="sect3">
 <h4 id="_known_supported_variables_4">Known supported variables</h4>
 <div class="paragraph"><p>This device is known to support the following variables (values are just examples):</p></div>
@@ -1357,6 +1467,18 @@ asciidoc.install(2);
 </tr>
 </table></div>
 </div>
+<div class="sect3">
+<h4 id="anchor-about-2.7.2-1">About this device</h4>
+<div class="paragraph"><p>Output from the PI running Armbian</p></div>
+<div class="paragraph"><p>Reported at:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<a href="https://github.com/networkupstools/nut/issues/483">https://github.com/networkupstools/nut/issues/483</a>
+</p>
+</li>
+</ul></div>
+</div>
 </div>
 </div>
 </div>
@@ -1364,8 +1486,8 @@ asciidoc.install(2);
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Version nut:v2.8.0-2244-g2ced48d1b ddl:v2.8.0-23-g415dcdc web:v2.8.0-280-g4294d12d-master<br />
-Last updated 2023-08-02 11:49:44
+Version nut:v2.8.0-2250-g80767e396 ddl:v2.8.0-52-g823b285 web:v2.8.0-291-gfc2cec23-master<br />
+Last updated 2023-08-03 12:38:46
 </div>
 <div id="footer-badges">
 <a href="https://github.com/networkupstools/nut">

@@ -948,7 +948,7 @@ Vars comments
 </dt>
 <dd>
 <p>
-Comments that are binded to a particular variable.
+Comments that are bound to a particular variable.
 </p>
 <div class="openblock">
 <div class="content">
@@ -960,7 +960,7 @@ Comments that are binded to a particular variable.
 # &lt;comment&gt;
 # &lt;var.name&gt;:EOC</code></pre>
 </div></div>
-<div class="paragraph"><p>(The trailing colon after <code>:COMMENT</code> is not mandatory.)</p></div>
+<div class="paragraph"><p>(The trailing colon after <code>:COMMENT</code> or <code>:EOC</code> is not mandatory.)</p></div>
 <div class="paragraph"><p>e.g.:</p></div>
 <div class="listingblock">
 <div class="content">
@@ -984,7 +984,7 @@ Commands comments
 </dt>
 <dd>
 <p>
-Comments binded to a particular command.
+Comments bound to a particular command.
 </p>
 <div class="openblock">
 <div class="content">
@@ -996,7 +996,7 @@ Comments binded to a particular command.
 # &lt;comment&gt;
 # &lt;command.name&gt;:EOC</code></pre>
 </div></div>
-<div class="paragraph"><p>(The trailing colon after <code>:COMMENT</code> is not mandatory.)</p></div>
+<div class="paragraph"><p>(The trailing colon after <code>:COMMENT</code> or <code>:EOC</code> is not mandatory.)</p></div>
 <div class="paragraph"><p>e.g.:</p></div>
 <div class="listingblock">
 <div class="content">
@@ -1019,6 +1019,9 @@ to describe the way NUT supports it. At most one is allowed per file.
 <div class="paragraph"><p>Keep in mind that each comment line is stripped of two leftmost characters
 (assuming the hash and space characters), and the rest is treated as usual
 asciidoc markup, e.g. keep blank lines to separate multiple paragraphs.</p></div>
+<div class="paragraph"><p>See also <code>DEVICE:COMMENT-BLOCK: &lt;title&gt;</code> which supports multiple pre-formatted
+block comments specifically for data dumps and tool output "screenshots" (with
+titles for particular subjects).</p></div>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
@@ -1029,7 +1032,7 @@ asciidoc markup, e.g. keep blank lines to separate multiple paragraphs.</p></div
 # &lt;comment&gt;
 # DEVICE:EOC</code></pre>
 </div></div>
-<div class="paragraph"><p>(The trailing colon after <code>:COMMENT</code> is not mandatory.)</p></div>
+<div class="paragraph"><p>(The trailing colon after <code>:COMMENT</code> or <code>:EOC</code> is not mandatory.)</p></div>
 <div class="paragraph"><p>e.g.:</p></div>
 <div class="listingblock">
 <div class="content">
@@ -1046,10 +1049,20 @@ Device comment block
 </dt>
 <dd>
 <p>
-A way to pass otherwise unclassified blocks of information which benefits
+A way to pass otherwise "un-classified" blocks of information which benefits
 from pre-formatting, such as <code>ups.conf</code> device configuration section examples,
 or "console screenshots". It may include a title (recommended for readability).
 </p>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img src="../images/note.png" alt="Note" />
+</td>
+<td class="content">For certain frequently seen content types there are special tags to take
+care of default title and possible other mark-up in the rendered documents.
+So it is not necessarily fully unstructured information after all.</td>
+</tr></table>
+</div>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
@@ -1063,12 +1076,102 @@ or "console screenshots". It may include a title (recommended for readability).
 <div class="paragraph"><p>e.g.:</p></div>
 <div class="listingblock">
 <div class="content">
-<pre><code># DEVICE:COMMENT-BLOCK: Driver configuration
+<pre><code>### For driver config snippets, especially if with useful overrides etc.:
+
+# DEVICE:COMMENT-BLOCK:UPSCONF: # see comment below about optional title
+# &gt; A single-token title is UPS name if no section in conf section,
+# &gt; otherwise non-trivial title is pasted as a starting comment
+# [ups]
+#   driver = blazer_ser
+#   port = /dev/ttyUSB0
+#   # Certain overrides were needed:
+# ...
+# DEVICE:EOC
+
+### or:
+
+# DEVICE:COMMENT-BLOCK: Driver configuration
 # :; cat /etc/nut/ups.conf
 #
 # [ups]
 #   driver = blazer_ser
 #   port = /dev/ttyUSB0
+# DEVICE:EOC
+
+
+### For `lsusb` dumps:
+
+# DEVICE:COMMENT-BLOCK:LSUSB: `lsusb -vvv` # see comment below about optional title
+# &gt; Accepts optional title with exact command,
+# &gt; possibly not even `lsusb` per se on some OSes
+# ...
+# DEVICE:EOC
+
+### or:
+
+# DEVICE:COMMENT-BLOCK: `lsusb` listing
+# :; lsusb -vvv
+# ...
+# DEVICE:EOC
+
+
+### For service startup/shutdown log messages:
+
+# DEVICE:COMMENT-BLOCK:LOGS: Console messages of NUT driver startup
+# &gt; Accepts optional title with description of the log - used "as is"
+# ...
+# DEVICE:EOC
+
+### or:
+
+# DEVICE:COMMENT-BLOCK: Syslog of NUT startup
+# ...
+# DEVICE:EOC
+
+
+### For unstructured `upsrw` dumps:
+
+# DEVICE:COMMENT-BLOCK:FIXME:UPSRW: # see comment below about optional title
+# &gt; A single-token title is UPS name for example command,
+# &gt; multi-token is pasted as a starting comment
+# [battery.charge.low]
+# Remaining battery level when UPS switches to LB (percent)
+# ...
+# DEVICE:EOC
+
+### or:
+
+# DEVICE:COMMENT-BLOCK: Variables per `upsrw ups@localhost` listing
+# TODO: Convert to RW:... and RO:... markup
+# :; upsrw ups
+# [battery.charge.low]
+# Remaining battery level when UPS switches to LB (percent)
+# Type: STRING
+# Maximum length: 10
+# Value: 10
+# ...
+# DEVICE:EOC
+
+
+### For unstructured `upscmd` dumps:
+
+# DEVICE:COMMENT-BLOCK:FIXME:UPSCMD: # see comment below about optional title
+# &gt; A single-token title is UPS name for example command,
+# &gt; multi-token is pasted as a starting comment
+# beeper.disable - Disable the UPS beeper
+# ...
+# DEVICE:EOC
+
+### or:
+
+# DEVICE:COMMENT-BLOCK: Commands per `upscmd -l ups@localhost` listing
+# TODO: Convert to CMD:... markup
+# :; upscmd -l ups
+# Instant commands supported on UPS [ups]:
+#
+# beeper.disable - Disable the UPS beeper
+# beeper.enable - Enable the UPS beeper
+#...
 # DEVICE:EOC</code></pre>
 </div></div>
 </div></div>
@@ -1082,17 +1185,23 @@ Further information about this device or report can be found at specified URL,
 e.g. vendor product page, NUT issue tracker or mailing list archive page where
 the report originated, etc. Many URLs may be listed, but only one per tag.
 </p>
+<div class="paragraph"><p>Use of specific <code>DEVICE:URL:VENDOR:</code> (product/vendor/manufacturer pages) and
+<code>DEVICE:URL:REPORT:</code> (GitHub issue or pull request, mailing list archive, blog
+etc. where the reported information originated and more clues may appear later)
+is encouraged over the less specific <code>DEVICE:URL:</code> used for additional info.</p></div>
 <div class="openblock">
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre><code># DEVICE:URL:&lt;link&gt;</code></pre>
+<pre><code># DEVICE:URL:VENDOR:&lt;link&gt;
+# DEVICE:URL:REPORT:&lt;link&gt;
+# DEVICE:URL:&lt;link&gt;</code></pre>
 </div></div>
 <div class="paragraph"><p>e.g.:</p></div>
 <div class="listingblock">
 <div class="content">
-<pre><code># DEVICE:URL: https://github.com/networkupstools/nut/issues/867
-# DEVICE:URL: https://www.njoy.ro/UPS/keen-600</code></pre>
+<pre><code># DEVICE:URL:REPORT: https://github.com/networkupstools/nut/issues/867
+# DEVICE:URL:VENDOR: https://www.njoy.ro/UPS/keen-600</code></pre>
 </div></div>
 </div></div>
 </dd>
@@ -1202,8 +1311,8 @@ commands, i.e.:</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Version nut:v2.8.0-2244-g2ced48d1b ddl:v2.8.0-23-g415dcdc web:v2.8.0-280-g4294d12d-master<br />
-Last updated 2023-08-02 11:50:03
+Version nut:v2.8.0-2250-g80767e396 ddl:v2.8.0-52-g823b285 web:v2.8.0-291-gfc2cec23-master<br />
+Last updated 2023-08-03 12:39:05
 </div>
 <div id="footer-badges">
 <a href="https://github.com/networkupstools/nut">

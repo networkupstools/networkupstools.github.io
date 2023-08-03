@@ -1,11 +1,15 @@
-# Source: https://github.com/networkupstools/nut/issues/646#issuecomment-939439743
+# DEVICE:URL:REPORT: https://github.com/networkupstools/nut/issues/646#issuecomment-939439743
 
+# DEVICE:COMMENT:
 # Not sure what changes they made in the latest stable debian bullseye
-# using nut-server 2.7.4 version, but these ups are now using the MGE HID
+# using nut-server 2.7.4 version, but these UPSes are now using the MGE HID
 # driver version, previous was the Liebert driver which wasn't stable and
-# missing a load of features, like battery test. So far my following config
-# works and is stable:
+# missing a load of features, like battery test. So far my config posted
+# with the report works and is stable.
+# DEVICE:EOC
 
+# DEVICE:COMMENT-BLOCK:UPSCONF: NUT configuration files
+# :; cat ups.conf
 # maxretry = 3
 # pollinterval = 20
 # user = nut
@@ -31,14 +35,15 @@
 #   override.battery.runtime.low = 180
 #   override.ups.model = "PowerWalker VI 1200 SH"
 #   override.driver.parameter.pollfreq = 40
-
-# upsmon.conf
+#
+# :; cat upsmon.conf
 #   POLLFREQ 20
 #   POLLFREQALERT 10
-#   DEADTIME 60 ( 3x the POLLFREQ)
-
-# upsd.conf
+#   DEADTIME 60  ### 3x the POLLFREQ
+#
+# :; cat upsd.conf
 #   MAXAGE 40
+# DEVICE:EOC
 
 # :; upsc powerwalker-1200
 battery.charge: 100
@@ -83,7 +88,7 @@ ups.timer.start: -1
 ups.type: offline / line interactive
 ups.vendorid: 06da
 
-# :; upscmd -l powerwalker-650
+# DEVICE:COMMENT-BLOCK:FIXME:UPSCMD: powerwalker-650
 # Instant commands supported on UPS [powerwalker-650]:
 # beeper.disable - Disable the UPS beeper
 # beeper.enable - Enable the UPS beeper
@@ -100,3 +105,4 @@ ups.vendorid: 06da
 # test.battery.start.deep - Start a deep battery test
 # test.battery.start.quick - Start a quick battery test
 # test.battery.stop - Stop the battery test
+# DEVICE:EOC

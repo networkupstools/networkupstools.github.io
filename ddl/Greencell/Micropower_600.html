@@ -87,10 +87,11 @@ asciidoc.install(2);
 <h2 id="_2_7_4">2.7.4</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_report_1_with_driver_blazer_usb">Report #1 with driver blazer_usb</h3><div style="clear:left"></div>
+<h3 id="_report_1_with_driver_blazer_usb_detailed_comments_available">Report #1 with driver blazer_usb (detailed comments available)</h3><div style="clear:left"></div>
 <div class="paragraph"><p>This device is known to work with driver <a href="../../docs/man/blazer_usb.html">blazer_usb</a>.
 It may also work with driver <a href="../../docs/man/nutdrv_qx.html">nutdrv_qx</a>.</p></div>
 <div class="paragraph"><p>You can grab a <a href="../../docs/man/dummy-ups.html">dummy-ups</a> compliant <code>.dev</code> file to simulate this device <a href="raw/Greencell__Micropower_600__blazer_usb__2.7.4__01.dev">clicking here</a>.</p></div>
+<div class="paragraph"><p>Some more detailed comments are available <a href="#anchor-about-2.7.4-1">after</a> the "Known supported&#8230;" sections.</p></div>
 <div class="sect3">
 <h4 id="_known_supported_variables">Known supported variables</h4>
 <div class="paragraph"><p>This device is known to support the following variables (values are just examples):</p></div>
@@ -405,6 +406,36 @@ It may also work with driver <a href="../../docs/man/nutdrv_qx.html">nutdrv_qx</
 </tr>
 </table></div>
 </div>
+<div class="sect3">
+<h4 id="anchor-about-2.7.4-1">About this device</h4>
+<div class="paragraph"><p>The UPS looks to be using working with the <code>blazer_usb</code> driver,
+different status events are properly reported and my connected
+Raspberry Pi shuts down as expected, but the UPS itself does
+not shut down.</p></div>
+<div class="paragraph"><p>Later discussion in the ticket mentioned that <code>nutdrv_qx</code> worked
+but did not detail to what extent, except a subsequent comment:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>  If I would be able to disable the beeper then I would
+  have achieved all my goals: beeper.toggle command works,
+  but the driver settings alarm_control = disabled and
+  battery_alarm = disabled don't do anything..</code></pre>
+</div></div>
+<div class="paragraph"><p>The (v2.7.4) <code>nut-scanner</code> tool suggested <code>nutdrv_atcl_usb</code> driver
+according to vendorid/productid which is used in many unrelated
+devices, that driver did not support the (Qx) protocol here.</p></div>
+<div class="paragraph"><p>Further system data or configuration example:</p></div>
+<div class="listingblock">
+<div class="title">Driver configuration</div>
+<div class="content">
+<pre><code>maxretry = 3
+pollinterval = 5
+[greencell]
+  driver = "blazer_usb"
+  port = "auto"
+  langid_fix = 0x409</code></pre>
+</div></div>
+</div>
 </div>
 </div>
 </div>
@@ -412,8 +443,8 @@ It may also work with driver <a href="../../docs/man/nutdrv_qx.html">nutdrv_qx</
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Version nut:v2.8.0-2244-g2ced48d1b ddl:v2.8.0-23-g415dcdc web:v2.8.0-280-g4294d12d-master<br />
-Last updated 2023-08-02 11:49:24
+Version nut:v2.8.0-2250-g80767e396 ddl:v2.8.0-52-g823b285 web:v2.8.0-291-gfc2cec23-master<br />
+Last updated 2023-08-03 12:38:27
 </div>
 <div id="footer-badges">
 <a href="https://github.com/networkupstools/nut">

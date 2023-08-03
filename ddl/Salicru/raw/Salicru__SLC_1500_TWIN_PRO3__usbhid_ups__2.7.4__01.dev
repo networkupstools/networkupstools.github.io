@@ -1,7 +1,12 @@
+# DEVICE:URL:REPORT: https://github.com/networkupstools/nut/issues/1142
+
+# DEVICE:COMMENT:
 # As initially reported in https://github.com/networkupstools/nut/issues/1142
 # modified back to "native" VID/PID (that report was done with UPS apparently
 # modified to reply to IDs supported by existing drivers to check its work
-# "out of the box":
+# "out of the box").
+# DEVICE:EOC
+
 battery.capacity: 0.00
 battery.charge: 91
 battery.charge.low: 0
@@ -55,15 +60,20 @@ ups.timer.start: 0
 ups.type: online
 ups.vendorid: 2e66
 
-# $ upsrw -s battery.runtime.low Unity
+# DEVICE:COMMENT-BLOCK: Check that UPS variable setting works
+# :; upsrw -s battery.runtime.low Unity
 # Enter new value for battery.runtime.low: 240
 # OK
 #
-# $ upsc Unity battery.runtime.low
+# :; upsc Unity battery.runtime.low
 # 240
-# I successfully set the “ups.delay.shutdown” from 20 to 120 via “upsrw -s ups.delay.shutdown Unity” command
+#
+# ### I successfully set the `ups.delay.shutdown` from 20 to 120
+# ### via `upsrw -s ups.delay.shutdown Unity` command
+# DEVICE:EOC
 
-# $ upscmd -l Unity
+# DEVICE:COMMENT-BLOCK: Check that UPS commands work
+# :; upscmd -l Unity
 # Instant commands supported on UPS [Unity]:
 #
 # load.off - Turn off the load immediately
@@ -77,5 +87,8 @@ ups.vendorid: 2e66
 # test.battery.start.quick - Start a quick battery test
 # test.battery.stop - Stop the battery test
 #
-# Send command “upscmd Unity load.off” , the output voltage has changed from 230.2 to 0 after loading off.
-# Send command “upscmd Unity load.on”, the output voltage has changed from 0 to 230.2 after loading on.
+# ### * Send command `upscmd Unity load.off`, the output
+# ###   voltage has changed from 230.2 to 0 after loading off.
+# ### * Send command `upscmd Unity load.on`, the output
+# ###   voltage has changed from 0 to 230.2 after loading on.
+# DEVICE:EOC

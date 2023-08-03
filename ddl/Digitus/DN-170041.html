@@ -87,10 +87,11 @@ asciidoc.install(2);
 <h2 id="_2_7_4">2.7.4</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_report_1_with_driver_blazer_usb">Report #1 with driver blazer_usb</h3><div style="clear:left"></div>
+<h3 id="_report_1_with_driver_blazer_usb_detailed_comments_available">Report #1 with driver blazer_usb (detailed comments available)</h3><div style="clear:left"></div>
 <div class="paragraph"><p>This device is known to work with driver <a href="../../docs/man/blazer_usb.html">blazer_usb</a>.
 It may also work with driver <a href="../../docs/man/nutdrv_qx.html">nutdrv_qx</a>.</p></div>
 <div class="paragraph"><p>You can grab a <a href="../../docs/man/dummy-ups.html">dummy-ups</a> compliant <code>.dev</code> file to simulate this device <a href="raw/Digitus__DN-170041__blazer_usb__2.7.4__01.dev">clicking here</a>.</p></div>
+<div class="paragraph"><p>Some more detailed comments are available <a href="#anchor-about-2.7.4-1">after</a> the "Known supported&#8230;" sections.</p></div>
 <div class="sect3">
 <h4 id="_known_supported_variables">Known supported variables</h4>
 <div class="paragraph"><p>This device is known to support the following variables (values are just examples):</p></div>
@@ -493,6 +494,46 @@ It may also work with driver <a href="../../docs/man/nutdrv_qx.html">nutdrv_qx</
 </tr>
 </table></div>
 </div>
+<div class="sect3">
+<h4 id="anchor-about-2.7.4-1">About this device</h4>
+<div class="paragraph"><p>I tested the Digitus DN-170040 and DN-170041 with the blazer_usb
+driver and it works as expected. The same model was also sold as
+Voltronic Power GalleonX9-RT LCD-1-3K.</p></div>
+<div class="paragraph"><p>It is connected through USB and is recognized as:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>Bus 001 Device 002: ID 0665:5161 Cypress Semiconductor USB to Serial</code></pre>
+</div></div>
+<div class="paragraph"><p>See also: Digitus<em>DN-170041</em>nutdrv_qx<em>2.7.4</em>01.dev</p></div>
+<div class="paragraph"><p>Reported at:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<a href="https://github.com/networkupstools/nut/issues/1251">https://github.com/networkupstools/nut/issues/1251</a>
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>Vendor/Manufacturer information:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<a href="http://ftp.assmann.com/pub/DN-/DN-170041___4016032365907">http://ftp.assmann.com/pub/DN-/DN-170041___4016032365907</a>
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>Further system data or configuration example:</p></div>
+<div class="listingblock">
+<div class="title">Driver configuration</div>
+<div class="content">
+<pre><code>[digitus]
+    driver = blazer_usb
+    port = auto
+    vendorid = 0665
+    productid = 5161
+    subdriver = cypress
+    desc = "Digitus DN-170041"</code></pre>
+</div></div>
+</div>
 </div>
 </div>
 </div>
@@ -500,9 +541,10 @@ It may also work with driver <a href="../../docs/man/nutdrv_qx.html">nutdrv_qx</
 <h2 id="_2_7_4_2">2.7.4</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_report_1_with_driver_nutdrv_qx">Report #1 with driver nutdrv_qx</h3><div style="clear:left"></div>
+<h3 id="_report_1_with_driver_nutdrv_qx_detailed_comments_available">Report #1 with driver nutdrv_qx (detailed comments available)</h3><div style="clear:left"></div>
 <div class="paragraph"><p>This device is known to work with driver <a href="../../docs/man/nutdrv_qx.html">nutdrv_qx</a>.</p></div>
 <div class="paragraph"><p>You can grab a <a href="../../docs/man/dummy-ups.html">dummy-ups</a> compliant <code>.dev</code> file to simulate this device <a href="raw/Digitus__DN-170041__nutdrv_qx__2.7.4__01.dev">clicking here</a>.</p></div>
+<div class="paragraph"><p>Some more detailed comments are available <a href="#anchor-about-2.7.4-1">after</a> the "Known supported&#8230;" sections.</p></div>
 <div class="sect3">
 <h4 id="_known_supported_variables_2">Known supported variables</h4>
 <div class="paragraph"><p>This device is known to support the following variables (values are just examples):</p></div>
@@ -1147,6 +1189,64 @@ It may also work with driver <a href="../../docs/man/nutdrv_qx.html">nutdrv_qx</
 </tr>
 </table></div>
 </div>
+<div class="sect3">
+<h4 id="anchor-about-2.7.4-1">About this device</h4>
+<div class="paragraph"><p>See also Digitus<em>DN-170041</em>blazer_usb<em>2.7.4</em>01.dev</p></div>
+<div class="paragraph"><p><code>nutdrv_qx</code> seems to give more information than <code>blazer_usb</code>. It even detects
+the right <code>voltronic</code> protocol as well as all settings from the ups:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>:; upsdrvctl start digitus
+Network UPS Tools - UPS driver controller 2.7.4
+Network UPS Tools - Generic Q* USB/Serial driver 0.28 (2.7.4)
+USB communication driver 0.33
+Using protocol: Voltronic 0.06
+device.serial: UPS reported a non-significant serial [00000000000000]
+battery_number: 3
+battery_number, settable range: 1..9
+bypass_alarm: enabled
+battery_alarm: enabled
+bypass_when_off: disabled
+alarm_control: enabled
+converter_mode: disabled
+eco_mode: enabled
+bypass_forbidding: disabled
+site_fault_detection: disabled
+advanced_eco_mode: enabled
+max_bypass_volt: 264
+max_bypass_volt, settable range: 230..264
+min_bypass_volt: 170
+min_bypass_volt, settable range: 170..220
+max_bypass_freq: 53.0
+max_bypass_freq, settable range: 51.0..60.0
+min_bypass_freq: 47.0
+min_bypass_freq, settable range: 40.0..49.0</code></pre>
+</div></div>
+<div class="paragraph"><p>Reported at:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<a href="https://github.com/networkupstools/nut/issues/1251">https://github.com/networkupstools/nut/issues/1251</a>
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>Further system data or configuration example:</p></div>
+<div class="listingblock">
+<div class="title">Driver configuration</div>
+<div class="content">
+<pre><code>[digitus]
+    driver = nutdrv_qx
+    port = auto
+    desc = "Digitus DN-170041"
+    default.battery.voltage.high = 39
+        default.battery.voltage.low = 31.2
+        default.battery.voltage.nominal = 36
+    runtimecal = 210,100,660,50
+        chargetime = 14400
+
+    # The values are set according the datasheet.</code></pre>
+</div></div>
+</div>
 </div>
 </div>
 </div>
@@ -1154,8 +1254,8 @@ It may also work with driver <a href="../../docs/man/nutdrv_qx.html">nutdrv_qx</
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Version nut:v2.8.0-2244-g2ced48d1b ddl:v2.8.0-23-g415dcdc web:v2.8.0-280-g4294d12d-master<br />
-Last updated 2023-08-02 11:49:14
+Version nut:v2.8.0-2250-g80767e396 ddl:v2.8.0-52-g823b285 web:v2.8.0-291-gfc2cec23-master<br />
+Last updated 2023-08-03 12:38:17
 </div>
 <div id="footer-badges">
 <a href="https://github.com/networkupstools/nut">

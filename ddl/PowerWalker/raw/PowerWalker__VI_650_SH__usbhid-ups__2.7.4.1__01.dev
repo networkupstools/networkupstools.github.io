@@ -1,7 +1,17 @@
-# Source: https://github.com/networkupstools/nut/issues/483#issuecomment-590977267
+# DEVICE:URL:REPORT: https://github.com/networkupstools/nut/issues/483#issuecomment-590977267
 
-# ups.conf:
-#  [pw]
+# DEVICE:COMMENT:
+# Without the `overrides` and `ignorelb` posted in the `ups.conf` snippet,
+# the UPS not reporting Low Battery for some reason (tried running on battery
+# till the 1% `battery.charge`).
+#
+# Charging status and `battery.voltage` is missing too (but they are present
+# with Phoenixtec/Liebert HID 0.3), as you can see. The `ups.power.nominal` and
+# `ups.realpower` values also looks strange.
+# DEVICE:EOC
+
+# DEVICE:COMMENT-BLOCK:UPSCONF:
+# [pw]
 #    driver = usbhid-ups
 #    desc = "PowerWalker VI 650 SH"
 #    port = auto
@@ -10,12 +20,7 @@
 #    override.battery.charge.low = 15
 #    override.battery.runtime.low = 180
 #    override.ups.model = "PowerWalker VI 650 SH"
-
-# Without these overrides and ignorelb, the UPS not reporting Low Battery
-# for some reason (tried running on battery till the 1% battery.charge).
-# Charging status and battery.voltage is missing too (but they are present
-# with Phoenixtec/Liebert HID 0.3), as you can see. ups.power.nominal and
-# ups.realpower also looks strange.
+# DEVICE:EOC
 
 # :; upsc pw
 battery.charge: 20
@@ -60,7 +65,7 @@ ups.timer.start: 0
 ups.type: offline / line interactive
 ups.vendorid: 06da
 
-# :; upscmd -l pw:
+# DEVICE:COMMENT-BLOCK:FIXME:UPSCMD: pw
 # Instant commands supported on UPS [pw]:
 # beeper.disable - Disable the UPS beeper
 # beeper.enable - Enable the UPS beeper
@@ -77,8 +82,9 @@ ups.vendorid: 06da
 # test.battery.start.deep - Start a deep battery test
 # test.battery.start.quick - Start a quick battery test
 # test.battery.stop - Stop the battery test
+# DEVICE:EOC
 
-# :; upsrw pw:
+# DEVICE:COMMENT-BLOCK:FIXME:UPSRW: pw
 # [output.voltage.nominal]
 # Nominal output voltage (V)
 # Type: ENUM
@@ -87,13 +93,16 @@ ups.vendorid: 06da
 # Option: "220"
 # Option: "230" SELECTED
 # Option: "240"
+#
 # [ups.delay.shutdown]
 # Interval to wait after shutdown with delay command (seconds)
 # Type: STRING
 # Maximum length: 10
 # Value: 20
+#
 # [ups.delay.start]
 # Interval to wait before (re)starting the load (seconds)
 # Type: STRING
 # Maximum length: 10
 # Value: 30
+# DEVICE:EOC

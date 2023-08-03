@@ -87,9 +87,10 @@ asciidoc.install(2);
 <h2 id="_2_7_4">2.7.4</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_report_1_with_driver_nutdrv_qx">Report #1 with driver nutdrv_qx</h3><div style="clear:left"></div>
+<h3 id="_report_1_with_driver_nutdrv_qx_detailed_comments_available">Report #1 with driver nutdrv_qx (detailed comments available)</h3><div style="clear:left"></div>
 <div class="paragraph"><p>This device is known to work with driver <a href="../../docs/man/nutdrv_qx.html">nutdrv_qx</a>.</p></div>
 <div class="paragraph"><p>You can grab a <a href="../../docs/man/dummy-ups.html">dummy-ups</a> compliant <code>.dev</code> file to simulate this device <a href="raw/Digitus__DN-170076__nutdrv_qx__2.7.4__01.dev">clicking here</a>.</p></div>
+<div class="paragraph"><p>Some more detailed comments are available <a href="#anchor-about-2.7.4-1">after</a> the "Known supported&#8230;" sections.</p></div>
 <div class="sect3">
 <h4 id="_known_supported_variables">Known supported variables</h4>
 <div class="paragraph"><p>This device is known to support the following variables (values are just examples):</p></div>
@@ -514,11 +515,97 @@ asciidoc.install(2);
 </tr>
 </table></div>
 </div>
+<div class="sect3">
+<h4 id="anchor-about-2.7.4-1">About this device</h4>
+<div class="paragraph"><p>I&#8217;ve successfully tested the nutdrv_qx driver with the Digitus DN-170076 UPS,
+connected via USB (it has a DB-9 serial interface as well).</p></div>
+<div class="paragraph"><p>Device manufacturer: Digitus (by ASSMANN Electronic GmbH, www.assmann.com)</p></div>
+<div class="paragraph"><p>Name: DN-170076 Line-Interactive UPS-System, capacity 2000VA/1200W</p></div>
+<div class="paragraph"><p>EAN 4016032441380</p></div>
+<div class="paragraph"><p>With this configuration:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code> [digitus]
+   driver = "nutdrv_qx"
+   port = "auto"
+   desc = "Digitus UPS 2000VA/1200W (via USB)"
+   vendorid = "0001"
+   productid = "0000"
+   product = "MEC0003"
+   vendor = "MEC"
+   default.battery.voltage.low = 20.81
+   default.battery.voltage.high = 27.40</code></pre>
+</div></div>
+<div class="paragraph"><p>&#8230;it is detected with Q1 protocol and basically works (except the
+<code>button.toggle</code> command did not work with neither <code>blazer_usb</code> nor
+<code>nutdrv_qx</code> drivers with Q1 protocol).</p></div>
+<div class="paragraph"><p>After adding:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>   protocol = "megatec"
+   novendor</code></pre>
+</div></div>
+<div class="paragraph"><p>&#8230;the <code>button.toggle</code> works and is displayed properly by <code>upsc</code>.</p></div>
+<div class="paragraph"><p>I did a shutdown test with modified settings, to shorten the shutdown time:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>   override.battery.charge.low = 30
+   default.battery.voltage.low = 25.20
+   runtimecal=60,100,80,50</code></pre>
+</div></div>
+<div class="paragraph"><p>As UPS does not report <code>battery.charge</code>, <code>battery.runtime</code> on its own,
+have to provide the <code>default.battery.voltage.{low,high}</code> values as
+mentioned in the man page (otherwise the driver issues "No values
+provided for battery high/low voltages in ups.conf"), and added
+<code>runtimecal</code> setting too.</p></div>
+<div class="paragraph"><p>upsc reports the values below when running on main power.</p></div>
+<div class="paragraph"><p>See also Digitus<em>DN-170076</em>nutdrv_qx<em>2.7.4</em>02.dev</p></div>
+<div class="paragraph"><p>Reported at:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<a href="https://github.com/networkupstools/nut/issues/948">https://github.com/networkupstools/nut/issues/948</a>
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>Vendor/Manufacturer information:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<a href="https://www.digitus.info/en/products/network-and-server-cabinets/power-supply/uninterruptible-power-supplies/dn-170076/">https://www.digitus.info/en/products/network-and-server-cabinets/power-supply/uninterruptible-power-supplies/dn-170076/</a>
+</p>
+</li>
+<li>
+<p>
+<a href="https://www.assmann.com">https://www.assmann.com</a>
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>Further system data or configuration example:</p></div>
+<div class="listingblock">
+<div class="title">Commands per <code>upscmd -l digitus@localhost</code> listing</div>
+<div class="content">
+<pre><code># TODO: Convert to CMD:... markup
+:; upscmd -l digitus@localhost
+ Instant commands supported on UPS [digitus]:
+ beeper.toggle - Toggle the UPS beeper            # works (with megatec protocol)
+ load.off - Turn off the load immediately             # did not work, syslog tells 'instcmd: command [load.off] handled' but nothing happens
+ load.on - Turn on the load immediately
+ shutdown.return - Turn off the load and return when power is back
+ shutdown.stayoff - Turn off the load and remain off
+ shutdown.stop - Stop a shutdown in progress
+ test.battery.start - Start a battery test
+ test.battery.start.deep - Start a deep battery test
+ test.battery.start.quick - Start a quick battery test      # works
+ test.battery.stop - Stop the battery test</code></pre>
+</div></div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_report_2_with_driver_nutdrv_qx">Report #2 with driver nutdrv_qx</h3><div style="clear:left"></div>
+<h3 id="_report_2_with_driver_nutdrv_qx_detailed_comments_available">Report #2 with driver nutdrv_qx (detailed comments available)</h3><div style="clear:left"></div>
 <div class="paragraph"><p>This device is known to work with driver <a href="../../docs/man/nutdrv_qx.html">nutdrv_qx</a>.</p></div>
 <div class="paragraph"><p>You can grab a <a href="../../docs/man/dummy-ups.html">dummy-ups</a> compliant <code>.dev</code> file to simulate this device <a href="raw/Digitus__DN-170076__nutdrv_qx__2.7.4__02.dev">clicking here</a>.</p></div>
+<div class="paragraph"><p>Some more detailed comments are available <a href="#anchor-about-2.7.4-2">after</a> the "Known supported&#8230;" sections.</p></div>
 <div class="sect3">
 <h4 id="_known_supported_variables_2">Known supported variables</h4>
 <div class="paragraph"><p>This device is known to support the following variables (values are just examples):</p></div>
@@ -954,6 +1041,21 @@ asciidoc.install(2);
 </tr>
 </table></div>
 </div>
+<div class="sect3">
+<h4 id="anchor-about-2.7.4-2">About this device</h4>
+<div class="paragraph"><p>See also Digitus<em>DN-170076</em>nutdrv_qx<em>2.7.4</em>01.dev
+for majority of info from this report</p></div>
+<div class="paragraph"><p>Here <code>upsc</code> reports values when running on battery,
+after toggling <code>beeper.status</code> to <code>disabled</code>.</p></div>
+<div class="paragraph"><p>Reported at:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<a href="https://github.com/networkupstools/nut/issues/948">https://github.com/networkupstools/nut/issues/948</a>
+</p>
+</li>
+</ul></div>
+</div>
 </div>
 </div>
 </div>
@@ -961,8 +1063,8 @@ asciidoc.install(2);
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Version nut:v2.8.0-2244-g2ced48d1b ddl:v2.8.0-23-g415dcdc web:v2.8.0-280-g4294d12d-master<br />
-Last updated 2023-08-02 11:49:15
+Version nut:v2.8.0-2250-g80767e396 ddl:v2.8.0-52-g823b285 web:v2.8.0-291-gfc2cec23-master<br />
+Last updated 2023-08-03 12:38:17
 </div>
 <div id="footer-badges">
 <a href="https://github.com/networkupstools/nut">

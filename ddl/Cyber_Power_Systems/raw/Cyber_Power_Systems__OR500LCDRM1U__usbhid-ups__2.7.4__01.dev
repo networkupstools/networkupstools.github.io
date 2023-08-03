@@ -1,36 +1,42 @@
-# From https://github.com/networkupstools/nut/issues/578
+# DEVICE:URL:REPORT: https://github.com/networkupstools/nut/issues/578
+# DEVICE:URL: https://www.cyberpowersystems.com/product/ups/or500lcdrm1u/
 
+# DEVICE:COMMENT:
 # CyberPower OR500LCDRM1U - Inexpensive 1U rack mount UPS
-# https://www.cyberpowersystems.com/product/ups/or500lcdrm1u/
-
+#
+# * https://www.cyberpowersystems.com/product/ups/or500lcdrm1u/
+#
 # This UPS has the same ondelay/offdelay issue that other Cyberpower UPS's
 # have, the UPS expects minutes for those values, and rounds down.
 # So the default values of 20 and 30 get rounded down so the UPS shuts
 # off immediately.
-
-# The ondelay for this model doesn't work very well.
-# If you give it a value of 60 seconds, the UPS will power back
-# on the load after 60 seconds even if the mains power isn't back.
-# An ondelay=-1 disables the auto start behavior.
-# Setting an ondelay value of 0 seems to be the only useful value.
-# With ondelay=0 the UPS will start back up immediately if the power
-# is restored after the UPS shuts down, and it will restart the load
-# approximately 10 seconds after a shutdown if the power comes back
-# after the shutdown with delay command is sent.
+#
+# The `ondelay` for this model doesn't work very well.
+#
+# * If you give it a value of 60 seconds, the UPS will power back
+#   on the load after 60 seconds even if the mains power isn't back.
+# * An `ondelay=-1` disables the auto start behavior.
+# * Setting an `ondelay` value of 0 seems to be the only useful value.
+#   With `ondelay=0` the UPS will start back up immediately if the power
+#   is restored after the UPS shuts down, and it will restart the load
+#   approximately 10 seconds after a shutdown if the power comes back
+#   after the shutdown with delay command is sent.
+#
 # I would suggest that if the default values are changed for cyberpower
-# models, that the ondelay be set to a default of 0, and the
-# offdelay be set to 60.
-
+# models, that the `ondelay` be set to a default of 0, and the
+# `offdelay` be set to 60.
+#
 # I've successfully tested the shutdown behavior with this UPS with
-# a FreeBSD system (pfSense firewall). The offdelay must be set greater
-# than 60 and the ondelay must be set to 0 for correct behavior.
+# a FreeBSD system (pfSense firewall). The `offdelay` must be set greater
+# than 60 and the `ondelay` must be set to 0 for correct behavior.
 # (FreeBSD doesn't remount into a RO mode during shutdown, so delayed
 # shutdown is absolutely needed to prevent disk corruption).
-
+#
 # One last note is that this system doesn't seem to have any nonvolatile
-# storage, any values set via upsrw are lost when the UPS is restarted.
+# storage, any values set via `upsrw` are lost when the UPS is restarted.
 # So if you want to tweak certain settings you will need to have a way
 # to reset them any time the UPS resets.
+# DEVICE:EOC
 
 # :; upsc or500
 battery.charge: 100
@@ -74,7 +80,7 @@ ups.timer.shutdown: -60
 ups.timer.start: -60
 ups.vendorid: 0764
 
-# :; upsrw or500
+# DEVICE:COMMENT-BLOCK:FIXME:UPSRW: or500
 # [battery.charge.low]
 # Remaining battery level when UPS switches to LB (percent)
 # Type: STRING
@@ -110,8 +116,9 @@ ups.vendorid: 0764
 # Type: STRING
 # Maximum length: 10
 # Value: 30
+# DEVICE:EOC
 
-# :; upscmd -l or500
+# DEVICE:COMMENT-BLOCK:FIXME:UPSCMD: or500
 # Instant commands supported on UPS [or500]:
 #
 # beeper.disable - Disable the UPS beeper
@@ -129,4 +136,4 @@ ups.vendorid: 0764
 # test.battery.start.deep - Start a deep battery test
 # test.battery.start.quick - Start a quick battery test
 # test.battery.stop - Stop the battery test
-
+# DEVICE:EOC
