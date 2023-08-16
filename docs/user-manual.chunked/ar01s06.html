@@ -125,7 +125,12 @@ that it would manage.</p><p>References: man pages: <a class="ulink" href="../man
 default, <code class="literal">upsd</code> will only listen to <code class="literal">localhost</code> port 3493/tcp. If you want
 to connect to it from other machines, you must specify each interface you
 want <code class="literal">upsd</code> to listen on for connections, optionally with a port number.</p><pre class="literallayout">LISTEN 127.0.0.1 3493
-LISTEN ::1 3493</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>Refer to the NUT user manual <a class="link" href="ar01s10.html" title="10. Notes on securing NUT">security chapter</a> for
+LISTEN ::1 3493</pre><p>As a special case, <code class="literal">LISTEN * &lt;port&gt;</code> (with an asterisk) will try to
+listen on "ANY" IP address for both and IPv6 (<code class="literal">::0</code>) and IPv4 (<code class="literal">0.0.0.0</code>),
+subject to <code class="literal">upsd</code> command-line arguments, or system configuration or support.
+Note that if the system supports IPv4-mapped IPv6 addressing per RFC-3493,
+and does not allow to disable this mode, then there may be one listening
+socket to handle both address families.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>Refer to the NUT user manual <a class="link" href="ar01s10.html" title="10. Notes on securing NUT">security chapter</a> for
 information on how to access and secure upsd clients connections.</p></div><p>Next, create <span class="emphasis"><em>upsd.users</em></span>.  For now, this can be an empty file.
 You can come back and add more to it later when it’s time to
 configure <code class="literal">upsmon</code> or run one of the management tools.</p><p>Do not make either file world-readable, since they both hold
@@ -478,4 +483,4 @@ system with a 1:1 cord:supply ratio has more wires stuffed behind it, but
 it’s much easier to move things around since any given UPS drives a smaller
 percentage of the overall power.</p><p>More information can be found in the <a class="ulink" href="../user-manual.chunked/index.html" target="_top">NUT user manual</a>,
 and the various <a class="ulink" href="man/index.html" target="_top">user manual pages</a>.</p></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2023-07-30 18:02:03 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s05.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s07.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2023-08-16 18:04:15 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s05.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s07.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
