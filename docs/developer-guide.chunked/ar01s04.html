@@ -2237,7 +2237,127 @@ Return the currently processed status so that it can be checked with one of the 
 <span class="strong"><strong><code class="literal">void  update_status(const char *nutvalue)</code></strong></span>
 </span></dt><dd>
 If you need to edit the current status call this function with one of the NUT status (all but <code class="literal">OB</code> are supported, simply set it as not <code class="literal">OL</code>); prefix them with an exclamation mark if you want to clear them from the status (e.g. <code class="literal">!OL</code>).
-</dd></dl></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_notes_2"></a>Notes</h4></div></div></div><p>You must put the generated files into the <code class="literal">drivers/</code> subdirectory, with the name of your subdriver preceded by <code class="literal">nutdrv_qx_</code>, and update <code class="literal">nutdrv_qx.c</code> by adding the appropriate <code class="literal">#include</code> line and by updating the definition of <code class="literal">subdriver_list</code>.</p><p>Please, make sure to add your driver in that list in a smart way: if your device supports also the basic commands used by the other subdrivers to claim a device, add something that is unique (i.e. not supported by the other subdrivers) to your device in your claim function and then add it on top of the slightly supported ones in that list.</p><p>You must also add the subdriver to <code class="literal">NUTDRV_QX_SUBDRIVERS</code> list variable in the <code class="literal">drivers/Makefile.am</code> and call "<code class="literal">autoreconf</code>" and/or "<code class="literal">./configure</code>" from the top level NUT directory.</p><p>You can then recompile <code class="literal">nutdrv_qx</code>, and start experimenting with the new subdriver.</p><p>For more details, have a look at the currently available subdrivers:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</dd></dl></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_armac_subdriver"></a>Armac Subdriver</h4></div></div></div><p>Armac subdriver is based on reverse engineering of Power Manager II software by
+Richcomm Technologies written in 2005 that is still (as of 2023) being
+distributed as a valid software for freshly sold UPS of various manufacturers.
+It uses commands as defined for Megatec protocol - but has a different
+communication mechanism.</p><p>It uses two types of USB interrupt transfers:
+- 4 bytes to send a command (usually single transfer).
+- 6 byte chunk to read a reply (multiple transfers).</p><p>Transfers are similar to those of the richcomm nut driver, but the transferred
+data is not short binary commands. Instead, serial text data is overlaid in
+these transfers in a way that creates a badly made USB serial interface.  UPS
+reply looks similar to this:</p><pre class="literallayout"> 0  1  2  3  4  5
+HL 00 00 00 00 00</pre><p>HL is a control byte. Its high nibble meaning is unknown. It changes between
+two possible values during transmission. Low nibble encodes number of bytes
+that have a meaning in the transaction. For example there are 5 bytes that
+might contain ASCII serial data, but only some might be valid, and other might
+be random, stale buffer data, etc.</p><p>What follows is set of observed transmissions by various UPSes gathered from
+Github issues.</p><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_transfer_dumps"></a>Transfer dumps</h5></div></div></div><p>## Vultech V2000</p><pre class="screen">419.987514     [D4] armac command Q1
+419.988307     [D4] armac cleanup ret i=0 ret=6 ctrl=c0
+420.119402     [D4] read: ret 6 buf 81: 28 30 31 30 30  &gt;(0100&lt;
+420.130383     [D4] read: ret 6 buf c1: 32 30 31 30 30  &gt;20100&lt;
+420.141408     [D4] read: ret 6 buf 82: 33 33 31 30 30  &gt;33100&lt;
+420.152201     [D4] read: ret 6 buf c3: 2e 30 20 30 30  &gt;.0 00&lt;
+420.153237     [D4] read: ret 6 buf 82: 30 30 20 30 30  &gt;00 00&lt;
+420.164299     [D4] read: ret 6 buf c1: 30 30 20 30 30  &gt;00 00&lt;
+420.175293     [D4] read: ret 6 buf 82: 2e 30 20 30 30  &gt;.0 00&lt;
+420.186358     [D4] read: ret 6 buf c3: 20 32 33 30 30  &gt; 2300&lt;
+420.190322     [D4] read: ret 6 buf 83: 33 2e 30 30 30  &gt;3.000&lt;
+420.194323     [D4] read: ret 6 buf c1: 20 2e 30 30 30  &gt; .000&lt;
+420.205358     [D4] read: ret 6 buf 81: 30 2e 30 30 30  &gt;0.000&lt;
+420.216318     [D4] read: ret 6 buf c2: 31 34 30 30 30  &gt;14000&lt;
+420.227445     [D4] read: ret 6 buf 83: 20 34 39 30 30  &gt; 4900&lt;
+420.228334     [D4] read: ret 6 buf c2: 2e 30 39 30 30  &gt;.0900&lt;
+420.239461     [D4] read: ret 6 buf 81: 20 30 39 30 30  &gt; 0900&lt;
+420.250411     [D4] read: ret 6 buf c2: 32 37 39 30 30  &gt;27900&lt;
+420.261405     [D4] read: ret 6 buf 83: 2e 30 20 30 30  &gt;.0 00&lt;
+420.265468     [D4] read: ret 6 buf c3: 32 30 2e 30 30  &gt;20.00&lt;
+420.269465     [D4] read: ret 6 buf 81: 38 30 2e 30 30  &gt;80.00&lt;
+420.280322     [D4] read: ret 6 buf c1: 20 30 2e 30 30  &gt; 0.00&lt;
+420.291469     [D4] read: ret 6 buf 82: 30 30 2e 30 30  &gt;00.00&lt;
+420.302465     [D4] read: ret 6 buf c3: 30 30 31 30 30  &gt;00100&lt;
+420.303511     [D4] read: ret 6 buf 82: 00 30 31 30 30  &gt;          &lt;- This has 0x00 and '0', will be read as "00"
+420.303515     [D3] found null byte in status bits at 43 byte, assuming 0.
+420.314425     [D4] read: ret 6 buf c1: 31 30 31 30 30  &gt;10100&lt;    &lt;- this has '1'
+420.325432     [D4] read: ret 6 buf 81: 0d 30 31 30 30  &gt;.0100&lt;    &lt;- and this finishes with `\r`.
+420.325442     [D3] armac command Q1 response read: '(233.0 000.0 233.0 014 49.0 27.0 20.8 00001001'</pre><pre class="screen">1.185164     [D4] armac command ID
+1.316257     [D4] read: ret 6 buf c1: 23 31 00 30 30  &gt;#1
+1.327309     [D4] read: ret 6 buf 81: 20 31 00 30 30  &gt; 1
+1.338264     [D4] read: ret 6 buf c2: 20 20 00 30 30  &gt;
+1.349151     [D4] read: ret 6 buf 83: 20 20 20 30 30  &gt;   00&lt;
+1.360277     [D4] read: ret 6 buf c2: 20 20 20 30 30  &gt;   00&lt;
+1.371322     [D4] read: ret 6 buf 83: 20 20 20 30 30  &gt;   00&lt;
+1.382265     [D4] read: ret 6 buf c3: 20 20 20 30 30  &gt;   00&lt;
+1.393156     [D4] read: ret 6 buf 82: 20 20 20 30 30  &gt;   00&lt;
+1.404324     [D4] read: ret 6 buf c3: 20 20 20 30 30  &gt;   00&lt;
+1.415342     [D4] read: ret 6 buf 83: 20 20 20 30 30  &gt;   00&lt;
+1.426292     [D4] read: ret 6 buf c2: 20 20 20 30 30  &gt;   00&lt;
+1.437203     [D4] read: ret 6 buf 83: 20 20 20 30 30  &gt;   00&lt;
+1.448328     [D4] read: ret 6 buf c3: 56 34 2e 30 30  &gt;V4.00&lt;
+1.459293     [D4] read: ret 6 buf 82: 31 30 2e 30 30  &gt;10.00&lt;
+1.470274     [D4] read: ret 6 buf c3: 20 20 20 30 30  &gt;   00&lt;
+1.481208     [D4] read: ret 6 buf 82: 20 20 20 30 30  &gt;   00&lt;
+1.492261     [D4] read: ret 6 buf c1: 0d 20 20 30 30  &gt;
+1.492270     [D3] armac command ID response read: '#                           V4.10     '</pre><pre class="screen">4.749667     [D4] armac command F
+4.876638     [D4] read: ret 6 buf 81: 23 31 00 30 30  &gt;#1
+4.887614     [D4] read: ret 6 buf c1: 32 31 00 30 30  &gt;21
+4.898644     [D4] read: ret 6 buf 82: 32 30 00 30 30  &gt;20
+4.909595     [D4] read: ret 6 buf c3: 2e 30 20 30 30  &gt;.0 00&lt;
+4.920648     [D4] read: ret 6 buf 82: 30 30 20 30 30  &gt;00 00&lt;
+4.931629     [D4] read: ret 6 buf c3: 35 20 32 30 30  &gt;5 200&lt;
+4.942601     [D4] read: ret 6 buf 83: 34 2e 30 30 30  &gt;4.000&lt;
+4.953666     [D4] read: ret 6 buf c2: 30 20 30 30 30  &gt;0 000&lt;
+4.964535     [D4] read: ret 6 buf 83: 35 30 2e 30 30  &gt;50.00&lt;
+4.975540     [D4] read: ret 6 buf c2: 30 0d 2e 30 30  &gt;0
+4.975546     [D3] armac command F response read: '#220.0 005 24.00 50.0'</pre><p>## Armac R/2000I/PSW</p><pre class="screen">112.966856     [D4] armac command Q1
+112.968197     [D4] armac cleanup ret i=0 ret=6 ctrl=c0         &lt;- Cleanups required.
+113.091193     [D4] read: ret 6 buf 81: 28 30 0d 2e 30  &gt;(0     &lt;- Usually 1-3 bytes available in transfer.
+113.103211     [D4] read: ret 6 buf c1: 30 30 0d 2e 30  &gt;00
+113.115180     [D4] read: ret 6 buf 82: 30 30 0d 2e 30  &gt;00
+113.117144     [D4] read: ret 6 buf c3: 2e 30 20 2e 30  &gt;.0 .0&lt;
+113.120150     [D4] read: ret 6 buf 81: 31 30 20 2e 30  &gt;10 .0&lt;
+113.132178     [D4] read: ret 6 buf c1: 34 30 20 2e 30  &gt;40 .0&lt;
+113.144159     [D4] read: ret 6 buf 82: 30 2e 20 2e 30  &gt;0. .0&lt;
+113.146149     [D4] read: ret 6 buf c3: 30 20 32 2e 30  &gt;0 2.0&lt;
+113.149173     [D4] read: ret 6 buf 81: 32 20 32 2e 30  &gt;2 2.0&lt;
+113.161167     [D4] read: ret 6 buf c1: 37 20 32 2e 30  &gt;7 2.0&lt;
+113.173159     [D4] read: ret 6 buf 82: 2e 30 32 2e 30  &gt;.02.0&lt;
+113.175157     [D4] read: ret 6 buf c3: 20 30 30 2e 30  &gt; 00.0&lt;
+113.178158     [D4] read: ret 6 buf 81: 32 30 30 2e 30  &gt;200.0&lt;
+113.190157     [D4] read: ret 6 buf c1: 20 30 30 2e 30  &gt; 00.0&lt;
+113.202161     [D4] read: ret 6 buf 82: 30 30 30 2e 30  &gt;000.0&lt;
+113.204154     [D4] read: ret 6 buf c3: 2e 30 20 2e 30  &gt;.0 .0&lt;
+113.207150     [D4] read: ret 6 buf 81: 34 30 20 2e 30  &gt;40 .0&lt;
+113.219174     [D4] read: ret 6 buf c1: 36 30 20 2e 30  &gt;60 .0&lt;
+113.231165     [D4] read: ret 6 buf 82: 2e 38 20 2e 30  &gt;.8 .0&lt;
+113.233157     [D4] read: ret 6 buf c3: 20 35 36 2e 30  &gt; 56.0&lt;
+113.237149     [D4] read: ret 6 buf 81: 2e 35 36 2e 30  &gt;.56.0&lt;
+113.249168     [D4] read: ret 6 buf c1: 30 35 36 2e 30  &gt;056.0&lt;
+113.261155     [D4] read: ret 6 buf 83: 20 31 30 2e 30  &gt; 10.0&lt;
+113.263151     [D4] read: ret 6 buf c2: 30 30 30 2e 30  &gt;000.0&lt;
+113.266152     [D4] read: ret 6 buf 81: 31 30 30 2e 30  &gt;100.0&lt;
+113.278161     [D4] read: ret 6 buf c1: 30 30 30 2e 30  &gt;000.0&lt;  &lt;- No Null bytes.
+113.290155     [D4] read: ret 6 buf 82: 30 30 30 2e 30  &gt;000.0&lt;
+113.292159     [D4] read: ret 6 buf c1: 0d 30 30 2e 30  &gt;
+113.292169     [D3] armac command Q1 response read: '(000.0 140.0 227.0 002 00.0 46.8 56.0 10001000'</pre><p>Next query would return 0x80 control byte - 0 available bytes. This used to
+terminate transmission, but some UPS don’t work like that.</p><p>## Armac R/3000I/PF1</p><pre class="screen">0.083301     [D4] armac command Q1
+0.164847     [D4] read: ret 6 buf a6: 28 32 34 31 2e  &gt;(241.&lt;
+0.184839     [D4] read: ret 6 buf 86: 35 20 30 30 30  &gt;5 000&lt;
+0.205851     [D4] read: ret 6 buf a6: 2e 30 20 32 33  &gt;.0 23&lt;
+0.226849     [D4] read: ret 6 buf 86: 30 2e 33 20 30  &gt;0.3 0&lt;
+0.247859     [D4] read: ret 6 buf a6: 30 30 20 34 39  &gt;00 49&lt;
+0.268862     [D4] read: ret 6 buf 86: 2e 39 20 32 2e  &gt;.9 2.&lt;
+0.289857     [D4] read: ret 6 buf a6: 32 35 20 34 38  &gt;25 48&lt;
+0.309866     [D4] read: ret 6 buf 86: 2e 30 20 30 30  &gt;.0 00&lt;
+0.330863     [D4] read: ret 6 buf a6: 30 30 30 30 30  &gt;00000&lt;
+0.827913     [D4] read: ret 6 buf 83: 31 0d 30 30 30  &gt;1 000&lt;
+0.827927     [D3] armac command Q1 response read: '(241.5 000.0 230.3 000 49.9 2.25 48.0 00000001'
+0.827954     [D4] armac command ID
+1.394985     [D4] read: ret 6 buf a5: 4e 41 4b 0d 30  &gt;NAK  &lt;
+1.395001     [D3] armac command ID response read: 'NAK'</pre><p>This UPS sends higher nibble set to 6 often, which exceeds available bytes.
+Maybe means that more are available. Its serial-USB bridge is probably faster.
+We read 5 bytes in case 6 nibble is sent. End of transmission is marked by <code class="literal">\r</code>,
+no 0 nibble is sent.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_notes_2"></a>Notes</h4></div></div></div><p>You must put the generated files into the <code class="literal">drivers/</code> subdirectory, with the name of your subdriver preceded by <code class="literal">nutdrv_qx_</code>, and update <code class="literal">nutdrv_qx.c</code> by adding the appropriate <code class="literal">#include</code> line and by updating the definition of <code class="literal">subdriver_list</code>.</p><p>Please, make sure to add your driver in that list in a smart way: if your device supports also the basic commands used by the other subdrivers to claim a device, add something that is unique (i.e. not supported by the other subdrivers) to your device in your claim function and then add it on top of the slightly supported ones in that list.</p><p>You must also add the subdriver to <code class="literal">NUTDRV_QX_SUBDRIVERS</code> list variable in the <code class="literal">drivers/Makefile.am</code> and call "<code class="literal">autoreconf</code>" and/or "<code class="literal">./configure</code>" from the top level NUT directory.</p><p>You can then recompile <code class="literal">nutdrv_qx</code>, and start experimenting with the new subdriver.</p><p>For more details, have a look at the currently available subdrivers:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 <code class="literal">nutdrv_qx_bestups.</code>{<code class="literal">c</code>,<code class="literal">h</code>}
 </li><li class="listitem">
 <code class="literal">nutdrv_qx_masterguard.</code>{<code class="literal">c</code>,<code class="literal">h</code>}
@@ -2262,4 +2382,4 @@ If you need to edit the current status call this function with one of the NUT st
 </li><li class="listitem">
 <code class="literal">nutdrv_qx_ablerex.</code>{<code class="literal">c</code>,<code class="literal">h</code>}
 </li></ul></div></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2023-07-30 11:09:03 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s03.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s05.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2023-08-17 08:45:14 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ar01s03.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="ar01s05.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
