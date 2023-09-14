@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>6. NUT configuration management with Augeas</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><link rel="home" href="index.html" title="Network UPS Tools Developer Guide" /><link rel="up" href="index.html" title="Network UPS Tools Developer Guide" /><link rel="prev" href="sock-protocol.html" title="5. Driver/server socket protocol" /><link rel="next" href="devscan.html" title="7. NUT device discovery" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="sock-protocol.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="devscan.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="augeas"></a>6. NUT configuration management with Augeas</h2></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_introduction_2"></a>6.1. Introduction</h3></div></div></div><p>Configuration has long been one of the two main NUT weaknesses. This is
+mostly due to the framework nature of NUT, and its many components and
+features, which make NUT configuration a very complex task.</p><p>In order to address this point, NUT now provides configuration tools and
+manipulation abstraction, to anybody who want to manipulate NUT configuration,
+through Augeas lenses and modules.</p><p>From <a class="ulink" href="http://augeas.net" target="_top">Augeas homepage</a>:</p><p>"Augeas is a configuration editing tool. It parses configuration files in their
+native formats and transforms them into a tree. Configuration changes are made
+by manipulating this tree and saving it back into native config files."</p><p>In other words, Augeas is the dreamed Registry, with all the advantages
+(such as a uniform interface and tools), and the added bonus of being
+free/libre open source software and letting liberty on configuration file
+format.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_requirements"></a>6.2. Requirements</h3></div></div></div><p>To be able to use Augeas with NUT, you will need to install Augeas,
+and also the NUT provided lenses, which describe NUT configuration
+files format.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_augeas"></a>Augeas</h4></div></div></div><p>Having <a class="ulink" href="http://augeas.net" target="_top">Augeas</a> installed.
+You will need at least version 0.5.1 (prior versions may work too, reports
+are welcome).</p><p>As an example, on Debian and derivatives, do the following:</p><pre class="literallayout">$ apt-get install augeas-lenses augeas-tools</pre><p>And optionally:</p><pre class="literallayout">$ apt-get install libaugeas0 libaugeas-dev python-augeas</pre><p>On RedHat and derivatives, you have to install the packages <span class="emphasis"><em>augeas</em></span> and
+<span class="emphasis"><em>augeas-libs</em></span>.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="augeas_user"></a>NUT lenses and modules for Augeas</h4></div></div></div><p>These are the *.aug files in the present directory.</p><p>You can either install the files to the right location on your system,
+generally in <span class="emphasis"><em>/usr/share/augeas/lenses/</em></span>, or use these from NUT
+source directory (<span class="emphasis"><em>nut/scripts/augeas</em></span>). The latter is to be preferred for
+the time being.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_create_a_test_sandbox"></a>6.3. Create a test sandbox</h3></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>for now, it’s easier to include an existing /etc/nut/ directory.</p></div><pre class="literallayout">$ export AUGEAS_ROOT=./augeas-sandbox
+$ mkdir $AUGEAS_ROOT
+$ sudo cp -pr /etc/nut $AUGEAS_ROOT
+$ sudo chown -R $(id -nu):$(id -ng) $AUGEAS_ROOT</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_start_testing_and_using"></a>6.4. Start testing and using</h3></div></div></div><p>Augeas provides many tools and
+<a class="ulink" href="http://augeas.net/download.html" target="_top">languages bindings</a> (Python, Perl,
+Java, PHP, Ruby, …), still with the same simple logic.</p><p>This chapter will only illustrate some of these. Refer to the language
+binding’s help and <a class="ulink" href="http://augeas.net/docs/index.html" target="_top">Augeas documentation</a>
+for more information.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_shell"></a>Shell</h4></div></div></div><p>Start an augeas shell using:</p><pre class="literallayout">$ augtool -b</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>if you have not installed NUT lenses, add <span class="emphasis"><em>-I/path/to/nut/scripts/augeas</em></span>.</p></div><p>From there, you can perform different actions like:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
+list existing nut related files:
+</p><pre class="literallayout">augtool&gt; ls /files/etc/nut/
+nut.conf/ = (none)
+upsd.users/ = (none)
+upsmon.conf = (none)
+ups.conf/ = (none)
+upsd.conf/ = (none</pre><p class="simpara">or using:</p><pre class="literallayout">augtool&gt; match /files/etc/nut/*
+/files/etc/nut/nut.conf = (none)
+/files/etc/nut/upsd.users = (none)
+/files/etc/nut/upsmon.conf = (none)
+/files/etc/nut/ups.conf = (none)
+/files/etc/nut/upsd.conf = (none)</pre></li></ul></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>if you don’t see anything, you may search for error messages by using:</p></div><p>+
+        augtool&gt; ls /augeas/files/etc/nut/*/errors
+and
+        augtool&gt; get /augeas/files/etc/nut/ups.conf/error/message
+        /augeas/files/etc/nut/ups.conf/error/message = Permission denied</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
+create a new device entry (in ups.conf), called <span class="emphasis"><em>augtest</em></span>:
+</p><pre class="literallayout">augtool&gt; set /files/etc/nut/ups.conf/augtest/driver dummy-ups
+augtool&gt; set /files/etc/nut/ups.conf/augtest/port auto
+augtool&gt; save</pre></li><li class="listitem"><p class="simpara">
+list the devices using the <span class="emphasis"><em>usbhid-ups</em></span> driver:
+</p><pre class="literallayout">augtool&gt; match /files/etc/nut/ups.conf/*/driver dummy-ups</pre></li></ul></div><p>C
+~</p><p>A library is available for C programs, along with pkg-config support.</p><p>You can get the compilation and link flags using the following code
+in your configure script or Makefile:</p><pre class="literallayout">CFLAGS="`pkg-config --silence-errors --cflags augeas`"
+LDFLAGS="`pkg-config --silence-errors --libs augeas`"</pre><p>Here is an code sample using this library for NUT configuration:</p><pre class="screen">augeas *a = aug_init(NULL, NULL, AUG_NONE);
+ret = aug_match(a, "/files/etc/nut/*", &amp;matches_p);
+ret = aug_set(a, "/files/etc/nut/ups.conf/augtest/driver", "dummy-ups");
+ret = aug_set(a, "/files/etc/nut/ups.conf/augtest/port", "auto");
+ret = aug_save(a);</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_python"></a>Python</h4></div></div></div><p>The <code class="literal">augeas</code> class abstracts access to the configuration files.</p><pre class="literallayout">$ python
+Python 2.5.1 (r251:54863, Apr  8 2008, 01:19:33)
+[GCC 4.3.0 20080404 (Red Hat 4.3.0-6)] on linux2
+Type "help", "copyright", "credits" or "license" for more information.
+&gt;&gt;&gt; import augeas
+&gt;&gt;&gt; a = augeas.augeas()
+&gt;&gt;&gt; a.match("/files/etc/nut/*")
+['/files/etc/nut/upsd.users', '/files/etc/nut/upsmon.conf', '/files/etc/nut/ups.conf', '/files/etc/nut/upsd.conf']
+&gt;&gt;&gt; a.set("/files/etc/nut/ups.conf/augtest/driver", "dummy-ups")
+True
+&gt;&gt;&gt; a.set("/files/etc/nut/ups.conf/augtest/port", "auto")
+True
+&gt;&gt;&gt; a.save()
+True
+&gt;&gt;&gt;</pre><pre class="literallayout">$ grep -A 2 augtest /etc/nut/ups.conf
+[augtest]
+driver=dummy-ups
+port=auto</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_perl"></a>Perl</h4></div></div></div><p>The Perl binding is available through CPAN and packages.</p><pre class="literallayout">use Config::Augeas;</pre><pre class="literallayout">my $aug = Config::Augeas-&gt;new( root =&gt; $aug_root ) ;</pre><pre class="literallayout">my @a = $aug-&gt;match("/files/etc/nut/*") ;
+my $nb = $aug-&gt;count_match("/files/etc/nut/*") ;</pre><pre class="literallayout">$aug-&gt;set("/files/etc/nut/ups.conf/augtest/driver", "dummy-ups") ;
+$aug-&gt;set("/files/etc/nut/ups.conf/augtest/port", "auto") ;</pre><pre class="literallayout">$aug-&gt;save ;</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_test_the_conformity_testing_module"></a>Test the conformity testing module</h4></div></div></div><p>Existing configuration files can be tested for conformity. To do so, use:</p><pre class="literallayout">$ augparse -I ./ ./test_nut.aug</pre></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_complete_configuration_wizard_example"></a>6.5. Complete configuration wizard example</h3></div></div></div><p>Here is a Python example that generate a complete and usable standalone configuration:</p><pre class="screen">import augeas
+
+device_name="dev1"
+driver_name="usbhid-ups"
+port_name="auto"
+
+a = augeas.augeas()
+
+# Generate nut.conf
+a.set("/files/etc/nut/nut.conf/MODE", "standalone")
+
+# Generate ups.conf
+# FIXME: chroot, driverpath?
+a.set(("/files/etc/nut/ups.conf/%s/driver" % device_name), driver_name)
+a.set(("/files/etc/nut/ups.conf/%s/port" % device_name), port_name)
+
+# Generate upsd.conf
+a.set("/files/etc/nut/upsd.conf/#comment[1]", "just to touch the file!")
+
+# Generate upsd.users
+user = "admin"
+a.set(("/files/etc/nut/upsd.users/%s/password" % user), "dummypass")
+a.set(("/files/etc/nut/upsd.users/%s/actions/SET" % user), "")
+# FIXME: instcmds lens should be fixed, as per the above rule
+a.set(("/files/etc/nut/upsd.users/%s/instcmds" % user), "ALL")
+
+monuser = "monuser"
+monpasswd = "******"
+a.set(("/files/etc/nut/upsd.users/%s/password" % monuser), monpasswd)
+a.set(("/files/etc/nut/upsd.users/%s/upsmon" % monuser), "primary")
+
+# Generate upsmon.conf
+a.set("/files/etc/nut/upsmon.conf/MONITOR/system/upsname", device_name)
+# Note: we prefer to omit localhost, not to be bound to a specific
+# entry in /etc/hosts, and thus be more generic
+#a.set("/files/etc/nut/upsmon.conf/MONITOR/system/hostname", "localhost")
+a.set("/files/etc/nut/upsmon.conf/MONITOR/powervalue", "1")
+a.set("/files/etc/nut/upsmon.conf/MONITOR/username", monuser)
+a.set("/files/etc/nut/upsmon.conf/MONITOR/password", monpasswd)
+a.set("/files/etc/nut/upsmon.conf/MONITOR/type", "primary")
+
+# FIXME: glitch on the generated content
+a.set("/files/etc/nut/upsmon.conf/SHUTDOWNCMD", "/sbin/shutdown -h +0")
+
+# save config
+a.save()
+a.close()</pre></div></div><div xmlns="" class="navfooter nut_footer"><hr />
+		Last updated 2023-09-14 14:45:25 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="sock-protocol.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="devscan.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

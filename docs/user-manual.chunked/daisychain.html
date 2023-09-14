@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>9. NUT daisychain support notes</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><link rel="home" href="index.html" title="Network UPS Tools User Manual" /><link rel="up" href="index.html" title="Network UPS Tools User Manual" /><link rel="prev" href="outlet_management.html" title="8. NUT outlets management and PDU notes" /><link rel="next" href="NUT_Security.html" title="10. Notes on securing NUT" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="outlet_management.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="NUT_Security.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="daisychain"></a>9. NUT daisychain support notes</h2></div></div></div><p>NUT supports daisychained devices for any kind of device that proposes
+it. This chapter introduces:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+for developers: how to implement such mechanism,
+</li><li class="listitem">
+for users: how to manage and use daisychained devices in NUT in general,
+  and how to take advantage of the provided features.
+</li></ul></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_introduction_3"></a>9.1. Introduction</h3></div></div></div><p>It’s not unusual to see some daisy-chained PDUs or UPSs, connected together
+in master-slave mode, to only consume 1 IP address for their communication
+interface (generally, network card exposing SNMP data) and expose only one
+point of communication to manage several devices, through the daisy-chain
+master.</p><p>This breaks the historical consideration of NUT that one driver provides
+data for one unique device. However, there is an actual need, and a smart
+approach was considered to fulfill this, while not breaking the standard
+scope (for base compatibility).</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_implementation_notes"></a>9.2. Implementation notes</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_general_specification"></a>General specification</h4></div></div></div><p>The daisychain support uses the device collection to extend the historical
+NUT scope (1 driver — 1 device), and provides data from the additional
+devices accessible through a single management interface.</p><p>A new variable was introduced to provide the number of devices exposed: the
+<code class="literal">device.count</code>, which:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+defaults to 1
+</li><li class="listitem">
+if higher than 1, enables daisychain support and access to data of each
+individual device through <code class="literal">device.X.{...}</code>
+</li></ul></div><p>To ensure backward compatibility in NUT, the data of the various devices
+are exposed the following way:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<code class="literal">device.0</code> is a special case, for the whole set of devices (the whole
+daisychain). It is equivalent to <code class="literal">device</code> (without <code class="literal">.X</code> index) and root
+collections. The idea is to be able to get visibility and control over the
+whole daisychain from a single point.
+</li><li class="listitem">
+daisy-chained devices are available from <code class="literal">device.1</code> (master) to <code class="literal">device.N</code>
+(slaves).
+</li></ul></div><p>That way, client applications that are unaware of the daisychain support,
+will only see the whole daisychain, as it would normally seem, and not
+nothing at all.</p><p>Moreover, this solution is generic, and not specific to the ePDU use case
+currently considered. It thus support both the current NUT scope, along with
+other use cases (parallel / serial UPS setups), and potential evolution and
+technology change (hybrid chain with UPS and PDU for example).</p><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_devices_status_handling"></a>Devices status handling</h5></div></div></div><p>To be clarified…</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_devices_alarms_handling"></a>Devices alarms handling</h5></div></div></div><p>Devices (master and slaves) alarms are published in <code class="literal">device.X.ups.alarm</code>,
+which may evolve into <code class="literal">device.X.alarm</code>. If any of the devices has an alarm,
+the main <code class="literal">ups.status</code> will publish an <code class="literal">ALARM</code> flag. This flag is be cleared
+once all devices have no alarms anymore.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>ups.alarm behavior is not yet defined (all devices alarms vs. list of
+device(s) that have alarms vs. nothing?)</p></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_example"></a>Example</h5></div></div></div><p>Here is an example excerpt of three PDUs, connected in daisychain mode, with
+one master and two slaves:</p><pre class="literallayout">device.count: 3
+device.mfr: EATON
+device.model: EATON daisychain PDU
+device.1.mfr: EATON
+device.1.model: EPDU MI 38U-A IN: L6-30P 24A 1P OUT: 36XC13:6XC19
+device.2.mfr: EATON
+device.2.model: EPDU MI 38U-A IN: L6-30P 24A 1P OUT: 36XC13:6XC19
+device.3.mfr: EATON
+device.3.model: EPDU MI 38U-A IN: L6-30P 24A 1P OUT: 36XC13:6XC19
+...
+device.3.ups.alarm: high current critical!
+device.3.ups.status: ALARM
+...
+input.voltage: ??? (proposal: range or list or average?)
+device.1.input.voltage: 237.75
+device.2.input.voltage: 237.75
+device.3.input.voltage: 237.75
+...
+outlet.1.status: ?? (proposal: "on, off, off)
+device.1.outlet.1.status: on
+device.2.outlet.1.status: off
+device.3.outlet.1.status: off
+...
+ups.status: ALARM</pre></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_information_for_developers"></a>Information for developers</h4></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>these details are dedicated to the <code class="literal">snmp-ups</code> driver!</p></div><p>In order to enable daisychain support for a range of devices, developers
+have to do two things:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Add a <code class="literal">device.count</code> entry in a mapping file (see <code class="literal">*-mib.c</code>)
+</li><li class="listitem">
+Modify mapping entries to include a format string for the daisychain index
+</li></ul></div><p>Optionally, if there is support for outlets and / or outlet-groups, there
+is already a template formatting string. So you have to tag such templates
+with multiple definitions, to point if the daisychain index is the first
+or second formatting string.</p><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_base_support"></a>Base support</h5></div></div></div><p>In order to enable daisychain support on a mapping structure, the following
+steps have to be done:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
+Add a "device.count" entry in the mapping file: snmp-ups will determine
+if the daisychain support has to be enabled (if more than 1 device).
+To achieve this, use one of the following type of declarations:
+</p><p class="simpara">a) point at an OID which provides the number of devices:</p><pre class="literallayout">{ "device.count", 0, 1, ".1.3.6.1.4.1.13742.6.3.1.0", "1",
+        SU_FLAG_STATIC, NULL },</pre><p class="simpara">b) point at a template OID to guesstimate the number of devices, by walking
+through this template, until it fails:</p><pre class="literallayout">{ "device.count", 0, 1, ".1.3.6.1.4.1.534.6.6.7.1.2.1.2.%i", "1",
+        SU_FLAG_STATIC, NULL, NULL },</pre></li><li class="listitem"><p class="simpara">
+Modify all entries so that OIDs include the formatting string for the
+daisychain index. For example, if you have the following entry:
+</p><pre class="literallayout">{ "device.model", ST_FLAG_STRING, SU_INFOSIZE,
+        ".1.3.6.1.4.1.534.6.6.7.1.2.1.2.0", ... },</pre><p class="simpara">And if the last "0" of the the 4th field represents the index of the device
+in the daisychain, then you would have to adapt it the following way:</p><pre class="literallayout">{ "device.model", ST_FLAG_STRING, SU_INFOSIZE,
+        ".1.3.6.1.4.1.534.6.6.7.1.2.1.2.%i", ... },</pre></li></ul></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_templates_with_multiple_definitions"></a>Templates with multiple definitions</h5></div></div></div><p>If there already exist templates in the mapping structure, such as for
+single outlets and outlet-groups, you also need to specify the position
+of the daisychain device index in the OID strings for all entries in the
+mapping table, to indicate where the daisychain insertion point is exactly.</p><p>For example, using the following entry:</p><pre class="literallayout">{ "outlet.%i.current", 0, 0.001, ".1.3.6.1.4.1.534.6.6.7.6.4.1.3.0.%i",
+        NULL, SU_OUTLET, NULL, NULL },</pre><p>You would have to translate it to:</p><pre class="literallayout">{ "outlet.%i.current", 0, 0.001, ".1.3.6.1.4.1.534.6.6.7.6.4.1.3.%i.%i",
+        NULL, SU_OUTLET | SU_TYPE_DAISY_1, NULL, NULL },</pre><p><code class="literal">SU_TYPE_DAISY_1</code> flag indicates that the daisychain index is the first
+<code class="literal">%i</code> specifier in the OID template string. If it is the second one, use
+<code class="literal">SU_TYPE_DAISY_2</code>.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_devices_alarms_handling_2"></a>Devices alarms handling</h5></div></div></div><p>Two functions are available to handle alarms on daisychain devices in your
+driver:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<code class="literal">device_alarm_init()</code>: clear the current alarm buffer
+</li><li class="listitem">
+<code class="literal">device_alarm_commit(const int device_number)</code>: commit the current alarm
+buffer to "device.&lt;device_number&gt;.ups.alarm", and increase the count of
+alarms. If the current alarms buffer is empty, the count of alarm is
+decreased, and the variable "device.&lt;device_number&gt;.ups.alarm" is removed
+from publication. Once the alarm count reaches "0", the main (device.0)
+ups.status will also remove the "ALARM" flag.
+</li></ul></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>When implementing a new driver, the following functions have to be
+called:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<code class="literal">alarm_init()</code> at the beginning of the main update loop, for the whole
+daisychain. This will set the alarm count to "0", and reinitialize all
+alarms,
+</li><li class="listitem">
+<code class="literal">device_alarm_init()</code> at the beginning of the per-device update loop.
+This will only clear the alarms for the current device,
+</li><li class="listitem">
+<code class="literal">device_alarm_commit()</code> at the end of the per-device update loop.
+This will flush the current alarms for the current device,
+</li><li class="listitem">
+also <code class="literal">device_alarm_init()</code> at the end of the per-device update loop.
+This will clear the current alarms, and ensure that this buffer will not
+be considered by other subsequent devices,
+</li><li class="listitem">
+<code class="literal">alarm_commit()</code> at the end of the main update loop, for the whole
+daisychain. This will take care of publishing or not the "ALARM" flag
+in the main ups.status (<code class="literal">device.0</code>, root collection).
+</li></ul></div></div></div></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
+		Last updated 2023-09-14 14:45:42 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="outlet_management.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Security.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

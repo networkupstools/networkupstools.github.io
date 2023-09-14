@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>J.3. Network UPS Tools</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><link rel="home" href="index.html" title="Network UPS Tools User Manual" /><link rel="up" href="Project_History.html" title="J. Project history" /><link rel="prev" href="_smart_ups_tools.html" title="J.2. Smart UPS Tools" /><link rel="next" href="_leaving_0_x_territory.html" title="J.4. Leaving 0.x territory" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="_smart_ups_tools.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="_leaving_0_x_territory.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_network_ups_tools"></a>J.3. Network UPS Tools</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_september_1999_new_name_new_url"></a>September 1999: new name, new URL</h4></div></div></div><p>Several visitors to the web page and subscribers to the mailing lists provided
+suggestions to rename the project. The old name no longer accurately described
+it, and it was perilously close to APC’s "Smart-UPS" trademark. Rather than
+risk problems in the future, the name was changed. Kern Sibbald provided the
+winner: Network UPS Tools, which captures the essence of the project and makes
+for great short tarball filenames: nut-x.y.z.tar.gz.</p><p>The new name was first applied to 0.42.0, released October 31, 1999.
+This is also when the web pages moved from the old
+<code class="literal">http://www.exploits.org/~rkroll/smartupstools/</code> URL to the replacement
+at <code class="literal">http://www.exploits.org/nut/</code> to coincide with the name change.</p><p>More drivers were written and the hardware support continued to grow. upsmon
+picked up the concepts of what is now known as "primary" and "secondary",
+and could now handle environments where multiple systems get power from a
+single UPS.</p><p>Manager mode was added to allow changing the value of read/write variables
+in certain UPS models.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_june_2001_common_driver_core"></a>June 2001: common driver core</h4></div></div></div><p>Up to this point, all of the drivers compiled into freestanding programs, each
+providing their own implementation of main(). This meant they all had to check
+the incoming arguments and act uniformly. Unfortunately, not all of the
+programs behaved the same way, and it was hard to document and use consistently.
+It also meant that startup scripts had to be edited depending on what kind of
+hardware was attached.</p><p>Starting in 0.45.0, released June 11, 2001, there was a new common core for
+all drivers called <code class="literal">main.c</code>. It provided the main function and called back to
+the <code class="literal">upsdrv_*</code> functions provided by the hardware-specific part of the drivers.
+This allowed driver authors to focus on the UPS hardware without worrying about
+the housekeeping stuff that needs to happen.</p><p>This new design provided an obvious way to configure drivers from one file, and
+so <code class="literal">ups.conf</code> was born. This eventually spawned upsdrvctl, and now all drivers
+based on this common core could be started or stopped with one command. Startup
+scripts now could contain "upsdrvctl start", and it didn’t matter what kind of
+hardware or how many UPSes you had on one system.</p><p>Interestingly, at the end of this month, Arnaud Quette entered the UPS world,
+as a subcontractor of the now defunct MGE UPS SYSTEMS. This marked the start of
+a future successful collaboration.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_may_2002_casting_off_old_drivers_iana_port_towards_1_0"></a>May 2002: casting off old drivers, IANA port, towards 1.0</h4></div></div></div><p>During the 0.45.x series, both the old standalone drivers and the ones which
+had been converted to the common core were released together. Before the
+release of 0.50.0 on May 24, 2002, all of the old drivers were removed.
+While this shrank the list of supported hardware, it set the precedent for
+removing code which isn’t receiving regular maintenance. The assumption is
+that the code will be brought back up to date by someone if they actually
+need it. Otherwise, it’s just dead weight in the tree.</p><p>This change meant that all remaining drivers could be controlled with the
+<code class="literal">upsdrvctl</code> and <code class="literal">ups.conf</code>, allowing the documentation to be greatly
+simplified. There was no longer any reason to say "do this, unless you
+have this driver, then do this".</p><p>IANA granted an official port number to the project, and the network code
+switched to port 3493. It had previously been on 3305 which is assigned to
+<code class="literal">odette-ftp</code>. 3305 was probably picked in 1997 because it was the fifth
+project to spawn from some common UDP server code.</p><p>After 0.50.1, the 0.99 tree was created to provide a tree which would receive
+nothing but bug fixes in preparation for the release of 1.0. As it turned out,
+very few things required fixing, and there were only three releases in this
+tree.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
+		Last updated 2023-09-14 14:45:42 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_smart_ups_tools.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="Project_History.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="_leaving_0_x_territory.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

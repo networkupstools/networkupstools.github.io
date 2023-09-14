@@ -864,10 +864,34 @@ Some devices show a wrong nominal battery voltage (or none at all), so you may n
 </dt>
 <dd>
 <p>
-Some devices report a part of the total battery voltage.
-For instance, if <strong>battery.voltage.nominal</strong> is 24 V, but it reports a <strong>battery.voltage</strong> of around 2 V, the number of <strong>battery.packs</strong> to correct this reading would be 12.
-The driver will attempt to detect this automatically, but if this fails somehow, you may want to override this value.
+Some devices "natively" report just a part of the total battery voltage
+(see also <strong>battery_voltage_reports_one_pack</strong> below).
 </p>
+<div class="paragraph"><p>For instance, if <strong>battery.voltage.nominal</strong> is 24 V, but it reports
+a <strong>battery.voltage</strong> of around 2 V, the number of <strong>battery.packs</strong> to
+correct this reading would be 12.</p></div>
+<div class="paragraph"><p>The driver will attempt to detect this number automatically, but if
+this fails somehow, you may want to override this value.</p></div>
+<div class="paragraph"><p>Note that this is primarily useful for "guesstimation" of <code>battery.charge</code>
+and/or <code>battery.runtime</code> (with <code>runtimecal</code> setting), if those readings are
+not provided by the device directly.</p></div>
+</dd>
+<dt class="hdlist1">
+<strong>battery_voltage_reports_one_pack</strong>
+</dt>
+<dd>
+<p>
+Some devices "natively" report just report a part of the total battery voltage
+(see also <strong>override.battery.packs</strong> above, if that value is not reported by the
+device or properly guessed by the driver otherwise).
+</p>
+<div class="paragraph"><p>If this flag is set, most of the subdrivers (except those which know about
+more  complicated device-specific nuances, currently: <strong>ablerex</strong>, <strong>masterguard</strong>
+and <strong>voltronic-qs-hex</strong>) adjust their ultimately reported <strong>battery.voltage</strong>
+value as a multiple of <strong>battery.packs</strong> and "native" <strong>battery.voltage</strong>).</p></div>
+<div class="paragraph"><p>Note this is primarily useful for consistent diagnostics and graphing of the
+numbers, and should not impact the "guesstimation" of <code>battery.charge</code> and/or
+<code>battery.runtime</code> - so rather a cosmetic adjustment, than critical.</p></div>
 </dd>
 <dt class="hdlist1">
 <strong>runtimecal =</strong> <em>value,value,value,value</em>
@@ -2529,7 +2553,7 @@ The NUT HCL: <a href="https://www.networkupstools.org/stable-hcl.html">https://w
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-07-01 08:44:37 UTC -- Network UPS Tools 2.8.0.1
+Last updated 2023-09-14 14:43:49 UTC -- Network UPS Tools 2.8.0.1
 </div>
 </div>
 </body>

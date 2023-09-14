@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>H.5. Other configuration options</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><link rel="home" href="index.html" title="Network UPS Tools User Manual" /><link rel="up" href="Configure_options.html" title="H. Configure options" /><link rel="prev" href="_optional_features.html" title="H.4. Optional features" /><link rel="next" href="_installation_directories.html" title="H.6. Installation directories" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="_optional_features.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="_installation_directories.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_other_configuration_options"></a>H.5. Other configuration options</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_nut_data_server_port"></a>NUT data server port</h4></div></div></div><pre class="literallayout">--with-port=PORT</pre><p>Change the TCP port used by the network code.  Default is 3493
+as registered with IANA.</p><p>Ancient versions of <code class="literal">upsd</code> used port 3305.  NUT 2.0 and up use a
+substantially different network protocol and are not able to
+communicate with anything older than the 1.4 series.</p><p>If you have to monitor a mixed environment, use the last 1.4 version,
+as it contains compatibility code for both the old "REQ" and the new
+"GET" versions of the protocol.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_daemon_user_accounts"></a>Daemon user accounts</h4></div></div></div><pre class="literallayout">--with-user=&lt;username&gt;
+--with-group=&lt;groupname&gt;</pre><p>See also <code class="literal">--enable-inplace-runtime</code>.</p><p>Programs started as <code class="literal">root</code> will <code class="literal">setuid()</code> to <code class="literal">&lt;username&gt;</code> for somewhat
+safer operation.  You can override this with <code class="literal">-u &lt;otheruser&gt;</code> in several
+programs, including <code class="literal">upsdrvctl</code> (and all drivers by extension), <code class="literal">upsd</code>,
+and <code class="literal">upsmon</code>.  The "user" directive in <code class="literal">ups.conf</code> overrides this at run
+time for the drivers.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p><code class="literal">upsmon</code> does not totally drop <code class="literal">root</code> because it may need to
+initiate a shutdown.  There is always at least a stub process
+remaining with <code class="literal">root</code> powers.  The network code runs in another
+(separate) process as the new user.</p></div><p>The <code class="literal">&lt;groupname&gt;</code> is used for the permissions of some files,
+particularly the hotplugging rules for USB. The idea is that the
+device files for any UPS devices should be readable and writable by
+members of that group.</p><p>The default value for both the username and groupname is <code class="literal">nobody</code>
+(or <code class="literal">nogroup</code> on systems that have it when <code class="literal">configure</code> script runs).
+This was done since it’s slightly better than staying around as
+<code class="literal">root</code>.  Running things as <code class="literal">nobody</code> is not a good idea, since it’s a
+hack for NFS access.  You should create at least one separate user
+for this software.</p><p>If you use one of the <code class="literal">--with-user</code> and <code class="literal">--with-group</code> options, then
+you have to use the other one too.</p><p>See the <a class="ulink" href="INSTALL.nut" target="_top">INSTALL.nut</a> document and the FAQ for more on this topic.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_syslog_facility"></a>Syslog facility</h4></div></div></div><pre class="literallayout">--with-logfacility=FACILITY</pre><p>Change the facility used when writing to the log file.  Read the man
+page for <code class="literal">openlog</code> to get some idea of what’s available on your system.
+Default is <code class="literal">LOG_DAEMON</code>.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
+		Last updated 2023-09-14 14:45:42 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_optional_features.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="Configure_options.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="_installation_directories.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
