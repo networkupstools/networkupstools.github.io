@@ -4,7 +4,7 @@
 <head>
 <title>Network UPS Tools - Fortron UPS Champ 3000VA Tower</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta name="generator" content="AsciiDoc 10.1.2" />
+<meta name="generator" content="AsciiDoc 9.0.0rc2" />
 <meta name="description" content="Power Devices support" />
 <meta name="keywords" content="NUT, Network UPS Tools, Eaton, APC, Free Software, UPS, Uninterruptible Power Supplies, PDU, Power Distributions Units, Solar Controllers, power, power devices, control, monitor, Linux, Unix, Windows, Mac OS X" />
 <meta name="format-detection" content="telephone=no" />
@@ -562,6 +562,67 @@ un  nut-xml        &lt;none&gt;          &lt;none&gt;       (no description avai
 <pre><code></code></pre>
 </div></div>
 <div class="listingblock">
+<div class="title">SystemD log of NUT startup</div>
+<div class="content">
+<pre><code>&gt; I tried to test a few instant commands, using `upscmd`,
+&gt; but they all failed when checking the logs...
+
+:; systemctl status --lines=20 --full --no-pager nut-server nut-driver
+
+* nut-server.service - Network UPS Tools - power devices information server
+     Loaded: loaded (/lib/systemd/system/nut-server.service; enabled; preset: enabled)
+     Active: active (running) since Sat 2022-12-24 17:09:07 +03; 50min ago
+    Process: 2624 ExecStart=/sbin/upsd (code=exited, status=0/SUCCESS)
+   Main PID: 2625 (upsd)
+      Tasks: 1 (limit: 38274)
+     Memory: 648.0K
+        CPU: 171ms
+     CGroup: /system.slice/nut-server.service
+             +-2625 /lib/nut/upsd
+
+Dec 24 17:09:07 kubuntu systemd[1]: Starting Network UPS Tools - power devices information server...
+Dec 24 17:09:07 kubuntu upsd[2624]: fopen /run/nut/upsd.pid: No such file or directory
+Dec 24 17:09:07 kubuntu upsd[2624]: listening on 127.0.0.1 port 3493
+Dec 24 17:09:07 kubuntu upsd[2624]: listening on ::1 port 3493
+Dec 24 17:09:07 kubuntu upsd[2624]: listening on 127.0.0.1 port 3493
+Dec 24 17:09:07 kubuntu upsd[2624]: listening on ::1 port 3493
+Dec 24 17:09:07 kubuntu upsd[2624]: Connected to UPS [fsp]: blazer_usb-fsp
+Dec 24 17:09:07 kubuntu upsd[2624]: Connected to UPS [fsp]: blazer_usb-fsp
+Dec 24 17:09:07 kubuntu upsd[2625]: Startup successful
+Dec 24 17:09:07 kubuntu systemd[1]: Started Network UPS Tools - power devices information server.
+Dec 24 17:09:47 kubuntu upsd[2625]: User upsmon@127.0.0.1 logged into UPS [fsp]
+Dec 24 17:12:06 kubuntu upsd[2625]: Instant command: admin@127.0.0.1 did load.off on fsp
+Dec 24 17:12:42 kubuntu upsd[2625]: Instant command: admin@127.0.0.1 did load.on on fsp
+Dec 24 17:13:55 kubuntu upsd[2625]: Instant command: admin@127.0.0.1 did beeper.toggle on fsp
+
+* nut-driver.service - Network UPS Tools - power device driver controller
+     Loaded: loaded (/lib/systemd/system/nut-driver.service; static)
+     Active: active (running) since Sat 2022-12-24 17:09:07 +03; 50min ago
+    Process: 2620 ExecStart=/sbin/upsdrvctl start (code=exited, status=0/SUCCESS)
+   Main PID: 2623 (blazer_usb)
+      Tasks: 1 (limit: 38274)
+     Memory: 452.0K
+        CPU: 12.598s
+     CGroup: /system.slice/nut-driver.service
+             +-2623 /lib/nut/blazer_usb -a fsp
+
+Dec 24 17:09:04 kubuntu systemd[1]: Starting Network UPS Tools - power device driver controller...
+Dec 24 17:09:06 kubuntu upsdrvctl[2621]: Supported UPS detected with megatec protocol
+Dec 24 17:09:06 kubuntu upsdrvctl[2621]: Vendor information read in 1 tries
+Dec 24 17:09:06 kubuntu upsdrvctl[2621]: No values provided for battery high/low voltages in ups.conf
+Dec 24 17:09:06 kubuntu upsdrvctl[2621]: Using 'guestimation' (low: 62.400000, high: 78.000000)!
+Dec 24 17:09:06 kubuntu upsdrvctl[2621]: Battery runtime will not be calculated (runtimecal not set)
+Dec 24 17:09:07 kubuntu upsdrvctl[2620]: Network UPS Tools - UPS driver controller 2.7.4
+Dec 24 17:09:07 kubuntu blazer_usb[2623]: Startup successful
+Dec 24 17:09:07 kubuntu systemd[1]: Started Network UPS Tools - power device driver controller.
+Dec 24 17:12:06 kubuntu blazer_usb[2623]: instcmd(load.off, [NULL])
+Dec 24 17:12:07 kubuntu blazer_usb[2623]: instcmd: command [load.off] failed
+Dec 24 17:12:42 kubuntu blazer_usb[2623]: instcmd(load.on, [NULL])
+Dec 24 17:12:42 kubuntu blazer_usb[2623]: instcmd: command [load.on] failed
+Dec 24 17:13:55 kubuntu blazer_usb[2623]: instcmd(beeper.toggle, [NULL])
+Dec 24 17:13:55 kubuntu blazer_usb[2623]: instcmd: command [beeper.toggle] failed</code></pre>
+</div></div>
+<div class="listingblock">
 <div class="title">Variables per <code>upsrw ups@localhost</code> listing</div>
 <div class="content">
 <pre><code># TODO: Convert to RW:... and RO:... markup
@@ -656,8 +717,8 @@ Device Status:     0x0000
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Version nut:v2.8.0-2548-gcb5e92ccc ddl:v2.8.0-76-g541c7d8 web:v2.8.0-327-g0de85336-master<br />
-Last updated 2023-09-20 08:44:30
+Version nut:v2.8.0-2549-g2f08b9b43 ddl:v2.8.0-80-g68ce037 web:v2.8.0-334-gb7aae2f8-master<br />
+Last updated 2023-09-20 15:25:34
 </div>
 <div id="footer-badges">
 <a href="https://github.com/networkupstools/nut">
