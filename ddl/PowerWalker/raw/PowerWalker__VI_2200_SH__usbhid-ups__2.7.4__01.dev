@@ -1,4 +1,5 @@
 # DEVICE:URL:REPORT: https://github.com/networkupstools/nut/issues/646#issuecomment-462101161
+# DEVICE:URL:VENDOR: link:https://powerwalker.com/?lang=en&page=product&item=10120051[PowerWalker VI 2200 SH]
 
 # DEVICE:COMMENT:
 # As others have noted in PowerWalker-related issues, the Liebert HID subdriver
@@ -45,3 +46,549 @@ ups.productid: ffff
 ups.serial: 000000000
 ups.status: OL CHRG
 ups.vendorid: 06da
+
+# DEVICE:COMMENT-BLOCK:LOGS: Driver output in explore-mode
+# pi@raspberrypi:~ $ sudo /lib/nut/usbhid-ups -DD -u root -x explore -x vendorid=XXXX -x port=auto -a ups
+#    0.000000	debug level is '2'
+#    0.002193	upsdrv_initups...
+#    0.003019	Checking device (06DA/FFFF) (001/004)
+#    0.018699	- VendorID: 06da
+#    0.018733	- ProductID: ffff
+#    0.018750	- Manufacturer: PPC
+#    0.018766	- Product: Offline UPS
+#    0.018783	- Serial Number: 000000000   
+#    0.018801	- Bus: 001
+#    0.018860	- Device release number: 0003
+#    0.018901	Trying to match device
+#    0.019061	Device matches
+#    0.019141	failed to claim USB device: could not claim interface 0: Device or resource busy
+#    0.019711	detached kernel driver from USB device...
+#    0.023365	HID descriptor length 495
+#    0.086576	Report Descriptor size = 495
+#    0.087666	Using subdriver: EXPLORE HID 0.1
+#    0.087697	45 HID objects found
+#    0.089608	Path: UPS.BatterySystem.Battery.Test, Type: Feature, ReportID: 0x24, Offset: 0, Size: 8, Value: 6
+#    0.091355	Path: UPS.Flow.[4].ConfigApparentPower, Type: Feature, ReportID: 0x74, Offset: 0, Size: 16, Value: 9
+#    0.093102	Path: UPS.Flow.[4].ConfigFrequency, Type: Feature, ReportID: 0x36, Offset: 0, Size: 8, Value: 50
+#    0.093725	Path: UPS.Flow.[4].ConfigVoltage, Type: Feature, ReportID: 0x72, Offset: 0, Size: 8, Value: 230
+#    0.095597	Path: UPS.PowerConverter.ffff0041, Type: Feature, ReportID: 0x4a, Offset: 0, Size: 8, Value: 1
+#    0.097354	Path: UPS.PowerConverter.Input.[1].Voltage, Type: Feature, ReportID: 0x31, Offset: 0, Size: 16, Value: 241
+#    0.099108	Path: UPS.PowerConverter.Input.[1].PresentStatus.Boost, Type: Feature, ReportID: 0x2d, Offset: 0, Size: 8, Value: 0
+#    0.099163	Path: UPS.PowerConverter.Input.[1].PresentStatus.Boost, Type: Input, ReportID: 0x2d, Offset: 0, Size: 8, Value: 0
+#    0.099211	Path: UPS.PowerConverter.Input.[1].PresentStatus.Buck, Type: Feature, ReportID: 0x2d, Offset: 8, Size: 8, Value: 0
+#    0.099258	Path: UPS.PowerConverter.Input.[1].PresentStatus.Buck, Type: Input, ReportID: 0x2d, Offset: 8, Size: 8, Value: 0
+#    0.101105	Path: UPS.PowerConverter.Output.Frequency, Type: Feature, ReportID: 0x42, Offset: 0, Size: 16, Value: 50
+#    0.101156	Path: UPS.PowerConverter.Output.Voltage, Type: Feature, ReportID: 0x42, Offset: 16, Size: 16, Value: 240
+#    0.101725	Path: UPS.PowerSummary.AudibleAlarmControl, Type: Feature, ReportID: 0x13, Offset: 0, Size: 8, Value: 2
+#    0.103600	Path: UPS.PowerSummary.DelayBeforeShutdown, Type: Feature, ReportID: 0x09, Offset: 0, Size: 32, Value: -1
+#    0.105349	Path: UPS.PowerSummary.DelayBeforeStartup, Type: Feature, ReportID: 0x0a, Offset: 0, Size: 32, Value: -1
+#    0.107102	Path: UPS.PowerSummary.iDeviceChemistry, Type: Feature, ReportID: 0x10, Offset: 0, Size: 8, Value: 5
+#    0.107151	Path: UPS.PowerSummary.iManufacturer, Type: Feature, ReportID: 0x10, Offset: 8, Size: 8, Value: 1
+#    0.107196	Path: UPS.PowerSummary.ffff00f0, Type: Feature, ReportID: 0x10, Offset: 16, Size: 8, Value: 3
+#    0.107239	Path: UPS.PowerSummary.iProduct, Type: Feature, ReportID: 0x10, Offset: 24, Size: 8, Value: 2
+#    0.107282	Path: UPS.PowerSummary.iSerialNumber, Type: Feature, ReportID: 0x10, Offset: 32, Size: 8, Value: 4
+#    0.109098	Path: UPS.PowerSummary.ffff00e2, Type: Feature, ReportID: 0xe2, Offset: 0, Size: 8, Value: 4
+#    0.109722	Path: UPS.PowerSummary.PercentLoad, Type: Feature, ReportID: 0x07, Offset: 0, Size: 8, Value: 1
+#    0.111607	Path: UPS.PowerSummary.PresentStatus.ACPresent, Type: Feature, ReportID: 0x01, Offset: 0, Size: 8, Value: 1
+#    0.111663	Path: UPS.PowerSummary.PresentStatus.ACPresent, Type: Input, ReportID: 0x01, Offset: 0, Size: 8, Value: 1
+#    0.111715	Path: UPS.PowerSummary.PresentStatus.BelowRemainingCapacityLimit, Type: Feature, ReportID: 0x01, Offset: 8, Size: 8, Value: 0
+#    0.111765	Path: UPS.PowerSummary.PresentStatus.BelowRemainingCapacityLimit, Type: Input, ReportID: 0x01, Offset: 8, Size: 8, Value: 0
+#    0.111813	Path: UPS.PowerSummary.PresentStatus.Charging, Type: Feature, ReportID: 0x01, Offset: 16, Size: 8, Value: 1
+#    0.111885	Path: UPS.PowerSummary.PresentStatus.Charging, Type: Input, ReportID: 0x01, Offset: 16, Size: 8, Value: 1
+#    0.111965	Path: UPS.PowerSummary.PresentStatus.Discharging, Type: Feature, ReportID: 0x01, Offset: 24, Size: 8, Value: 0
+#    0.112042	Path: UPS.PowerSummary.PresentStatus.Discharging, Type: Input, ReportID: 0x01, Offset: 24, Size: 8, Value: 0
+#    0.112094	Path: UPS.PowerSummary.PresentStatus.Good, Type: Feature, ReportID: 0x01, Offset: 32, Size: 8, Value: 1
+#    0.112204	Path: UPS.PowerSummary.PresentStatus.Good, Type: Input, ReportID: 0x01, Offset: 32, Size: 8, Value: 1
+#    0.112280	Path: UPS.PowerSummary.PresentStatus.InternalFailure, Type: Feature, ReportID: 0x01, Offset: 40, Size: 8, Value: 0
+#    0.112357	Path: UPS.PowerSummary.PresentStatus.InternalFailure, Type: Input, ReportID: 0x01, Offset: 40, Size: 8, Value: 0
+#    0.112434	Path: UPS.PowerSummary.PresentStatus.Overload, Type: Feature, ReportID: 0x01, Offset: 48, Size: 8, Value: 0
+#    0.112510	Path: UPS.PowerSummary.PresentStatus.Overload, Type: Input, ReportID: 0x01, Offset: 48, Size: 8, Value: 0
+#    0.113105	Path: UPS.PowerSummary.DesignCapacity, Type: Feature, ReportID: 0x0b, Offset: 0, Size: 8, Value: 100
+#    0.113183	Path: UPS.PowerSummary.CapacityGranularity1, Type: Feature, ReportID: 0x0b, Offset: 8, Size: 8, Value: 1
+#    0.113257	Path: UPS.PowerSummary.FullChargeCapacity, Type: Feature, ReportID: 0x0b, Offset: 16, Size: 8, Value: 100
+#    0.113327	Path: UPS.PowerSummary.CapacityMode, Type: Feature, ReportID: 0x0b, Offset: 24, Size: 8, Value: 2
+#    0.115101	Path: UPS.PowerSummary.RemainingCapacity, Type: Feature, ReportID: 0x06, Offset: 0, Size: 8, Value: 100
+#    0.115176	Path: UPS.PowerSummary.RemainingCapacity, Type: Input, ReportID: 0x06, Offset: 0, Size: 8, Value: 100
+#    0.115252	Path: UPS.PowerSummary.RunTimeToEmpty, Type: Feature, ReportID: 0x06, Offset: 8, Size: 16, Value: 3290
+#    0.115325	Path: UPS.PowerSummary.RunTimeToEmpty, Type: Input, ReportID: 0x06, Offset: 8, Size: 16, Value: 3290
+#    0.115396	Path: UPS.PowerSummary.Voltage, Type: Feature, ReportID: 0x07, Offset: 8, Size: 16, Value: 27.1
+# Network UPS Tools - Generic HID driver 0.41 (2.7.4)
+# USB communication driver 0.33
+#    0.115517	Report descriptor retrieved (Reportlen = 495)
+#    0.115541	Found HID device
+#    0.115580	Detected a UPS: PPC/Offline UPS
+#    0.115646	find_nut_info: unknown info type: load.off.delay
+#    0.115688	find_nut_info: unknown info type: load.on.delay
+#    0.115705	find_nut_info: unknown info type: load.off.delay
+#    0.115816	upsdrv_initinfo...
+#    0.115885	upsdrv_updateinfo...
+#    0.116614	Got 2 HID objects...
+#    0.116666	Path: UPS.PowerSummary.RemainingCapacity, Type: Input, ReportID: 0x06, Offset: 0, Size: 8, Value: 100
+#    0.116719	Path: UPS.PowerSummary.RunTimeToEmpty, Type: Input, ReportID: 0x06, Offset: 8, Size: 16, Value: 3359
+#    0.116745	Quick update...
+#    0.116954	dstate_init: sock /var/run/nut/usbhid-ups-ups open on fd 5
+#    0.117041	upsdrv_updateinfo...
+#    0.308599	Got 2 HID objects...
+#    0.308664	Path: UPS.PowerSummary.RemainingCapacity, Type: Input, ReportID: 0x06, Offset: 0, Size: 8, Value: 100
+#    0.308718	Path: UPS.PowerSummary.RunTimeToEmpty, Type: Input, ReportID: 0x06, Offset: 8, Size: 16, Value: 3290
+#    0.308743	Quick update...
+#    2.118890	upsdrv_updateinfo...
+#    2.369631	libusb_get_interrupt: Connection timed out
+#    2.369672	Got 0 HID objects...
+#    2.369702	Quick update...
+#    4.120678	upsdrv_updateinfo...
+#    4.120796	libusb_get_interrupt: error submitting URB: Device or resource busy
+#    4.120826	Got disconnected by another driver: Device or resource busy
+#    6.122715	upsdrv_updateinfo...
+#    6.122773	Got to reconnect!
+
+#    6.123402	Checking device (06DA/FFFF) (001/004)
+#    6.140477	- VendorID: 06da
+#    6.140509	- ProductID: ffff
+#    6.140526	- Manufacturer: PPC
+#    6.140542	- Product: Offline UPS
+#    6.140558	- Serial Number: 000000000   
+#    6.140574	- Bus: 001
+#    6.140591	- Device release number: 0003
+#    6.140608	Trying to match device
+#    6.140655	Device matches
+#    6.140694	failed to claim USB device: could not claim interface 0: Device or resource busy
+#    6.140850	detached kernel driver from USB device...
+#    6.391079	libusb_get_interrupt: Connection timed out
+#    6.391130	Got 0 HID objects...
+#    6.391154	Quick update...
+#    8.124479	upsdrv_updateinfo...
+#    8.374840	libusb_get_interrupt: Connection timed out
+#    8.374882	Got 0 HID objects...
+#    8.374904	Quick update...
+#   10.126268	upsdrv_updateinfo...
+#   10.126378	libusb_get_interrupt: error submitting URB: Device or resource busy
+#   10.126410	Got disconnected by another driver: Device or resource busy
+#   12.128307	upsdrv_updateinfo...
+#   12.128369	Got to reconnect!
+
+#   12.128912	Checking device (06DA/FFFF) (001/004)
+#   12.147393	- VendorID: 06da
+#   12.147439	- ProductID: ffff
+#   12.147465	- Manufacturer: PPC
+#   12.147533	- Product: Offline UPS
+#   12.147555	- Serial Number: 000000000   
+#   12.147573	- Bus: 001
+#   12.147594	- Device release number: 0003
+#   12.147613	Trying to match device
+#   12.147662	Device matches
+#   12.147726	failed to claim USB device: could not claim interface 0: Device or resource busy
+#   12.147915	detached kernel driver from USB device...
+#   12.398512	libusb_get_interrupt: Connection timed out
+#   12.398569	Got 0 HID objects...
+#   12.398599	Quick update...
+#   14.130086	upsdrv_updateinfo...
+#   14.380612	libusb_get_interrupt: Connection timed out
+#   14.380677	Got 0 HID objects...
+#   14.380703	Quick update...
+#   16.131872	upsdrv_updateinfo...
+#   16.131998	libusb_get_interrupt: error submitting URB: Device or resource busy
+#   16.132051	Got disconnected by another driver: Device or resource busy
+#   18.133915	upsdrv_updateinfo...
+#   18.133977	Got to reconnect!
+
+#   18.134706	Checking device (06DA/FFFF) (001/004)
+#   18.151789	- VendorID: 06da
+#   18.151835	- ProductID: ffff
+#   18.151855	- Manufacturer: PPC
+#   18.151876	- Product: Offline UPS
+#   18.151896	- Serial Number: 000000000   
+#   18.151914	- Bus: 001
+#   18.151944	- Device release number: 0003
+#   18.151963	Trying to match device
+#   18.152017	Device matches
+#   18.152064	failed to claim USB device: could not claim interface 0: Device or resource busy
+#   18.152319	detached kernel driver from USB device...
+#   18.403744	libusb_get_interrupt: Connection timed out
+#   18.403800	Got 0 HID objects...
+#   18.403826	Quick update...
+#   20.135695	upsdrv_updateinfo...
+#   20.386109	libusb_get_interrupt: Connection timed out
+#   20.386173	Got 0 HID objects...
+#   20.386202	Quick update...
+#   22.137480	upsdrv_updateinfo...
+#   22.137611	libusb_get_interrupt: error submitting URB: Device or resource busy
+#   22.137642	Got disconnected by another driver: Device or resource busy
+#   24.139518	upsdrv_updateinfo...
+#   24.139583	Got to reconnect!
+
+#   24.140226	Checking device (06DA/FFFF) (001/004)
+#   24.156190	- VendorID: 06da
+#   24.156247	- ProductID: ffff
+#   24.156270	- Manufacturer: PPC
+#   24.156289	- Product: Offline UPS
+#   24.156308	- Serial Number: 000000000   
+#   24.156326	- Bus: 001
+#   24.156345	- Device release number: 0003
+#   24.156363	Trying to match device
+#   24.156412	Device matches
+#   24.156455	failed to claim USB device: could not claim interface 0: Device or resource busy
+#   24.156629	detached kernel driver from USB device...
+#   24.407581	libusb_get_interrupt: Connection timed out
+#   24.407643	Got 0 HID objects...
+#   24.407669	Quick update...
+#   26.141289	upsdrv_updateinfo...
+#   26.392265	libusb_get_interrupt: Connection timed out
+#   26.392330	Got 0 HID objects...
+#   26.392359	Quick update...
+#   28.143073	upsdrv_updateinfo...
+#   28.143195	libusb_get_interrupt: error submitting URB: Device or resource busy
+#   28.143230	Got disconnected by another driver: Device or resource busy
+#   30.145103	upsdrv_updateinfo...
+#   30.145186	Got to reconnect!
+
+#   30.145864	Checking device (06DA/FFFF) (001/004)
+#   30.164101	- VendorID: 06da
+#   30.164145	- ProductID: ffff
+#   30.164179	- Manufacturer: PPC
+#   30.164198	- Product: Offline UPS
+#   30.164216	- Serial Number: 000000000   
+#   30.164244	- Bus: 001
+#   30.164263	- Device release number: 0003
+#   30.164281	Trying to match device
+#   30.164377	Device matches
+#   30.164458	failed to claim USB device: could not claim interface 0: Device or resource busy
+#   30.164716	detached kernel driver from USB device...
+#   30.415514	libusb_get_interrupt: Connection timed out
+#   30.415593	Got 0 HID objects...
+#   30.415622	Quick update...
+#   32.146880	upsdrv_updateinfo...
+#   32.397609	libusb_get_interrupt: Connection timed out
+#   32.397657	Got 0 HID objects...
+#   32.397683	Full update...
+#   34.147552	upsdrv_updateinfo...
+#   34.147701	libusb_get_interrupt: error submitting URB: Device or resource busy
+#   34.147739	Got disconnected by another driver: Device or resource busy
+#   36.149599	upsdrv_updateinfo...
+#   36.149677	Got to reconnect!
+
+#   36.150625	Checking device (06DA/FFFF) (001/004)
+#   36.166492	- VendorID: 06da
+#   36.166566	- ProductID: ffff
+#   36.166760	- Manufacturer: PPC
+#   36.166784	- Product: Offline UPS
+#   36.166803	- Serial Number: 000000000   
+#   36.166821	- Bus: 001
+#   36.166841	- Device release number: 0003
+#   36.166858	Trying to match device
+#   36.166908	Device matches
+#   36.166950	failed to claim USB device: could not claim interface 0: Device or resource busy
+#   36.167100	detached kernel driver from USB device...
+#   36.418357	libusb_get_interrupt: Connection timed out
+#   36.418577	Got 0 HID objects...
+#   36.418706	Quick update...
+#   38.151364	upsdrv_updateinfo...
+#   38.401754	libusb_get_interrupt: Connection timed out
+#   38.401921	Got 0 HID objects...
+#   38.402061	Quick update...
+#   40.153138	upsdrv_updateinfo...
+#   40.153433	libusb_get_interrupt: error submitting URB: Device or resource busy
+#   40.153587	Got disconnected by another driver: Device or resource busy
+#   42.155174	upsdrv_updateinfo...
+#   42.155429	Got to reconnect!
+
+#   42.156104	Checking device (06DA/FFFF) (001/004)
+#   42.174383	- VendorID: 06da
+#   42.174618	- ProductID: ffff
+#   42.174831	- Manufacturer: PPC
+#   42.175023	- Product: Offline UPS
+#   42.175217	- Serial Number: 000000000   
+#   42.175439	- Bus: 001
+#   42.175598	- Device release number: 0003
+#   42.175790	Trying to match device
+#   42.176015	Device matches
+#   42.176234	failed to claim USB device: could not claim interface 0: Device or resource busy
+#   42.176606	detached kernel driver from USB device...
+#   42.177347	Got 2 HID objects...
+#   42.177699	Path: UPS.PowerSummary.RemainingCapacity, Type: Input, ReportID: 0x06, Offset: 0, Size: 8, Value: 100
+#   42.177946	Path: UPS.PowerSummary.RunTimeToEmpty, Type: Input, ReportID: 0x06, Offset: 8, Size: 16, Value: 3290
+#   42.178154	Quick update...
+#   44.157188	upsdrv_updateinfo...
+#   44.407700	libusb_get_interrupt: Connection timed out
+#   44.407896	Got 0 HID objects...
+#   44.408035	Quick update...
+#   46.158968	upsdrv_updateinfo...
+#   46.159240	libusb_get_interrupt: error submitting URB: Device or resource busy
+#   46.159394	Got disconnected by another driver: Device or resource busy
+#   48.160986	upsdrv_updateinfo...
+#   48.161459	Got to reconnect!
+
+#   48.162017	Checking device (06DA/FFFF) (001/004)
+#   48.180297	- VendorID: 06da
+#   48.180346	- ProductID: ffff
+#   48.180369	- Manufacturer: PPC
+#   48.180387	- Product: Offline UPS
+#   48.180406	- Serial Number: 000000000   
+#   48.180424	- Bus: 001
+#   48.180446	- Device release number: 0003
+#   48.180463	Trying to match device
+#   48.180513	Device matches
+#   48.180555	failed to claim USB device: could not claim interface 0: Device or resource busy
+#   48.180946	detached kernel driver from USB device...
+#   48.431837	libusb_get_interrupt: Connection timed out
+#   48.432192	Got 0 HID objects...
+#   48.432466	Quick update...
+#   50.162754	upsdrv_updateinfo...
+#   50.413827	libusb_get_interrupt: Connection timed out
+#   50.414011	Got 0 HID objects...
+#   50.414155	Quick update...
+#   52.164549	upsdrv_updateinfo...
+#   52.164894	libusb_get_interrupt: error submitting URB: Device or resource busy
+#   52.165149	Got disconnected by another driver: Device or resource busy
+#   54.166567	upsdrv_updateinfo...
+#   54.166849	Got to reconnect!
+
+#   54.167692	Checking device (06DA/FFFF) (001/004)
+#   54.186175	- VendorID: 06da
+#   54.186377	- ProductID: ffff
+#   54.186541	- Manufacturer: PPC
+#   54.186707	- Product: Offline UPS
+#   54.186969	- Serial Number: 000000000   
+#   54.187212	- Bus: 001
+#   54.187856	- Device release number: 0003
+#   54.187995	Trying to match device
+#   54.188270	Device matches
+#   54.188552	failed to claim USB device: could not claim interface 0: Device or resource busy
+#   54.188990	detached kernel driver from USB device...
+#   54.439788	libusb_get_interrupt: Connection timed out
+#   54.440007	Got 0 HID objects...
+#   54.440190	Quick update...
+#   56.167554	upsdrv_updateinfo...
+#   56.418806	libusb_get_interrupt: Connection timed out
+#   56.419057	Got 0 HID objects...
+#   56.419242	Quick update...
+#   58.169340	upsdrv_updateinfo...
+#   58.169650	libusb_get_interrupt: error submitting URB: Device or resource busy
+#   58.169847	Got disconnected by another driver: Device or resource busy
+#   60.171378	upsdrv_updateinfo...
+#   60.171853	Got to reconnect!
+
+#   60.172461	Checking device (06DA/FFFF) (001/004)
+#   60.189570	- VendorID: 06da
+#   60.189768	- ProductID: ffff
+#   60.189945	- Manufacturer: PPC
+#   60.190209	- Product: Offline UPS
+#   60.190478	- Serial Number: 000000000   
+#   60.190762	- Bus: 001
+#   60.190995	- Device release number: 0003
+#   60.191241	Trying to match device
+#   60.191524	Device matches
+#   60.191834	failed to claim USB device: could not claim interface 0: Device or resource busy
+#   60.192342	detached kernel driver from USB device...
+#   60.442945	libusb_get_interrupt: Connection timed out
+#   60.443174	Got 0 HID objects...
+#   60.443346	Quick update...
+#   62.173161	upsdrv_updateinfo...
+#   62.423894	libusb_get_interrupt: Connection timed out
+#   62.424097	Got 0 HID objects...
+#   62.424281	Quick update...
+#   64.174949	upsdrv_updateinfo...
+#   64.175298	libusb_get_interrupt: error submitting URB: Device or resource busy
+#   64.175582	Got disconnected by another driver: Device or resource busy
+#   66.176989	upsdrv_updateinfo...
+#   66.177272	Got to reconnect!
+
+#   66.178279	Checking device (06DA/FFFF) (001/004)
+#   66.195455	- VendorID: 06da
+#   66.195638	- ProductID: ffff
+#   66.195864	- Manufacturer: PPC
+#   66.196332	- Product: Offline UPS
+#   66.196612	- Serial Number: 000000000   
+#   66.196883	- Bus: 001
+#   66.197142	- Device release number: 0003
+#   66.197449	Trying to match device
+#   66.197801	Device matches
+#   66.198203	failed to claim USB device: could not claim interface 0: Device or resource busy
+#   66.198609	detached kernel driver from USB device...
+#   66.264496	Got 2 HID objects...
+#   66.264780	Path: UPS.PowerSummary.RemainingCapacity, Type: Input, ReportID: 0x06, Offset: 0, Size: 8, Value: 100
+#   66.265088	Path: UPS.PowerSummary.RunTimeToEmpty, Type: Input, ReportID: 0x06, Offset: 8, Size: 16, Value: 3290
+#   66.265485	Full update...
+#   68.178940	upsdrv_updateinfo...
+#   68.429587	libusb_get_interrupt: Connection timed out
+#   68.429813	Got 0 HID objects...
+#   68.430086	Quick update...
+#   70.180726	upsdrv_updateinfo...
+#   70.181035	libusb_get_interrupt: error submitting URB: Device or resource busy
+#   70.181342	Got disconnected by another driver: Device or resource busy
+#   72.182771	upsdrv_updateinfo...
+#   72.183079	Got to reconnect!
+
+#   72.184126	Checking device (06DA/FFFF) (001/004)
+#   72.201353	- VendorID: 06da
+#   72.201529	- ProductID: ffff
+#   72.201749	- Manufacturer: PPC
+#   72.202115	- Product: Offline UPS
+#   72.202259	- Serial Number: 000000000   
+#   72.202560	- Bus: 001
+#   72.202887	- Device release number: 0003
+#   72.203092	Trying to match device
+#   72.203444	Device matches
+#   72.203767	failed to claim USB device: could not claim interface 0: Device or resource busy
+#   72.204274	detached kernel driver from USB device...
+#   72.205013	Got 2 HID objects...
+#   72.205266	Path: UPS.PowerSummary.RemainingCapacity, Type: Input, ReportID: 0x06, Offset: 0, Size: 8, Value: 100
+#   72.205669	Path: UPS.PowerSummary.RunTimeToEmpty, Type: Input, ReportID: 0x06, Offset: 8, Size: 16, Value: 3290
+#   72.205934	Quick update...
+#   74.184790	upsdrv_updateinfo...
+#   74.435183	libusb_get_interrupt: Connection timed out
+#   74.435421	Got 0 HID objects...
+#   74.435664	Quick update...
+#   76.186589	upsdrv_updateinfo...
+#   76.186929	libusb_get_interrupt: error submitting URB: Device or resource busy
+#   76.187200	Got disconnected by another driver: Device or resource busy
+#   78.188634	upsdrv_updateinfo...
+#   78.189001	Got to reconnect!
+
+#   78.190197	Checking device (06DA/FFFF) (001/004)
+#   78.208737	- VendorID: 06da
+#   78.208999	- ProductID: ffff
+#   78.209239	- Manufacturer: PPC
+#   78.209665	- Product: Offline UPS
+#   78.209976	- Serial Number: 000000000   
+#   78.210176	- Bus: 001
+#   78.210570	- Device release number: 0003
+#   78.210764	Trying to match device
+#   78.211089	Device matches
+#   78.211547	failed to claim USB device: could not claim interface 0: Device or resource busy
+#   78.212141	detached kernel driver from USB device...
+#   78.213404	Got 2 HID objects...
+#   78.213653	Path: UPS.PowerSummary.RemainingCapacity, Type: Input, ReportID: 0x06, Offset: 0, Size: 8, Value: 100
+#   78.213928	Path: UPS.PowerSummary.RunTimeToEmpty, Type: Input, ReportID: 0x06, Offset: 8, Size: 16, Value: 3359
+#   78.214139	Quick update...
+#   80.190662	upsdrv_updateinfo...
+#   80.441546	libusb_get_interrupt: Connection timed out
+#   80.441730	Got 0 HID objects...
+#   80.441908	Quick update...
+#   82.192449	upsdrv_updateinfo...
+#   82.192761	libusb_get_interrupt: error submitting URB: Device or resource busy
+#   82.193030	Got disconnected by another driver: Device or resource busy
+#   84.194502	upsdrv_updateinfo...
+#   84.195144	Got to reconnect!
+
+#   84.195827	Checking device (06DA/FFFF) (001/004)
+#   84.211641	- VendorID: 06da
+#   84.211855	- ProductID: ffff
+#   84.212124	- Manufacturer: PPC
+#   84.212577	- Product: Offline UPS
+#   84.212927	- Serial Number: 000000000   
+#   84.213143	- Bus: 001
+#   84.213436	- Device release number: 0003
+#   84.213780	Trying to match device
+#   84.214333	Device matches
+#   84.214600	failed to claim USB device: could not claim interface 0: Device or resource busy
+#   84.215166	detached kernel driver from USB device...
+#   84.466363	libusb_get_interrupt: Connection timed out
+#   84.466602	Got 0 HID objects...
+#   84.466749	Quick update...
+#   86.196273	upsdrv_updateinfo...
+#   86.447135	libusb_get_interrupt: Connection timed out
+#   86.447320	Got 0 HID objects...
+#   86.447448	Quick update...
+#   88.198056	upsdrv_updateinfo...
+#   88.198367	libusb_get_interrupt: error submitting URB: Device or resource busy
+#   88.198530	Got disconnected by another driver: Device or resource busy
+#   90.200092	upsdrv_updateinfo...
+#   90.200337	Got to reconnect!
+
+#   90.201002	Checking device (06DA/FFFF) (001/004)
+#   90.217010	- VendorID: 06da
+#   90.217212	- ProductID: ffff
+#   90.217336	- Manufacturer: PPC
+#   90.217455	- Product: Offline UPS
+#   90.217645	- Serial Number: 000000000   
+#   90.217765	- Bus: 001
+#   90.217887	- Device release number: 0003
+#   90.218003	Trying to match device
+#   90.218153	Device matches
+#   90.218298	failed to claim USB device: could not claim interface 0: Device or resource busy
+#   90.218557	detached kernel driver from USB device...
+#   90.469784	libusb_get_interrupt: Connection timed out
+#   90.470028	Got 0 HID objects...
+#   90.470177	Quick update...
+#   92.201861	upsdrv_updateinfo...
+#   92.452855	libusb_get_interrupt: Connection timed out
+#   92.453056	Got 0 HID objects...
+#   92.453190	Quick update...
+#   94.203646	upsdrv_updateinfo...
+#   94.204001	libusb_get_interrupt: error submitting URB: Device or resource busy
+#   94.204169	Got disconnected by another driver: Device or resource busy
+#   96.205678	upsdrv_updateinfo...
+#   96.205927	Got to reconnect!
+
+#   96.206600	Checking device (06DA/FFFF) (001/004)
+#   96.222395	- VendorID: 06da
+#   96.222597	- ProductID: ffff
+#   96.222721	- Manufacturer: PPC
+#   96.222844	- Product: Offline UPS
+#   96.222964	- Serial Number: 000000000   
+#   96.223099	- Bus: 001
+#   96.223221	- Device release number: 0003
+#   96.223339	Trying to match device
+#   96.223492	Device matches
+#   96.223636	failed to claim USB device: could not claim interface 0: Device or resource busy
+#   96.223901	detached kernel driver from USB device...
+#   96.474574	libusb_get_interrupt: Connection timed out
+#   96.474798	Got 0 HID objects...
+#   96.474931	Quick update...
+#   98.207449	upsdrv_updateinfo...
+#   98.458528	libusb_get_interrupt: Connection timed out
+#   98.458720	Got 0 HID objects...
+#   98.458863	Full update...
+#  100.209250	upsdrv_updateinfo...
+#  100.209575	libusb_get_interrupt: error submitting URB: Device or resource busy
+#  100.209737	Got disconnected by another driver: Device or resource busy
+#  102.211283	upsdrv_updateinfo...
+#  102.211535	Got to reconnect!
+
+#  102.212202	Checking device (06DA/FFFF) (001/004)
+#  102.229280	- VendorID: 06da
+#  102.229385	- ProductID: ffff
+#  102.229408	- Manufacturer: PPC
+#  102.229427	- Product: Offline UPS
+#  102.229445	- Serial Number: 000000000   
+#  102.229462	- Bus: 001
+#  102.229484	- Device release number: 0003
+#  102.229501	Trying to match device
+#  102.229549	Device matches
+#  102.229589	failed to claim USB device: could not claim interface 0: Device or resource busy
+#  102.229739	detached kernel driver from USB device...
+#  102.480168	libusb_get_interrupt: Connection timed out
+#  102.480379	Got 0 HID objects...
+#  102.480511	Quick update...
+#  104.213050	upsdrv_updateinfo...
+#  104.464065	libusb_get_interrupt: Connection timed out
+#  104.464262	Got 0 HID objects...
+#  104.464396	Quick update...
+#  106.214836	upsdrv_updateinfo...
+#  106.215139	libusb_get_interrupt: error submitting URB: Device or resource busy
+#  106.215371	Got disconnected by another driver: Device or resource busy
+#  108.216875	upsdrv_updateinfo...
+#  108.217141	Got to reconnect!
+
+#  108.218024	Checking device (06DA/FFFF) (001/004)
+#  108.234168	- VendorID: 06da
+#  108.234402	- ProductID: ffff
+#  108.234594	- Manufacturer: PPC
+#  108.234784	- Product: Offline UPS
+#  108.235153	- Serial Number: 000000000   
+#  108.235439	- Bus: 001
+#  108.235616	- Device release number: 0003
+#  108.235882	Trying to match device
+#  108.236212	Device matches
+#  108.236594	failed to claim USB device: could not claim interface 0: Device or resource busy
+#  108.237032	detached kernel driver from USB device...
+#  108.237909	Got 2 HID objects...
+#  108.238150	Path: UPS.PowerSummary.RemainingCapacity, Type: Input, ReportID: 0x06, Offset: 0, Size: 8, Value: 100
+#  108.238498	Path: UPS.PowerSummary.RunTimeToEmpty, Type: Input, ReportID: 0x06, Offset: 8, Size: 16, Value: 3290
+#  108.238773	Quick update...
+#  110.218905	upsdrv_updateinfo...
+#  110.469647	libusb_get_interrupt: Connection timed out
+#  110.469857	Got 0 HID objects...
+#  110.470093	Quick update...
+# DEVICE:EOC

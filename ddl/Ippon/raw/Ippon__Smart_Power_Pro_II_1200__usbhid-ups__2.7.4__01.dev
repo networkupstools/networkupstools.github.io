@@ -1,0 +1,128 @@
+# DEVICE:URL:REPORT: https://github.com/networkupstools/nut/issues/701
+
+# DEVICE:COMMENT:
+# I've got a new Ippon UPS "Smart Power Pro II 1200" and neither
+# Input nor Output voltage values are reported/shown by nut.
+# 
+# The same problem probably applies to the whole family of new(?)
+# Ippon devices with a display - SMART POWER PRO II 1200/1600/2200
+# and SMART POWER PRO II EURO 1200/1600/2200.
+#
+# For an issue with regular disconnections, see also:
+# https://github.com/networkupstools/nut/issues/786
+#
+# Regarding driver data dump below:
+#
+# * It seems that driver just ignores some paths:
+#
+# ** `Path: UPS.PowerConverter.Input.[1].Voltage, Type: Feature, ReportID: 0x31, Offset: 0, Size: 16, Value: 225`
+# ** `Path: UPS.PowerConverter.Output.Voltage, Type: Feature, ReportID: 0x42, Offset: 16, Size: 16, Value: 225`
+#
+# * Other parameters like frequency data is available on UPS as well,
+#   but not seen by the driver.
+#
+# Another problem that it is not possible to send commands to the UPS,
+# for example, to disable beep - the list of commands is empty.
+#
+# "Same thing" (problems?) also reported for Ippon Smart Power Pro II 1600.
+#
+# More information seems to be available with custom builds using
+# an MGE and not Liebert subdriver (shared USB identification).
+# DEVICE:EOC
+
+# DEVICE:COMMENT-BLOCK:UPSCONF:
+# [ups]
+#     driver = usbhid-ups
+#     port = auto
+#     desc = "Ippon Smart Power Pro II 1200"
+#     synchronous = yes
+#     pollinterval = 10
+# DEVICE:EOC
+
+# upsc test result:
+battery.charge: 100
+battery.runtime: 4520
+battery.type: PbAc
+battery.voltage: 28
+device.mfr: PPC
+device.model: Offline UPS
+device.serial: 000000000
+device.type: ups
+driver.name: usbhid-ups
+driver.parameter.pollfreq: 30
+driver.parameter.pollinterval: 10
+driver.parameter.port: auto
+driver.parameter.synchronous: yes
+driver.version: 2.7.4
+driver.version.data: Phoenixtec/Liebert HID 0.3
+driver.version.internal: 0.41
+ups.load: 5
+ups.mfr: PPC
+ups.model: Offline UPS
+ups.productid: ffff
+ups.serial: 000000000
+ups.status: OL CHRG
+ups.vendorid: 06da
+
+# DEVICE:COMMENT-BLOCK:LOGS: Driver data dump
+# :; /lib/nut/usbhid-ups -D -a ups -u root
+# Network UPS Tools - Generic HID driver 0.41 (2.7.4)
+# USB communication driver 0.33
+# 0.000000 debug level is '1'
+# 0.001405 upsdrv_initups...
+# 0.142334 Using subdriver: Phoenixtec/Liebert HID 0.3
+# 0.142385 45 HID objects found
+# 0.144121 Path: UPS.BatterySystem.Battery.Test, Type: Feature, ReportID: 0x24, Offset: 0, Size: 8, Value: 6
+# 0.146117 Path: UPS.Flow.[4].ConfigApparentPower, Type: Feature, ReportID: 0x74, Offset: 0, Size: 16, Value: 5
+# 0.148099 Path: UPS.Flow.[4].ConfigFrequency, Type: Feature, ReportID: 0x36, Offset: 0, Size: 8, Value: 50
+# 0.150099 Path: UPS.Flow.[4].ConfigVoltage, Type: Feature, ReportID: 0x72, Offset: 0, Size: 8, Value: 220
+# 0.152099 Path: UPS.PowerConverter.ffff0041, Type: Feature, ReportID: 0x4a, Offset: 0, Size: 8, Value: 1
+# 0.154127 Path: UPS.PowerConverter.Input.[1].Voltage, Type: Feature, ReportID: 0x31, Offset: 0, Size: 16, Value: 225
+# 0.156105 Path: UPS.PowerConverter.Input.[1].PresentStatus.Boost, Type: Feature, ReportID: 0x2d, Offset: 0, Size: 8, Value: 0
+# 0.156136 Path: UPS.PowerConverter.Input.[1].PresentStatus.Boost, Type: Input, ReportID: 0x2d, Offset: 0, Size: 8, Value: 0
+# 0.156178 Path: UPS.PowerConverter.Input.[1].PresentStatus.Buck, Type: Feature, ReportID: 0x2d, Offset: 8, Size: 8, Value: 0
+# 0.156211 Path: UPS.PowerConverter.Input.[1].PresentStatus.Buck, Type: Input, ReportID: 0x2d, Offset: 8, Size: 8, Value: 0
+# 0.158129 Path: UPS.PowerConverter.Output.Frequency, Type: Feature, ReportID: 0x42, Offset: 0, Size: 16, Value: 50
+# 0.158160 Path: UPS.PowerConverter.Output.Voltage, Type: Feature, ReportID: 0x42, Offset: 16, Size: 16, Value: 225
+# 0.160107 Path: UPS.PowerSummary.AudibleAlarmControl, Type: Feature, ReportID: 0x13, Offset: 0, Size: 8, Value: 2
+# 0.162117 Path: UPS.PowerSummary.DelayBeforeShutdown, Type: Feature, ReportID: 0x09, Offset: 0, Size: 32, Value: -1
+# 0.164108 Path: UPS.PowerSummary.DelayBeforeStartup, Type: Feature, ReportID: 0x0a, Offset: 0, Size: 32, Value: -1
+# 0.166106 Path: UPS.PowerSummary.iDeviceChemistry, Type: Feature, ReportID: 0x10, Offset: 0, Size: 8, Value: 5
+# 0.166136 Path: UPS.PowerSummary.iManufacturer, Type: Feature, ReportID: 0x10, Offset: 8, Size: 8, Value: 1
+# 0.166174 Path: UPS.PowerSummary.ffff00f0, Type: Feature, ReportID: 0x10, Offset: 16, Size: 8, Value: 3
+# 0.166246 Path: UPS.PowerSummary.iProduct, Type: Feature, ReportID: 0x10, Offset: 24, Size: 8, Value: 2
+# 0.166301 Path: UPS.PowerSummary.iSerialNumber, Type: Feature, ReportID: 0x10, Offset: 32, Size: 8, Value: 4
+# 0.168104 Path: UPS.PowerSummary.ffff00e2, Type: Feature, ReportID: 0xe2, Offset: 0, Size: 8, Value: 4
+# 0.170120 Path: UPS.PowerSummary.PercentLoad, Type: Feature, ReportID: 0x07, Offset: 0, Size: 8, Value: 5
+# 0.172101 Path: UPS.PowerSummary.PresentStatus.ACPresent, Type: Feature, ReportID: 0x01, Offset: 0, Size: 8, Value: 1
+# 0.172131 Path: UPS.PowerSummary.PresentStatus.ACPresent, Type: Input, ReportID: 0x01, Offset: 0, Size: 8, Value: 1
+# 0.172167 Path: UPS.PowerSummary.PresentStatus.BelowRemainingCapacityLimit, Type: Feature, ReportID: 0x01, Offset: 8, Size: 8, Value: 0
+# 0.172208 Path: UPS.PowerSummary.PresentStatus.BelowRemainingCapacityLimit, Type: Input, ReportID: 0x01, Offset: 8, Size: 8, Value: 0
+# 0.172246 Path: UPS.PowerSummary.PresentStatus.Charging, Type: Feature, ReportID: 0x01, Offset: 16, Size: 8, Value: 1
+# 0.172298 Path: UPS.PowerSummary.PresentStatus.Charging, Type: Input, ReportID: 0x01, Offset: 16, Size: 8, Value: 1
+# 0.172355 Path: UPS.PowerSummary.PresentStatus.Discharging, Type: Feature, ReportID: 0x01, Offset: 24, Size: 8, Value: 0
+# 0.172410 Path: UPS.PowerSummary.PresentStatus.Discharging, Type: Input, ReportID: 0x01, Offset: 24, Size: 8, Value: 0
+# 0.172461 Path: UPS.PowerSummary.PresentStatus.Good, Type: Feature, ReportID: 0x01, Offset: 32, Size: 8, Value: 1
+# 0.172504 Path: UPS.PowerSummary.PresentStatus.Good, Type: Input, ReportID: 0x01, Offset: 32, Size: 8, Value: 1
+# 0.172538 Path: UPS.PowerSummary.PresentStatus.InternalFailure, Type: Feature, ReportID: 0x01, Offset: 40, Size: 8, Value: 0
+# 0.172571 Path: UPS.PowerSummary.PresentStatus.InternalFailure, Type: Input, ReportID: 0x01, Offset: 40, Size: 8, Value: 0
+# 0.172603 Path: UPS.PowerSummary.PresentStatus.Overload, Type: Feature, ReportID: 0x01, Offset: 48, Size: 8, Value: 0
+# 0.172634 Path: UPS.PowerSummary.PresentStatus.Overload, Type: Input, ReportID: 0x01, Offset: 48, Size: 8, Value: 0
+# 0.174129 Path: UPS.PowerSummary.DesignCapacity, Type: Feature, ReportID: 0x0b, Offset: 0, Size: 8, Value: 100
+# 0.174158 Path: UPS.PowerSummary.CapacityGranularity1, Type: Feature, ReportID: 0x0b, Offset: 8, Size: 8, Value: 1
+# 0.174210 Path: UPS.PowerSummary.FullChargeCapacity, Type: Feature, ReportID: 0x0b, Offset: 16, Size: 8, Value: 100
+# 0.174249 Path: UPS.PowerSummary.CapacityMode, Type: Feature, ReportID: 0x0b, Offset: 24, Size: 8, Value: 2
+# 0.176108 Path: UPS.PowerSummary.RemainingCapacity, Type: Feature, ReportID: 0x06, Offset: 0, Size: 8, Value: 100
+# 0.176137 Path: UPS.PowerSummary.RemainingCapacity, Type: Input, ReportID: 0x06, Offset: 0, Size: 8, Value: 100
+# 0.176177 Path: UPS.PowerSummary.RunTimeToEmpty, Type: Feature, ReportID: 0x06, Offset: 8, Size: 16, Value: 4520
+# 0.176209 Path: UPS.PowerSummary.RunTimeToEmpty, Type: Input, ReportID: 0x06, Offset: 8, Size: 16, Value: 4520
+# 0.176251 Path: UPS.PowerSummary.Voltage, Type: Feature, ReportID: 0x07, Offset: 8, Size: 16, Value: 27.5
+# 0.176291 Detected a UPS: PPC/Offline UPS
+# 0.180164 upsdrv_initinfo...
+# 0.180195 upsdrv_updateinfo...
+# 0.431114 Got 0 HID objects...
+# 0.431155 Quick update...
+# 0.431341 upsdrv_updateinfo...
+# 0.683333 Got 0 HID objects...
+# 0.683432 Quick update...
+# DEVICE:EOC

@@ -34,8 +34,8 @@ functions that will be called by main.  These all have names that start
 with <code class="literal">upsdrv_</code>, and they will be called at different times by main
 depending on what needs to happen.</p><p>See the <a class="link" href="new-drivers.html" title="4. Creating a new driver to support another device">driver documentation</a> for information on writing
 drivers, and also refer to the skeletal driver in <code class="literal">skel.c</code>.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_portability"></a>3.3. Portability</h3></div></div></div><p>Avoid things that will break on other systems.  All the world is not an
-x86 Linux box.</p><p>There are still older systems out there that don’t do C++ style comments.</p><pre class="screen">/* Comments look like this. */
-// Not like this.</pre><p>Newer versions of gcc allow you to declare a variable inside a function
+x86 Linux box.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_c_comments"></a>C comments</h4></div></div></div><p>There are still older systems out there that don’t do C++ style comments.</p><pre class="screen">/* Comments look like this. */
+// Not like this.</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_variable_declarations_go_on_top"></a>Variable declarations go on top</h4></div></div></div><p>Newer versions of gcc allow you to declare a variable inside a function
 after code, somewhat like the way C++ operates, like this:</p><pre class="screen">function do_stuff(void)
 {
         check_something();
@@ -44,8 +44,19 @@ after code, somewhat like the way C++ operates, like this:</p><pre class="screen
 
         a = do_something_else();
 }</pre><p>While this will compile and run on these newer versions, it will fail
-miserably for anyone on an older system.  That means you must not use
-it.  <code class="literal">gcc</code> only warns about this with <code class="literal">-pedantic</code> flag.</p><p>Another feature that does not work on some compilers (e.g. conforming
+miserably for anyone on an older system.  That means you must not use it.</p><p>Note that <code class="literal">gcc</code> only warns about this with <code class="literal">-pedantic</code> flag, and <code class="literal">clang</code>
+with a <code class="literal">-Weverything</code> (possibly <code class="literal">-Wextra</code>) flag, which can be enabled by
+developers with <code class="literal">configure --enable-warnings=...</code> option values (and made
+fatal with <code class="literal">configure --enable-Werror</code>), to ensure non-regression of code
+quality.  It was reported that <code class="literal">clang-16</code> with such options does complain
+about non-portability to older C language revisions even if explicitly
+building for a newer revision.</p><p>Please note that for the purposes of legacy-compatible variable declarations
+(on top of their scopes), a <code class="literal">NUT_UNUSED_VARIABLE(varname)</code> counts as code and
+should be used just below the declarations.  Initial assignments to variables
+(also as return values of methods) may generally happen as part of their
+declarations.</p><p>You can use scoping (e.g. <code class="literal">do { ... } while (0);</code>) where it makes sense
+to constrain visibility of temporary variables, such as in <code class="literal">switch/case</code>
+blocks.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_variable_declaration_in_loop_block_syntax"></a>Variable declaration in loop block syntax</h4></div></div></div><p>Another feature that does not work on some compilers (e.g. conforming
 to "ANSI C"/C89/C90 standard) is initial variable declaration inside a
 <span class="emphasis"><em>for loop</em></span> block, like this:</p><pre class="screen">function do_stuff(void)
 {
@@ -54,7 +65,7 @@ to "ANSI C"/C89/C90 standard) is initial variable declaration inside a
 
         /* Additional loops cause also an error about re-declaring a variable: */
         for (int i = 10; i &lt; 15; ++i) { ... }
-}</pre><div class="tip" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Tip</h3><p>At this point NUT is expected to work correctly when built with a
+}</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_other_hints"></a>Other hints</h4></div></div></div><div class="tip" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Tip</h3><p>At this point NUT is expected to work correctly when built with a
 C99 (or rather GNU99 on many systems) or newer standard.</p></div><p>The NUT codebase may build in a mode without warnings made fatal on C89
 (GNU89), but the emitted warnings indicate that those binaries may crash.
 By the end of 2021, NUT codebase has been revised to pass GNU and strict-C
@@ -70,7 +81,7 @@ of the standard but a GNU extension (and part of C99 and newer standard
 revisions). Many of the "offences" against the older standard actually
 come from system and third-party header files.</p><p>That said, the NUT CI farm does run non-regression builds with GNU C89
 and strict C89 standard revisions and minimal passing warnings level,
-to ensure that codebase is and remains at least basically compliant.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_continuous_integration_and_automated_builds"></a>3.4. Continuous Integration and Automated Builds</h3></div></div></div><p>To ease and automate the build scenarios which were deemed important for
+to ensure that codebase is and remains at least basically compliant.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_continuous_integration_and_automated_builds"></a>3.4. Continuous Integration and Automated Builds</h3></div></div></div><p>To ease and automate the build scenarios which were deemed important for
 quality assurance and non-regression checks of NUT, several solutions
 were introduced over time.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_build_automation_tools_and_scripts"></a>Build automation tools and scripts</h4></div></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_ci_build_sh"></a>ci_build.sh</h5></div></div></div><p>This script was originally introduced (following ZeroMQ/ZProject example)
 to automate CI builds, by automating certain scenarios driven by exported
@@ -545,7 +556,9 @@ the vast range of existing systems that run NUT today and expect to be
 able to do so tomorrow (hence the required C99+ support noted above).</p><p>In NUT codebase we prefer to mark un-used variables explicitly in the
 body of the function (or an <code class="literal">#ifdef</code> branch of its code) using the
 <code class="literal">NUT_UNUSED_VARIABLE(varname)</code> as a routine call inside a function
-body, referring to the macro defined in <code class="literal">common.h</code>.</p><p>To display in a rough example:</p><pre class="screen">        static void signal_X_handler(int signal_X) {
+body, referring to the macro defined in <code class="literal">common.h</code>.</p><p>Please note that for the purposes of legacy-compatible variable declarations
+(on top of their scopes), <code class="literal">NUT_UNUSED_VARIABLE(varname)</code> counts as code and
+should happen below the declarations.</p><p>To display in a rough example:</p><pre class="screen">        static void signal_X_handler(int signal_X) {
                 NUT_UNUSED_VARIABLE(signal_X);
                 /* We have explicitly got nothing to do if we catch signal X */
                 return;
@@ -851,4 +864,4 @@ scenarios automatically. If your code adds a substantial feature, consider
 extending the <code class="literal">Jenkinsfile-dynamatrix</code> and/or <code class="literal">ci_build.sh</code> scripts in the
 workspace root to add another <code class="literal">BUILD_TYPE</code> to the matrix of tests run in
 parallel.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2023-09-14 14:45:25 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="design.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="new-drivers.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2023-09-20 08:41:25 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="design.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="new-drivers.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
