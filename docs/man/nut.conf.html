@@ -824,6 +824,21 @@ the MODE should be set to netclient.
 </dl></div>
 </dd>
 <dt class="hdlist1">
+<strong>ALLOW_NO_DEVICE</strong>
+</dt>
+<dd>
+<p>
+Optional, defaults to <code>false</code>.  Set this to <code>true</code> to allow starting the <code>upsd</code>
+NUT data server service even if <code>ups.conf</code> has no device sections configured
+at the moment. This environment variable overrides the built-in "false" flag
+value in the <code>upsd</code> program, and an optional same-named default flag that
+can be set in <code>upsd.conf</code>.
+</p>
+<div class="paragraph"><p>If you want a data server always running and responding on the network, even
+if it initially has nothing to serve (may be live-reloaded later, when devices
+become configured), this option is for you.</p></div>
+</dd>
+<dt class="hdlist1">
 <strong>UPSD_OPTIONS</strong>
 </dt>
 <dd>
@@ -860,8 +875,6 @@ system remains offline for an unreasonable amount of time if line
 power has returned.  See sleep(1) for compatible time syntax.
 If you specify the time in seconds, use the "s" suffix.
 </p>
-</dd>
-</dl></div>
 <div class="admonitionblock">
 <table><tr>
 <td class="icon">
@@ -871,6 +884,20 @@ If you specify the time in seconds, use the "s" suffix.
 Please read <a href="http://bugs.debian.org/358696">http://bugs.debian.org/358696</a> for more details.</td>
 </tr></table>
 </div>
+</dd>
+<dt class="hdlist1">
+<strong>POWEROFF_QUIET</strong>
+</dt>
+<dd>
+<p>
+Optional, defaults to <code>false</code>.  This setting controls if the NUT shutdown
+integration scripts or service units would emit messages about their activity
+(or lack thereof).  By default they may be verbose, to aid in post-mortem
+troubleshooting via logs or console captures.  Set to <code>true</code> to avoid that
+trove of information, if you consider it noise.
+</p>
+</dd>
+</dl></div>
 </div>
 </div>
 <div class="sect1">
@@ -912,7 +939,7 @@ file in order to determine which components have to be started.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-07-01 08:44:37 UTC -- Network UPS Tools 2.8.0.1
+Last updated 2023-10-05 08:43:27 UTC -- Network UPS Tools 2.8.0.1
 </div>
 </div>
 </body>
