@@ -1214,6 +1214,35 @@ Refer to the section:
 or refer to the online version.</p></div>
 </dd>
 <dt class="hdlist1">
+<strong>OFFDURATION</strong> <em>seconds</em>
+</dt>
+<dd>
+<p>
+NUT supports an "administrative OFF" for power devices which can be managed to
+turn off their application workload, while the UPS or ePDU remains accessible
+for monitoring and management. This toggle allows to delay propagation of such
+state into a known loss of a feed (possibly triggering FSD on <code>upsmon</code> clients
+which <code>MONITOR</code> the device and are in fact still alive&#8201;&#8212;&#8201;e.g. with multiple
+power sources or because they as the load are not really turned off), because
+when some devices begin battery calibration, they report "OFF" for a few seconds
+and only then they might report "CAL" after switching all the power relays&#8201;&#8212;&#8201;thus causing false-positives for <code>upsmon</code> FSD trigger.
+</p>
+<div class="paragraph"><p>A negative value means to disable decreasing the counter of working power
+supplies in such cases, and a zero makes the effect of detected "OFF" state
+immediate. Built-in default value is 30 (seconds), to put an "OFF" state into
+effect (decrease known-fed supplies count) if it persists for this many seconds.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">so far we support the device reporting an "OFF" state which usually
+means completely un-powering the load; a bug-tracker issue was logged to
+design similar support for just some manageable outlets or outlet groups.</td>
+</tr></table>
+</div>
+</dd>
+<dt class="hdlist1">
 <strong>RBWARNTIME</strong> <em>seconds</em>
 </dt>
 <dd>
@@ -1393,7 +1422,7 @@ does not change the previously active logging verbosity.</td>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-09-17 02:43:19 UTC -- Network UPS Tools 2.8.0.1
+Last updated 2023-10-17 17:45:48 UTC -- Network UPS Tools 2.8.0.1
 </div>
 </div>
 </body>

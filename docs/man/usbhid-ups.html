@@ -1114,6 +1114,27 @@ wall power is lost&#8201;&#8212;&#8201;and need this option to handle shutdowns.
 </p>
 </dd>
 <dt class="hdlist1">
+<strong>onlinedischarge_calibration</strong>
+</dt>
+<dd>
+<p>
+If this flag is set, the driver will treat <code>OL+DISCHRG</code> status as calibration.
+Some UPS models (e.g. APC were seen to do so) report <code>OL+DISCHRG</code> when they
+are in calibration mode. This usually happens after a few seconds reporting
+an <code>OFF</code> state as well, while the hardware is switching to on-battery mode.
+</p>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">If it takes so long on your device that a shutdown gets issued, you may
+want to look at <code>upsmon</code> option <code>OFFDURATION</code> used to filter out temporary
+values of "administrative OFF" as not a loss of a feed for the powered load.</td>
+</tr></table>
+</div>
+</dd>
+<dt class="hdlist1">
 <strong>disable_fix_report_desc</strong>
 </dt>
 <dd>
@@ -1363,7 +1384,7 @@ Arjen de Korte
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-09-19 08:44:57 UTC -- Network UPS Tools 2.8.0.1
+Last updated 2023-10-17 17:45:48 UTC -- Network UPS Tools 2.8.0.1
 </div>
 </div>
 </body>
