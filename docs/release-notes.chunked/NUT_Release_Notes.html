@@ -183,6 +183,29 @@ improvement for <code class="literal">POLL_INTERVAL_MIN</code> from <a class="ul
 fix to clean obsoleted readings (if any) AFTER getting new info from an
      <code class="literal">apcupsd</code> daemon, to avoid the gap when NUT driver knows nothing [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2007" target="_top">#2007</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
+apc_modbus driver was introduced, to cover the feature gap between existing
+   NUT drivers for APC hardware and the actual USB-connected devices (or their
+   firmwares) released since roughly 2010, which deprecated standard USB HID
+   support in favor of Modbus-based protocol which is used across the board
+   (also with their network management cards). The new driver can monitor APC
+   UPS devices over TCP and Serial connections, as well as USB with a patched
+   libmodbus (check <a class="ulink" href="https://github.com/EchterAgo/libmodbus/commits/rtu_usb" target="_top">https://github.com/EchterAgo/libmodbus/commits/rtu_usb</a>
+   for now, PR pending). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/139" target="_top">#139</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2063" target="_top">#2063</a>]
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+For a decade until this driver got introduced, people were advised to
+     use apcupsd project as the actual program which talks to a device, and
+     NUT apcupsd-ups driver to relay information back and forth. This was a
+     limited solution due to lack of command and variable setting support,
+     as well as relaying of just some readings (just whatever apcupsd exposes,
+     further constrained by what our driver knows to re-translate), with
+     little leverage for NUT to tap into everything the device has to offer.
+     There were also issues on some systems due to packaging (e.g. marking
+     NUT and apcupsd as competing implementations of the same features) which
+     required clumsy workarounds to get both installed and running. Finally,
+     there is a small matter of long-term viability of that approach: last
+     commits to apcupsd sources were in 2017 (with last release 3.14.14 in
+     May 2016): <a class="ulink" href="https://sourceforge.net/p/apcupsd/svn/HEAD/tree/" target="_top">https://sourceforge.net/p/apcupsd/svn/HEAD/tree/</a>
+</li></ul></div></li><li class="listitem"><p class="simpara">
 NUT for Windows:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 Ability to build NUT for Windows, last tackled with a branch based on
@@ -2975,4 +2998,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.31. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2023-10-19 23:57:36 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2023-10-20 20:46:24 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
