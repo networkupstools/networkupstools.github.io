@@ -915,7 +915,7 @@ second), independently of (and/or in addition to) any <code>TIMER</code> keyword
 </div>
 <div class="sect2">
 <h3 id="_repeater_mode_2">Repeater Mode</h3>
-<div class="paragraph"><p>In this context, <code>port</code> in the <code>ups.conf</code> block is the name of a remote UPS,
+<div class="paragraph"><p>In this context, <code>port</code> in the <code>ups.conf</code> block is the name of the target UPS,
 using the NUT format, i.e.:</p></div>
 <div class="literalblock">
 <div class="content">
@@ -936,6 +936,10 @@ UPS on the same host as <strong>dummy-ups</strong>, use <code>port = upsname@loc
 bit between data-requesting cycles (currently this delay is hardcoded to one
 second), so propagation of data updates available to a remote <code>upsd</code> may lag
 by this much.</p></div>
+<div class="paragraph"><p>Beware that any error encountered at repeater mode startup (e.g. when not all
+target UPS to be repeated or <code>upsd</code> instances are connectable yet) will cause
+<strong>dummy-ups</strong> driver to terminate prematurely. This behaviour can be changed by
+setting the <code>repeater_disable_strict_start</code> flag, making such errors non-fatal.</p></div>
 </div>
 </div>
 </div>
@@ -1024,7 +1028,7 @@ this output as if it were a normal UPS.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-07-01 08:44:37 UTC -- Network UPS Tools 2.8.0.1
+Last updated 2023-10-26 14:56:57 UTC -- Network UPS Tools 2.8.0.1
 </div>
 </div>
 </body>
