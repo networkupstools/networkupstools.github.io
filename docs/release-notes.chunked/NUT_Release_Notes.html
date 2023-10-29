@@ -440,27 +440,40 @@ sstate (server state, e.g. upsd) should now "PING" drivers also if they
 </li><li class="listitem">
 Clarified documentation in codebase according to end-user feedback [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1721" target="_top">#1721</a>,
    <a class="ulink" href="https://github.com/networkupstools/nut/issues/1750" target="_top">#1750</a> and others over time]
-</li><li class="listitem">
+</li><li class="listitem"><p class="simpara">
+upsmon client changes include:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 Several fixes for <code class="literal">upsmon</code> behavior [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1761" target="_top">#1761</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1680" target="_top">#1680</a>…], including new
-   ability to configure default POWERDOWNFLAG location — packagers are
-   encouraged to pick optimal location for their distributions (which
-   remains mounted at least read-only late in shutdown) and a new optional
-   POLLFAIL_LOG_THROTTLE_MAX setting [<a class="ulink" href="https://github.com/networkupstools/nut/issues/529" target="_top">#529</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/506" target="_top">#506</a>]
+     ability to configure default POWERDOWNFLAG location — packagers are
+     encouraged to pick optimal location for their distributions (which
+     remains mounted at least read-only late in shutdown) and a new optional
+     POLLFAIL_LOG_THROTTLE_MAX setting [<a class="ulink" href="https://github.com/networkupstools/nut/issues/529" target="_top">#529</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/506" target="_top">#506</a>]
 </li><li class="listitem">
 Also <code class="literal">upsmon</code> should now recognize <code class="literal">OFF</code> and <code class="literal">BYPASS</code> flags in <code class="literal">ups.status</code>
-   and report that these states begin or end. The <code class="literal">OFF</code> state usually means
-   than an administrative action happened to power off the load, but the UPS
-   device is still alive and communicating (USB, SNMP, etc.); corresponding
-   <code class="literal">MONITOR</code>'ed amount of power sources are considered not being "fed" for
-   the power value calculation purposes. The <code class="literal">BYPASS</code> state is now treated
-   similarly to <code class="literal">ONBATT</code>: currently this UPS "feeds" its load, but if later
-   communications fail, it is considered dead. This may have unintended
-   consequences for devices (or NUT drivers) that do not report these modes
-   correctly (e.g. an APC calibration routine seems to start with a few
-   seconds of "OFF" state), so the reported status is only considered as a
-   loss of feed if it persists for more than <code class="literal">OFFDURATION</code> seconds. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2044" target="_top">#2044</a>,
-   <a class="ulink" href="https://github.com/networkupstools/nut/issues/2104" target="_top">#2104</a>]
+     and report that these states begin or end. The <code class="literal">OFF</code> state usually means
+     than an administrative action happened to power off the load, but the UPS
+     device is still alive and communicating (USB, SNMP, etc.); corresponding
+     <code class="literal">MONITOR</code>'ed amount of power sources are considered not being "fed" for
+     the power value calculation purposes. The <code class="literal">BYPASS</code> state is now treated
+     similarly to <code class="literal">ONBATT</code>: currently this UPS "feeds" its load, but if later
+     communications fail, it is considered dead. This may have unintended
+     consequences for devices (or NUT drivers) that do not report these modes
+     correctly (e.g. an APC calibration routine seems to start with a few
+     seconds of "OFF" state), so the reported status is only considered as a
+     loss of feed if it persists for more than <code class="literal">OFFDURATION</code> seconds. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2044" target="_top">#2044</a>,
+     <a class="ulink" href="https://github.com/networkupstools/nut/issues/2104" target="_top">#2104</a>]
 </li><li class="listitem">
+Introduced <code class="literal">SHUTDOWNEXIT no</code> configuration toggle for systems which
+     require a long time to stop their workload such as virtual machines.
+     Since the disconnection of a "secondary" client is treated by the
+     "primary" system as permission to proceed with its own shutdown and
+     power-off for the UPS, the original (now merely default) behavior to
+     call <code class="literal">SHUTDOWNCMD</code> and immediately exit could be counter-productive.
+     An optional delay can also be introduced. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2133" target="_top">#2133</a>]
+</li><li class="listitem">
+Note there were other changes detailed below which impacted several NUT
+     programs, including <code class="literal">upsmon</code>.
+</li></ul></div></li><li class="listitem">
 Extended Linux systemd support with optional notifications about daemon
    state (READY, RELOADING, STOPPING) and watchdog keep-alive messages [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1590" target="_top">#1590</a>]
 </li><li class="listitem">
@@ -3009,4 +3022,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.31. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2023-10-26 14:58:42 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2023-10-29 02:45:09 -- Network UPS Tools 2.8.0.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

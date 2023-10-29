@@ -1295,6 +1295,37 @@ together, i.e.:</p></div>
 </div></div>
 </dd>
 <dt class="hdlist1">
+<strong>SHUTDOWNEXIT</strong> <em>boolean|number</em>
+</dt>
+<dd>
+<p>
+After initiating shutdown, should this upsmon daemon itself exit?
+By doing so NUT secondary systems can tell the NUT primary that
+it can proceed with its own shutdown and eventually tell the UPS
+to cut power for the load. ("Yes" by default)
+</p>
+<div class="paragraph"><p>Some "secondary" systems with workloads that take considerable time
+to stop (e.g. virtual machines or large databases) can benefit from
+reporting (by virtue of logging off the data server) that they are
+ready for the "primary" system to begin its own shutdown and eventually
+to tell the UPS to cut the power - not as soon as they have triggered
+their own shutdown, but at a later point (e.g. when the upsmon service
+is stopped AFTER the heavier workloads).</p></div>
+<div class="paragraph"><p>Note that the actual ability to complete such shutdown depends on the
+remaining battery run-time at the moment when UPS power state becomes
+considered critical and the shutdowns begin. You may also have to tune
+<code>HOSTSYNC</code> on the NUT primary to be long enough for those secondaries to
+stop their services. In practice, it may be worthwhile to investigate
+ways to trigger shutdowns earlier on these systems, e.g. by setting up
+<code>upssched</code> integration, or <code>dummy-ups</code> driver with overrides for stricter
+<code>battery.charge</code> or <code>battery.runtime</code> triggers than used by the rest of
+your servers.</p></div>
+<div class="paragraph"><p>This option supports Boolean-style strings (yes/on/true or no/off/false)
+or numbers to define a delay (in seconds) between calling <code>SHUTDOWNCMD</code>
+and exiting the daemon. Zero means immediate exit (default), negative
+values mean never exiting on its own accord.</p></div>
+</dd>
+<dt class="hdlist1">
 <strong>CERTPATH</strong> <em>certificate file or database</em>
 </dt>
 <dd>
@@ -1422,7 +1453,7 @@ does not change the previously active logging verbosity.</td>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-10-17 17:45:48 UTC -- Network UPS Tools 2.8.0.1
+Last updated 2023-10-29 02:43:25 UTC -- Network UPS Tools 2.8.0.1
 </div>
 </div>
 </body>
