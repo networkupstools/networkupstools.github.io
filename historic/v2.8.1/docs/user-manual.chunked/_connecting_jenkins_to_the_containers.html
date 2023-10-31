@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>L.2. Connecting Jenkins to the containers</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><link rel="home" href="index.html" title="Network UPS Tools User Manual" /><link rel="up" href="CI_Farm_Notes.html" title="L. CI Farm configuration notes" /><link rel="prev" href="_setting_up_the_multi_arch_linux_lxc_container_farm_for_nut_ci.html" title="L.1. Setting up the multi-arch Linux LXC container farm for NUT CI" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="_setting_up_the_multi_arch_linux_lxc_container_farm_for_nut_ci.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> </td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_connecting_jenkins_to_the_containers"></a>L.2. Connecting Jenkins to the containers</h3></div></div></div><p>To properly cooperate with the
+<a class="ulink" href="https://github.com/networkupstools/jenkins-dynamatrix" target="_top">jenkins-dynamatrix</a>
+project driving regular NUT CI builds, each build environment should be
+exposed as an individual agent with labels describing its capabilities.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_agent_labels"></a>Agent Labels</h4></div></div></div><p>With the <code class="literal">jenkins-dynamatrix</code>, agent labels are used to calculate a large
+"slow build" matrix to cover numerous scenarios for what can be tested
+with the current population of the CI farm, across operating systems,
+<code class="literal">make</code>, shell and compiler implementations and versions, and C/C++ language
+revisions, to name a few common "axes" involved.</p><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_labels_for_qemu"></a>Labels for QEMU</h5></div></div></div><p>Emulated-CPU container builds are CPU-intensive, so for them we define as
+few capabilities as possible: here CI is more interested in checking how
+binaries behave on those CPUs, <span class="strong"><strong>not</strong></span> in checking the quality of recipes
+(distcheck, Make implementations, etc.), shell scripts or documentation,
+which is more efficient to test on native platforms.</p><p>Still, we are interested in results from different compiler suites, so
+specify at least one version of each.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>Currently the NUT <code class="literal">Jenkinsfile-dynamatrix</code> only looks at various
+<code class="literal">COMPILER</code> variants for <code class="literal">qemu-nut-builder</code> use-cases, disregarding the
+versions and just using one that the environment defaults to.</p></div><p>The reduced set of labels for QEMU workers looks like:</p><pre class="screen">qemu-nut-builder qemu-nut-builder:alldrv
+NUT_BUILD_CAPS=drivers:all NUT_BUILD_CAPS=cppunit
+OS_FAMILY=linux OS_DISTRO=debian11 GCCVER=10 CLANGVER=11
+COMPILER=GCC COMPILER=CLANG
+ARCH64=ppc64le ARCH_BITS=64</pre></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_labels_for_native_builds"></a>Labels for native builds</h5></div></div></div><p>For contrast, a "real" build agent’s set of labels, depending on
+presence or known lack of some capabilities, looks something like this:</p><pre class="screen">doc-builder nut-builder nut-builder:alldrv
+NUT_BUILD_CAPS=docs:man NUT_BUILD_CAPS=docs:all
+NUT_BUILD_CAPS=drivers:all NUT_BUILD_CAPS=cppunit=no
+OS_FAMILY=bsd OS_DISTRO=freebsd12 GCCVER=10 CLANGVER=10
+COMPILER=GCC COMPILER=CLANG
+ARCH64=amd64 ARCH_BITS=64
+SHELL_PROGS=sh SHELL_PROGS=dash SHELL_PROGS=zsh SHELL_PROGS=bash
+SHELL_PROGS=csh SHELL_PROGS=tcsh SHELL_PROGS=busybox
+MAKE=make MAKE=gmake
+PYTHON=python2.7 PYTHON=python3.8</pre></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_generic_agent_attributes"></a>Generic agent attributes</h4></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Name: e.g. <code class="literal">ci-debian-altroot--jenkins-debian10-arm64</code> (note the
+  pattern for "Conflicts With" detailed below)
+</li><li class="listitem"><p class="simpara">
+Remote root directory: preferably unique per agent, to avoid surprises;
+  e.g.: <code class="literal">/home/abuild/jenkins-nut-altroots/jenkins-debian10-armel</code>
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Note it may help that the system home directory itself is shared between
+   co-located containers, so that the <code class="literal">.ccache</code> or <code class="literal">.gitcache-dynamatrix</code>
+   are available to all builders with identical contents
+</li><li class="listitem">
+If RAM permits, the Jenkins Agent working directory may be placed in
+   a temporary filesystem not backed by disk (e.g. <code class="literal">/dev/shm</code> on modern
+   Linux distributions); roughly estimate 300Mb per executor for NUT builds.
+</li></ul></div></li><li class="listitem">
+Usage: "Only build jobs with label expressions matching this node"
+</li><li class="listitem"><p class="simpara">
+Node properties / Environment variables:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+<code class="literal">PATH+LOCAL</code> ⇒ <code class="literal">/usr/lib/ccache</code>
+</li></ul></div></li></ul></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_where_to_run_agent_jar"></a>Where to run agent.jar</h4></div></div></div><p>Depending on circumstances of the container, there are several options
+available to the NUT CI farm:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Java can run in the container, efficiently (native CPU, different distro)
+  ⇒ the container may be exposed as a standalone host for direct SSH access
+  (usually by NAT, exposing SSH on a dedicated port of the host; or by first
+  connecting the Jenkins controller with the host as an SSH Build Agent, and
+  then calling SSH to the container as a prefix for running the agent; or
+  by using Jenkins Swarm agents), so ultimately the build <code class="literal">agent.jar</code> JVM
+  would run in the container.
+  Filesystem for the <code class="literal">abuild</code> account may be or not be shared with the host.
+</li><li class="listitem">
+Java can not run in the container (crashes on emulated CPU, or is too old
+  in the agent container’s distro — currently Jenkins requires JRE 8+, but
+  eventually will require 11+) ⇒ the agent would run on the host, and then
+  the host would <code class="literal">ssh</code> or <code class="literal">chroot</code> (networking not required, but bind-mount
+  of <code class="literal">/home/abuild</code> and maybe other paths from host would be needed) called
+  for executing <code class="literal">sh</code> steps in the container environment. Either way, home
+  directory of the <code class="literal">abuild</code> account is maintained on the host and shared with
+  the guest environment, user and group IDs should match.
+</li><li class="listitem">
+Java is inefficient in the container (operations like un-stashing the source
+  succeed but take minutes instead of seconds) ⇒ either of the above
+</li></ul></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_using_jenkins_ssh_build_agents"></a>Using Jenkins SSH Build Agents</h5></div></div></div><p>This is a typical use-case for tightly integrated build farms under common
+management, where the Jenkins controller can log by SSH into systems which
+act as its build agents. It injects and launches the <code class="literal">agent.jar</code> to execute
+child processes for the builds, and maintains a tunnel to communicate.</p><p>Methods below involving SSH assume that you have configured a password-less
+key authentication from the host machine to the <code class="literal">abuild</code> account in each
+guest build environment container.
+This can be an <code class="literal">ssh-keygen</code> result posted into <code class="literal">authorized_keys</code>, or a
+trusted key passed by a chain of ssh agents from a Jenkins Credential
+for connection to the container-hoster into the container.
+The private SSH key involved may be secured by a pass-phrase, as long as
+your Jenkins Credential storage knows it too.
+Note that for the approaches explored below, the containers are not
+directly exposed for log-in from any external network.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
+For passing the agent through an SSH connection from host to container,
+  so that the <code class="literal">agent.jar</code> runs inside the container environment, configure:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Launch method: "Agents via SSH"
+</li><li class="listitem"><p class="simpara">
+Host, Credentials, Port: as suitable for accessing the container-hoster
+</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>The container-hoster should have accessed the guest container from
+      the account used for intermediate access, e.g. <code class="literal">abuild</code>, so that its
+      <code class="literal">.ssh/known_hosts</code> file would trust the SSH server on the container.</p></div></li><li class="listitem"><p class="simpara">
+Prefix Start Agent Command: content depends on the container name,
+   but generally looks like the example below to report some info about
+   the final target platform (and make sure <code class="literal">java</code> is usable) in the
+   agent’s log. Note that it ends with un-closed quote and a space char:
+</p><pre class="screen">ssh jenkins-debian10-amd64 '( java -version &amp; uname -a ; getconf LONG_BIT; getconf WORD_BIT; wait ) &amp;&amp;</pre></li><li class="listitem">
+Suffix Start Agent Command: a single quote to close the text opened above:
+</li></ul></div></li></ul></div><pre class="screen">'</pre><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
+The other option is to run the <code class="literal">agent.jar</code> on the host, for all the
+  network and filesystem magic the agent does, and only execute shell
+  steps in the container. The solution relies on overridden <code class="literal">sh</code> step
+  implementation in the <code class="literal">jenkins-dynamatrix</code> shared library that uses a
+  magic <code class="literal">CI_WRAP_SH</code> environment variable to execute a pipe into the
+  container. Such pipes can be <code class="literal">ssh</code> or <code class="literal">chroot</code> with appropriate host
+  setup described above.
+</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>In case of ssh piping, remember that the container’s
+      <code class="literal">/etc/ssh/sshd_config</code> should <code class="literal">AcceptEnv *</code> and the SSH
+      server should be restarted after such configuration change.</p></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Launch method: "Agents via SSH"
+</li><li class="listitem">
+Host, Credentials, Port: as suitable for accessing the container-hoster
+</li><li class="listitem"><p class="simpara">
+Prefix Start Agent Command: content depends on the container name,
+   but generally looks like the example below to report some info about
+   the final target platform (and make sure it is accessible) in the
+   agent’s log. Note that it ends with a space char, and that the command
+   here should not normally print anything into stderr/stdout (this tends
+   to confuse the Jenkins Remoting protocol):
+</p><pre class="screen">echo PING &gt; /dev/tcp/jenkins-debian11-ppc64el/22 &amp;&amp;</pre></li><li class="listitem">
+Suffix Start Agent Command: empty
+</li></ul></div></li><li class="listitem"><p class="simpara">
+Node properties / Environment variables:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><p class="simpara">
+<code class="literal">CI_WRAP_SH</code> ⇒
+</p><pre class="screen">ssh -o SendEnv='*' "jenkins-debian11-ppc64el" /bin/sh -xe</pre></li></ul></div></li></ul></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_using_jenkins_swarm_agents"></a>Using Jenkins Swarm Agents</h5></div></div></div><p>This approach allows remote systems to participate in the NUT CI farm by
+dialing in and so defining an agent. A single contributing system may be
+running a number of containers or virtual machines set up following the
+instructions above, and each of those would be a separate build agent.</p><p>Such systems should be "dedicated" to contribution in the sense that
+they should be up and connected for days, and sometimes tasks would land.</p><p>Configuration files maintained on the Swarm Agent system dictate which
+labels or how many executors it would expose, etc. Credentials to access
+the NUT CI farm Jenkins controller to register as an agent should be
+arranged with the farm maintainers, and currently involve a GitHub account
+with Jenkins role assignment for such access, and a token for authentication.</p><p>The <a class="ulink" href="https://github.com/networkupstools/jenkins-swarm-nutci" target="_top">jenkins-swarm-nutci</a>
+repository contains example code from such setup with a back-up server
+experiment for the NUT CI farm, including auto-start method scripts for
+Linux systemd and upstart, illumos SMF, and OpenBSD rcctl.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_sequentializing_the_stress"></a>Sequentializing the stress</h4></div></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_running_one_agent_at_a_time"></a>Running one agent at a time</h5></div></div></div><p>Another aspect of farm management is that emulation is a slow and intensive
+operation, so we can not run all agents and execute builds at the same time.</p><p>The current solution relies on
+<a class="ulink" href="https://github.com/jimklimov/conflict-aware-ondemand-retention-strategy-plugin" target="_top">https://github.com/jimklimov/conflict-aware-ondemand-retention-strategy-plugin</a>
+to allow co-located build agents to "conflict" with each other — when one
+picks up a job from the queue, it blocks neighbors from starting; when it
+is done, another may start.</p><p>Containers can be configured with "Availability ⇒ On demand", with shorter
+cycle to switch over faster (the core code sleeps a minute between attempts):</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+In demand delay: <code class="literal">0</code>;
+</li><li class="listitem">
+Idle delay: <code class="literal">0</code> (Jenkins may change it to <code class="literal">1</code>);
+</li><li class="listitem">
+Conflicts with: <code class="literal">^ci-debian-altroot--.*$</code> assuming that is the pattern
+  for agent definitions in Jenkins — not necessarily linked to hostnames.
+</li></ul></div><p>Also, the "executors" count should be reduced to the amount of compilers
+in that system (usually 2) and so avoid extra stress of scheduling too many
+emulated-CPU builds at once.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_sequentializing_the_git_cache_access"></a>Sequentializing the git cache access</h5></div></div></div><p>As part of the <code class="literal">jenkins-dynamatrix</code> optional optimizations, the NUT CI
+recipe invoked via <code class="literal">Jenkinsfile-dynamatrix</code> maintains persistent git
+reference repositories that can be used to cache NUT codebase (including
+the tested commits) and so considerably speed up workspace preparation
+when running numerous build scenarios on the same agent.</p><p>Such <code class="literal">.gitcache-dynamatrix</code> cache directories are located in the build
+workspace location (unique for each agent), but on a system with numerous
+containers these names can be symlinks pointing to a shared location.</p><p>To avoid collisions with several executors updating the same cache with
+new commits, critical access windows are sequentialized with the use of
+<a class="ulink" href="https://github.com/jenkinsci/lockable-resources-plugin" target="_top">Lockable Resources
+plugin</a>. On the <code class="literal">jenkins-dynamatrix</code> side this is facilitated by labels:</p><pre class="screen">DYNAMATRIX_UNSTASH_PREFERENCE=scm-ws:nut-ci-src
+DYNAMATRIX_REFREPO_WORKSPACE_LOCKNAME=gitcache-dynamatrix:SHARED_HYPERVISOR_NAME</pre><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+The <code class="literal">DYNAMATRIX_UNSTASH_PREFERENCE</code> tells the <code class="literal">jenkins-dynamatrix</code> library
+  code which checkout/unstash strategy to use on a particular build agent
+  (following values defined in the library; <code class="literal">scm-ws</code> means SCM caching
+  under the agent workspace location, <code class="literal">nut-ci-src</code> names the cache for
+  this project);
+</li><li class="listitem">
+The <code class="literal">DYNAMATRIX_REFREPO_WORKSPACE_LOCKNAME</code> specifies a semi-unique
+  string: it should be same for all co-located agents which use the same
+  shared cache location, e.g. guests on the same hypervisor; and it should
+  be different for unrelated cache locations, e.g. different hypervisors
+  and stand-alone machines.
+</li></ul></div></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
+		Last updated 2023-10-31 22:46:04 -- Network UPS Tools 2.8.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_setting_up_the_multi_arch_linux_lxc_container_farm_for_nut_ci.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="CI_Farm_Notes.html">Up</a></td><td width="40%" align="right"> </td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

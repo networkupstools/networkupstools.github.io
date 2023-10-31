@@ -1,0 +1,1004 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<title>Network UPS Tools - US9003 UPS Communication Interface</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="generator" content="AsciiDoc 10.1.2" />
+<meta name="description" content="Power Devices support" />
+<meta name="keywords" content="NUT, Network UPS Tools, Eaton, APC, Free Software, UPS, Uninterruptible Power Supplies, PDU, Power Distributions Units, Solar Controllers, power, power devices, control, monitor, Linux, Unix, Windows, Mac OS X" />
+<meta name="format-detection" content="telephone=no" />
+<link rel="stylesheet" href="../css/xhtml11.css" type="text/css" />
+<link rel="stylesheet" href="../css/web-layout.css" type="text/css" />
+<link rel="shortcut icon" href="../faviconut.ico" />
+<link rel="icon" type="image/png" href="../faviconut.png" />
+<script type="text/javascript" src="../scripts/asciidoc.js"></script>
+<script type="text/javascript">
+/*<![CDATA[*/
+asciidoc.install(2);
+/*]]>*/
+</script>
+<!--[if lte IE 7]>
+<link rel="stylesheet" href="../css/ie-overrides.css" type="text/css" />
+<![endif]-->
+<!--[if lte IE 6]>
+<script type="text/javascript" src="../scripts/filter_png.js"></script>
+<![endif]-->
+</head>
+<body>
+<div id="layout-banner-box">
+<div id="layout-banner">
+  <div id="layout-logo"><img src="../images/nut-logo.png" alt="NUT logo" /></div>
+  <div id="layout-title">Network UPS Tools</div>
+  <div id="layout-description">Power Devices support</div>
+</div>
+</div>
+<div id="layout-menu-box">
+  <ul id="layout-menu">
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="../download.html">Download</a></li>
+    <li><a href="../projects.html">Related projects</a></li>
+    <li><a href="../stable-hcl.html">Compatibility</a></li>
+    <li><a href="../features.html">Features</a></li>
+    <li><a href="../documentation.html">Documentation</a></li>
+    <li><a href="../support.html">Support</a></li>
+    <li>* <a href="https://alioth-lists.debian.net/pipermail/nut-upsuser/">NUT UPS User archive</a></li>
+    <li>* <a href="https://alioth-lists.debian.net/pipermail/nut-upsdev/">NUT UPS Dev archive</a></li>
+    <li>* <a href="https://github.com/networkupstools/nut/">GitHub</a>:<a
+        href="https://github.com/networkupstools/nut/issues">issues</a>,<a
+        href="https://github.com/networkupstools/nut/wiki">wiki</a>
+        and more</li>
+    <li><a href="..//historic/index.html">Sub-sites for historic releases</a></li>
+    <li><a href="https://opencollective.com/networkupstools/">Sponsor NUT</a></li>
+  </ul>
+  <!-- div id="sponsor"><span>Hosted by<br/></span>
+    <a href="http://sponsor.com"><img src="../images/sponsor-logo.png" alt="Sponsor" /></a>
+  </div -->
+</div>
+<div id="layout-content-box">
+<div id="layout-content">
+<div id="header">
+<h1>US9003 UPS Communication Interface</h1>
+</div>
+<div id="toc">
+  <div id="toctitle">Table of Contents</div>
+  <noscript><p><b>JavaScript must be enabled in your browser to display the table of contents.</b></p></noscript>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_hardware">Hardware</h2>
+<div class="sectionbody">
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>UPS Connector</strong>
+</dt>
+<dd>
+<p>
+D-Sub-9 Female
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>Communication Interface Pins Assignment</strong>
+</dt>
+<dd>
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="center" valign="middle">Pin No.        </th>
+<th align="left" valign="middle">Signal         </th>
+<th align="left" valign="middle">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center" valign="middle"><p class="table">2</p></td>
+<td align="left" valign="middle"><p class="table">RXD</p></td>
+<td align="left" valign="middle"><p class="table">RS232 receive data (Output data from UPS to PC)</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">3</p></td>
+<td align="left" valign="middle"><p class="table">TXD</p></td>
+<td align="left" valign="middle"><p class="table">RS232 transmit data (Input data from PC to UPS)</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">4</p></td>
+<td align="left" valign="middle"><p class="table">DTR</p></td>
+<td align="left" valign="middle"><p class="table">+12Vdc</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">5</p></td>
+<td align="left" valign="middle"><p class="table">GND</p></td>
+<td align="left" valign="middle"><p class="table">Signal ground</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">6</p></td>
+<td align="left" valign="middle"><p class="table">BATT LOW</p></td>
+<td align="left" valign="middle"><p class="table">This pin triggers an active-low signal in battery low condition</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">8</p></td>
+<td align="left" valign="middle"><p class="table">BATT MODE</p></td>
+<td align="left" valign="middle"><p class="table">This pin triggers an active-low signal in UPS backup mode</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">1, 7, 9</p></td>
+<td colspan="2" align="left" valign="middle"><p class="table">UNUSED</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</dd>
+<dt class="hdlist1">
+<strong>RS232 Technical Specification Summary</strong>
+</dt>
+<dd>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<em>Connector</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+9 pin, Type D, Female
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>Format</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+ASCII 8 bit, 1 start bit, 1 stop bit
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>Baud Rate</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+1200 bps
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>Parity</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+None
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>Duplex</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Full
+</p>
+</td>
+</tr>
+</table></div>
+</dd>
+</dl></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_message_format">Message Format</h2>
+<div class="sectionbody">
+<div class="paragraph"><p><code>&lt;</code><strong><code>Header</code></strong><code> 1 byte&gt;&lt;</code><strong><code>Message Type</code></strong><code> 1 byte&gt;&lt;</code><strong><code>Data Length</code></strong><code> 3 bytes&gt;&lt;</code><strong><code>Data</code></strong><code> 128bytes max&gt;</code></p></div>
+<div class="paragraph"><p>Where:</p></div>
+<div class="dlist" id="horizontal"><dl>
+<dt class="hdlist1">
+<strong><code>Header</code></strong>
+</dt>
+<dd>
+<p>
+is a <strong><code>^</code></strong> (carat) character
+</p>
+</dd>
+<dt class="hdlist1">
+<strong><code>Message Type</code></strong>
+</dt>
+<dd>
+<p>
+will be one of the following:
+</p>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<strong><code>0</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Command rejected (from UPS to PC)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>1</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Command accepted (from UPS to PC)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>P</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Poll command (from PC to UPS)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>S</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Set command (from PC to UPS)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>D</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Data returned (from UPS to PC)
+</p>
+</td>
+</tr>
+</table></div>
+</dd>
+<dt class="hdlist1">
+<strong><code>Data Length</code></strong>
+</dt>
+<dd>
+<p>
+is the number of bytes of data passed
+</p>
+</dd>
+<dt class="hdlist1">
+<strong><code>Data</code></strong>
+</dt>
+<dd>
+<p>
+is comma delimited.
+If a variable value is unavailable, a comma with no data is placed in the variable location.
+</p>
+<div class="paragraph"><p>For example, if only the 2nd, 4th, and 6th variables have valid data, the UPS response will have the following format:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>^D010,1,,22,,82</code></pre>
+</div></div>
+</dd>
+</dl></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_poll_commands">Poll Commands</h2>
+<div class="sectionbody">
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="center" valign="middle">Command        </th>
+<th align="left" valign="middle">Description                    </th>
+<th align="center" valign="middle">Max Data Length        </th>
+<th align="left" valign="middle">Variables Returned</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>MAN</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">UPS manufacturer</p></td>
+<td align="center" valign="middle"><p class="table">32</p></td>
+<td align="left" valign="middle"><p class="table">Manufacturer</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>MOD</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">UPS model</p></td>
+<td align="center" valign="middle"><p class="table">64</p></td>
+<td align="left" valign="middle"><p class="table">UPS model</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>ST1</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Status group 1 - Battery</p></td>
+<td align="center" valign="middle"><p class="table">32</p></td>
+<td align="left" valign="middle"><p class="table">,Battery status ,,,, Estimated charge</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>ST2</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Status group 2 - Input</p></td>
+<td align="center" valign="middle"><p class="table">65</p></td>
+<td align="left" valign="middle"><p class="table">,Input num lines, Input frequency 1, Input voltage 1</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>ST3</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Status group 3 - Output</p></td>
+<td align="center" valign="middle"><p class="table">66</p></td>
+<td align="left" valign="middle"><p class="table">Output source, Output frequency, Output num lines, Output voltage 1,,,Output load1</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>VER</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">UPS version</p></td>
+<td align="center" valign="middle"><p class="table">32</p></td>
+<td align="left" valign="middle"><p class="table">UPS firmware and/or software version</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_ups_status">UPS Status</h3>
+<div class="paragraph"><p><strong><code>ST1</code></strong> command will return up to 32 bytes of data (including commas).
+All values are comma delimited.</p></div>
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="middle">Variable Name          </th>
+<th align="center" valign="middle">Max Length     </th>
+<th align="left" valign="middle">Units</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="middle"><p class="table">Battery status</p></td>
+<td align="center" valign="middle"><p class="table">1</p></td>
+<td align="left" valign="middle"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; Battery ok
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Battery Low
+</p>
+</li>
+<li>
+<p>
+<code>2</code> &#8594; Battery Depleted
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table">Estimated Charge</p></td>
+<td align="center" valign="middle"><p class="table">3</p></td>
+<td align="left" valign="middle"><p class="table">Percent</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="paragraph"><p><strong><code>ST2</code></strong> command will return up to 65 bytes of data (including commas).
+All values are comma delimited.</p></div>
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="middle">Variable Name          </th>
+<th align="center" valign="middle">Max Length     </th>
+<th align="left" valign="middle">Units</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="middle"><p class="table">Input num lines</p></td>
+<td align="center" valign="middle"><p class="table">1</p></td>
+<td align="left" valign="middle"><p class="table">Integer (1-3)</p></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table">Input frequency 1</p></td>
+<td align="center" valign="middle"><p class="table">3</p></td>
+<td align="left" valign="middle"><p class="table">0.1 Hz</p></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table">Input voltage 1</p></td>
+<td align="center" valign="middle"><p class="table">4</p></td>
+<td align="left" valign="middle"><p class="table">0.1 volts</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="paragraph"><p><strong><code>ST3</code></strong> command will return up to 66 bytes of data (including commas).
+All values are delimited.</p></div>
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="middle">Variable Name          </th>
+<th align="center" valign="middle">Max Length     </th>
+<th align="left" valign="middle">Units</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="middle"><p class="table">Output source</p></td>
+<td align="center" valign="middle"><p class="table">1</p></td>
+<td align="left" valign="middle"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; Normal
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; On battery
+</p>
+</li>
+<li>
+<p>
+<code>2</code> &#8594; On bypass
+</p>
+</li>
+<li>
+<p>
+<code>3</code> &#8594; Reducing
+</p>
+</li>
+<li>
+<p>
+<code>4</code> &#8594; Boosting
+</p>
+</li>
+<li>
+<p>
+<code>5</code> &#8594; Other
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table">Output frequency</p></td>
+<td align="center" valign="middle"><p class="table">3</p></td>
+<td align="left" valign="middle"><p class="table">0.1 Hz</p></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table">Output num lines</p></td>
+<td align="center" valign="middle"><p class="table">1</p></td>
+<td align="left" valign="middle"><p class="table">Integer (1-3)</p></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table">Output voltage 1</p></td>
+<td align="center" valign="middle"><p class="table">4</p></td>
+<td align="left" valign="middle"><p class="table">0.1 volts</p></td>
+</tr>
+<tr>
+<td align="left" valign="middle"><p class="table">Output load 1</p></td>
+<td align="center" valign="middle"><p class="table">3</p></td>
+<td align="left" valign="middle"><p class="table">Percent</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_set_commands">Set Commands</h2>
+<div class="sectionbody">
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="center" valign="middle">Command        </th>
+<th align="left" valign="middle">Description                                                                    </th>
+<th align="center" valign="middle">Max Length     </th>
+<th align="left" valign="middle">Data           </th>
+<th align="left" valign="middle">Variable Set</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>PSD</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Performs UPS shutdown after the indicated no. of seconds</p></td>
+<td align="center" valign="middle"><p class="table">7</p></td>
+<td align="left" valign="middle"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>-1</code> &#8594; Abort
+</p>
+</li>
+<li>
+<p>
+<code>0</code> &#8594; Immediate
+</p>
+</li>
+<li>
+<p>
+<code>&gt;0</code> &#8594; seconds until shutdown
+</p>
+</li>
+</ul></div></div></td>
+<td align="left" valign="middle"><p class="table">Shutdown After Delay</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>RWD</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Immediately perform UPS shutdown, then restarts after indicated no. of seconds</p></td>
+<td align="center" valign="middle"><p class="table">7</p></td>
+<td align="left" valign="middle"><p class="table">Seconds</p></td>
+<td align="left" valign="middle"><p class="table">Reboot with Duration</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>STD</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Starts UPS after indicated no. of seconds</p></td>
+<td align="center" valign="middle"><p class="table">7</p></td>
+<td align="left" valign="middle"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>-1</code> &#8594; Abort
+</p>
+</li>
+<li>
+<p>
+<code>0</code> &#8594; Immediate
+</p>
+</li>
+<li>
+<p>
+<code>&gt;0</code> &#8594; seconds until startup
+</p>
+</li>
+</ul></div></div></td>
+<td align="left" valign="middle"><p class="table">Startup After Delay</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>TST</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Test UPS</p></td>
+<td align="center" valign="middle"><p class="table">2</p></td>
+<td align="left" valign="middle"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>-1</code> &#8594; Abort test
+</p>
+</li>
+<li>
+<p>
+<code>0</code> &#8594; No effect
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; General test
+</p>
+</li>
+</ul></div></div></td>
+<td align="left" valign="middle"><p class="table">Test Type</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_communication_examples">Communication Examples</h2>
+<div class="sectionbody">
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Host PC requests for UPS manufacturer:
+</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre><code>^P003MAN</code></pre>
+</div></div>
+<div class="paragraph"><p>UPS responds:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>^D014PK ELECTRONICS</code></pre>
+</div></div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>014</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+14 bytes to follow
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>PK ELECTRONICS</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Manufacturer
+</p>
+</td>
+</tr>
+</table></div>
+</div></div>
+</li>
+<li>
+<p>
+Host PC requests for UPS model:
+</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre><code>^P003MOD</code></pre>
+</div></div>
+<div class="paragraph"><p>UPS responds:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>^D006US9003</code></pre>
+</div></div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>006</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+6 bytes to follow
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>US9003</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Model
+</p>
+</td>
+</tr>
+</table></div>
+</div></div>
+</li>
+<li>
+<p>
+Host PC requests for UPS status input parameters:
+</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre><code>^P003ST2</code></pre>
+</div></div>
+<div class="paragraph"><p>UPS responds:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>^D011,1,500,2350</code></pre>
+</div></div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>011</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+11 bytes to follow
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>1</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Input num lines (single phase UPS)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>500</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Input frequency 1 of 50.0 Hz
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>2350</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Input voltage 1 of 235.0 Volts
+</p>
+</td>
+</tr>
+</table></div>
+</div></div>
+</li>
+<li>
+<p>
+Host PC attempts to shutdown UPS:
+</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre><code>^S006PSD120</code></pre>
+</div></div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>006</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+6 bytes to follow
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>PSD120</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Shutdown UPS in 2 minutes
+</p>
+</td>
+</tr>
+</table></div>
+<div class="paragraph"><p>UPS responds:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>^1</code></pre>
+</div></div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>1</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Command accepted
+</p>
+</td>
+</tr>
+</table></div>
+</div></div>
+</li>
+<li>
+<p>
+Host PC attempts to reboot UPS:
+</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre><code>^S006RWD300</code></pre>
+</div></div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>006</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+6 bytes to follow
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>RWD300</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Shutdown UPS immediately and restarts it after 5 minutes
+</p>
+</td>
+</tr>
+</table></div>
+<div class="paragraph"><p>UPS responds:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>^1</code></pre>
+</div></div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>1</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Command accepted
+</p>
+</td>
+</tr>
+</table></div>
+</div></div>
+</li>
+</ol></div>
+</div>
+</div>
+</div>
+<div id="footnotes"><hr /></div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2023-09-20 10:08:32 UTC
+</div>
+<div id="footer-badges">
+<a href="https://github.com/networkupstools/nut">
+  <img style="border:0;height:20"
+    src="https://img.shields.io/github/checks-status/networkupstools/nut/master"
+    alt="Latest GitHub checks status: master branch"/>
+</a>
+<!--
+<a href="https://travis-ci.org/github/networkupstools/nut">
+  <img style="border:0;height:20"
+    src="https://api.travis-ci.org/networkupstools/nut.svg?branch=master"
+    alt="Latest Travis CI build status: master branch"/>
+</a>
+-->
+<a href="https://ci.networkupstools.org/job/nut/job/nut/job/master/">
+  <img style="border:0;height:20"
+    src="https://ci.networkupstools.org/buildStatus/icon?job=nut%2Fnut%2Fmaster"
+    alt="Latest NUT CI build status: master branch"/>
+</a>
+<!-- MacOS, maybe later Windows builds: -->
+<a href="https://app.circleci.com/pipelines/github/networkupstools">
+  <img style="border:0;height:20"
+    src="https://circleci.com/gh/networkupstools/nut/tree/master.svg?style=svg"
+    alt="Latest Circle CI build status: master branch"/>
+</a>
+<!-- Windows, maybe later MacOS builds: -->
+<a href="https://ci.appveyor.com/project/nut-travis/nut/build/artifacts">
+  <img style="border:0;height:20"
+    src="https://ci.appveyor.com/api/projects/status/vrhkatid9hr7lq7r/branch/master?svg=true&failingText=Windows-FAIL&passingText=Windows-OK&pendingText-Windows-PENDING"
+    alt="Latest AppVeyor build status (NUT for Windows iterations)"/>
+</a>
+<!--
+<a href="https://ci.networkupstools.org/job/nut/job/nut/job/fightwarn/">
+  <img style="border:0;height:20"
+    src="https://ci.networkupstools.org/buildStatus/icon?job=nut%2Fnut%2Ffightwarn&subject=Fightwarn%20Branch"
+    alt="Latest NUT CI build status: fightwarn branch"/>
+</a>
+-->
+<!--
+<a href="https://github.com/networkupstools/nut/releases">
+  <img style="border:0;height:20"
+    src="https://img.shields.io/github/v/release/networkupstools/nut"
+    alt="Latest GitHub drafted NUT source release"/>
+</a>
+-->
+<a href="https://github.com/networkupstools/nut/releases">
+  <img style="border:0;height:20"
+    src="https://img.shields.io/github/v/tag/networkupstools/nut?sort=semver"
+    alt="Latest Git-tagged NUT source release"/>
+</a>
+<!-- Maintainer note: for the counter below to work, a git tag
+     is not sufficient -- a release must be drafted and published
+     at https://github.com/networkupstools/nut/releases
+     Counter URL may also be .../latest/BRANCHNAME -->
+<a href="https://github.com/networkupstools/nut">
+  <img style="border:0;height:20"
+    src="https://img.shields.io/github/commits-since/networkupstools/nut/latest.svg"
+    alt="Commits on master branch since latest release on GitHub"/>
+</a>
+<a href="http://www.methods.co.nz/asciidoc/">
+  <img style="border:0;width:88px;height:31px"
+    src="../images/asciidoc.png"
+    alt="Powered by AsciiDoc"/>
+</a>
+<a href="https://validator.w3.org/check?uri=referer">
+  <img style="border:0;width:88px;height:31px"
+    src="https://www.w3.org/Icons/valid-xhtml11-blue"
+    alt="Valid XHTML 1.1"/>
+</a>
+<a href="https://jigsaw.w3.org/css-validator/check?uri=referer">
+  <img style="border:0;width:88px;height:31px"
+    src="https://jigsaw.w3.org/css-validator/images/vcss-blue"
+    alt="Valid CSS!"/>
+</a>
+<a href="https://www.gandi.net/">
+  <img style="border:0;height:38px;"
+       src="../images/gandi-ar21.svg"
+       alt="DNS, redirection and related services Hoster"/>
+</a>
+<a href="https://fosshost.org/">
+  <img style="border:0;width:112px;height:38px;"
+       src="../images/ci/fosshost.org_Host_Light_38px.png"
+       alt="Dedicated Hosting for NUT CI"/>
+</a>
+</div>
+</div>
+</div>
+</div>
+<!-- Google Analytics integration -->
+<script type="text/javascript">
+
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-9664272-1']);
+        _gaq.push(['_trackPageview']);
+
+        (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+
+</script>
+</body>
+</html>

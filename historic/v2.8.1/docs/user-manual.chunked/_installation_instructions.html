@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>5. Installation instructions</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><link rel="home" href="index.html" title="Network UPS Tools User Manual" /><link rel="up" href="index.html" title="Network UPS Tools User Manual" /><link rel="prev" href="Download_instructions.html" title="4. Download information" /><link rel="next" href="Configuration_notes.html" title="6. Configuration notes" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="Download_instructions.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="Configuration_notes.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_installation_instructions"></a>5. Installation instructions</h2></div></div></div><p>This chapter describes the various methods for installing Network UPS Tools.</p><p>Whenever it is possible, prefer <a class="link" href="_installation_instructions.html#Installing_packages" title="5.3. Installing from packages">installing from packages</a>.
+Packagers have done an excellent and hard work at improving NUT integration
+into their operating system.  On the other hand, distributions and appliances
+tend to package "official releases" of projects such as NUT, and so do not
+deliver latest and greatest fixes, new drivers, bugs and other features.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="Installing_source"></a>5.1. Installing from source</h3></div></div></div><p>These are the essential steps for compiling and installing this software
+from distribution archives (usually "release tarballs") which include a
+pre-built copy of the <code class="literal">configure</code> script and some other generated source
+files.</p><p>To build NUT from a Git checkout you may need some additional tools
+(referenced just a bit below) and run <code class="literal">./autogen.sh</code> to generate the
+needed files. For common developer iterations, porting to new platforms,
+or in-place testing, running the <code class="literal">./ci_build.sh</code> script can be helpful.
+The "<a class="link" href="_installation_instructions.html#Installing_inplace" title="5.2. Building NUT for in‐place upgrades or non‐disruptive tests">Building NUT for in‐place upgrades or non‐disruptive tests</a>" section details some more hints about such workflow, including some
+<code class="literal">systemd</code> integration.</p><p>The NUT <a class="ulink" href="../packager-guide.chunked/index.html" target="_top">Packager Guide</a>, which presents the best
+practices for installing and integrating NUT, is also a good reading.</p><p>The <a class="link" href="Config_Prereqs.html" title="K. Prerequisites for building NUT on different OSes">Prerequisites for building NUT on different OSes</a>
+document suggests prerequisite packages with tools and dependencies
+available and needed to build and test as much as possible of NUT on
+numerous platforms, written from perspective of CI testing (if you
+are interested in getting updated drivers for a particular device,
+you might select a sub-set of those suggestions).</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>This "Config Prereqs" document for latest NUT iteration can be found at
+<a class="ulink" href="https://github.com/networkupstools/nut/blob/master/docs/config-prereqs.txt" target="_top">https://github.com/networkupstools/nut/blob/master/docs/config-prereqs.txt</a>
+or as <code class="literal">docs/config-prereqs.txt</code> in your build workspace (from Git or tarball).</p></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Keep in mind that…</h3><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+the paths shown below are the default values you get by just calling
+  configure by itself.  If you have used --prefix or similar, things will be
+  different.  Also, if you didn’t install this program from source yourself,
+  the paths will probably have a number of differences.
+</li><li class="listitem"><p class="simpara">
+by default, your system probably won’t find the man pages, since they
+  install to /usr/local/ups/man.  You can fix this by editing your MANPATH,
+  or just do this:
+</p><pre class="literallayout">man -M /usr/local/ups/man &lt;man page&gt;</pre></li><li class="listitem">
+if your favorite system offers up to date binary packages, you should
+  always prefer these over a source installation (unless there are known
+  deficiencies in the package or one is too obsolete). Along with the known
+  advantages of such systems for installation, upgrade and removal, there
+  are many integration issues that have been addressed.
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_prepare_your_system"></a>Prepare your system</h4></div></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_system_user_creation"></a>System User creation</h5></div></div></div><p>Create at least one system user and a group for running this software.
+You might call them "ups" and "nut".  The exact names aren’t important as
+long as you are consistent.</p><p>The process for doing this varies from one system to the next, and
+explaining how to add users is beyond the scope of this document.</p><p>For the purposes of this document, the user name and group name
+will be <span class="emphasis"><em>ups</em></span> and <span class="emphasis"><em>nut</em></span> respectively.</p><p>Be sure the new user is a member of the new group!  If you forget to
+do this, you will have problems later on when you try to start upsd.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_build_and_install"></a>Build and install</h4></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>See also <a class="link" href="_installation_instructions.html#Installing_inplace" title="5.2. Building NUT for in‐place upgrades or non‐disruptive tests">Building NUT for in‐place upgrades or non‐disruptive tests</a>.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="Configuration"></a>Configuration</h5></div></div></div><p>Configure the source tree for your system.  Add the <span class="emphasis"><em>--with-user</em></span> and
+<span class="emphasis"><em>--with-group</em></span> switch to set the user name and group that you created
+above.</p><pre class="literallayout">./configure --with-user=ups --with-group=nut</pre><p>If you need any other switches for configure, add them here.  For example:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+to build and install USB drivers, add <span class="emphasis"><em>--with-usb</em></span> (note that you
+  need to install libusb development package or files).
+</li><li class="listitem">
+to build and install SNMP drivers, add <span class="emphasis"><em>--with-snmp</em></span> (note that
+  you need to install libsnmp development package or files).
+</li><li class="listitem">
+to build and install CGI scripts, add <span class="emphasis"><em>--with-cgi</em></span>.
+</li></ul></div><p>See <a class="link" href="Configure_options.html" title="H. Configure options">Configure options</a> from the User Manual,
+docs/configure.txt or <span class="emphasis"><em>./configure --help</em></span> for all the available
+options.</p><p>If you alter paths with additional switches, be sure to use those
+new paths while reading the rest of the steps.</p><p>Reference: <a class="link" href="Configure_options.html" title="H. Configure options">Configure options</a> from the
+User Manual.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_build_the_programs"></a>Build the programs</h5></div></div></div><pre class="literallayout">make</pre><p>This will build the NUT client and server programs and the
+selected drivers. It will also build any other features that were
+selected during <a class="link" href="_installation_instructions.html#Configuration" title="Configuration">configuration</a> step above.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_installation"></a>Installation</h5></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>you should now gain privileges for installing software if necessary:</p><pre class="literallayout">su</pre></div><p>Install the files to a system level directory:</p><pre class="literallayout">make install</pre><p>This will install the compiled programs and man pages, as well as
+some data files required by NUT. Any optional features selected
+during configuration will also be installed.</p><p>This will also install sample versions of the NUT configuration
+files. Sample files are installed with names like ups.conf.sample
+so they will not overwrite any existing real config files you may
+have created.</p><p>If you are packaging this software, then you will probably want to
+use the DESTDIR variable to redirect the build into another place,
+i.e.:</p><pre class="literallayout">make DESTDIR=/tmp/package install
+make DESTDIR=/tmp/package install-conf</pre></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="StatePath"></a>State path creation</h5></div></div></div><p>Create the state path directory for the driver(s) and server to use
+for storing UPS status data and other auxiliary files, and make it
+group-writable by the group of the system user you created.</p><pre class="literallayout">mkdir -p /var/state/ups
+chmod 0770 /var/state/ups
+chown root:nut /var/state/ups</pre></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="Ownership"></a>Ownership and permissions</h5></div></div></div><p>Set ownership data and permissions on your serial or USB ports
+that go to your UPS hardware.  Be sure to limit access to just
+the user you created earlier.</p><p>These examples assume the second serial port (ttyS1) on a typical
+Slackware system.  On FreeBSD, that would be cuaa1.  Serial ports
+vary greatly, so yours may be called something else.</p><pre class="literallayout">chmod 0660 /dev/ttyS1
+chown root:nut /dev/ttyS1</pre><p>The setup for USB ports is slightly more complicated. Device files
+for USB devices, such as /proc/bus/usb/002/001, are usually
+created "on the fly" when a device is plugged in, and disappear
+when the device is disconnected.  Moreover, the names of these
+device files can change randomly. To set up the correct
+permissions for the USB device, you may need to set up (operating
+system dependent) hotplugging scripts.  Sample scripts and
+information are provided in the scripts/hotplug and
+scripts/udev directories. For most users, the hotplugging scripts
+will be installed automatically by "make install".</p><p>(If you want to try if a driver works without setting up
+hotplugging, you can add the "-u root" option to upsd, upsmon, and
+drivers; this should allow you to follow the below
+instructions. However, don’t forget to set up the correct
+permissions later!).</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>if you are using something like udev or devd, make sure
+these permissions stay set across a reboot.  If they revert to the
+old values, your drivers may fail to start.</p></div><p>You are now ready to configure NUT, and start testing and using it.</p><p>You can jump directly to the <a class="link" href="Configuration_notes.html" title="6. Configuration notes">NUT configuration</a>.</p></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="Installing_inplace"></a>5.2. Building NUT for in‐place upgrades or non‐disruptive tests</h3></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>The NUT GitHub Wiki article at
+<a class="ulink" href="https://github.com/networkupstools/nut/wiki/Building-NUT-for-in%E2%80%90place-upgrades-or-non%E2%80%90disruptive-tests" target="_top">https://github.com/networkupstools/nut/wiki/Building-NUT-for-in%E2%80%90place-upgrades-or-non%E2%80%90disruptive-tests</a>
+may contain some more hints as contributed by the community.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_overview"></a>Overview</h4></div></div></div><p>Since late 2022/early 2023 NUT codebase supports "in-place" builds
+which try their best to discover the configuration of an earlier build
+(configuration and run-time paths and OS accounts involved, maybe an
+exact configuration if stored in deployed binaries).</p><p>This optional mode is primarily intended for several use-cases:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Test recent GitHub "master" branch or a proposed PR to see if it
+  solves a practical problem for a particular user;
+</li><li class="listitem"><p class="simpara">
+Replace an existing deployment, e.g. if OS-provided packages deliver
+  obsolete code, to use newer NUT locally in "production mode".
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+In such cases ideally get your distribution, NAS vendor, etc.
+    to provide current NUT — and benefit from a better integrated
+    and tested product.
+</li></ul></div></li></ul></div><p>Note that "just testing" often involves building the codebase and new
+drivers or tools in question, and running them right from the build
+workspace (without installing into the system and so risking an
+unpredictable-stability state). In case of testing new driver builds,
+note that you would need to stop the normally running instances to
+free up the communications resources (USB/serial ports, etc.), run the
+new driver program in data-dump mode, and restart the normal systems
+operations.</p><p>Such tests still benefit from matching the build configuration to what
+is already deployed, in order to request same configuration files and
+system access permissions (e.g. to own device nodes for physical-media
+ports involved, and to read the production configuration files).</p><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_pre_requisites"></a>Pre-requisites</h5></div></div></div><p>The <a class="link" href="Config_Prereqs.html" title="K. Prerequisites for building NUT on different OSes">Prerequisites for building NUT on different OSes</a>
+document details tools and dependencies that were added on NUT CI build
+environments, which now cover many operating systems. This should
+provide a decent starting point for the build on yours (PRs to update
+the document are welcome!)</p><p>Note that unlike distribution tarballs, Git sources do not include a
+<code class="literal">configure</code> script and some other files — these should be generated by
+running <code class="literal">autogen.sh</code> (or <code class="literal">ci_build.sh</code> that calls it).</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_getting_the_right_sources"></a>Getting the right sources</h5></div></div></div><p>To build the current tip of development iterations (usually after PR
+merges that passed CI, reviews and/or other tests), just clone the NUT
+repository and "master" branch should get checked out by default (also
+can request that explicitly, per example posted below).</p><p>If you want to quickly test a particular pull request, see the link on
+top of the PR page that says <code class="literal">... wants to merge ... from : ...</code> and
+copy the proposed-source URL of that "from" part.</p><p>For example, in some PR this says <code class="literal">jimklimov:issue-1234</code> and links to
+<code class="literal">https://github.com/jimklimov/nut/tree/issue-1234</code>.
+For manual git-cloning, just paste that URL into the shell and replace
+the <code class="literal">/tree/</code> with "<code class="literal">-b</code>" CLI option for branch selection, like this:</p><pre class="literallayout">:; cd /tmp
+### Checkout https://github.com/jimklimov/nut/tree/issue-1234
+:; git clone https://github.com/jimklimov/nut -b issue-1234</pre></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_testing_with_ci_helper"></a>Testing with CI helper</h4></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>this uses the <code class="literal">ci_build.sh</code> script to arrange some rituals and
+settings, in this case primarily to default the choice of drivers to
+auto-detection of what can be built, and to skip building documentation.
+Also note that this script supports many other scenarios for CI and
+developers, managed by <code class="literal">BUILD_TYPE</code> and other environment variables,
+which are not explored here.</p></div><p>An "in-place" <span class="emphasis"><em>testing</em></span> build and run would probably go along these lines:</p><pre class="literallayout">:; cd /tmp
+:; git clone -b master https://github.com/networkupstools/nut
+:; cd nut
+:; ./ci_build.sh inplace
+### Temporarily stop your original drivers
+:; ./drivers/nutdrv_qx -a DEVNAME_FROM_UPS_CONF -d1 -DDDDDD \
+    # -x override...=... -x subdriver=...
+### Can start back your original drivers
+### Analyze and/or post back the data-dump</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>To probe a device for which you do not have an <code class="literal">ups.conf</code> section
+yet, you must specify <code class="literal">-s name</code> and all config options (including
+<code class="literal">port</code>) on command-line with <code class="literal">-x</code> arguments, e.g.:</p><pre class="literallayout">:; ./drivers/nutdrv_qx -s temp-ups \
+    -d1 -DDDDDD -x port=auto \
+    -x vendorid=... -x productid=... \
+    -x subdriver=...</pre></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_replacing_a_nut_deployment"></a>Replacing a NUT deployment</h4></div></div></div><p>While <code class="literal">ci_build.sh inplace</code> can be a viable option for preparation of
+local builds, you may want to have precise control over <code class="literal">configure</code>
+options (e.g. choice of required drivers, or enabled documentation).</p><p>A sound starting point would be to track down packaging recipes used by
+your distribution (e.g.
+<a class="ulink" href="https://src.fedoraproject.org/rpms/nut/blob/rawhide/f/nut.spec" target="_top">RPM spec</a>
+or
+<a class="ulink" href="https://salsa.debian.org/debian/nut/-/blob/debian/debian/rules" target="_top">DEB rules</a>
+files, etc.) to detail the same paths if you intend to replace those,
+and copy the parameters for <code class="literal">configure</code> script from there — especially
+if your system is not currently running NUT v2.8.1 or newer (which embeds
+this information to facilitate in-place upgrade rebuilds).</p><p>Note that the primary focus of in-place automated configuration mode is
+about critical run-time options, such as OS user accounts, configuration
+location and state/PID paths, so it alone might not replace your driver
+binaries that the package would put into an obscure location like
+<code class="literal">/lib/nut</code>. It would however install init-scripts or systemd units that
+would refer to new locations specified by the current build, so such old
+binaries would just consume disk space but not run.</p><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_replacing_any_nut_deployment"></a>Replacing any NUT deployment</h5></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>For deployments on OSes with <code class="literal">systemd</code> see the next section.</p></div><p>This goes similar to usual build and install from Git:</p><pre class="literallayout">:; cd /tmp
+:; git clone https://github.com/networkupstools/nut
+:; cd nut
+:; ./autogen.sh
+:; ./configure --enable-inplace-runtime # --maybe-some-other-options
+:; make -j 4 all &amp;&amp; make -j 4 check &amp;&amp; sudo make install</pre><p>Note that <code class="literal">make install</code> does not currently handle all the nuances that
+packaging installation scripts would, such as customizing filesystem
+object ownership, daemon restarts, etc. or even creating locations like
+<code class="literal">/var/state/ups</code> and <code class="literal">/var/run/nut</code> as part of the <code class="literal">make</code> target (but
+e.g. the delivered <code class="literal">systemd-tmpfiles</code> configuration can handle that for
+a large part of the audience). This aspect is tracked as
+<a class="ulink" href="https://github.com/networkupstools/nut/issues/1298" target="_top">issue #1298</a></p><p>At this point you should revise the locations for PID files
+(e.g. <code class="literal">/var/run/nut</code>) and pipe files (e.g. <code class="literal">/var/state/ups</code>) that they
+exist and permissions remain suitable for NUT run-time user selected by
+your configuration, and typically stop your original NUT drivers,
+data-server (upsd) and upsmon, and restart them using the new binaries.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_replacing_a_systemd_enabled_nut_deployment"></a>Replacing a systemd-enabled NUT deployment</h5></div></div></div><p>For modern Linux distributions with <code class="literal">systemd</code> this replacement procedure
+could be enhanced like below, to also re-enable services (creating proper
+symlinks) and to get them started:</p><pre class="literallayout">:; cd /tmp
+:; git clone https://github.com/networkupstools/nut
+:; cd nut
+:; ./autogen.sh
+:; ./configure --enable-inplace-runtime # --maybe-some-other-options
+:; make -j 4 all &amp;&amp; make -j 4 check &amp;&amp; \
+    { sudo systemctl stop nut-monitor nut-server || true ; } &amp;&amp; \
+    { sudo systemctl stop nut-driver.service || true ; } &amp;&amp; \
+    { sudo systemctl stop nut-driver.target || true ; } &amp;&amp; \
+    { sudo systemctl stop nut.target || true ; } &amp;&amp; \
+    sudo make install &amp;&amp; \
+    sudo systemctl daemon-reload &amp;&amp; \
+    sudo systemd-tmpfiles --create &amp;&amp; \
+    sudo systemctl disable nut.target nut-driver.target \
+        nut-monitor nut-server nut-driver-enumerator.path \
+        nut-driver-enumerator.service &amp;&amp; \
+    sudo systemctl enable nut.target nut-driver.target \
+        nut-monitor nut-server nut-driver-enumerator.path \
+        nut-driver-enumerator.service &amp;&amp; \
+    { sudo systemctl restart udev || true ; } &amp;&amp; \
+    sudo systemctl restart nut-driver-enumerator.service \
+        nut-monitor nut-server</pre><p>Note the several attempts to stop old service units — naming did change
+from 2.7.4 and older releases, through 2.8.0, and up to current codebase.
+Most of the NUT units are now <code class="literal">WantedBy=nut.target</code> (which is in turn
+<code class="literal">WantedBy=multi-user.target</code> and so bound to system startup). You should
+only <code class="literal">systemctl enable</code> those units you need on this system — this allows
+it to not start the daemons you do not need (e.g. not run <code class="literal">upsd</code> NUT data
+server on systems which are only <code class="literal">upsmon secondary</code> clients).</p><p>The <code class="literal">nut-driver-enumerator</code> units (and corresponding shell script) are
+part of a new feature introduced in NUT 2.8.0, which automatically
+discovers <code class="literal">ups.conf</code> sections and changes to their contents, and manages
+instances of a <code class="literal">nut-driver@.service</code> definition.</p><p>You may also have to restart (or reload if supported) some system services
+if your updates impact them, like <code class="literal">udev</code> for updates USB support (note also
+<a class="ulink" href="https://github.com/networkupstools/nut/pull/1342" target="_top">PR #1342</a> regarding
+the change from <code class="literal">udev.rules</code> to <code class="literal">udev.hwdb</code> file with NUT v2.8.0 or later — you may have to remove the older file manually).</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_iterating_with_a_systemd_deployment"></a>Iterating with a systemd deployment</h5></div></div></div><p>If you are regularly building NUT from GitHub "master" branch, or iterating
+local development branches of your own, you <span class="strong"><strong>may</strong></span> get away with shorter
+constructs to just restart the services after installing newly built files
+(if you know there were no changes to unit file definitions and dependencies),
+e.g.:</p><pre class="literallayout">:; cd /tmp
+:; git clone https://github.com/networkupstools/nut
+:; cd nut
+:; git checkout -b issue-1234 ### your PR branch name, arbitrary
+:; ./autogen.sh
+:; ./configure --enable-inplace-runtime # --maybe-some-other-options
+### Iterate your code changes (e.g. PR draft), build and install with:
+:; make -j 4 all &amp;&amp; make -j 4 check &amp;&amp; \
+    sudo make install &amp;&amp; \
+    sudo systemctl daemon-reload &amp;&amp; \
+    sudo systemd-tmpfiles --create &amp;&amp; \
+    sudo systemctl restart \
+        nut-driver-enumerator.service nut-monitor nut-server</pre></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_next_steps_after_an_in_place_upgrade"></a>Next steps after an in-place upgrade</h4></div></div></div><p>You can jump directly to the <a class="link" href="Configuration_notes.html" title="6. Configuration notes">NUT configuration</a>
+if you need to revise the settings for your new NUT version, take advantage
+of new configuration options, etc.</p><p>Check the linkdoc:NEWS and <a class="ulink" href="../UPGRADING.chunked/index.html" target="_top">Upgrade Notes</a> files in your
+Git workspace to review features that should be present in your new build.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="Installing_packages"></a>5.3. Installing from packages</h3></div></div></div><p>This chapter describes the specific installation steps when using
+binary packages that exist on various major systems.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="Debian"></a>Debian, Ubuntu and other derivatives</h4></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>NUT is packaged and well maintained in these systems.
+The official Debian packager is part of the NUT Team.</p></div><p>Using your preferred method (apt-get, aptitude, Synaptic, …), install
+the <span class="emphasis"><em>nut</em></span> package, and optionally the following:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<span class="emphasis"><em>nut-cgi</em></span>, if you need the CGI (HTML) option,
+</li><li class="listitem">
+<span class="emphasis"><em>nut-snmp</em></span>, if you need the snmp-ups driver,
+</li><li class="listitem">
+<span class="emphasis"><em>nut-xml</em></span>, for the netxml-ups driver,
+</li><li class="listitem">
+<span class="emphasis"><em>nut-powerman-pdu</em></span>, to control the PowerMan daemon (PDU management)
+</li><li class="listitem">
+<span class="emphasis"><em>nut-dev</em></span>, if you need the development files.
+</li></ul></div><p>Configuration files are located in /etc/nut.
+<a class="ulink" href="../man/nut.conf.html" target="_top">nut.conf(5)</a> must be edited to be able to invoke /etc/init.d/nut</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>Ubuntu users can access the APT URL installation by clicking
+on <a class="ulink" href="apt://nut" target="_top">this link</a>.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="Mandriva"></a>Mandriva</h4></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>NUT is packaged and well maintained in these systems.
+The official Mandriva packager is part of the NUT Team.</p></div><p>Using your preferred method (urpmi, RPMdrake, …), install one of the
+two below packages:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<span class="emphasis"><em>nut-server</em></span> if you have a <span class="emphasis"><em>standalone</em></span> or <span class="emphasis"><em>netserver</em></span> installation,
+</li><li class="listitem">
+<span class="emphasis"><em>nut</em></span> if you have a <span class="emphasis"><em>netclient</em></span> installation.
+</li></ul></div><p>Optionally, you can also install the following:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<span class="emphasis"><em>nut-cgi</em></span>, if you need the CGI (HTML) option,
+</li><li class="listitem">
+<span class="emphasis"><em>nut-devel</em></span>, if you need the development files.
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="SUSE"></a>SUSE / openSUSE</h4></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>NUT is packaged and well maintained in these systems.
+The official SUSE packager is part of the NUT Team.</p></div><p>Install the <span class="emphasis"><em>nut-classic</em></span> package, and optionally the following:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<span class="emphasis"><em>nut-drivers-net</em></span>, if you need the snmp-ups or the netxml-ups drivers,
+</li><li class="listitem">
+<span class="emphasis"><em>nut-cgi</em></span>, if you need the CGI (HTML) option,
+</li><li class="listitem">
+<span class="emphasis"><em>nut-devel</em></span>, if you need the development files,
+</li></ul></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>SUSE and openSUSE users can use the
+<a class="ulink" href="http://software.opensuse.org/search?baseproject=ALL&amp;p=1&amp;q=nut" target="_top">one-click install method</a>
+to install NUT.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="RedHat"></a>Red Hat, Fedora and CentOS</h4></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>NUT is packaged and well maintained in these systems.
+The official Red Hat packager is part of the NUT Team.</p></div><p>Using your preferred method (yum, Add/Remove Software, …), install
+one of the two below packages:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<span class="emphasis"><em>nut</em></span> if you have a <span class="emphasis"><em>standalone</em></span> or <span class="emphasis"><em>netserver</em></span> installation,
+</li><li class="listitem">
+<span class="emphasis"><em>nut-client</em></span> if you have a <span class="emphasis"><em>netclient</em></span> installation.
+</li></ul></div><p>Optionally, you can also install the following:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<span class="emphasis"><em>nut-cgi</em></span>, if you need the CGI (HTML) option,
+</li><li class="listitem">
+<span class="emphasis"><em>nut-xml</em></span>, if you need the netxml-ups driver,
+</li><li class="listitem">
+<span class="emphasis"><em>nut-devel</em></span>, if you need the development files.
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="FreeBSD"></a>FreeBSD</h4></div></div></div><p>You can either install NUT as a binary package or as a port.</p><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_binary_package"></a>Binary package</h5></div></div></div><p>To install NUT as a package execute:</p><pre class="literallayout"># pkg install nut</pre></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_port"></a>Port</h5></div></div></div><p>The port is located under <code class="literal">sysutils/nut</code>.
+Use <code class="literal">make config</code> to select configuration options, e.g. to build the
+optional CGI scripts.
+To install it, use:</p><pre class="literallayout"># make install clean</pre></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_usb_ups_on_freebsd"></a>USB UPS on FreeBSD</h5></div></div></div><p>For USB UPS devices the NUT package/port installs devd rules in
+<code class="literal">/usr/local/etc/devd/nut-usb.conf</code> to set USB device permissions.
+ <span class="emphasis"><em>devd</em></span> needs to be restarted  for these rules to apply:</p><pre class="literallayout"># service devd restart</pre><p>(Re-)connect the device after restarting <span class="emphasis"><em>devd</em></span> and check that the USB
+device has the proper permissions. Check the last entries of the system
+message buffer. You should find an entry like:</p><pre class="literallayout"># dmesg | tail
+[...]
+ugen0.2: &lt;INNO TECH USB to Serial&gt; at usbus0</pre><p>The device file must be owned by group <code class="literal">uucp</code> and must be group
+read-/writable. In the example from above this would be</p><pre class="literallayout"># ls -Ll /dev/ugen0.2
+crw-rw----  1 root  uucp  0xa5 Mar 12 10:33 /dev/ugen0.2</pre><p>If the permissions are not correct, verify that your device is registered in
+<code class="literal">/usr/local/etc/devd/nut-usb.conf</code>. The vendor and product id can be found
+using:</p><pre class="literallayout"># usbconfig -u 0 -a 2 dump_device_desc</pre><p>where <code class="literal">-u</code> specifies the USB bus number and <code class="literal">-a</code> specifies the USB device
+index.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="Windows"></a>Windows</h4></div></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_windows_binary_package"></a>Windows binary package</h5></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>NUT binary package built for Windows platform was last issued for
+a much older codebase (using NUT v2.6.5 as a baseline). While the current
+state of the codebase you are looking at aims to refresh the effort of
+delivering NUT on Windows, the aim at the moment is to help developers
+build and modernize it after a decade of blissful slumber, and packages
+are not being regularly produced yet. Functionality of such builds varies
+a lot depending on build environment used. This effort is generally
+tracked at <a class="ulink" href="https://github.com/orgs/networkupstools/projects/2/views/1" target="_top">https://github.com/orgs/networkupstools/projects/2/views/1</a>
+and help would be welcome!</p><p>It should currently be possible to build the codebase in native Windows
+with MSYS2/MinGW and cross-building from Linux with mingw (preferably
+in a Debian/Ubuntu container). Refer to
+<a class="ulink" href="config-prereqs.txt" target="_top">Prerequisites for building NUT on different OSes</a>
+and <a class="ulink" href="scripts/Windows/README.adoc" target="_top">scripts/Windows/README.adoc file</a>
+for respective build environment preparation instructions.</p><p>Note that to use NUT for Windows, non-system dependency DLL files must
+be located in same directory as each EXE file that uses them. This can be
+accomplished for FOSS libraries (copying them from the build environment)
+by calling <code class="literal">make install-win-bundle DESTDIR=/some/valid/location</code> easily.</p><p>Archives with binaries built by recent iterations of continuous integration
+jobs should be available for exploration on the respective CI platforms.</p></div><p><span class="strong"><strong>Information below may be currently obsolete, but the NUT project wishes
+it to become actual and factual again :)</strong></span></p><p>NUT binary package built for Windows platform comes in a <code class="literal">.msi</code> file.</p><p>If you are using Windows 95, 98 or Me, you should install
+<a class="ulink" href="http://www.microsoft.com/downloads/en/details.aspx?familyid=cebbacd8-c094-4255-b702-de3bb768148f&amp;displaylang=en" target="_top">Windows Installer 2.0</a>
+from Microsoft site.</p><p>If you are using Windows 2000 or NT 4.0, you can
+<a class="ulink" href="http://www.microsoft.com/downloads/en/details.aspx?FamilyID=4b6140f9-2d36-4977-8fa1-6f8a0f5dca8f&amp;DisplayLang=en" target="_top">download it here</a>.</p><p>Newer Windows releases should include the Windows Installer natively.</p><p>Run <code class="literal">NUT-Installer.msi</code> and follow the wizard indications.</p><p>If you plan to use an UPS which is locally connected to an USB port,
+you have to install
+<a class="ulink" href="https://sourceforge.net/projects/libusb-win32/files/" target="_top">libUSB-win32</a>
+on your system. Then you must install your device via libusb’s "Inf Wizard".</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>If you intend to build from source, relevant sources may be available at
+<a class="ulink" href="https://github.com/mcuee/libusb-win32" target="_top">https://github.com/mcuee/libusb-win32</a> and keep in mind that it is a variant of
+libusb-0.1. Current NUT supports libusb-1.0 as well, and that project should
+have Windows support out of the box (but it was not explored for NUT yet).</p></div><p>If you have selected default directory, all configuration files are located in
+<code class="literal">C:\Program Files\NUT\ups\etc</code></p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_building_for_windows"></a>Building for Windows</h5></div></div></div><p>For suggestions about setting up the NUT build environment variants
+for Windows, please see link:docs/config-prereqs.txt and/or
+link:scripts/Windows/README.adoc files. Note this is rather experimental
+at this point.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_runtime_configuration"></a>Runtime configuration</h4></div></div></div><p>You are now ready to configure NUT, and start testing and using it.</p><p>You can jump directly to the
+<a class="link" href="Configuration_notes.html" title="6. Configuration notes">NUT configuration</a>.</p></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
+		Last updated 2023-10-31 22:46:04 -- Network UPS Tools 2.8.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="Download_instructions.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="Configuration_notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

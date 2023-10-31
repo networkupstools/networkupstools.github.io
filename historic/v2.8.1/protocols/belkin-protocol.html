@@ -1,0 +1,5192 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<title>Network UPS Tools - Belkin UPS Protocol</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="generator" content="AsciiDoc 10.1.2" />
+<meta name="description" content="Power Devices support" />
+<meta name="keywords" content="NUT, Network UPS Tools, Eaton, APC, Free Software, UPS, Uninterruptible Power Supplies, PDU, Power Distributions Units, Solar Controllers, power, power devices, control, monitor, Linux, Unix, Windows, Mac OS X" />
+<meta name="format-detection" content="telephone=no" />
+<link rel="stylesheet" href="../css/xhtml11.css" type="text/css" />
+<link rel="stylesheet" href="../css/web-layout.css" type="text/css" />
+<link rel="shortcut icon" href="../faviconut.ico" />
+<link rel="icon" type="image/png" href="../faviconut.png" />
+<script type="text/javascript" src="../scripts/asciidoc.js"></script>
+<script type="text/javascript">
+/*<![CDATA[*/
+asciidoc.install(2);
+/*]]>*/
+</script>
+<!--[if lte IE 7]>
+<link rel="stylesheet" href="../css/ie-overrides.css" type="text/css" />
+<![endif]-->
+<!--[if lte IE 6]>
+<script type="text/javascript" src="../scripts/filter_png.js"></script>
+<![endif]-->
+</head>
+<body>
+<div id="layout-banner-box">
+<div id="layout-banner">
+  <div id="layout-logo"><img src="../images/nut-logo.png" alt="NUT logo" /></div>
+  <div id="layout-title">Network UPS Tools</div>
+  <div id="layout-description">Power Devices support</div>
+</div>
+</div>
+<div id="layout-menu-box">
+  <ul id="layout-menu">
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="../download.html">Download</a></li>
+    <li><a href="../projects.html">Related projects</a></li>
+    <li><a href="../stable-hcl.html">Compatibility</a></li>
+    <li><a href="../features.html">Features</a></li>
+    <li><a href="../documentation.html">Documentation</a></li>
+    <li><a href="../support.html">Support</a></li>
+    <li>* <a href="https://alioth-lists.debian.net/pipermail/nut-upsuser/">NUT UPS User archive</a></li>
+    <li>* <a href="https://alioth-lists.debian.net/pipermail/nut-upsdev/">NUT UPS Dev archive</a></li>
+    <li>* <a href="https://github.com/networkupstools/nut/">GitHub</a>:<a
+        href="https://github.com/networkupstools/nut/issues">issues</a>,<a
+        href="https://github.com/networkupstools/nut/wiki">wiki</a>
+        and more</li>
+    <li><a href="..//historic/index.html">Sub-sites for historic releases</a></li>
+    <li><a href="https://opencollective.com/networkupstools/">Sponsor NUT</a></li>
+  </ul>
+  <!-- div id="sponsor"><span>Hosted by<br/></span>
+    <a href="http://sponsor.com"><img src="../images/sponsor-logo.png" alt="Sponsor" /></a>
+  </div -->
+</div>
+<div id="layout-content-box">
+<div id="layout-content">
+<div id="header">
+<h1>Belkin UPS Protocol</h1>
+</div>
+<div id="toc">
+  <div id="toctitle">Table of Contents</div>
+  <noscript><p><b>JavaScript must be enabled in your browser to display the table of contents.</b></p></noscript>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img src="../images/note.png" alt="Note" />
+</td>
+<td class="content">
+<div class="paragraph"><p><strong>[N]</strong> indicates the item is supported by N 1~3K series</p></div>
+<div class="paragraph"><p><strong>[L]</strong> indicates the item is supported by L series</p></div>
+</td>
+</tr></table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_history">History</h2>
+<div class="sectionbody">
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">1.0</p></td>
+<td colspan="2" align="left" valign="top"><p class="table">09/23/1997</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">1.1</p></td>
+<td colspan="2" align="left" valign="top"><p class="table">11/14/1997</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">1.2</p></td>
+<td align="left" valign="top"><p class="table">12/30/1997</p></td>
+<td align="left" valign="top"><p class="table">Add <strong><code>VSN</code></strong> (Voltage Sensitivity)</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">1.3</p></td>
+<td align="left" valign="top"><p class="table">10/09/1998</p></td>
+<td align="left" valign="top"><p class="table">Control Outlet</p>
+<p class="table">Add Regular Format ID</p>
+<p class="table">Add <strong><code>TEL</code></strong>, <strong><code>BRD</code></strong> commands</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">1.31</p></td>
+<td align="left" valign="top"><p class="table">01/26/1999</p></td>
+<td align="left" valign="top"><p class="table"><strong><code>SDR</code></strong> from <code>99999</code> to <code>65535</code></p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">1.32</p></td>
+<td align="left" valign="top"><p class="table">03/04/1999</p></td>
+<td align="left" valign="top"><p class="table">Add <strong><code>STA</code></strong> (Inverter Bad)</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">1.33</p></td>
+<td align="left" valign="top"><p class="table">04/28/1999</p></td>
+<td align="left" valign="top"><p class="table">Add <strong><code>ENV</code></strong>, Battery Level, Rating Battery Voltage</p>
+<p class="table">Mark some items that UPS must support</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">1.34</p></td>
+<td align="left" valign="top"><p class="table">05/03/1999</p></td>
+<td align="left" valign="top"><p class="table">Change <strong><code>BUZ</code></strong> Status (<code>0</code> &#8594; Buzzer off, <code>1</code> &#8594; Buzzer on)</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">1.35</p></td>
+<td align="left" valign="top"><p class="table">07/21/1999</p></td>
+<td align="left" valign="top"><p class="table">Economic Mode enable/disable</p>
+<p class="table">Periodic Auto-test</p>
+<p class="table">Buzzer Test</p>
+<p class="table"><strong><code>ATX</code></strong> Reboot enable/disable</p>
+<p class="table">Auto Reboot enable/disable</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">1.36</p></td>
+<td align="left" valign="top"><p class="table">07/28/1999</p></td>
+<td align="left" valign="top"><p class="table">Add <strong><code>RSM</code></strong> (Resume PC), <strong><code>AVL</code></strong> rearrange</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">1.37</p></td>
+<td align="left" valign="top"><p class="table">08/17/1999</p></td>
+<td align="left" valign="top"><p class="table">Change Length of <strong><code>MNU</code></strong>, <strong><code>MOD</code></strong> and <strong><code>VER</code></strong> to <code>16</code></p>
+<p class="table">Change Range of <strong><code>RNF</code></strong> from <code>1</code> to <code>65535</code></p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">1.38</p></td>
+<td align="left" valign="top"><p class="table">05/09/2000</p></td>
+<td align="left" valign="top"><p class="table">Add the Emergency Power Off item in the <strong><code>STA</code></strong></p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">1.39</p></td>
+<td align="left" valign="top"><p class="table">04/03/2001</p></td>
+<td align="left" valign="top"><p class="table">Add <strong><code>TXF</code></strong> (Raymond), <strong><code>UBD</code></strong> Commands</p>
+<p class="table">Define the <strong><code>ARB</code></strong> command</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">1.40</p></td>
+<td align="left" valign="top"><p class="table">07/18/2001</p></td>
+<td align="left" valign="top"><p class="table">Add <strong><code>SOV</code></strong> command</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">1.41</p></td>
+<td align="left" valign="top"><p class="table">01/25/2002</p></td>
+<td align="left" valign="top"><p class="table">Delete the <strong><code>RST</code></strong> command because it is conflict to the <strong><code>ARB</code></strong> command.</p>
+<p class="table">Redefine <strong><code>BUZ</code></strong> command to alarm/silence</p>
+<p class="table">Add <strong><code>EDB</code></strong> command to enable/disable buzzer alarm</p>
+<p class="table">Define a standard string of Windows Plug &amp; Play</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">1.42</p></td>
+<td align="left" valign="top"><p class="table">01/30/2002</p></td>
+<td align="left" valign="top"><p class="table">Redefine &#8216;Battery Temperature&#8217; to &#8216;Temperature&#8217;</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">1.44</p></td>
+<td align="left" valign="top"><p class="table">05/24/2002</p></td>
+<td align="left" valign="top"><p class="table">Add <strong><code>BTV</code></strong> command for battery test</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_communication_parameters">Communication Parameters</h2>
+<div class="sectionbody">
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Baud Rate
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+2400
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Parity
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+None
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Data Bits
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+8
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Stop Bits
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+1
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_message_format">Message Format</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_regular_format">Regular Format</h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Header
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+1 byte
+</p>
+<div class="paragraph"><p>The header will be a <strong><code>~</code></strong> character.</p></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+ID
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+2 bytes
+</p>
+<div class="paragraph"><p>Default value is <strong><code>00</code></strong>.</p></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Type
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+1 byte
+</p>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<strong><code>R</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Command rejected (UPS à Computer)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>A</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Command accepted (UPS à Computer)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>P</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Polling command (Computer à UPS)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>S</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Set command (Computer à UPS)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>D</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Data returned (UPS à Computer)
+</p>
+</td>
+</tr>
+</table></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Length
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+3 bytes
+</p>
+<div class="paragraph"><p>The length is the number of bytes of data passed.</p></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+128 bytes max
+</p>
+<div class="paragraph"><p>All data will be separated by <strong><code>;</code></strong>.
+If a variable value is not currently available, a <strong><code>;</code></strong> with no data should be placed in the variable location.</p></div>
+</td>
+</tr>
+</table></div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_regular_format_messages_polling_commands">Regular Format Messages: Polling Commands</h2>
+<div class="sectionbody">
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<thead>
+<tr>
+<th align="center" valign="middle">Command        </th>
+<th align="left" valign="middle">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>* <strong>AVL</strong></code></p></td>
+<td align="left" valign="middle"><p class="table"><strong>[N][L]</strong> Available Commands</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>* <strong>MNU</strong></code></p></td>
+<td align="left" valign="middle"><p class="table"><strong>[N][L]</strong> UPS Manufacturer</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>* <strong>MOD</strong></code></p></td>
+<td align="left" valign="middle"><p class="table"><strong>[N][L]</strong> UPS Model Name</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>* <strong>RAT</strong></code></p></td>
+<td align="left" valign="middle"><p class="table"><strong>[N][L]</strong> Rating (Nominal) Values</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>SDT</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Shutdown Type</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>* <strong>STB</strong></code></p></td>
+<td align="left" valign="middle"><p class="table"><strong>[N][L]</strong> Battery Status</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>* <strong>STI</strong></code></p></td>
+<td align="left" valign="middle"><p class="table"><strong>[N][L]</strong> Input Status</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>* <strong>STO</strong></code></p></td>
+<td align="left" valign="middle"><p class="table"><strong>[N][L]</strong> Output Status</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>* <strong>STP</strong></code></p></td>
+<td align="left" valign="middle"><p class="table"><strong>[N]</strong> Bypass Status</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>* <strong>STA</strong></code></p></td>
+<td align="left" valign="middle"><p class="table"><strong>[N][L]</strong> Alarm Status</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>* <strong>TSR</strong></code></p></td>
+<td align="left" valign="middle"><p class="table"><strong>[N][L]</strong> Self Test Results</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>UBR</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">UPS Baud Rate</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>* <strong>UID</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">UPS Identification</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>* <strong>VER</strong></code></p></td>
+<td align="left" valign="middle"><p class="table"><strong>[N][L]</strong> UPS Firmware Version</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>TXV</strong></code></p></td>
+<td align="left" valign="middle"><p class="table"><strong>[N][L]</strong> Transfer Voltage</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>VSN</strong></code></p></td>
+<td align="left" valign="middle"><p class="table"><strong>[L]</strong> Voltage Sensitivity</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>* <strong>LET</strong></code></p></td>
+<td align="left" valign="middle"><p class="table"><strong>[N][L]</strong> Number of Outlet Relay</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>* <strong>SOL</strong></code></p></td>
+<td align="left" valign="middle"><p class="table"><strong>[N][L]</strong> Outlet Relay Status</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>TEL</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Modem Phone Number</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>* <strong>BRD</strong></code></p></td>
+<td align="left" valign="middle"><p class="table"><strong>[N][L]</strong> Battery Replacement Date</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>ENV</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Environment Information</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>ATT</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Auto Test</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>ATX</strong></code></p></td>
+<td align="left" valign="middle"><p class="table"><strong>[N][L]</strong> ATX Reboot enable/disable</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>ARB</strong></code></p></td>
+<td align="left" valign="middle"><p class="table"><strong>[N][L]</strong> AC Fail &amp; Restore Auto-Reboot enable/disable</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>TXF</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Transfer Frequency</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>UBD</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">UPS Boot Delay</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>SOV</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Select Output Voltage</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>BTV</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Battery Test Time &amp; Voltage</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_code_avl_code"><code>AVL</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(UPS&#8594;Computer)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name                                                                   </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table"><code>b19 b18 b17 b16 b15 b14 b13 b12 b11 b10 b9 b8 b7b6 b5 b4 b3 b2 b1 b0</code></p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>20</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>1</code> &#8594; Available
+</p>
+</li>
+<li>
+<p>
+<code>0</code> &#8594; Not supported
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Description
+<br />
+</td>
+<td class="hdlist2">
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+b0
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>UBD</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+b1
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>TXF</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+b2
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>ECO</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+b3
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>ATT</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+b4
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>BTT</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+b5
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>ATX</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+b6
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>ARB</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+b7
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>BUZ</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+b8
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>RST</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+b9
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>SDA</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+b10
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>SDR</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+b11
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>SDT</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+b12
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>TST</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+b13
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>UBR</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+b14
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>UID</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+b15
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>TXV</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+b16
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>VSN</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+b17
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>RON</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+b18
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>ROF</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+b19
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>RNF</code></strong>
+</p>
+</td>
+</tr>
+</table></div>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_mnu_code"><code>MNU</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(UPS&#8594;Computer)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name           </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Manufacturer</p></td>
+<td align="center" valign="top"><p class="table">String</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>16</code></p></td>
+<td align="left" valign="top"><p class="table"></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Description
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+The string identifies the manufacturer.
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_mod_code"><code>MOD</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(UPS&#8594;Computer)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name   </th>
+<th align="center" valign="top">Type   </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Model</p></td>
+<td align="center" valign="top"><p class="table">String</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>16</code></p></td>
+<td align="left" valign="top"><p class="table"></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Description
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+The string identifies the UPS model name.
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_rat_code"><code>RAT</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(UPS&#8594;Computer)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name                           </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length           </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">* Rating Input Voltage</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table"><strong>[N][L]</strong> Volt</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">* Rating Input Frequency</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table"><strong>[N][L]</strong> 0.1Hz</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Rating Output Voltage</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table"><strong>[N][L]</strong> Volt</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Rating Output Frequency</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table"><strong>[N][L]</strong> 0.1Hz</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">* Rating VA</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999999</code></p></td>
+<td align="left" valign="top"><p class="table"><strong>[N][L]</strong> VA</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Rating Output Power</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999999</code></p></td>
+<td align="left" valign="top"><p class="table"><strong>[N][L]</strong> Watt</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Low Battery Time</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>99</code></p></td>
+<td align="left" valign="top"><p class="table">Minute, time from low battery to low battery shutdown</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Low Tx Voltage Point</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table"><strong>[N][L]</strong> Volt</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">High Tx Voltage Point</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table"><strong>[N][L]</strong> Volt</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Low Tx Voltage Upper Bound</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table"><strong>[N][L]</strong> Volt</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Low Tx Voltage Lower Bound</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table"><strong>[N][L]</strong> Volt</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">High Tx Voltage Upper Bound</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table"><strong>[N][L]</strong> Volt</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">High Tx Voltage Lower Bound</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table"><strong>[N][L]</strong> Volt</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">* UPS Type</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>4</code></p></td>
+<td align="left" valign="top"><div><div class="paragraph"><p><strong>[N][L]</strong></p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; On-Line
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Off-Line
+</p>
+</li>
+<li>
+<p>
+<code>2</code> &#8594; Line-Interactive
+</p>
+</li>
+<li>
+<p>
+<code>3</code> &#8594; 3 Phase
+</p>
+</li>
+<li>
+<p>
+<code>4</code> &#8594; Others
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">* Rating Battery Voltage</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table"><strong>[N][L]</strong> Volt</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Low Tx Freq Point</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table">0.1Hz</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">High Tx Freq Point</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table">0.1Hz</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Low Tx Freq Upper Bound</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table">0.1Hz</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Low Tx Freq Lower Bound</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table">0.1Hz</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">High Tx Freq Upper Bound</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table">0.1Hz</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">High Tx Freq Lower Bound</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table">0.1Hz</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Description
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+The Tx voltage
+</p>
+<div class="imageblock">
+<div class="content">
+<img src="images/belkin-protocol_tx-voltage.png" alt="Tx voltage" />
+</div>
+</div>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_sdt_code"><code>SDT</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(UPS&#8594;Computer)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name           </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Shutdown Type</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>1</code> to <code>2</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>1</code> &#8594; UPS output
+</p>
+</li>
+<li>
+<p>
+<code>2</code> &#8594; UPS system
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Description
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+default value is <code>2</code>.
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_stb_code"><code>STB</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(UPS&#8594;Computer)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name                           </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">* Battery Condition</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>2</code></p></td>
+<td align="left" valign="top"><div><div class="paragraph"><p><strong>[N][L]</strong></p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; Good
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Weak
+</p>
+</li>
+<li>
+<p>
+<code>2</code> &#8594; Replace
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">* Battery Status</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>2</code></p></td>
+<td align="left" valign="top"><div><div class="paragraph"><p><strong>[N][L]</strong></p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; OK
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Low
+</p>
+</li>
+<li>
+<p>
+<code>2</code> &#8594; Depleted
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">* Battery Charge</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>3</code></p></td>
+<td align="left" valign="top"><div><div class="paragraph"><p><strong>[N][L]</strong></p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; Floating
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Charging
+</p>
+</li>
+<li>
+<p>
+<code>2</code> &#8594; Resting
+</p>
+</li>
+<li>
+<p>
+<code>3</code> &#8594; Discharging
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Seconds on Battery</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>99999</code></p></td>
+<td align="left" valign="top"><p class="table"><strong>[N]</strong> Seconds</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Estimated Minutes Remaining</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>9999</code></p></td>
+<td align="left" valign="top"><p class="table">Estimated time from backup to low battery shutdown.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Estimated Charge Remaining</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table"><strong>[N]</strong> Estimated of percent battery charge remaining.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Battery Voltage</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>9999</code></p></td>
+<td align="left" valign="top"><p class="table"><strong>[N][L]</strong> 0.1Volt</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Battery Current</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>9999</code></p></td>
+<td align="left" valign="top"><p class="table"><strong>[N]</strong> 0.1Amp</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Temperature</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table"><strong>[N][L]</strong> Degree Celsius</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">* Battery Level</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table"><strong>[N][L]</strong> %</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Description
+<br />
+</td>
+<td class="hdlist2">
+<div class="dlist"><dl>
+<dt class="hdlist1">
+Battery Condition
+</dt>
+<dd>
+<p>
+If input power normal and battery normal then UPS replies Good (<code>0</code>).
+If input power normal and battery low then Weak (<code>1</code>) is replied.
+</p>
+</dd>
+<dt class="hdlist1">
+Battery Status
+</dt>
+<dd>
+<p>
+The indication of the capacity remaining in the batteries.
+</p>
+</dd>
+<dt class="hdlist1">
+Estimated Minutes Remaining
+</dt>
+<dd>
+<p>
+Estimated time from backup to low battery shutdown base on the current load.
+</p>
+</dd>
+<dt class="hdlist1">
+Estimated Charge Remaining
+</dt>
+<dd>
+<p>
+An estimate of the battery charge remaining expressed as a percent of full charge.
+</p>
+</dd>
+<dt class="hdlist1">
+Temperature
+</dt>
+<dd>
+<p>
+The temperature value that is measured in the UPS.
+</p>
+</dd>
+</dl></div>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_sti_code"><code>STI</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(UPS&#8594;Computer)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name                           </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">* Input Num Lines (Phases)</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>9</code></p></td>
+<td align="left" valign="top"><p class="table"><strong>[N][L]</strong> Number of input lines</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Input Frequency1</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table"><strong>[N][L]</strong> 0.1Hz</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Input Voltage1</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>9999</code></p></td>
+<td align="left" valign="top"><p class="table"><strong>[N][L]</strong> 0.1Volt</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Input Current1</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>9999</code></p></td>
+<td align="left" valign="top"><p class="table">0.1Amp</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Input Power1</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>99999</code></p></td>
+<td align="left" valign="top"><p class="table">Watt</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Input Frequency2</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table">0.1Hz</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Input Voltage2</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>9999</code></p></td>
+<td align="left" valign="top"><p class="table">0.1Volt</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Input Current2</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>9999</code></p></td>
+<td align="left" valign="top"><p class="table">0.1Amp</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Input Power2</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>99999</code></p></td>
+<td align="left" valign="top"><p class="table">Watt</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Input Frequency3</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table">0.1Hz</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Input Voltage3</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>9999</code></p></td>
+<td align="left" valign="top"><p class="table">0.1Volt</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Input Current3</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>9999</code></p></td>
+<td align="left" valign="top"><p class="table">0.1Amp</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Input Power3</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>99999</code></p></td>
+<td align="left" valign="top"><p class="table">Watt</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_sto_code"><code>STO</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(UPS&#8594;Computer)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name                           </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length           </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">* Output Source</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>5</code></p></td>
+<td align="left" valign="top"><div><div class="paragraph"><p><strong>[N][L]</strong></p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; Normal
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Battery
+</p>
+</li>
+<li>
+<p>
+<code>2</code> &#8594; Bypass (Reserve)
+</p>
+</li>
+<li>
+<p>
+<code>3</code> &#8594; Reducing
+</p>
+</li>
+<li>
+<p>
+<code>4</code> &#8594; Boosting
+</p>
+</li>
+<li>
+<p>
+<code>5</code> &#8594; Manual Bypass
+</p>
+</li>
+<li>
+<p>
+<code>6</code> &#8594; Other
+</p>
+</li>
+<li>
+<p>
+<code>7</code> &#8594; None
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Frequency</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table"><strong>[N][L]</strong> 0.1Hz</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">* Output Num Lines (Phase)</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>9</code></p></td>
+<td align="left" valign="top"><p class="table"><strong>[N][L]</strong> Number of output lines</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Voltage1</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>9999</code></p></td>
+<td align="left" valign="top"><p class="table"><strong>[N][L]</strong> 0.1Volt</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Current1</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>9999</code></p></td>
+<td align="left" valign="top"><p class="table">0.1Amp</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Power1</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999999</code></p></td>
+<td align="left" valign="top"><p class="table"><strong>[N]</strong> Watt</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">* Output Load1</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table"><strong>[N][L]</strong> Percent</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Voltage2</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>9999</code></p></td>
+<td align="left" valign="top"><p class="table">0.1Volt</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Current2</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>9999</code></p></td>
+<td align="left" valign="top"><p class="table">0.1Amp</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Power2</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999999</code></p></td>
+<td align="left" valign="top"><p class="table">Watt</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Load2</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table">Percent</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Voltage3</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>9999</code></p></td>
+<td align="left" valign="top"><p class="table">0.1Volt</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Current3</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>9999</code></p></td>
+<td align="left" valign="top"><p class="table">0.1Amp</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Power3</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999999</code></p></td>
+<td align="left" valign="top"><p class="table">Watt</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Load3</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table">Percent</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Description
+<br />
+</td>
+<td class="hdlist2">
+<div class="dlist"><dl>
+<dt class="hdlist1">
+Output Source
+</dt>
+<dd>
+<p>
+On-Line UPS status will be <code>0</code>, <code>1</code>, <code>2</code>
+</p>
+<div class="paragraph"><p>Off-Line UPS status will be <code>1</code>, <code>2</code>, <code>3</code>, <code>4</code></p></div>
+<div class="paragraph"><p>3 Phase UPS status will be <code>0</code>, <code>1</code>, <code>2</code>, <code>5</code></p></div>
+<div class="paragraph"><p>The present source of output power.</p></div>
+</dd>
+</dl></div>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_stp_code"><code>STP</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(UPS&#8594;Computer)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name                           </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length           </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Bypass Frequency</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table"><strong>[N]</strong> 0.1Hz</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">* Bypass Num Lines(Phase)</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>9</code></p></td>
+<td align="left" valign="top"><p class="table"><strong>[N]</strong> Number of bypass lines</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Bypass Voltage1</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>9999</code></p></td>
+<td align="left" valign="top"><p class="table"><strong>[N]</strong> 0.1Volt</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Bypass Current1</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>9999</code></p></td>
+<td align="left" valign="top"><p class="table">0.1Amp</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Bypass Power1</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999999</code></p></td>
+<td align="left" valign="top"><p class="table"><strong>[N]</strong> Watt</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Bypass Voltage2</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>9999</code></p></td>
+<td align="left" valign="top"><p class="table">0.1Volt</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Bypass Current2</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>9999</code></p></td>
+<td align="left" valign="top"><p class="table">0.1Amp</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Bypass Power2</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999999</code></p></td>
+<td align="left" valign="top"><p class="table">Watt</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Bypass Voltage3</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>9999</code></p></td>
+<td align="left" valign="top"><p class="table">0.1Volt</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Bypass Current3</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>9999</code></p></td>
+<td align="left" valign="top"><p class="table">0.1Amp</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Bypass Power3</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999999</code></p></td>
+<td align="left" valign="top"><p class="table">Watt</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_sta_code"><code>STA</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(UPS&#8594;Computer)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name                           </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Alarm Temperature</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> or <code>1</code></p></td>
+<td align="left" valign="top"><div><div class="paragraph"><p><strong>[N][L]</strong></p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; OK
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Over Temperature
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Alarm Input Bad</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> or <code>1</code></p></td>
+<td align="left" valign="top"><div><div class="paragraph"><p><strong>[N][L]</strong></p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; OK
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Input Bad
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Alarm Output Bad</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> or <code>1</code></p></td>
+<td align="left" valign="top"><div><div class="paragraph"><p><strong>[N][L]</strong></p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; OK
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Output Bad
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Alarm Overload</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> or <code>1</code></p></td>
+<td align="left" valign="top"><div><div class="paragraph"><p><strong>[N][L]</strong></p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; OK
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Overload
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Alarm Bypass Bad</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> or <code>1</code></p></td>
+<td align="left" valign="top"><div><div class="paragraph"><p><strong>[L]</strong></p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; OK
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Bypass Bad
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Alarm Output Off</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> or <code>1</code></p></td>
+<td align="left" valign="top"><div><div class="paragraph"><p><strong>[N][L]</strong></p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; Output On
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Output Off
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Alarm UPS Shutdown</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> or <code>1</code></p></td>
+<td align="left" valign="top"><div><div class="paragraph"><p><strong>[L]</strong></p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; OK
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Shutdown
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Alarm Charger Failure</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> or <code>1</code></p></td>
+<td align="left" valign="top"><div><div class="paragraph"><p><strong>[L]</strong></p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; OK
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Charger Failed
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Alarm System Off</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> or <code>1</code></p></td>
+<td align="left" valign="top"><div><div class="paragraph"><p><strong>[L]</strong></p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; System On
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; System Off
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Alarm Fan Failure</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> or <code>1</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; OK
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Fan Fault
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Alarm Fuse Failure</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> or <code>1</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; OK
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Fuse Fault
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Alarm General Fault</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> or <code>1</code></p></td>
+<td align="left" valign="top"><div><div class="paragraph"><p><strong>[N][L]</strong></p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; OK
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; General Fault
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Alarm Awaiting Power</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> or <code>1</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; OK
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Awaiting Power
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Alarm Shutdown Pending</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> or <code>1</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; OK
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Shutdown Pending
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Alarm Shutdown Imminent</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> or <code>1</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; OK
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Shutdown Imminent
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Buzzer Status</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> or <code>1</code></p></td>
+<td align="left" valign="top"><div><div class="paragraph"><p><strong>[N][L]</strong></p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; UPS Buzzer Silence
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; UPS Buzzer Alarm
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Economic Mode</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> or <code>1</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; No
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Yes
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Alarm Inverter Bad</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> or <code>1</code></p></td>
+<td align="left" valign="top"><div><div class="paragraph"><p><strong>[L]</strong></p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; No
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Yes
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Emergency Power Off</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> or <code>1</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; Off
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; On
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Buzzer State</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> or <code>1</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; UPS Buzzer Disable
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; UPS Buzzer Enable
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Description
+<br />
+</td>
+<td class="hdlist2">
+<div class="dlist"><dl>
+<dt class="hdlist1">
+Alarm Input Bad
+</dt>
+<dd>
+<p>
+An input condition is out of tolerance.
+This item is used to indicate the input power fail, a test condition should not set this item on.
+</p>
+</dd>
+<dt class="hdlist1">
+Alarm Output Bad
+</dt>
+<dd>
+<p>
+An output condition (other than OutputOverload) is out of tolerance.
+</p>
+</dd>
+<dt class="hdlist1">
+Alarm Overload
+</dt>
+<dd>
+<p>
+The output load exceeds the UPS output capacity.
+</p>
+</dd>
+<dt class="hdlist1">
+Alarm Bypass Bad
+</dt>
+<dd>
+<p>
+The Bypass is out of tolerance.
+</p>
+</dd>
+<dt class="hdlist1">
+Alarm Output Off
+</dt>
+<dd>
+<p>
+The UPS has shutdown as requested, i.e., the output is off.
+</p>
+</dd>
+<dt class="hdlist1">
+Alarm UPS Shutdown
+</dt>
+<dd>
+<p>
+The entire UPS has shutdown as commanded.
+</p>
+</dd>
+<dt class="hdlist1">
+Alarm Charger Failure
+</dt>
+<dd>
+<p>
+An uncorrected problem has been detected within the UPS charger subsystem.
+</p>
+</dd>
+<dt class="hdlist1">
+Alarm System Off
+</dt>
+<dd>
+<p>
+The UPS system is in the off state.
+For example: The UPS get the input power but does not startup the system.
+</p>
+</dd>
+<dt class="hdlist1">
+Alarm Fan Failure
+</dt>
+<dd>
+<p>
+The failure of one or more fans in the UPS has been detected.
+</p>
+</dd>
+<dt class="hdlist1">
+Alarm Fuse Failure
+</dt>
+<dd>
+<p>
+The failure of one or more fuses has been detected.
+</p>
+</dd>
+<dt class="hdlist1">
+Alarm Awaiting Power
+</dt>
+<dd>
+<p>
+The UPS output is off and the UPS is awaiting the return of input power.
+</p>
+</dd>
+<dt class="hdlist1">
+Alarm Shutdown Pending
+</dt>
+<dd>
+<p>
+A shutdown UPS command SDA countdown is underway.
+</p>
+</dd>
+<dt class="hdlist1">
+Alarm Shutdown Imminent
+</dt>
+<dd>
+<p>
+The UPS will turn off power to the load in less than 5 seconds; this may be either a timed shutdown or a low battery shutdown.
+</p>
+</dd>
+<dt class="hdlist1">
+Alarm Buzzer Status
+</dt>
+<dd>
+<p>
+To indicate the UPS buzzer is silent or alarm.
+</p>
+</dd>
+<dt class="hdlist1">
+Economic Mode
+</dt>
+<dd>
+<p>
+The UPS is in the economic mode (act like a off-line UPS).
+</p>
+</dd>
+<dt class="hdlist1">
+Emergency Power Off
+</dt>
+<dd>
+<p>
+The User pressed the Emergency Power Off button.
+</p>
+</dd>
+<dt class="hdlist1">
+Alarm Buzzer State
+</dt>
+<dd>
+<p>
+To indicate the UPS buzzer is enabled or disabled.
+</p>
+</dd>
+</dl></div>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_tsr_code"><code>TSR</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(UPS&#8594;Computer)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name           </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">* Test Result</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>5</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; No test performed
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Test passed
+</p>
+</li>
+<li>
+<p>
+<code>2</code> &#8594; Test in progress
+</p>
+</li>
+<li>
+<p>
+<code>3</code> &#8594; General test failed
+</p>
+</li>
+<li>
+<p>
+<code>4</code> &#8594; Battery test failed
+</p>
+</li>
+<li>
+<p>
+<code>5</code> &#8594; Deep batt test failed
+</p>
+</li>
+<li>
+<p>
+<code>6</code> &#8594; Test Aborted
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_ubr_code"><code>UBR</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(UPS&#8594;Computer)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name           </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Baud Rate</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table">See Comment</p></td>
+<td align="left" valign="top"><p class="table"><code>1200</code>, <code>2400</code>, <code>4800</code>, <code>9600</code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Default
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>2400</code>
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_uid_code"><code>UID</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(UPS&#8594;Computer)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name                   </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">UPS Identification</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>99</code></p></td>
+<td align="left" valign="top"><p class="table">Used for one PC connect to multi-UPS</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Default
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>0</code>
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_ver_code"><code>VER</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(UPS&#8594;Computer)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name                   </th>
+<th align="center" valign="top">Type   </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">UPS Firmware Version</p></td>
+<td align="center" valign="top"><p class="table">String</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>16</code></p></td>
+<td align="left" valign="top"><p class="table"></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_txv_code"><code>TXV</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(UPS&#8594;Computer)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name                   </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Low Transfer Voltage</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table">Volt</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">High Transfer Voltage</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table">Volt</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_vsn_code"><code>VSN</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(UPS&#8594;Computer)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name                   </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Voltage Sensitivity</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>2</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; Normal
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Reduced
+</p>
+</li>
+<li>
+<p>
+<code>2</code> &#8594; Low
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_let_code"><code>LET</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(UPS&#8594;Computer)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name                   </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Number of Output Relay</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>99</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; Not available
+</p>
+</li>
+<li>
+<p>
+<code>&gt;0</code> &#8594; Available
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_sol_code"><code>SOL</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(Computer&#8594;UPS)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name                   </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Index of Output Relay</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>1</code> to <code>99</code></p></td>
+<td align="left" valign="top"><p class="table"></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(UPS&#8594;Computer)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name                   </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Normal or Shutdown</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> or <code>1</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; Normal
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Shutdown
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_tel_code"><code>TEL</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(UPS&#8594;Computer)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name                   </th>
+<th align="center" valign="top">Type   </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Modem Phone Number</p></td>
+<td align="center" valign="top"><p class="table">String</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>16</code></p></td>
+<td align="left" valign="top"><p class="table">Telephone Number</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_brd_code"><code>BRD</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(UPS&#8594;Computer)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name                           </th>
+<th align="center" valign="top">Type   </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Last Battery Replacement Date</p></td>
+<td align="center" valign="top"><p class="table">String</p></td>
+<td align="center" valign="top"><p class="table"><code>8</code></p></td>
+<td align="left" valign="top"><p class="table"><code>YYYYMMDD</code></p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Next Battery Replacement Date</p></td>
+<td align="center" valign="top"><p class="table">String</p></td>
+<td align="center" valign="top"><p class="table"><code>8</code></p></td>
+<td align="left" valign="top"><p class="table"><code>YYYYMMDD</code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_env_code"><code>ENV</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(UPS&#8594;Computer)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name           </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Temperature</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table">Degree Celsius</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Humidity</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table">Sensor Box Humidity</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Relay1</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> or <code>1</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; Off
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; On
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Relay2</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> or <code>1</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; Off
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; On
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Relay3</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> or <code>1</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; Off
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; On
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Relay4</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> or <code>1</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; Off
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; On
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_att_code"><code>ATT</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(UPS&#8594;Computer)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name                   </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">UPS Periodic Auto-Test</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>1</code> to <code>5</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>1</code> &#8594; Disable
+</p>
+</li>
+<li>
+<p>
+<code>2</code> &#8594; Daily
+</p>
+</li>
+<li>
+<p>
+<code>3</code> &#8594; Weekly
+</p>
+</li>
+<li>
+<p>
+<code>4</code> &#8594; BiWeekly
+</p>
+</li>
+<li>
+<p>
+<code>5</code> &#8594; Monthly
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_atx_code"><code>ATX</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(UPS&#8594;Computer)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name                   </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">ATX PC Reboot Function</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>1</code> to <code>2</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>1</code> &#8594; Enable
+</p>
+</li>
+<li>
+<p>
+<code>2</code> &#8594; Disable
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Description
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Enable/Disable ATX PC reboot function (RS-232 Ring Indicator).
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_arb_code"><code>ARB</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(UPS&#8594;Computer)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name                           </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">AC Fail &amp; Restore Auto-Reboot</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>1</code> to <code>2</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>1</code> &#8594; Enable (default)
+</p>
+</li>
+<li>
+<p>
+<code>2</code> &#8594; Disable
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Description
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+If you enable this function, UPS will reboot to restart the computer otherwise, it will back to normal state.
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_txf_code"><code>TXF</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(UPS&#8594;Computer)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name                           </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Low Transfer Frequency</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table">0.1Hz</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">High Transfer Frequency</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table">0.1Hz</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_ubd_code"><code>UBD</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(UPS&#8594;Computer)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name           </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">UPS Boot Delay</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table">Seconds</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_sov_code"><code>SOV</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(UPS&#8594;Computer)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name                   </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Current Output Voltage</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table">Voltage</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Select Output Voltage1</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table">Voltage</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Select Output Voltage2</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table">Voltage</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Select Output Voltage3</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table">Voltage</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">?</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table">Voltage</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Description
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+UPS provide the output voltage list for users to pick up a suitable one for the current environment.
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_btv_code"><code>BTV</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(UPS&#8594;Computer)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name           </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Test Time</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>1</code> to <code>60</code></p></td>
+<td align="left" valign="top"><p class="table">Minutes</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Test Voltage</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table">Voltage</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Description
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+This command is the same as 3Phase UPS.
+If battery voltage is lower than the "Test Voltage" which is set by users then UPS reports test fail.
+This kind of battery test is triggered by <strong><code>TST</code></strong> (<code>2</code>) command.
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_regular_format_set_commands">Regular Format: Set Commands</h2>
+<div class="sectionbody">
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<thead>
+<tr>
+<th align="center" valign="middle">Command        </th>
+<th align="left" valign="middle">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>BUZ</strong></code></p></td>
+<td align="left" valign="middle"><p class="table"><strong>[N][L]</strong> Switch UPS Buzzer</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>SDA</strong></code></p></td>
+<td align="left" valign="middle"><p class="table"><strong>[N][L]</strong> Shutdown Action</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>SDR</strong></code></p></td>
+<td align="left" valign="middle"><p class="table"><strong>[N][L]</strong> Shutdown and Restart</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>SDT</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Shutdown Type</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>TST</strong></code></p></td>
+<td align="left" valign="middle"><p class="table"><strong>[N][L]</strong> Test Type</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>UBR</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">UPS Baud Rate</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>UID</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">UPS Identification</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>TXV</strong></code></p></td>
+<td align="left" valign="middle"><p class="table"><strong>[N][L]</strong> Transfer Voltage</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>VSN</strong></code></p></td>
+<td align="left" valign="middle"><p class="table"><strong>[L]</strong> Voltage Sensitivity</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>RON</strong></code></p></td>
+<td align="left" valign="middle"><p class="table"><strong>[N]</strong> Outlet Relay On</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>ROF</strong></code></p></td>
+<td align="left" valign="middle"><p class="table"><strong>[N]</strong> Outlet Relay Off</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>RNF</strong></code></p></td>
+<td align="left" valign="middle"><p class="table"><strong>[N]</strong> Outlet Relay On and Off</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>TEL</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Modem Telephone Number</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>BRD</strong></code></p></td>
+<td align="left" valign="middle"><p class="table"><strong>[N]</strong> Battery Replacement Date</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>ECO</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Economic Mode enable/disable</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>ATT</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Auto Test</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>BTT</strong></code></p></td>
+<td align="left" valign="middle"><p class="table"><strong>[N]</strong> Buzzer Test</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>ATX</strong></code></p></td>
+<td align="left" valign="middle"><p class="table"><strong>[N][L]</strong> ATX Reboot enable/disable</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>ARB</strong></code></p></td>
+<td align="left" valign="middle"><p class="table"><strong>[N][L]</strong> AC Fail &amp; Restore Auto-Reboot enable/disable</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>RSM</strong></code></p></td>
+<td align="left" valign="middle"><p class="table"><strong>[N][L]</strong> ATX Resume enable/disable</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>UBD</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">UPS Boot Delay</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>TXF</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Transfer Frequency</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>SOV</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Select Output Voltage</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>EDB</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Enable/Disable Buzzer</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong>BTV</strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Battery Test Time &amp; Voltage</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_code_buz_code"><code>BUZ</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(Computer&#8594;UPS)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name           </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">UPS Buzzer</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>1</code> or <code>2</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>1</code> &#8594; Buzzer Alarm
+</p>
+</li>
+<li>
+<p>
+<code>2</code> &#8594; Buzzer Silence
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Description
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+If <code>1</code>, UPS system alarms normally.
+If <code>2</code>, UPS will keep silence but will alarm again when next power event is occurred.
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_sda_code"><code>SDA</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(Computer&#8594;UPS)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name                   </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length           </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Shutdown Action</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> or <code>1</code> to <code>9999</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; Abort
+</p>
+</li>
+<li>
+<p>
+<code>&gt;0</code> &#8594; Seconds
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Description
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Performs shutdown action defined by <strong><code>SDT</code></strong> after the seconds.
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_sdr_code"><code>SDR</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(Computer&#8594;UPS)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name                   </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Shutdown Restart</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>65535</code></p></td>
+<td align="left" valign="top"><p class="table">Minute</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Description
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Perform shutdown action and delay defined by <strong><code>SDT</code></strong> and <strong><code>SDA</code></strong> then reboot after indicated number of minutes.
+65535 minutes == 45 days
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_sdt_code_2"><code>SDT</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(Computer&#8594;UPS)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name           </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Shutdown Type</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>1</code> or <code>2</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>1</code> &#8594; UPS output (all outlet relay)
+</p>
+</li>
+<li>
+<p>
+<code>2</code> &#8594; UPS system
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Description
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Defines action to be taken at UPS shutdown.
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_tst_code"><code>TST</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(Computer&#8594;UPS)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name   </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Test</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>4</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; Abort test
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; General test
+</p>
+</li>
+<li>
+<p>
+<code>2</code> &#8594; <strong><code>BTV</code></strong> test
+</p>
+</li>
+<li>
+<p>
+<code>3</code> &#8594; Test for 10 seconds
+</p>
+</li>
+<li>
+<p>
+<code>4</code> &#8594; Test until battery low
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Description
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Application support only <code>0</code>, <code>3</code>, <code>4</code>.
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_ubr_code_2"><code>UBR</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(Computer&#8594;UPS)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name           </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Baud Rate</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table">See Comment</p></td>
+<td align="left" valign="top"><p class="table"><code>1200</code>, <code>2400</code>, <code>4800</code>, <code>9600</code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Description
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Sets UPS baud rate.
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_uid_code_2"><code>UID</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(Computer&#8594;UPS)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name                   </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">UPS Identification</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>99</code></p></td>
+<td align="left" valign="top"><p class="table"></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Description
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Sets UPS ID for one PC monitor more than one UPS.
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_txv_code_2"><code>TXV</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(Computer&#8594;UPS)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name                   </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Low Transfer Voltage</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table">Volt</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">High Transfer Voltage</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table">Volt</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Description
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Sets high and low transfer voltages.
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_vsn_code_2"><code>VSN</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(Computer&#8594;UPS)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name                   </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Voltage Sensitivity</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>2</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; Normal
+</p>
+</li>
+<li>
+<p>
+<code>1</code> &#8594; Reduced
+</p>
+</li>
+<li>
+<p>
+<code>2</code> &#8594; Low
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Description
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Sets UPS voltage sensitivity.
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_ron_code"><code>RON</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(Computer&#8594;UPS)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name                   </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Outlet Relay Number</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>&gt;0</code></p></td>
+<td align="left" valign="top"><p class="table"></p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Delay Time</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>9999</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; Cancel
+</p>
+</li>
+<li>
+<p>
+<code>&gt;0</code> &#8594; Seconds
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Description
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Perform relay on after the seconds.
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_rof_code"><code>ROF</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(Computer&#8594;UPS)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name                   </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Outlet Relay Number</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>&gt;0</code></p></td>
+<td align="left" valign="top"><p class="table"></p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Delay Time</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>9999</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> &#8594; Cancel
+</p>
+</li>
+<li>
+<p>
+<code>&gt;0</code> &#8594; Seconds
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Description
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Perform relay off after the seconds.
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_rnf_code"><code>RNF</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(Computer&#8594;UPS)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name                   </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Outlet Relay Number</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>&gt;0</code></p></td>
+<td align="left" valign="top"><p class="table"></p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Turn Off Delay Time</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>1</code> to <code>9999</code></p></td>
+<td align="left" valign="top"><p class="table">Seconds</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Turn On Delay Time</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>1</code> to <code>65535</code></p></td>
+<td align="left" valign="top"><p class="table">Minute</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Description
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Perform relay on after the seconds.
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_tel_code_2"><code>TEL</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(Computer&#8594;UPS)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name                   </th>
+<th align="center" valign="top">Type   </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Modem Telephone Number</p></td>
+<td align="center" valign="top"><p class="table">String</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>16</code></p></td>
+<td align="left" valign="top"><p class="table">Phone Number</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_brd_code_2"><code>BRD</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(Computer&#8594;UPS)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name                           </th>
+<th align="center" valign="top">Type   </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Last Battery Replacement Date</p></td>
+<td align="center" valign="top"><p class="table">String</p></td>
+<td align="center" valign="top"><p class="table"><code>8</code></p></td>
+<td align="left" valign="top"><p class="table"><code>YYYYMMDD</code></p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Next Battery Replacement Date</p></td>
+<td align="center" valign="top"><p class="table">String</p></td>
+<td align="center" valign="top"><p class="table"><code>8</code></p></td>
+<td align="left" valign="top"><p class="table"><code>YYYYMMDD</code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_eco_code"><code>ECO</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(Computer&#8594;UPS)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name                                   </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Switch Economic Mode enable/disable</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>1</code> to <code>2</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>1</code> &#8594; Enable
+</p>
+</li>
+<li>
+<p>
+<code>2</code> &#8594; Disable
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_att_code_2"><code>ATT</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(Computer&#8594;UPS)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name                   </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Set Periodic Auto-Test</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>1</code> to <code>5</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>1</code> &#8594; Disable
+</p>
+</li>
+<li>
+<p>
+<code>2</code> &#8594; Daily
+</p>
+</li>
+<li>
+<p>
+<code>3</code> &#8594; Weekly
+</p>
+</li>
+<li>
+<p>
+<code>4</code> &#8594; BiWeekly
+</p>
+</li>
+<li>
+<p>
+<code>5</code> &#8594; Monthly
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_btt_code"><code>BTT</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(Computer&#8594;UPS)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name           </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Buzzer Test</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>1</code> to <code>99</code></p></td>
+<td align="left" valign="top"><p class="table">Seconds</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_atx_code_2"><code>ATX</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(Computer&#8594;UPS)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name                   </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">ATX PC Reboot Function</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>1</code> to <code>2</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>1</code> &#8594; Enable
+</p>
+</li>
+<li>
+<p>
+<code>2</code> &#8594; Disable(default)
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Description
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Enable/Disable ATX PC reboot function (RS-232 Ring Indicator).
+The UPS set the RI (pin 9) to high for a while when it startup (For example: schedule or power restore).
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_arb_code_2"><code>ARB</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(Computer&#8594;UPS)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name                           </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">AC Fail &amp; Restore Auto-Reboot</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>1</code> to <code>2</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>1</code> &#8594; Enable (default)
+</p>
+</li>
+<li>
+<p>
+<code>2</code> &#8594; Disable
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Description
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Use the <strong><code>ARB</code></strong> command to choose whether the UPS turns on its power outlets automatically when power returns after an extended power failure.
+</p>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+UPS receives the <strong><code>SDA</code></strong> command in Backup mode (AC Power Fail):
+</p>
+<div class="openblock">
+<div class="content">
+<div class="ulist"><ul>
+<li>
+<p>
+Enable <strong><code>ARB</code></strong>: Shutdown the UPS when the countdown time reaches 0.
+UPS turns on its power outlets automatically when power restores.
+</p>
+</li>
+<li>
+<p>
+Disable <strong><code>ARB</code></strong>: Shutdown the UPS when the countdown time reaches 0.
+UPS won&#8217;t startup users need to startup the UPS manually.
+</p>
+</li>
+</ul></div>
+</div></div>
+<div class="imageblock" style="text-align:center;">
+<div class="content">
+<img src="images/belkin-protocol_shutdown-time.png" alt="Shutdown time" />
+</div>
+</div>
+</li>
+<li>
+<p>
+UPS receive the <strong><code>SDA</code></strong> command in AC mode (AC Normal):
+</p>
+<div class="ulist"><ul>
+<li>
+<p>
+Shutdown the UPS when the countdown time reaches 0.
+UPS won&#8217;t startup users need to startup the UPS manually.
+</p>
+</li>
+</ul></div>
+</li>
+</ol></div>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_rsm_code"><code>RSM</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(Computer&#8594;UPS)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name                   </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">ATX PC Resume Function</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>1</code> to <code>2</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>1</code> &#8594; Enable
+</p>
+</li>
+<li>
+<p>
+<code>2</code> &#8594; Disable (default)
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Description
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Enable/Disable ATX PC resume (RS-232 Ring Indicator) when the UPS status changes.
+The aim of this function is to wakeup the PC and let the UPS notify the application that the status changes.
+The UPS should disable this function when UPS shutdown each time and waiting for the direction from the application.
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_ubd_code_2"><code>UBD</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(Computer&#8594;UPS)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name           </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">UPS Boot Delay</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table">Seconds</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Description
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Delay the UPS startup after power restores.
+The power quality may not stable when power restores, this feature let the UPS wait a period of time to startup the system.
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_txf_code_2"><code>TXF</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(Computer&#8594;UPS)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name                           </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Low Transfer Frequency</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table">0.1 Hz</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">High Transfer Frequency</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table">0.1 Hz</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Description
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Sets high and low transfer frequency.
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_sov_code_2"><code>SOV</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(Computer&#8594;UPS)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name                   </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Select Output Voltage</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table">Voltage</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Description
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Select the output voltage.
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_edb_code"><code>EDB</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(Computer&#8594;UPS)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name                   </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Enable/Disable Buzzer</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>1</code> to <code>2</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>1</code> &#8594; Enable (Default)
+</p>
+</li>
+<li>
+<p>
+<code>2</code> &#8594; Disable
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Description
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Enable/Disable UPS buzzer.
+If it is enabled, the UPS should check the <strong><code>BUZ</code></strong> to decide to alarm or silence.
+If it is disabled then the UPS will always mute.
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_code_btv_code_2"><code>BTV</code></h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Data
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+(Computer&#8594;UPS)
+</p>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Name           </th>
+<th align="center" valign="top">Type           </th>
+<th align="center" valign="top">Range/Length   </th>
+<th align="left" valign="top">Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Test Time</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>1</code> to <code>60</code></p></td>
+<td align="left" valign="top"><p class="table">Minutes</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Test Voltage</p></td>
+<td align="center" valign="top"><p class="table">Integer</p></td>
+<td align="center" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table">Voltage</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Description
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+This command is the same as 3Phase UPS.
+If battery voltage is lower than the "Test Voltage" which is set by users then UPS reports test fail.
+This kind of battery test is triggered by <strong><code>TST</code></strong> (<code>2</code>) command.
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+</div>
+</div>
+</div>
+<div id="footnotes"><hr /></div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2023-09-20 10:08:29 UTC
+</div>
+<div id="footer-badges">
+<a href="https://github.com/networkupstools/nut">
+  <img style="border:0;height:20"
+    src="https://img.shields.io/github/checks-status/networkupstools/nut/master"
+    alt="Latest GitHub checks status: master branch"/>
+</a>
+<!--
+<a href="https://travis-ci.org/github/networkupstools/nut">
+  <img style="border:0;height:20"
+    src="https://api.travis-ci.org/networkupstools/nut.svg?branch=master"
+    alt="Latest Travis CI build status: master branch"/>
+</a>
+-->
+<a href="https://ci.networkupstools.org/job/nut/job/nut/job/master/">
+  <img style="border:0;height:20"
+    src="https://ci.networkupstools.org/buildStatus/icon?job=nut%2Fnut%2Fmaster"
+    alt="Latest NUT CI build status: master branch"/>
+</a>
+<!-- MacOS, maybe later Windows builds: -->
+<a href="https://app.circleci.com/pipelines/github/networkupstools">
+  <img style="border:0;height:20"
+    src="https://circleci.com/gh/networkupstools/nut/tree/master.svg?style=svg"
+    alt="Latest Circle CI build status: master branch"/>
+</a>
+<!-- Windows, maybe later MacOS builds: -->
+<a href="https://ci.appveyor.com/project/nut-travis/nut/build/artifacts">
+  <img style="border:0;height:20"
+    src="https://ci.appveyor.com/api/projects/status/vrhkatid9hr7lq7r/branch/master?svg=true&failingText=Windows-FAIL&passingText=Windows-OK&pendingText-Windows-PENDING"
+    alt="Latest AppVeyor build status (NUT for Windows iterations)"/>
+</a>
+<!--
+<a href="https://ci.networkupstools.org/job/nut/job/nut/job/fightwarn/">
+  <img style="border:0;height:20"
+    src="https://ci.networkupstools.org/buildStatus/icon?job=nut%2Fnut%2Ffightwarn&subject=Fightwarn%20Branch"
+    alt="Latest NUT CI build status: fightwarn branch"/>
+</a>
+-->
+<!--
+<a href="https://github.com/networkupstools/nut/releases">
+  <img style="border:0;height:20"
+    src="https://img.shields.io/github/v/release/networkupstools/nut"
+    alt="Latest GitHub drafted NUT source release"/>
+</a>
+-->
+<a href="https://github.com/networkupstools/nut/releases">
+  <img style="border:0;height:20"
+    src="https://img.shields.io/github/v/tag/networkupstools/nut?sort=semver"
+    alt="Latest Git-tagged NUT source release"/>
+</a>
+<!-- Maintainer note: for the counter below to work, a git tag
+     is not sufficient -- a release must be drafted and published
+     at https://github.com/networkupstools/nut/releases
+     Counter URL may also be .../latest/BRANCHNAME -->
+<a href="https://github.com/networkupstools/nut">
+  <img style="border:0;height:20"
+    src="https://img.shields.io/github/commits-since/networkupstools/nut/latest.svg"
+    alt="Commits on master branch since latest release on GitHub"/>
+</a>
+<a href="http://www.methods.co.nz/asciidoc/">
+  <img style="border:0;width:88px;height:31px"
+    src="../images/asciidoc.png"
+    alt="Powered by AsciiDoc"/>
+</a>
+<a href="https://validator.w3.org/check?uri=referer">
+  <img style="border:0;width:88px;height:31px"
+    src="https://www.w3.org/Icons/valid-xhtml11-blue"
+    alt="Valid XHTML 1.1"/>
+</a>
+<a href="https://jigsaw.w3.org/css-validator/check?uri=referer">
+  <img style="border:0;width:88px;height:31px"
+    src="https://jigsaw.w3.org/css-validator/images/vcss-blue"
+    alt="Valid CSS!"/>
+</a>
+<a href="https://www.gandi.net/">
+  <img style="border:0;height:38px;"
+       src="../images/gandi-ar21.svg"
+       alt="DNS, redirection and related services Hoster"/>
+</a>
+<a href="https://fosshost.org/">
+  <img style="border:0;width:112px;height:38px;"
+       src="../images/ci/fosshost.org_Host_Light_38px.png"
+       alt="Dedicated Hosting for NUT CI"/>
+</a>
+</div>
+</div>
+</div>
+</div>
+<!-- Google Analytics integration -->
+<script type="text/javascript">
+
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-9664272-1']);
+        _gaq.push(['_trackPageview']);
+
+        (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+
+</script>
+</body>
+</html>

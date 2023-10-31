@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>K.1. General call to Test the ability to configure and build</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><link rel="home" href="index.html" title="Network UPS Tools User Manual" /><link rel="up" href="Config_Prereqs.html" title="K. Prerequisites for building NUT on different OSes" /><link rel="prev" href="Config_Prereqs.html" title="K. Prerequisites for building NUT on different OSes" /><link rel="next" href="_build_prerequisites_to_make_nut_from_scratch_on_various_operating_systems.html" title="K.2. Build prerequisites to make NUT from scratch on various Operating Systems" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="Config_Prereqs.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="_build_prerequisites_to_make_nut_from_scratch_on_various_operating_systems.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_general_call_to_test_the_ability_to_configure_and_build"></a>K.1. General call to Test the ability to configure and build</h3></div></div></div><p>Check out from git, generate files and configure to tailor to your build
+environment, and build some tests:</p><pre class="screen">:; mkdir -p nut &amp;&amp; cd nut &amp;&amp; \
+    git clone https://github.com/networkupstools/nut/ -b master .
+:; ./autogen.sh &amp;&amp; \
+    ./configure --with-doc=all --with-all --with-cgi &amp;&amp; \
+    make all &amp;&amp; make check &amp;&amp; make spellcheck</pre><p>You can toggle some <code class="literal">configure</code> options to check different dependency
+variants, e.g. <code class="literal">--with-ssl=nss</code> vs. <code class="literal">--with-ssl=openssl</code></p><p>For reproducible runs of various pre-sets of configuration during
+development, take a look at <code class="literal">ci_build.sh</code> script and different <code class="literal">BUILD_TYPE</code>
+(and other) environment variable settings that it supports. A minimal run
+with it is just to call the script, e.g.:</p><pre class="screen">:; mkdir -p nut &amp;&amp; cd nut &amp;&amp; \
+   git clone https://github.com/networkupstools/nut/ -b fightwarn .
+:; ./ci_build.sh</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>To build older releases, such as "vanilla" NUT 2.7.4 and older,
+you may need to address some nuances:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Ensure that <code class="literal">python</code> in <code class="literal">PATH</code> points to a python-2.x implementation
+  (<code class="literal">master</code> branch is fixed to work with python 2 and 3)
+</li><li class="listitem">
+Ensure that <code class="literal">bash</code> is your user and maybe system shell (or ensure the
+  generated <code class="literal">configure</code> script gets interpreted by it)
+</li><li class="listitem">
+Generally you may have better results with GNU Make newer than 3.81
+  than with other make implementations; however, builds are regularly
+  tested by CI with Sun dmake and BSD make as well, so recipes should
+  not expect GNU-only syntax and constructs to work
+</li><li class="listitem">
+Parallel builds should be okay in current development version and
+  since NUT 2.8.0 (is a bug to log and fix, if not), but they may be
+  failure-prone in 2.7.4 and earlier releases
+</li></ul></div></div><p>For intensive rebuilds, <code class="literal">ccache</code> is recommended. Note that instructions
+below detail how to provide its directory with symlinks as <code class="literal">/usr/lib/ccache</code>
+which is not the default case in all OS distributions. Recent versions of
+the NUT <code class="literal">ci_build.sh</code> script allow to override the location by using the
+<code class="literal">CI_CCACHE_SYMLINKDIR</code> environment variable, which is cumbersome and only
+recommended for build agents with immutable system areas, etc.</p></div><div xmlns="" class="navfooter nut_footer"><hr />
+		Last updated 2023-10-31 22:46:04 -- Network UPS Tools 2.8.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="Config_Prereqs.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="Config_Prereqs.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="_build_prerequisites_to_make_nut_from_scratch_on_various_operating_systems.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

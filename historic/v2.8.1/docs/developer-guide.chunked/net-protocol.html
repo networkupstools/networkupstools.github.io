@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>9. Network protocol information</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><link rel="home" href="index.html" title="Network UPS Tools Developer Guide" /><link rel="up" href="index.html" title="Network UPS Tools Developer Guide" /><link rel="prev" href="new-clients.html" title="8. Creating new client" /><link rel="next" href="dev-tools.html" title="10. NUT developers tools" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="new-clients.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="dev-tools.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="net-protocol"></a>9. Network protocol information</h2></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Two NUT websites</h3><p>This version of the page reflects NUT release <span class="emphasis"><em>v2.8.1</em></span>
+with codebase commited 4ba352d8f at 2023-10-31T21:46:20+01:00</p><p>Options, features and capabilities in current development (and future
+releases) are detailed on the main site and may differ from ones
+described here.</p></div><p>Since May 2002, this protocol has an official port number from IANA,
+which is <span class="strong"><strong>3493</strong></span>.  The old number (3305) was a relic of the original code’s
+ancestry, and conflicted with other services.  Version 0.50.0 and up
+use 3493 by default.</p><p>This protocol runs over TCP.  UDP support was dropped in July 2003.  It
+had been deprecated for some time and was only capable of the simplest
+query commands as authentication is impossible over a UDP socket.</p><p>A library, named libupsclient, that implement this protocol is provided
+in both static and shared version to help the client application development.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_old_command_removal_notice"></a>9.1. Old command removal notice</h3></div></div></div><p>Before version 1.5.0, a number of old commands were supported.  These
+have been removed from the specification.  For more information, consult
+an older version of the software.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_command_reference"></a>9.2. Command reference</h3></div></div></div><p>Multi-word elements are contained within "quotes" for easier parsing.
+Embedded quotes are escaped with backslashes.  Embedded backslashes are
+also escaped by representing them as \\.  This protocol is intended to
+be interpreted with parseconf (NUT parser) or something similar.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_revision_history"></a>9.3. Revision history</h3></div></div></div><p>Here’s a table to present the various changes that happened to the
+NUT network protocol, over the time:</p><div class="informaltable"><table class="informaltable" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; "><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><thead><tr><th style="border-bottom: 1px solid #527bbd; " align="center" valign="middle">Protocol version </th><th style="border-bottom: 1px solid #527bbd; " align="center" valign="middle">NUT version </th><th style="border-bottom: 1px solid #527bbd; " align="left" valign="top">Description</th></tr></thead><tbody><tr><td style="border-bottom: 1px solid #527bbd; " align="center" valign="middle"><p>1.0</p></td><td style="border-bottom: 1px solid #527bbd; " align="center" valign="middle"><p>&lt; 1.5.0</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>Original protocol (legacy version)</p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " align="center" valign="middle"><p>1.1</p></td><td style="border-bottom: 1px solid #527bbd; " align="center" valign="middle"><p>&gt;= 1.5.0</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>Original protocol (without old commands)</p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " rowspan="2" align="center" valign="middle"><p>1.2</p></td><td style="border-bottom: 1px solid #527bbd; " rowspan="2" align="center" valign="middle"><p>&gt;= 2.6.4</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>Add "LIST CLIENT" and "NETVER" commands</p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>Add ranges of values for writable variables</p></td></tr><tr><td style="" rowspan="4" align="center" valign="middle"><p>1.3</p></td><td style="" rowspan="4" align="center" valign="middle"><p>&gt;= 2.8.0</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>Add "cmdparam" to "INSTCMD"</p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>Add "TRACKING" commands (GET, SET)</p></td></tr><tr><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>Add "PRIMARY" as alias to older "MASTER"
+                                (implementation tested to be backwards
+                                compatible in <code class="literal">upsd</code> and <code class="literal">upsmon</code>)</p></td></tr><tr><td style="" align="left" valign="top"><p>Add "PROTVER" as alias to older "NETVER"</p></td></tr></tbody></table></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>Any new version of the protocol implies an update of <code class="literal">NUT_NETVERSION</code>
+in <span class="emphasis"><em>configure.ac</em></span> file.</p></div><p>ERRATA: Earlier revisions of this table mistakenly mentioned <code class="literal">LIST CLIENTS</code>
+as added since 2.6.4. The actual added command was <code class="literal">LIST CLIENT</code> (no <code class="literal">S</code>)
+as documented in its section below.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_get"></a>9.4. GET</h3></div></div></div><p>Retrieve a single response from the server.</p><p>Possible sub-commands:</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_numlogins"></a>NUMLOGINS</h4></div></div></div><p>Form:</p><pre class="literallayout">GET NUMLOGINS &lt;upsname&gt;
+GET NUMLOGINS su700</pre><p>Response:</p><pre class="literallayout">NUMLOGINS &lt;upsname&gt; &lt;value&gt;
+NUMLOGINS su700 1</pre><p><span class="emphasis"><em>&lt;value&gt;</em></span> is the number of clients which have done LOGIN for this UPS.
+This is used by the upsmon in primary mode to determine how many clients are
+still connected when starting the shutdown process.</p><p>This replaces the old "REQ NUMLOGINS" command.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_upsdesc"></a>UPSDESC</h4></div></div></div><p>Form:</p><pre class="literallayout">GET UPSDESC &lt;upsname&gt;
+GET UPSDESC su700</pre><p>Response:</p><pre class="literallayout">UPSDESC &lt;upsname&gt; "&lt;description&gt;"
+UPSDESC su700 "Development box"</pre><p><span class="emphasis"><em>&lt;description&gt;</em></span> is the value of "desc=" from ups.conf for this UPS.  If it
+is not set, upsd will return "Unavailable".</p><p>This can be used to provide human-readable descriptions instead of a
+cryptic "upsname@hostname" string.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_var"></a>VAR</h4></div></div></div><p>Form:</p><pre class="literallayout">GET VAR &lt;upsname&gt; &lt;varname&gt;
+GET VAR su700 ups.status</pre><p>Response:</p><pre class="literallayout">VAR &lt;upsname&gt; &lt;varname&gt; "&lt;value&gt;"
+VAR su700 ups.status "OL"</pre><p>This replaces the old "REQ" command.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_type"></a>TYPE</h4></div></div></div><p>Form:</p><pre class="literallayout">GET TYPE &lt;upsname&gt; &lt;varname&gt;
+GET TYPE su700 input.transfer.low</pre><p>Response:</p><pre class="literallayout">TYPE &lt;upsname&gt; &lt;varname&gt; &lt;type&gt;...
+TYPE su700 input.transfer.low ENUM</pre><p><span class="emphasis"><em>&lt;type&gt;</em></span> can be several values, and multiple words may be returned:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<span class="emphasis"><em>RW</em></span>: this variable may be set to another value with SET
+</li><li class="listitem">
+<span class="emphasis"><em>ENUM</em></span>: an enumerated type, which supports a few specific values
+</li><li class="listitem">
+<span class="emphasis"><em>STRING:n</em></span>: this is a string of maximum length n
+</li><li class="listitem">
+<span class="emphasis"><em>RANGE</em></span>: this is an numeric, either integer or float, comprised in the
+range (see LIST RANGE)
+</li><li class="listitem">
+<span class="emphasis"><em>NUMBER</em></span>: this is a simple numeric value, either integer or float
+</li></ul></div><p>ENUM, STRING and RANGE are usually associated with RW, but not always.
+The default &lt;type&gt;, when omitted, is numeric, so either integer or float.
+Each driver is then responsible for handling values as either integer or
+float.</p><p>Note that float values are expressed using decimal (base 10) english-based
+representation, so using a dot, in non-scientific notation.  So hexadecimal,
+exponents, and comma for thousands separator are forbidden.
+For example: "1200.20" is valid, while "1,200.20" and "1200,20" are invalid.</p><p>This replaces the old "VARTYPE" command.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_desc"></a>DESC</h4></div></div></div><p>Form:</p><pre class="literallayout">GET DESC &lt;upsname&gt; &lt;varname&gt;
+GET DESC su700 ups.status</pre><p>Response:</p><pre class="literallayout">DESC &lt;upsname&gt; &lt;varname&gt; "&lt;description&gt;"
+DESC su700 ups.status "UPS status"</pre><p><span class="emphasis"><em>&lt;description&gt;</em></span> is a string that gives a brief explanation of the named
+variable.  upsd may return "Unavailable" if the file which provides this
+description is not installed.</p><p>Different versions of this file may be used in some situations to
+provide for localization and internationalization.</p><p>This replaces the old "VARDESC" command.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_cmddesc"></a>CMDDESC</h4></div></div></div><p>Form:</p><pre class="literallayout">GET CMDDESC &lt;upsname&gt; &lt;cmdname&gt;
+GET CMDDESC su700 load.on</pre><p>Response:</p><pre class="literallayout">CMDDESC &lt;upsname&gt; &lt;cmdname&gt; "&lt;description&gt;"
+CMDDESC su700 load.on "Turn on the load immediately"</pre><p>This is like DESC above, but it applies to the instant commands.</p><p>This replaces the old "INSTCMDDESC" command.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_tracking_2"></a>TRACKING</h4></div></div></div><p>Form:</p><pre class="literallayout">GET TRACKING      (activation status of TRACKING)
+GET TRACKING &lt;id&gt; (execution status of a command / setvar)
+GET TRACKING 1bd31808-cb49-4aec-9d75-d056e6f018d2</pre><p>Response:</p><pre class="literallayout">ON                   (TRACKING feature is enabled)
+OFF                  (TRACKING feature is disabled)
+PENDING              (command execution is pending)
+SUCCESS              (command was successfully executed)
+ERR UNKNOWN          (command execution failed with unknown error)
+ERR INVALID-ARGUMENT (command execution failed due to missing or invalid argument)
+ERR FAILED           (command execution failed)</pre></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_list"></a>9.5. LIST</h3></div></div></div><p>The LIST functions all share a common container format.  They will
+return "BEGIN LIST" and then repeat the initial query.  The list then
+follows, with as many lines are necessary to convey it.  "END LIST" with
+the initial query attached then follows.</p><p>The formatting may seem a bit redundant, but it makes a different form
+of client possible.  You can send a LIST query and then go off and wait
+for it to get back to you.  When it arrives, you don’t need complicated
+state machines to remember which list is which.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_ups"></a>UPS</h4></div></div></div><p>Form:</p><pre class="literallayout">LIST UPS</pre><p>Response:</p><pre class="literallayout">BEGIN LIST UPS
+UPS &lt;upsname&gt; "&lt;description&gt;"
+...
+END LIST UPS</pre><pre class="literallayout">BEGIN LIST UPS
+UPS su700 "Development box"
+END LIST UPS</pre><p><span class="emphasis"><em>&lt;upsname&gt;</em></span> is a name from ups.conf, and &lt;description&gt; is the value of
+desc= from ups.conf, if available.  It will be set to "Unavailable"
+otherwise.</p><p>This can be used to determine what values of &lt;upsname&gt; are valid before
+calling other functions on the server.  This is also a good way to
+handle situations where a single upsd supports multiple drivers.</p><p>Clients which perform a UPS discovery process may find this useful.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_var_2"></a>VAR</h4></div></div></div><p>Form:</p><pre class="literallayout">LIST VAR &lt;upsname&gt;
+LIST VAR su700</pre><p>Response:</p><pre class="literallayout">BEGIN LIST VAR &lt;upsname&gt;
+VAR &lt;upsname&gt; &lt;varname&gt; "&lt;value&gt;"
+...
+END LIST VAR &lt;upsname&gt;</pre><pre class="literallayout">BEGIN LIST VAR su700
+VAR su700 ups.mfr "APC"
+VAR su700 ups.mfr.date "10/17/96"
+...
+END LIST VAR su700</pre><p>This replaces the old "LISTVARS" command.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_rw"></a>RW</h4></div></div></div><p>Form:</p><pre class="literallayout">LIST RW &lt;upsname&gt;
+LIST RW su700</pre><p>Response:</p><pre class="literallayout">BEGIN LIST RW &lt;upsname&gt;
+RW &lt;upsname&gt; &lt;varname&gt; "&lt;value&gt;"
+...
+END LIST RW &lt;upsname&gt;</pre><pre class="literallayout">BEGIN LIST RW su700
+RW su700 output.voltage.nominal "115"
+RW su700 ups.delay.shutdown "020"
+...
+END LIST RW su700</pre><p>This replaces the old "LISTRW" command.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_cmd"></a>CMD</h4></div></div></div><p>Form:</p><pre class="literallayout">LIST CMD &lt;upsname&gt;
+LIST CMD su700</pre><p>Response:</p><pre class="literallayout">BEGIN LIST CMD &lt;upsname&gt;
+CMD &lt;upsname&gt; &lt;cmdname&gt;
+...
+END LIST CMD &lt;cmdname&gt;</pre><pre class="literallayout">BEGIN LIST CMD su700
+CMD su700 load.on
+CMD su700 test.panel.start
+...
+END LIST CMD su700</pre><p>This replaces the old "LISTINSTCMD" command.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_enum"></a>ENUM</h4></div></div></div><p>Form:</p><pre class="literallayout">LIST ENUM &lt;upsname&gt; &lt;varname&gt;
+LIST ENUM su700 input.transfer.low</pre><p>Response:</p><pre class="literallayout">BEGIN LIST ENUM &lt;upsname&gt; &lt;varname&gt;
+ENUM &lt;upsname&gt; &lt;varname&gt; "&lt;value&gt;"
+...
+END LIST ENUM &lt;upsname&gt; &lt;varname&gt;</pre><pre class="literallayout">BEGIN LIST ENUM su700 input.transfer.low
+ENUM su700 input.transfer.low "103"
+ENUM su700 input.transfer.low "100"
+...
+END LIST ENUM su700 input.transfer.low</pre><p>This replaces the old "ENUM" command.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>this does not support the old "SELECTED" notation.  You must
+request the current value separately.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_range"></a>RANGE</h4></div></div></div><p>Form:</p><pre class="literallayout">LIST RANGE &lt;upsname&gt; &lt;varname&gt;
+LIST RANGE su700 input.transfer.low</pre><p>Response:</p><pre class="literallayout">BEGIN LIST RANGE &lt;upsname&gt; &lt;varname&gt;
+RANGE &lt;upsname&gt; &lt;varname&gt; "&lt;min&gt;" "&lt;max&gt;"
+...
+END LIST RANGE &lt;upsname&gt; &lt;varname&gt;</pre><pre class="literallayout">BEGIN LIST RANGE su700 input.transfer.low
+RANGE su700 input.transfer.low "90" "100"
+RANGE su700 input.transfer.low "102" "105"
+...
+END LIST RANGE su700 input.transfer.low</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_client"></a>CLIENT</h4></div></div></div><p>Form:</p><pre class="literallayout">LIST CLIENT &lt;device_name&gt;
+LIST CLIENT ups1</pre><p>Response:</p><pre class="literallayout">BEGIN LIST CLIENT &lt;device_name&gt;
+CLIENT &lt;device name&gt; &lt;client IP address&gt;
+...
+END LIST CLIENT &lt;device_name&gt;</pre><pre class="literallayout">BEGIN LIST CLIENT ups1
+CLIENT ups1 ::1
+CLIENT ups1 192.168.1.2
+END LIST CLIENT ups1</pre></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_set_3"></a>9.6. SET</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_var_3"></a>VAR</h4></div></div></div><p>Form:</p><pre class="literallayout">SET VAR &lt;upsname&gt; &lt;varname&gt; "&lt;value&gt;"
+SET VAR su700 ups.id "My UPS"</pre><p>Response:</p><pre class="literallayout">OK                         (if TRACKING is not enabled)
+OK TRACKING &lt;id&gt;           (if TRACKING is enabled)
+ERR &lt;message&gt; [&lt;extra&gt;...] (see Error responses)</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_tracking_3"></a>TRACKING</h4></div></div></div><p>Form:</p><pre class="literallayout">SET TRACKING &lt;value&gt;
+SET TRACKING ON
+SET TRACKING OFF</pre><p>Response:</p><pre class="literallayout">OK
+ERR INVALID-ARGUMENT  (if &lt;value&gt; is not "ON" or "OFF")
+ERR USERNAME-REQUIRED (if not yet authenticated)
+ERR PASSWORD-REQUIRED (if not yet authenticated)</pre></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_instcmd_3"></a>9.7. INSTCMD</h3></div></div></div><p>Form:</p><pre class="literallayout">INSTCMD &lt;upsname&gt; &lt;cmdname&gt; [&lt;cmdparam&gt;]
+INSTCMD su700 test.panel.start
+INSTCMD su700 load.off.delay 120</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>&lt;cmdparam&gt; is an additional and optional parameter for the command.</p></div><p>Response:</p><pre class="literallayout">OK                         (if TRACKING is not enabled)
+OK TRACKING &lt;id&gt;           (if TRACKING is enabled)
+ERR &lt;message&gt; [&lt;extra&gt;...] (see Error responses)</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_logout"></a>9.8. LOGOUT</h3></div></div></div><p>Form:</p><pre class="literallayout">LOGOUT</pre><p>Response:</p><pre class="literallayout">OK Goodbye      (recent versions)
+Goodbye...      (older versions)</pre><p>Used to disconnect gracefully from the server.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_login"></a>9.9. LOGIN</h3></div></div></div><p>Form:</p><pre class="literallayout">LOGIN &lt;upsname&gt;</pre><p>Response:</p><pre class="literallayout">OK      (upon success)</pre><p>or <a class="link" href="net-protocol.html#np-errors" title="9.16. Error responses">various errors</a></p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>This requires "upsmon secondary" or "upsmon primary" in upsd.users</p></div><p>Use this to log the fact that a system is drawing power from this UPS.
+The upsmon primary will wait until the count of attached systems reaches
+1 — itself.  This allows the secondaries to shut down first.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>You probably shouldn’t send this command unless you are upsmon,
+or a upsmon replacement.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_primary_since_nut_2_8_0_or_master_deprecated"></a>9.10. PRIMARY (since NUT 2.8.0) or MASTER (deprecated)</h3></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>This command was renamed in NUT 2.8.0 to "PRIMARY" with the older
+name "MASTER" kept as deprecated alias for compatibility.</p></div><p>Form:</p><pre class="literallayout">MASTER &lt;upsname&gt;</pre><p>Response:</p><pre class="literallayout">OK MASTER-GRANTED       (upon success)</pre><p>Form:</p><pre class="literallayout">PRIMARY &lt;upsname&gt;</pre><p>Response:</p><pre class="literallayout">OK PRIMARY-GRANTED      (upon success)</pre><p>or <a class="link" href="net-protocol.html#np-errors" title="9.16. Error responses">various errors</a></p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>This requires "upsmon primary" in upsd.users</p></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>Previously documented response was just <code class="literal">OK</code> — clients checking
+that server reply <span class="strong"><strong>starts with</strong></span> that keyword would handle all cases.</p></div><p>This function doesn’t do much by itself.  It is used by upsmon to make
+sure that primary-mode functions like FSD are available if necessary.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_fsd"></a>9.11. FSD</h3></div></div></div><p>Form:</p><pre class="literallayout">FSD &lt;upsname&gt;</pre><p>Response:</p><pre class="literallayout">OK FSD-SET      (success)</pre><p>or <a class="link" href="net-protocol.html#np-errors" title="9.16. Error responses">various errors</a></p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>This requires "upsmon primary" in upsd.users, or "FSD" action
+granted in upsd.users</p></div><p>upsmon in primary mode is the primary user of this function.  It sets this
+"forced shutdown" flag on any UPS when it plans to power it off.  This is
+done so that secondary systems will know about it and shut down before the
+power disappears.</p><p>Setting this flag makes "FSD" appear in a STATUS request for this UPS.
+Finding "FSD" in a status request should be treated just like a "OB LB".</p><p>It should be noted that FSD is currently a latch — once set, there is
+no way to clear it short of restarting upsd or dropping then re-adding
+it in the ups.conf.  This may cause issues when upsd is running on a
+system that is not shut down due to the UPS event.</p><p>Note also that certain drivers can propagate the "FSD" state declared by
+the smarter UPSes themselves, e.g. when an UPS is charging after an outage
+and its battery level is below the "safe for load" threshold configured on
+the device itself. In this case the device usually does not power up its
+outlets automatically, but it can be forced by the systems administrator.
+The rationale behind such FSD during charging allows enough power to be
+guaranteed for systems to both boot and shut down safely, if the wall
+power disappears again, trading off prolonged unavailability of the shut
+down servers for the safety of their data. In such cases, administrators
+should be ready to disarm their upsmon clients until the batteries are
+charged, to avoid quick shutdowns of quickly restored servers — but only
+if they are sure about the wall power being restored for good (e.g. outage
+was due to maintenance).</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_password"></a>9.12. PASSWORD</h3></div></div></div><p>Form:</p><pre class="literallayout">PASSWORD &lt;password&gt;</pre><p>Response:</p><pre class="literallayout">OK      (upon success)</pre><p>or <a class="link" href="net-protocol.html#np-errors" title="9.16. Error responses">various errors</a></p><p>Sets the password associated with a connection.  Used for later
+authentication for commands that require it.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_username"></a>9.13. USERNAME</h3></div></div></div><p>Form:</p><pre class="literallayout">USERNAME &lt;username&gt;</pre><p>Response:</p><pre class="literallayout">OK      (upon success)</pre><p>or <a class="link" href="net-protocol.html#np-errors" title="9.16. Error responses">various errors</a></p><p>Sets the username associated with a connection.  This is also used for
+authentication, specifically in conjunction with the upsd.users file.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_starttls"></a>9.14. STARTTLS</h3></div></div></div><p>Form:</p><pre class="literallayout">STARTTLS</pre><p>Response:</p><pre class="literallayout">OK STARTTLS</pre><p>or <a class="link" href="net-protocol.html#np-errors" title="9.16. Error responses">various errors</a></p><p>This tells upsd to switch to TLS mode internally, so all future
+communications will be encrypted.  You must also change to TLS mode in
+the client after receiving the OK, or the connection will be useless.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_other_commands"></a>9.15. Other commands</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+HELP: lists the commands supported by this server
+</li><li class="listitem">
+VER: shows the version of the server currently in use
+</li><li class="listitem">
+NETVER: shows the version of the network protocol currently in use
+  (aliased as PROTVER since NUT v2.8.0, or formal protocol version 1.3)
+</li></ul></div><p>These three are not intended to be used directly by programs.  Humans can
+make use of this program by using telnet or netcat.  If you use
+telnet, make sure you don’t have it set to negotiate extra options.
+upsd doesn’t speak telnet and will probably misunderstand your first
+request due to the extra junk in the buffer.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="np-errors"></a>9.16. Error responses</h3></div></div></div><p>An error response has the following format:</p><pre class="literallayout">ERR &lt;message&gt; [&lt;extra&gt;...]</pre><p>&lt;message&gt; is always one element; it never contains spaces.  This may
+be used to allow additional information (&lt;extra&gt;) in the future.</p><p>&lt;message&gt; can have the following values:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
+<span class="emphasis"><em>ACCESS-DENIED</em></span>
+</p><p class="simpara">The client’s host and/or authentication details (username, password)
+are not sufficient to execute the requested command.</p></li><li class="listitem"><p class="simpara">
+<span class="emphasis"><em>UNKNOWN-UPS</em></span>
+</p><p class="simpara">The UPS specified in the request is not known to upsd.  This usually
+means that it didn’t match anything in ups.conf.</p></li><li class="listitem"><p class="simpara">
+<span class="emphasis"><em>VAR-NOT-SUPPORTED</em></span>
+</p><p class="simpara">The specified UPS doesn’t support the variable in the request.</p><p class="simpara">This is also sent for unrecognized variables which are in a space
+which is handled by upsd, such as server.*.</p></li><li class="listitem"><p class="simpara">
+<span class="emphasis"><em>CMD-NOT-SUPPORTED</em></span>
+</p><p class="simpara">The specified UPS doesn’t support the instant command in the request.</p></li><li class="listitem"><p class="simpara">
+<span class="emphasis"><em>INVALID-ARGUMENT</em></span>
+</p><p class="simpara">The client sent an argument to a command which is not recognized or
+is otherwise invalid in this context.  This is typically caused by
+sending a valid command like GET with an invalid subcommand.</p></li><li class="listitem"><p class="simpara">
+<span class="emphasis"><em>INSTCMD-FAILED</em></span>
+</p><p class="simpara">upsd failed to deliver the instant command request to the driver.
+No further information is available to the client.  This typically
+indicates a dead or broken driver.</p></li><li class="listitem"><p class="simpara">
+<span class="emphasis"><em>SET-FAILED</em></span>
+</p><p class="simpara">upsd failed to deliver the set request to the driver.  This is
+   just like INSTCMD-FAILED above.</p></li><li class="listitem"><p class="simpara">
+<span class="emphasis"><em>READONLY</em></span>
+</p><p class="simpara">The requested variable in a SET command is not writable.</p></li><li class="listitem"><p class="simpara">
+<span class="emphasis"><em>TOO-LONG</em></span>
+</p><p class="simpara">The requested value in a SET command is too long.</p></li><li class="listitem"><p class="simpara">
+<span class="emphasis"><em>FEATURE-NOT-SUPPORTED</em></span>
+</p><p class="simpara">This instance of upsd does not support the requested feature.  This
+is only used for TLS/SSL mode (STARTTLS) at the moment.</p></li><li class="listitem"><p class="simpara">
+<span class="emphasis"><em>FEATURE-NOT-CONFIGURED</em></span>
+</p><p class="simpara">This instance of upsd hasn’t been configured properly to allow the
+requested feature to operate.  This is also limited to STARTTLS for now.</p></li><li class="listitem"><p class="simpara">
+<span class="emphasis"><em>ALREADY-SSL-MODE</em></span>
+</p><p class="simpara">TLS/SSL mode is already enabled on this connection, so upsd can’t
+start it again.</p></li><li class="listitem"><p class="simpara">
+<span class="emphasis"><em>DRIVER-NOT-CONNECTED</em></span>
+</p><p class="simpara">upsd can’t perform the requested command, since the driver for that
+UPS is not connected.  This usually means that the driver is not
+running, or if it is, the ups.conf is misconfigured.</p></li><li class="listitem"><p class="simpara">
+<span class="emphasis"><em>DATA-STALE</em></span>
+</p><p class="simpara">upsd is connected to the driver for the UPS, but that driver isn’t
+providing regular updates or has specifically marked the data
+as stale.  upsd refuses to provide variables on stale units to avoid
+false readings.</p><p class="simpara">This generally means that the driver is running, but it has lost
+communications with the hardware.  Check the physical connection
+to the equipment.</p></li><li class="listitem"><p class="simpara">
+<span class="emphasis"><em>ALREADY-LOGGED-IN</em></span>
+</p><p class="simpara">The client already sent LOGIN for a UPS and can’t do it again.
+There is presently a limit of one LOGIN record per connection.</p></li><li class="listitem"><p class="simpara">
+<span class="emphasis"><em>INVALID-PASSWORD</em></span>
+</p><p class="simpara">The client sent an invalid PASSWORD — perhaps an empty one.</p></li><li class="listitem"><p class="simpara">
+<span class="emphasis"><em>ALREADY-SET-PASSWORD</em></span>
+</p><p class="simpara">The client already set a PASSWORD and can’t set another.  This also
+should never happen with normal NUT clients.</p></li><li class="listitem"><p class="simpara">
+<span class="emphasis"><em>INVALID-USERNAME</em></span>
+</p><p class="simpara">The client sent an invalid USERNAME.</p></li><li class="listitem"><p class="simpara">
+<span class="emphasis"><em>ALREADY-SET-USERNAME</em></span>
+</p><p class="simpara">The client has already set a USERNAME, and can’t set another.  This
+should never happen with normal NUT clients.</p></li><li class="listitem"><p class="simpara">
+<span class="emphasis"><em>USERNAME-REQUIRED</em></span>
+</p><p class="simpara">The requested command requires a username for authentication,
+but the client hasn’t set one.</p></li><li class="listitem"><p class="simpara">
+<span class="emphasis"><em>PASSWORD-REQUIRED</em></span>
+</p><p class="simpara">The requested command requires a passname for authentication,
+but the client hasn’t set one.</p></li><li class="listitem"><p class="simpara">
+<span class="emphasis"><em>UNKNOWN-COMMAND</em></span>
+</p><p class="simpara">upsd doesn’t recognize the requested command.</p><p class="simpara">This can be useful for backwards compatibility with older versions
+of upsd.  Some NUT clients will try GET and fall back on REQ after
+receiving this response.</p></li><li class="listitem"><p class="simpara">
+<span class="emphasis"><em>INVALID-VALUE</em></span>
+</p><p class="simpara">The value specified in the request is not valid.  This usually
+applies to a SET of an ENUM type which is using a value which is
+not in the list of allowed values.</p></li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_future_ideas"></a>9.17. Future ideas</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_dense_lists"></a>Dense lists</h4></div></div></div><p>The LIST commands may be given the ability to handle options some day.
+For example, "LIST VARS &lt;ups&gt; +DESC" would return the current value
+like now, but it would also append the description of that variable.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_get_collection"></a>Get collection</h4></div></div></div><p>Allow to request only a subtree, which can be a collection, or a sub
+collection.</p></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
+		Last updated 2023-10-31 22:46:09 -- Network UPS Tools 2.8.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="new-clients.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="dev-tools.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
