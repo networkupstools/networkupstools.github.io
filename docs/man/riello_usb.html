@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
-<meta name="generator" content="AsciiDoc 10.1.2" />
+<meta name="generator" content="AsciiDoc 9.0.0rc2" />
 <title>RIELLO_USB(8)</title>
 <style type="text/css">
 /* Shared CSS for AsciiDoc xhtml11 and html5 backends */
@@ -854,8 +854,8 @@ argument for finding out the strings to match.</p></div>
 <p>
 Select a UPS on a specific USB bus or group of buses. The argument is
 a regular expression that must match the bus name where the UPS is
-connected (e.g. <code>bus="002"</code> or <code>bus="00[2-3]"</code>) as seen on Linux in
-<code>/sys/bus/usb/devices</code> or <strong>lsusb(8)</strong>; including leading zeroes.
+connected (e.g. <code>bus="002"</code> or <code>bus="00[2-3]"</code>) as seen in
+<code>/proc/bus/usb/devices</code> or <strong>lsusb(8)</strong>; including leading zeroes.
 </p>
 </dd>
 <dt class="hdlist1">
@@ -865,40 +865,11 @@ connected (e.g. <code>bus="002"</code> or <code>bus="00[2-3]"</code>) as seen on
 <p>
 Select a UPS on a specific USB device or group of devices. The argument is
 a regular expression that must match the device name where the UPS is
-connected (e.g. <code>device="001"</code> or <code>device="00[1-2]"</code>) as seen on Linux
-in <code>/sys/bus/usb/devices</code> or <strong>lsusb(8)</strong>; including leading zeroes.
+connected (e.g. <code>device="001"</code> or <code>device="00[1-2]"</code>) as seen in
+<code>/proc/bus/usb/devices</code> or <strong>lsusb(8)</strong>; including leading zeroes.
+Note that device numbers are not guaranteed by the OS to be stable across
+re-boots or device re-plugging.
 </p>
-<div class="admonitionblock">
-<table><tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">device numbers are not guaranteed by the OS to be stable across
-re-boots or device re-plugging.</td>
-</tr></table>
-</div>
-</dd>
-<dt class="hdlist1">
-<strong>busport =</strong> <em>regex</em>
-</dt>
-<dd>
-<p>
-If supported by the hardware, OS and libusb on the particular deployment,
-this option should allow to specify physical port numbers on an USB hub,
-rather than logical <code>device</code> enumeration values, and in turn&#8201;&#8212;&#8201;this should
-be less volatile across reboots or re-plugging. The value may be seen in
-the USB topology output of <code>lsusb -tv</code> on systems with that tool, for example.
-</p>
-<div class="admonitionblock">
-<table><tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">this option is not practically supported by some NUT builds
-(it should be ignored with a warning then), and not by all systems
-that NUT can run on.</td>
-</tr></table>
-</div>
 </dd>
 <dt class="hdlist1">
 <strong>allow_duplicates</strong>
@@ -965,7 +936,7 @@ by the interface number <code>0</code> (default).
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-09-18 13:03:12 UTC -- Network UPS Tools 2.8.0.1
+Last updated 2023-07-01 08:44:37 UTC -- Network UPS Tools 2.8.0.1
 </div>
 </div>
 </body>
