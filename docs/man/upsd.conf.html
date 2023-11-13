@@ -798,6 +798,28 @@ for the current run. One way this can happen is somebody un-commenting it in
 the <em>nut.conf</em> file used by init-scripts and service unit method scripts.</p></div>
 </dd>
 <dt class="hdlist1">
+"ALLOW_NOT_ALL_LISTENERS <em>Boolean</em>"
+</dt>
+<dd>
+<p>
+Normally upsd requires that all <code>LISTEN</code> directives can be honoured at the
+moment the daemon starts. If your LAN IP address (or host name) used in one
+of the <code>LISTEN</code> directives may be not always accessible, and for some reason
+do not want to just <code>LISTEN *</code> on the wildcard interface, but e.g. you still
+want to use <code>upsmon</code> on <code>localhost</code>, this option can help. Note you would
+have to restart <code>upsd</code> to pick up the `LISTEN`ed IP address if it appears
+later.
+</p>
+<div class="paragraph"><p>Boolean values <em>true</em>, <em>yes</em>, <em>on</em> and <em>1</em> mean that the server would not
+refuse to start if it can listen on at least one interface.</p></div>
+<div class="paragraph"><p>Boolean values <em>false</em>, <em>no</em>, <em>off</em> and <em>0</em> mean that the server should
+refuse to start if it can not LISTEN on each and every (non-localhost)
+interface found in upsd.conf. This is the default, unless the calling
+environment sets a same-named variable to enforce a value for the current run.
+One way this can happen is somebody un-commenting it in the <em>nut.conf</em> file
+used by init-scripts and service unit method scripts.</p></div>
+</dd>
+<dt class="hdlist1">
 "STATEPATH <em>path</em>"
 </dt>
 <dd>
@@ -978,7 +1000,7 @@ does not change the previously active logging verbosity.</td>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-08-16 18:01:15 UTC -- Network UPS Tools 2.8.0.1
+Last updated 2023-11-13 08:43:30 UTC -- Network UPS Tools 2.8.1.1
 </div>
 </div>
 </body>
