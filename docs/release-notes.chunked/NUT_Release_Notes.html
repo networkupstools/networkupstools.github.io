@@ -24,6 +24,9 @@ dstate machinery: a segmentation fault (null pointer dereference) was
      possible with <code class="literal">INSTCMD</code> processing of commands without parameters nor
      <code class="literal">TRACKING</code> identifier. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2155" target="_top">#2155</a>]
 </li><li class="listitem">
+USB bus number detection for libusb-1.0 builds was overly zealous and
+     wrongly considered zero values as an error. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2198" target="_top">#2198</a>]
+</li><li class="listitem">
 <code class="literal">upsmon</code> recognition of <code class="literal">CAL</code> state could linger after the calibration
      activity was completed by the hardware, which led to mis-processing of
      shutdown triggers. Also, notification was added to report "finished
@@ -33,6 +36,11 @@ Drivers running with non-default user account (e.g. with <code class="literal">u
      in their configuration) failed to apply group ownership and permissions
      to their Unix socket file for interaction with the local data server.
      [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2185" target="_top">#2185</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2096" target="_top">#2096</a>]
+</li><li class="listitem">
+Dispatcher script <code class="literal">scripts/python/app/NUT-Monitor</code> referenced <code class="literal">py3qt3</code>
+     instead of the correct <code class="literal">py3qt5</code>. It also tries to check both <code class="literal">py2gtk2</code>
+     and <code class="literal">py3qt5</code> implementations verbosely, even if one is not installed.
+     [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2199" target="_top">#2199</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2201" target="_top">#2201</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 nut-usbinfo.pl, nut-scanner and libnutscan:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -3090,4 +3098,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.32. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2023-11-21 11:46:50 -- Network UPS Tools 2.8.1.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2023-11-26 00:03:21 -- Network UPS Tools 2.8.1.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
