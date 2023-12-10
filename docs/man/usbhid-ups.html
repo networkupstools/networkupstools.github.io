@@ -1112,14 +1112,23 @@ are broken on your UPS).
 </p>
 </dd>
 <dt class="hdlist1">
+<strong>onlinedischarge_battery</strong>
+</dt>
+<dd>
+<p>
+If this flag is set, the driver will treat <code>OL+DISCHRG</code> status as
+offline/on-battery.
+</p>
+<div class="paragraph"><p>For most devices this combination means calibration or similar maintenance;
+however some UPS models (e.g. CyberPower UT series) emit <code>OL+DISCHRG</code> when
+wall power is lost&#8201;&#8212;&#8201;and need this option to handle shutdowns.</p></div>
+</dd>
+<dt class="hdlist1">
 <strong>onlinedischarge</strong>
 </dt>
 <dd>
 <p>
-If this flag is set, the driver will treat <code>OL+DISCHRG</code> status as offline.
-For most devices this combination means calibration or similar maintenance;
-however some UPS models (e.g. CyberPower UT series) emit <code>OL+DISCHRG</code> when
-wall power is lost&#8201;&#8212;&#8201;and need this option to handle shutdowns.
+DEPRECATED, old name for <code>onlinedischarge_battery</code> described above.
 </p>
 </dd>
 <dt class="hdlist1">
@@ -1142,6 +1151,38 @@ want to look at <code>upsmon</code> option <code>OFFDURATION</code> used to filt
 values of "administrative OFF" as not a loss of a feed for the powered load.</td>
 </tr></table>
 </div>
+</dd>
+<dt class="hdlist1">
+<strong>onlinedischarge_log_throttle_sec</strong>=<em>num</em>
+</dt>
+<dd>
+<p>
+Set the minimum frequency (in seconds) at which warnings would be emitted
+for an otherwise not handled <code>OL+DISCHRG</code> device status combination.
+Negative values disable sequentially repeated messages (when this state
+appears and persists).
+</p>
+<div class="paragraph"><p>If the device does not report <code>battery.charge</code>, the default value is 30 seconds
+(fairly frequent, in case the UPS-reported state combination does reflect a
+bad power condition and so the situation is urgent).</p></div>
+<div class="paragraph"><p>If it does report <code>battery.charge</code>, by default the repeated notifications
+would only be logged if this charge is different from when the message was
+emitted previously (e.g. when the battery is really discharging).</p></div>
+<div class="paragraph"><p>If both this option is set, and <code>battery.charge</code> is correctly reported,
+either of these rules allow the notification to be logged.</p></div>
+</dd>
+<dt class="hdlist1">
+<strong>onlinedischarge_log_throttle_hovercharge</strong>=<em>num</em>
+</dt>
+<dd>
+<p>
+See details in <code>onlinedischarge_log_throttle_sec</code> and <code>battery.charge</code> based
+log message throttling description above.  This option adds a concept of UPS
+"hovering" a battery charge at some level deemed safe for its chemistry, and
+not forcing it to be fully charged all the time.  As long as the current value
+of <code>battery.charge</code> remains at or above this threshold percentage (default 100),
+the <code>OL+DISCHRG</code> message logging is not triggered by variations of the charge.
+</p>
 </dd>
 <dt class="hdlist1">
 <strong>disable_fix_report_desc</strong>
@@ -1393,7 +1434,7 @@ Arjen de Korte
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-11-02 08:47:03 UTC -- Network UPS Tools 2.8.1.1
+Last updated 2023-12-10 15:08:42 UTC -- Network UPS Tools 2.8.1.1
 </div>
 </div>
 </body>
