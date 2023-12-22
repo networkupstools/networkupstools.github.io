@@ -5,7 +5,7 @@
 <head>
 <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
 <meta name="generator" content="AsciiDoc 9.0.0rc2" />
-<title>NUTSCAN_INIT(3)</title>
+<title>NUTSCAN_SCAN_NUT_SIMULATION(3)</title>
 <style type="text/css">
 /* Shared CSS for AsciiDoc xhtml11 and html5 backends */
 
@@ -735,13 +735,13 @@ asciidoc.install();
 </head>
 <body class="article">
 <div id="header">
-<h1>NUTSCAN_INIT(3)</h1>
+<h1>NUTSCAN_SCAN_NUT_SIMULATION(3)</h1>
 </div>
 <div id="content">
 <div class="sect1">
 <h2 id="_name">NAME</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>nutscan_init - Initialize the nutscan library.</p></div>
+<div class="paragraph"><p>nutscan_scan_nut_simulation - Scan your sysconfig directory for NUT simulation devices.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -749,55 +749,47 @@ asciidoc.install();
 <div class="sectionbody">
 <div class="literalblock">
 <div class="content">
-<pre><code>#include &lt;nut-scan.h&gt;</code></pre>
+<pre><code>#include &lt;nut-scan.h&gt;
+#include &lt;unistd.h&gt; /* useconds_t */</code></pre>
 </div></div>
 <div class="literalblock">
 <div class="content">
-<pre><code>void nutscan_init(void);</code></pre>
+<pre><code>nutscan_device_t * nutscan_scan_nut_simulation();</code></pre>
 </div></div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>The <strong>nutscan_init()</strong> function must be called at least once before using
-any other function of the nutscan library.</p></div>
-<div class="paragraph"><p>It updates the following global variables which can be used by nutscan
-library user to know which scan methods are available at run-time.</p></div>
-<div class="paragraph"><p>This depends on the libraries installed on the system:</p></div>
-<div class="literalblock">
-<div class="content">
-<pre><code>nutscan_avail_avahi = 1 : AVAHI scan is available
-nutscan_avail_ipmi = 1 : IPMI scan is available
-nutscan_avail_nut = 1 : Old NUT method is available
-nutscan_avail_nut_simulation = 1 : NUT simulation devices method is available
-nutscan_avail_snmp = 1 : SNMP method is available
-nutscan_avail_usb = 1 : USB method is available
-nutscan_avail_xml_http = 1 : XML HTTP method is available</code></pre>
-</div></div>
-<div class="paragraph"><p>Note that if a method is reported as unavailable by those variables, the
-call to the corresponding <code>nutscan_scan_*</code> function will always return NULL.</p></div>
+<div class="paragraph"><p>The <strong>nutscan_scan_nut_simulation()</strong> function try to detect available NUT
+simulation devices, by finding .dev and .seq files in your sysconfig
+directory.</p></div>
+<div class="paragraph"><p>You MUST call <a href="nutscan_init.html">nutscan_init(3)</a> before using this function.</p></div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_notes">NOTES</h2>
+<h2 id="_return_value">RETURN VALUE</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>Technically, the function is currently defined in <em>nutscan-init.h</em> file.</p></div>
+<div class="paragraph"><p>The <strong>nutscan_scan_nut_simulation()</strong> function returns a pointer to a
+<code>nutscan_device_t</code> structure containing all found devices or NULL if an
+error occurs or no device is found.</p></div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
-<div class="paragraph"><p><a href="nutscan_init.html">nutscan_init(3)</a>, <a href="nutscan_scan_usb.html">nutscan_scan_usb(3)</a>,
-<a href="nutscan_scan_snmp.html">nutscan_scan_snmp(3)</a>, <a href="nutscan_scan_xml_http_range.html">nutscan_scan_xml_http_range(3)</a>,
-<a href="nutscan_scan_nut.html">nutscan_scan_nut(3)</a>, <a href="nutscan_scan_nut_simulation.html">nutscan_scan_nut_simulation(3)</a>,
-<a href="nutscan_scan_avahi.html">nutscan_scan_avahi(3)</a>, <a href="nutscan_scan_ipmi.html">nutscan_scan_ipmi(3)</a>,
-<a href="nutscan_display_ups_conf.html">nutscan_display_ups_conf(3)</a>, <a href="nutscan_display_sanity_check.html">nutscan_display_sanity_check(3)</a>,
+<div class="paragraph"><p><a href="nutscan_init.html">nutscan_init(3)</a>,
+<a href="nutscan_scan_usb.html">nutscan_scan_usb(3)</a>, <a href="nutscan_scan_xml_http_range.html">nutscan_scan_xml_http_range(3)</a>,
+<a href="nutscan_scan_snmp.html">nutscan_scan_snmp(3)</a>, <a href="nutscan_scan_avahi.html">nutscan_scan_avahi(3)</a>,
+<a href="nutscan_scan_ipmi.html">nutscan_scan_ipmi(3)</a>, <a href="nutscan_scan_nut.html">nutscan_scan_nut(3)</a>,
+<a href="nutscan_display_sanity_check.html">nutscan_display_sanity_check(3)</a>,
 <a href="nutscan_display_sanity_check_serial.html">nutscan_display_sanity_check_serial(3)</a>,
 <a href="nutscan_display_ups_conf_with_sanity_check.html">nutscan_display_ups_conf_with_sanity_check(3)</a>,
+<a href="nutscan_display_ups_conf.html">nutscan_display_ups_conf(3)</a>,
 <a href="nutscan_display_parsable.html">nutscan_display_parsable(3)</a>, <a href="nutscan_new_device.html">nutscan_new_device(3)</a>,
 <a href="nutscan_free_device.html">nutscan_free_device(3)</a>, <a href="nutscan_add_option_to_device.html">nutscan_add_option_to_device(3)</a>,
-<a href="nutscan_add_device_to_device.html">nutscan_add_device_to_device(3)</a></p></div>
+<a href="nutscan_add_device_to_device.html">nutscan_add_device_to_device(3)</a>, <a href="nutscan_scan_eaton_serial.html">nutscan_scan_eaton_serial(3)</a>,
+<a href="nutscan_cidr_to_ip.html">nutscan_cidr_to_ip(3)</a></p></div>
 </div>
 </div>
 </div>
