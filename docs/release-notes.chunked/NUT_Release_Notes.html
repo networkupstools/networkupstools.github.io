@@ -55,6 +55,9 @@ Dispatcher script <code class="literal">scripts/python/app/NUT-Monitor</code> re
 Set the <code class="literal">DesktopFileName</code> in <code class="literal">scripts/python/app/NUT-Monitor-py3qt5</code>,
      this binds the application with the desktop file and allow the Desktop
      implementation to display the proper icon and application name. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2205" target="_top">#2205</a>]
+</li><li class="listitem">
+Original recipe for <code class="literal">apc_modbus</code> strictly required USB support even if
+     building NUT without it. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2262" target="_top">#2262</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 nut-usbinfo.pl, nut-scanner and libnutscan:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -73,11 +76,17 @@ Added generation of FreeBSD/pfSense quirks for USB devices supported
      by NUT (may get installed to <code class="literal">$datadir</code> e.g. <code class="literal">/usr/local/share/nut</code>
      and need to be pasted into your <code class="literal">/boot/loader.conf.local</code>). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2159" target="_top">#2159</a>]
 </li><li class="listitem">
-nut-scanner can now discover NUT simulated devices (.dev &amp; .seq files)
-     located in your sysconfig directory
+nut-scanner now avoids creating ambiguous <code class="literal">nutdevN</code> device section names
+     when called separately to scan different media buses (one at a time).
+     Now the "bus" name would be embedded (e.g. non-colliding <code class="literal">nutdev-usb1</code>
+     and <code class="literal">nutdev-snmp1</code>). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2247" target="_top">#2247</a>]
 </li><li class="listitem">
-nut-scanner now report <span class="emphasis"><em>dummy-ups</em></span> as driver when scanning NUT with
-     Old or Avahi method.
+nut-scanner can now discover NUT simulated devices (<code class="literal">.dev</code> and <code class="literal">.seq</code>
+     files) located in your sysconfig directory, and prepare configuration
+     sections with the simulation driver (currently <code class="literal">dummy-ups</code>). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2246" target="_top">#2246</a>]
+</li><li class="listitem">
+nut-scanner now reports <code class="literal">dummy-ups</code> as driver when scanning NUT "bus"
+     with Old or Avahi method. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2236" target="_top">#2236</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2245" target="_top">#2245</a>]
 </li></ul></div></li><li class="listitem">
 upsd: Fixed conditions for "no listening interface available" diagnosis
    to check how many listeners we succeeded with, not whether the first one
@@ -90,6 +99,17 @@ NUT CI improvements:
 Added publishing recipes for PyNUT client bindings for NUT, so it ends
      up in the <a class="ulink" href="https://pypi.org/project/PyNUTClient" target="_top">PyPI repository</a>.
      [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2158" target="_top">#2158</a>]
+</li></ul></div></li><li class="listitem"><p class="simpara">
+main driver core codebase:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Help users of drivers that can be built to support optionally USB and
+     other media (like <code class="literal">nutdrv_qx</code> built for serial-only support), and built
+     in fact without USB support but used for USB devices, with some more
+     information to make troubleshooting easier. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2259" target="_top">#2259</a>]
+</li><li class="listitem">
+Driver programs with debug tracing support via <code class="literal">-D</code> CLI option and/or
+     the <code class="literal">NUT_DEBUG_LEVEL</code> environment variable now check those earlier in
+     their life-time, so that initialization routine can be debugged. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2259" target="_top">#2259</a>]
 </li></ul></div></li><li class="listitem">
 powerpanel text driver now handles status responses in any format and should
    support most devices [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2156" target="_top">#2156</a>]
@@ -3135,4 +3155,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.32. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2024-01-03 05:43:53 -- Network UPS Tools 2.8.1.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2024-01-12 18:03:06 -- Network UPS Tools 2.8.1.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
