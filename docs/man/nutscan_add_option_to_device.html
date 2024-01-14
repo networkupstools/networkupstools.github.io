@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
-<meta name="generator" content="AsciiDoc 9.0.0rc2" />
+<meta name="generator" content="AsciiDoc 10.2.0" />
 <title>NUTSCAN_ADD_OPTION_TO_DEVICE(3)</title>
 <style type="text/css">
 /* Shared CSS for AsciiDoc xhtml11 and html5 backends */
@@ -741,7 +741,8 @@ asciidoc.install();
 <div class="sect1">
 <h2 id="_name">NAME</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>nutscan_add_option_to_device - Add option data to the specified device.</p></div>
+<div class="paragraph"><p>nutscan_add_option_to_device, nutscan_add_commented_option_to_device - Add
+option data to the specified device.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -753,10 +754,22 @@ asciidoc.install();
 </div></div>
 <div class="literalblock">
 <div class="content">
-<pre><code>void nutscan_add_option_to_device(
+<pre><code>/* Add enabled option data to the specified device. */
+void nutscan_add_option_to_device(
        nutscan_device_t * device,
        char * option_name,
        char * value);</code></pre>
+</div></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>/* Since libnutscan version 2.5.0:
+ * Add option data to the specified device with an optional comment tag
+ * for options suggested, but not currently enabled for actual use. */
+void nutscan_add_commented_option_to_device(
+       nutscan_device_t * device,
+       char * option_name,
+       char * value,
+       char * comment_tag);</code></pre>
 </div></div>
 </div>
 </div>
@@ -778,9 +791,21 @@ struct nutscan_device * next;</code></pre>
 its <code>type</code>, its <code>driver</code> name, its <code>port</code> and any number of optional data.</p></div>
 <div class="paragraph"><p>The <strong>nutscan_add_option_to_device()</strong> adds an optional data in the
 given device. Optional data are made of an <em>option_name</em> and an
-associated <em>value</em>. Copies of <em>option_name</em> and <em>value</em> are stored
-in the device, so the caller can safely free both of the original
-strings used as arguments.</p></div>
+associated <em>value</em>, and optionally a <em>comment_tag</em>. Copies of the
+<em>option_name</em>, <em>value</em> and <em>comment_tag</em> are stored in the device,
+so the caller can safely free all of the original strings used as
+arguments.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">A non-<code>NULL</code> value of the <em>comment_tag</em> makes the option not-enabled
+for current use. Depending on the output format, it may be either completely
+ignored, or rendered as a comment with this value as a prefix (a zero-length
+string <code>"\0"</code> may be passed to have no prefix).</td>
+</tr></table>
+</div>
 <div class="paragraph"><p>Such options and their values may be further sanity-checked and reported
 as warnings by <strong>nutscan_display_sanity_check()</strong> dispatcher and its related
 methods which implement the logic of particular checks. This is used for
@@ -812,7 +837,7 @@ example when generating <em>ups.conf</em> file content suggestions with
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-11-08 08:47:45 UTC -- Network UPS Tools 2.8.1.1
+Last updated 2024-01-14 17:43:00 UTC -- Network UPS Tools 2.8.1.1
 </div>
 </div>
 </body>

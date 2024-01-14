@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
-<meta name="generator" content="AsciiDoc 9.0.0rc2" />
+<meta name="generator" content="AsciiDoc 10.2.0" />
 <title>NUTSCAN_SCAN_USB(3)</title>
 <style type="text/css">
 /* Shared CSS for AsciiDoc xhtml11 and html5 backends */
@@ -753,14 +753,46 @@ asciidoc.install();
 </div></div>
 <div class="literalblock">
 <div class="content">
+<pre><code>nutscan_device_t * nutscan_scan_usb(nutscan_usb_t * scanopts);</code></pre>
+</div></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_note">NOTE</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Before <code>libnutscan</code> version 2.5.0 there was no argument:</p></div>
+<div class="literalblock">
+<div class="content">
 <pre><code>nutscan_device_t * nutscan_scan_usb(void);</code></pre>
 </div></div>
+<div class="paragraph"><p>After the API update to have an argument, equivalent default activity can
+be achieved by passing <code>NULL</code> value for the argument.</p></div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>The <strong>nutscan_scan_usb()</strong> function try to detect NUT compatible USB devices.</p></div>
+<div class="paragraph"><p>The <strong>nutscan_scan_usb()</strong> function tries to detect NUT compatible USB devices.</p></div>
+<div class="paragraph"><p>The <code>scanopts</code> argument contains toggles about values that would be reported
+into the generated device section. Currently they regard physical link details
+which can change over time (e.g. USB re-enumeration due to software or hardware
+re-connections); see <code>nut-scan.h</code> for current details:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>/* USB scan options structure */
+typedef struct nutscan_usb {
+    /* Hardware link related values below are not reliable for run-time
+     * matching (they can change over time) but can be useful if e.g.
+     * "serial" is not available or unique */
+    int report_bus;
+    int report_busport;
+    int report_device;
+
+    /* The value is not currently used for device matching, but might be
+     * used later, and it is available from discovery */
+    int report_bcdDevice;
+} nutscan_usb_t;</code></pre>
+</div></div>
 <div class="paragraph"><p>You MUST call <a href="nutscan_init.html">nutscan_init(3)</a> before using this function.</p></div>
 </div>
 </div>
@@ -792,7 +824,7 @@ device is found.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-01-15 14:43:52 UTC -- Network UPS Tools 2.8.0.1
+Last updated 2024-01-14 17:43:00 UTC -- Network UPS Tools 2.8.1.1
 </div>
 </div>
 </body>
