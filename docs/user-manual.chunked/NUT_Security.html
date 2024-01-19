@@ -63,7 +63,7 @@ are powerful, and access to them needs to be restricted.</p><p>NUT provides an i
 <a class="ulink" href="../man/upsd.users.html" target="_top">upsd.users(5)</a>.</p><p>This file defines who may access instant commands and settings, and what
 is available.</p><p>During the initial
 <a class="link" href="Configuration_notes.html#NUT_user_creation" title="NUT user creation">NUT user creation</a>, we have created a
-monitoring user for <code class="literal">upsmon</code>.</p><p>You can also create an <span class="emphasis"><em>administrator</em></span> user with full power using:</p><pre class="literallayout">[administrator]
+monitoring user for <code class="literal">upsmon</code>.</p><p>You can also create an <code class="literal">administrator</code> user in NUT with full power using:</p><pre class="literallayout">[administrator]
         password = mypass
         actions = set
         instcmds = all</pre><p>For more information on how to restrict actions and instant commands, refer
@@ -105,8 +105,8 @@ UFW manual page, section APPLICATION INTEGRATION
 NUT username is allowed to connect from the client address through the
 <code class="literal">/etc/hosts.allow</code> and <code class="literal">/etc/hosts.deny</code> files.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>this will only be done for commands that require the user to be logged
 into the server.</p></div><p><code class="literal">hosts.allow</code>:</p><pre class="literallayout">upsd : admin@127.0.0.1/32
-upsd : observer@127.0.0.1/32 observer@192.168.1.0/24</pre><p><code class="literal">hosts.deny</code>:</p><pre class="literallayout">upsd : ALL</pre><p>Further details are described in hosts_access(5).</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_configuring_ssl"></a>10.6. Configuring SSL</h3></div></div></div><p>SSL is available as a build option (<code class="literal">--with-ssl</code>).</p><p>It encrypts sessions between upsd and clients, and can also be used to
-authenticate servers.</p><p>This means that stealing port 3493 from upsd will no longer net you interesting
+upsd : observer@127.0.0.1/32 observer@192.168.1.0/24</pre><p><code class="literal">hosts.deny</code>:</p><pre class="literallayout">upsd : ALL</pre><p>Further details are described in hosts_access(5).</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_configuring_ssl"></a>10.6. Configuring SSL</h3></div></div></div><p>SSL is available as a build option (<code class="literal">--with-ssl</code>).</p><p>It encrypts sessions between <code class="literal">upsd</code> and clients, and can also be used to
+authenticate servers.</p><p>This means that stealing port 3493 from <code class="literal">upsd</code> will no longer net you interesting
 passwords.</p><p>Several things must happen before this will work, however. This chapter will
 present these steps.</p><p>SSL is available via two back-end libraries : NSS and OpenSSL (historically).
 You can choose to use one of them by specifying it with a build option
@@ -127,28 +127,28 @@ chmod 0755 &lt;certpath&gt;
 cp upsd.crt &lt;certpath&gt;/&lt;hash&gt;.0</pre><p>Example:</p><pre class="literallayout">mkdir /usr/local/ups/etc/certs
 chmod 0755 /usr/local/ups/etc/certs
 cp upsd.crt /usr/local/ups/etc/certs/0123abcd.0</pre><p>If you already have a file with that name in there, increment the
-0 until you get a unique filename that works.</p><p>If you have multiple client systems (like upsmon instances in
+<code class="literal">0</code> part until you get a unique filename that works.</p><p>If you have multiple client systems (like <code class="literal">upsmon</code> instances in
 secondary mode), be sure to install this file on them as well.</p><p>We recommend making a directory under your existing confpath to
 keep everything in the same place.  Remember the path you created,
-since you will need to put it in upsmon.conf later.</p><p>It must not be writable by unprivileged users, since someone could
-insert a new client certificate and fool upsmon into trusting a
-fake upsd.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_create_the_combined_file_for_upsd"></a>Create the combined file for upsd</h5></div></div></div><p>To do so, use the below commands:</p><pre class="literallayout">cat upsd.crt upsd.key &gt; upsd.pem
+since you will need to put it in <code class="literal">upsmon.conf</code> later.</p><p>It must not be writable by unprivileged users, since someone could
+insert a new client certificate and fool <code class="literal">upsmon</code> into trusting a
+fake <code class="literal">upsd</code>.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_create_the_combined_file_for_upsd"></a>Create the combined file for upsd</h5></div></div></div><p>To do so, use the below commands:</p><pre class="literallayout">cat upsd.crt upsd.key &gt; upsd.pem
 chown root:nut upsd.pem
 chmod 0640 upsd.pem</pre><p>This file must be kept secure, since anyone possessing it could
-pretend to be upsd and harvest authentication data if they get a
-hold of port 3493.</p><p>Having it be owned by <span class="emphasis"><em>root</em></span> and readable by group <span class="emphasis"><em>nut</em></span> allows upsd
+pretend to be <code class="literal">upsd</code> and harvest authentication data if they get a
+hold of port 3493.</p><p>Having it owned by <code class="literal">root</code> and readable by group <code class="literal">nut</code> allows <code class="literal">upsd</code>
 to read the file without being able to change the contents.  This
-is done to minimize the impact if someone should break into upsd.
+is done to minimize the impact if someone should break into <code class="literal">upsd</code>.
 NUT reads the key and certificate files after dropping privileges
 and forking.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_note_on_certification_authorities_cas_and_signed_keys"></a>Note on certification authorities (CAs) and signed keys</h5></div></div></div><p>There are probably other ways to handle this, involving keys which have
 been signed by a CA you recognize.  Contact your local SSL guru.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_install_the_server_side_certificate"></a>Install the server-side certificate</h5></div></div></div><p>Install the certificate with the following command:</p><pre class="literallayout">mv upsd.pem &lt;upsd certfile path&gt;</pre><p>Example:</p><pre class="literallayout">mv upsd.pem /usr/local/ups/etc/upsd.pem</pre><p>After that, edit your <code class="literal">upsd.conf</code> and tell it where to find it:</p><pre class="literallayout">CERTFILE /usr/local/ups/etc/upsd.pem</pre></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_clean_up_the_temporary_files"></a>Clean up the temporary files</h5></div></div></div><pre class="literallayout">rm -f upsd.crt upsd.key</pre></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_restart_upsd"></a>Restart upsd</h5></div></div></div><p>It should come back up without any complaints.  If it says something
-about keys or certificates, then you probably missed a step.</p><p>If you run upsd as a separate user id (like nutsrv), make sure that
-user can read the upsd.pem file.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_point_upsmon_at_the_certificates"></a>Point upsmon at the certificates</h5></div></div></div><p>Edit your upsmon.conf, and tell it where the CERTPATH is:</p><pre class="literallayout">CERTPATH &lt;path&gt;</pre><p>Example:</p><pre class="literallayout">CERTPATH /usr/local/ups/etc/certs</pre></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_recommended_make_upsmon_verify_all_connections_with_certificates"></a>Recommended: make upsmon verify all connections with certificates</h5></div></div></div><p>Put this in upsmon.conf:</p><pre class="literallayout">CERTVERIFY 1</pre><p>Without this, there is no guarantee that the upsd is the right host.
+about keys or certificates, then you probably missed a step.</p><p>If you run <code class="literal">upsd</code> as a separate user id (like <code class="literal">nutsrv</code>), make sure that
+user can read the <code class="literal">upsd.pem</code> file.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_point_upsmon_at_the_certificates"></a>Point upsmon at the certificates</h5></div></div></div><p>Edit your <code class="literal">upsmon.conf</code>, and tell it where the <code class="literal">CERTPATH</code> is:</p><pre class="literallayout">CERTPATH &lt;path&gt;</pre><p>Example:</p><pre class="literallayout">CERTPATH /usr/local/ups/etc/certs</pre></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_recommended_make_upsmon_verify_all_connections_with_certificates"></a>Recommended: make upsmon verify all connections with certificates</h5></div></div></div><p>Put this in <code class="literal">upsmon.conf</code>:</p><pre class="literallayout">CERTVERIFY 1</pre><p>Without this, there is no guarantee that the <code class="literal">upsd</code> is the right host.
 Enabling this greatly reduces the risk of man in the middle attacks.</p><p>This effectively forces the use of SSL, so don’t use this unless
-all of your upsd hosts are ready for SSL and have their certificates
-in order.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_recommended_force_upsmon_to_use_ssl"></a>Recommended: force upsmon to use SSL</h5></div></div></div><p>Again in upsmon.conf:</p><pre class="literallayout">FORCESSL 1</pre><p>If you don’t use <code class="literal">CERTVERIFY 1</code>, then this will at least make sure
+all of your <code class="literal">upsd</code> hosts are ready for SSL and have their certificates
+in order.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_recommended_force_upsmon_to_use_ssl"></a>Recommended: force upsmon to use SSL</h5></div></div></div><p>Again in <code class="literal">upsmon.conf</code>:</p><pre class="literallayout">FORCESSL 1</pre><p>If you don’t use <code class="literal">CERTVERIFY 1</code>, then this will at least make sure
 that nobody can sniff your sessions without a large effort.  Setting
-this will make upsmon drop connections if the remote upsd doesn’t
+this will make <code class="literal">upsmon</code> drop connections if the remote <code class="literal">upsd</code> doesn’t
 support SSL, so don’t use it unless all of them have it running.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_nss_backend_usage"></a>NSS backend usage</h4></div></div></div><p>This section describes how to enable NUT SSL support using
 <a class="ulink" href="http://www.mozilla.org/projects/security/pki/nss/" target="_top">Mozilla NSS</a>.</p><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_install_nss"></a>Install NSS</h5></div></div></div><p>Install <a class="ulink" href="http://www.mozilla.org/projects/security/pki/nss/" target="_top">Mozilla NSS</a>
 as usual, either from source or binary packages. If using binary packages,
@@ -156,7 +156,7 @@ be sure to include the developer libraries, and nss-tools (for <code class="lite
 <code class="literal">certutil</code>.
 It will be used to generate certificates and manage certificate database.</p><p>Certificates should be signed by a certification authorities (CAs).
 Following commands are typical samples, contact your SSL guru or security
-officer to follow your company procedures.</p><div class="itemizedlist"><p class="title"><strong>Generate a server certificate for upsd:</strong></p><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+officer to follow your company procedures.</p><div class="itemizedlist"><p class="title"><strong>Generate a server certificate for <code class="literal">upsd</code>:</strong></p><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 Create a directory where store the certificate database: <code class="literal">mkdir cert_db</code>
 </li><li class="listitem">
 Create the certificate database : <code class="literal">certutil -N -d cert_db</code>
@@ -164,7 +164,7 @@ Create the certificate database : <code class="literal">certutil -N -d cert_db</
 Import the CA certificate:
         <code class="literal">certutil -A -d cert_db -n "My Root CA" -t "TC,," -a -i rootca.crt</code>
 </li><li class="listitem">
-Create a server certificate request (here called <span class="emphasis"><em>My nut server</em></span>):
+Create a server certificate request (here called "My nut server"):
         <code class="literal">certutil -R -d cert_db -s "CN=My nut server,O=MyCompany,ST=MyState,C=US" -a -o server.req</code>
 </li><li class="listitem">
 Make your CA sign the certificate (produces server.crt)
@@ -188,9 +188,9 @@ Create the certificate database:
 </li><li class="listitem">
 Generate a certificate for CA:
         <code class="literal">certutil -S -d CA_db -n "My Root CA" -s "CN=My CA,O=MyCompany,ST=MyState,C=US" -t "CT,," -x -2</code>
-(Do not forget to answer <span class="emphasis"><em>Yes</em></span> to the question <span class="emphasis"><em>Is this a CA certificate [y/N]?</em></span>)
+(Do not forget to answer <code class="literal">Yes</code> to the question "Is this a CA certificate [y/N]?")
 </li><li class="listitem">
-Extract the CA certificate to be able to import it in upsd (or upsmon)
+Extract the CA certificate to be able to import it in <code class="literal">upsd</code> (or <code class="literal">upsmon</code>)
 certificate database:
         <code class="literal">certutil -L -d CA_db -n "My Root CA" -a -o rootca.crt</code>
 </li><li class="listitem">
@@ -198,11 +198,11 @@ Sign a certificate request with the CA certificate (simulate a real CA
 signature):
         <code class="literal">certutil -C -d CA_db -c "My Root CA" -a -i server.req -o server.crt -2 -6</code>
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_install_the_server_side_certificate_2"></a>Install the server-side certificate</h5></div></div></div><p>Just copy the database directory (just the directory and included 3
-database .db files) to the right place, such as <code class="literal">/usr/local/ups/etc/</code>:</p><pre class="literallayout">mv cert_db /usr/local/ups/etc/</pre></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_upsd_required_certificate_database_and_self_certificate"></a>upsd (required): certificate database and self certificate</h5></div></div></div><p>Edit the upsd.conf to tell where find the certificate database:</p><pre class="literallayout">CERTPATH /usr/local/ups/etc/cert_db</pre><p>Also tell which is the certificate to send to clients to authenticate itself
-and the password to decrypt private key associated to certificate:</p><pre class="literallayout">CERTIDENT 'certificate name' 'database password'</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>Generally, the certificate name is the server domain name, but is not
+database .db files) to the right place, such as <code class="literal">/usr/local/ups/etc/</code>:</p><pre class="literallayout">mv cert_db /usr/local/ups/etc/</pre></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_upsd_required_certificate_database_and_self_certificate"></a>upsd (required): certificate database and self certificate</h5></div></div></div><p>Edit the <code class="literal">upsd.conf</code> to tell where find the certificate database:</p><pre class="literallayout">CERTPATH /usr/local/ups/etc/cert_db</pre><p>Also tell which is the certificate to send to clients to authenticate itself
+and the password to decrypt private key associated to certificate:</p><pre class="literallayout">CERTIDENT "certificate name" "database password"</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>Generally, the certificate name is the server domain name, but is not
 a hard rule. The certificate can be named as useful.</p></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_upsd_optional_client_authentication"></a>upsd (optional): client authentication</h5></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>This functionality is disabled by default. To activate it, recompile
 NUT with <code class="literal">WITH_CLIENT_CERTIFICATE_VALIDATION</code> defined:</p></div><pre class="literallayout">make CFLAGS="-DWITH_CLIENT_CERTIFICATE_VALIDATION"</pre><p>UPSD can accept three levels of client authentication. Just specify it with
-the directive <code class="literal">CERTREQUEST</code> with the corresponding value in the upsd.conf
+the directive <code class="literal">CERTREQUEST</code> with the corresponding value in the <code class="literal">upsd.conf</code>
 file:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 NO: no client authentication.
 </li><li class="listitem">
@@ -212,30 +212,28 @@ If the client does not send any certificate, the connection is closed.
 </li><li class="listitem">
 REQUIRE: a certificate is requested to the client and if it is not valid
 (no validation chain) the connection is closed.
-</li></ul></div><p>Like CA certificates, you can add many <span class="emphasis"><em>trusted</em></span> client and CA certificates
-in server’s certificate databases.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_upsmon_required_upsd_authentication"></a>upsmon (required): upsd authentication</h5></div></div></div><p>In order for upsmon to securely connect to upsd, it must authenticate it.
-You must associate an upsd host name to security rules in upsmon.conf
-with the directive <span class="emphasis"><em>CERTHOST</em></span>.</p><p><span class="emphasis"><em>CERTHOST</em></span> associates a hostname to a certificate name. It also determines
+</li></ul></div><p>Like CA certificates, you can add many "trusted" client and CA certificates
+in server’s certificate databases.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_upsmon_required_upsd_authentication"></a>upsmon (required): upsd authentication</h5></div></div></div><p>In order for <code class="literal">upsmon</code> to securely connect to <code class="literal">upsd</code>, it must authenticate it.
+You must associate an <code class="literal">upsd</code> host name to security rules in <code class="literal">upsmon.conf</code>
+with the directive <code class="literal">CERTHOST</code>.</p><p><code class="literal">CERTHOST</code> associates a hostname to a certificate name. It also determines
 whether a SSL connection is mandatory, and if the server certificate must be
-validated.</p><pre class="literallayout">CERTHOST 'hostname' 'certificate name' 'certverify' 'forcessl'</pre><p>If the flag <code class="literal">forcessl</code> is set to <code class="literal">1</code>, and upsd answers that it can not
-connect with SSL, the connection closes.
-If the flag <code class="literal">certverify</code> is set to <code class="literal">1</code> and the connection is done in SSL,
-upsd’s certificate is verified and its name must be the specified
-<span class="emphasis"><em>certificate name</em></span>.</p><p>To prevent security leaks, you should set all <code class="literal">certverify</code> and <code class="literal">forcessl</code>
+validated.</p><pre class="literallayout">CERTHOST "hostname" "certificate name" "certverify" "forcessl"</pre><p>If the flag <code class="literal">forcessl</code> is set to <code class="literal">1</code>, and <code class="literal">upsd</code> answers that it can not
+connect with SSL, the connection closes.</p><p>If the flag <code class="literal">certverify</code> is set to <code class="literal">1</code> and the connection is done in SSL,
+<code class="literal">upsd</code>'s certificate is verified and its name must be the specified
+<code class="literal">"certificate name"</code>.</p><p>To prevent security leaks, you should set all <code class="literal">certverify</code> and <code class="literal">forcessl</code>
 flags to <code class="literal">1</code> (force SSL connection and validate all certificates for all
 peers).</p><p>You can specify <code class="literal">CERTVERIFY</code> and <code class="literal">FORCESSL</code> directive (to <code class="literal">1</code> or <code class="literal">0</code>) to
 define a default security rule to apply to all host not specified with a
 dedicated <code class="literal">CERTHOST</code> directive.</p><p>If a host is not specified in a <code class="literal">CERTHOST</code> directive, its expected certificate
-name is its hostname.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_upsmon_optional_certificate_database_and_self_certificate"></a>upsmon (optional): certificate database and self certificate</h5></div></div></div><p>Like upsd, upsmon may need to authenticate itself (upsd’s <code class="literal">CERTREQUEST</code>
-directive set to <code class="literal">REQUEST</code> or <code class="literal">REQUIRE</code>).
-It must access to a certificate (and its private key) in a certificate
-database configuring <code class="literal">CERTPATH</code> and <code class="literal">CERTIDENT</code> in upsmon.conf in the
-same way as upsd.</p><pre class="literallayout">CERTPATH /usr/local/ups/etc/cert_db
-CERTIDENT 'certificate name' 'database password'</pre></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_restart_upsd_2"></a>Restart upsd</h4></div></div></div><p>It should come back up without any complaints.  If it says something
-about keys or certificates, then you probably missed a step.</p><p>If you run upsd as a separate user ID (like nutsrv), make sure that
+name is its hostname.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_upsmon_optional_certificate_database_and_self_certificate"></a>upsmon (optional): certificate database and self certificate</h5></div></div></div><p>Like <code class="literal">upsd</code>, <code class="literal">upsmon</code> may need to authenticate itself (<code class="literal">upsd</code>'s <code class="literal">CERTREQUEST</code>
+directive set to <code class="literal">REQUEST</code> or <code class="literal">REQUIRE</code>).</p><p>It must access to a certificate (and its private key) in a certificate
+database configuring <code class="literal">CERTPATH</code> and <code class="literal">CERTIDENT</code> in <code class="literal">upsmon.conf</code> in the
+same way as <code class="literal">upsd</code>.</p><pre class="literallayout">CERTPATH /usr/local/ups/etc/cert_db
+CERTIDENT "certificate name" "database password"</pre></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_restart_upsd_2"></a>Restart upsd</h4></div></div></div><p>It should come back up without any complaints.  If it says something
+about keys or certificates, then you probably missed a step.</p><p>If you run <code class="literal">upsd</code> as a separate user ID (like <code class="literal">nutsrv</code>), make sure that
 user can read files in the certificate directory. NUT reads the keys and
-certificates after forking and dropping privileges.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_restart_upsmon"></a>Restart upsmon</h4></div></div></div><p>You should see something like this in the syslog from upsd:</p><pre class="literallayout">foo upsd[1234]: Client mon@localhost logged in to UPS [myups] (SSL)</pre><p>If upsd or upsmon give any error messages, or the <code class="literal">(SSL)</code> is missing,
-then something isn’t right.</p><p>If in doubt about upsmon, start it with -D so it will stay in
+certificates after forking and dropping privileges.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_restart_upsmon"></a>Restart upsmon</h4></div></div></div><p>You should see something like this in the syslog from <code class="literal">upsd</code>:</p><pre class="literallayout">foo upsd[1234]: Client mon@localhost logged in to UPS [myups] (SSL)</pre><p>If <code class="literal">upsd</code> or <code class="literal">upsmon</code> give any error messages, or the <code class="literal">(SSL)</code> is missing,
+then something isn’t right.</p><p>If in doubt about <code class="literal">upsmon</code>, start it with <code class="literal">-D</code> so it will stay in
 the foreground and print debug messages.  It should print something
 like this every couple of seconds:</p><pre class="literallayout">polling ups: myups@localhost [SSL]</pre><p>Obviously, if the <code class="literal">[SSL]</code> isn’t there, something’s broken.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_recommended_sniff_the_connection_to_see_it_for_yourself"></a>Recommended: sniff the connection to see it for yourself</h4></div></div></div><p>Using tcpdump, Wireshark (Ethereal), or another network sniffer tool,
 tell it to monitor port 3493/tcp and see what happens.  You should only
@@ -258,7 +256,7 @@ has been granted.  That is (purposely) impossible here, since NUT is the
 combined effort of many people, and all of them would have to agree to a
 license change.  This is actually a feature, since it means nobody can
 unilaterally run off with the source — not even the NUT team.</p><p>Note that the replacement of OpenSSL by Mozilla Network Security Services
-(NSS) should avoid the above licensing issues.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_chrooting_and_other_forms_of_paranoia"></a>10.7. chrooting and other forms of paranoia</h3></div></div></div><p>It has been possible to run the drivers and upsd in a chrooted jail for
+(NSS) should avoid the above licensing issues.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_chrooting_and_other_forms_of_paranoia"></a>10.7. chrooting and other forms of paranoia</h3></div></div></div><p>It has been possible to run the drivers and <code class="literal">upsd</code> in a chrooted jail for
 some time, but it involved a number of evil hacks.  From the 1.3 series,
 a much saner chroot behavior exists, using BIND 9 as an inspiration.</p><p>The old way involved creating an entire tree, complete with libraries, a
 shell (!), and many auxiliary files.  This was hard to maintain and
@@ -275,7 +273,7 @@ programs have been built with the default prefix, so they are using
 cd /chroot/nut/usr/local/ups/etc
 cp -a /usr/local/ups/etc/upsd.users .
 cp -a /usr/local/ups/etc/upsd.conf .
-cp -a /usr/local/ups/etc/ups.conf .</pre><p>We’re using <span class="emphasis"><em>cp -a</em></span> to maintain the permissions on those files.</p><p>Now bring over your state path, maintaining the same permissions as
+cp -a /usr/local/ups/etc/ups.conf .</pre><p>We’re using <code class="literal">cp -a</code> to maintain the permissions on those files.</p><p>Now bring over your state path, maintaining the same permissions as
 before.</p><pre class="literallayout">mkdir -p /chroot/nut/var/state
 cp -a /var/state/ups /chroot/nut/var/state</pre><p>Next we must put <code class="literal">/etc/localtime</code> inside the jail, or you may get very
 strange readings in your syslog.  You’ll know you have this problem if
@@ -286,17 +284,17 @@ background properly — they redirect file descriptors into the bit
 bucket to make sure nothing else grabs fds 0-2.</p><pre class="literallayout">mkdir -p /chroot/nut/dev
 cp -a /dev/null /chroot/nut/dev</pre><p>Try to start your driver(s) and make sure everything fires up as before.</p><pre class="literallayout">upsdrvctl -r /chroot/nut -u nutdev start</pre><p>Once your drivers are running properly, try starting <code class="literal">upsd</code>.</p><pre class="literallayout">upsd -r /chroot/nut -u nutsrv</pre><p>Check your syslog.  If nothing is complaining, try running clients like
 <code class="literal">upsc</code> and <code class="literal">upsmon</code>.  If they seem happy, then you’re done.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_symlinks"></a>symlinks</h4></div></div></div><p>After you do this, you will have two copies of many things, like the
-confpath and the state path.  I recommend deleting the <span class="emphasis"><em>real</em></span>
+confpath and the state path.  I recommend deleting the "real"
 <code class="literal">/var/state/ups</code>, replacing it with a symlink to
 <code class="literal">/chroot/nut/var/state/ups</code>.  That will let other programs reference the
 <code class="literal">.pid</code> files without a lot of hassle.</p><p>You can also do this with your confpath and point <code class="literal">/usr/local/ups/etc</code> (or
 equivalent on your system) at <code class="literal">/chroot/nut/usr/local/ups/etc</code> unless you’re
 worried about something hurting the files inside that directory.  In that
-case, you should maintain a <span class="emphasis"><em>golden</em></span> copy and push it into the chroot path
+case, you should maintain a "golden" copy and push it into the chroot path
 after making changes.</p><p>The <code class="literal">upsdrvctl</code> itself does not chroot, so the <code class="literal">ups.conf</code> still needs to be
-in the usual confpath.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_upsmon"></a>upsmon</h4></div></div></div><p>This has not yet been applied to upsmon, since it can be quite
+in the usual confpath.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_upsmon"></a>upsmon</h4></div></div></div><p>This has not yet been applied to <code class="literal">upsmon</code>, since it can be quite
 complicated when there are notifiers that need to be run.  One
-possibility would be for upsmon to have three instances:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+possibility would be for <code class="literal">upsmon</code> to have three instances:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 privileged root parent that listens for a shutdown command
 </li><li class="listitem">
 unprivileged child that listens for notify events
@@ -304,4 +302,4 @@ unprivileged child that listens for notify events
 unprivileged chrooted child that does network I/O
 </li></ul></div><p>This one is messy, and may not happen for some time, if ever.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_config_files"></a>Config files</h4></div></div></div><p>You may now set <code class="literal">chroot=</code> and <code class="literal">user=</code> in the global section of <code class="literal">ups.conf</code>.</p><p>The <code class="literal">upsd</code> chroots before opening any config files, so there is no way to
 add support for that in <code class="literal">upsd.conf</code> at the present time.</p></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2024-01-14 17:45:22 -- Network UPS Tools 2.8.1.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="daisychain.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="_glossary.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2024-01-19 23:43:42 -- Network UPS Tools 2.8.1.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="daisychain.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="_glossary.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
