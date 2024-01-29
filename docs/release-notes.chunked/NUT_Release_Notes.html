@@ -40,7 +40,7 @@ USB bus number detection for libusb-1.0 builds was overly zealous and
      applied setting when live-reloading configuration, so commenting it
      away in <code class="literal">upsmon.conf</code> did not have the effect of resetting the logging
      frequency to default. It also did not reset the counters to certainly
-     follow the new configuration for existing faults. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2207" target="_top">#2207</a>]
+     follow the new configuration for existing faults. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2207" target="_top">issue #2207</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/2209" target="_top">PR #2209</a>]
 </li><li class="listitem">
 <code class="literal">upsmon</code> support for <code class="literal">POLLFAIL_LOG_THROTTLE_MAX</code> had an off-by-one error
      (e.g. reporting "Data stale" or "Driver not connected" every 30 sec with
@@ -115,13 +115,24 @@ NUT CI improvements:
 Added publishing recipes for PyNUT client bindings for NUT, so it ends
      up in the <a class="ulink" href="https://pypi.org/project/PyNUTClient" target="_top">PyPI repository</a>.
      [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2158" target="_top">#2158</a>]
+</li><li class="listitem">
+Added support for new <code class="literal">ccache</code> namespace concept, where possible. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2256" target="_top">#2256</a>]
+</li><li class="listitem">
+Fixed an issue for builds configured <code class="literal">--without-usb</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2263" target="_top">#2263</a>]
+</li><li class="listitem">
+Added a fallback for <code class="literal">libgd</code> discovery (for CGI etc. builds). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2287" target="_top">#2287</a>]
+</li><li class="listitem">
+Made <code class="literal">aspell</code> TeX module detection more reliable. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2206" target="_top">#2206</a>]
+</li><li class="listitem">
+Various other recipe and documentation clean-up efforts. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2284" target="_top">#2284</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2269" target="_top">#2269</a>,
+     <a class="ulink" href="https://github.com/networkupstools/nut/issues/2261" target="_top">#2261</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 main driver core codebase:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 Help users of drivers that can be built to support optionally USB and
      other media (like <code class="literal">nutdrv_qx</code> built for serial-only support), and built
      in fact without USB support but used for USB devices, with some more
-     information to make troubleshooting easier. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2259" target="_top">#2259</a>]
+     information to make troubleshooting easier. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2259" target="_top">issue #2259</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/2260" target="_top">PR #2260</a>]
 </li><li class="listitem">
 Driver programs with debug tracing support via <code class="literal">-D</code> CLI option and/or
      the <code class="literal">NUT_DEBUG_LEVEL</code> environment variable now check those earlier in
@@ -140,8 +151,14 @@ The optional daemon mode (primarily useful for systems which monitor
 Also applied other optimizations to the script implementation. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/682" target="_top">#682</a>]
 </li></ul></div></li><li class="listitem">
 powerpanel text driver now handles status responses in any format and should
-   support most devices [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2156" target="_top">#2156</a>]
+   support most devices. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2156" target="_top">#2156</a>]
 </li><li class="listitem"><p class="simpara">
+snmp-ups driver:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+added support for Eaton EMP002 sensor for ATS16 NM2 sub-driver. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2286" target="_top">#2286</a>]
+</li><li class="listitem">
+mapping table updates for apc-mib sub-driver. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2264" target="_top">#2264</a>]
+</li></ul></div></li><li class="listitem"><p class="simpara">
 usbhid-ups driver:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 <code class="literal">arduino-hid</code> subdriver was enhanced from "initial bare bones" experimental
@@ -164,6 +181,16 @@ Also can throttle to a time frequency configurable by a new option
        <code class="literal">onlinedischarge_log_throttle_sec</code>, by default 30 sec if <code class="literal">battery.charge</code>
        is not reported by the device (should be frequent by default, in case
        the UPS-reported state combination does reflect a bad power condition).
+</li><li class="listitem">
+Various code and documentation fixes for NSS crypto support. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2274" target="_top">#2274</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2268" target="_top">#2268</a>]
+</li><li class="listitem">
+Laid foundations for the SmartNUT effort (aiming to integrate drivers with
+   some other backends than the networked NUT data server process).
+</li><li class="listitem">
+Eaton contributed recipes and scripts used to create the IPP for Unix bundle
+   (UPS software companion), delivering NUT packages with an interactive
+   installer and some system integration scripts (events, notifications,
+   status, shutdown daemon…) [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2288" target="_top">#2288</a>]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_release_notes_for_nut_2_8_1_what_8217_s_new_since_2_8_0"></a>2.4. Release notes for NUT 2.8.1 - what’s new since 2.8.0</h3></div></div></div><p><a class="ulink" href="https://github.com/networkupstools/nut/milestone/8" target="_top">https://github.com/networkupstools/nut/milestone/8</a></p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 "UPS management protocol", Informational RFC 9271 published
    by IETF at <a class="ulink" href="https://www.rfc-editor.org/info/rfc9271" target="_top">https://www.rfc-editor.org/info/rfc9271</a> and the
@@ -3183,4 +3210,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.32. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2024-01-29 02:48:54 -- Network UPS Tools 2.8.1.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2024-01-29 14:45:35 -- Network UPS Tools 2.8.1.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
