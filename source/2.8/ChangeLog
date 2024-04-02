@@ -1,5 +1,2972 @@
+2024-04-01  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* configure.ac: mark exact NUT v2.8.2 release  Happy Fools' Day!
+	* docs/maintainer-guide.txt: update instruction
+	* Makefile.am: avoid parallelizing "doc" and "all-recursive" just in
+	  case (only follow up by "make doc")  Maybe this is behind duplicate
+	  man page builds which tend to step on each other's toes.
+	* docs/maintainer-guide.txt: example command for tag remake
+	* docs/maintainer-guide.txt: example command fix
+	* .github/workflows/PyNUTClient.yml, NEWS.adoc, appveyor.yml,
+	  configure.ac, docs/docinfo.xml.in,
+	  scripts/Windows/build-mingw-nut.sh: Update versions for release of
+	  NUT v2.8.2
+	* drivers/adelsystem_cbi.c, drivers/al175.c, drivers/apcsmart.c,
+	  drivers/apcupsd-ups.c, drivers/asem.c, drivers/bcmxcp.c,
+	  drivers/belkin.c, drivers/belkinunv.c, drivers/bestfcom.c,
+	  drivers/bestfortress.c, drivers/bestuferrups.c, drivers/bestups.c,
+	  drivers/blazer_ser.c, drivers/blazer_usb.c, drivers/clone-outlet.c,
+	  drivers/clone.c, drivers/dummy-ups.c, drivers/etapro.c,
+	  drivers/everups.c, drivers/gamatronic.c,
+	  drivers/generic_gpio_libgpiod.c, drivers/generic_modbus.c,
+	  drivers/genericups.c, drivers/huawei-ups2000.c, drivers/isbmex.c,
+	  drivers/ivtscd.c, drivers/liebert-esp2.c, drivers/liebert.c,
+	  drivers/macosx-ups.c, drivers/masterguard.c, drivers/metasys.c,
+	  drivers/mge-utalk.c, drivers/microdowell.c, drivers/microsol-apc.c,
+	  drivers/netxml-ups.c, drivers/nut-ipmipsu.c,
+	  drivers/nutdrv_atcl_usb.c, drivers/nutdrv_siemens_sitop.c,
+	  drivers/oneac.c, drivers/optiups.c,
+	  drivers/phoenixcontact_modbus.c, drivers/pijuice.c,
+	  drivers/powercom.c, drivers/powerman-pdu.c, drivers/powerpanel.c,
+	  drivers/rhino.c, drivers/richcomm_usb.c, drivers/riello_ser.c,
+	  drivers/safenet.c, drivers/skel.c, drivers/sms_ser.c,
+	  drivers/snmp-ups.c, drivers/socomec_jbus.c, drivers/solis.c,
+	  drivers/tripplite.c, drivers/tripplite_usb.c,
+	  drivers/tripplitesu.c, drivers/upscode2.c, drivers/usbhid-ups.c,
+	  drivers/victronups.c: drivers/*.c: mass-bump DRIVER_VERSION values
+	  due to changes in main.c since NUT v2.8.1 release
+	* NEWS.adoc, UPGRADING.adoc, docs/docinfo.xml.in: finalize text
+	  before NUT v2.8.2 release
+	* docs/maintainer-guide.txt: top note about (not-)spellchecking this
+	  doc
+	* docs/maintainer-guide.txt: update release instructions, fix typos
+
+2024-03-31  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* NEWS.adoc: mention belkin-hid fix as also a regression fix [#2371]
+	* drivers/riello_usb.c: upsdrv_initinfo(): set batt_volt_* limit vars
+	  from nominal voltage alignment, then apply from settings or initial
+	  reading [#1692]
+	* drivers/riello_usb.c: upsdrv_initinfo(): set batt_volt_* limit vars
+	  from settings or initial reading [#1692]
+
+2024-03-26  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* tests/Makefile.am: EXTRA_DIST the test mock "program" source
+	* NEWS.adoc: document fixes for Belkin/Liebert readings
+	* tests/getexponenttest-belkin-hid.c, drivers/belkin-hid.c: absorb
+	  liebert_psi5_line_voltage_fun() into common
+	  liebert_line_voltage_fun()  Hopefully should help more devices than
+	  those which serve this or that HID subtree only. Follows up from PR
+	  #2369
+
+2024-03-25  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* drivers/belkin-hid.c: fix liebert_line_voltage_fun() and friends
+	  for 0..500V range (cover 3-pole while we are at it)  Not touching
+	  liebert_config_voltage_fun() at the moment as have no non-integer
+	  examples under hand to test against.
+	* tests/getexponenttest-belkin-hid.c: add tests for larger value
+	  ranges (over 200V)
+	* drivers/belkin-hid.c: comment expectations for
+	  liebert_line_voltage_fun() and friends
+	* tests/.gitignore, tests/Makefile.am: tests: no longer need a
+	  replica of belkin-hid.c in tests/ to build
+	  getexponenttest-belkin-hid  Suffices that we #include it in the
+	  test source, and drivers/ are among include dirs
+	* tests/.gitignore, tests/Makefile.am, tests/driver-stub-usb.c,
+	  tests/{getexponenttest.c => getexponenttest-belkin-hid.c}: tests:
+	  rename getexponenttest => getexponenttest-belkin-hid since it
+	  became quite specific to that subdriver source  Still, can serve as
+	  an example/blueprint for other drivers' tests.
+	* tests/getexponenttest.c: use our macros to avoid "comparing
+	  floating point with == or != is unsafe [-Werror,-Wfloat-equal]"
+	  [#2371]
+	* drivers/belkin-hid.c, tests/Makefile.am, tests/driver-stub-usb.c,
+	  tests/getexponenttest.c: drivers/belkin-hid.c: Revert modifications
+	  for unit-testing, arrange its build differently [#2371]
+	* drivers/belkin-hid.c, tests/.gitignore, tests/Makefile.am,
+	  tests/driver-stub-usb.c, tests/getexponenttest.c: Add unit tests
+	  for belkin-hid liebert_line_voltage_fun() and related methods
+	  [#2370]
+	* drivers/belkin-hid.c: whitespace fix
+	* drivers/belkin-hid.c: update (C) heading [#2369 follow-up]
+
+2024-03-24  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* drivers/riello_usb.c: extend built-in default battery low/high
+	  range to match nutdrv_qx data for PbAc batteries [#1692]
+	* drivers/riello_usb.c, docs/man/riello_usb.txt: pick battery
+	  low/high range via known or configured battery.voltage.nominal
+	  [#1692]
+	* drivers/riello_usb.c, docs/man/riello_usb.txt: allow configurable
+	  battery.voltage.low/.high for localcalculation guesstimates [#1692]
+	* drivers/riello_usb.c: bump (C) and DRIVER_VERSION for
+	  "localcalculation" related support [#1692]
+	* drivers/riello_usb.c: comment the meaning of logical blocks changed
+	  by PR #1692
+
+2024-03-23  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* UPGRADING.adoc, NEWS.adoc: mention changes in
+	  tools/gitlog2changelog.py.in [#2360, #2366]
+	* tools/gitlog2changelog.py.in: when authorMustBeASCII, only parse
+	  str via unicode() if we did not shortcut it earlier, and fix a typo
+	  in encoding value
+	* tools/gitlog2changelog.py.in: trace absence of "unicode" type in
+	  some python bundles
+
+2024-03-22  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* Makefile.am, docs/Makefile.am: use abs_top_builddir for wrapper
+	  rules
+	* docs/Makefile.am, docs/man/Makefile.am: clarify default "all"
+	  target variants as requiring a prep
+	* Makefile.am: be sure to prep before the many docs-related targets
+	* Makefile.am: fix typo for "docs/man" prep for spellcheck target
+	* Makefile.am: clarify default "all" target variants
+
+2024-03-23  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* NEWS.adoc: Add Liebert PSI5 [#2369]
+
+2024-03-22  James R. Parks <jrjparks@zathera.com>
+
+	* drivers/belkin-hid.c, drivers/usbhid-ups.c, drivers/usbhid-ups.h:
+	  feat: Add support for Liebert PSI5  Adding support for the Liebert
+	  PSI5 model of UPS.
+
+2024-03-22  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* docs/man/Makefile.am: typo fix in comments
+	* docs/man/apc_modbus.txt: update comments for libmodbus+rtu_usb
+	  builds - with a static library suggestion [#2063]
+	* Jenkinsfile-dynamatrix: enable "autotools driven build with default
+	  configuration ... with fatal warnings" for all branch types
+	  Earlier enabled for fightwarn and PRs against stable branches, but
+	  not for master-branch builds themselves.
+	* tools/nut-scanner/scan_xml_http.c, tools/nut-scanner/scan_snmp.c:
+	  ignore potentially unreachable code in platforms-dependent range
+	  checks  Same as 34056dd43261c92e9230e2d18ddf5e8f498d98e9 earlier.
+
+2024-03-21  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* docs/man/apc_modbus.txt, docs/nut.dict: update manpage with
+	  instructions for USB-capable builds [#2063]
+	* m4/nut_check_libmodbus.m4: make it visible when some libmodbus is
+	  found, but does not support libusb while we want it (and will fail
+	  NUT configure later) [#2063]
+
+2024-03-19  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* scripts/installer/make_package.sh: update comments
+	* scripts/installer/README.adoc, docs/nut.dict: update about
+	  directory layout and contents expected by make_package.sh
+	* scripts/installer/Makefile.am, scripts/installer/README.adoc,
+	  scripts/installer/nut: scripts/installer: avoid SCM-tracking a
+	  symlink to NUT source root
+
+2024-03-18  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* Jenkinsfile-dynamatrix: for autotools-only builds, select by
+	  OS_DISTRO (avoide duplicates with OS_FAMILY)
+	* Jenkinsfile-dynamatrix: exclude GCC on OpenBSD 6.5 from autotools
+	  CI builds  Old compiler that won't hush about warnings, pollutes CI
+	  dashboard. Equivalent builds handled by `ci_build.sh` are in quiet
+	  mode for the first compilation attempt (usually the only one, if
+	  all is OK) so these warnings are just not seen by build-log
+	  analysis parser.
+	* configure.ac, Makefile.am, docs/Makefile.am,
+	  tools/gitlog2changelog.py.in: detect if we should mangle
+	  ChangeLog.pdf section titles with non-ASCII contributor names
+	* docs/Makefile.am: hint to asciidoc/dblatex to trivialize section
+	  names into ASCII themselves  Inspired by
+	  http://aerostitch.github.io/misc/asciidoc/asciidoc-title_uft8.html
+	  but did not directly help at least for Ubuntu 14.04 worker  NOTE:
+	  Fallback suggestion to add
+	  --dblatex-opts="--param=latex.encoding=utf8" actually broke the PDF
+	  doc builds, not only for ChangeLog.
+	* tools/gitlog2changelog.py.in: trivialize author names into plain
+	  ASCII  Older asciidoc/a2x/dblatex stack fails with non-ASCII
+	  characters in section titles (date and commit author become
+	  ChangeLog sections).  Inspired by:  *
+	  http://aerostitch.github.io/misc/asciidoc/asciidoc-title_uft8.html
+	  *
+	  https://stackoverflow.com/questions/51710082/what-does-unicodedata-normalize-do-in-python
+	  *
+	  https://stackoverflow.com/questions/38697037/how-to-convert-python-2-unicode-function-into-correct-python-3-x-syntax
+	* Makefile.am: make sure that "make all" ends up making all types of
+	  docs
+	* common/nutconf.cpp, common/nutwriter.cpp, include/nutconf.hpp,
+	  tests/nutconf_ut.cpp, tools/nutconf/nutconf-cli.cpp:
+	  nutconf-related C++ sources: deprecate certain terminology and
+	  keywords [#840]
+
+2024-03-14  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* Jenkinsfile-dynamatrix: rectify passing of CONFIG_OPTS [relies on
+	  nut/jenkins-dynamatrix#34]
+
+2024-03-18  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* common/nutconf.cpp, common/nutwriter.cpp, include/nutconf.hpp,
+	  tests/nutconf_parser_ut.cpp: nutconf-related C++ sources: fix typo
+	  in source var names: hotSync => hostSync
+	* common/nutconf.cpp, common/nutwriter.cpp, include/nutconf.hpp,
+	  tools/nutconf/nutconf-cli.cpp: nutconf-related C++ sources: add new
+	  UPSMON-style notification keywords to vocabulary
+
+2024-03-14  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* Jenkinsfile-dynamatrix: wrap unstashing of sources into their own
+	  pipeline sub-stage
+	* Jenkinsfile-dynamatrix: fix passing of (multi-token)
+	  DISTCHECK_FLAGS to autotools build/test variants
+	* Jenkinsfile-dynamatrix: add a section for direct use of autotools
+	  (once per platform) in all stable-branch builds  In fallout of PR
+	  #2256 we had situations "caused" by tighter integration for NUT CI
+	  builds (and developer convenience via ./ci_build.sh) which were not
+	  seen on the NUT CI farm but could bite the common approach of
+	  `./autogen.sh && ./configure && make` on some (not all) platforms.
+	* common/nutstream.cpp: avoid pedantic warning about a const/static
+	  variable
+	* tools/nutconf/Makefile.am: apply convenience CCACHE exports like
+	  for other compiled sources [#2256]
+	* Makefile.am, clients/Makefile.am, common/Makefile.am, configure.ac,
+	  drivers/Makefile.am, include/Makefile.am, lib/Makefile.am,
+	  server/Makefile.am, tests/Makefile.am, tests/NIT/Makefile.am,
+	  tools/Makefile.am, tools/nut-scanner/Makefile.am: configure.ac,
+	  *.am: wherever we export CCACHE_* envvars for convenience - avoid
+	  doing so if they were not set at configure time [#2256]
+
+2024-03-07  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* .github/workflows/codeql.yml: revise APT preinstallation  * clang
+	  or gcc/g++ depending on matrix.compiler * collapse other pkgs into
+	  one call * add libneon*-dev
+	* .github/workflows/codeql.yml: use C/C++ buids with "native"
+	  autogen+configure (and a single run for each config combo)
+	* .github/workflows/codeql.yml: exile "python" analysis into one
+	  "included" matrix cell
+
+2024-03-06  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* .github/workflows/codeql.yml: add ./ci_build.sh options to
+	  constrain build/check scenario workload sprawl
+	* .github/workflows/codeql.yml: make a CodeQL matrix of
+	  compiler/NUT_SSL_VARIANTS/NUT_USB_VARIANTS instead of single
+	  fightwarn-all
+	* .github/workflows/codeql.yml: fix stringification of
+	  "ubuntu-latest"
+	* .github/workflows/codeql.yml: make "ubuntu-latest" formally a part
+	  of "matrix.os" for "if" clause
+	* .github/workflows/codeql.yml: install prerequisite packages and
+	  ensure a "BUILD_TYPE=fightwarn-all ./ci_build.sh" loop for C/C++
+	  "Autobuild" implementation
+	* .github/workflows/codeql.yml: non-default C/C++ "Autobuild"
+	  implementation
+	* .github/workflows/codeql.yml, .github/codeql/codeql-config.yml: add
+	  "paths" for Python scripts
+	* Jenkinsfile-dynamatrix: fiddle with BUILD_WARNFATAL settings
+
+2024-03-04  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* Jenkinsfile-dynamatrix: fix naming for cross-Windows builds
+	  ("Strict C" part is optional)
+	* Jenkinsfile-dynamatrix: add a TODO about "completely out-of-tree"
+	  builds
+
+2024-03-06  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* .github/workflows/codeql.yml: extend with python
+
+2024-03-04  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* autogen.sh: in the end of successful execution, lead interactive
+	  users to running the ./configure script
+
+2024-03-03  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* scripts/systemd/nut-driver-enumerator-daemon-activator.path.in:
+	  clarify the unit description (it does not strictly restart the
+	  daemon, can reload if running too)
+	* docs/config-prereqs.txt: clarify that FreeBSD likely does not want
+	  to "pkg add openssl" in fact [#2275]
+	* README.adoc: update phrasing on DigitalOcean and NUT CI farm
+
+2020-04-29  Jim Klimov <jim@jimklimov.com>
+
+	* scripts/systemd/nut-driver-enumerator-daemon-activator.service.in:
+	  nut-driver-enumerator-daemon-activator.service : use older
+	  Service/StartLimitInterval for broader compatibility  Should help
+	  avoid this warning and unachieved functionality on systemd-229 and
+	  older: * systemd[1]:
+	  [/lib/systemd/system/nut-driver-enumerator-daemon-activator.service:30]
+	  Unknown lvalue 'StartLimitIntervalSec' in section 'Service'
+
+2024-03-02  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* scripts/systemd/nut-server.service.in: summarize LimitNOFILE
+	  increase and ExecStartPost to monitor that it was applied, from FTY
+	  branch  Originates from FTY commits:  * 062d1868fa (Jim Klimov
+	  2018-01-16 13:11:08 +0100) * 0e28cc865c (Jim Klimov    2018-01-16
+	  13:37:39 +0100) * e9a67100a0 (Jim Klimov    2018-01-16 13:41:52
+	  +0100)
+
+2020-04-20  Jim Klimov <jim@jimklimov.com>
+
+	* scripts/systemd/nut-driver-enumerator-daemon-activator.service.in:
+	  nut-driver-enumerator-daemon-activator.service.in : disable
+	  quick-start throttling
+
+2024-03-02  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* tools/nut-scanner/scan_snmp.c: apply comments from FTY branch
+	* tools/nut-usbinfo.pl: quietly skip editor backup files, and those
+	  prepared by "git difftool" for comparisons
+	* scripts/systemd/.gitignore: do not GitIgnore nut-driver.target, it
+	  lives in SCM now
+
+2024-03-01  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* m4/ax_c_pragmas.m4: comment where "-Wcast-function-type-strict"
+	  comes from
+
+2024-03-02  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* drivers/snmp-ups.c: apply comments and formatting from FTY branch
+
+2017-01-14  Jim Klimov <jim@jimklimov.com>
+
+	* drivers/nut-libfreeipmi.c: drivers/nut-libfreeipmi.c : set the 4
+	  voltage_range variable to unsigned ints
+
+2024-03-02  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* drivers/dstate.c: apply comments from FTY branch  Originally from
+	  commits 9723e08096 and 6909e965a9 (Jan 2017)
+
+2016-09-07  Jim Klimov <jim@jimklimov.com>
+
+	* drivers/dstate.c: dstate.c : a pedantic compiler warning fix
+
+2016-07-04     Arnaud Quette <arnaud.quette@free.fr>
+
+	* docs/man/nut-scanner.txt: comment about debugging level for
+	  troubleshooting  Originates from commit 951f8f8b3 by  Date:
+	  Mon Jul 4 16:27:29 2016 +0200
+
+2024-03-02  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* docs/man/nut-scanner.txt: reconcile asciidoc markup with FTY branch
+	* docs/config-prereqs.txt: reconcile markup with FTY branch
+	* docs/config-notes.txt: reconcile markup with FTY branch
+	* common/common.c: reconcile markup with FTY branch
+	* autogen.sh: reconcile markup with FTY branch
+	* UPGRADING.adoc: fix basic asciidoc list markup for releases v2.6.x
+	  and older
+	* NEWS.adoc, UPGRADING.adoc: clarify drop of oldmge-shut from NUT
+	  codebase
+	* NEWS.adoc: rephrase the text about Eaton-contributed installer from
+	  news prepared in FTY branch
+	* tools/nut-scanner/nut-scanner.c: bump (C) years, reconcile with
+	  master branch
+
+2024-03-01  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* tools/nut-scanner/nut-scanner.c: use same conservative base level
+	  of USB scan verbosity when scanning all media types (-C) [#2334]
+	* tools/nut-scanner/scan_nut_simulation.c: do not abort if CONFPATH
+	  is missing [#2235]
+	* NEWS.adoc, conf/ups.conf.sample, docs/man/nut_usb_addvars.txt,
+	  docs/man/ups.conf.txt, docs/nut.dict, drivers/arduino-hid.c,
+	  drivers/libshut.c, drivers/libusb0.c, drivers/libusb1.c,
+	  drivers/main.c, drivers/powervar-hid.c,
+	  tools/nut-scanner/scan_usb.c: Multiple USB-capable drivers: add
+	  ways to tune USB HID config, report, descriptor indexes and in/out
+	  endpoints [#2149]
+
+2024-03-01  Yifeng Li <tomli@tomli.me>
+
+	* docs/nut.dict: nut.dict: add model "KRTL" to dictionary.
+	* docs/man/huawei-ups2000.txt: huawei-ups2000.txt: add
+	  UPS2000-G-3KRTL to the confirmed list  A user has reported that
+	  UPS2000-G-3KRTL is confirmed working, thus this commit adds it to
+	  the list of known-working models. A remark about standard and long
+	  runtime variants has also been added.
+
+2024-03-01  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* docs/Makefile.am: comment typo fix
+
+2024-03-01  Yifeng Li <tomli@tomli.me>
+
+	* docs/Makefile.am: reminder about missing dictionary when aspell is
+	  unavailable  When aspell is not unavailable, the cause can either
+	  be that aspell itself is not installed, or it has no English
+	  dictionary (aspell-en). I've wasted several minutes due to this
+	  oversight. Add this reminder in the error message to give clue to
+	  future developers.
+
+2024-03-01  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* drivers/usb-common.c: free() USB matcher structures if called again
+	  [#2309]  e.g. when reconnecting after link loss
+
+2024-02-29  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* docs/config-prereqs.txt: clarify libneon.so symlink on OpenBSD
+	* common/common.c: get_libname_in_dir(): report first found "related"
+	  name (if any), if got no hits
+	* docs/config-prereqs.txt: document hacks to get pip for Python 2.7
+	  ...on systems that only support it partially  Courtesy of
+	  https://stackoverflow.com/a/65125295/4715872
+	* conf/Makefile.am, data/Makefile.am, data/html/Makefile.am,
+	  docs/man/Makefile.am, scripts/Makefile.am,
+	  scripts/Solaris/Makefile.am, scripts/Windows/Makefile.am,
+	  scripts/devd/Makefile.am, scripts/hotplug/Makefile.am,
+	  scripts/installer/Makefile.am, scripts/python/Makefile.am,
+	  scripts/systemd/Makefile.am, scripts/udev/Makefile.am,
+	  scripts/upsdrvsvcctl/Makefile.am, tests/NIT/Makefile.am:
+	  */Makefile.am: fix comment referring to
+	  "$(top_builddir)/install-sh"
+	* drivers/hidparser.h, drivers/libhid.h, drivers/nutdrv_qx.h,
+	  drivers/serial.h, drivers/snmp-ups.h, drivers/usb-common.h,
+	  drivers/usbhid-ups.h, include/common.h, include/nut_float.h,
+	  include/nut_stdint.h, include/proto.h: */*.h: use NUT_NETVERSION as
+	  a header guard for #include "config.h"
+	* NEWS.adoc: fix for battery_voltage_reports_one_pack flag handling
+	  [#2324]
+
+2024-02-28  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* m4/nut_check_libltdl.m4: fix detection on OpenBSD
+	* docs/config-prereqs.txt: clarify how to get pip on OpenBSD
+	* indent.sh, scripts/HP-UX/makedepot.sh,
+	  scripts/Windows/build-mingw-nut.sh,
+	  scripts/installer/make_package.sh,
+	  scripts/subdriver/gen-snmp-subdriver.sh,
+	  scripts/subdriver/gen-usbhid-subdriver.sh: NUT shell scripts: use a
+	  better portable shebang for bash interpreter discovery  NOTE: Some
+	  scripts require BASH syntax; maybe not all of them do (did not
+	  revise at this time)
+	* scripts/HP-UX/makedepot.sh: fix whitespace
+
+2024-02-27  Denny Page <dennypage@me.com>
+
+	* drivers/nutdrv_qx.c: Correct access method used for flag
+	  battery_voltage_reports_one_pack
+
+2024-02-27  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* include/state.h: include time headers (we use timespec/timeval
+	  here)
+
+2024-02-27  Jim Klimov <jimklimov@gmail.com>
+
+	* Makefile.am: ChangeLog: fix shell-scripting typo
+
+2024-02-27  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* configure.ac: report if deliberately avoiding hardlinks for LN_S_R
+	  implementation
+	* ci_build.sh: support CI_FAILFAST also to bail out from
+	  parallel/sequential build_to_only_catch_errors_target() logic -
+	  ensure parallel builds succeed "as is"
+	* configure.ac: revise detection of LN_S_R
+	* Makefile.am: avoid what some makes see as a loop for ChangeLog
+	* Makefile.am: make sure "make ChangeLog" does some work  ...even
+	  with OpenBSD make implementation
+	* docs/Makefile.am: produce proper asciidoc markup for ChangeLog.adoc
+	  if "FAILED to resolve input or output filename with this make
+	  implementation..."
+	* Makefile.am: fix out-of-tree build of ChangeLog file
+
+2024-02-26  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* common/Makefile.am: define libnutwincompat.la recipe
+	* common/Makefile.am: annotate automake if/else/endif with the
+	  appropriate macro name, and indent  Should help with
+	  navigation/maintenance of the code base
+	* common/Makefile.am: pre-define CLEANFILES along with other vars of
+	  that sort
+	* tools/nut-scanner/Makefile.am: annotate automake if/else/endif with
+	  the appropriate macro name  Should help with navigation/maintenance
+	  of the code base
+	* tools/nut-scanner/scan_eaton_serial.c,
+	  tools/nut-scanner/scan_ipmi.c, tools/nut-scanner/scan_xml_http.c:
+	  nut-scanner sources : fix leading indentation (SPACEs to TABs) to
+	  be consistent in the same file
+	* tools/nut-scanner/Makefile.am: rearrange and deduplicate lines for
+	  $(top_builddir)/include/nut_version.h target
+
+2024-02-22  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* NEWS.adoc: note revised recipes [#2318]
+	* Makefile.am, clients/Makefile.am, common/Makefile.am,
+	  conf/Makefile.am, data/Makefile.am, data/html/Makefile.am,
+	  docs/Makefile.am, drivers/Makefile.am, scripts/Makefile.am,
+	  scripts/Solaris/Makefile.am, scripts/Windows/Makefile.am,
+	  scripts/devd/Makefile.am, scripts/hotplug/Makefile.am,
+	  scripts/installer/Makefile.am, scripts/python/Makefile.am,
+	  scripts/python/module/Makefile.am, scripts/systemd/Makefile.am,
+	  scripts/udev/Makefile.am, scripts/upsdrvsvcctl/Makefile.am,
+	  server/Makefile.am, tests/Makefile.am, tests/NIT/Makefile.am,
+	  tools/nut-scanner/Makefile.am, tools/nutconf/Makefile.am:
+	  */Makefile.am: be sure to use AM_MAKEFLAGS and invoke jobserver (+)
+	  everywhere we call another $(MAKE)
+	* docs/Makefile.am: fix AM_FLAGS => AM_MAKEFLAGS
+	* scripts/python/module/Makefile.am: fix AM_FLAGS => AM_MAKEFLAGS
+	* conf/Makefile.am, data/Makefile.am, data/html/Makefile.am,
+	  docs/man/Makefile.am, scripts/Makefile.am,
+	  scripts/Solaris/Makefile.am, scripts/Windows/Makefile.am,
+	  scripts/devd/Makefile.am, scripts/hotplug/Makefile.am,
+	  scripts/installer/Makefile.am, scripts/python/Makefile.am,
+	  scripts/systemd/Makefile.am, scripts/udev/Makefile.am,
+	  scripts/upsdrvsvcctl/Makefile.am, tests/NIT/Makefile.am:
+	  */Makefile.am: pass (top_)(src|build)dir, MKDIR_P and AM_MAKEFLAGS
+	  of caller into docs/Makefile parsing
+	* Makefile.am: comment how to maintain list of subdirs for
+	  spellchecking  TOTHINK: Do we want to just automate this discovery?
+	* Makefile.am: use jobserver for spellcheck* callouts; ensure
+	  .prep-src-docs are pre-generated
+	* Makefile.am, docs/nut.dict,
+	  scripts/installer/common/README_ipp-os-shutdown.adoc: Makefile.am:
+	  spellcheck "scripts/installer" too [#2288]
+	* README.adoc, docs/Makefile.am, ...g_Host_Dark_56px.png =>
+	  fosshost_org_Host_Dark_56px.png}, ...st_Light_309px.png =>
+	  fosshost_org_Host_Light_309px.png}, ...Host_Light_38px.png =>
+	  fosshost_org_Host_Light_38px.png}, docs/images/ci/jenkins-nut.css,
+	  docs/images/ci/jenkins-nut.txt, docs/nut.dict: docs: rename
+	  FossHost logo files to not include a dot in the name  ...it upsets
+	  some versions of `dblatex` (used in PDF generation) which treat
+	  everything after the *first* dot as a file extension.
+	* ci_build.sh: do not claim "Could not query git repo" if it was just
+	  clean
+	* docs/Makefile.am, docs/man/Makefile.am, .gitignore: fix back the
+	  "-prepped" suffix (with a dash)
+	* docs/Makefile.am, docs/man/Makefile.am: fix clean-up of *_prepped
+	  files
+	* scripts/installer/common/README_ipp-os-shutdown.adoc:
+	  scripts/installer/README_ipp-os-shutdown.adoc: fix asciidoc list
+	  style
+	* docs/nut.dict, scripts/python/module/README.adoc:
+	  scripts/python/module/README.adoc: fix spelling error
+	* docs/Makefile.am: when touching a *-spellchecked file, ensure its
+	  dir exists  This file may be the only (or first) build product, so
+	  nobody else made that dir for us!
+
+2024-02-21  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* docs/Makefile.am: abolish dependency from spellcheck on
+	  .prep-src-docs
+	* docs/Makefile.am: spellcheck recipes: pass an explicitly empty
+	  SPELLCHECK_SRC list to sub-makes (do not confuse .prep-src-docs
+	  dependency)
+	* docs/Makefile.am: spellcheck recipes: report "pwd" when complaining
+	  about bogus paths
+	* docs/Makefile.am: do not hard-code running dpkg (for diags)
+	  everywhere
+	* docs/Makefile.am, docs/man/Makefile.am: use full path relative to
+	  abs_top_builddir for .prep-src-docs  Facilitate running the
+	  docs/Makefile from other dirs (to spell-check their docs)
+	* docs/nut.dict: learn about "wildcard" (singular)
+	* docs/Makefile.am, docs/man/Makefile.am: do not "ls" files for
+	  PREP_SRC, suffices to sort|uniq the names in a diferent manner
+	* docs/Makefile.am, docs/man/Makefile.am: drop shell debug tracing
+	  from .prep-src-docs rules
+	* docs/Makefile.am, docs/man/Makefile.am: chop non-trivial "srcdir"
+	  from PREP_SRC pathnames, if present
+	* docs/Makefile.am, docs/man/Makefile.am: list PREP_SRC pathnames
+	  starting from builddir as "make" crafts them, not from srcdir
+	* docs/Makefile.am, docs/man/Makefile.am: try to accomodate different
+	  "make" implementations for .prep-src-docs file discovery
+
+2024-02-20  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* docs/Makefile.am, docs/man/Makefile.am: only the paths deal in
+	  absolutes!
+	* docs/Makefile.am: depend spellcheck on .prep-src-docs too, for
+	  completeness
+	* docs/Makefile.am, docs/man/Makefile.am: .prep-src-docs: for in-tree
+	  builds, cover all PREP_SRC names even if they do not yet exist
+	* docs/Makefile.am, docs/man/Makefile.am: revise calling the prep vs.
+	  document products again
+	* .gitignore, docs/Makefile.am, docs/man/Makefile.am:
+	  docs/man/Makefile.am, docs/Makefile.am, Makefile.am: use
+	  *.txt_prepped (with underscore) for suffix rules
+	* docs/man/Makefile.am, docs/Makefile.am: insist on having a
+	  "$(builddir)/.prep-src-docs"  ...do not get distracted by one
+	  in-tree, if any, when doing out-of-tree builds
+	* docs/.gitignore: GitIgnore .prep-src-docs* touch-files
+	* .gitignore, Makefile.am, docs/Makefile.am, docs/man/Makefile.am:
+	  docs/man/Makefile.am, docs/Makefile.am, Makefile.am: avoid hacky
+	  rules to pre-call .prep-src-docs; use hacky touch-files instead
+	* Makefile.am: try to be sure to use the job server for docs-related
+	  sub-makes  ...when using custom make targets to build specific docs
+	  or checks
+	* docs/man/Makefile.am: enable the opportunistic suffix rule for
+	  build products to depend on .prep-src-docs  Hopefully avoids
+	  duplicate parallel runs of the helper where the make implementation
+	  would support it (courtesy above standard requirements).
+	* docs/Makefile.am, docs/man/Makefile.am: play with VPATH to help
+	  prefer PREP_SRC symlinks
+	* docs/Makefile.am, docs/man/Makefile.am: when creating PREP_SRC
+	  symlinks, report current workdir (help with relative src/build
+	  dirs)
+	* docs/Makefile.am, docs/man/Makefile.am: when cleaning PREP_SRC
+	  symlinks, be sure to only hit symlinks
+	* docs/man/Makefile.am: be sure to include LINKMAN_INCLUDE_GENERATED
+	  into PREP_SRC
+	* docs/man/Makefile.am: simplify clean-up
+	* docs/man/Makefile.am, docs/Makefile.am: rearrange dependencies on
+	  .prep-src-docs, avoid sub-makes where we can
+	* docs/man/Makefile.am, docs/Makefile.am: make sure that "all" target
+	  is first
+
+2024-02-19  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* tools/nut-scanner/nutscan-display.c: revise use of nutdev_num in
+	  nutscan_display_sanity_check_serial()  Actually rewind it back to
+	  the number which the first entry for this device type had in the
+	  "continuous numbering" we track for this scan report.
+	* docs/man/Makefile.am: fix out-of-tree build check for
+	  linkman-driver{,tool}-names.txt recipes
+	* docs/Makefile.am, docs/man/Makefile.am: touch .prep-src-docs if
+	  called for in-tree builds too
+	* docs/Makefile.am, docs/man/Makefile.am: do not hard-depend common
+	  targets on .prep-src-docs
+	* tools/nut-scanner/nutscan-display.c: convert nutdev_num and
+	  last_nutdev_num to size_t
+	* tools/nut-scanner/nutscan-display.c: update comments about methods
+	  iterating WHOLE lists, not just parsing one "device"
+	* tools/nut-scanner/nutscan-display.c: fix nutdev_name rendition (it
+	  is NOT always a "nut-serialX"!)
+	* docs/Makefile.am, docs/man/Makefile.am: PREP_SRC: symlink from
+	  abs_srcdir to avoid the mess with relative paths and ".." offsets
+	* docs/Makefile.am, docs/man/Makefile.am: prefix sub-make calls with
+	  "+" to invoke jobserver
+	* docs/Makefile.am, Makefile.am: explicitly "make .prep-src-docs"
+	  before calling (possibly parallel) sub-make for docs or docs/man
+	* docs/Makefile.am, docs/man/Makefile.am: report "Preparing to
+	  generate" separately from actually "Generating"
+	* docs/Makefile.am, docs/man/Makefile.am: augment with .prep-src-docs
+	  target for building out-of-tree
+	* docs/Makefile.am: do not make a "NOTE:..." line into a heading
+	* Makefile.am: ChangeLog: re-use one from tarball when not building
+	  from git
+	* Makefile.am: call tools/gitlog2changelog.py in SOURCE dir (where
+	  git repo is) and use CHANGELOG_FILE to store the result in BUILD
+	  dir
+	* Makefile.am: add a shortcut to "make ChangeLog.adoc"; fix formal
+	  markup if we "failed to generate the ChangeLog" to produce a sane
+	  adoc=>pdf note anyway
+	* tools/gitlog2changelog.py.in: allow to use CHANGELOG_FILE="-" for
+	  redirect to stdout
+	* tools/gitlog2changelog.py.in: allow to customize CHANGELOG_FILE
+	* tools/nut-scanner/nutscan-display.c: update comments about
+	  last_nutdev_num
+
+2024-02-17  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* docs/config-prereqs.txt: update for LUA pacakge naming on new
+	  Ubuntu/Debian distros
+	* drivers/eaton-ups-pwnm2-mib.c: bump version after edit in be29b to
+	  drop values not needed in this fork of the mapping
+
+2024-02-16  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* tests/nutipc_ut.cpp: use NutFile::tmp_dir() and NutFile::path_sep()
+	  for temporary PID file path construction [#2314]
+	* include/nutstream.hpp: expose NutFile::tmp_dir() and
+	  NutFile::path_sep() for good measure
+	* tests/nutipc_ut.cpp: NutIPCUnitTest::testSignalSend(): report PID
+	  file name and contents when in verbose mode
+	* tests/nutipc_ut.cpp: use unique PID filenames for each test run
+	  Closes: #2314
+
+2024-02-15  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* tests/NIT/nit.sh: introduce upsd_start_loop()  Improve chances of
+	  passing the test suite even on congested CI farm agents
+	* tests/nutconf_ut.cpp: with fixed ABS_TOP_SRCDIR for WIN32, un-block
+	  config file parsing tests
+	* configure.ac: The more slashes - the better! One can never fully
+	  escape them!
+	* .github/workflows/codeql.yml: update to v3  Due to
+	  https://github.blog/changelog/2024-01-12-code-scanning-deprecation-of-codeql-action-v2/
+	* docs/config-prereqs.txt: fix Windows sub-section heading levels
+	* drivers/ever-hid.c: clarify a comment about USB VID 0x0483
+	* NEWS.adoc, data/driver.list.in, drivers/cps-hid.c,
+	  scripts/upower/95-upower-hid.hwdb: drivers/cps-hid.c et al: add
+	  support for Cyber Energy branded devices [#2312]
+	* common/nutstream.cpp: NutFile::open(): add a big comment about
+	  POSIX/WIN32 (absolute) path concerns  Copied from tests, but would
+	  hopefully evaporate there eventually as that particular acute issue
+	  gets resolved.
+	* tests/nutconf_ut.cpp: add a big comment about POSIX/WIN32
+	  (absolute) path concerns
+	* common/nutstream.cpp: checkExistsWritableDir(): add debuggging, fix
+	  use of access() check
+	* configure.ac: fix WIN32 resolution of build/src paths for tests
+
+2024-02-14  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* configure.ac: fix up ABS_TOP_SRCDIR/ABS_TOP_BUILDDIR for builds of
+	  NUT directly on Windows agents
+	* common/nutstream.cpp: NutFile::open(): try to report the filename
+	  which was problematic
+	* appveyor.yml: be sure to have a NUT_STATEPATH spelled in a way that
+	  is writeable by WIN32 system methods (e.g. not mangled by
+	  mingw/msys)
+	* common/nutstream.cpp: try more locations for getTmpDirPath(),
+	  particularly on WIN32
+	* tests/nutstream_ut.cpp: improve chances on parallel CI testing:
+	  retry listen_sock.bind() a few times; freeze/thaw the writer PID
+	* common/nutstream.cpp: neuter fallback localtime_r(), gmtime_r() on
+	  mingw builds
+	* configure.ac: fix nut_with_debuginfo*="legacy" to consider flag
+	  list snapshots made just after autoconf might have mangled them
+	* configure.ac: to not change nut_with_debuginfo* from "no" to
+	  "legacy", leave it strictly as caller asked  Recent changes are
+	  more careful about the "LEGACY FALLBACK" application. Let users ask
+	  for it explicitly though.
+	* common/nutstream.cpp: NutFile(anonymous_t): trace the attempted
+	  m_tmp_dir and filename (if known) in theexception (so far WIN32
+	  code path)
+	* common/nutstream.cpp: NutFile(anonymous_t): use tmp file as binary
+	  in both POSIX and WIN32 code
+	* common/nutstream.cpp: NutFile(anonymous_t): pre-zero filename
+	  buffer
+	* common/nutstream.cpp: getTmpDirPath(): return "/tmp" not "/var/tmp"
+	  by default
+	* common/nutstream.cpp: getTmpDirPath(): comment about a C++17
+	  equivalent to maybe call later
+	* common/nutstream.cpp: :NutFile(anonymous_t), getTmpDirPath(): use
+	  ASCII char variants of Windows path related methods
+	* configure.ac: typo fix (--with-cppunit => --enable-cppunit) in
+	  messages
+	* NEWS.adoc, docs/nut.dict: NEWS.adoc: document "configure
+	  --with-debuginfo" possibility [#2310]
+	* m4/nut_report_feature.m4: adjust NUT_REPORT_COMPILERS to note about
+	  debug optimizations
+	* configure.ac: move CONFIG_C(XX)FLAGS definition back down to where
+	  we check AC_PROG_C* macros
+	* configure.ac: rename C(XX)FLAGS_ORIG to CONFIG_C(XX)FLAGS to avoid
+	  conflict with m4 scripts and to maintain similarly to CONFIG_FLAGS
+	* configure.ac: move stashing of CFLAGS_ORIG/CXXFLAGS_ORIG higher in
+	  the script; only do it if they are not yet set (and do set them if
+	  re-entering for an in-place build)
+	* configure.ac: add C(XX)FLAGS_ORIG tracing printouts to where we
+	  check nut_with_debuginfo
+	* configure.ac: hide C(XX)FLAGS_(BEFORE|AFTER)_ACPROG tracing
+	  printouts; move "LEGACY DEFAULT FALLBACK" CFLAGS to the same block
+	  where we check AC_PROG_C*
+	* configure.ac: fix typo in shell test
+	* configure.ac: avoid needless quoting in AC_MSG_RESULT() printouts
+	* configure.ac: do not mangle C(XX)FLAGS added by autotools; just
+	  stash and consult original values when deciding --with-debuginfo
+	  behavior
+	* configure.ac: rearrange mangling of CFLAGS and CXXFLAGS by
+	  autotools defaults (optimizations/debug barged in) and our script
+
+2024-02-13  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* configure.ac: avoid autoconf-added debug/optimization settings
+	* configure.ac: allow to --enable-cppunit=force for dev-testing
+
+2024-02-12  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* configure.ac, tests/Makefile.am: define CPPUNIT_NUT_CXXFLAGS
+	  properly
+	* configure.ac: if we apply nut_with_debuginfo_CXX, avoid separate
+	  settings for CPPUNIT_NUT_CXXFLAGS debugging
+	* configure.ac: separate internally nut_with_debuginfo into
+	  nut_with_debuginfo_C vs. nut_with_debuginfo_CXX
+	* configure.ac, ci_build.sh: introduce --with-debuginfo
+	  (BUILD_DEBUGINFO) setting
+	* ci_build.sh: empty BUILD_TYPE is not an "error", fix the warning
+	  message
+	* ci_build.sh: add "TAKING SHORTCUT" to re-generate if current
+	  configure script syntax is broken
+
+2024-02-14  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* m4/nut_report_feature.m4: adjust NUT_REPORT_COMPILERS to note about
+	  debug optimizations
+	* configure.ac: move CONFIG_C(XX)FLAGS definition back down to where
+	  we check AC_PROG_C* macros
+	* configure.ac: rename C(XX)FLAGS_ORIG to CONFIG_C(XX)FLAGS to avoid
+	  conflict with m4 scripts and to maintain similarly to CONFIG_FLAGS
+	* configure.ac: move stashing of CFLAGS_ORIG/CXXFLAGS_ORIG higher in
+	  the script; only do it if they are not yet set (and do set them if
+	  re-entering for an in-place build)
+	* configure.ac: add C(XX)FLAGS_ORIG tracing printouts to where we
+	  check nut_with_debuginfo
+	* configure.ac: hide C(XX)FLAGS_(BEFORE|AFTER)_ACPROG tracing
+	  printouts; move "LEGACY DEFAULT FALLBACK" CFLAGS to the same block
+	  where we check AC_PROG_C*
+	* NEWS.adoc, docs/nut.dict: NEWS.adoc: document "configure
+	  --with-debuginfo" possibility [#2290]
+	* configure.ac: fix typo in shell test
+	* configure.ac: avoid needless quoting in AC_MSG_RESULT() printouts
+	* configure.ac: do not mangle C(XX)FLAGS added by autotools; just
+	  stash and consult original values when deciding --with-debuginfo
+	  behavior
+	* configure.ac: rearrange mangling of CFLAGS and CXXFLAGS by
+	  autotools defaults (optimizations/debug barged in) and our script
+
+2024-02-13  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* common/nutstream.cpp, common/Makefile.am: augment getTmpDirPath()
+	  with NUT altpidpath() support
+	* common/nutstream.cpp: drop fflush() for sockets, not applicable
+	  type
+	* common/nutstream.cpp: refactor getTmpDirPath() with
+	  checkExistsWritableDir() helper
+	* configure.ac: avoid autoconf-added debug/optimization settings
+	* include/nutstream.hpp: make flush() methods in the NutStream
+	  classes part of the interface API
+	* common/nutstream.cpp, include/nutstream.hpp,
+	  tests/nutstream_ut.cpp: introduce flush() methods in the classes;
+	  use in NutFile stream tests between write() and read() parts
+	  [#2293]  WIN32 builds failed due to lack of flush() and read an
+	  empty temporary file. Apparently the OS does not read() from a
+	  queued write() buffer/FS cache for a file.
+	* common/nutstream.cpp, include/nutstream.hpp: track NutSocket domain
+	  and type (e.g. AF_INET and SOCK_STREAM)  Also sanity-check if they
+	  fit when used.
+	* common/nutstream.cpp: avoid use of hard-coded temporary path; fix
+	  WIN32 use-case [#2293]  In WIN32 builds, ::tmpfile() tries to write
+	  to C:\ root dir and usually has no permissions to do so. Here we
+	  actively probe common envvars for temporary directories (or also
+	  use a WIN32 syscall for the effect) to try and get a realistic
+	  TMPDIR.  TODO: Consider NUT statepath/(alt)pidpath... maybe not
+	  available in tests though. Probe if the chosen dir actually exists?
+	* tests/nutstream_ut.cpp: use global "verbose" setting to trace
+	  readTestData()/writeTestData() helpers
+	* tests/cpputest.cpp, tests/nutstream_ut.cpp: let individual tests
+	  see the global "verbose" setting from CLI
+	* tests/nutstream_ut.cpp: Revert "tests/nutstream_ut.cpp: let the
+	  destructor alone close() the bound socket"  This reverts commit
+	  f93c31fa9a5804d8aadbefb0cfb98e0cc03b6e7d.
+	* configure.ac: allow to --enable-cppunit=force for dev-testing
+	* common/nutstream.cpp: fix NutSocket calls to
+	  read/write/close/connect methods to use our WIN32/POSIX friendly
+	  wrappers
+	* tests/nutstream_ut.cpp: let the destructor alone close() the bound
+	  socket
+	* tests/nutstream_ut.cpp: getFreePort(): use sock.closex() with
+	  exceptions on errors right away
+
+2024-02-12  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* appveyor.yml: try to print "make check" post-mortem details with a
+	  subshell  It is surprisingly difficult to do in-line scripts for
+	  Windows via YAML
+	* configure.ac, tests/Makefile.am: define CPPUNIT_NUT_CXXFLAGS
+	  properly
+	* configure.ac: if we apply nut_with_debuginfo_CXX, avoid separate
+	  settings for CPPUNIT_NUT_CXXFLAGS debugging
+	* appveyor.yml: Revert "appveyor.yml: use double-quotes to wrap bash
+	  calls (windows shell is quirky with single quotes)"  This reverts
+	  commit abf2a9e24e2d122f10c6b74121439f88a43f1d57.
+	* tests/nutstream_ut.cpp: on IWN32, use WSAStartup() before socket
+	  methods
+	* include/nutipc.hpp, tests/nutipc_ut.cpp: accomodate the likes of
+	  OSX where sigemptyset() is a macro
+	* appveyor.yml: use double-quotes to wrap bash calls (windows shell
+	  is quirky with single quotes)
+	* ci_build.sh: empty BUILD_TYPE is not an "error", fix the warning
+	  message
+	* tests/nutipc_ut.cpp: testSignalRecvQuick(): avoid switch/case over
+	  an enum  Avoids warning about "enumeration values not explicitly
+	  handled in switch: ..."
+	* appveyor.yml: print trace files if "make check" failed
+	* tests/cpputest.cpp: avoid segfault with debug-trace progress
+	  printer and certain compiler optimizations
+	* tests/cpputest.cpp: be sure to avoid debug-trace segfaults if
+	  "test" is NULL
+	* tests/nutstream_ut.cpp: avoid forked helper continuing with another
+	  copy of tests
+	* configure.ac: separate internally nut_with_debuginfo into
+	  nut_with_debuginfo_C vs. nut_with_debuginfo_CXX
+	* ci_build.sh: add "TAKING SHORTCUT" to re-generate if current
+	  configure script syntax is broken
+	* configure.ac, ci_build.sh: introduce --with-debuginfo
+	  (BUILD_DEBUGINFO) setting
+	* tests/nutipc_ut.cpp: be sure to caught_signals.clear() early in
+	  testSignalRecv*()
+	* tests/nutipc_ut.cpp, tests/nutconf_ut.cpp: register each test
+	  separately to trace them better
+	* tests/cpputest.cpp: be sure to flush the printout of starting test
+	  name before churning CPU on it
+	* tests/nutstream_ut.cpp: try to actively probe an available port
+	  number for the test
+	* tests/nutipc_ut.cpp: separate tests about received signal count
+	  (rapid-fire) and order (staggered)
+
+2024-02-10  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* configure.ac: warn early if building with mingw and strict/ansi
+	  C/C++ mode
+	* drivers/mge-hid.c: fix includes and defines for WIN32 build with
+	  strict C89
+	* common/common.c: avoid "FOR loop initial declarations" (are only
+	  allowed in C99 or C11 mode) for a WIN32 codepath
+	* server/netssl.c: include common.h=>config.h first
+	* drivers/riello_ser.c: include common.h=>config.h first
+	* drivers/riello.c: include common.h=>config.h first
+	* server/sockdebug.c: include common.h=>config.h first
+	* drivers/snmp-ups.h: rearrange commented-away code
+	* drivers/riello_ser.c: rearrange commented-away code
+	* clients/upsmon.c, drivers/dstate.c, drivers/eaton-pdu-marlin-mib.c,
+	  drivers/main.c, drivers/nutdrv_qx.c, drivers/snmp-ups.c,
+	  drivers/tripplite_usb.c, drivers/upsdrvctl.c,
+	  drivers/upsdrvquery.c,
+	  scripts/Windows/DriverInstaller/wdi-simple.c, server/conf.c,
+	  server/pipedebug.c, server/sstate.c: Fix comment style from
+	  double-slash to C89 compatible
+	* common/strptime.c: fix indentations and comment style
+	* drivers/nutdrv_qx_ablerex.c: rearrange commented-away code
+	* common/strptime.c: use NUT config.h
+	* drivers/pijuice.c: indent nested #if/#endif macros for readability
+	* clients/cgilib.c: include common.h=>config.h first; be sure to have
+	  stdio.h for snprintf()
+	* docs/developers.txt: extend notes about NUT CI farm hosting (with
+	  DigitalOcean) [#2192]
+	* docs/developers.txt, docs/nut.dict: docs/developers.txt: extend
+	  notes about baseline supported C/C++ standards
+	* UPGRADING.adoc, NEWS.adoc: mention fixed C/C++ standard support in
+	  builds
+	* tests/generic_gpio_utest.c: "int main()" requires a return value
+	* tests/generic_gpio_utest.c, tests/generic_gpio_liblocal.c: avoid
+	  "FOR loop initial declarations" (are only allowed in C99 or C11
+	  mode)  A little fallout for recent fix of actually doing C89 bulids
+	  via ci_build.sh
+	* configure.ac, m4/nut_compiler_family.m4: extend sensitivity for
+	  "-std=..." to also cover "-ansi" option
+	* ci_build.sh: update comment for "ignored" BUILD_WARNOPT and
+	  BUILD_WARNFATAL settings when BUILD_TYPE is empty
+	* Jenkinsfile-dynamatrix: constrain cross-mingw builds to GNU C
+	  standard by default (Strict C seems broken on OS side)
+
+2024-02-09  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* drivers/sms_ser.c, clients/upssched.c: avoid "FOR loop initial
+	  declarations" (are only allowed in C99 or C11 mode)  A little
+	  fallout for recent fix of actually doing C89 bulids via ci_build.sh
+	* m4/nut_compiler_family.m4: fix detection of a compiler standard
+	  already requested by caller
+	* tests/NIT/nit.sh: support NIT_CASE=isBusy_NUT_PORT for
+	  troubleshooting
+	* tests/NIT/nit.sh: isBusy_NUT_PORT(): check known sockets also with
+	  "ss" tool
+	* tests/NIT/nit.sh: isBusy_NUT_PORT(): do not test for non-emptiness
+	  of /proc/net/tcp* (they have contents AND are reported empty on
+	  some distros)
+	* tests/NIT/nit.sh: isBusy_NUT_PORT(): add log_debug() tracing about
+	  detected or not detected information
+	* tests/NIT/nit.sh: make sure log_debug() never errors out
+
+2024-02-10  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* drivers/raritan-px2-mib.c: fix NULL from string to pointer
+	  (raritanpx2_outlet_status_info[] sentinel)  Closes: #2304
+	* drivers/raritan-px2-mib.c: add a comment about daisy-chain features
+	  anticipated by this vendor MIB
+	* drivers/raritan-px2-mib.c: add more values to
+	  raritanpx2_outlet_status_info[]  Found per
+	  https://www.circitor.fr/Mibs/Html/P/PDU2-MIB.php#SensorStateEnumeration
+	* drivers/delta_ups-mib.c: fix typo for "split-phase" UPS type
+	  mapping  Closes: #2302
+	* Jenkinsfile-dynamatrix: constrain cross-mingw builds to GNU C
+	  standard by default (Strict C seems broken on OS side)
+
+2024-02-09  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* tests/NIT/nit.sh: support NIT_CASE=isBusy_NUT_PORT for
+	  troubleshooting
+	* tests/NIT/nit.sh: isBusy_NUT_PORT(): check known sockets also with
+	  "ss" tool
+	* tests/NIT/nit.sh: isBusy_NUT_PORT(): do not test for non-emptiness
+	  of /proc/net/tcp* (they have contents AND are reported empty on
+	  some distros)
+	* tests/NIT/nit.sh: isBusy_NUT_PORT(): add log_debug() tracing about
+	  detected or not detected information
+	* tests/NIT/nit.sh: make sure log_debug() never errors out
+	* drivers/sms_ser.c, clients/upssched.c: avoid "FOR loop initial
+	  declarations" (are only allowed in C99 or C11 mode)  A little
+	  fallout for recent fix of actually doing C89 bulids via ci_build.sh
+	* ci_build.sh: refine CANBUILD_NUTCONF handling vs.
+	  CXXFLAGS="-std=..."
+	* tests/nutstream_ut.cpp: try to fix the use of really random port
+	  numbers (again)
+	* tests/nutipc_ut.cpp: try to fix the occasional fault of
+	  testSignalRecv() - also with USER1 after USER2 (and a sleep)
+	* tests/nutipc_ut.cpp: try to fix the occasional fault of
+	  testSignalRecv()
+	* m4/nut_compiler_family.m4: fix detection of a compiler standard
+	  already requested by caller
+	* drivers/eaton-pdu-marlin-mib.c, drivers/hpe-pdu-mib.c:
+	  drivers/*-mib.c: fix "open" to "opened" (again) for dry contact
+	  states  Re-apply commit d3b6ea4d89 to modernized codebase of PR
+	  #2285 and newly cover drivers/hpe-pdu-mib.c as well
+	* drivers/baytech-mib.c, drivers/eaton-ups-pwnm2-mib.c,
+	  drivers/huawei-mib.c: drivers/*-mib.c: clean up typos for PR #2285
+	* drivers/tripplite_usb.c: typo fix in formatting string
+	* common/nutstream.cpp, include/nutstream.hpp: NutFile class:
+	  refactor constructor with access_t mode to not use tmpnam() [#2295]
+	  The method for NutFile::tmpName() was private and only used in this
+	  constructor, and relied on the unsafe tmpnam() method to openx()
+	  the resulting file with a given mode.  With this change, the file
+	  is created via tmpfile() and freopen()'ed with the desired mode.
+	  Downside: name inherently unknown.  Upside: auto-deletion of the
+	  temporary file.  Closes: #2295
+	* common/nutstream.cpp, include/nutstream.hpp: NutFile class:
+	  refactor strAccessMode() helper into a separate method [#2295]
+	* common/nutstream.cpp: NutFile class: take more care about empty
+	  m_name or null m_impl values (sanity-checks etc.)
+	* common/nutstream.cpp, include/nutstream.hpp: wrap some long
+	  exception-printing lines
+	* tools/nutconf/nutconf-cli.cpp: rearrange getMode() default handling
+	  Avoid claims that "control reaches end of non-void function
+	  [-Wreturn-type]"
+	* tools/nutconf/Makefile.am, tools/nutconf/{nutconf.cpp =>
+	  nutconf-cli.cpp}: tools/nutconf/nutconf.cpp: rename to
+	  nutconf-cli.cpp to reduce ambiguity
+	* tests/Makefile.am, tests/{nutconf.cpp => nutconf_parser_ut.cpp}:
+	  tests/nutconf.cpp: rename to nutconf_parser_ut.cpp to reduce
+	  ambiguity
+	* drivers/tripplite_usb.c: harden the int types used to detect and
+	  report unit id
+	* NEWS.adoc: update for tripplite_usb unit id matcher [#2297]
+
+2024-02-09  Jim Klimov <jimklimov@gmail.com>
+
+	* drivers/tripplite_usb.c: update comments and logging for unit id
+	  matcher
+
+2024-01-31  sapireli <114778791+sapireli@users.noreply.github.com>
+
+	* drivers/tripplite_usb.c: Fix for undefined upsid in config small
+	  fix restoring matching when upsid is undefined in config closes
+	  #2282
+
+2024-01-30  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* tests/cpputest.cpp: initialize random number generator with srand()
+	  Ensure better that the ports used by nutstream_ut.cpp can end up
+	  random.
+	* common/nutwriter.cpp: avoid UPSD_DIRECTIVEX and UPSMON_DIRECTIVEX
+	  macros claiming "unreachable code" warnings
+	* tests/nutstream_ut.cpp: make use of
+	  HAVE_PRAGMA_GCC_DIAGNOSTIC_IGNORED_DEPRECATED_DECLARATIONS to fix
+	  warnings on CentOS7 (older clang, older cppunit)
+	* m4/ax_c_pragmas.m4: introduce
+	  HAVE_PRAGMA_GCC_DIAGNOSTIC_IGNORED_DEPRECATED_DECLARATIONS
+	* tools/nutconf/nutconf.cpp: getMode(): wrap potentially unreachable
+	  de-enumeration code into pragmas
+	* drivers/snmp-ups-helpers.c: convert to info_lkp_fun_vp2s() and
+	  info_lkp_sentinel
+	* tests/nutstream_ut.cpp: use CPPUNIT_ASSERT_MESSAGE with prepared
+	  C++ string, not inlined
+	* tests/nutstream_ut.cpp: troubleshoot
+	  listen_sock.bind(m_listen_address) hiccups
+	* tests/nutstream_ut.cpp: nutconf related tests: CPPUNIT_MACROS raise
+	  warnings (for older compilers/distros), try some workarounds
+	* common/nutconf.cpp, tools/nutconf/nutconf.cpp: nutconf related
+	  code: where we use pragmas for "-Wcovered-switch-default", do also
+	  use "-Wunreachable-code" (for older compilers)
+	* tests/nutstream_ut.cpp: troubleshoot writer_exit!=0
+	* tests/nutipc_ut.cpp: not all shells have "test" with two equality
+	  chars
+	* tests/nutstream_ut.cpp: cast the random() port number to uint16_t
+
+2024-01-29  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* include/nutipc.hpp, include/nutstream.hpp: Revert "nutconf related
+	  headers: tell clang to ignore "unknown" \retval in Doxygen
+	  comments"  This reverts commit
+	  9ec19231ced75d942955a31108613cecdb4a75fe.  Some clang versions warn
+	  about unknown pragma. Not a quick win...
+	* NEWS.adoc: document addition of nutconf [#2290]
+	* NEWS.adoc: update info about installer
+	* drivers/snmp-ups.h: do not lose function pointers in non-DMF builds
+	  with info_lkp_fun_s2l() and info_lkp_nuf_vp2s()
+
+2024-01-23  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* drivers/eaton-pdu-marlin-mib.c: marlin_device_count_fun(): decorate
+	  a NUT_UNUSED_VARIABLE()
+
+2024-01-29  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* drivers/eaton-ats16-nm2-mib.c: rename
+	  eaton_ats16_ambient_drycontacts_info[] =>
+	  eaton_ats16_nm2_ambient_drycontacts_info[] to match other table
+	  naming patterns
+	* drivers/eaton-ats16-nm2-mib.c: wrap new EMP002 snmp_info_t entries
+	  into snmp_info_default() macros
+
+2024-01-24  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* drivers/eaton-ats16-nm2-mib.c, drivers/eaton-pdu-marlin-mib.c,
+	  drivers/eaton-ups-pwnm2-mib.c, drivers/mge-mib.c,
+	  drivers/raritan-pdu-mib.c: drivers/*-mib.c: convert to use
+	  info_lkp_sentinel, info_lkp_default et al wrapping
+
+2024-01-29  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* NEWS.adoc, docs/nut.dict: NEWS.adoc: document recently addressed
+	  issues and merged PRs that would be part of NUT v2.8.2 eventually
+	* configure.ac: tell clang to ignore "unknown" \retval in Doxygen
+	  comments
+	* include/nutipc.hpp, include/nutstream.hpp: nutconf related headers:
+	  tell clang to ignore "unknown" \retval in Doxygen comments
+	* common/nutipc.cpp: disarm NUT fallbacks for time methods (as may be
+	  defined in our common.h) for C++ (notably on mingw)
+	* tests/nutstream_ut.cpp: ensure random() symbol for WIN32 builds
+	* common/nutstream.cpp: comment not-use of wincompat.h wq
+	* tools/nutconf/nutconf.cpp: avoid bogus warnings about uninitialized
+	  map
+	* common/Makefile.am: add NETLIBS to libnutconf (esp. needed on WIN32
+	  builds)
+
+2024-01-28  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* common/nutipc.cpp, common/nutstream.cpp, include/nutipc.hpp,
+	  tests/nutconf_ut.cpp, tests/nutipc_ut.cpp, tests/nutstream_ut.cpp:
+	  nutconf related codebase: neuter code parts that need WIN32
+	  implementations (process IPC, etc.)
+	* common/nutstream.cpp: radically avoid the hassle with sa_family
+	  type
+	* include/nutstream.hpp, common/nutstream.cpp: currently neuter
+	  AF_UNIX support code under WIN32
+	* common/nutstream.cpp: add a comment about NutFile::m_tmp_dir
+	  (should not be hard-coded in the long run)
+	* common/nutconf.cpp: rename "system" and "word" vars to avoid
+	  clashes with some build environments
+	* common/nutstream.cpp: adapt socket operations to Win/Lin cross
+	  builds, similar to nutclient.cpp solution
+	* common/nutconf.cpp, common/nutipc.cpp, common/nutstream.cpp,
+	  common/nutwriter.cpp, include/nutipc.hpp, include/nutstream.hpp,
+	  tests/nutconf.cpp, tests/nutipc_ut.cpp, tests/nutstream_ut.cpp:
+	  nutconf related sources: revise include file lists and order
+	  (config.h, WIN32...)
+
+2024-01-24  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* ci_build.sh: update that nutconf is now fair game for builds and
+	  tests
+	* configure.ac: default --with-nutconf=auto (based on have_cxx11) and
+	  add it to --with-all
+
+2024-01-29  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* tests/nutstream_ut.cpp: Randomize bind(port) to try avoiding
+	  collisions in parallel testing
+
+2022-01-15  Jim Klimov <jim@jimklimov.com>
+
+	* ci_build.sh: add support for CANBUILD_NUTCONF toggle
+	  (NUT_BUILD_CAPS=nutconf... for CI farm)
+
+2024-01-25  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* configure.ac: use -Wno-exit-time-destructors and
+	  -Wno-global-constructors with clang++ to not worry about "(static)
+	  const something" variables
+
+2024-01-28  desertwitch <24509509+desertwitch@users.noreply.github.com>
+
+	* clients/upsmon.c: debug information to rectify unwanted OFF
+	  criticalities
+
+2024-01-28  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* drivers/snmp-ups.h: reshuffle in main codebase for unrecognized DMF
+	  macros
+	* scripts/installer/Makefile.am, .../{README_ipp-os-shutdown.txt =>
+	  README_ipp-os-shutdown.adoc}: scripts/installer/Makefile.am:
+	  spellcheck common/README_ipp-os-shutdown.adoc
+	* scripts/installer/Makefile.am: EXTRA_DIST all the files
+
+2022-02-02  Jim Klimov <jim@jimklimov.com>
+
+	* scripts/installer/common/init,
+	  scripts/installer/common/ipp-event.sh,
+	  scripts/installer/common/ipp-notifier.sh,
+	  scripts/installer/common/ipp-os-shutdown,
+	  scripts/installer/common/ipp-shutdown-daemon.sh,
+	  scripts/installer/common/ipp-status,
+	  scripts/installer/common/shutdown,
+	  scripts/installer/common/string.sh: scripts/installer/common/*:
+	  update from latest revision snapshot
+
+2022-01-14  Jim Klimov <jim@jimklimov.com>
+
+	* scripts/installer/aix/aix_init, ...are_shutdown.txt =>
+	  README_ipp-os-shutdown.txt}, ...usterware_shutdown =>
+	  ipp-host-shutdown.sample}, scripts/installer/common/ipp-wrapper,
+	  scripts/installer/common_EN/install.res,
+	  scripts/installer/install.sh, scripts/installer/make_package.sh,
+	  .../{solari => solcmn}/ipp-os-shutdown.conf.sample,
+	  scripts/installer/solcmn/solaris_init,
+	  .../installer/solint/ipp-os-shutdown.conf.sample,
+	  scripts/installer/uninstall-ipp, scripts/installer/version.sh:
+	  Update installer scripts from tentative Eaton IPSS Unix 1.40-5
+	  release (2018)
+	* scripts/installer/aix/ipp-os-shutdown.conf.sample,
+	  scripts/installer/common/AIX_Clusterware_shutdown,
+	  .../common/README_AIX_Clusterware_shutdown.txt,
+	  scripts/installer/common/aix_init, scripts/installer/common/init,
+	  scripts/installer/common/ipp-event.sh,
+	  scripts/installer/common/ipp-notifier.sh,
+	  scripts/installer/common/ipp-os-shutdown,
+	  scripts/installer/common/ipp-shutdown-daemon.sh,
+	  scripts/installer/common/ipp-status,
+	  scripts/installer/common/ipp.conf,
+	  scripts/installer/common/shutdown,
+	  scripts/installer/common/solaris_init,
+	  scripts/installer/common/string.sh,
+	  scripts/installer/common_EN/install.res,
+	  scripts/installer/hpux/ipp-os-shutdown.conf.sample,
+	  scripts/installer/install.sh, scripts/installer/make_package.sh,
+	  .../installer/solari/ipp-os-shutdown.conf.sample,
+	  .../installer/solint/ipp-os-shutdown.conf.sample,
+	  scripts/installer/uninstall-ipp, scripts/installer/version.sh:
+	  scripts/installer: snapshot from AIX_Clusterware_shutdown delivery
+	  (2015-11-18)
+	* scripts/installer/install.sh: do not dictate a MANPATH (led to some
+	  install errors)
+	* scripts/installer/install.sh: add logging to trace installer
+	  errors; use more library paths
+
+2024-01-28  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* configure.ac, scripts/Makefile.am, scripts/installer/Makefile.am,
+	  scripts/installer/{README.txt => README.adoc}:
+	  scripts/installer/Makefile.am: added to distribute and spell-check
+	  README.adoc
+	* scripts/installer/README.txt: comments on nutconf and authors
+
+2022-01-14  Jim Klimov <jim@jimklimov.com>
+
+	* scripts/installer/README.txt, scripts/installer/common/init,
+	  scripts/installer/common/ipp-event.sh,
+	  scripts/installer/common/ipp-notifier.sh,
+	  scripts/installer/common/ipp-shutdown-daemon.sh,
+	  scripts/installer/common/ipp-status,
+	  scripts/installer/common/ipp.conf,
+	  scripts/installer/common/shutdown,
+	  scripts/installer/common/string.sh,
+	  scripts/installer/common_EN/install.res,
+	  scripts/installer/common_EN/license.txt,
+	  scripts/installer/install.sh, scripts/installer/make_package.sh,
+	  scripts/installer/nut, scripts/installer/nutconf-dummy,
+	  scripts/installer/uninstall-ipp,
+	  scripts/installer/uninstall-lsnw.sh, scripts/installer/version.sh:
+	  Add installer scripts from Eaton IPSS Unix 1.40-4 release
+	  (2013-10-25)
+
+2024-01-28  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* m4/nut_check_libgd.m4: fall back to checking with explicit -lpng in
+	  the LDFLAGS loop
+	* docs/nut.dict: Update nut.dict
+
+2021-11-15  Arnaud Quette <ArnaudQuette@eaton.com>
+
+	* drivers/eaton-ats16-nm2-mib.c: Eaton: add support for EMP002 on
+	  ATS16 NM2 with SNMP  This support is identical to what is in Eaton
+	  Marlin and Powerware MIBs. Future improvements should consider
+	  putting these bits in a common eaton-sensor-mib file, to avoid
+	  multiple definition of the same MIB structure!  Imported from DMF
+	  branch (with reductions for main trunk) from commit
+	  40c883f42aede519fe716a6d26e7dff567996d75
+
+2024-01-24  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* drivers/apc-ats-mib.c, drivers/apc-epdu-mib.c, drivers/apc-mib.c,
+	  drivers/apc-pdu-mib.c, drivers/baytech-mib.c,
+	  drivers/bestpower-mib.c, drivers/compaq-mib.c,
+	  drivers/cyberpower-mib.c, drivers/delta_ups-mib.c,
+	  drivers/eaton-ats16-nm2-mib.c, drivers/eaton-ats16-nmc-mib.c,
+	  drivers/eaton-ats30-mib.c, drivers/eaton-pdu-genesis2-mib.c,
+	  drivers/eaton-pdu-marlin-mib.c, drivers/eaton-pdu-nlogic-mib.c,
+	  drivers/eaton-pdu-pulizzi-mib.c,
+	  drivers/eaton-pdu-revelation-mib.c, drivers/eaton-ups-pwnm2-mib.c,
+	  drivers/eaton-ups-pxg-mib.c, drivers/emerson-avocent-pdu-mib.c,
+	  drivers/hpe-pdu-mib.c, drivers/hpe-pdu3-cis-mib.c,
+	  drivers/huawei-mib.c, drivers/ietf-mib.c, drivers/mge-mib.c,
+	  drivers/netvision-mib.c, drivers/raritan-pdu-mib.c,
+	  drivers/raritan-px2-mib.c, drivers/xppc-mib.c: drivers/*-mib.c:
+	  convert to use snmp_info_sentinel wrapping
+	* drivers/apc-ats-mib.c, drivers/apc-epdu-mib.c, drivers/apc-mib.c,
+	  drivers/apc-pdu-mib.c, drivers/baytech-mib.c,
+	  drivers/bestpower-mib.c, drivers/compaq-mib.c,
+	  drivers/cyberpower-mib.c, drivers/delta_ups-mib.c,
+	  drivers/eaton-ats16-nm2-mib.c, drivers/eaton-ats16-nmc-mib.c,
+	  drivers/eaton-ats30-mib.c, drivers/eaton-pdu-genesis2-mib.c,
+	  drivers/eaton-pdu-marlin-mib.c, drivers/eaton-pdu-nlogic-mib.c,
+	  drivers/eaton-pdu-pulizzi-mib.c,
+	  drivers/eaton-pdu-revelation-mib.c, drivers/eaton-ups-pwnm2-mib.c,
+	  drivers/eaton-ups-pxg-mib.c, drivers/emerson-avocent-pdu-mib.c,
+	  drivers/hpe-pdu-mib.c, drivers/hpe-pdu3-cis-mib.c,
+	  drivers/huawei-mib.c, drivers/ietf-mib.c, drivers/mge-mib.c,
+	  drivers/netvision-mib.c, drivers/raritan-pdu-mib.c,
+	  drivers/raritan-px2-mib.c, drivers/xppc-mib.c: drivers/*-mib.c:
+	  convert to use snmp_info_default() wrapping
+	* drivers/apc-ats-mib.c, drivers/apc-epdu-mib.c, drivers/apc-mib.c,
+	  drivers/apc-pdu-mib.c, drivers/baytech-mib.c,
+	  drivers/bestpower-mib.c, drivers/compaq-mib.c,
+	  drivers/cyberpower-mib.c, drivers/delta_ups-mib.c,
+	  drivers/eaton-ats16-nm2-mib.c, drivers/eaton-ats16-nmc-mib.c,
+	  drivers/eaton-ats30-mib.c, drivers/eaton-pdu-marlin-mib.c,
+	  drivers/eaton-pdu-nlogic-mib.c, drivers/eaton-pdu-pulizzi-mib.c,
+	  drivers/eaton-pdu-revelation-mib.c, drivers/eaton-ups-pwnm2-mib.c,
+	  drivers/eaton-ups-pxg-mib.c, drivers/emerson-avocent-pdu-mib.c,
+	  drivers/hpe-pdu-mib.c, drivers/hpe-pdu3-cis-mib.c,
+	  drivers/huawei-mib.c, drivers/ietf-mib.c, drivers/mge-mib.c,
+	  drivers/netvision-mib.c, drivers/raritan-pdu-mib.c,
+	  drivers/raritan-px2-mib.c, drivers/xppc-mib.c: drivers/*-mib.c:
+	  convert to use info_lkp_sentinel, info_lkp_default et al wrapping
+
+2024-01-27  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* drivers/snmp-ups.h: adapt to non-DMF SNMP NUT driver builds
+
+2024-01-24  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* drivers/snmp-ups.h: introduce also info_lkp_nuf_vp2s(),
+	  info_lkp_nuf_s2l() and info_lkp_fun_s2l() wrappers
+	* scripts/subdriver/gen-snmp-subdriver.sh, drivers/snmp-ups.h:
+	  introduce short-hand snmp_info_sentinel and info_lkp_sentinel
+
+2024-01-27  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* scripts/subdriver/gen-snmp-subdriver.sh: bump version and copyright
+
+2024-01-24  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* scripts/subdriver/gen-snmp-subdriver.sh: convert C table generator
+	  to propose info_lkp_default(...) instead of fixed C structure items
+	* scripts/subdriver/gen-snmp-subdriver.sh: convert C table generator
+	  to propose snmp_info_default(...) instead of fixed C structure
+	  items
+	* drivers/snmp-ups.h: introduce wrappers to handle optionally-defined
+	  NULL fields for snmp_info_t and info_lkp_t [DMF]
+	* scripts/subdriver/gen-snmp-subdriver.sh: start subdriver versions
+	  as 0.01 for double digits
+
+2024-01-27  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* drivers/apc-ats-mib.c, drivers/apc-epdu-mib.c,
+	  drivers/apc-pdu-mib.c, drivers/bestpower-mib.c,
+	  drivers/delta_ups-mib.c, drivers/eaton-pdu-nlogic-mib.c,
+	  drivers/eaton-pdu-pulizzi-mib.c, drivers/emerson-avocent-pdu-mib.c,
+	  drivers/hpe-pdu3-cis-mib.c, drivers/huawei-mib.c,
+	  drivers/raritan-pdu-mib.c, drivers/raritan-px2-mib.c,
+	  drivers/xppc-mib.c: drivers/*-mib.c: convert versions to at least
+	  double digits
+
+2024-01-25  Jim Klimov <jim@jimklimov.com>
+
+	* tools/nut-usbinfo.pl: avoid dying on unknown file name patterns
+	  (e.g. *-mib.c.bak), just warn and skip them
+
+2024-01-27  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* Makefile.am, clients/Makefile.am, common/Makefile.am,
+	  data/html/Makefile.am: */Makefile.am: standardize to have the
+	  export commands on top, just after title comment line
+	* scripts/python/module/Makefile.am: avoid "make clean" invalidating
+	  the NUT build area  Otherwise we can not find the test script
+	  (generated from .in by configure normally)
+
+2024-01-25  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* tests/nutconf.cpp, tests/nutipc_ut.cpp: nutconf related tests:
+	  avoid "old-style cast" usage
+	* tests/nutconf_ut.cpp, tests/nutipc_ut.cpp, tests/nutstream_ut.cpp:
+	  nutconf related tests: avoid "no out-of-line virtual method
+	  definitions" (weak-vtables)
+	* tests/nutipc_ut.cpp: declare the override of nut::Signal::Handler
+	  methods
+	* tests/nutconf.cpp, tests/nutconf_ut.cpp, tests/nutipc_ut.cpp,
+	  tests/nutstream_ut.cpp: nutconf related tests: declare the override
+	  of CPPUNIT methods
+	* tests/nutstream_ut.cpp: fix cast of size_t vs. double for "pivot"
+	* tools/nutconf/nutconf.cpp: avoid shadowing a class property with
+	  method arg name
+	* tools/nutconf/nutconf.cpp: mark almost all methods in the tool as
+	  static
+	* tools/nutconf/nutconf.cpp: align "us_timeout" to be "useconds_t"
+	  not "long" (per libnutscan API evolution)
+	* common/nutconf.cpp: cast around std::getline() for parenthesized
+	  syntax  Why didn't the original author just receive the word into
+	  target string?.. e.g.:  std::getline(system, monitor.upsname, '@');
+	  std::getline(system, monitor.hostname);
+	* common/nutconf.cpp, include/nutconf.hpp: include/nutconf.{c,h}pp:
+	  align port type to uint16_t (not plain or short int as mismatched
+	  in older code)
+	* common/nutwriter.cpp: include/nutwriter.hpp: comment away a
+	  currently unused static method
+	* common/nutstream.cpp: include/nutstream.hpp: align size_t vs
+	  ssize_t maths
+	* common/nutipc.cpp: include/nutipc.hpp: align size_t vs ssize_t
+	  maths
+	* common/nutipc.cpp: include/nutipc.hpp: align array deleter with
+	  allocator
+	* include/nutipc.hpp: align templated class destructor name with
+	  class name
+	* include/nutstream.hpp: decorate unimplemented methods which only
+	  throw with noreturn (for C++11 and newer)
+	* common/nutwriter.cpp, include/nutconf.hpp,
+	  tools/nutconf/nutconf.cpp: include/nutconf.hpp: align
+	  UpsmonConfiguration::notifyFlags type with clients/upsmon.h
+	  (notifylist->flags)  Note that here we have "unsigned int" and
+	  there a plain "int" at the moment; but even with short signed ints
+	  we currently do not have too many values :)  This fix also drops a
+	  warning about shortening the cast when assigning from a temporary
+	  "unsigned int flags" in UpsmonConfigParser::onParseDirective()
+	* common/nutconf.cpp: include/nutconf.cpp:
+	  NutConfigParser::parseConfig(): explicitly handle all enum values
+	  in switch/case (and allow "default" to be safe)
+	* common/nutconf.cpp: include/nutconf.cpp:
+	  NutConfigParser::parseConfig(): be explicit about the infinite loop
+	  Assignment of tok=parseToken() does not return a boolean (nor even
+	  a nullptr) so should not be a while(...) condition by itself.
+	* common/nutconf.cpp: include/nutconf.cpp: avoid annotating a
+	  switch/case fallthrough
+	* common/nutconf.cpp: include/nutconf.hpp: err on the safe side by
+	  having a default handler in a currently exhaustive switch(enum)
+	* common/nutconf.cpp, common/nutipc.cpp, common/nutstream.cpp,
+	  include/nutipc.hpp: nutconf related sources: avoid "old-style cast"
+	  usage
+	* include/nutconf.hpp: avoid naming clash for Token "type" and "str"
+	  properties vs. method args
+	* common/nutconf.cpp, common/nutipc.cpp, common/nutstream.cpp,
+	  common/nutwriter.cpp, include/nutconf.hpp, include/nutipc.hpp,
+	  include/nutstream.hpp, include/nutwriter.hpp: nutconf related
+	  sources: avoid "no out-of-line virtual method definitions"
+	  (weak-vtables)
+	* common/nutconf.cpp, common/nutipc.cpp, common/nutstream.cpp,
+	  include/nutconf.hpp, include/nutipc.hpp, include/nutstream.hpp,
+	  tests/nutipc_ut.cpp, tests/nutstream_ut.cpp,
+	  tools/nutconf/nutconf.cpp: nutconf related changes: avoid NULL
+	  ("zero as null pointer constant"), use "::" prefix for C methods
+
+2024-01-24  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* tests/nutconf_ut.cpp: update expectations for current
+	  ups.conf.sample default contents
+	* configure.ac, tests/nutconf_ut.cpp: rearrange to use ABS_TOP_SRCDIR
+	  and ABS_TOP_BUILDDIR in the test program
+	* tools/nutconf/nutconf.cpp: adapt nutscan_scan_usb() to libnutscan
+	  API evolution
+	* common/nutstream.cpp: address a run-time warning about tempnam()
+	* include/nutipc.hpp: Process::Child<M>::wait(): fix error-case check
+	* common/nutstream.cpp: formatIPv{4,6}addr(): code typo fix (bit
+	  maths, not boolean expressions!)
+
+2024-01-25  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* include/nutipc.hpp: avoid naming clash for QUIT signal and command
+
+2024-01-27  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* common/nutconf.cpp: NutConfigParser::parseConfig(): reshuffle base
+	  vs. overridden call for parser to work again  Fine piece of C++
+	  magic and inheritance. Wrong call got called.
+
+2024-01-24  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* common/nutconf.cpp, include/nutconf.hpp, include/nutipc.hpp,
+	  include/nutstream.hpp, include/nutwriter.hpp: nutconf related
+	  sources: fix implicit copy/move operator warnings - use explicit
+	  defaults, destructors, and clarify overrides
+	* common/nutconf.cpp: NutConfigParser::parseConfig(): fix switch/case
+	  that did not check all enum values
+	* common/nutconf.cpp, include/nutconf.hpp, include/nutipc.hpp,
+	  include/nutstream.hpp, tools/nutconf/nutconf.cpp: nutconf related
+	  sources: use NUT_UNUSED_VARIABLE() to decorate the code where
+	  needed
+	* common/nutconf.cpp, common/nutwriter.cpp, include/Makefile.am,
+	  include/{nutconf.h => nutconf.hpp}, include/nutwriter.hpp,
+	  tests/nutconf.cpp, tests/nutconf_ut.cpp, tools/nutconf/nutconf.cpp:
+	  Rename include/nutconf.h => .hpp as a C++ specific source file
+	* common/nutconf.cpp, common/nutstream.cpp, common/nutwriter.cpp,
+	  include/nutconf.h, include/nutipc.hpp, include/nutstream.hpp,
+	  include/nutwriter.hpp, tests/nutconf.cpp, tests/nutconf_ut.cpp,
+	  tools/nutconf/nutconf.cpp: nutconf related sources: fix typos and
+	  wording in comments
+	* common/nutipc.cpp, common/nutstream.cpp, include/nutconf.h,
+	  include/nutipc.hpp, include/nutstream.hpp,
+	  tools/nutconf/nutconf.cpp: nutconf related sources: fix deprecated
+	  throw() declarations to not be used since C++11  They are invalid
+	  in C++17 as the code did fence against; however C++11 already shows
+	  them as deprecated, and with "fatal warnings" this bites!
+	* common/nutconf.cpp: NutConfigParser::parseConfig(): pre-initialize
+	  "sep" to avoid surporises
+	* common/nutconf.cpp, common/nutipc.cpp, common/nutstream.cpp,
+	  common/nutwriter.cpp, include/nutconf.h, include/nutipc.hpp,
+	  include/nutstream.hpp, include/nutwriter.hpp, tests/nutconf.cpp,
+	  tests/nutconf_ut.cpp, tests/nutipc_ut.cpp, tests/nutstream_ut.cpp,
+	  tools/nutconf/nutconf.cpp: nutconf related sources: fix whitespace
+	  style
+	* tools/nutconf/nutconf.cpp: fix file description
+	* tools/nutconf/Makefile.am: update Makefile markup and comments
+
+2022-01-15  Jim Klimov <jim@jimklimov.com>
+
+	* common/Makefile.am, configure.ac, tests/Makefile.am,
+	  tools/nutconf/Makefile.am: tools/nutconf/Makefile.am,
+	  tests/Makefile.am, configure.ac: limit the impact of nutconf
+	  codebase quality by default
+	* include/nutconf.h, tools/nutconf/nutconf.cpp: nutconf codebase: fix
+	  C++17 warnings - equality operators should return *this
+	* common/nutipc.cpp, common/nutstream.cpp, include/nutconf.h,
+	  include/nutipc.hpp, include/nutstream.hpp,
+	  tools/nutconf/nutconf.cpp: nutconf codebase: fix C++17 warnings -
+	  dynamic throw() declaration
+
+2022-01-14  Jim Klimov <jim@jimklimov.com>
+
+	* docs/man/nutconf.txt, docs/nut.dict: Spellcheck manpage for nutconf
+	  tool
+	* tools/nutconf/nutconf.cpp: adjust to changed API for
+	  nutscan_scan_xml_http() => nutscan_scan_xml_http_range()
+	* tools/nutconf/.gitignore: Add tools/nutconf/.gitignore
+	* tools/nutconf/nutconf.cpp: add (C) header
+	* tools/nutconf/Makefile.am: modernize
+	* common/Makefile.am, common/nutwriter.cpp, tests/Makefile.am,
+	  tools/nutconf/Makefile.am: Import NUT source changes for nutconf
+	  tool from 42ITy (initial set)
+
+2013-04-12  Vaclav Krpec <VaclavKrpec@Eaton.com>
+
+	* docs/man/nutconf.txt: nutconf man page update
+
+2013-03-29  Vaclav Krpec <VaclavKrpec@Eaton.com>
+
+	* include/nutconf.h, tools/nutconf/nutconf.cpp: nutconf:
+	  --{add|set}-device: <key>=<value> support  Added support for
+	  setting virtually any <key>=<value> pairs for devices by the above
+	  options. Now, the synopsis of the options argument lists is: <id>
+	  <driver> <port> [<key}=<value>]* (i.e. description is set as
+	  desc="blah blah blah")
+
+2013-03-18  Vaclav Krpec <VaclavKrpec@Eaton.com>
+
+	* tools/nutconf/nutconf.cpp: nutconf: reintroduction of funcs lost in
+	  trans.  --set-notifycmd, --set-minsupplies & --set-powerdownflag
+	  options reintroduced after being lost in recent multi-step
+	  transition to git
+
+2013-03-10  Charles Lepple <clepple+nut@gmail.com>
+
+	* tests/Makefile.am: tests: Fix build without libcppunit
+
+2013-02-08  Vaclav Krpec <VaclavKrpec@Eaton.com>
+
+	* tools/nutconf/nutconf.cpp: nutconf: --scan-serial port list bugfix
+	  Piggybacking: added device type check to skip invalid devices
+	  returned from libnutscan
+	* tools/nut-scanner/nutscan-device.c,
+	  tools/nut-scanner/nutscan-device.h: libnutscan: dev. type strings
+	  array size fixed
+
+2013-02-07  Vaclav Krpec <VaclavKrpec@Eaton.com>
+
+	* tools/nut-scanner/nutscan-device.c: libnutscan: serial device type
+	  string undefined
+
+2013-02-05  Vaclav Krpec <VaclavKrpec@Eaton.com>
+
+	* common/nutconf.cpp, common/nutwriter.cpp, docs/man/nutconf.txt,
+	  include/nutconf.h, tools/nut-scanner/nutscan-device.c,
+	  tools/nut-scanner/nutscan-device.h,
+	  tools/nut-scanner/nutscan-display.c,
+	  tools/nut-scanner/scan_avahi.c,
+	  tools/nut-scanner/scan_eaton_serial.c,
+	  tools/nut-scanner/scan_ipmi.c, tools/nut-scanner/scan_nut.c,
+	  tools/nut-scanner/scan_snmp.c, tools/nut-scanner/scan_usb.c,
+	  tools/nut-scanner/scan_xml_http.c, tools/nutconf/nutconf.cpp:
+	  nutconf: another round of bugfixes  --{get|set}-mode options have
+	  replaced --mode option --set-mode option actually sets the mode in
+	  nut.conf libnutscan provides devices list rewinded (i.e. handled by
+	  the head) libnutscan options fixed (so that the 1st is dynamic,
+	  too)
+	* tools/nutconf/nutconf.cpp: nutconf: proper device config dump
+	* tools/nutconf/nutconf.cpp: nutconf: device with no options bugfix
+	* docs/man/Makefile.am, tools/nutconf/nutconf.cpp: nutconf: bugfixes
+	  + HTML manpage
+
+2013-02-04  Vaclav Krpec <VaclavKrpec@Eaton.com>
+
+	* common/Makefile.am, docs/man/nutconf.txt, include/Makefile.am,
+	  tests/Makefile.am, tests/nutconf_ut.cpp, tools/nutconf/Makefile.am,
+	  tools/nutconf/nutconf.cpp: nutconf: compilation & finishing touches
+
+2013-02-01  Vaclav Krpec <VaclavKrpec@Eaton.com>
+
+	* docs/man/Makefile.am, docs/man/nutconf.txt: nutconf: manpage added
+	* tests/nutconf_ut.cpp, tools/nutconf/nutconf.cpp: nutconf: added
+	  --scan-serial option  Piggybacking: IPMI devices scanning updated
+	  Fixed nutconf UT
+
+2013-01-31  Vaclav Krpec <VaclavKrpec@Eaton.com>
+
+	* tools/nutconf/nutconf.cpp: nutconf: --scan-snmp option added
+
+2013-01-30  Vaclav Krpec <VaclavKrpec@Eaton.com>
+
+	* common/Makefile.am, configure.in, tools/Makefile.am,
+	  tools/nut-scanner/nutscan-device.c,
+	  tools/nut-scanner/nutscan-device.h, tools/nutconf/Makefile.am,
+	  common/nutconfbin.cpp => tools/nutconf/nutconf.cpp: nutconf:
+	  --scan-* options added  --scan-snmp is still not implemented, TODO
+	  --scan-serial is missing, too All other device protocols should
+	  work as long as libnutscan works.
+
+2013-01-29  Vaclav Krpec <VaclavKrpec@Eaton.com>
+
+	* common/nutconfbin.cpp: nutconf: --{set|add}-user options added
+	  NOTE: The options ONLY manipulate upsd.users configuration file. It
+	  shall have to be discussed how upsmon.conf shall be kept in sync
+	  with the upsmon user settings (TODO).
+
+2013-01-13  Emilien Kia <kiae.dev@gmail.com>
+
+	* clients/cgilib.h, clients/status.h, clients/upsimagearg.h,
+	  clients/upslog.h, clients/upsmon.h, clients/upssched.h,
+	  clients/upsstats.h, include/common.h, include/extstate.h,
+	  include/proto.h, include/state.h, include/upsconf.h, server/conf.h,
+	  server/desc.h, server/netcmds.h, server/netget.h,
+	  server/netinstcmd.h, server/netlist.h, server/netmisc.h,
+	  server/netset.h, server/netssl.h, server/netuser.h,
+	  server/sstate.h, server/stype.h, server/upsd.h, server/upstype.h,
+	  server/user-data.h, server/user.h, tools/nut-scanner/nut-scan.h,
+	  tools/nut-scanner/nutscan-device.h,
+	  tools/nut-scanner/nutscan-init.h, tools/nut-scanner/nutscan-ip.h:
+	  Protect header files for C++ inclusion.
+
+2013-01-22  Arnaud Quette <arnaud.quette@free.fr>
+
+	* docs/man/.gitignore, docs/man/Makefile.am, docs/man/index.txt,
+	  docs/man/nut-scanner.txt,
+	  docs/man/nutscan_get_serial_ports_list.txt,
+	  docs/man/nutscan_scan_avahi.txt,
+	  docs/man/nutscan_scan_eaton_serial.txt,
+	  docs/man/nutscan_scan_ipmi.txt, docs/man/nutscan_scan_nut.txt,
+	  docs/man/nutscan_scan_snmp.txt, docs/man/nutscan_scan_usb.txt,
+	  docs/man/nutscan_scan_xml_http.txt, include/nut_platform.h,
+	  tools/nut-scanner/Makefile.am, tools/nut-scanner/nut-scan.h,
+	  tools/nut-scanner/nut-scanner.c,
+	  tools/nut-scanner/nutscan-device.h,
+	  tools/nut-scanner/nutscan-display.c,
+	  tools/nut-scanner/nutscan-serial.c,
+	  tools/nut-scanner/nutscan-serial.h,
+	  tools/nut-scanner/scan_eaton_serial.c,
+	  tools/nut-scanner/scan_nut.c: Add nut-scanner support for Eaton
+	  serial units  nut-scanner and libnutscan now provides respectively
+	  an option and functions to detect Eaton serial devices. The
+	  following protocols are supported: SHUT, XCP and Q1 (patch from
+	  Frederic Bohe, with parts from Arnaud Quette, both for Eaton)
+
+2012-10-04  Arnaud Quette <arnaud.quette@free.fr>
+
+	* docs/man/nut-scanner.txt, drivers/nut-ipmipsu.c,
+	  tools/nut-scanner/nut-scan.h, tools/nut-scanner/nut-scanner.c,
+	  tools/nut-scanner/scan_ipmi.c: Support power supplies scan over the
+	  network  nut-scanner can now scan for power supplies with IPMI over
+	  LAN. This is currently limited to IPMI 1.5 only
+
+2012-09-19  Arnaud Quette <arnaud.quette@free.fr>
+
+	* drivers/nut-libfreeipmi.c, m4/nut_check_libfreeipmi.m4,
+	  tools/nut-scanner/scan_ipmi.c: Support for FreeIPMI 1.1.x and 1.2.x
+	  (#2)  Prepare for supporting API changes in FreeIPMI 1.1.x and
+	  1.2.x. This 2nd patch, which completes [[SVN:3675]], addresses FRU
+	  API changes, and removes code redundancy. This code has been tested
+	  with FreeIPMI 0.8.12 and the latest [[FreeIPMI SVN]] trunk r9505
+	  (reported as 1.2.0.beta2 by pkgconfig)
+
+2013-01-28  Vaclav Krpec <VaclavKrpec@Eaton.com>
+
+	* common/nutconfbin.cpp: nutconf: --set-shutdowncmd option added
+	* common/nutconfbin.cpp: nutconf: --set-notifymsg option added
+	* common/nutconf.cpp, common/nutconfbin.cpp: nutconf:
+	  --{set|add}-notifyflags options added
+
+2013-01-25  Vaclav Krpec <VaclavKrpec@Eaton.com>
+
+	* common/nutconfbin.cpp: nutconf: --{set|add}-device options added
+	* common/nutconf.cpp, common/nutconfbin.cpp: nutconf: daily commit
+	  Changes: Merged with changes/bugfixes suggested by Arnaud
+	  --set-monitor option discards existing entries --add-monitor option
+	  added --set-listen and --add-listen options added
+
+2013-01-24  Vaclav Krpec <VaclavKrpec@Eaton.com>
+
+	* common/nutconf.cpp, common/nutconfbin.cpp: nutconf: daily commit
+	  Changes: --is-configured option added (checks existence of nut.conf
+	  and the MODE) --local and --system options added to set config.
+	  directory --mode option added (so far it only stores the required
+	  mode, TODO) --set-monitor multi-option added, allows to set (add
+	  actually) MONITORs
+
+2013-01-23  Vaclav Krpec <VaclavKrpec@Eaton.com>
+
+	* common/nutconfbin.cpp, common/nutstream.cpp, include/nutstream.hpp:
+	  nutconf: --is-configured option introduced  The option causes
+	  nut.conf::MODE being checked; if not "none" (and if the file exists
+	  at all), it pronounces NUT as configured.
+
+2013-01-22  Vaclav Krpec <VaclavKrpec@Eaton.com>
+
+	* common/nutconfbin.cpp: The very 1st nutconf tool stub  For now,
+	  only cmd. options parsing and usage works.
+
+2013-01-21  Vaclav Krpec <VaclavKrpec@Eaton.com>
+
+	* common/nutwriter.cpp: C++11 code removed due platform compatibility
+
+2013-01-09  Vaclav Krpec <VaclavKrpec@Eaton.com>
+
+	* common/nutipc.cpp, include/nutipc.hpp, tests/nutipc_ut.cpp: nutipc:
+	  signal handling UT added
+
+2013-01-08  Vaclav Krpec <VaclavKrpec@Eaton.com>
+
+	* common/nutconf.cpp, common/nutwriter.cpp, include/nutconf.h,
+	  tests/nutconf_ut.cpp: nutconf: fix of misplaced value quoting
+	  Value quoting/escaping is now done generically in nutwriter.
+	* common/nutconf.cpp, common/nutconfbin.cpp, common/nutipc.cpp,
+	  common/nutstream.cpp, common/nutwriter.cpp, include/Makefile.am,
+	  include/nutconf.h, include/nutipc.hpp, include/{nutstream.h =>
+	  nutstream.hpp}, include/{nutwriter.h => nutwriter.hpp},
+	  tests/nutconf_ut.cpp, tests/nutipc_ut.cpp, tests/nutstream_ut.cpp:
+	  nutipc: signal sending UTs  nut::Signal::send via PIDfile and
+	  nut::NutSignal::send via process name added, too. Minor
+	  backwards-compatible changes in nutstream (file removal methods).
+
+2013-01-07  Vaclav Krpec <VaclavKrpec@Eaton.com>
+
+	* common/nutipc.cpp, include/nutipc.hpp, tests/nutipc_ut.cpp: nutipc:
+	  ext. command execution improvements  The command line segmentation
+	  is finally implemented. nut::Process::execute static functions
+	  added for simplicity of usage.
+	* common/nutipc.cpp, include/nutipc.hpp, tests/Makefile.am,
+	  tests/nutipc_ut.cpp: nutipc: linking cleanup & exec UT
+
+2012-12-20  Émilien Kia <emilien.kia@gmail.com>
+
+	* common/Makefile.am, common/nutconfbin.cpp: Add a little sample to
+	  use libconf. Special dedicace to Fred.
+
+2012-12-14  Vaclav Krpec <VaclavKrpec@Eaton.com>
+
+	* common/Makefile.am, common/nutipc.cpp, include/Makefile.am,
+	  include/nutipc.hpp: NUT IPC module introduction  A non-complete
+	  implementation of NUT IPC support module. Certain functions are
+	  just outlined, for now. Deals with signal handling and execution of
+	  external commands. I commit this partial implementation because
+	  I'll be on holiday for certain amount of time and it's IMO better
+	  to have the code comitted.
+
+2012-12-11  Vaclav Krpec <VaclavKrpec@Eaton.com>
+
+	* common/nutconf.cpp, include/nutconf.h, tests/Makefile.am,
+	  tests/nutconf_ut.cpp: Basic unit tests for libnutconf  UTs with
+	  focus on basic configuration settings and serialisation were added
+	  for nut.conf, upsmon.conf, upsd.conf ups.conf and upsd.users. Note
+	  that the tests are not exhaustive; they only parse configuration
+	  files samples, change a few randomly selected parameters, serialise
+	  the result back and check it.
+
+2012-12-07  Vaclav Krpec <VaclavKrpec@Eaton.com>
+
+	* common/nutconf.cpp, common/nutstream.cpp, common/nutwriter.cpp,
+	  include/nutconf.h, include/nutstream.h, include/nutwriter.h:
+	  (De)serialisation methods added to config. classes  All existing
+	  NUT configuration classes now implement Serialisable interface
+	  (parseFrom and writeTo methods). Note that the parseFrom
+	  implementations are very naive (they simply read whole source
+	  stream to memory and call existing parseFromString method).  That's
+	  enough for now, however, in future the parsres should directly use
+	  NutStream interface.
+
+2012-12-06  Vaclav Krpec <VaclavKrpec@Eaton.com>
+
+	* common/nutconf.cpp, include/nutconf.h: Support for upsd.users
+	  config. file added
+	* common/nutstream.cpp, common/nutwriter.cpp, include/nutstream.h,
+	  include/nutwriter.h: Bugfix: out. std::stringstream constr. arg
+	  ignored
+	* common/nutwriter.cpp, include/nutwriter.h: Special serialiser for
+	  upsd.users config file  The special serialiser is needed because of
+	  the [upsmon]::upsmon directive (which doesn't use the standard =
+	  key/ value separator). Also, serialisation of section entry value
+	  list was fixed (so that multiple entries are produced rather than a
+	  list of values).
+
+2012-12-05  Vaclav Krpec <VaclavKrpec@Eaton.com>
+
+	* common/nutconf.cpp, common/nutwriter.cpp, include/nutconf.h:
+	  UpsConfiguration class added to libnutconf  Getters/setters for all
+	  UPS config. attributes added The getters/setters need further
+	  checking for type correctness Generic support for the above
+	  implemented in GenericConfiguration class
+
+2012-11-30  Vaclav Krpec <VaclavKrpec@Eaton.com>
+
+	* common/nutwriter.cpp, include/nutconf.h: NutWriter: ups.conf
+	  upsmon.conf upsd.conf support
+
+2012-11-28  Vaclav Krpec <VaclavKrpec@Eaton.com>
+
+	* common/Makefile.am, common/nutstream.cpp, common/nutwriter.cpp,
+	  include/Makefile.am, include/nutconf.h, include/nutstream.h,
+	  include/nutwriter.h: Partial implementation on NutWriter subtree
+	  General serialisers implemented Several TBDs and TODOs left for
+	  review tbc...
+
+2012-11-22  Vaclav Krpec <VaclavKrpec@Eaton.com>
+
+	* tests/nutstream_ut.cpp: Forgotten UT source from prev. commit
+	* common/Makefile.am, common/nutstream.cpp, include/Makefile.am,
+	  include/nutstream.h, tests/Makefile.am: Unit tests for
+	  nut::NutStream subtree  Basic unit tests plus a few minor changes
+	  and updates to the code
+
+2012-11-16  Vaclav Krpec <VaclavKrpec@Eaton.com>
+
+	* common/nutstream.cpp, include/nutstream.h: Initial implementation
+	  of nut::NutStream sub-tree  nut::NutMemory (memory-based stream)
+	  nut::NutFile (file-stream) nut::NutSocket with
+	  nut::NutSocket::Address (UNIX domain, IPv4, IPv6)
+
+2012-10-24  Émilien Kia <emilien.kia@gmail.com>
+
+	* common/nutconf.cpp, include/nutconf.h, tests/nutconf.cpp: Add
+	  parsing options and allow ':' to be interpreted as normal
+	  character.  Add parsing option to NutParser. Add a first option
+	  OPTION_IGNORE_COLON to parse ':' as a normal character and not as
+	  token. Use it to allow parsing "::1" IPv6-like as string without
+	  having to quote them (upsd.conf).
+	* tests/nutconf.cpp: Add test for UpsdConfiguration parsing.
+	* include/nutconf.h: Add equality test operators for Settable<T> and
+	  UpsdConfiguration::Listen.
+
+2012-10-23  Émilien Kia <emilien.kia@gmail.com>
+
+	* common/nutconf.cpp, include/nutconf.h: Implement upsd.conf
+	  UpsdConfigParser.  Test pending. A bug is pending: IPv6 format must
+	  be in quoted string because of ':'.
+	* common/nutconf.cpp, include/nutconf.h, tests/nutconf.cpp: Implement
+	  nut.conf NutConfiguration parser.
+	* common/nutconf.cpp, include/nutconf.h, tests/nutconf.cpp: Implement
+	  UpsmonConfigParser and related.
+	* include/nutconf.h: Create and use a Settable helper which indicate
+	  if a parameter is set or not.
+	* include/nutconf.h: Add notify messages array in UpsmonConfiguration
+	  (oups !).
+
+2012-10-22  Émilien Kia <emilien.kia@gmail.com>
+
+	* common/nutconf.cpp, include/nutconf.h: Add stubs for upsmon.conf
+	  parser and config structure.
+	* common/nutconf.cpp, include/nutconf.h, tests/nutconf.cpp: Add unit
+	  test for GenericConfiguration parsing.  Add UT for
+	  GenericConfiguration (validate GenericConfigParser and all the
+	  stack). Fix some errors found with UT.
+
+2012-10-19  Émilien Kia <emilien.kia@gmail.com>
+
+	* common/nutconf.cpp, include/nutconf.h: Add GenericConfiguration
+	  function to parse from string (use GenericConfigParser).
+	* common/nutconf.cpp, include/nutconf.h: Virtualize
+	  GenericConfiguration with BaseConfiguration to really allow
+	  specialized versions of config class.
+	* common/nutconf.cpp, include/nutconf.h: Implement
+	  GenericConfigParser and related.
+	* common/nutconf.cpp, include/nutconf.h: Implement abstract class
+	  DefaultConfigParser
+	* common/nutconf.cpp, include/nutconf.h: Define a typedef type to
+	  make function easier to understand.
+
+2012-10-15  Émilien Kia <emilien.kia@gmail.com>
+
+	* common/nutconf.cpp, include/nutconf.h: Add stubs for
+	  DefaultConfigParser  Add stubs for the default configuration file
+	  parser. Basic implementation will follow.
+	* common/nutconf.cpp, include/nutconf.h, tests/nutconf.cpp: Implement
+	  abstract configuration parser.  Rename NutConfParser in NutParser.
+	  Implement the abstract class NutConfParser based on NutParser for
+	  configuration file parsing. Remove old C sample code.
+
+2012-10-10  Émilien Kia <emilien.kia@gmail.com>
+
+	* common/Makefile.am, common/nutconf.cpp, include/nutconf.h,
+	  tests/Makefile.am, tests/nutconf.cpp: Initial conf library.  Just
+	  parse tokens.
+
+2024-01-27  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* NEWS.adoc: untie OFF from linestate in upsmon FSD [#2279]
+
+2024-01-26  desertwitch <24509509+desertwitch@users.noreply.github.com>
+
+	* clients/upsmon.c: fix offstate not being a requirement for a
+	  critical UPS on OFF
+
+2024-01-21  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* server/netssl.c: fix decl-after-statement  NUT_UNUSED_VARIABLE()
+	  implementation counts as a code statement, so should be after true
+	  declarations.
+
+2024-01-21  Duncan Webb <duncan@linuxowl.com>
+
+	* server/netssl.c: Fix possible buffer overrun calls to
+	  PR_GetErrorText  Removed call to NSS_NoDB_Init as certfile will be
+	  defined. Copy paste from upscli change to ssl_init.
+
+2024-01-20  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* clients/upsmon.c: fix comment wording [#840, #2240]
+	* scripts/upower/95-upower-hid.hwdb: update for recent changes in
+	  drivers/belkin-hid.c [#2271]
+
+2024-01-19  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in:
+	  upsconf_getSection_content(): optimize string emptiness checks
+	* NEWS.adoc, docs/nut.dict: update for nut-driver-enumerator [#682]
+	* scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in: fix
+	  systemd_findSavedDeviceName() to use common SYSTEMD_CONFPATH
+	  variable
+	* drivers/belkin-hid.c: add Liebert PowerSure PST UPS productid
+	  [#2271]
+
+2024-01-19  Charles Lepple <clepple+nut@gmail.com>
+
+	* drivers/belkin-hid.c: fix Liebert GXT4 UPS productid  Follow-up to
+	  3e1b00ec3ff105a05e67ae8602996cf7436f816b which intended to add the
+	  ID after NUT v2.7.4 release, but fell prey to copy-paste typo (got
+	  0x0004 instead of intended 0x0000):  commit
+	  3e1b00ec3ff105a05e67ae8602996cf7436f816b Date:   Sat Jun 3 12:24:15
+	  2017 -0400  usbhid-ups: add Liebert GXT4 USB VID:PID [10AF:0000]
+	  Source:
+	  http://lists.alioth.debian.org/pipermail/nut-upsuser/2017-June/010682.html
+	  Voltage and ConfigVoltage appear to be scaled improperly per the
+	  debug output.
+
+2024-01-19  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* docs/ci-farm-lxc-setup.txt: errata for virt-top too new to work
+	  with LXC
+
+2024-01-18  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* docs/security.txt: typography: fix quoting style
+	* docs/security.txt, docs/man/upsd.conf.txt,
+	  docs/man/upsmon.conf.txt: stress that multi-word "Certificate Name"
+	  values should be double-quoted; fix examples [#2265]
+	* docs/man/upsmon.conf.txt: fix multi-paragraph attachments in the
+	  very nested MONITOR section  Blanks and pluses are the trick:
+	  https://stackoverflow.com/a/52164722/4715872
+	* docs/man/upsd.conf.txt: fix multi-paragraph attachments in sections
+
+2024-01-03  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* docs/images/ci/jenkins-nut.css: update hosting logo from FH to DO
+	  [#2192]  Imported from NUT CI farm where this CSS was edited in the
+	  beginning of the month
+
+2024-01-18  Vytautas Survila <vytautas.survila@gmail.com>
+
+	* drivers/nutdrv_qx.c: use correct read_size for 'too much data read'
+	  message
+
+2024-01-15  Vytautas Survila <vytautas.survila@gmail.com>
+
+	* drivers/nutdrv_qx.c: return actual number of bytes we copied to
+	  buffer
+
+2024-01-15  Jim Klimov <jimklimov@gmail.com>
+
+	* drivers/apc-mib.c: bump DRIVER_VERSION to double-digits  1.60 is
+	  more future-proof than 1.7 (after 1.6) :)
+
+2024-01-15  Christian Manal <manal@uni-bremen.de>
+
+	* drivers/apc-mib.c: update MIB values
+
+2024-01-14  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* docs/man/Makefile.am: neuter the fictive
+	  nutscan_add_commented_option_to_device.html recipe for now [#2221]
+	* docs/man/Makefile.am: fix
+	  nutscan_add_commented_option_to_device.html recipe for BSD make
+	  [#2221]
+
+2024-01-13  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* tools/nut-scanner/scan_usb.c: code after declarations [#2221]
+	* docs/man/nutscan_add_option_to_device.txt, docs/man/Makefile.am:
+	  fix markup for a single asciidoc text describing several command
+	  names [#2221]  https://asciidoc-py.github.io/userguide.html#X1
+	* tools/nut-scanner/nut-scanner.c: disambiguate and un-shadow
+	  link_detail_level variables [#2221]
+
+2024-01-12  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* tools/nut-scanner/scan_usb.c, UPGRADING.adoc: make use of
+	  nutscan_add_commented_option_to_device() for link-specific details
+	  if not suggesting to use them directly [#2221]
+	* NEWS.adoc, docs/man/nutscan_add_option_to_device.txt,
+	  tools/nut-scanner/nutscan-device.c,
+	  tools/nut-scanner/nutscan-device.h,
+	  tools/nut-scanner/nutscan-display.c: libnutscan API: add a concept
+	  of commented-away suggested option values instead of hacks in
+	  prepared config data [#2221]
+	* NEWS.adoc: reword the entry about desktop integration [#2205]
+	* NEWS.adoc, docs/man/nut-scanner.txt, docs/man/nutscan_scan_usb.txt,
+	  docs/nut.dict, tools/nut-scanner/Makefile.am,
+	  tools/nut-scanner/README.adoc, tools/nut-scanner/nut-scan.h,
+	  tools/nut-scanner/nut-scanner.c, tools/nut-scanner/scan_usb.c:
+	  nut-scanner: change "-U" handling to tweak generated device
+	  configuration section level of detail [#2221]
+	* NEWS.adoc, drivers/Makefile.am: drivers/Makefile.ami, NEWS.adoc:
+	  fix builds --without-usb [#2262]
+	* docs/nut.dict, NEWS.adoc: document recent improvements to
+	  nut-scanner
+	* docs/man/nut-scanner.txt: change markup for code and output
+	  examples [#2247]
+	* NEWS.adoc: debug level initialized earlier now [#2259]  Checked for
+	  a similar need in other programs - nut-scanner does it already, and
+	  others start with the getopt() loop.
+	* drivers/main.c: move NUT_DEBUG_LEVEL and "-D" CLI option handling
+	  to start of program [#2259]  This allows to use upsdebugx() in
+	  early initialization methods like upsdrv_makevartable()
+
+2024-01-11  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* NEWS.adoc: add info about #2259
+	* drivers/main.c: if nutdrv_qx is built for serial-only support but
+	  asked to use USB options at run-time, help the user about the
+	  discrepancy [#2259]
+	* drivers/libusb0.c, drivers/libusb1.c: drivers/libusb{0,1}.c: report
+	  in debug trace which USB implementation is used [#2259]
+
+2024-01-03  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* tests/NIT/nit.sh: testcase_sandbox_nutscanner_list(): adjust
+	  generated section names to nut-scanner evolution
+	* tools/nut-scanner/scan_avahi.c: fix indentation to match
+	  surrounding code [#2246]
+	* tools/nut-scanner/Makefile.am: bump libnutscan version due to
+	  scan_nut_simulation.c [#2246]
+	* tools/nut-scanner/scan_avahi.c: fix indentation to match
+	  surrounding code [#2246]
+	* tools/nut-scanner/Makefile.am: bump libnutscan version due to
+	  scan_nut_simulation.c [#2246]
+	* scripts/Windows/DriverInstaller/README.adoc: update link to libwdi
+	* docs/ci-farm-lxc-setup.txt: note path to DHCP lease file for
+	  troubleshooting
+
+2024-01-02  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* configure.ac: fix NUT_AM_MAKE_CAN_EXPORT test syntax for Solaris
+	  ksh
+	* Makefile.am, clients/Makefile.am, common/Makefile.am, configure.ac,
+	  drivers/Makefile.am, include/Makefile.am, lib/Makefile.am,
+	  server/Makefile.am, tests/Makefile.am, tests/NIT/Makefile.am,
+	  tools/Makefile.am, tools/nut-scanner/Makefile.am: */Makefile.am,
+	  configure.ac: constrain makefile exports to implementations where
+	  NUT_AM_MAKE_CAN_EXPORT
+	* Makefile.am, clients/Makefile.am, common/Makefile.am,
+	  drivers/Makefile.am, include/Makefile.am, lib/Makefile.am,
+	  server/Makefile.am, tests/Makefile.am, tests/NIT/Makefile.am,
+	  tools/Makefile.am, tools/nut-scanner/Makefile.am: */Makefile.am:
+	  export PATH and CCACHE_* envvars to be used during rebuilds
+	* configure.ac: remember PATH_DURING_CONFIGURE
+	* configure.ac: track selected CCACHE_* envvars as "precious"
+	* configure.ac: allow to specify --with-CCACHE_NAMESPACE=... for the
+	  build
+	* docs/Makefile.am, docs/cables/Makefile.am, docs/man/Makefile.am,
+	  include/Makefile.am, scripts/python/module/Makefile.am,
+	  tests/NIT/Makefile.am, tools/Makefile.am,
+	  tools/nut-scanner/Makefile.am: */Makefile.am: add top line
+	  descriptions where missing
+	* ci_build.sh: fix reporting of used envvars (avoid shell
+	  functions/aliases/...)
+
+2023-12-24  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* tools/nut-scanner/scan_nut_simulation.c: Fix declaration-after-code
+	  in scan_nut_simulation.c
+
+2023-12-24  Arnaud Quette <arnaud.quette@free.fr>
+
+	* tools/nut-scanner/scan_nut_simulation.c: nut-scanner: actually
+	  simplify simulation scan code  Reimplement scan algorithm, and
+	  remove non-portable scandir code. Get back to my early
+	  implemention, using opendir/readdir, as in common/common.c. This
+	  works and is portable!
+	* tools/nut-scanner/scan_nut_simulation.c: nut-scanner: simplify
+	  simulation scan code  Remove non-portable directory-filtering code,
+	  since there is no actual need for it, and very few chances of false
+	  positive results.
+	* tools/nut-scanner/scan_nut_simulation.c: nut-scanner: don't require
+	  alphasort  Sorting is not needed, and despite alphasort being
+	  supported since: * Since glibc 2.10: (_POSIX_C_SOURCE >= 200809L) *
+	  || Glibc versions <= 2.19: (_BSD_SOURCE || _SVID_SOURCE) it seems
+	  still not supported on some platforms.
+	* tools/nut-scanner/nut-scan.h,
+	  tools/nut-scanner/scan_nut_simulation.c: nut-scanner: fix
+	  nutscan_scan_nut_simulation prototype  Please CI and add void args
+
+2023-12-23  Arnaud Quette <arnaud.quette@free.fr>
+
+	* docs/man/nut-scanner.txt: nut-scanner: spell checks
+	* docs/man/nut-scanner.txt, tools/nut-scanner/nutscan-device.c,
+	  tools/nut-scanner/nutscan-device.h,
+	  tools/nut-scanner/nutscan-display.c: nut-scanner: fix device-name
+	  collisions in generated conf  When nut-scanner is called
+	  separately, to scan different buses, it will generate similar names
+	  for each of these: * USB scan > [nutdev1] > ... * NUT scan >
+	  [nutdev1] > ... * ... As a result, one can't just redirect
+	  nut-scanner outputs directly to ups.conf, without a 'sed' hack
+	  workaround.  Solution: simply refine the device names, like
+	  "nutdev-<method><id>". Ex: nutdev-usb1, nutdev-usb2, nutdev-nut1,
+	  nutdev-snmp1, nutdev-simulation1, ...
+
+2023-12-22  Arnaud Quette <arnaud.quette@gmail.com>
+
+	* NEWS.adoc, data/driver.list.in, docs/developer-guide.txt,
+	  docs/man/Makefile.am, docs/man/nut-scanner.txt,
+	  docs/man/nutscan_init.txt,
+	  docs/man/nutscan_scan_nut_simulation.txt,
+	  tools/nut-scanner/Makefile.am, tools/nut-scanner/nut-scan.h,
+	  tools/nut-scanner/nut-scanner.c,
+	  tools/nut-scanner/nutscan-device.c,
+	  tools/nut-scanner/nutscan-device.h,
+	  tools/nut-scanner/nutscan-init.c, tools/nut-scanner/nutscan-init.h,
+	  tools/nut-scanner/scan_avahi.c,
+	  tools/nut-scanner/scan_nut_simulation.c: nut-scanner: detect and
+	  configure NUT simulation devices (#2246)  * nut-scanner: detect and
+	  configure NUT simlation devices  Provide an additional nut-scanner
+	  "-n | --nut_simulation_scan" option to detect and configure dummy
+	  simulation (.dev & .seq) from the default $sysconfdir.  Also
+	  advertise NUT Simulation Devices in HCL.  This should standardize
+	  and streamline the use of nut-scanner as an automatic detection and
+	  configuration tool.  Closes: #networkupstools/nut/issues/2242
+	* NEWS.adoc, data/driver.list.in, tools/nut-scanner/scan_avahi.c,
+	  tools/nut-scanner/scan_nut.c: 2236 nut scanner reports non existent
+	  driver for nut discovery (#2245)  * Start to advertise NUT support
+	  of itself * nut-scanner: NUT scan (old and Avahi) points at
+	  dummy-ups the previously pointed driver "nutclient" does not exist
+	  yet. At least points to a sane working default * Document in NEWS
+	  Closes: #networkupstools/nut/issues/2236
+
+2023-12-15  Jim Klimov <jim@jimklimov.com>
+
+	* docs/ci-farm-lxc-setup.txt, docs/nut.dict: suggest dependency
+	  packages for LXC and QEMU
+
+2023-12-10  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* README.adoc: use DigitalOcean referral campaign identifier in badge
+	  URL [#2192]
+	* tools/nut-scanner/scan_usb.c: hide bcdDevice logic behind ifdef
+	  WITH_BCD_DEVICE [#2221]  Earlier approaches to only partially
+	  comment away code trigger static analysis warnings here or there,
+	  and we do not want to fully drop it here just yet.
+	* tools/nut-scanner/scan_usb.c: comment away bcdDevice which we do
+	  not currently use [#2221]
+
+2023-12-10  Arnaud Quette <Arnaud.Quette@free.fr>
+
+	* tools/nut-scanner/scan_usb.c: nut-scanner USB: disable some output
+	  results  Some additional fields, like 'device' (device number /
+	  path), may introduce more issues than solving. Hence disable these
+
+2023-12-05  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* NEWS.adoc, docs/man/usbhid-ups.txt, docs/nut.dict,
+	  drivers/usbhid-ups.c: drivers/usbhid-ups.c,
+	  docs/man/usbhid-ups.txt, NEWS.adoc: introduce
+	  "onlinedischarge_log_throttle_hovercharge" setting [#2215]
+	* drivers/usbhid-ups.c, docs/man/usbhid-ups.txt, NEWS.adoc: introduce
+	  "onlinedischarge_log_throttle_sec" setting and/or throttling by
+	  changes of battery.charge [#2214]
+	* NEWS.adoc, docs/man/usbhid-ups.txt, docs/nut.dict,
+	  drivers/usbhid-ups.c: drivers/usbhid-ups.c,
+	  docs/man/usbhid-ups.txt, NEWS.adoc: deprecate "onlinedischarge" in
+	  favor of "onlinedischarge_onbattery" option name [#2213]
+	* docs/man/upsmon.txt: update with NOTCAL state
+	* conf/upsmon.conf.sample.in: update NOTIFYFLAG examples
+
+2023-12-01  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* data/driver.list.in: note that "NEW Keor Multiplug" is not
+	  supported as of 2023  ...per "mrc989" report on IRC channel
+	* server/conf.c, clients/upsmon.c: align logged DEBUG_MIN NUM casing
+	  and wording with the setting/docs
+	* clients/upsmon.c: when POLLFAIL_LOG_THROTTLE_MAX>0 takes effect,
+	  report also how often it would report in seconds [#2207]
+	* clients/upsmon.c: align logged POLLFAIL_LOG_THROTTLE_MAX casing
+	  with the setting/docs
+	* NEWS.adoc, clients/upsmon.c: clients/upsmon.c: forget poll-failure
+	  error-states and the counts involved when we reload config [#2207]
+	* clients/upsmon.c: markup/style typo fix
+	* NEWS.adoc, clients/upsmon.c, conf/upsmon.conf.sample.in,
+	  docs/man/upsmon.conf.txt, docs/man/upsmon.txt: clients/upsmon.c,
+	  NEWS.adoc: fix an off-by-one error with POLLFAIL_LOG_THROTTLE_MAX
+	  loop counting [#2207]
+	* clients/upsmon.c, NEWS.adoc: Forget POLLFAIL_LOG_THROTTLE_MAX
+	  before configuration reload [#2207]
+	* clients/upsmon.c: clarify wording about POLLFAIL_LOG_THROTTLE_MAX
+	  "standard behavior"
+	* docs/man/upsmon.txt, docs/man/upsmon.conf.txt,
+	  conf/upsmon.conf.sample.in: clarify wording about
+	  POLLFAIL_LOG_THROTTLE_MAX "standard behavior"
+
+2023-11-28  Jim Klimov <jim@jimklimov.com>
+
+	* m4/nut_check_aspell.m4: check if aspell can use the discovered tex
+	  module (binary arch match) and try to fall back to built-in
+	  defaults if not  Either way, avoid an unusable `make spellcheck`
+	  which just reports a massive failure.
+
+2023-11-27  Jim Klimov <jim@jimklimov.com>
+
+	* m4/nut_check_aspell.m4: run a live check if the detected aspell is
+	  useful
+	* m4/nut_check_aspell.m4: AC_SUBST detected paths after checking if
+	  detected aspell is useful
+
+2023-11-27  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* scripts/python/app/NUT-Monitor-py2gtk2.in: leave a comment to
+	  suggest using g_set_prgname()  Suggested by Laurent Bigonville
+	  Currently I've failed to find a test system with Py2 + GTK2
+	  preinstalled (the one I had was updated and half the old
+	  dependencies are missing), and did not quickly find python syntax
+	  examples for it as well.
+	* scripts/python/app/NUT-Monitor-py3qt5.in: take a cautious approach
+	  to setDesktopFileName()
+	* NEWS.adoc, docs/nut.dict: checking and formatting for the entry
+	  about DesktopFileName in NUT-Monitor-py3qt5 [#2205]
+
+2023-11-27  Laurent Bigonville <bigon@bigon.be>
+
+	* NEWS.adoc, scripts/python/app/NUT-Monitor-py3qt5.in: Set the
+	  DesktopFileName in scripts/python/app/NUT-Monitor-py3qt5  This
+	  binds the application with the desktop file and allow the Desktop
+	  to display the proper icon and application name.
+
+2023-11-25  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* scripts/python/app/NUT-Monitor, NEWS.adoc: check if implementation
+	  scripts exist before looking into them for a PYTHON* version
+	  Closes: #2201
+	* NEWS.adoc: note the fix for #2198
+	* scripts/python/app/NUT-Monitor, NEWS.adoc: fix typo (qt3=>qt5)
+	  Closes: #2199
+
+2023-11-23  Xin LI <delphij@FreeBSD.org>
+
+	* drivers/libusb1.c: Remove unnecessary validation for bus_num  The
+	  libusb_get_bus_number() function serves as a simple accessor for
+	  the bus number of the opaque device struct. Unlike
+	  libusb_get_port_number(), it does not have the ability to convey
+	  errors back to the caller, and a bus number of 0 is a valid value.
+	  Therefore, any validation around bus_num is redundant.  This commit
+	  removes the unnecessary validation code related to bus_num.
+
+2023-11-23  Axel Gembe <axel@gembe.net>
+
+	* drivers/apc_modbus.c: apc_modbus: Add target outlet group to load.*
+	  and shutdown.* commands  Maybe this is needed, needs to be
+	  confirmed.
+	* drivers/apc_modbus.c: apc_modbus: Always store times in UTC  This
+	  changes `_apc_modbus_date_from_nut` to use `timegm` instead of
+	  `mktime` which does not add the current time zone information. This
+	  fixes dates that are off-by-one compared to what was set.
+
+2023-11-24  Axel Gembe <axel@gembe.net>
+
+	* configure.ac, include/timehead.h: build: Add a fallback for timegm
+	  on Windows / MINGW  MINGW headers do not provide a `timegm`
+	  implementation but there is a `_mkgmtime` which does the same:
+	  https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/mkgmtime-mkgmtime32-mkgmtime64
+
+2023-11-23  Axel Gembe <axel@gembe.net>
+
+	* drivers/apc_modbus.c: apc_modbus: Fix re-read of values at the end
+	  of setvar  The for loop searching for the correct register map kept
+	  on looping after finding the value which caused the `apc_map`
+	  mariable to potentially point to the wrong register map.  This can
+	  cause the re-read of the set value at the end of the function to
+	  fail.
+	* drivers/apc_modbus.c, drivers/apc_modbus.h: apc_modbus: Add
+	  ups.test.result  This outputs the test result, the source of the
+	  start of the test and a result modifier.
+
+2023-11-16  Jim Klimov <jimklimov@gmail.com>
+
+	* drivers/Makefile.am: dist the apc_modbus.h file
+
+2023-11-14  Axel Gembe <axel@gembe.net>
+
+	* drivers/apc_modbus.c, drivers/apc_modbus.h, drivers/upshandler.h:
+	  apc_modbus: Updates, command, writable variables and outlet group
+	  support  This adds support for commands, writable variables and
+	  outlet groups.  - For commands there is a new table called
+	  `apc_modbus_command_map` which defines the supported commands as a
+	  tuple of command name, register offset and value to write. This
+	  also adds a new instcmd status called
+	  `STAT_INSTCMD_CONVERSION_FAILED` for when conversion of values
+	  fails. On startup all the commands are registered using
+	  `dstate_addcmd`. This also adds support for the `upsdrv_shutdown`
+	  function. - For writable variables we added a new flag called
+	  `APC_VF_RW` to the existing variables that indicates a writable
+	  variable. We added code to convert from a string to UINT/INT/STRING
+	  variables with output in APCs register format. There is a new
+	  `_apc_modbus_setvar` function that handles setting variables and
+	  rereading them from the device. This also adds a new setvar status
+	  called `STAT_SET_CONVERSION_FAILED` for when conversion of values
+	  fails. Variables are now correctly set as `ST_FLAG_STRING` and
+	  `ST_FLAG_RW` and we call `dstate_setaux` to give a maximum length
+	  for strings. - For outlet groups, we now have names, configurable
+	  delays and commands per outlet group. Devices have an outlet group
+	  called MOG (Main outlet group) that switches all the outputs of the
+	  UPS and 1-3 SOGs (Switched outlet groups) that can be controlled
+	  independently. Note that MOG is `outlet.group.0` and the SOGs start
+	  at `outlet.group.1`. The outlet groups should have markings with
+	  the same index at the back of the unit. - This also reduces the
+	  length of some of the defines to make the variable maps more
+	  readable. - It also adds a comment to when the reopen matcher is
+	  created that clarifies why we create it.
+
+2023-11-22  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* drivers/nutdrv_qx.c: armac_command(): avoid
+	  "-Wdeclaration-after-statement"  Also minor cleanup with comments
+	  markup
+	* drivers/nutdrv_qx.c: load_armac_endpoint_cache(): avoid
+	  "-Wdeclaration-after-statement" situations  Also log if effectively
+	  skipping the method (not libusb-1.x build)
+	* README.adoc: add links to custom Jenkins Dynamatrix library and
+	  setup for NUT
+	* README.adoc: do our best to top-align the cells in acknowledgements
+	  table, and comment about caveats of known renderers
+	* README.adoc: rephrase the sponsoring/starring tip section
+	* README.adoc: dumb down the table format for GitHub renderer
+	* README.adoc: no need for a plus in table for multi-paragraph cells
+	* README.adoc: align columns in vendor logo table; leave a FIXME
+	  comment for PDF renditions
+	* README.adoc: try to fix vendor acknowledgements table width
+	* README.adoc: refer from "NUT and Ecosystem" to "Acknowledgements
+	  for NUT CI and Ops" table with vendor logos [#2192]
+	* README.adoc: use single PNG for OpenCollective vendor logo
+	* README.adoc, docs/nut.dict: README.adoc: use alt/url/width/height
+	  markup for vendor logo images
+	* docs/Makefile.am, docs/images/ci/OC_logo_merged_140x26.png,
+	  docs/images/ci/OC_logo_merged_171x32.png:
+	  docs/images/ci/OC_logo_merged_XxY.png: add merged (and also
+	  resized) single image files
+	* docs/asciidoc-vars.conf: fix "imagesdir" for GitHub rendering
+	* README.adoc: fix title markup
+	* README.adoc, docs/nut.dict: README.adoc: make "NUT and the
+	  ecosystem" a separate chapter (including a "TIP" on GitHub
+	  starring)
+	* .github/pull_request_template.md: remind to Please star NUT on
+	  GitHub, this helps with sponsorships [#2192]
+	* README.adoc: start with a note about sponsorship and GitHub stars
+
+2023-11-21  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* README.adoc, docs/nut.dict: README.adoc: fix GitHub rendering of
+	  logos in the README [#2192]
+	* docs/Makefile.am, docs/images/ci/jenkins-nut.txt: docs/Makefile.am:
+	  list IMAGE_LOGO_FILES andi IMAGE_LOGO_FILES_JENKINS_NUT for
+	  EXTRA_DIST
+
+2023-11-20  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* README.adoc, docs/images/ci/DO_Powered_by_Badge_blue_140pxW.png,
+	  docs/images/ci/GitHub-Mark-140pxW.png,
+	  docs/images/ci/jenkins-nut-transparent-bg-140pxW.png,
+	  docs/nut.dict: README.adoc: try to adjust logo image widths
+	* README.adoc: use PNG versions of logos (avoid requirement of
+	  inkscape etc. to build PDF)
+	* docs/images/ci/AppVeyor_logo-ar21.png,
+	  docs/images/ci/AppVeyor_logo-ar21.svg:
+	  docs/images/ci/AppVeyor_logo-ar21.png: convert from SVG to PNG with
+	  Inkscape
+	* docs/images/ci/AppVeyor_logo-ar21.svg: copy from
+	  https://www.vectorlogo.zone/logos/appveyor/appveyor-ar21.svg
+	* docs/images/ci/OC_logotype.png, docs/images/ci/OC_logotype.svg:
+	  docs/images/ci/OC_logotype.png: convert from SVG to PNG with
+	  Inkscape
+	* docs/images/ci/OC_logo-watercolor-256.png: copy from
+	  https://next-images.opencollective.com/_next/image?url=%2Fstatic%2Fimages%2Foc-logo-watercolor-256.png&w=32&q=75
+	* docs/images/ci/gandi-ar21.png: convert from SVG to PNG with
+	  Inkscape
+	* docs/images/ci/DO_Powered_by_Badge_blue.png,
+	  docs/images/ci/DO_Powered_by_Badge_blue.svg:
+	  docs/images/ci/DO_Powered_by_Badge_blue.png: copy from
+	  https://opensource.nyc3.cdn.digitaloceanspaces.com/attribution/assets/PoweredByDO/DO_Powered_by_Badge_blue.png
+	* docs/images/ci/CircleCI_vertical_black_logo.png,
+	  docs/images/ci/CircleCI_vertical_black_logo.svg:
+	  docs/images/ci/CircleCI_vertical_black_logo.png: copy from
+	  https://brand.circleci.com/api/asset/download.png?asset_id=47134418&auth=XCzXjqT6lGYuIc0lH9SjTA
+	* README.adoc: use locally stored logos of acknowledged helper
+	  projects
+	* docs/images/ci/CircleCI_vertical_black_logo.svg: copy from
+	  https://brand.circleci.com/api/asset/download.svg?asset_id=47134422&auth=XCzXjqT6lGYuIc0lH9SjTA
+	* docs/images/ci/AppVeyor_logo-2x.png: copy from
+	  https://ci.appveyor.com/assets/images/logo-2x.png
+	* docs/images/ci/OC_logotype.svg: copy from
+	  https://opencollective.com/static/images/logotype.svg
+	* docs/images/ci/DO_Powered_by_Badge_blue.svg: copy from
+	  https://opensource.nyc3.cdn.digitaloceanspaces.com/attribution/assets/PoweredByDO/DO_Powered_by_Badge_blue.svg
+	  [#2192]
+	* docs/images/ci/GitHub-Mark-ea2971cee799.png: copy from
+	  https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png
+	* docs/images/ci/gandi-ar21.svg: docs/images/gandi-ar21.svg: copy
+	  from nut-website
+	* README.adoc: extend the Acknowledgements chapter with logos of
+	  organizations and projects which help ensure NUT project operations
+	  on a continuous basis [#2192]
+
+2023-11-08  Vytautas Survila <vytautas.survila@gmail.com>
+
+	* drivers/nutdrv_qx.c: support Armac O/850E/PSW #2153  Support for
+	  Armac UPS that uses interrupt instead of control msg. It will be
+	  enabled automatically only for devices that reports 0x82 as in
+	  endpoint address with interrupt transfer type
+
+2023-11-21  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* scripts/python/module/MANIFEST.in,
+	  scripts/python/module/Makefile.am,
+	  scripts/python/module/setup.py.in:
+	  scripts/python/module/MANIFEST.in: distribute "tox.ini" in a
+	  different way so it is only in sdist [#2193]
+	* drivers/main.c, NEWS.adoc: fix fallout of TOCTOU fixes for socket
+	  file non-default permissions [#2185]
+
+2023-11-20  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* drivers/main.c: clarify numeric errno for faults of
+	  fstat/chmod/chown/... for socket file [#2185]
+	* scripts/python/module/tox.ini: revise relative paths made available
+	  for source testing [#2186]
+	* scripts/python/module/Makefile.am: arrange for "make tox"
+
+2023-11-19  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* scripts/python/module/.gitignore: Update .gitignore
+	* .github/workflows/PyNUTClient.yml: Update PyNUTClient.yml
+	* .github/workflows/PyNUTClient.yml: Update PyNUTClient.yml
+	* .github/workflows/PyNUTClient.yml: Update PyNUTClient.yml
+	* .github/workflows/PyNUTClient.yml: Update PyNUTClient.yml
+	* .github/workflows/PyNUTClient.yml: Update PyNUTClient.yml
+	* .github/workflows/PyNUTClient.yml: Update PyNUTClient.yml
+	* .github/workflows/PyNUTClient.yml: Update PyNUTClient.yml
+	* .github/workflows/PyNUTClient.yml: Update PyNUTClient.yml
+
+2023-11-18  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* .github/workflows/PyNUTClient.yml: convert to use
+	  scripts/python/module/Makefile.am directly, to avoid discrepancies
+	  in two logic impementations
+	* scripts/python/module/tox.ini: update pip as a "commands_pre"
+	  action [#2186]
+	* .github/workflows/PyNUTClient.yml: fix typo determining TAG_NAME
+	* scripts/python/module/Makefile.am,
+	  scripts/python/module/setup.py.in, scripts/python/module/tox.ini:
+	  Py: try to beat sense into packaging all the files
+	* scripts/python/module/Makefile.am: add "py-in" and "redist" targets
+	  for manual iterations
+	* scripts/python/module/.gitignore,
+	  scripts/python/module/Makefile.am, scripts/python/module/tox.ini:
+	  scripts/python/module: add Python testing framework handling
+	  (tox.ini etc) [#2186]
+
+2023-11-16  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* scripts/python/module/setup.py.in: update "keywords" to refer to
+	  NUT
+	* scripts/python/module/setup.py.in: constrain lowest known
+	  compatible python version
+	* scripts/python/module/setup.py.in: clean up formatting
+	* scripts/python/module/Makefile.am: create the PyNUTClient/src
+	  directory for better module naming
+	* scripts/python/module/Makefile.am: clean the many .pypi-dist*
+	  touch-files we have now
+	* scripts/python/module/Makefile.am: allow "make clean dist" to do a
+	  sane thing
+	* NEWS.adoc: update for arduino-hid [#2188]
+	* NEWS.adoc: Update NEWS.adoc
+	* drivers/arduino-hid.c: Update arduino-hid.c
+	* scripts/systemd/nut-driver-enumerator-daemon-activator.path.in,
+	  scripts/systemd/nut-driver-enumerator-daemon-activator.service.in,
+	  scripts/systemd/nut-driver-enumerator-daemon.service.in,
+	  scripts/systemd/nut-driver-enumerator.path.in:
+	  scripts/systemd/nut-driver-enumerator-daemon*.in: add NUT headers
+	  like in other systemd units
+
+2023-11-15  Kelly Byrd <kbyrd@memcpy.com>
+
+	* drivers/arduino-hid.c: battery.runtime, status OL/OB and more for
+	  Arduino subdriver  Add support for the common status flags as well
+	  as time remaining, battery voltage and other variables found in
+	  other HID subdrivers. The Arduino library always supported these
+	  items, just the NUT subdriver didn't pick them up so things like
+	  status were always OB.
+
+2023-11-14  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* scripts/python/module/setup.py.in: do not install_require telnetlib
+	  which is not a standalone project [#2181]
+	* .github/workflows/PyNUTClient.yml,
+	  scripts/python/module/.gitignore,
+	  scripts/python/module/Makefile.am,
+	  scripts/python/module/setup.py.in:
+	  scripts/python/module/setup.py.in: reference the license file
+	  (GPLv3 per NUT COPYING doc) [#2180]
+	* scripts/python/module/setup.py.in: rectify whitespace
+	* scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in: AVOID_REPARSE of
+	  the (empty) ups.conf in the main loop method [#2178]
+	* scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in: consider two
+	  empty UPS lists (conf and svc) as a valid situation (nothing to
+	  reconcile yet) [#2178]
+	* scripts/Solaris/nut-driver-enumerator.xml.in: do not return
+	  exit-code 42 if "No more changes to reconcile"
+	* server/conf.c, drivers/snmp-ups.c, clients/upsmon.c,
+	  clients/upssched.c: report if config errors were seen and we
+	  ignored them (went on)
+	* scripts/Solaris/nut.xml.in: revise "refresh" handling in umbrella
+	  service
+
+2023-11-14  Axel Gembe <axel@gembe.net>
+
+	* drivers/apcsmart-old.c: apcsmart-old: Fix return value for not
+	  writable variable  The code returned `STAT_SET_UNKNOWN`, which is
+	  for variables that were not found, instead this should return
+	  `STAT_SET_INVALID`, which means that the variable is not writable.
+
+2023-11-13  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* docs/Makefile.am: when used to `make spellcheck` from different
+	  directories (and of other-directory files) try to report the path
+	  to text source relative to NUT source
+	* scripts/augeas/README.adoc: for paragraph-quote block markup
+	* NEWS.adoc, UPGRADING.adoc, autogen.sh, configure.ac, docs/nut.dict,
+	  scripts/devd/.gitignore, scripts/devd/Makefile.am,
+	  tools/Makefile.am, tools/nut-usbinfo.pl: tools/nut-usbinfo.pl:
+	  generate FreeBSD style quirks information [#2159]
+	* data/html/README.adoc, docs/nut.dict, scripts/Windows/README.adoc,
+	  scripts/augeas/README.adoc, scripts/python/README.adoc,
+	  scripts/python/app/README.adoc, scripts/usb_resetter/README.adoc:
+	  scripts/*/README.adoc: revise markup for proper rendered visuals
+	* Makefile.am, data/html/Makefile.am, data/html/README,
+	  data/html/README.adoc, docs/nut.dict: data/html/README.adoc: rename
+	  to .adoc extension, refresh text and markup, add to spell-checking
+	  laundry list
+	* Makefile.am, tests/NIT/Makefile.am, tests/NIT/{README =>
+	  README.adoc}: tests/NIT/README.adoc: rename to .adoc extension,
+	  refresh text and markup, add to spell-checking laundry list
+	* scripts/Makefile.am, scripts/RedHat/README,
+	  scripts/RedHat/README.adoc: scripts/RedHat/README.adoc: rename to
+	  .adoc extension, refresh text and markup, add to spell-checking
+	  laundry list
+	* docs/nut.dict, scripts/Makefile.am, scripts/usb_resetter/{README.md
+	  => README.adoc}: scripts/usb_resetter/README.adoc: convert from .md
+	  to .adoc, refresh text, add to spell-checking laundry list (also do
+	  EXTRA_DIST this directory)
+	* Makefile.am, scripts/hotplug/Makefile.am, scripts/hotplug/README,
+	  scripts/hotplug/README.adoc: scripts/hotplug/README.adoc: rename to
+	  .adoc extension, refresh text and markup, add to spell-checking
+	  laundry list
+	* Makefile.am, scripts/udev/Makefile.am, scripts/udev/README,
+	  scripts/udev/README.adoc: scripts/udev/README.adoc: rename to .adoc
+	  extension, refresh text and markup, add to spell-checking laundry
+	  list
+	* Makefile.am, docs/nut.dict, scripts/upsdrvsvcctl/Makefile.am,
+	  scripts/upsdrvsvcctl/README, scripts/upsdrvsvcctl/README.adoc:
+	  scripts/upsdrvsvcctl/README.adoc: rename to .adoc extension,
+	  refresh text and markup, add to spell-checking laundry list
+	* scripts/Makefile.am, scripts/Solaris/Makefile.am,
+	  scripts/Windows/Makefile.am, scripts/augeas/Makefile.am,
+	  scripts/devd/Makefile.am, scripts/hotplug/Makefile.am,
+	  scripts/systemd/Makefile.am, scripts/udev/Makefile.am,
+	  scripts/ufw/Makefile.am, scripts/upsdrvsvcctl/Makefile.am:
+	  scripts/*/Makefile.am: add/update headings about the NUT
+	  scripts/subdir for easier navigation
+	* Makefile.am, scripts/devd/Makefile.am, scripts/devd/README,
+	  scripts/devd/README.adoc: scripts/devd/README.adoc: rename to .adoc
+	  extension, refresh text and markup, add to spell-checking laundry
+	  list
+	* scripts/augeas/Makefile.am: comment about spellchecking and markup
+	  of README.adoc
+	* scripts/ufw/Makefile.am: comment about spellchecking and markup of
+	  README.adoc
+	* Makefile.am, docs/nut.dict, scripts/systemd/Makefile.am,
+	  scripts/systemd/README, scripts/systemd/README.adoc:
+	  scripts/systemd/README.adoc: rename to .adoc extension, refresh
+	  text and markup, add to spell-checking laundry list
+	* Makefile.am, scripts/Makefile.am: scripts/README.adoc: add to
+	  spell-checking laundry list
+	* scripts/README.adoc: refresh text and markup
+	* scripts/Makefile.am, scripts/{README => README.adoc}:
+	  scripts/README: rename to .adoc extension
+	* Makefile.am, docs/nut.dict, scripts/python/Makefile.am,
+	  scripts/python/app/README.adoc, scripts/python/module/README.adoc:
+	  scripts/python/*/README.adoc: add to spell-checking laundry list
+	* Makefile.am, docs/nut.dict, scripts/Windows/Installer/README.adoc,
+	  scripts/Windows/Makefile.am, scripts/Windows/README.adoc:
+	  scripts/Windows/*/README.adoc: add to spell-checking laundry list
+	* .../DriverInstaller/{README.txt => README.adoc},
+	  scripts/Windows/Makefile.am: scripts/Windows/Makefile.am: fix
+	  EXTRA_DIST to cover many other scripts and resource files
+	* Makefile.am, docs/nut.dict, scripts/Solaris/Makefile.am:
+	  scripts/Solaris/README.adoc: add to spell-checking laundry list
+	* scripts/Solaris/README.adoc: refresh text and markup
+	* scripts/Solaris/Makefile.am, scripts/Solaris/{README =>
+	  README.adoc}: scripts/Solaris/README: rename to .adoc extension
+
+2023-11-12  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* NEWS.adoc, clients/upsmon.c, clients/upsmon.h,
+	  conf/upsmon.conf.sample.in, docs/man/upsmon.conf.txt,
+	  docs/nut.dict: clients/upsmon.{c,h} et al: add notification support
+	  for NOTCAL state change [#2169]
+	* NEWS.adoc, docs/nut.dict: NEWS.adoc: document fix of INSTCMD NPE
+	  [#2155]
+	* NEWS.adoc: inject a new NUT v2.8.3 expectations plan
+	* NEWS.adoc: refer to PR #2156 for powerpanel fix
+	* docs/maintainer-guide.txt: ensure PyNUT publication
+	* .github/workflows/PyNUTClient.yml: only update TestPyPI repo if
+	  PyNUT sources changed
+
+2023-11-11  root <root@deb128.rd-dpis77.local>
+
+	* clients/upsmon.c: It is important to reset the "CAL" status. This
+	  will be reset later if necessary.
+
+2023-11-11  Jim Klimov <jim@jimklimov.com>
+
+	* .github/workflows/PyNUTClient.yml: limit auto-runs to NUT upstream
+	  [#2158]  Other repos lack needed pypi credentials anyway.
+
+2023-11-09  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* NEWS.adoc, conf/nut.conf.sample, conf/upsd.conf.sample,
+	  docs/config-notes.txt, docs/man/nut.conf.txt,
+	  docs/man/upsd.conf.txt, scripts/augeas/nutupsdconf.aug.in,
+	  server/conf.c, server/upsd.c, server/upsd.h: upsd: introduce
+	  support for ALLOW_NOT_ALL_LISTENERS configuration toggle [#723]
+	* NEWS.adoc, server/upsd.c: server/upsd.c: server_load(): if
+	  listenersTotal != listenersValid, default to fatal start-up failure
+	  [#723]
+	* server/upsd.c: server_load(): if discrepancy of listenersTotal vs.
+	  listenersValid amounts to localhost-related addresses, let it slide
+	  [#723]
+	* server/upsd.c: server_load(): keep track of listenersTotal vs.
+	  listenersValid for certain localhost-related string names and IP
+	  addresses [#723]
+	* NEWS.adoc, server/upsd.c: server/upsd.c: server_load(): keep track
+	  of listenersTotal vs. listenersValid, and base "no listening
+	  interface available" diagnosis on the latter, not on the
+	  firstaddr->sock_fd [#723]
+	* server/upsd.c: setuptcp(): warn if requested to LISTEN on
+	  "localhost" by name (in case it misfires for IPv4 vs. IPv6)
+
+2023-11-10  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* tools/Makefile.am, autogen.sh: cause USB (and SNMP) file
+	  re-generation if generating script was changed
+	* autogen.sh, m4/nut_check_python.m4: update ad-hoc lists for
+	  python3.x program name detection
+	* drivers/powervar-hid.c: fix file perms
+	* autogen.sh: re-generate USB ID listing files if we updated sources
+	* tools/nut-usbinfo.pl: add a big scary header that nutscan-usb.h is
+	  generated
+
+2023-11-09  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* server/Makefile.am: limit SSL and LIBWRAP options to upsd
+	  (sockdebug/pipedebug is not networked)
+
+2023-11-09  Greg Troxel <gdt@lexort.com>
+
+	* scripts/python/Makefile.am: python: Do not install setup.py
+
+2023-11-09  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* scripts/python/module/.gitignore: .pypi* touch-files [#2158]
+
+2023-11-09  Doug Nazar <nazard@nazar.ca>
+
+	* NEWS.adoc: Update with powerpanel driver changes
+
+2023-11-07  Doug Nazar <nazard@nazar.ca>
+
+	* drivers/powerp-txt.c: powerpanel: Rewrite status parsing of text
+	  protocol to be generic  Instead of having several scanf formats for
+	  different devices, parse the individual fields provided only.
+	* drivers/powerp-bin.c: powerpanel: Don't report errors about output
+	  voltage if not available
+
+2023-11-09  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* .github/workflows/PyNUTClient.yml: fix testpypi repo url argument
+	  [#2158]
+	* .github/workflows/PyNUTClient.yml: publish from our non-default
+	  directory location [#2158]
+	* .github/workflows/PyNUTClient.yml: update pypa action to
+	  "release/v1" (not chasing specific tag) [#2158]
+	* .github/workflows/PyNUTClient.yml: update doc reference comments
+	  [#2158]
+	* .github/workflows/PyNUTClient.yml: separate source preparation from
+	  distro preparation [#2158]
+	* scripts/python/module/README.adoc: reshuffle paragraphs for
+	  readability, fix a few typos [#2158]
+	* docs/maintainer-guide.txt: make note to check PyPI resources
+	  [#2158]
+	* .github/workflows/PyNUTClient.yml: refine yaml vs. shell syntax
+	  some more [#2158]
+	* .github/workflows/PyNUTClient.yml: refine yaml vs. shell syntax
+	  [#2158]
+	* scripts/python/module/setup.py.in: scripts/python/module/setup.py:
+	  refer to README.txt made for sdist [#2158]
+	* .github/workflows/PyNUTClient.yml,
+	  scripts/python/module/Makefile.am: actually better prefer "pip
+	  build" as the newest designed solution [#2158]
+	* .github/workflows/PyNUTClient.yml,
+	  scripts/python/module/Makefile.am: prefer setup.py for its sdist
+	  support [#2158]
+	* .github/workflows/PyNUTClient.yml: align with recent changes in
+	  scripts/python/module/Makefile.am [#2158]
+	* scripts/python/module/Makefile.am: use quieter "pip" build wrapper,
+	  not directly calling setup.py [#2158]
+	* scripts/python/module/Makefile.am: make sure the src/... module is
+	  found (wants __init__.py) [#2158]
+	* scripts/python/module/setup.py.in: fix README quoting as the long
+	  description [#2158]
+	* .github/workflows/PyNUTClient.yml,
+	  scripts/python/module/.gitignore,
+	  scripts/python/module/Makefile.am:
+	  scripts/python/module/Makefile.am: PyPI standard wants a README.txt
+	  to be present [#2158]
+	* scripts/python/module/Makefile.am: revise verbosity and selection
+	  of upload target [#2158]
+	* configure.ac, .github/workflows/PyNUTClient.yml: refine definition
+	  of NUT_SOURCE_GITREV_NUMERIC to avoid dash separator and use a dot
+	  (major.minor.patch.commitnumsince) [#2158]
+	* scripts/python/module/Makefile.am: revise GENERATED_DIST artifacts
+	  [#2158]
+	* scripts/python/module/setup.py.in: fix README content type [#2158]
+	* .github/workflows/PyNUTClient.yml, configure.ac,
+	  scripts/python/module/Makefile.am,
+	  scripts/python/module/setup.py.in: Introduce
+	  NUT_SOURCE_GITREV_NUMERIC for scripts/python/module/Makefile.am
+	  [#2158]
+	* configure.ac, scripts/python/Makefile.am,
+	  scripts/python/module/.gitignore,
+	  scripts/python/module/Makefile.am: Introduce
+	  scripts/python/module/Makefile.am to allow PyPI repo activities
+	  from command line [#2158]
+
+2023-11-08  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* .github/workflows/PyNUTClient.yml, configure.ac,
+	  scripts/python/Makefile.am, scripts/python/module/.gitignore,
+	  scripts/python/module/{setup.py => setup.py.in}:
+	  .github/workflows/PyNUTClient.yml, scripts/python/module/setup.py:
+	  rename setup.py into a .in template; use @NUT_SOURCE_GITREV@
+	  [#2158]
+	* .github/workflows/PyNUTClient.yml: publish (master) branch builds
+	  to TestPyPI repository [#2158]
+	* .github/workflows/PyNUTClient.yml: follow warnings for token access
+	  [#2158]
+	* .github/workflows/PyNUTClient.yml: update set-output action =>
+	  GITHUB_OUTPUT file [#2158]  Follow warnings into
+	  https://github.blog/changelog/2022-10-11-github-actions-deprecating-save-state-and-set-output-commands/
+	* .github/workflows/PyNUTClient.yml: use definitive version of pypa
+	  action - v1.8.10 (current latest) [#2158]
+	* .github/workflows/PyNUTClient.yml: use definitive version of pypa
+	  action [#2158]
+	* scripts/python/module/setup.py: note the renaming of README.adoc
+	* .github/workflows/PyNUTClient.yml: fix shell syntax [#2158]
+	* .github/workflows/PyNUTClient.yml: fix shell syntax [#2158]
+	* .github/workflows/PyNUTClient.yml: fix shell syntax [#2158]
+	* .github/workflows/PyNUTClient.yml: use default github-hosted runner
+	  [#2158]
+	* .github/workflows/PyNUTClient.yml: also publish master-branch
+	  rolling changes [#2158]
+	* NEWS.adoc, scripts/python/Makefile.am, scripts/python/{README =>
+	  README.adoc}, scripts/python/app/{README => README.adoc},
+	  scripts/python/module/{README => README.adoc}:
+	  scripts/python/*/README: rename to *.adoc extension [#1953]
+
+2023-11-08  Jim Klimov <jim@jimklimov.com>
+
+	* .github/workflows/PyNUTClient.yml, NEWS.adoc,
+	  scripts/python/module/README, scripts/python/module/setup.py: Add
+	  recipes for PyPI publishing of PyNUTClient bindings for NUT [#2158]
+	  Note: PyPI names are case-insensitive, and "pynut" was occupied.
+
+2023-11-07  Doug Nazar <nazard@nazar.ca>
+
+	* drivers/libhid.c: Fix passing of errors up from libusb 1.x.  The
+	  api for get_item_buffered() requires the actual error to be in
+	  errno which was automatic for libusb 0.x but libusb 1.x doesn't use
+	  errno.  Otherwise a poll-only driver will miss errors like
+	  disconnects and never try to reconnect.
+	* drivers/dstate.c: Fix SIGSEGV while preforming INSTCMD  Parameter
+	  arg[2] is not guaranteed to be valid while preforming INSTCMD.
+	  Don't pass directly to main_instcmd().
+
+2023-11-07  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* tools/nut-usbinfo.pl: track preference of certain drivers over
+	  others [#1021]
+	* NEWS.adoc, docs/man/nutscan_add_device_to_device.txt,
+	  docs/man/nutscan_add_option_to_device.txt, docs/nut.dict,
+	  tools/nut-scanner/Makefile.am, tools/nut-scanner/nutscan-device.h,
+	  tools/nut-scanner/nutscan-display.c, tools/nut-scanner/scan_usb.c,
+	  tools/nut-usbinfo.pl: tools/nut-usbinfo.pl, nut-scanner: extend to
+	  track alt_driver_names in generated config suggestions
+	* tools/nut-usbinfo.pl: track all suitable driver names (in comments)
+
+2023-11-05  Kelly Byrd <kbyrd@memcpy.com>
+
+	* drivers/libusb0.c, drivers/libusb1.c, drivers/nut_libusb.h,
+	  drivers/usb-common.h: Add usb_config_index to
+	  usb_communication_subdriver_s, default to 0.  The tactical goal of
+	  this change is to change ret = libusb_get_config_descriptor(device,
+	  (uint8_t)usb_subdriver.hid_rep_index, &conf_desc); to ret =
+	  libusb_get_config_descriptor(device,
+	  (uint8_t)usb_subdriver.usb_config_index, &conf_desc);  Before this
+	  change, libusb1.c did libusb_get_config_descriptor() with a config
+	  index equal to the interface number. For composite devices using an
+	  interface index > 0, this is usally the wrong choice. Concretely,
+	  I'm using an Arduino for a DIY UPS project and these are composite
+	  devices with multiple interfaces under the first (and only) config
+	  descriptor.  In the USB descriptor heirarchy, deivce descriptors
+	  have config descriptors which have interface descriptors. Also,
+	  nearly all USB devices have a single configuration (index 0).  In
+	  order to do this, I added a new member alongside the existing
+	  hid_rep_idex and hid_desc_index. I chose to do this instead of
+	  using the add_var method because this member is used in places in
+	  very similar ways to how hid_rep_index and hid_desc_index is used.
+	  This new member defaults to 0 which covers the majority of USB
+	  devices. Any future subdriver is able to use this if a device
+	  requires it. For existing subdrives, we'll just use an index of 0.
+	  I also changed some debug logging to print out the config index
+	  where the code was already printing the interface index.
+
+2023-11-06  Jim Klimov <jim@jimklimov.com>
+
+	* configure.ac: quiece -Wincompatible-function-pointer-types-strict
+	  for clang-17 on some platforms [#823]
+
+2023-11-05  Fabrice Fontaine <fontaine.fabrice@gmail.com>
+
+	* m4/nut_check_python.m4: allow overriding of
+	  PYTHON{2,3}_SITE_PACKAGES  Allow the end-user to override
+	  PYTHON{2,3}_SITE_PACKAGES as this can be useful when
+	  cross-compiling
+
+2023-11-03  Fabrice Fontaine <fontaine.fabrice@gmail.com>
+
+	* m4/nut_compiler_family.m4: fix cross-compilation  Do not use
+	  isystem with host paths when cross-compiling
+
+2023-11-02  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* configure.ac: nut_enable_inplace_runtime: pass libexecdir if
+	  specified
+	* docs/man/upsmon.txt: avoid characters (some unicode space) that
+	  some versions of asciidoc dislike
+	* NEWS.adoc, docs/nut.dict, lib/libnutclientstub.pc.in: Clarify what
+	  is libnutclientstub
+	* docs/config-prereqs.txt, docs/nut.dict: clarify about /dev/shm and
+	  noexec option [#2143 follow-up]
+	* docs/config-prereqs.txt: small fixes to Slackware 15 chapter [#2143
+	  follow-up]
+	* docs/man/al175.txt, docs/man/apc_modbus.txt,
+	  docs/man/apcupsd-ups.txt, docs/man/asem.txt, docs/man/bcmxcp.txt,
+	  docs/man/bcmxcp_usb.txt, docs/man/belkin.txt,
+	  docs/man/belkinunv.txt, docs/man/bestfcom.txt,
+	  docs/man/bestfortress.txt, docs/man/bestuferrups.txt,
+	  docs/man/bestups.txt, docs/man/blazer_ser.txt,
+	  docs/man/blazer_usb.txt, docs/man/clone.txt,
+	  docs/man/dummy-ups.txt, docs/man/etapro.txt, docs/man/everups.txt,
+	  docs/man/gamatronic.txt, docs/man/genericups.txt,
+	  docs/man/isbmex.txt, docs/man/ivtscd.txt,
+	  docs/man/liebert-esp2.txt, docs/man/liebert.txt,
+	  docs/man/macosx-ups.txt, docs/man/masterguard.txt,
+	  docs/man/metasys.txt, docs/man/microdowell.txt,
+	  docs/man/microsol-apc.txt, docs/man/netxml-ups.txt,
+	  docs/man/nutdrv_atcl_usb.txt, docs/man/nutdrv_qx.txt,
+	  docs/man/nutdrv_siemens_sitop.txt, docs/man/oneac.txt,
+	  docs/man/optiups.txt, docs/man/pijuice.txt, docs/man/powercom.txt,
+	  docs/man/powerpanel.txt, docs/man/rhino.txt,
+	  docs/man/richcomm_usb.txt, docs/man/safenet.txt, docs/man/skel.txt,
+	  docs/man/snmp-ups.txt, docs/man/solis.txt, docs/man/tripplite.txt,
+	  docs/man/tripplitesu.txt, docs/man/upscode2.txt,
+	  docs/man/usbhid-ups.txt, docs/man/victronups.txt: Fix man pages to
+	  have SYNOPSIS as the second section per standard
+	* docs/config-prereqs.txt, docs/nut.dict: docs/config-prereqs.txt:
+	  update about docbook-xml / linuxdoc-tools [#2142]
+	* m4/nut_check_asciidoc.m4, configure.ac: separate A2X_MIN_VERSION
+	  from ASCIIDOC_MIN_VERSION [#2142]
+	* docs/config-prereqs.txt, docs/nut.dict: add diffutils to Slackware
+	  baseline (not in default install)
+	* scripts/Windows/Makefile.am: avoid "Using $< in a non-suffix rule
+	  context is a GNUmake idiom" for non-GNU makes
+	* docs/Makefile.am: avoid "Using $< in a non-suffix rule context is a
+	  GNUmake idiom" for non-GNU makes
+	* docs/config-prereqs.txt, docs/nut.dict: docs/nut.dict: update
+	  spellchecker to make older systems happy
+	* configure.ac: dumb down the check for HAVE_WINDOWS_H to cater for
+	  older autotools
+
+2023-11-01  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* docs/config-prereqs.txt, docs/nut.dict: add a chapter on Slackware
+	  15 build environment - clarify Sotirov's SlackPack
+	* configure.ac: only define that we HAVE_WINDOWS if both the
+	  minimally required tools and headers are in place
+	* m4/nut_check_headers_windows.m4: add automake conditionals for
+	  detected header files
+	* docs/config-prereqs.txt, docs/nut.dict: add a chapter on Slackware
+	  15 build environment - clarify Alien Slack Builds
+	* docs/config-prereqs.txt, docs/nut.dict: add a chapter on Slackware
+	  15 build environment
+	* scripts/Windows/Makefile.am: limit binary builds to cases where we
+	  HAVE_WINDOWS [#2142]
+	* docs/man/huawei-ups2000.txt, docs/man/liebert-esp2.txt: fix titles
+	* configure.ac: bump AC_INIT to development version 2.8.1.1
+
 2023-10-31  Jim Klimov <jimklimov+nut@gmail.com>
 
+	* NEWS.adoc, UPGRADING.adoc, docs/docinfo.xml.in: Revert "NEWS.adoc,
+	  UPGRADING.adoc, docs/docinfo.xml.in: finalize text before NUT
+	  v2.8.1 release"  This reverts commit
+	  909705233877a45953f9c739abd9bc8156a05627.
 	* configure.ac: update AC_INIT for NUT v2.8.1 release
 	* docs/configure.txt, scripts/Windows/README.adoc,
 	  scripts/Windows/build-mingw-nut.sh: update examples for NUT v2.8.1
@@ -2521,6 +5488,12 @@
 	  binaries with tighter systemd integration support"
 	* configure.ac: quiesce python checks for modules
 
+2023-01-28  Jim Klimov <jimklimov@gmail.com>
+
+	* docs/man/riello_usb.txt: Update riello_usb.txt
+	* NEWS: Update NEWS
+	* docs/man/riello_usb.txt: Update riello_usb.txt
+
 2023-01-26  Jim Klimov <jimklimov+nut@gmail.com>
 
 	* appveyor.yml: avoid redirect to /dev/null on Windows
@@ -3739,6 +6712,27 @@
 
 2022-11-03  Jim Klimov <jimklimov@gmail.com>
 
+	* drivers/riello_usb.c: Update riello_usb.c  Log that guesstimation
+	  will be used instead of device readings (if any)
+	* docs/man/riello_usb.txt: Update riello_usb.txt  Use "guesstimate"
+	  as common NUT term for future searches
+
+2022-11-03  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* drivers/riello_usb.c: testvar("localcalculation") only once, use
+	  cached int in the loop [#1692]
+	* drivers/riello_usb.c: do not set bogus "ups.temperature" as 0, log
+	  low-prio message instead [#1692]
+	* drivers/riello_usb.c: only log once about possibly missing
+	  battery.charge and battery.runtime [#1692]
+	* NEWS, docs/man/riello_usb.txt: fix "docs/man/riello_usb.txt"
+	  description [#1692]
+	* drivers/riello_usb.c: deduplicate message about possibly missing
+	  battery.charge and battery.runtime [#1692]
+	* drivers/riello_usb.c: fix indentation [#1692]
+
+2022-11-03  Jim Klimov <jimklimov@gmail.com>
+
 	* docs/nut.dict: Update nut.dict
 	* NEWS: Update NEWS
 
@@ -3754,6 +6748,33 @@
 	  inability to do so)
 	* common/common.c: become_user(): log change of UID/GID (or inability
 	  to do so)
+
+2022-10-31  Jim Klimov <jimklimov@gmail.com>
+
+	* docs/nut.dict: Update nut.dict
+	* docs/nut.dict: Update nut.dict
+	* docs/man/riello_usb.txt: Update riello_usb.txt  Added
+	  localcalculation flag description
+	* NEWS: added localcalculation flag for riello_usb
+
+2022-10-30  amikot <3470285+amikot@users.noreply.github.com>
+
+	* drivers/riello_usb.c: Update riello_usb.c  Added driver setting
+	  flag `localcalculation`.  When enabled, driver will calculate
+	  values of battery.runtime and battery.load locally. This is for
+	  some Riello models (iPlug and iDialog series) that provides
+	  incorrect values. Local calculation is done according to nominal
+	  battery capacity, nominal battery voltage, actual battery charge,
+	  maximum and actual UPS load. Added condition to filter off
+	  situation when battery temperature variable is incorrectly set to
+	  variable type maximum (255) - which is typical issue of some Riello
+	  models (iPlug and iDialog series). If incorrect value is detected
+	  temperature is set to 0.
+
+2022-10-21  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in: fix more "egrep"
+	  => "grep -E" cases in the older branch
 
 2022-10-21  Yifeng Li <tomli@tomli.me>
 
@@ -18212,6 +21233,11 @@
 	  https://www.eaton.com/content/dam/eaton/products/backup-power-ups-surge-it-power-distribution/backup-power-ups/eaton-ferrups-tower-ups/eaton-ferrups-FE-QFE-userguide-.pdf
 	  (o [time] a is how the manual references the "short" command)
 
+2019-04-15  Jim Klimov <jim@jimklimov.com>
+
+	* scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in:
+	  nut-driver-enumerator.sh.in : optimize large string-emptiness tests
+
 2019-04-16  Ross Williams <ross@ross-williams.net>
 
 	* drivers/snmp-ups.c: snmp-ups: add ability to set TimeTicks
@@ -18227,11 +21253,38 @@
 	  possible for read/write variable functions to be called without a
 	  value (unlike instant commands).
 
+2019-04-15  Jim Klimov <jim@jimklimov.com>
+
+	* scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in:
+	  nut-driver-enumerator.sh.in : expose for debugging
+	  hook_findSavedDeviceName and hook_getSavedDeviceName
+	* scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in:
+	  nut-driver-enumerator.sh.in : fix systemd_findSavedDeviceName() to
+	  return expected values
+	* scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in:
+	  nut-driver-enumerator.sh.in : avoid sub-shelling and varname clash
+	  in smf_setSavedUniq() and smf_setSavedMD5()
+
 2019-04-11  Jim Klimov <jimklimov@gmail.com>
 
 	* drivers/eaton-pdu-marlin-mib.c, drivers/snmp-ups.c: [DNMY] Fix snmp
 	  templates (#681)  * eaton-pdu-marlin-mib.c : move "outlet.count"
 	  query higher  * snmp-ups.c : anticipate lack of OIDs in templates
+
+2019-04-11  Jim Klimov <jim@jimklimov.com>
+
+	* scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in:
+	  nut-driver-enumerator.sh.in : in systemd_getSavedDeviceName() strip
+	  quotes around returned DEVICE == "..." value
+	* scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in:
+	  nut-driver-enumerator.sh.in : escape the verbatim dollar in
+	  doublequotes
+
+2019-04-05  Jim Klimov <jim@jimklimov.com>
+
+	* scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in:
+	  nut-driver-enumerator.sh.in : typo fix in
+	  systemd_findSavedDeviceName()
 
 2019-04-05  Jim Klimov <jimklimov@gmail.com>
 
@@ -18269,6 +21322,150 @@
 	  routines into macros that check debugging level first, and only
 	  invest into calling routines and passing data later - if that would
 	  not be in vain.
+	* docs/nut.dict: nut.dict : add "daemonize"
+	* docs/man/nut-driver-enumerator.txt,
+	  scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in:
+	  nut-driver-enumerator.sh.in man/nut-driver-enumerator.txt :
+	  document --daemon-after mode
+
+2018-12-18  Jim Klimov <jim@jimklimov.com>
+
+	* scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in:
+	  nut-driver-enumerator.sh.in : centralize management of TIMEOUT_CMD
+	  and TIMEOUT_ARGS, and use it for driver stop/start - it hangs too
+	  sometimes
+	* docs/man/upsdrvsvcctl.txt, scripts/upsdrvsvcctl/upsdrvsvcctl.in:
+	  upsdrvsvcctl.in : support --timeout-cmd and --timeout-args to limit
+	  running the systemctl/svcadm commands
+
+2018-12-05  Jim Klimov <jim@jimklimov.com>
+
+	* scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in:
+	  nut-driver-enumerator.sh.in : log the reevaluation frequency when
+	  daemonizing
+	* scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in:
+	  nut-driver-enumerator.sh.in : reword a log message
+	* scripts/Solaris/nut-driver-enumerator.xml.in:
+	  nut-driver-enumerator.xml.in : use --daemon-after to verify that
+	  the config was correct, and only then daemonize
+	* scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in:
+	  nut-driver-enumerator.sh.in : handle TERM et al more visibly
+	* scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in:
+	  nut-driver-enumerator.sh.in : re-evaluate ups.conf checksum if
+	  interrupted during sleep
+	* scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in:
+	  nut-driver-enumerator.sh.in : refactor $RECONFIGURATION_SIGNALS in
+	  daemonize() mode and add graceful termination support
+	* scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in:
+	  nut-driver-enumerator.sh.in : refactor SIGHUP trap handling in
+	  daemonize() mode
+	* scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in:
+	  nut-driver-enumerator.sh.in : do not further subshell the aready
+	  backgrounded daemonize()
+	* scripts/systemd/nut-driver-enumerator-daemon.service.in,
+	  scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in:
+	  nut-driver-enumerator-daemon.sh /
+	  nut-driver-enumerator-daemon.service.in : support a daemon-after
+	  mode
+	* scripts/systemd/nut-driver-enumerator-daemon-activator.service.in:
+	  nut-driver-enumerator-daemon-activator.service.in : Make it a
+	  short-lived oneshot service after all
+	* scripts/systemd/nut-driver-enumerator-daemon.service.in:
+	  nut-driver-enumerator-daemon.service.in : remove irrelevant
+	  comments (from non-daemonized origins) and we do forking
+	* scripts/systemd/nut-driver-enumerator-daemon-activator.service.in:
+	  nut-driver-enumerator-daemon-activator.service.in : Limit the
+	  ammount of times we try to reload/restart
+	  nut-driver-enumerator-daemon.service
+	* .../systemd/nut-driver-enumerator-daemon-activator.service.in:
+	  nut-driver-enumerator-daemon-activator.service.in : This unit is
+	  intentionally not installed as PartOf/WantedBy anything, no
+	  auto-start
+
+2018-12-04  Jim Klimov <jim@jimklimov.com>
+
+	* configure.ac, docs/config-notes.txt, scripts/systemd/.gitignore,
+	  scripts/systemd/Makefile.am, scripts/systemd/README,
+	  .../nut-driver-enumerator-daemon-activator.path.in,
+	  ...t-driver-enumerator-daemon-activator.service.in,
+	  .../nut-driver-enumerator-daemon.service.in,
+	  scripts/systemd/nut-driver-enumerator.path.in,
+	  scripts/systemd/nut-driver-enumerator.service.in:
+	  nut-driver-enumerator-daemon* : Introduce a systemd service unit
+	  bundle for daemonized mode
+
+2019-03-29  Jim Klimov <jimklimov@gmail.com>
+
+	* scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in:
+	  nut-driver-enumerator.sh.in : refactor
+	  nut_driver_enumerator_full_reconfigure() into a routine
+	* scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in:
+	  nut-driver-enumerator.sh.in : refactor get_service_for_device()
+	  into a routine
+	* scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in:
+	  nut-driver-enumerator.sh.in : added
+	  update_upslist_savednames_find_missing() into single-run and
+	  daemonized modes, to update inconsistent configs
+	* scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in:
+	  nut-driver-enumerator.sh.in : refactor
+	  list_services_for_devices(_once) and get_device_for_service() into
+	  routines
+	* scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in:
+	  nut-driver-enumerator.sh.in : introduce
+	  upslist_savednames_missing() and upslist_savednames_find_mismatch()
+	  to upgrade entries without saved names
+	* scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in:
+	  nut-driver-enumerator.sh.in : comment that we trust
+	  hook_getSavedDeviceName data to be consistent (ensuring it is is
+	  expensive and belongs elsewhere)
+	* scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in:
+	  nut-driver-enumerator.sh.in : to be sure, chop instance names from
+	  SMF FMRIs more intensively
+	* scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in:
+	  nut-driver-enumerator.sh.in : introduce hook_findSavedDeviceName()
+	  for faster --get-service-for-device processing
+	* scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in:
+	  nut-driver-enumerator.sh.in : use hook_getSavedDeviceName() to
+	  speed up --get-device-for-service processing where possible (typo
+	  fix)
+	* scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in:
+	  nut-driver-enumerator.sh.in : standardize hook_setSavedDeviceName()
+	* scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in:
+	  nut-driver-enumerator.sh.in : use hook_getSavedDeviceName() to
+	  speed up --get-device-for-service processing where possible
+	* scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in:
+	  nut-driver-enumerator.sh.in : update (C) 2019
+	* scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in:
+	  nut-driver-enumerator.sh.in : refactor expansions "$_VAR" =>
+	  "${_VAR}" for better readability
+	* scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in:
+	  nut-driver-enumerator.sh.in : add a BIG NOTE about shell
+	  interpreter
+
+2019-03-28  Jim Klimov <jimklimov@gmail.com>
+
+	* scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in:
+	  nut-driver-enumerator.sh.in : save original device name into
+	  service props
+	* scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in:
+	  nut-driver-enumerator.sh.in : run smf_setSaved*() in subprocesses
+	  to avoid variable pollution in caller
+	* scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in:
+	  nut-driver-enumerator.sh.in : smf_setSavedMD5() : refactor the
+	  actual setter into smf_setSavedUniq() for other use-cases
+	* scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in:
+	  nut-driver-enumerator.sh.in : smf_setSavedMD5() : do not spam
+	  stderr about yet-missing property
+	* scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in:
+	  nut-driver-enumerator.sh.in : smf_setSavedMD5() : do not try to
+	  refresh the non-instance service (for global config)
+	* scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in:
+	  nut-driver-enumerator.sh.in : smf_getSavedMD5() : do not spam
+	  stderr about yet-missing property
+	* scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in:
+	  nut-driver-enumerator.sh : do not create a hashed SMF instance if
+	  failed to add a normally-named one because it already exists (clean
+	  it up and then add)
 
 2019-03-25  Jean-Baptiste Boric <boricj@users.noreply.github.com>
 
@@ -24676,11 +27873,12 @@
 
 2014-02-14  Arnaud Quette <arnaud.quette@free.fr>
 
-	* docs/acknowledgements.txt: Update NUT team membership for Frédéric
-	  Bohe  Frederic Bohe, NUT senior developer and Eaton contractor from
-	  2009 to 2013, is now a retired member. Thanks for all the hard work
-	  on the Windows port, nut-scanner, Unix packaging, support, ... Also
-	  update the developers membership page, from Alioth to GitHub
+	* docs/acknowledgements.txt: Update NUT team membership for
+	  Frédéric Bohe  Frederic Bohe, NUT senior developer and Eaton
+	  contractor from 2009 to 2013, is now a retired member. Thanks for
+	  all the hard work on the Windows port, nut-scanner, Unix packaging,
+	  support, ... Also update the developers membership page, from
+	  Alioth to GitHub
 
 2013-02-24  Charles Lepple <clepple+nut@gmail.com>
 
@@ -25002,8 +28200,8 @@
 	  environment on ships (and we don't need shutdown there -- in
 	  critical situations the system has to operate as long as possible,
 	  untill the battery is empty)  Also, all of the previous issues
-	  listed below are now fixed in this al175 version:  - ‘return’ with
-	  a value, in function returning void (2x) - anonymous variadic
+	  listed below are now fixed in this al175 version:  - ‘return’
+	  with a value, in function returning void (2x) - anonymous variadic
 	  macros were introduced in C99 - C++ style comments are not allowed
 	  in ISO C90 - ISO C forbids braced-groups within expressions (5x) -
 	  ISO C90 forbids specifying subobject to initialize (16x) - ISO C99
