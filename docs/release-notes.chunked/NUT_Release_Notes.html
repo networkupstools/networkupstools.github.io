@@ -29,6 +29,10 @@ drivers started with the <code class="literal">-FF</code> command-line option (e
    systemd units to stay "foregrounded" <span class="strong"><strong>and</strong></span> save a PID file anyway) should
    now also handle an existing PID file to interact with the earlier instance
    of the driver program, if still running (e.g. started manually). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2384" target="_top">#2384</a>]
+</li><li class="listitem">
+Extended instant commands for driver reloading with a <code class="literal">driver.exit</code>
+   command for a protocol equivalent of sending a <code class="literal">SIGTERM</code>, e.g. when
+   a newer instance of the driver program tries to start. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1903" target="_top">#1903</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2392" target="_top">#2392</a>]
 </li><li class="listitem"><p class="simpara">
 riello_ser updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -38,6 +42,10 @@ added <code class="literal">localcalculation</code> option to compute <code clas
      (similar to <code class="literal">runtimecal</code> in some other drivers, may be refactored
      to that configuration and logic model in later NUT releases)
 </li></ul></div></li><li class="listitem">
+USB drivers could log <code class="literal">(nut_)libusb_get_string: Success</code> due to either
+   reading an empty string or getting a success code <code class="literal">0</code> from libusb.
+   This difference should now be better logged, and not into syslog. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2399" target="_top">#2399</a>]
+</li><li class="listitem">
 upsmon: it was realized that the <code class="literal">POWERDOWNFLAG</code> must be explicitly set in
    the configuration file, there is no built-in default in the binary program
    (the settings facilitated by the <code class="literal">configure</code> script during build "only"
@@ -3309,4 +3317,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.32. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2024-04-13 17:46:15 -- Network UPS Tools 2.8.2.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2024-04-16 09:38:31 -- Network UPS Tools 2.8.2.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
