@@ -741,7 +741,7 @@ asciidoc.install();
 <div class="sect1">
 <h2 id="_name">NAME</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>riello_ser - Driver for Riello UPS Protocol UPS equipment</p></div>
+<div class="paragraph"><p>riello_ser - Driver for Riello UPS Protocol UPS equipment via serial port connections</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -770,6 +770,54 @@ UPS GPSER and SENTR protocols.</p></div>
 </div>
 </div>
 <div class="sect1">
+<h2 id="_extra_arguments">EXTRA ARGUMENTS</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>You may need to tweak some settings, depending on the make and model of your
+UPS (see <a href="ups.conf.html">ups.conf(5)</a>):</p></div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>localcalculation</strong>
+</dt>
+<dd>
+<p>
+When enabled, driver will calculate values of <code>battery.runtime</code> and
+<code>battery.charge</code> "locally" in the driver. This is for some Riello models
+which provide incorrect values in hardware readings, or none at all.
+This "local calculation" is done according to nominal battery capacity,
+nominal battery voltage, actual battery charge, maximum and actual UPS
+load.
+</p>
+<div class="paragraph"><p>You may want to also configure <em>default.battery.voltage.low</em> and
+<em>default.battery.voltage.high</em> in case the built-in default range
+(from 10.7V to 12.9V) does not match your hardware, or give a shot
+to <em>default.battery.voltage.nominal</em> (e.g. <em>24</em>) if your device does
+not serve that either.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">Lead (PbAc) battery charge graph is not linear, so guesstimated
+charge value may not be perfectly accurate. However it should be good
+enough to determine battery actual status and roughly estimate the time
+it can still power the system.</td>
+</tr></table>
+</div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Warning</div>
+</td>
+<td class="content">This keyword may be deprecated in future releases of the driver,
+in favor of <code>runtimecal</code> and other settings which it requires (as seen in
+<a href="nutdrv_qx.html">nutdrv_qx(8)</a>, <a href="blazer_ser.html">blazer_ser(8)</a> and <a href="blazer_usb.html">blazer_usb(8)</a> drivers).</td>
+</tr></table>
+</div>
+</dd>
+</dl></div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_author">AUTHOR</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>Massimo Zampieri</p></div>
@@ -778,6 +826,10 @@ UPS GPSER and SENTR protocols.</p></div>
 <div class="sect1">
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="_related_drivers">Related drivers</h3>
+<div class="paragraph"><p><a href="riello_usb.html">riello_usb(8)</a></p></div>
+</div>
 <div class="sect2">
 <h3 id="_the_core_driver">The core driver</h3>
 <div class="paragraph"><p><a href="nutupsdrv.html">nutupsdrv(8)</a></p></div>
@@ -792,7 +844,7 @@ UPS GPSER and SENTR protocols.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-07-01 08:44:37 UTC -- Network UPS Tools 2.8.1.1
+Last updated 2024-04-29 08:42:36 UTC -- Network UPS Tools 2.8.2.1
 </div>
 </div>
 </body>

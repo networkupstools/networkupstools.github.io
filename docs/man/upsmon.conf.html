@@ -751,6 +751,10 @@ asciidoc.install();
 will monitor and to tell it how to shut down the system when necessary.
 It will contain passwords, so keep it secure.  Ideally, only the upsmon
 process should be able to read it.</p></div>
+<div class="paragraph"><p>A minimal configuration should include at least one <code>MONITOR</code> instruction,
+<code>MINSUPPLIES</code> (may be 0 if this system is only monitoring other NUT servers),
+and a <code>POWERDOWNFLAG</code> if this machine is a "primary" system connected to
+the UPS and drives its late-shutdown power-off command in an emergency.</p></div>
 <div class="paragraph"><p>Additionally, other optional configuration values can be set in this
 file.</p></div>
 </div>
@@ -1234,13 +1238,30 @@ also apply here.</p></div>
 <dd>
 <p>
 upsmon creates this file when running in primary mode when the UPS needs
-to be powered off.  You should check for this file in your shutdown
-scripts and call <code>upsdrvctl shutdown</code> if it exists.
+to be powered off.  You should check for this file in your late shutdown
+scripts and call <code>upsdrvctl shutdown</code> if it exists; note that <code>upsmon -K</code>
+may be called for this effect, if NUT configuration files remain readable
+at that point (file systems mostly unmounted or changed to read-only).
 </p>
+<div class="paragraph"><p>Historically it was often <code>/etc/killpower</code> but nowadays you may want it
+in a temporary filesystem (e.g. under <code>/run</code> or <code>/run/nut</code> location).</p></div>
+<div class="paragraph"><p>Note that double backslashes must be used for Windows paths, e.g.
+<code>C:\\Temp\\killpower</code> (modern Windows may also accept forward slashes
+like <code>C:/Temp/killpower</code> but YMMV).</p></div>
 <div class="paragraph"><p>This is done to forcibly reset the secondary systems, so they don&#8217;t get
 stuck at the "halted" stage even if the power returns during the shutdown
 process.  This usually does not work well on contact-closure UPSes that
 use the genericups driver.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Warning</div>
+</td>
+<td class="content">The <code>upsmon</code> binary program does not have a built-in default,
+so this setting MUST be specified in the configuration, in order for the
+late shutdown integration to work on the particular primary-mode system!</td>
+</tr></table>
+</div>
 <div class="paragraph"><p>See the config-notes.txt file in the docs subdirectory for more information.
 Refer to the section:
 <a id="UPS_shutdown"></a> "Configuring automatic shutdowns for low battery events",
@@ -1272,6 +1293,35 @@ effect (decrease known-fed supplies count) if it persists for this many seconds.
 <td class="content">so far we support the device reporting an "OFF" state which usually
 means completely un-powering the load; a bug-tracker issue was logged to
 design similar support for just some manageable outlets or outlet groups.</td>
+</tr></table>
+</div>
+</dd>
+<dt class="hdlist1">
+<strong>OBLBDURATION</strong> <em>seconds</em>
+</dt>
+<dd>
+<p>
+NUT normally raises alarms for immediate shutdown (FSD) for consumers of an
+UPS known to be on battery ("OB") and achieving the low battery status ("LB"),
+if that is their last remaining power source to satisfy their <code>MINSUPPLIES</code>
+setting. In some special cases, users may want to delay raising the alarm
+(using the <code>OBLBDURATION</code> option) at their discretion and risk of an ungraceful
+shutdown.
+</p>
+<div class="paragraph"><p>A positive value puts "OB LB" state into effect only if it persists for this
+many seconds. A non-positive value makes the FSD effect of detected "OB LB"
+state immediate. Built-in default value is 0 (seconds).</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">If both <code>OBLBDURATION</code> and <code>HOSTSYNC</code> options are set on the same
+(secondary) <code>upsmon</code> client system, and <code>HOSTSYNC</code> is shorter, it would be
+effectively ignored: <code>upsmon</code> would wait for up to <code>OBLBDURATION</code> seconds
+for the "OB LB" state to clear, and then the secondary client logic would
+fall through to immediate shutdown. If the primary system issues an FSD on
+this UPS, that would take an even higher-priority effect as soon as seen.</td>
 </tr></table>
 </div>
 </dd>
@@ -1504,7 +1554,7 @@ does not change the previously active logging verbosity.</td>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-01-19 23:42:25 UTC -- Network UPS Tools 2.8.1.1
+Last updated 2024-04-29 08:42:36 UTC -- Network UPS Tools 2.8.2.1
 </div>
 </div>
 </body>

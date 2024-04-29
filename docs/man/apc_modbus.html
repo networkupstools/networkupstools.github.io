@@ -982,6 +982,32 @@ by the interface number <code>0</code> (default).
 </p>
 </dd>
 <dt class="hdlist1">
+<strong>usb_config_index</strong>
+</dt>
+<dt class="hdlist1">
+<strong>usb_hid_rep_index</strong>
+</dt>
+<dt class="hdlist1">
+<strong>usb_hid_desc_index</strong>
+</dt>
+<dt class="hdlist1">
+<strong>usb_hid_ep_in</strong>
+</dt>
+<dt class="hdlist1">
+<strong>usb_hid_ep_out</strong>
+</dt>
+<dd>
+<p>
+Force use of specific interface, endpoint, descriptor index etc. numbers,
+rather than defaulting to 0 (rarely other values in certain drivers for
+some devices known to use non-zero numbers). Specified as a hexadecimal
+number.
+</p>
+<div class="paragraph"><p>As a rule of thumb for <code>usb_hid_desc_index</code> discovery, you can see larger
+<code>wDescriptorLength</code> values (roughly 600+ bytes) in reports of <code>lsusb</code> or
+similar tools.</p></div>
+</dd>
+<dt class="hdlist1">
 <strong>porttype</strong>=<em>value</em>
 </dt>
 <dd>
@@ -1054,6 +1080,91 @@ be good to set a higher timeout on TCP connections with high latency.
 </div>
 </div>
 <div class="sect1">
+<h2 id="_bugs">BUGS</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>This driver relies on advanced features of <code>libmodbus</code> to talk Modbus protocol
+over USB specifically (Serial and TCP are part of common library codebase).
+At the time of this writing, the common library project is just expecting a
+merge of the pull request with this ability.</p></div>
+<div class="paragraph"><p>For the time being, if your OS distribution does not ship the required feature
+set, you may have to build your own <code>libmodbus</code> and subsequently (re-)build NUT
+against this library, as detailed in the NUT GitHub Wiki at
+<a href="https://github.com/networkupstools/nut/wiki/APC-UPS-with-Modbus-protocol">https://github.com/networkupstools/nut/wiki/APC-UPS-with-Modbus-protocol</a></p></div>
+<div class="paragraph"><p>The short sequence may be like follows:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>cd ~/
+git clone -b rtu_usb https://github.com/networkupstools/libmodbus
+cd libmodbus
+./autogen.sh
+./configure --with-libusb --prefix=/path/to/prefix
+make install</code></pre>
+</div></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<div class="ulist"><ul>
+<li>
+<p>
+you may need to &#8216;make &amp;&amp; sudo make install` if you want to place this library
+  files&#8217; variant into a system path (like <code>--prefix=/usr/local/ups</code> to match
+  NUT defaults&#8201;&#8212;&#8201;this activity would need privilege elevation via <code>sudo</code>),
+  and not into your home directory or some <code>/tmp</code> location.
+</p>
+</li>
+<li>
+<p>
+conversely, you may want to
+  <code>./configure --with-libusb --enable-static --disable-shared --prefix=/path/to/prefix</code>
+  and only build and install a static <code>libmodbus.a</code> (can well be installed into
+  <code>/tmp</code> or similarly short-lived location), so that the customized Modbus+USB
+  logic gets built directly into <code>apc_modbus</code> binary program and there would be
+  no potential run-time conflict with a dynamic library file available elsewhere
+  in the system.
+</p>
+</li>
+</ul></div>
+</td>
+</tr></table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre><code>cd ~/
+git clone https://github.com/networkupstools/nut
+cd nut
+./autogen.sh
+./configure --with-drivers=apc_modbus --with-usb --with-modbus \
+   --with-modbus-includes=-I/path/to/prefix/include/modbus \
+   --with-modbus-libs="-L/path/to/prefix/lib -lmodbus"
+make</code></pre>
+</div></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<div class="ulist"><ul>
+<li>
+<p>
+Other NUT <code>configure</code> options may be needed for proper behavior, such as
+<code>--prefix</code>, <code>--with-sysconfdir</code>, <code>--with-user</code> and <code>--with-group</code> to match
+your packaged or otherwise preceding NUT installation.
+</p>
+</li>
+</ul></div>
+</td>
+</tr></table>
+</div>
+<div class="paragraph"><p>The <code>./configure --enable-inplace-runtime</code> may be a good start to inherit
+build configuration from an existing NUT deployment, as further detailed at
+<a href="https://github.com/networkupstools/nut/wiki/Building-NUT-for-in%E2%80%90place-upgrades-or-non%E2%80%90disruptive-tests">https://github.com/networkupstools/nut/wiki/Building-NUT-for-in%E2%80%90place-upgrades-or-non%E2%80%90disruptive-tests</a></p></div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_authors">AUTHORS</h2>
 <div class="sectionbody">
 <div class="ulist"><ul>
@@ -1082,7 +1193,7 @@ Axel Gembe &lt;<a href="mailto:axel@gembe.net">axel@gembe.net</a>&gt;
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-11-02 08:47:03 UTC -- Network UPS Tools 2.8.1.1
+Last updated 2024-04-29 08:42:36 UTC -- Network UPS Tools 2.8.2.1
 </div>
 </div>
 </body>
