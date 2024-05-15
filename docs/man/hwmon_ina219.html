@@ -5,7 +5,7 @@
 <head>
 <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
 <meta name="generator" content="AsciiDoc 10.2.0" />
-<title>NUT.CONF(5)</title>
+<title>HWMON_INA219(8)</title>
 <style type="text/css">
 /* Shared CSS for AsciiDoc xhtml11 and html5 backends */
 
@@ -735,230 +735,222 @@ asciidoc.install();
 </head>
 <body class="article">
 <div id="header">
-<h1>NUT.CONF(5)</h1>
+<h1>HWMON_INA219(8)</h1>
 </div>
 <div id="content">
 <div class="sect1">
 <h2 id="_name">NAME</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>nut.conf - UPS definitions for Network UPS Tools</p></div>
+<div class="paragraph"><p>hwmon_ina219 - driver for UPS based on INA219</p></div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_description">DESCRIPTION</h2>
+<h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>This file attempts to standardize the various files being found
-in different installations, like /etc/default/nut on Debian based
-systems and /etc/sysconfig/ups on RedHat based systems.</p></div>
-<div class="paragraph"><p>Distribution&#8217;s init script should source this file in order to
-determine which components have to be started.</p></div>
-<div class="paragraph"><p>Blank lines are ignored. Lines with a hash (<em>#</em>) character at the
-1st position of the line are ignored, too.  They can be used to add
-comments.</p></div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_important_note">IMPORTANT NOTE</h2>
-<div class="sectionbody">
-<div class="paragraph"><p>This file is intended to be sourced by shell scripts.
-You MUST NOT use spaces around the equal sign!</p></div>
-<div class="paragraph"><p>Refer to the EXAMPLE section for illustrations.</p></div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_directives">DIRECTIVES</h2>
-<div class="sectionbody">
-<div class="dlist"><dl>
-<dt class="hdlist1">
-<strong>MODE</strong>
-</dt>
-<dd>
-<p>
-Required.  Recognized values are <em>none</em>, <em>standalone</em>, <em>netserver</em> and
-<em>netclient</em>.  Defaults to <em>none</em>.
-</p>
-<div class="dlist"><dl>
-<dt class="hdlist1">
-none
-</dt>
-<dd>
-<p>
-Indicates that NUT should not get started automatically,
-possibly because it is not configured or that an Integrated Power
-Management or some external system, is used to startup the NUT
-components.
-</p>
-</dd>
-<dt class="hdlist1">
-standalone
-</dt>
-<dd>
-<p>
-Addresses a local only configuration, with 1 UPS
-protecting the local system.  This implies to start the 3 NUT
-layers (driver, upsd and upsmon), with the related configuration
-files.  This mode can also address UPS redundancy.
-</p>
-</dd>
-<dt class="hdlist1">
-netserver
-</dt>
-<dd>
-<p>
-Like the standalone configuration, but also possibly
-need one or more specific LISTEN directive(s) in upsd.conf.
-Since this MODE is open to the network, a special care should be
-applied to security concerns.
-</p>
-</dd>
-<dt class="hdlist1">
-netclient
-</dt>
-<dd>
-<p>
-When only upsmon is required, possibly because
-there are other hosts that are more closely attached to the UPS,
-the MODE should be set to netclient.
-</p>
-</dd>
-</dl></div>
-</dd>
-<dt class="hdlist1">
-<strong>ALLOW_NO_DEVICE</strong>
-</dt>
-<dd>
-<p>
-Optional, defaults to <code>false</code>.  Set this to <code>true</code> to allow starting the <code>upsd</code>
-NUT data server service even if <code>ups.conf</code> has no device sections configured
-at the moment. This environment variable overrides the built-in "false" flag
-value in the <code>upsd</code> program, and an optional same-named default flag that
-can be set in <code>upsd.conf</code>.
-</p>
-<div class="paragraph"><p>If you want a data server always running and responding on the network, even
-if it initially has nothing to serve (may be live-reloaded later, when devices
-become configured), this option is for you.</p></div>
-</dd>
-<dt class="hdlist1">
-<strong>ALLOW_NOT_ALL_LISTENERS</strong>
-</dt>
-<dd>
-<p>
-Optional, defaults to <code>false</code>.  Set this to <code>true</code> to allow starting the <code>upsd</code>
-NUT data server even if not all <code>LISTEN</code> directives can be honoured at the
-moment. This environment variable overrides the built-in "false" flag in the
-<code>upsd</code> program, and an optional same-named default flag that can be set in
-<code>upsd.conf</code>.
-</p>
-<div class="paragraph"><p>If you want a data server always running, even if it would potentially not
-serve all clients on every uptime, this option is for you (note you would
-have to restart <code>upsd</code> to pick up the `LISTEN`ed IP address if it appears
-later).</p></div>
-<div class="paragraph"><p>Probably configuring <code>LISTEN *</code> is a better choice in such cases.</p></div>
-</dd>
-<dt class="hdlist1">
-<strong>UPSD_OPTIONS</strong>
-</dt>
-<dd>
-<p>
-Optional.  Set upsd specific options. See <a href="upsd.html">upsd(8)</a> for more
-details.  It is ignored when <em>MODE</em> above indicates that no upsd
-should be running.
-</p>
-</dd>
-<dt class="hdlist1">
-<strong>UPSMON_OPTIONS</strong>
-</dt>
-<dd>
-<p>
-Optional.  Set upsmon specific options. See <a href="upsmon.html">upsmon(8)</a> for
-more details.  It is ignored when <em>MODE</em> above indicates that no
-upsmon should be running.
-</p>
-</dd>
-<dt class="hdlist1">
-<strong>POWEROFF_WAIT</strong>
-</dt>
-<dd>
-<p>
-Optional.  At the end of an emergency system halt, the upsmon primary
-will signal the UPS to switch off.  This may fail for a number of
-reasons.  Most notably is the case that mains power returns during
-the shutdown process.  See the section "Power races" in
-/usr/share/doc/nut/FAQ.txt.gz.  The system will wait this
-long for the UPS to cut power, and then reboot.  It should be long
-enough to exhaust the batteries, in case line power continues to be
-unavailable.  On the other hand, it should not be so long that the
-system remains offline for an unreasonable amount of time if line
-power has returned.  See sleep(1) for compatible time syntax.
-If you specify the time in seconds, use the "s" suffix.
-</p>
+<div class="paragraph"><p><strong>hwmon_ina219</strong> -h</p></div>
+<div class="paragraph"><p><strong>hwmon_ina219</strong> -a <em>UPS_NAME</em> [<em>OPTIONS</em>]</p></div>
 <div class="admonitionblock">
 <table><tr>
 <td class="icon">
-<div class="title">Warning</div>
+<div class="title">Note</div>
 </td>
-<td class="content">this workaround might be dangerous under some circumstances.
-Please read <a href="http://bugs.debian.org/358696">http://bugs.debian.org/358696</a> for more details.</td>
+<td class="content">This man page only documents the specific features of the <strong>hwmon_ina219</strong>
+driver. For information about the core driver, see <a href="nutupsdrv.html">nutupsdrv(8)</a>.</td>
 </tr></table>
 </div>
-</dd>
+<div class="paragraph"><p>The driver implements reading of current and voltage from INA219 by using hwmon
+sysfs API of the Linux Kernel. There is no other UPS-like logic in there. Based
+on the measurements of the battery voltage and charging current, the driver
+makes assumptions of the current state of the system.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_supported_hardware">SUPPORTED HARDWARE</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>The <strong>hwmon_ina219</strong> driver is based on setup with Raspberry PI Compute Module 4
+and its baseboard Waveshare CM4-POE-UPS-BASE.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_extra_arguments">EXTRA ARGUMENTS</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>The required parameter for this driver:</p></div>
+<div class="dlist"><dl>
 <dt class="hdlist1">
-<strong>POWEROFF_QUIET</strong>
+<strong>port</strong>=<em>hwmon-dir</em>
 </dt>
 <dd>
 <p>
-Optional, defaults to <code>false</code>.  This setting controls if the NUT shutdown
-integration scripts or service units would emit messages about their activity
-(or lack thereof).  By default they may be verbose, to aid in post-mortem
-troubleshooting via logs or console captures.  Set to <code>true</code> to avoid that
-trove of information, if you consider it noise.
+Path to appropriate /sys/hwmon/hwmonX or <em>auto</em> to detect automatically.
+</p>
+</dd>
+</dl></div>
+<div class="paragraph"><p>Optional parameters:</p></div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>default.battery.charge.low</strong>=<em>low-battery-threshold</em>
+</dt>
+<dd>
+<p>
+Threshold for low battery state (in percent).
 </p>
 </dd>
 <dt class="hdlist1">
-<strong>NUT_DEBUG_LEVEL</strong>
+<strong>default.battery.voltage.nominal</strong>=<em>voltage-value</em>
 </dt>
 <dd>
 <p>
-Optional, defaults to <code>0</code>. This setting controls the default debugging message
-verbosity passed to NUT daemons. As an environment variable, its priority sits
-between that of <em>DEBUG_MIN</em> setting of a driver and the command-line options.
+Nominal voltage (V) value of utilised batteries, used to derive their low
+and high watermark settings (see below). Default: 3.6.
+</p>
+<div class="paragraph"><p>Known pre-sets include: <code>3.6</code>, <code>3.7</code>, <code>3.8</code>, <code>3.85</code>.</p></div>
+</dd>
+<dt class="hdlist1">
+<strong>default.battery.voltage.low</strong>=<em>voltage-value</em>
+</dt>
+<dd>
+<p>
+Low voltage (V) value of used batteries. Practically, it denotes depleted
+batteries. If not given, it is derived from the <strong>battery.voltage.nominal</strong>.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>default.battery.voltage.high</strong>=<em>voltage-value</em>
+</dt>
+<dd>
+<p>
+High voltage (V) value of used batteries. Practically, it denotes fully
+charged batteries. If not given, it is derived from the
+<strong>battery.voltage.nominal</strong>.
 </p>
 </dd>
 </dl></div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_example">EXAMPLE</h2>
+<h2 id="_installation">INSTALLATION</h2>
 <div class="sectionbody">
+<div class="paragraph"><p>This driver is specific to the Linux hwmon API.</p></div>
+<div class="paragraph"><p>When using with the Waveshare CM4-POE-UPS-BASE baseboard, there are few steps
+to be done to enable access to the INA219 circuit:</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+edit boot/config.txt:
+</p>
 <div class="listingblock">
 <div class="content">
-<pre><code>   # /etc/nut/nut.conf.  See nut.conf(5)
-
-   MODE=none
-
-   UPSD_OPTIONS=""
-
-   UPSMON_OPTIONS=""
-
-   # POWEROFF_WAIT=15m</code></pre>
+<pre><code>  dtparam=i2c_vc=on
+  dtoverlay=i2c-ina219</code></pre>
 </div></div>
+</li>
+<li>
+<p>
+create a new device tree overlay file i2c-ina219.dts:
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>/dts-v1/;
+/plugin/;
+
+/ {
+    compatible = "brcm,bcm2835";
+
+    fragment@0 {
+        target = &lt;&amp;i2c_csi_dsi&gt;;
+        __overlay__ {
+            #address-cells = <b>&lt;1&gt;</b>;
+            #size-cells = <b>&lt;0&gt;</b>;
+
+            ina219@43 {
+                status = "okay";
+                compatible = "ti,ina219";
+                reg = &lt;0x43&gt;;
+                shunt-resistor = <b>&lt;100000&gt;</b>;  // R100
+            };
+        };
+    };
+};</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+convert i2c-ina219.dts to dtbo and place it into /boot/overlays:
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>$ dtc -@ -I dts -O dtb -o /boot/overlays/i2c-ina219.dtbo i2c-ina219.dts</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+configure hwmon_ina219 UPS driver for NUT (ups.conf):
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>[ina219]
+driver = hwmon_ina219
+port = auto</code></pre>
+</div></div>
+</li>
+</ol></div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_integration">INTEGRATION</h2>
+<h2 id="_known_issues_and_bugs">KNOWN ISSUES AND BUGS</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>An init script, such as /etc/init.d/nut, is expected to source this
-file in order to determine which components have to be started.</p></div>
+<div class="paragraph"><p>The driver shutdown function is not implemented.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_authors">AUTHORS</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Andrew Anderson &lt;<a href="mailto:aander07@gmail.com">aander07@gmail.com</a>&gt;</p></div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
-<div class="paragraph"><p><a href="ups.conf.html">ups.conf(5)</a>, <a href="upsd.conf.html">upsd.conf(5)</a>, <a href="upsd.users.html">upsd.users(5)</a>,
-<a href="upsmon.conf.html">upsmon.conf(5)</a></p></div>
+<div class="sect2">
+<h3 id="_the_core_driver">The core driver:</h3>
+<div class="paragraph"><p><a href="nutupsdrv.html">nutupsdrv(8)</a></p></div>
+</div>
 <div class="sect2">
 <h3 id="_internet_resources">Internet resources:</h3>
-<div class="paragraph"><p>The NUT (Network UPS Tools) home page: <a href="https://www.networkupstools.org/">https://www.networkupstools.org/</a></p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+Initial pull requests adding this driver:
+</p>
+<div class="ulist"><ul>
+<li>
+<p>
+<a href="https://github.com/networkupstools/nut/pull/2430">https://github.com/networkupstools/nut/pull/2430</a>
+</p>
+</li>
+<li>
+<p>
+<a href="https://github.com/networkupstools/nut/issues/2378">https://github.com/networkupstools/nut/issues/2378</a>
+</p>
+</li>
+</ul></div>
+</li>
+<li>
+<p>
+Baseboard with INA219: <a href="https://www.waveshare.com/wiki/CM4-POE-UPS-BASE">https://www.waveshare.com/wiki/CM4-POE-UPS-BASE</a>
+</p>
+</li>
+<li>
+<p>
+TI INA219: <a href="https://www.ti.com/lit/ds/symlink/ina219.pdf">https://www.ti.com/lit/ds/symlink/ina219.pdf</a>
+</p>
+</li>
+<li>
+<p>
+The NUT (Network UPS Tools) home page: <a href="https://www.networkupstools.org/">https://www.networkupstools.org/</a>
+</p>
+</li>
+</ul></div>
 </div>
 </div>
 </div>
@@ -966,7 +958,7 @@ file in order to determine which components have to be started.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-05-01 20:42:57 UTC -- Network UPS Tools 2.8.2.1
+Last updated 2024-05-15 11:42:53 UTC -- Network UPS Tools 2.8.2.1
 </div>
 </div>
 </body>

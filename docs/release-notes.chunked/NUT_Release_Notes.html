@@ -61,10 +61,22 @@ usbhid-ups updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 Support of the <code class="literal">onlinedischarge_log_throttle_hovercharge</code> in the NUT
      v2.8.2 release was found to be incomplete. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2423" target="_top">#2423</a>, follow-up to <a class="ulink" href="https://github.com/networkupstools/nut/issues/2215" target="_top">#2215</a>]
+</li><li class="listitem">
+MGE HID list of <code class="literal">mge_model_names[]</code> was extended for Eaton 5PX and 5SC
+     series (largely guessing, feedback and PRs for adaptation to actual
+     string values reported by devices via USB are welcome), so these devices
+     would now report <code class="literal">battery.voltage</code> and <code class="literal">battery.voltage.nominal</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2380" target="_top">#2380</a>]
 </li></ul></div></li><li class="listitem">
 USB drivers could log <code class="literal">(nut_)libusb_get_string: Success</code> due to either
    reading an empty string or getting a success code <code class="literal">0</code> from libusb.
    This difference should now be better logged, and not into syslog. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2399" target="_top">#2399</a>]
+</li><li class="listitem">
+Introduced a new driver concept for interaction with OS-reported hardware
+   monitoring readings. Currently instantiated as <code class="literal">hwmon_ina219</code> specifically
+   made for Texas Instruments INA219 chip as exposed in the Linux "hwmon"
+   subsystem of its "sysfs" interface (and talking I2C under the hood), this
+   approach seems to have good potential to expand into covering more devices
+   and perhaps platforms. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2430" target="_top">#2430</a>]
 </li><li class="listitem"><p class="simpara">
 upsmon:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -3368,4 +3380,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.32. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2024-05-13 14:43:54 -- Network UPS Tools 2.8.2.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2024-05-15 11:44:34 -- Network UPS Tools 2.8.2.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
