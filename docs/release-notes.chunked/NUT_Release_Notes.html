@@ -130,7 +130,14 @@ introduced a check for daemons working with PID files to double-check
      that if they can resolve the program name of a running process with
      this identifier, that such name matches the current program (avoid
      failures to start NUT daemons if PID files are on persistent storage,
-     and some unrelated program got that PID after a reboot). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2463" target="_top">#2463</a>]
+     and some unrelated program got that PID after a reboot).  This might
+     introduce regressions for heavily customized NUT builds (e.g. those
+     embedded in NAS or similar devices) where binary file names differ
+     significantly from a <code class="literal">progname</code> string defined in the respective NUT
+     source file, so a boolean <code class="literal">NUT_IGNORE_CHECKPROCNAME</code> environment
+     variable support was added to optionally disable this verification.
+     Also the NUT daemons should request to double-check against their
+     run-time process name (if it can be detected). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2463" target="_top">issue #2463</a>]
 </li></ul></div></li><li class="listitem">
 various recipe, documentation and source files were revised to address
    respective warnings issued by the new generations of analysis tools.
@@ -3418,4 +3425,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.32. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2024-06-10 12:14:51 -- Network UPS Tools 2.8.2.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2024-06-15 18:19:14 -- Network UPS Tools 2.8.2.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

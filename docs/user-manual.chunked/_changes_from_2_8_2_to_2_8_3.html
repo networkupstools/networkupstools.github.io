@@ -12,6 +12,16 @@ Internal API change for <code class="literal">sendsignalpid()</code> and <code c
   which can impact NUT forks which build using <code class="literal">libcommon.la</code> and similar
   libraries.  Added new last argument with <code class="literal">const char *progname</code> (may be
   <code class="literal">NULL</code>) to check that we are signalling an expected program name when we
-  work with a PID. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2463" target="_top">#2463</a>]
+  work with a PID.  With the same effort, NUT programs which deal with PID
+  files to send signals (<code class="literal">upsd</code>, <code class="literal">upsmon</code>, drivers and <code class="literal">upsdrvctl</code>) would
+  now default to a safety precaution — checking that the running process
+  with that PID has the expected program name (on platforms where we can
+  determine one). This might introduce regressions for heavily customized
+  NUT builds (e.g. embedded in NAS or similar devices) whose binary file
+  names differ significantly from a <code class="literal">progname</code> defined in the respective
+  NUT source file, so a boolean <code class="literal">NUT_IGNORE_CHECKPROCNAME</code> environment
+  variable support was added to optionally disable this verification.
+  Also the NUT daemons should request to double-check against their
+  run-time process name (if it can be detected). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2463" target="_top">issue #2463</a>]
 </li></ul></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2024-06-10 09:08:28 -- Network UPS Tools 2.8.2.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="Upgrading_notes.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="Upgrading_notes.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="_changes_from_2_8_1_to_2_8_2.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2024-06-15 18:18:36 -- Network UPS Tools 2.8.2.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="Upgrading_notes.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="Upgrading_notes.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="_changes_from_2_8_1_to_2_8_2.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
