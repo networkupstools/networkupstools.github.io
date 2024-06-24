@@ -37,6 +37,12 @@ A fix for <code class="literal">upsmon</code> v2.8.1 setting of <code class="lit
      revisiting <a class="ulink" href="https://github.com/networkupstools/nut/pull/2055" target="_top">PR #2055</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2044" target="_top">issue #2044</a>] was overly zealous and impacted also
      the <code class="literal">OB</code> state in cases where communications to the data server were
      severed and <code class="literal">DEADTIME</code> setting was not honored. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/2462" target="_top">PR #2462</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2454" target="_top">issue #2454</a>]
+</li><li class="listitem">
+Using <code class="literal">drivername -c reload</code> (e.g. facilitated by <code class="literal">nut-driver-enumerator</code>
+     script and service when editing <code class="literal">ups.conf</code>) led to disconnected Unix
+     sockets and a tight polling loop that hogged CPU. While the underlying
+     bug is ancient, it took recent development to hit it as a practical
+     regression. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1904" target="_top">issue #1904</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2484" target="_top">issue #2484</a>]
 </li></ul></div></li><li class="listitem">
 drivers, <code class="literal">upsd</code>, <code class="literal">upsmon</code>: reduce "scary noise" about failure to <code class="literal">fopen()</code>
    the PID file (which most of the time means that no previous instance of
@@ -152,7 +158,21 @@ enabled installation of built single-file PDF and HTML (including man page
    renditions) under the configured <code class="literal">docdir</code>. It seems previously they were
    only built (if requested) but not installed via <code class="literal">make</code>, unlike the common
    man pages which are delivered automatically. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2445" target="_top">#2445</a>]
-</p><pre class="literallayout">NOTE: The `html-chunked` documents are currently still not installed.</pre></li><li class="listitem"><p class="simpara">
+</p><pre class="literallayout">NOTE: The `html-chunked` documents are currently still not installed.</pre></li><li class="listitem">
+added support to <code class="literal">./configure --with-doc=man=dist-auto</code> to use distributed
+   manual page files if present; only fall back to build them if we can. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2473" target="_top">#2473</a>]
+</li><li class="listitem">
+added a <code class="literal">make distcheck-light-man</code> recipe to require verification that the
+   manual page files can be built using the prepared "tarball" archive. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2473" target="_top">#2473</a>]
+</li><li class="listitem">
+added a <code class="literal">common/Makefile.am</code> build product for a new internal library
+   <code class="literal">libcommonstr.la</code> which allows a smaller selection of helper methods
+   for tools like <code class="literal">nut-scanner</code> which do not need the full <code class="literal">libcommon.la</code>
+   nor <code class="literal">libcommonclient.la</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2478" target="_top">#2478</a>]
+</li><li class="listitem">
+build of <code class="literal">snmp-ups</code> and <code class="literal">netxml-ups</code> drivers now explicitly brings linker
+   dependency on chosen SSL libraries. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2479" target="_top">#2479</a>]
+</li><li class="listitem"><p class="simpara">
 brought keyword dictionaries of <code class="literal">nutconf</code> and <code class="literal">augeas</code> NUT configuration
    file parsers up to date; restored automated checks for <code class="literal">augeas</code> lenses.
    [<a class="ulink" href="https://github.com/networkupstools/nut/issues/657" target="_top">issue #657</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2294" target="_top">issue #2294</a>]
@@ -3425,4 +3445,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.32. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2024-06-15 18:19:14 -- Network UPS Tools 2.8.2.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2024-06-24 08:53:41 -- Network UPS Tools 2.8.2.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
