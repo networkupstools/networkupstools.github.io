@@ -548,7 +548,29 @@ a different widths.</p><p>One common example for this is multi-line if condition
 (non-leading) spaces at least between names and values not too many
 characters wide; it still helps to align the columns with spaces at
 offsets divisible by 4 or 8 (consistently for the whole table):</p><pre class="screen">#define SHORT_MACRO                         1   /* flag comment */
-#define SOMETHING_WITH_A_VERY_LONG_NAME     255 /* flag comment */</pre><p>If you write something that uses leading spaces, you may get away with
+#define SOMETHING_WITH_A_VERY_LONG_NAME     255 /* flag comment */</pre><p>While at it, we encourage indentation of nested preprocessor macros
+and pragmas, by adding a single space character for each inner level,
+as well as commenting the <code class="literal">#else</code> and <code class="literal">#endif</code> parts (especially if
+they are far away from their opening <code class="literal">#if</code>/<code class="literal">#ifdef</code>/<code class="literal">#ifndef</code> statement)
+to help visual navigation in the source code base. Please take care to
+keep the hash <code class="literal">#</code> character of the preprocessor lines in the left-most
+column, since some implementations of <code class="literal">cpp</code> parser used for analysis
+default to "traditional" (pre-C89) syntax shared with other languages,
+and then ignore lines which do not start with the hash character (or
+worse, ignore only some of them but not others).</p><pre class="screen">#ifdef WITH_SSL
+# ifdef WITH_NSS
+        /* some code for NSS */
+# endif /* WITH_NSS */
+# ifdef WITH_OPENSSL
+#  ifndef WIN32
+        /* some code for OpenSSL on POSIX systems */
+#  else /* not WIN32 */
+        /* some code for OpenSSL on Windows */
+#  endif        /* not WIN32 */
+# endif /* WITH_OPENSSL */
+#else   /* not WITH_SSL */
+        /* report that crypto support is not built */
+#endif  /* WITH_SSL */</pre><p>If you write something that uses leading spaces, you may get away with
 it in a driver that’s relatively secluded.  However, if we have to work
 on that code, expect it to get reformatted according to the above.</p><p>Patches to existing code that don’t conform to the coding style being
 used in that file will probably be dropped.  If it’s something we really
@@ -582,7 +604,9 @@ should happen below the declarations.</p><p>To display in a rough example:</p><p
                 NUT_UNUSED_VARIABLE(signal_X);
                 /* We have explicitly got nothing to do if we catch signal X */
                 return;
-        }</pre></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_miscellaneous_coding_style_tools"></a>3.7. Miscellaneous coding style tools</h3></div></div></div><p>NUT codebase includes an <code class="literal">.editorconfig</code> file which should be supported
+        }</pre><p>All this having been said, we do detect and use the support for pragmas
+to quiesce the complaints about such situations, but limit their use to
+processing of certain third-party header files.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_miscellaneous_coding_style_tools"></a>3.7. Miscellaneous coding style tools</h3></div></div></div><p>NUT codebase includes an <code class="literal">.editorconfig</code> file which should be supported
 by most of the IDEs and text editors nowadays. Many support this format
 specification (at least partially) out of the box, possibly with some
 configuration toggle in the GUI. Others may need a plugin, see more at
@@ -884,4 +908,4 @@ scenarios automatically. If your code adds a substantial feature, consider
 extending the <code class="literal">Jenkinsfile-dynamatrix</code> and/or <code class="literal">ci_build.sh</code> scripts in the
 workspace root to add another <code class="literal">BUILD_TYPE</code> to the matrix of tests run in
 parallel.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2024-04-29 08:48:35 -- Network UPS Tools 2.8.2.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="design.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="new-drivers.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2024-07-04 23:52:48 -- Network UPS Tools 2.8.2.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="design.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="new-drivers.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
