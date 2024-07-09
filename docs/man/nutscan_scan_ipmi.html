@@ -754,22 +754,31 @@ asciidoc.install();
 <div class="literalblock">
 <div class="content">
 <pre><code>nutscan_device_t * nutscan_scan_ipmi(
-      const char * startIP,
-      const char * stopIP,
-      nutscan_ipmi_t * sec);</code></pre>
+       const char * startIP,
+       const char * stopIP,
+       nutscan_ipmi_t * sec);</code></pre>
+</div></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>nutscan_device_t * nutscan_scan_ip_range_ipmi(
+       nutscan_ip_range_list_t * irl,
+       nutscan_ipmi_t * sec);</code></pre>
 </div></div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>The <strong>nutscan_scan_ipmi()</strong> function tries to detect IPMI manageable devices.</p></div>
-<div class="paragraph"><p>If <em>start_ip</em> is NULL, the function searches for a local PSU.</p></div>
+<div class="paragraph"><p>The <strong>nutscan_scan_ipmi()</strong> and <strong>nutscan_scan_ip_range_ipmi()</strong> functions
+try to detect IPMI manageable devices.</p></div>
+<div class="paragraph"><p>If <em>start_ip</em> for the former or <em>irl</em> for the latter are NULL, the
+respective function searches for a local PSU.</p></div>
 <div class="paragraph"><p>Otherwise, it searches for remote hosts that would serve IPMI protocols,
 and would try to authenticate using the data in <em>sec</em> structure.
-It issues a NUT request on every IP ranging from <em>startIP</em> to <em>stopIP</em>,
-where <em>stopIP</em> is optional. Those IP arguments may be either IPv4 or IPv6
-addresses or host names.</p></div>
+The former issues an IPMI request on every IP ranging from <em>startIP</em> to
+<em>stopIP</em>, where <em>stopIP</em> is optional; the latter can walk several IP
+address ranges represented by a <code>nutscan_ip_range_list_t</code> structure.
+Those IP arguments may be either IPv4 or IPv6 addresses or host names.</p></div>
 <div class="paragraph"><p>You MUST call <a href="nutscan_init.html">nutscan_init(3)</a> before using this function.</p></div>
 </div>
 </div>
@@ -801,7 +810,9 @@ or hidden with <code>#if 0</code>.</p></div>
 <a href="nutscan_display_ups_conf.html">nutscan_display_ups_conf(3)</a>,
 <a href="nutscan_display_parsable.html">nutscan_display_parsable(3)</a>, <a href="nutscan_new_device.html">nutscan_new_device(3)</a>,
 <a href="nutscan_free_device.html">nutscan_free_device(3)</a>, <a href="nutscan_add_option_to_device.html">nutscan_add_option_to_device(3)</a>,
-<a href="nutscan_add_device_to_device.html">nutscan_add_device_to_device(3)</a>, <a href="nutscan_scan_eaton_serial.html">nutscan_scan_eaton_serial(3)</a>,
+<a href="nutscan_init_ip_ranges.html">nutscan_init_ip_ranges(3)</a>,
+<a href="nutscan_free_ip_ranges.html">nutscan_free_ip_ranges(3)</a>,
+<a href="nutscan_add_ip_range.html">nutscan_add_ip_range(3)</a>,
 <a href="nutscan_cidr_to_ip.html">nutscan_cidr_to_ip(3)</a></p></div>
 </div>
 </div>
@@ -809,7 +820,7 @@ or hidden with <code>#if 0</code>.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-04-29 08:42:36 UTC -- Network UPS Tools 2.8.2.1
+Last updated 2024-07-09 11:43:26 UTC -- Network UPS Tools 2.8.2.1
 </div>
 </div>
 </body>

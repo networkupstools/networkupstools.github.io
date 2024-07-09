@@ -869,7 +869,8 @@ an <em>end IP</em>. See specific SNMP OPTIONS for community and security setting
 <dd>
 <p>
 Scan XML/HTTP devices. Can broadcast a network message on the current network
-interfaces to retrieve XML/HTTP capable devices. No IP required in this mode.
+interface(s) to retrieve XML/HTTP capable devices. No IP required in this mode.
+If IP address ranges are specified, they would be scanned instead of a broadcast.
 </p>
 </dd>
 <dt class="hdlist1">
@@ -885,7 +886,7 @@ Scan NUT devices (i.e. upsd daemon) on IP ranging from <em>start IP</em> to <em>
 </dt>
 <dd>
 <p>
-Scan NUT simulated devices (.dev files in $CONFPATH).
+Scan NUT simulated devices (<code>.dev</code> files in <code>$NUT_CONFPATH</code>).
 </p>
 </dd>
 <dt class="hdlist1">
@@ -893,8 +894,8 @@ Scan NUT simulated devices (.dev files in $CONFPATH).
 </dt>
 <dd>
 <p>
-Scan NUT servers using Avahi request on the current network interfaces.
-No IP required.
+Scan NUT servers using Avahi request on the current network interface(s).
+No IP address options are required or used.
 </p>
 </dd>
 <dt class="hdlist1">
@@ -903,7 +904,7 @@ No IP required.
 <dd>
 <p>
 Scan NUT compatible power supplies available via IPMI on the current host,
-or over the network.
+or over the network if IP address ranges are specified.
 </p>
 </dd>
 <dt class="hdlist1">
@@ -924,13 +925,13 @@ This option must be requested explicitly, even for a complete scan.
 <li>
 <p>
 a single character indicating a port number (<em>0</em> (zero) for /dev/ttyS0 and
-/dev/ttyUSB0 on Linux, <em>1</em> for COM1 on Windows, <em>a</em> for /dev/ttya on Solaris&#8230;)
+  /dev/ttyUSB0 on Linux, <em>1</em> for COM1 on Windows, <em>a</em> for /dev/ttya on Solaris&#8230;)
 </p>
 </li>
 <li>
 <p>
 a range of N characters, hyphen separated, describing the range of
-ports using <em>X-Y</em>, where X and Y are characters referring to the port number.
+  ports using <em>X-Y</em>, where X and Y are characters referring to the port number.
 </p>
 </li>
 <li>
@@ -951,6 +952,37 @@ a list of ports name, coma separated, like <em>/dev/ttyS1,/dev/ttyS4</em>.
 <div class="sect1">
 <h2 id="_network_options">NETWORK OPTIONS</h2>
 <div class="sectionbody">
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">The networked buses (such as SNMP, NetXML, IPMI and "Old NUT") allow to
+specify several IP (IPv4 or IPv6) address ranges, down to individual single
+IP addresses.  Normally a new range is specified by a set of one <code>-s</code> and one
+<code>-e</code> options following each other (in any order).  Lone or consecutive <code>-s</code> or
+<code>-e</code> options present on the command line would translate to single-IP queries.
+Also a <code>-m</code> option squashed between two <code>-s</code> and <code>-e</code> options would be a new
+range, turning those two into single-IP queries.  This feature does not by
+itself recombine "neighboring" addresses into one range, nor even check for
+duplicate or overlapping specifications.</td>
+</tr></table>
+</div>
+<div class="paragraph"><p>+
+Also note that some buses require IP address(es) to scan, and others have a
+different behavior when exactly no addresses are specified (it is not currently
+possible to mix the two behaviors in one invocation of the <code>nut-scanner</code> tool).</p></div>
+<div class="paragraph"><p>+
+A single-address range may be a host name which would be resolved into one IP
+address by the system resolver. A CIDR using a host name and netmask length
+would be resolved into an IP address and subjected to the mask application,
+to query hosts "near" the named one.</p></div>
+<div class="paragraph"><p>+
+Finally note that currently even if multi-threaded support is available, each
+range specification is a separate fan-out of queries constrained by the timeout.
+Requests to scan many single IP addresses will take a while to complete, much
+longer than if they were a single range.  This will be hopefully fixed in later
+releases.</p></div>
 <div class="dlist"><dl>
 <dt class="hdlist1">
 <strong>-t</strong> | <strong>--timeout</strong> <em>timeout</em>
@@ -985,8 +1017,19 @@ less than <em>start IP</em>, both parameters are internally permuted.
 </dt>
 <dd>
 <p>
-Set a range of IP using CIDR notation.
+Set a range of IP addresses by using CIDR notation.
 </p>
+<div class="paragraph"><p>A special form <code>-m auto</code> allows <code>nut-scanner</code> to detect local IP address(es)
+and scan corresponding subnet(s) on supported platforms, and <code>-m auto4</code> or
+<code>-m auto6</code> limits the selected addresses to IPv4 and IPv6 respectively. Only
+the first "auto*" request would be honoured, others ignored with a warning.</p></div>
+<div class="paragraph"><p>An <code>/ADDRLEN</code> suffix can be added to the option, to filter out discovered
+subnets with too many bits available for the host address part (avoiding
+millions of scans in the extreme cases).  For example, if your IPv4 LAN&#8217;s
+network range is <code>10.2.3.0/24</code>, its address part is <code>(32-24)=8</code>. Note that
+while this is applied to IPv6 networks also, their typical <code>/64</code> subnets
+are not likely to have a NUT/SNMP/NetXML/&#8230; server <strong>that</strong> close nearby
+(in addressing terms), for a tight filter to find them. Default is <code>8</code>.</p></div>
 </dd>
 </dl></div>
 </div>
@@ -1327,7 +1370,7 @@ on address range 192.168.0.0 to 192.168.0.255 using CIDR notation:</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-04-29 08:42:36 UTC -- Network UPS Tools 2.8.2.1
+Last updated 2024-07-09 11:43:26 UTC -- Network UPS Tools 2.8.2.1
 </div>
 </div>
 </body>

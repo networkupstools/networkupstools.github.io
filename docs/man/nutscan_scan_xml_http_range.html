@@ -760,16 +760,26 @@ asciidoc.install();
        useconds_t usec_timeout,
        nutscan_xml_t * sec)</code></pre>
 </div></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>nutscan_device_t * nutscan_scan_ip_range_xml_http(
+       nutscan_ip_range_list_t * irl,
+       useconds_t usec_timeout,
+       nutscan_xml_t * sec)</code></pre>
+</div></div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>The <strong>nutscan_scan_xml_http_range()</strong> function tries to detect NUT compatible
-XML/HTTP devices.</p></div>
-<div class="paragraph"><p>If <em>start_ip</em> is NULL, the function does this by issuing a broadcast message
-on currently configured network interfaces.</p></div>
-<div class="paragraph"><p>Otherwise, it queries every IP ranging from <em>start_ip</em> to <em>stop_ip</em>.
+<div class="paragraph"><p>The <strong>nutscan_scan_xml_http_range()</strong> and <strong>nutscan_scan_ip_range_xml_http()</strong>
+functions try to detect NUT compatible XML/HTTP devices.</p></div>
+<div class="paragraph"><p>If <em>start_ip</em> for the former or <em>irl</em> for the latter are NULL, the
+respective function does this by issuing a broadcast message on all
+currently configured network interfaces.</p></div>
+<div class="paragraph"><p>Otherwise, the former queries every IP ranging from <em>start_ip</em> to <em>stop_ip</em>,
+where <em>stopIP</em> is optional; the latter can walk several IP address ranges
+represented by a <code>nutscan_ip_range_list_t</code> structure.
 Those IP arguments may be either IPv4 or IPv6 addresses or host names.</p></div>
 <div class="paragraph"><p>It waits up to <em>usec_timeout</em> microseconds for a response from potential
 devices.</p></div>
@@ -797,14 +807,18 @@ or NULL if an error occurs or no device is found.</p></div>
 <a href="nutscan_display_ups_conf.html">nutscan_display_ups_conf(3)</a>,
 <a href="nutscan_display_parsable.html">nutscan_display_parsable(3)</a>, <a href="nutscan_new_device.html">nutscan_new_device(3)</a>,
 <a href="nutscan_free_device.html">nutscan_free_device(3)</a>, <a href="nutscan_add_option_to_device.html">nutscan_add_option_to_device(3)</a>,
-<a href="nutscan_add_device_to_device.html">nutscan_add_device_to_device(3)</a>, <a href="nutscan_scan_eaton_serial.html">nutscan_scan_eaton_serial(3)</a></p></div>
+<a href="nutscan_add_device_to_device.html">nutscan_add_device_to_device(3)</a>, <a href="nutscan_scan_eaton_serial.html">nutscan_scan_eaton_serial(3)</a>,
+<a href="nutscan_init_ip_ranges.html">nutscan_init_ip_ranges(3)</a>,
+<a href="nutscan_free_ip_ranges.html">nutscan_free_ip_ranges(3)</a>,
+<a href="nutscan_add_ip_range.html">nutscan_add_ip_range(3)</a>,
+<a href="nutscan_cidr_to_ip.html">nutscan_cidr_to_ip(3)</a></p></div>
 </div>
 </div>
 </div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-04-29 08:42:36 UTC -- Network UPS Tools 2.8.2.1
+Last updated 2024-07-09 11:43:26 UTC -- Network UPS Tools 2.8.2.1
 </div>
 </div>
 </body>

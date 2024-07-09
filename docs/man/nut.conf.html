@@ -924,6 +924,67 @@ verbosity passed to NUT daemons. As an environment variable, its priority sits
 between that of <em>DEBUG_MIN</em> setting of a driver and the command-line options.
 </p>
 </dd>
+<dt class="hdlist1">
+<strong>NUT_DEBUG_SYSLOG</strong>
+</dt>
+<dd>
+<p>
+Optional, unset by default.
+Normally NUT can (attempt to) use the syslog or Event Log (WIN32), but the
+environment variable <em>NUT_DEBUG_SYSLOG</em> allows to bypass it, and perhaps keep
+the daemons logging to stderr (useful e.g. in NUT Integration Test suite to
+not pollute the OS logs, or in systemd where stderr and syslog both go into
+the same journal). Recognized values:
+</p>
+<div class="tableblock">
+<table rules="all"
+width="100%"
+frame="border"
+cellspacing="0" cellpadding="4">
+<col width="50%" />
+<col width="50%" />
+<thead>
+<tr>
+<th align="left" valign="top"> Value       </th>
+<th align="left" valign="top"> Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table"><code>stderr</code></p></td>
+<td align="left" valign="top"><p class="table">Disabled and background() keeps stderr attached</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table"><code>none</code></p></td>
+<td align="left" valign="top"><p class="table">Disabled and background() detaches stderr as usual</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table"><code>default</code></p></td>
+<td align="left" valign="top"><p class="table">Not disabled</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">unset/other</p></td>
+<td align="left" valign="top"><p class="table">Not disabled</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</dd>
+<dt class="hdlist1">
+<strong>NUT_IGNORE_CHECKPROCNAME</strong>
+</dt>
+<dd>
+<p>
+Optional, defaults to <code>false</code>.  Normally NUT can (attempt to) verify that
+the program file name matches the name associated with a running process,
+when using PID files to send signals.
+</p>
+<div class="paragraph"><p>The <code>NUT_IGNORE_CHECKPROCNAME</code> boolean toggle allows to quickly skip such
+verification, in case it causes problems (e.g. NUT programs were renamed
+and do not match built-in expectations).</p></div>
+<div class="paragraph"><p>This environment variable can also be optionally set in init-scripts or
+service methods for <code>upsd</code>, <code>upsmon</code> and NUT drivers/<code>upsdrvctl</code>.</p></div>
+</dd>
 </dl></div>
 </div>
 </div>
@@ -966,7 +1027,7 @@ file in order to determine which components have to be started.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-05-01 20:42:57 UTC -- Network UPS Tools 2.8.2.1
+Last updated 2024-06-15 18:14:47 UTC -- Network UPS Tools 2.8.2.1
 </div>
 </div>
 </body>

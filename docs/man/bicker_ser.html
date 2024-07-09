@@ -782,6 +782,161 @@ module such as UPSIC-1205, UPSIC-2403, DC2412-UPS and DC2412-UPS-LD.</p></div>
 </div>
 </div>
 <div class="sect1">
+<h2 id="_variables">VARIABLES</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Depending on the type of your UPS unit, some of the following variables may
+be changed with <a href="upsrw.html">upsrw(8)</a>. If the driver can&#8217;t read a variable from the
+UPS, it will not be made available. Whenever not explicitly stated, any variable
+can be disabled, in which case the action it performs will not be executed. To
+disable a variable, set it to an empty value.</p></div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>ups.delay.shutdown</strong> (in seconds, default disabled)
+</dt>
+<dd>
+<p>
+If activated and the UPS is in battery mode and the set time has expired, the
+output will be disabled, and the UPS and energy storage will be disconnected.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>ups.delay.start</strong> (in seconds, default disabled)
+</dt>
+<dd>
+<p>
+If activated and a restart condition switches the UPS output off and on again,
+the set time is the delay between switching on and off. The time should cause a
+defined off time so that capacities in the application can be discharged.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>battery.charge.restart</strong> (in percent, default disabled)
+</dt>
+<dd>
+<p>
+If activated and the UPS is off or restarts, the UPS output will not be released
+until the energy storage device has the set charge state. The energy storage
+device is charged in the meantime.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>battery.charge.low</strong> (in percent, default <code>20</code>)
+</dt>
+<dd>
+<p>
+If activated and the UPS is in battery mode and the battery level drops below
+the set value, a shutdown command via relay event is signaled.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>experimental.output.current.low</strong> (in mA, default <code>200</code>)
+</dt>
+<dd>
+<p>
+If activated and the UPS is in battery mode and the current drops below the set
+value, the output of the UPS will shut down and disconnect the energy storage to
+prevent self-discharge.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>experimental.ups.delay.shutdown.signal</strong> (in seconds, default disabled)
+</dt>
+<dd>
+<p>
+If activated and the UPS is in battery mode and the set time has elapsed, a
+shutdown command via relay event is signaled.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>experimental.ups.delay.shutdown.signal.masked</strong> (in seconds, default disabled)
+</dt>
+<dd>
+<p>
+If activated and the UPS is in battery mode and the signal at the IN-1 input is
+high and the set time has expired, a shutdown command via relay event is
+signaled.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>experimental.battery.charge.low.empty</strong> (in percent, default <code>20</code>)
+</dt>
+<dd>
+<p>
+This parameter stores the threshold value for the "Battery Empty" signal.
+Currently this setting is only valid for relay signaling. Cannot be disabled.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>experimental.ups.relay.mode</strong> (default <code>0x01</code>)
+</dt>
+<dd>
+<p>
+This parameter controls the behavior of the relay in case of different events.
+Cannot be disabled.
+</p>
+<div class="paragraph"><p>Available relay modes:</p></div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>0x01</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+On power fail (normally closed)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>0x02</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+On power fail (normally opened)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>0x03</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Shutdown impulse (1 second)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>0x04</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Battery low signal (normally closed)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>0x05</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Battery defect signal (normally closed)
+</p>
+</td>
+</tr>
+</table></div>
+</dd>
+</dl></div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_instant_commands">INSTANT COMMANDS</h2>
 <div class="sectionbody">
 <div class="dlist"><dl>
@@ -835,7 +990,7 @@ some UPS ignore it and use a fixed 2 seconds delay instead.
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-05-24 02:43:08 UTC -- Network UPS Tools 2.8.2.1
+Last updated 2024-05-30 23:43:02 UTC -- Network UPS Tools 2.8.2.1
 </div>
 </div>
 </body>
