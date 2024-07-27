@@ -11,6 +11,24 @@ be beneficial to add <code class="literal">--enable-option-checking=fatal</code>
 command line, in order to quickly pick up any other removed option flags.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_8_2_to_2_8_3"></a>3.1. Changes from 2.8.2 to 2.8.3</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 PLANNED: Keep track of any further API clean-up?
 </li><li class="listitem">
+NUT development snapshots can now have more version components than the
+  standard semantic versioning triplet, optionally adding the amount of
+  commits on the development trunk since previous release, and the amount
+  of commits on a feature branch that are unique to it.  Release artifacts
+  that have zeroes in both positions would have them stripped and still
+  have the standard "semver" exposed, but the development snapshots can
+  now be more reasonably upgraded with automated tooling. A copy of the
+  current version information would be embedded into "dist" archives as
+  a <code class="literal">VERSION_DEFAULT</code> file, so it can be used without git. Certain distros
+  can benefit from a <code class="literal">VERSION_FORCED</code> file or a <code class="literal">NUT_VERSION_FORCED</code>
+  environment variable exported from their build system, e.g. via
+  <code class="literal">echo NUT_VERSION_FORCED=1.1.1 &gt; VERSION_FORCED</code>. Unfortunately, some
+  appliances tag all software the same with their firmware version;
+  if this is required, a (NUT_)VERSION_FORCED_SEMVER envvar or file can
+  help identify the actual NUT release version triplet used on the box.
+  Please use it, it immensely helps with community troubleshooting!
+  [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1949" target="_top">issue #1949</a>]
+</li><li class="listitem">
 <code class="literal">usbhid-ups</code> subdriver <code class="literal">PowerCOM HID</code> subdriver sent UPS <code class="literal">shutdown</code> and
   <code class="literal">stayoff</code> commands in wrong byte order, at least for devices currently
   in the field. Driver now sends the commands in a way that satisfies new
@@ -616,4 +634,4 @@ The newapc driver has been renamed to apcsmart.  If you previously
   used newapc, make sure you delete the old binary and fix your
   ups.conf.  Otherwise, you may run the old driver from 1.4.
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_file_trimmed_here_on_changes_from_1_2_2_to_1_4_0"></a>3.28. File trimmed here on changes from 1.2.2 to 1.4.0</h3></div></div></div><p>For information before this point, start with version 2.4.1 and work back.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2024-07-23 08:45:25 -- Network UPS Tools 2.8.2.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="NUT_Release_Notes.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="Project_History.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2024-07-27 14:43:50 -- Network UPS Tools 2.8.2.121.647</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="NUT_Release_Notes.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="Project_History.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
