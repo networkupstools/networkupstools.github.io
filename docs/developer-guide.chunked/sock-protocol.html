@@ -29,7 +29,8 @@ transmitted in response to its DUMPALL request.  Once this has been
 received by the server, it can be sure that it knows everything that the
 driver does.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_pong"></a>PONG</h4></div></div></div><pre class="literallayout">PONG</pre><p>This is sent in response to a PING from the server.  It is only used as
 a sanity check to make sure that the driver has not gotten stuck
-somewhere.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_dataok"></a>DATAOK</h4></div></div></div><pre class="literallayout">DATAOK</pre><p>This means that the driver is able to communicate with the UPS, and the
+somewhere.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_ok"></a>OK</h4></div></div></div><pre class="literallayout">OK Goodbye</pre><p>This is sent in response to a LOGOUT from the server (or more likely from
+a sibling driver or <code class="literal">upsdrvctl</code> program).</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_dataok"></a>DATAOK</h4></div></div></div><pre class="literallayout">DATAOK</pre><p>This means that the driver is able to communicate with the UPS, and the
 data should be treated as usable.  It is always sent at the end of the
 dump if the data is not stale.  It may also be sent at other times.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_datastale"></a>DATASTALE</h4></div></div></div><pre class="literallayout">DATASTALE</pre><p>This is sent by the driver to inform any listeners that the data is no
 longer usable.  This usually means that the driver is unable to get any
@@ -80,7 +81,11 @@ by <code class="literal">send_to_all()</code> method in <code class="literal">ds
 enables that — unless disabled by providing an optional zero or negative
 numeric argument. Note that initial default is to receive everything, so
 this command may be useful for connections that disabled broadcasts at
-some point.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_design_notes"></a>5.4. Design notes</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_requests"></a>Requests</h4></div></div></div><p>There is no way to request just one variable.  This was done on purpose
+some point.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_logout"></a>LOGOUT</h4></div></div></div><p>Primarily used by communications between driver processes and/or <code class="literal">upsdrvctl</code>,
+this command allows clients to gracefully close connection to the NUT driver
+which acts as the server on the socket/pipe, avoiding noisy logs about sudden
+disconnection.</p><pre class="literallayout">LOGOUT
+OK Goodbye</pre></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_design_notes"></a>5.4. Design notes</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_requests"></a>Requests</h4></div></div></div><p>There is no way to request just one variable.  This was done on purpose
 to limit the complexity of the drivers.  Their job is to send out
 updates and handle a few simple requests.  DUMPALL is provided to give
 the server a known foundation.</p><p>To track a limited set of variables, a server just needs to do DUMPALL,
@@ -99,4 +104,4 @@ characters, with some speed penalty as things get really big.</p></div><div clas
 it must flush any local storage and start again with DUMPALL.  The
 driver may have changed the internal state considerably during that
 time, and any other approach could leave old elements behind.</p></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2024-07-31 17:43:18 -- Network UPS Tools 2.8.2.121.647</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="new-drivers.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="augeas.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2024-08-01 17:45:18 -- Network UPS Tools 2.8.2.121.647</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="new-drivers.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="augeas.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
