@@ -150,6 +150,17 @@ it was realized that the <code class="literal">POWERDOWNFLAG</code> must be expl
 </li><li class="listitem">
 added an <code class="literal">OBLBDURATION</code> (seconds) setting to optionally delay raising
      the alarm for immediate shutdown in critical situation. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/321" target="_top">#321</a>]
+</li></ul></div></li><li class="listitem"><p class="simpara">
+More systemd integration:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Introduced a <code class="literal">nut-sleep.service</code> unit which stops <code class="literal">nut.target</code> when a
+     system sleep was requested, and starts it when the sleep is finished.
+     This helps avoid NUT shutting down a woken-up system just because its
+     power state was critical before the sleep (called as a <code class="literal">SHUTDOWNCMD</code>
+     implementation by the end-user), and a next-read timestamp was not seen
+     (deemed to be a stale UPS, meaning lost communications during critical
+     state, so must go down ASAP). While not as elegant as native systemd
+     "inhibitor interface" support, this approach does work. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1833" target="_top">#1833</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1070" target="_top">#1070</a>]
 </li></ul></div></li><li class="listitem">
 gamatronic driver revised for safer memory operations; this was reported
    to have fixed a Segmentation Fault seen in earlier NUT releases with
@@ -3570,4 +3581,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.32. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2024-08-14 09:26:38 -- Network UPS Tools 2.8.2.901</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2024-08-19 17:52:39 -- Network UPS Tools 2.8.2.922</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
