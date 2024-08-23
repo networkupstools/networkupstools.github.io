@@ -81,6 +81,13 @@ A new <code class="literal">NUT_QUIET_INIT_BANNER</code> envvar (presence or "tr
    prevent the tool name and NUT version banner from being unilaterally
    printed out when NUT programs start. [issues <a class="ulink" href="https://github.com/networkupstools/nut/issues/1789" target="_top">#1789</a> vs. <a class="ulink" href="https://github.com/networkupstools/nut/issues/316" target="_top">#316</a>; <a class="ulink" href="https://github.com/networkupstools/nut/issues/2573" target="_top">#2573</a>]
 </li><li class="listitem">
+The <code class="literal">upsdrvctl</code> should now warn if executed on systems where NUT was
+   built with support for service management frameworks like systemd or SMF,
+   so nut-driver service units prepared by <code class="literal">nut-driver-enumerator</code> would
+   conflict with manually-executed driver programs. This warning can be
+   hushed by exporting a <code class="literal">NUT_QUIET_INIT_NDE_WARNING</code> environment variable
+   with any value.
+</li><li class="listitem">
 Extended <code class="literal">upsdrvctl</code> with a <code class="literal">list</code> operation (or <code class="literal">-l</code> option) to report
    manageable device configuration names (possible <code class="literal">&lt;ups&gt;</code> arguments to
    <code class="literal">start</code>, <code class="literal">stop</code> etc. operations), or to confirm a single name that it
@@ -161,6 +168,19 @@ Introduced a <code class="literal">nut-sleep.service</code> unit which stops <co
      (deemed to be a stale UPS, meaning lost communications during critical
      state, so must go down ASAP). While not as elegant as native systemd
      "inhibitor interface" support, this approach does work. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1833" target="_top">#1833</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1070" target="_top">#1070</a>]
+</li><li class="listitem">
+Introduced support for the "inhibitor interface" as well (should be
+     available on systems with systemd version 183 or newer) for a better
+     handling of the time jump specifically in the <code class="literal">upsmon</code> client via new
+     <code class="literal">Inhibit()</code> method in <code class="literal">common.c</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1070" target="_top">#1070</a>]
+</li><li class="listitem">
+As an extension of the logic introduced above, hopefully now <code class="literal">upsmon</code>
+     would behave better in face of any significant and unexpected clock
+     jumps (on POSIX builds so far), even if they are not suspend/hibernate
+     events (or they were but we could not have an inhibit lock). Now they
+     should be handled similar (avoid stale UPS data and rash decisions)
+     for summer/winter time change on non-UTC deployments, a debugger
+     suspending the <code class="literal">upsmon</code> process, etc. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2597" target="_top">#2597</a>]
 </li></ul></div></li><li class="listitem">
 gamatronic driver revised for safer memory operations; this was reported
    to have fixed a Segmentation Fault seen in earlier NUT releases with
@@ -3581,4 +3601,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.32. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2024-08-19 17:52:39 -- Network UPS Tools 2.8.2.922</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2024-08-23 09:34:33 -- Network UPS Tools 2.8.2.986</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
