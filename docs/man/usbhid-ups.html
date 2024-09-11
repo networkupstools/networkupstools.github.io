@@ -1049,6 +1049,37 @@ number.
 <code>wDescriptorLength</code> values (roughly 600+ bytes) in reports of <code>lsusb</code> or
 similar tools.</p></div>
 </dd>
+</dl></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<div class="paragraph"><p>Run-time troubleshooting of USB-capable NUT drivers can involve not only
+raising the common NUT debug verbosity (e.g. using the <code>DEBUG_MIN</code> setting
+in <a href="ups.conf.html">ups.conf(5)</a> or protocol commands to change the <code>driver.debug</code>
+value), but may also benefit from LibUSB specific debugging.</p></div>
+<div class="paragraph"><p>For the latter, currently you would have to export the environment variable
+<code>LIBUSB_DEBUG</code> before starting a NUT driver (may be set and "exported" via
+<a href="nut.conf.html">nut.conf(5)</a>), to a numeric value such as <code>4</code> ("All messages are
+emitted"). For more details, including the currently supported values, see:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<a href="https://libusb.sourceforge.io/api-1.0/">https://libusb.sourceforge.io/api-1.0/</a>
+</p>
+</li>
+<li>
+<p>
+<a href="https://libusb.sourceforge.io/api-1.0/group">https://libusb.sourceforge.io/api-1.0/group</a><em>libusb</em>lib.html
+</p>
+</li>
+</ul></div>
+</td>
+</tr></table>
+</div>
+<div class="dlist"><dl>
 <dt class="hdlist1">
 <strong>subdriver</strong>=<em>regex</em>
 </dt>
@@ -1211,6 +1242,29 @@ the <code>OL+DISCHRG</code> message logging is not triggered by variations of th
 </p>
 </dd>
 <dt class="hdlist1">
+<strong>lbrb_log_delay_sec</strong>=<em>num</em>
+</dt>
+<dd>
+<p>
+Set to delay status-setting (and log messages) about device entering <code>LB</code> or
+<code>LB+RB</code> state.
+</p>
+<div class="paragraph"><p>Some APC BXnnnnMI device models or firmware versions (reportedly 2023-2024)
+frequently report low battery, replace battery, and all ok within a couple
+of seconds, sometimes but not always preceded by OL+DISCHRG (presumably
+calibration). This setting lets the driver ignore short-lived states and
+only pay attention if they persist longer than this setting (and the device
+power state is <code>OL</code>).</p></div>
+</dd>
+<dt class="hdlist1">
+<strong>lbrb_log_delay_without_calibrating</strong>
+</dt>
+<dd>
+<p>
+Set to apply <code>lbrb_log_delay_sec</code> even if device is not calibrating.
+</p>
+</dd>
+<dt class="hdlist1">
 <strong>disable_fix_report_desc</strong>
 </dt>
 <dd>
@@ -1226,6 +1280,20 @@ products, so processing these fix-ups would be a waste of time there.</p></div>
 <div class="paragraph"><p>It is also always possible that NUT fix-ups cause issues on some devices,
 whether due to NUT bugs or because the vendor protocol implementation is
 broken in more than one place.</p></div>
+</dd>
+<dt class="hdlist1">
+<strong>powercom_sdcmd_byte_order_fallback</strong>
+</dt>
+<dd>
+<p>
+Original <code>PowerCOM HID</code> subdriver code (until version 0.7) sent UPS <code>shutdown</code>
+and <code>stayoff</code> commands in a wrong byte order, than what is needed by actual
+devices seen in the field in 2024.  The byte order is fixed to satisfy new
+devices by default since version 0.71.  Just in case there are different
+firmwares out there with opposite behaviors, we provide this toggle to use
+old behavior in a particular deployment.  Maybe it was just a bug and nobody
+needs this fall-back&#8230;
+</p>
 </dd>
 <dt class="hdlist1">
 <strong>explore</strong>
@@ -1460,7 +1528,7 @@ Arjen de Korte
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-04-29 08:42:36 UTC -- Network UPS Tools 2.8.2.1
+Last updated 2024-08-12 23:43:13 UTC -- Network UPS Tools 2.8.2.1049
 </div>
 </div>
 </body>

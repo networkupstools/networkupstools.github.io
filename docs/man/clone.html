@@ -741,7 +741,7 @@ asciidoc.install();
 <div class="sect1">
 <h2 id="_name">NAME</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>clone - UPS driver clone</p></div>
+<div class="paragraph"><p>clone - clone an UPS, treating its outlet as if it were an UPS (with shutdown INSTCMD support)</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -766,7 +766,57 @@ clone driver.  For information about the core driver, see
 <div class="sectionbody">
 <div class="paragraph"><p>This driver, which sits on top of another driver socket, allows users to group
 clients to a particular outlet of a device and deal with this output as if it
-was a normal UPS.</p></div>
+were a normal UPS.  Unlike the <a href="clone-outlet.html">clone-outlet(8)</a> driver, this driver
+represents a manageable device for that can be used both for monitoring and
+for client computer and UPS/ePDU outlet shutdowns (it supports sending
+relevant instant commands during run time).</p></div>
+<div class="paragraph"><p>Unlike <a href="dummy-ups.html">dummy-ups(8)</a>, this driver does not require a running <code>upsd</code>
+data server nor use the networked NUT protocol to talk to the "real" driver
+(which may be remote in case of <code>dummy-ups</code> repeater mode).</p></div>
+<div class="paragraph"><p>This driver does not create a completely new virtual device, but replaces or
+extends some of the original readings reported by the "real" driver using
+information from the specified outlet, and relays all other readings as they
+were.</p></div>
+<div class="paragraph"><p>Remote clients like <code>upsmon</code> can <code>MONITOR</code> the device entry presented by the
+data server with this driver (and the "real" driver) running and published.</p></div>
+<div class="paragraph"><p>A larger deployment with one or more lower-priority devices collected on a
+manageable outlet of an UPS or ePDU would likely see several drivers set
+up on the system actually capable of interactions with the UPS and running
+the NUT data server <a href="upsd.html">upsd(8)</a> (and likely powered by another outlet):</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+a "real" driver talking to the UPS;
+</p>
+</li>
+<li>
+<p>
+a <code>clone</code> driver talking to the "real" driver and issuing outlet power-off
+  (or power-cycle) based on relatively high thresholds for remaining battery
+  charge and/or runtime of the actual UPS (or explicit instant commands),
+  with such operations first setting the respective timers for the outlet
+  on the "real" driver, and the "FSD" flag among states of the virtual UPS
+  status;
+</p>
+</li>
+<li>
+<p>
+possibly a <code>clone-outlet</code> driver which is read-only and interprets the
+  outlet timer values as triggers for "FSD" or "OFF" flags reported among
+  states of the virtual UPS status.
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>With this approach, the lower-priority systems collected on such outlet
+would run the NUT <a href="upsmon.html">upsmon(8)</a> client to <code>MONITOR</code> the virtual UPS
+presented by the read-only <code>clone-outlet</code> driver and shut down as soon as
+the "FSD" flag is raised (fairly early, based on charge and/or runtime
+thresholds configured for that driver) allowing the higher-priority devices
+(likely including the NUT server) to enjoy a longer on-battery life.</p></div>
+<div class="paragraph"><p>The <code>clone</code> driver responsible for outlet power state changes would not
+normally be monitored directly (e.g. to avoid unfortunate direct shutdown
+requests from those clients), although it can be (instead of <code>clone-outlet</code>)
+in sufficiently trusted networks.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -774,6 +824,16 @@ was a normal UPS.</p></div>
 <div class="sectionbody">
 <div class="paragraph"><p>This driver supports the following settings:</p></div>
 <div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>port</strong>=<em>drivername-devicename</em>
+</dt>
+<dd>
+<p>
+Required. The standard NUT driver <code>port</code> setting, here it provides the name
+of the local Unix socket (or named Windows pipe) for connection to the "real"
+driver.
+</p>
+</dd>
 <dt class="hdlist1">
 <strong>load.off</strong>=<em>command</em>
 </dt>
@@ -850,8 +910,9 @@ Set the remaining battery runtime when the clone UPS switches to LB
 <div class="sect1">
 <h2 id="_implementation">IMPLEMENTATION</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>The port specification in the <a href="ups.conf.html">ups.conf(5)</a> reference the driver
-socket that the "real" UPS driver is using. For example:</p></div>
+<div class="paragraph"><p>The port specification in the <a href="ups.conf.html">ups.conf(5)</a> should reference the
+local driver socket (or Windows named pipe) that the "real" UPS driver
+is using. For example:</p></div>
 <div class="listingblock">
 <div class="content">
 <pre><code>  [realups]
@@ -864,8 +925,55 @@ socket that the "real" UPS driver is using. For example:</p></div>
      load.on = outlet.1.load.on
      load.off = outlet.1.load.off
      load.status = outlet.1.status
+     desc = "Outlet 1 of the Real UPS"
      [...]</code></pre>
 </div></div>
+<div class="paragraph"><p>This driver supports instant commands to initiate a forced shutdown for
+<code>upsmon</code> or similar clients which <code>MONITOR</code> this virtual UPS device, if
+the outlet status is currently <em>on</em> and no other shutdown was initiated
+yet (setting the virtual UPS shutdown delay timer to <code>offdelay</code> and
+issuing an FSD via <code>ups.status</code>):</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>shutdown.return</code>&#8201;&#8212;&#8201;power the outlet back on after <code>ondelay</code>;
+</p>
+</li>
+<li>
+<p>
+<code>shutdown.stayoff</code>&#8201;&#8212;&#8201;keep the outlet <em>off</em>.
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>Such commands are propagated to the "real" driver using the NUT socket
+protocol (using command names specified in the <code>load.off</code> and <code>load.on</code>
+driver configuration options), if the shutdown or start timers are set
+at the moment, or if the "real" device is not "online" and its known
+battery charge or runtime are below the configured "low" thresholds.</p></div>
+<div class="paragraph"><p>The outlet status is determined using the name specified by the
+<code>load.status</code> driver option if set, or is just assumed by latest
+completed shutdown/start operation (using unknown outlet number).</p></div>
+<div class="paragraph"><p>The driver does not support a common NUT device shutdown operation as
+such (<code>clone -k</code> just prints an error and bails out).</p></div>
+<div class="paragraph"><p>This driver also supports setting certain NUT variables at run-time:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>battery.charge.low</code>&#8201;&#8212;&#8201;see <code>mincharge</code> in driver options;
+</p>
+</li>
+<li>
+<p>
+<code>battery.runtime.low</code>&#8201;&#8212;&#8201;see <code>minruntime</code> in driver options.
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>Compared to the "real" driver&#8217;s readings, this driver also adds
+(or overrides) the following data points: <code>ups.delay.shutdown</code>,
+<code>ups.delay.start</code>, <code>ups.timer.shutdown</code> and <code>ups.timer.start</code>.
+It keeps track of "real" driver&#8217;s values of <code>battery.charge</code> and
+<code>battery.runtime</code> (actual current readings) to decide on automated
+outlet shutdown later on.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -911,12 +1019,13 @@ to queue your <code>clone</code> drivers to start after the "real" device driver
 <div class="paragraph"><p><a href="upscmd.html">upscmd(1)</a>,
 <a href="upsrw.html">upsrw(1)</a>,
 <a href="ups.conf.html">ups.conf(5)</a>,
+<a href="clone-outlet.html">clone-outlet(8)</a>,
 <a href="nutupsdrv.html">nutupsdrv(8)</a></p></div>
 <div class="sect2">
 <h3 id="_dummy_driver">Dummy driver:</h3>
 <div class="paragraph"><p>The "repeater" mode of <em>dummy-ups</em> driver is in some ways similar to the
-<em>clone</em> driver, by relaying information from a locally or remotely running
-"real" device driver (and NUT data server).</p></div>
+<em>clone</em> and <em>clone-outlet</em> drivers, by relaying information from a locally
+or remotely running "real" device driver (and NUT data server).</p></div>
 <div class="paragraph"><p><a href="dummy-ups.html">dummy-ups(8)</a></p></div>
 </div>
 <div class="sect2">
@@ -929,7 +1038,7 @@ to queue your <code>clone</code> drivers to start after the "real" device driver
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-04-29 08:42:36 UTC -- Network UPS Tools 2.8.2.1
+Last updated 2024-09-11 23:42:57 UTC -- Network UPS Tools 2.8.2.1049
 </div>
 </div>
 </body>

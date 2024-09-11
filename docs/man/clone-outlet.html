@@ -5,7 +5,7 @@
 <head>
 <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
 <meta name="generator" content="AsciiDoc 10.2.0" />
-<title>NUTSCAN_DISPLAY_UPS_CONF(3)</title>
+<title>CLONE-OUTLET(8)</title>
 <style type="text/css">
 /* Shared CSS for AsciiDoc xhtml11 and html5 backends */
 
@@ -735,58 +735,238 @@ asciidoc.install();
 </head>
 <body class="article">
 <div id="header">
-<h1>NUTSCAN_DISPLAY_UPS_CONF(3)</h1>
+<h1>CLONE-OUTLET(8)</h1>
 </div>
 <div id="content">
 <div class="sect1">
 <h2 id="_name">NAME</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>nutscan_display_ups_conf - Display the specified <code>nutscan_device_t</code>
-structure on stdout.</p></div>
+<div class="paragraph"><p>clone-outlet - clone an UPS, treating its outlet as if it were an UPS (monitoring only)</p></div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
-<div class="literalblock">
-<div class="content">
-<pre><code>#include &lt;nut-scan.h&gt;</code></pre>
-</div></div>
-<div class="literalblock">
-<div class="content">
-<pre><code>void nutscan_display_ups_conf(nutscan_device_t * device);</code></pre>
-</div></div>
+<div class="paragraph"><p><strong>clone-outlet</strong> -h</p></div>
+<div class="paragraph"><p><strong>clone-outlet</strong> -a <em>UPS_NAME</em> [<em>OPTIONS</em>]</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">This man page only documents the specific features of the
+clone-outlet driver.  For information about the core driver, see
+<a href="nutupsdrv.html">nutupsdrv(8)</a>.</td>
+</tr></table>
+</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>The <strong>nutscan_display_ups_conf()</strong> function displays all NUT devices in
-<em>device</em> to stdout. It displays them in a way that it can be directly
-copied into the <em>ups.conf</em> file.</p></div>
-<div class="paragraph"><p>It is called from <strong>nutscan_display_ups_conf_with_sanity_check()</strong> to
-provide an aggregate content for <em>ups.conf</em> file in one shot.</p></div>
+<div class="paragraph"><p>This driver, which sits on top of another driver socket, allows users to group
+clients to a particular outlet of a device and deal with this output as if it
+were a normal UPS.  Unlike the <a href="clone.html">clone(8)</a> driver or <a href="dummy-ups.html">dummy-ups(8)</a>
+in repeater mode, this driver represents a read-only device for monitoring and
+shutdowns (it does not accept setting any values or sending instant commands
+during run time).</p></div>
+<div class="paragraph"><p>Unlike <a href="dummy-ups.html">dummy-ups(8)</a>, this driver does not require a running <code>upsd</code>
+data server nor use the networked NUT protocol to talk to the "real" driver
+(which may be remote in case of <code>dummy-ups</code> repeater mode).</p></div>
+<div class="paragraph"><p>This driver does not create a completely new virtual device, but replaces or
+extends some of the original readings reported by the "real" driver using
+information from the specified outlet, and relays all other readings as they
+were.</p></div>
+<div class="paragraph"><p>Remote clients like <code>upsmon</code> can <code>MONITOR</code> the device entry presented by the
+data server with this driver (and the "real" driver) running and published.</p></div>
+<div class="paragraph"><p>A larger deployment with one or more lower-priority devices collected on a
+manageable outlet of an UPS or ePDU would likely see several drivers set
+up on the system actually capable of interactions with the UPS and running
+the NUT data server <a href="upsd.html">upsd(8)</a> (and likely powered by another outlet):</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+a "real" driver talking to the UPS;
+</p>
+</li>
+<li>
+<p>
+a <code>clone</code> driver talking to the "real" driver and issuing outlet power-off
+  (or power-cycle) based on relatively high thresholds for remaining battery
+  charge and/or runtime of the actual UPS (or explicit instant commands),
+  with such operations first setting the respective timers for the outlet
+  on the "real" driver, and the "FSD" flag among states of the virtual UPS
+  status;
+</p>
+</li>
+<li>
+<p>
+possibly a <code>clone-outlet</code> driver which is read-only and interprets the
+  outlet timer values as triggers for "FSD" or "OFF" flags reported among
+  states of the virtual UPS status.
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>With this approach, the lower-priority systems collected on such outlet
+would run the NUT <a href="upsmon.html">upsmon(8)</a> client to <code>MONITOR</code> the virtual UPS
+presented by the read-only <code>clone-outlet</code> driver and shut down as soon as
+the "FSD" flag is raised (fairly early, based on charge and/or runtime
+thresholds configured for that driver) allowing the higher-priority devices
+(likely including the NUT server) to enjoy a longer on-battery life.</p></div>
+<div class="paragraph"><p>The <code>clone</code> driver responsible for outlet power state changes would not
+normally be monitored directly (e.g. to avoid unfortunate direct shutdown
+requests from those clients), although it can be (instead of <code>clone-outlet</code>)
+in sufficiently trusted networks.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_extra_arguments">EXTRA ARGUMENTS</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>This driver supports the following settings:</p></div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>port</strong>=<em>drivername-devicename</em>
+</dt>
+<dd>
+<p>
+Required. The standard NUT driver <code>port</code> setting, here it provides the name
+of the local Unix socket (or named Windows pipe) for connection to the "real"
+driver.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>prefix</strong>=<em>outlet.N</em>
+</dt>
+<dd>
+<p>
+Required. Specify the outlet prefix as known on the original driver.
+The subset of data points reported by the "real" UPS driver for the actual device
+on this prefix would be reported as data points of the virtual UPS maintained by
+this driver.
+</p>
+</dd>
+</dl></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_implementation">IMPLEMENTATION</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>The port specification in the <a href="ups.conf.html">ups.conf(5)</a> should reference the
+local driver socket (or Windows named pipe) that the "real" UPS driver
+is using. For example:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>  [realups]
+     driver = usbhid-ups
+     port = auto
+
+  [clone-outlet-1]
+     driver = clone-outlet
+     port = usbhid-ups-realups
+     prefix = outlet.1
+     desc = "Outlet 1 of the Real UPS"
+     [...]</code></pre>
+</div></div>
+<div class="paragraph"><p>The driver internally interprets "real" driver&#8217;s information about shutdown
+delay and shutdown timer, whole UPS status and this outlet&#8217;s status, and
+relays other data points as they were.</p></div>
+<div class="paragraph"><p>If the outlet supports and reports a delayed power-off, the virtual UPS would
+issue an FSD via <code>ups.status</code> for its clients to shut down safely.</p></div>
+<div class="paragraph"><p>In more detail:</p></div>
+<div class="paragraph"><p>Given the (required) <code>prefix</code> value such as <code>outlet.1</code>, the driver would
+specifically keep track of <code>&lt;prefix&gt;.status</code>, <code>&lt;prefix&gt;.delay.shutdown</code>,
+and <code>&lt;prefix&gt;.timer.shutdown</code> data points reported by the "real" driver.
+Numeric values of the <code>*.shutdown</code> readings would be noted by this driver,
+and the boolean outlet status ("off" or otherwise) will be remembered.
+These values will also be re-published by this driver "as is".</p></div>
+<div class="paragraph"><p>The <code>ups.status</code> from the "real" driver would be remembered, but not
+re-published by this driver immediately. Instead, it would be published
+during regular "update info" loop cycles either:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+with the "OFF" state added (if <code>&lt;prefix&gt;.status</code> indicates the outlet
+  is "off"),
+</p>
+</li>
+<li>
+<p>
+or with the "FSD" state prepended (if <code>&lt;prefix&gt;.timer.shutdown</code> is
+  non-negative and does not exceed the <code>&lt;prefix&gt;.delay.shutdown</code> value),
+</p>
+</li>
+<li>
+<p>
+or "as is" if the outlet power state is "not critical".
+</p>
+</li>
+</ul></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_important">IMPORTANT</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Unlike a real UPS, you should <strong>not</strong> configure a upsmon primary mode for this
+driver.  When a upsmon primary sees the OB LB flags and tells the upsd server
+it is OK to initiate the shutdown sequence, the server will latch the FSD
+status and it will not be possible to restart the systems connected without
+restarting the upsd server.</p></div>
+<div class="paragraph"><p>This will be a problem if the power returns after the clone UPS initiated
+the shutdown sequence on it&#8217;s outlet, but returns before the real UPS begins
+shutting down. The solution is in the clone driver, that will insert the
+FSD flag if needed without the help of a upsmon primary.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_caveats">CAVEATS</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>The clone UPS will follow the status on the real UPS driver.  You can only
+make the clone UPS shutdown earlier than the real UPS driver, not later.
+If the real UPS driver initiates a shutdown, the clone-outlet UPS driver
+will immediately follow.</p></div>
+<div class="paragraph"><p>Be aware that the commands to shutdown/restart an outlet on the real UPS
+drivers are not affected, so if you tell the real UPS driver to shutdown
+the outlet of the clone UPS driver immediately, your clients will lose
+power without warning. A delayed outlet power-off should propagate as FSD,
+and the delay should be sufficiently long to allow for client shutdowns.</p></div>
+<div class="paragraph"><p>If you use service management frameworks like systemd or SMF to manage the
+dependencies between driver instances and other units, then you may have
+to set up special dependencies (e.g. with systemd "drop-in" snippet files)
+to queue your <code>clone</code> drivers to start after the "real" device drivers.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_author">AUTHOR</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Arjen de Korte &lt;<a href="mailto:adkorte-guest@alioth.debian.org">adkorte-guest@alioth.debian.org</a>&gt;</p></div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
-<div class="paragraph"><p><a href="nutscan_scan_usb.html">nutscan_scan_usb(3)</a>, <a href="nutscan_scan_xml_http_range.html">nutscan_scan_xml_http_range(3)</a>,
-<a href="nutscan_scan_nut.html">nutscan_scan_nut(3)</a>, <a href="nutscan_scan_avahi.html">nutscan_scan_avahi(3)</a>,
-<a href="nutscan_scan_ipmi.html">nutscan_scan_ipmi(3)</a>, <a href="nutscan_scan_snmp.html">nutscan_scan_snmp(3)</a>,
-<a href="nutscan_display_ups_conf_with_sanity_check.html">nutscan_display_ups_conf_with_sanity_check(3)</a>,
-<a href="nutscan_display_sanity_check.html">nutscan_display_sanity_check(3)</a>,
-<a href="nutscan_display_sanity_check_serial.html">nutscan_display_sanity_check_serial(3)</a>,
-<a href="nutscan_display_parsable.html">nutscan_display_parsable(3)</a>, <a href="nutscan_new_device.html">nutscan_new_device(3)</a>,
-<a href="nutscan_free_device.html">nutscan_free_device(3)</a>, <a href="nutscan_add_option_to_device.html">nutscan_add_option_to_device(3)</a>,
-<a href="nutscan_add_device_to_device.html">nutscan_add_device_to_device(3)</a>, <a href="nutscan_cidr_to_ip.html">nutscan_cidr_to_ip(3)</a></p></div>
+<div class="paragraph"><p><a href="upscmd.html">upscmd(1)</a>,
+<a href="upsrw.html">upsrw(1)</a>,
+<a href="ups.conf.html">ups.conf(5)</a>,
+<a href="clone.html">clone(8)</a>,
+<a href="nutupsdrv.html">nutupsdrv(8)</a></p></div>
+<div class="sect2">
+<h3 id="_dummy_driver">Dummy driver:</h3>
+<div class="paragraph"><p>The "repeater" mode of <em>dummy-ups</em> driver is in some ways similar to the
+<em>clone</em> and <em>clone-outlet</em> drivers, by relaying information from a locally
+or remotely running "real" device driver (and NUT data server).</p></div>
+<div class="paragraph"><p><a href="dummy-ups.html">dummy-ups(8)</a></p></div>
+</div>
+<div class="sect2">
+<h3 id="_internet_resources">Internet Resources:</h3>
+<div class="paragraph"><p>The NUT (Network UPS Tools) home page: <a href="https://www.networkupstools.org/">https://www.networkupstools.org/</a></p></div>
+</div>
 </div>
 </div>
 </div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-04-29 08:42:36 UTC -- Network UPS Tools 2.8.2.1049
+Last updated 2024-09-11 23:42:57 UTC -- Network UPS Tools 2.8.2.1049
 </div>
 </div>
 </body>

@@ -748,7 +748,8 @@ asciidoc.install();
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="paragraph"><p><strong>upsdrvctl</strong> -h</p></div>
-<div class="paragraph"><p><strong>upsdrvctl</strong> [<em>OPTIONS</em>] {start | stop | shutdown} [<em>ups</em>]</p></div>
+<div class="paragraph"><p><strong>upsdrvctl</strong> [<em>OPTIONS</em>] {start | stop | shutdown | status} [<em>ups</em>]</p></div>
+<div class="paragraph"><p><strong>upsdrvctl</strong> [<em>OPTIONS</em>] {list | -l} [<em>ups</em>]</p></div>
 <div class="paragraph"><p><strong>upsdrvctl</strong> [<em>OPTIONS</em>] -c COMMAND [<em>ups</em>]</p></div>
 </div>
 </div>
@@ -760,8 +761,21 @@ You should use upsdrvctl instead of direct calls to the drivers
 whenever possible.</p></div>
 <div class="paragraph"><p>When used properly, upsdrvctl lets you maintain identical startup
 scripts across multiple systems with different UPS configurations.</p></div>
-<div class="paragraph"><p>Note: For operating systems with service management frameworks, such as
-Solaris SMF or Linux systemd, the <strong>upsdrvsvcctl</strong> may be a better choice.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">For operating systems with service management frameworks, such as
+Solaris SMF or Linux systemd, the <strong>upsdrvsvcctl</strong> may be a better choice.
+In fact, service instances prepared by <a href="nut-driver-enumerator.html">nut-driver-enumerator(8)</a>
+based on contents of your <a href="ups.conf.html">ups.conf(5)</a> file and automatically
+maintained by the respective framework can conflict with manual execution
+of drivers, so this tool would emit a warning in NUT builds with that
+capability (can be silenced by exporting a <code>NUT_QUIET_INIT_NDE_WARNING</code>
+environment variable with any value).</td>
+</tr></table>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -859,6 +873,14 @@ Drivers will run in the background, regardless of debugging settings,
 as set by <strong>-D</strong> and passed-through by <strong>-d</strong> options.
 </p>
 </dd>
+<dt class="hdlist1">
+<strong>-l</strong>
+</dt>
+<dd>
+<p>
+Alias for <code>list</code> command.
+</p>
+</dd>
 </dl></div>
 </div>
 </div>
@@ -932,6 +954,145 @@ It can be overridden by <code>NUT_IGNORE_NOWAIT</code> environment variable
 (e.g. used to work around certain issues with systemd otherwise).</td>
 </tr></table>
 </div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>list</strong>
+</dt>
+<dd>
+<p>
+Without a further argument, report all currently known device configuration
+names to <code>stdout</code>, one per line. With an argument, also try to report that
+name, but exit with an error code if that name is not known.
+</p>
+</dd>
+</dl></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">The tool would exit with an error if <code>ups.conf</code> file is not found,
+readable, or does not define any device sections (whose names are reported
+here and managed in other commands).</td>
+</tr></table>
+</div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">The tool name and NUT version banner line is also printed to <code>stdout</code>
+before any other processing. This can be suppressed by <code>NUT_QUIET_INIT_BANNER</code>
+environment variable (exported by caller and empty or "true"):</td>
+</tr></table>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre><code>:; NUT_QUIET_INIT_BANNER=true upsdrvctl list
+dummy
+UPS1
+UPS2</code></pre>
+</div></div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>status</strong>
+</dt>
+<dd>
+<p>
+Similar to <code>list</code>, but reports more information&#8201;&#8212;&#8201;also the driver name, the
+PID if it is running, and result of a signal probe to check it is responding.
+The <code>NUT_QUIET_INIT_BANNER</code> suppression can be helpful for scripted parsing.
+If there is anything to print (at least one device is known), the first line
+of status report would be the heading with column names:
+</p>
+<div class="literalblock">
+<div class="content">
+<pre><code>:; NUT_QUIET_INIT_BANNER=true upsdrvctl status
+UPSNAME              UPSDRV  RUNNING PF_PID  S_RESPONSIVE    S_PID   S_STATUS
+dummy             dummy-ups  N/A     -3      NOT_RESPONSIVE  N/A
+eco650           usbhid-ups  RUNNING 3559207 RESPONSIVE      3559207 "OL"
+UPS2              dummy-ups  RUNNING 31455   RESPONSIVE      31455   "OL BOOST"</code></pre>
+</div></div>
+</dd>
+</dl></div>
+<div class="paragraph"><p>Values are TAB-separated, but UPSNAME and UPSDRV may be padded by spaces
+on the right and on the left respectively. Any complex string values would
+be encased in double-quotes.</p></div>
+<div class="paragraph"><p>Fields reported (<code>PF_*</code> = according to PID file, if any; <code>S_*</code> = via socket
+protocol):</p></div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>UPSNAME</strong>
+</dt>
+<dd>
+<p>
+driver section configuration name
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>UPSDRV</strong>
+</dt>
+<dd>
+<p>
+driver program name per <code>ups.conf</code>
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>RUNNING</strong>
+</dt>
+<dd>
+<p>
+<code>RUNNING</code> if <code>PF_PID</code> or <code>S_PID</code> is valid,
+                         <code>STOPPED</code> if at least one PID value was parsed but
+                         none was found running with a correct program name;
+                         <code>N/A</code> if no PID file/socket reply or failed to parse.
+                         First the PID file is consulted, but it may be absent
+                         either due to command-line parameters of daemons, or
+                         due to platform (WIN32). If no PID value was found and
+                         confirmed this way, we fall back to checking the PID
+                         reported via protocol (if available and different).
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>PF_PID</strong>
+</dt>
+<dd>
+<p>
+PID of driver according to PID file (if any), or some
+                         negative values upon errors (as defined in <code>common.c</code>)
+                         including an absent PID file, invalid contents, or
+                         unsupported platform for this mechanism (e.g. WIN32)
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>S_RESPONSIVE</strong>
+</dt>
+<dd>
+<p>
+<code>RESPONSIVE</code> if <code>PING</code>/<code>PONG</code> during socket protocol
+                         session setup succeeded; <code>NOT_RESPONSIVE</code> otherwise
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>S_PID</strong>
+</dt>
+<dd>
+<p>
+PID of driver according to <code>GETPID</code> active query,
+                         or <code>N/A</code> if the query failed
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>S_STATUS</strong>
+</dt>
+<dd>
+<p>
+Quoted value of <code>ups.status</code> variable
+</p>
+</dd>
+</dl></div>
+<div class="paragraph"><p>This mode does not discover drivers that are not in <code>ups.conf</code> (e.g. started
+manually for experiments with many <code>-x</code> CLI options).</p></div>
 <div class="dlist"><dl>
 <dt class="hdlist1">
 <strong>-c</strong> <em>command</em>
@@ -1030,7 +1191,8 @@ background.</p></div>
 <div class="sect1">
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
-<div class="paragraph"><p><a href="upsdrvsvcctl.html">upsdrvsvcctl(8)</a>, <a href="nutupsdrv.html">nutupsdrv(8)</a>, <a href="upsd.html">upsd(8)</a>, <a href="ups.conf.html">ups.conf(5)</a></p></div>
+<div class="paragraph"><p><a href="upsdrvsvcctl.html">upsdrvsvcctl(8)</a>, <a href="nut-driver-enumerator.html">nut-driver-enumerator(8)</a>,
+<a href="nutupsdrv.html">nutupsdrv(8)</a>, <a href="upsd.html">upsd(8)</a>, <a href="ups.conf.html">ups.conf(5)</a></p></div>
 <div class="sect2">
 <h3 id="_internet_resources">Internet resources:</h3>
 <div class="paragraph"><p>The NUT (Network UPS Tools) home page: <a href="https://www.networkupstools.org/">https://www.networkupstools.org/</a></p></div>
@@ -1041,7 +1203,7 @@ background.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-04-29 08:42:36 UTC -- Network UPS Tools 2.8.2.1
+Last updated 2024-08-23 09:31:03 UTC -- Network UPS Tools 2.8.2.1049
 </div>
 </div>
 </body>

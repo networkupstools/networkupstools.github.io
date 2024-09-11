@@ -748,7 +748,7 @@ asciidoc.install();
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
 <div class="paragraph"><p><strong>upsdrvsvcctl</strong> -h</p></div>
-<div class="paragraph"><p><strong>upsdrvsvcctl</strong> [<em>OPTIONS</em>] {start | stop } [<em>ups</em>]</p></div>
+<div class="paragraph"><p><strong>upsdrvsvcctl</strong> [<em>OPTIONS</em>] {start | stop | status} [<em>ups</em>]</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -799,7 +799,18 @@ other OSes) the <strong>upsdrvctl</strong> is a recommended option.</p></div>
 </dt>
 <dd>
 <p>
-Display the help text.
+Display the help text, including the built-in version of the script.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>-V</strong>
+</dt>
+<dd>
+<p>
+Display the version of NUT binaries (calling <strong>upsdrvctl -V</strong>), which
+normally should not differ much from the built-in version of the script
+shown in help. But with custom builds everything is possible, so it may
+be useful to know.
 </p>
 </dd>
 <dt class="hdlist1">
@@ -902,6 +913,19 @@ by using the <em>maxretry</em> and <em>retrydelay</em> options - see <a href="up
 <dd>
 <p>
 Stop the UPS driver(s).
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>status</strong>
+</dt>
+<dd>
+<p>
+Query run-time status of all configured devices (or one specified device).
+Currently defers work to <a href="upsdrvctl.html">upsdrvctl(8)</a>, to list known device
+configurations and their driver daemon details (PID, responsiveness,
+<code>ups.status</code>) and to <a href="nut-driver-enumerator.html">nut-driver-enumerator(8)</a> to map device
+names to service unit instances to report their names and states in
+the service management framework.
 </p>
 </dd>
 </dl></div>
@@ -1043,7 +1067,7 @@ Look for <code>/var/svc/log/system-power-nut-driver:instance-name.log</code> fil
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-04-29 08:42:36 UTC -- Network UPS Tools 2.8.2.1
+Last updated 2024-08-01 17:43:14 UTC -- Network UPS Tools 2.8.2.1049
 </div>
 </div>
 </body>
