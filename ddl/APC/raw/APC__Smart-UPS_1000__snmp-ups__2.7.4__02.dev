@@ -1,0 +1,80 @@
+# DEVICE:URL:REPORT: https://github.com/networkupstools/nut/issues/953#issuecomment-753569013
+
+# DEVICE:COMMENT-BLOCK:
+# An APC SU-1000 UPS with AP9617 card (reports itself as Smart-UPS 1000)
+# connected via SNMPv3, tested with a NUT v2.8.0 candidate code base.
+#
+# A number of shutdown attempt tests were done, returning SNMP errors like:
+# ----
+# [su1000] nut_snmp_set: can't set .1.3.6.1.4.1.318.1.1.1.6.1.1.0:
+#    Error in packet: wrongType (The set datatype does not match
+#    the data type the agent expects)
+# ----
+#
+# ...or (using NUT v2.7.4 from Fedora 33):
+# ----
+# [su1000] nut_snmp_set: can't set .1.3.6.1.4.1.318.1.1.1.6.1.1.0:
+#    Error in packet: (genError) A general failure occured
+# ----
+#
+# ...and those problems can be reproduced with `snmpset` program, as detailed
+# in the https://github.com/networkupstools/nut/issues/953 NUT ticket.
+#
+# Similar problems were reported with an APC SmartUPS 750 and an AP9631 card.
+# DEVICE:EOC
+
+# :; upsc su1000
+ambient.1.humidity.alarm.high: 60
+ambient.1.humidity.alarm.low: 30
+ambient.1.temperature.alarm.high: 40
+ambient.1.temperature.alarm.low: 10
+battery.charge: 100
+battery.charge.restart: 0
+battery.current: 0
+battery.date: 05/03/20
+battery.packs: 0
+battery.packs.bad: -1
+battery.runtime: 2580
+battery.runtime.low: 120
+battery.voltage: 27.60
+battery.voltage.nominal: -1
+device.mfr: APC
+device.model: SMART-UPS 1000
+device.serial: QS0023121408
+device.type: ups
+driver.name: snmp-ups
+driver.parameter.pollfreq: 15
+driver.parameter.pollinterval: 2
+driver.parameter.port: 192.168.122.104
+driver.parameter.snmp_version: v3
+driver.parameter.synchronous: no
+driver.version: 2.7.4-2077-g699bf8b4
+driver.version.data: apcc MIB 1.3
+driver.version.internal: 1.12
+input.frequency: 50
+input.sensitivity: low
+input.transfer.high: 253
+input.transfer.low: 196
+input.transfer.reason: selfTest
+input.voltage: 237.90
+input.voltage.maximum: 240.50
+input.voltage.minimum: 236.60
+output.current: 0
+output.frequency: 50
+output.voltage: 237.90
+output.voltage.nominal: 230
+ups.delay.shutdown: 20
+ups.delay.start: 0
+ups.firmware: 60.11.I
+ups.id: SU 1000
+ups.load: 3.60
+ups.mfr: APC
+ups.mfr.date: 06/03/00
+ups.model: SMART-UPS 1000
+ups.serial: QS0023121408
+ups.status: OL
+ups.temperature: 27.40
+ups.test.date: 01/02/2021
+ups.test.result: Ok
+
+

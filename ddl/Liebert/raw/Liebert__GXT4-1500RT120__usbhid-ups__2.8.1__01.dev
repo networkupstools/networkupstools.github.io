@@ -1,0 +1,82 @@
+# DEVICE:URL:REPORT: https://alioth-lists.debian.net/pipermail/nut-upsdev/2024-September/008013.html
+
+# DEVICE:COMMENT:
+# UPS shutdown has been tested.
+#
+# I suspect these same parameters will also work for other GXT4 models and
+# the GXT3 family as well, since they seem to share the same controller.
+# DEVICE:EOC
+
+# DEVICE:COMMENT-BLOCK:UPSCONF:
+# [gxt4]
+#   driver = "nutdrv_qx"
+#   desc = "Emerson Network Power Liebert GXT4"
+#   vendorid = 10af
+#   productid = 0000
+#   ignorelb
+#   override.battery.charge.warning = 40
+#   override.battery.charge.low = 30
+#   default.input.voltage.nominal = 120
+#   default.input.voltage = 120
+#   default.battery.voltage.nominal = 48
+#   default.battery.voltage = 54
+# DEVICE:EOC
+
+# :; upsc gxt4
+battery.charge: 100
+battery.charge.low: 30
+battery.charge.warning: 40
+battery.type: PbAcbattery.voltage: 54
+battery.voltage.nominal: 48
+device.mfr: Emerson Network Power
+device.model: Liebert GXT4
+device.serial: 1710600384AFBA3
+device.type: ups
+driver.debug: 0
+driver.flag.allow_killpower: 0
+driver.flag.ignorelb: enableddriver.name: usbhid-ups
+driver.parameter.default.battery.voltage: 54
+driver.parameter.default.battery.voltage.nominal: 48
+driver.parameter.default.input.voltage: 120
+driver.parameter.default.input.voltage.nominal: 120
+driver.parameter.override.battery.charge.low: 30
+driver.parameter.override.battery.charge.warning: 40
+driver.parameter.pollfreq: 30
+driver.parameter.pollinterval: 2
+driver.parameter.port: auto
+driver.parameter.productid: 0000
+driver.parameter.synchronous: auto
+driver.state: quiet
+driver.version: 2.8.1.1
+driver.version.data: Belkin/Liebert HID 0.18
+driver.version.internal: 0.52
+driver.version.usb: libusb-1.0.0 (API: 0x1000102)
+input.voltage: 120
+input.voltage.nominal: 120
+ups.mfr: Emerson Network Power
+ups.model: Liebert GXT4
+ups.productid: 0000
+ups.serial: 1710600384AFBA3
+ups.status: OL CHRG
+ups.vendorid: 10af
+
+# DEVICE:COMMENT-BLOCK:FIXME:UPSRW: gxt4
+# [driver.debug]
+# Current debug verbosity level of the driver program
+# Type: NUMBER
+# Value: 0
+#
+# [driver.flag.allow_killpower]
+# Safety flip-switch to allow the driver daemon to send UPS shutdown command (accessible via driver.killpower)
+# Type: NUMBER
+# Value: 0
+# DEVICE:EOC
+
+# DEVICE:COMMENT-BLOCK:FIXME:UPSCMD: gxt4
+# Instant commands supported on UPS [gxt4]:
+#
+# driver.killpower - Tell the driver daemon to initiate UPS shutdown; should be unlocked with driver.flag.allow_killpower option or variable setting
+# driver.reload - Reload running driver configuration from the file system (only works for changes in some options)
+# driver.reload-or-error - Reload running driver configuration from the file system (only works for changes in some options); return an error if something changed and could not be applied live (so the caller can restart it with new options)
+# driver.reload-or-exit - Reload running driver configuration from the file system (only works for changes in some options); exit the running driver if something changed and could not be applied live (so service management framework can restart it with new options)
+# DEVICE:EOC
