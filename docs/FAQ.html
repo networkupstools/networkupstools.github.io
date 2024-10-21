@@ -129,7 +129,12 @@ document, you probably started upsd by itself.  You have to run
 you might wrap your NUT drivers into individual services instances
 with <span class="emphasis"><em>upsdrvsvcctl resync</em></span> and then manage those with commands like
 <span class="emphasis"><em>upsdrvsvcctl stop</em></span> and <span class="emphasis"><em>upsdrvsvcctl start</em></span> (note that on other
-systems this tool may be not pre-installed via packaging).</p><p><span class="strong"><strong>Answer 2</strong></span></p><p>Some USB UPS devices have unreliable USB to serial interfaces.
+systems this tool may be not pre-installed via packaging).</p><p>In fact, service instances prepared by the <code class="literal">nut-driver-enumerator</code> script
+and service based on contents of your <code class="literal">ups.conf</code> file and automatically
+maintained by the respective framework can conflict with manual execution
+of drivers, so <code class="literal">upsdrvctl</code> would emit a warning in NUT builds with that
+capability (can be silenced by exporting a <code class="literal">NUT_QUIET_INIT_NDE_WARNING</code>
+environment variable with any value).</p><p><span class="strong"><strong>Answer 2</strong></span></p><p>Some USB UPS devices have unreliable USB to serial interfaces.
 In that case, it’s advised to unplug / plug the device and try again.
 If that resolves the issue, you should consider resetting the USB hub the device
 is attached to before starting the nut driver, using usb_resetter script from
@@ -148,7 +153,8 @@ bottom of your shutdown scripts.</p><p>Your machine obeys and shuts down, and st
 remembers the <span class="emphasis"><em>last state</em></span> when the UPS restarts.</p><p>One solution is to change your shutdown scripts so you never reach
 that point.  You <span class="strong"><strong>want</strong></span> the system to die without reaching the
 part where the kernel tells it to shut down.  A possible script
-might look like this:</p><pre class="screen">        # other shutdown stuff here (mount -o remount,ro ...)
+might look like this (see <code class="literal">scripts/systemd/nutshutdown</code> in NUT
+sources for a more streamlined and modern variant):</p><pre class="screen">        # other shutdown stuff here (mount -o remount,ro ...)
         # `upsmon -K` if available on still mounted filesystems
         # at this point is more portable than the `test` below
 
@@ -536,4 +542,4 @@ they won’t be stuck in the halted state with the UPS running on line power.</p
                 # uh oh, we never got shut down! (power race?)
                 reboot
         fi</pre></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2024-04-29 08:53:41 -- Network UPS Tools 2.8.2.1</div></body></html>
+		Last updated 2024-10-21 20:44:30 -- Network UPS Tools 2.8.2.1049</div></body></html>

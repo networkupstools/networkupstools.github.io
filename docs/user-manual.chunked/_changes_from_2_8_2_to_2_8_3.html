@@ -27,6 +27,16 @@ NUT development snapshots can now have more version components than the
   For fallback with older systemd, a <code class="literal">nut-sleep.service</code> is provided now.
   [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1070" target="_top">#1070</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2596" target="_top">#2596</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2597" target="_top">#2597</a>]
 </li><li class="listitem">
+Handling of per-UPS <code class="literal">ALARM</code> state was introduced to <code class="literal">upsmon</code>, allowing it
+  to optionally treat it as a factor in deciding that the device is in a
+  "critical" state (polled more often, assumed dead if communications are
+  lost). Since it is up to devices and their NUT drivers what they would
+  raise as an alarm (might be something as mundane as ECO mode being active),
+  some alarms can contribute to unwanted/early shutdowns. For this reason
+  a <code class="literal">0|1</code> setting <code class="literal">ALARMCRITICAL</code> was introduced into <code class="literal">upsmon.conf</code> (default
+  is <code class="literal">1</code>), for such users to be able to prevent their <code class="literal">upsmon</code> from treating
+  the <code class="literal">ALARM</code> status as overly severe when it is not in fact. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2658" target="_top">#2658</a>]
+</li><li class="listitem">
 <code class="literal">usbhid-ups</code> subdriver <code class="literal">PowerCOM HID</code> subdriver sent UPS <code class="literal">shutdown</code> and
   <code class="literal">stayoff</code> commands in wrong byte order, at least for devices currently
   in the field. Driver now sends the commands in a way that satisfies new
@@ -108,4 +118,4 @@ A <code class="literal">configure</code> script option to <code class="literal">
   This should primarily help against overly zealous static analysis tools
   in recent compiler generations. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2585" target="_top">#2585</a>]
 </li></ul></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2024-09-24 11:43:55 -- Network UPS Tools 2.8.2.1049</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="Upgrading_notes.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="Upgrading_notes.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="_changes_from_2_8_1_to_2_8_2.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2024-10-21 20:44:13 -- Network UPS Tools 2.8.2.1049</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="Upgrading_notes.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="Upgrading_notes.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="_changes_from_2_8_1_to_2_8_2.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

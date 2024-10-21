@@ -151,6 +151,9 @@ MGE HID list of <code class="literal">mge_model_names[]</code> was extended for 
      string values reported by devices via USB are welcome), so these devices
      would now report <code class="literal">battery.voltage</code> and <code class="literal">battery.voltage.nominal</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2380" target="_top">#2380</a>]
 </li><li class="listitem">
+Added <code class="literal">ups.beeper.status</code> support for Masterpower MF-UPS650VA using the
+     MGE HID subdriver. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2662" target="_top">#2662</a>]
+</li><li class="listitem">
 <code class="literal">powercom-hid</code> subdriver sent UPS shutdown commands in wrong byte order,
      at least for devices currently in the field. A toggle was added to set
      the old behavior (if some devices do need it), while a fix is applied
@@ -202,6 +205,24 @@ Introduced a new driver concept for interaction with OS-reported hardware
    approach seems to have good potential to expand into covering more devices
    and perhaps platforms. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2430" target="_top">#2430</a>]
 </li><li class="listitem"><p class="simpara">
+Introduced handling for the <code class="literal">ALARM</code> status, which already existed as a
+   common denominator for devices seen with active <code class="literal">ups.alarm</code> variables.
+   UPS devices in an <code class="literal">ALARM</code> status are generally considered volatile and
+   may be considered critical/dead by the <code class="literal">upsmon</code> client earlier than in
+   other statuses (e.g. in no-communication situations). It has to be noted
+   that there is no common standard for what constitutes an alarm and such
+   alarm states were also previously observed for less severe reasons. This
+   depends on the manufacturer/device-specific implementation in the driver.
+   [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2657" target="_top">issue #2657</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/2658" target="_top">PR #2658</a>]
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Updated documentation, end-user clients (CGI, NUT-Monitor UI);
+</li><li class="listitem">
+Updated <code class="literal">upsmon</code> client with ability to report entering and exiting
+     the ALARM status if reported by the driver;
+</li><li class="listitem">
+Updated <code class="literal">upsmon</code> client with setting to toggle whether an <code class="literal">ALARM</code>
+     status can prompt the UPS to become critical in certain situations;
+</li></ul></div></li><li class="listitem"><p class="simpara">
 upsmon:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 it was realized that the <code class="literal">POWERDOWNFLAG</code> must be explicitly set in the
@@ -3656,4 +3677,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.32. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2024-10-02 21:00:32 -- Network UPS Tools 2.8.2.1049</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2024-10-21 20:44:33 -- Network UPS Tools 2.8.2.1049</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
