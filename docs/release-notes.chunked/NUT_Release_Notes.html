@@ -392,6 +392,11 @@ revised the documentation building recipes, with the goal to avoid building
    and it defaults to <code class="literal">true</code> allowing for better ordered documents at the cost
    of some memory during document generation. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2510" target="_top">#2510</a>]
 </li><li class="listitem">
+lines in first section of NUT configuration report (can optionally remain as
+   <code class="literal">config.nut_report_feature.log</code> and be installed into shared documentation
+   of a NUT package) are now better grouped as miscellaneous features and
+   detection results, then drivers and programs/tools. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2676" target="_top">#2676</a>]
+</li><li class="listitem">
 added a <code class="literal">common/Makefile.am</code> build product for a new internal library
    <code class="literal">libcommonstr.la</code> which allows a smaller selection of helper methods
    for tools like <code class="literal">nut-scanner</code> which do not need the full <code class="literal">libcommon.la</code>
@@ -403,6 +408,16 @@ added a <code class="literal">drivers/Makefile.am</code> build product for a new
 </li><li class="listitem">
 build of <code class="literal">snmp-ups</code> and <code class="literal">netxml-ups</code> drivers now explicitly brings linker
    dependency on chosen SSL libraries. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2479" target="_top">#2479</a>]
+</li><li class="listitem">
+introduced <code class="literal">configure --with-modbus+usb</code> option to require an USB-capable
+   libmodbus, and defaulted a couple of specific situations as if this was
+   required (implicitly): <code class="literal">configure --with-modbus --with-usb</code> and
+   either <code class="literal">--with-drivers=*apc_modbus*</code> (actually implies <code class="literal">--with-modbus</code>)
+   or <code class="literal">--with-modbus-includes=... --with-modbus-libs=...</code>
+   as a way to avoid surprises with custom NUT builds aiming to have an
+   USB-capable <code class="literal">apc_modbus</code> driver (currently this requires a custom-built
+   libmodbus). Also fixed (re-)detection of libmodbus RTU USB support with
+   static libmodbus builds. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2666" target="_top">#2666</a>]
 </li><li class="listitem"><p class="simpara">
 brought keyword dictionaries of <code class="literal">nutconf</code> and <code class="literal">augeas</code> NUT configuration
    file parsers up to date; restored automated checks for <code class="literal">augeas</code> lenses.
@@ -3687,4 +3702,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.32. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2024-11-12 11:46:53 -- Network UPS Tools 2.8.2.1179</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2024-11-13 23:50:11 -- Network UPS Tools 2.8.2.1190</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
