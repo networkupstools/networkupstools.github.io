@@ -72,6 +72,12 @@ development iterations of NUT should now identify with not only the semantic
    current version information would be embedded into "dist" archives as a
    <code class="literal">VERSION_DEFAULT</code> file. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1949" target="_top">#1949</a>]
 </li><li class="listitem">
+the <code class="literal">upsnotify()</code> common code introduced in recent NUT releases (integrating
+   with service management frameworks, etc.) was a bit cryptic when it reported
+   a <span class="strong"><strong>failure to notify</strong></span> (e.g. when not running as a service currently), fixed
+   now to report human-friendly text instead of internal enum codes. Follow-up
+   to [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1590" target="_top">issue #1590</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/1777" target="_top">PR #1777</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/2136" target="_top">PR #2136</a>]
+</li><li class="listitem">
 drivers, <code class="literal">upsd</code>, <code class="literal">upsmon</code>: reduce "scary noise" about failure to <code class="literal">fopen()</code>
    the PID file (which most of the time means that no previous instance of
    the daemon was running to potentially conflict with), especially useless
@@ -137,10 +143,12 @@ usbhid-ups updates:
 Support of the <code class="literal">onlinedischarge_log_throttle_hovercharge</code> in the NUT
      v2.8.2 release was found to be incomplete. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2423" target="_top">#2423</a>, follow-up to <a class="ulink" href="https://github.com/networkupstools/nut/issues/2215" target="_top">#2215</a>]
 </li><li class="listitem">
-Prevent UPS Lockup on "0 HID Objects" by reconnecting on stale data.
-     Note that while some devices just report information upon subsequent
-     poll, others (APC BXnnnnMI) were seen to lock up until full connection
-     restart. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2671" target="_top">#2671</a>]
+Added support for <code class="literal">interrupt_pipe_no_events_tolerance=N</code> setting to
+     optionally prevent UPS lockup, indicated by continuous "Got 0 HID Objects"
+     situation as a clue, by reconnecting on stale data.  Note that while some
+     devices just report information upon subsequent poll and just have nothing
+     urgent to declare with an USB interrupt, others (e.g. APC BXnnnnMI) were
+     seen to lock up until a full connection restart. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2671" target="_top">#2671</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2681" target="_top">#2681</a>]
 </li><li class="listitem">
 Added support for <code class="literal">lbrb_log_delay_sec=N</code> setting to delay propagation of
      <code class="literal">LB</code> or <code class="literal">LB+RB</code> state (buggy with APC BXnnnnMI devices circa 2023-2024).
@@ -3723,4 +3731,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.32. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2024-11-16 03:28:32 -- Network UPS Tools 2.8.2.1190</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2024-11-17 14:46:40 -- Network UPS Tools 2.8.2.1190</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
