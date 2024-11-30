@@ -638,7 +638,54 @@ your friend.  If nobody should edit the contents of some buffer that’s
 behind a pointer, <code class="literal">const</code> keeps them honest.</p><p>We always compile with <code class="literal">-Wall</code>, so things like <code class="literal">const</code> and <code class="literal">static</code> help you
 find implementation flaws.  Functions that attempt to modify a constant
 or access something outside their scope will throw a warning or even
-fail to compile in some cases.  This is what we want.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_switch_case_fall_through"></a>Switch case fall-through</h4></div></div></div><p>While C standards allow to write <code class="literal">switch</code> statements to "fall through"
+fail to compile in some cases.  This is what we want.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_switch_case_vs_default_vs_enum"></a>Switch case vs. default vs. enum</h4></div></div></div><p>NUT codebase often uses the <code class="literal">switch/case/case.../default</code> construct to handle
+conditional situations expressed by discrete numeric values (the <code class="literal">case value:</code>
+labels). Different compilers and their different warning settings require
+different rules to be satisfied, and those are sometimes at odds:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+a <code class="literal">switch</code> should definitively handle all cases, so must have a <code class="literal">default</code>
+  label — this works well for general numeric variables;
+</li><li class="listitem">
+an <code class="literal">enum</code>'s valid values are known at compile time, and each must be handled
+  explicitly (even if implemented as many <code class="literal">case value:</code> labels preceding the
+  same code block), so…
+</li><li class="listitem">
+…a <code class="literal">default</code> label is redundant (should never be reachable) in a <code class="literal">switch</code>
+  that handles all <code class="literal">enum</code> values — but this notion is a head-on crash vs. the
+  first rule above.
+</li></ul></div><p>Ultimately, some cases require the wall of <code class="literal">pragma</code> directives below against
+warnings at this spot, and we use the <code class="literal">default</code> label handling to be sure,
+as the least-worst solution (ultra-long lines wrapped for readability in this
+document):</p><pre class="screen">#if (defined HAVE_PRAGMA_GCC_DIAGNOSTIC_PUSH_POP) \
+ &amp;&amp; ( (defined HAVE_PRAGMA_GCC_DIAGNOSTIC_IGNORED_COVERED_SWITCH_DEFAULT) \
+   || (defined HAVE_PRAGMA_GCC_DIAGNOSTIC_IGNORED_UNREACHABLE_CODE) )
+# pragma GCC diagnostic push
+#endif
+#ifdef HAVE_PRAGMA_GCC_DIAGNOSTIC_IGNORED_COVERED_SWITCH_DEFAULT
+# pragma GCC diagnostic ignored "-Wcovered-switch-default"
+#endif
+#ifdef HAVE_PRAGMA_GCC_DIAGNOSTIC_IGNORED_UNREACHABLE_CODE
+# pragma GCC diagnostic ignored "-Wunreachable-code"
+#endif
+/* Older CLANG (e.g. clang-3.4) seems to not support the GCC pragmas above */
+#ifdef __clang__
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wunreachable-code"
+# pragma clang diagnostic ignored "-Wcovered-switch-default"
+#endif
+                /* All enum cases defined as of the time of coding
+                 * have been covered above. Handle later definitions,
+                 * memory corruptions and buggy inputs below...
+                 */
+                default:
+                        fatalx(EXIT_FAILURE, "no suitable definition found!");
+#ifdef __clang__
+# pragma clang diagnostic pop
+#endif
+#if (defined HAVE_PRAGMA_GCC_DIAGNOSTIC_PUSH_POP) \
+ &amp;&amp; ( (defined HAVE_PRAGMA_GCC_DIAGNOSTIC_IGNORED_COVERED_SWITCH_DEFAULT) \
+   || (defined HAVE_PRAGMA_GCC_DIAGNOSTIC_IGNORED_UNREACHABLE_CODE) )
+# pragma GCC diagnostic pop
+#endif</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_switch_case_fall_through"></a>Switch case fall-through</h4></div></div></div><p>While C standards allow to write <code class="literal">switch</code> statements to "fall through"
 from handling one case into another, modern compilers frown upon that
 practice and spew warnings which complicate detecting real bugs in the
 code (and also looking back at some of the cases written decades ago,
@@ -909,4 +956,4 @@ scenarios automatically. If your code adds a substantial feature, consider
 extending the <code class="literal">Jenkinsfile-dynamatrix</code> and/or <code class="literal">ci_build.sh</code> scripts in the
 workspace root to add another <code class="literal">BUILD_TYPE</code> to the matrix of tests run in
 parallel.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2024-11-15 08:44:05 -- Network UPS Tools 2.8.2.1190</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="design.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="new-drivers.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2024-11-30 17:43:15 -- Network UPS Tools 2.8.2.1190</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="design.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="new-drivers.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
