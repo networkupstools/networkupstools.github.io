@@ -5,7 +5,7 @@
 <head>
 <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
 <meta name="generator" content="AsciiDoc 10.2.0" />
-<title>MACOSX-UPS(8)</title>
+<title>NHS_SER(8)</title>
 <style type="text/css">
 /* Shared CSS for AsciiDoc xhtml11 and html5 backends */
 
@@ -735,27 +735,27 @@ asciidoc.install();
 </head>
 <body class="article">
 <div id="header">
-<h1>MACOSX-UPS(8)</h1>
+<h1>NHS_SER(8)</h1>
 </div>
 <div id="content">
 <div class="sect1">
 <h2 id="_name">NAME</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>macosx-ups - monitor for Mac OS X built-in UPS and battery driver</p></div>
+<div class="paragraph"><p>nhs_ser - driver for NHS Nobreaks, senoidal line, with serial port</p></div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
-<div class="paragraph"><p><strong>macosx-ups</strong> -h</p></div>
-<div class="paragraph"><p><strong>macosx-ups</strong> -a <em>UPS_NAME</em> [<em>OPTIONS</em>]</p></div>
+<div class="paragraph"><p><strong>nhs_ser</strong> -h</p></div>
+<div class="paragraph"><p><strong>nhs_ser</strong> -a <em>UPS_NAME</em> [<em>OPTIONS</em>]</p></div>
 <div class="admonitionblock">
 <table><tr>
 <td class="icon">
 <div class="title">Note</div>
 </td>
 <td class="content">This man page only documents the hardware-specific features of the
-<strong>macosx-ups</strong> driver.  For information about the core driver, see
+<strong>nhs_ser</strong> driver.  For information about the core driver, see
 <a href="nutupsdrv.html">nutupsdrv(8)</a>.</td>
 </tr></table>
 </div>
@@ -764,95 +764,147 @@ asciidoc.install();
 <div class="sect1">
 <h2 id="_supported_hardware">SUPPORTED HARDWARE</h2>
 <div class="sectionbody">
-<div class="paragraph"><p><strong>macosx-ups</strong> supports any USB HID Power Device Class (PDC) UPS which is
-matched by the Mac OS X built-in drivers. It also can monitor a laptop
-internal battery as though it were an UPS.</p></div>
-<div class="paragraph"><p>If the UPS is visible in the Energy Saver preferences pane of System
-Preferences, this driver should be able to monitor it.</p></div>
+<div class="paragraph"><p><strong>nhs_ser</strong> supports numerous UPS models made by NHS Sistemas Eletronicos LTDA
+and marketed in Brazil. They feature a serial port and a binary wire protocol.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">Currently this driver only builds on Linux. This is expected to change
+in future revisions of the code.</td>
+</tr></table>
+</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_extra_arguments">EXTRA ARGUMENTS</h2>
 <div class="sectionbody">
+<div class="paragraph"><p>This driver also supports the following optional settings:</p></div>
 <div class="dlist"><dl>
 <dt class="hdlist1">
-<strong>port</strong>=auto
+<strong>baud</strong>=<em>num</em>
 </dt>
 <dd>
 <p>
-Due to changes in the way that Mac OS X lists power sources, the <strong>port</strong>
-parameter no longer has any effect. The rest of NUT still requires a value
-here, and our traditional "don&#8217;t care" value is <code>auto</code>.
+Set the value of serial port baud rate (default: 2400)
 </p>
 </dd>
 <dt class="hdlist1">
-<strong>model</strong>=<em>regex</em>
+<strong>ah</strong>=<em>num</em>
 </dt>
 <dd>
 <p>
-Likewise, if you have more than one UPS, it may be necessary to specify a
-<strong>model</strong> name to match against. This parameter is also a case-insensitive
-extended regular expression.
+Battery discharge capacity in Ampere/hour.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>va</strong>=<em>num</em>
+</dt>
+<dd>
+<p>
+Nobreak NOMINAL POWER in VA.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>pf</strong>=<em>num</em>
+</dt>
+<dd>
+<p>
+Power Factor to use in calculations of battery time (default: 0.90).
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>vin_low_warn_perc</strong>=<em>num</em>
+</dt>
+<dd>
+<p>
+Voltage In Percentage to calculate warning low level (default: 2.00).
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>vin_low_crit_perc</strong>=<em>num</em>
+</dt>
+<dd>
+<p>
+Voltage In Percentage to calculate critical low level (default: 2.00).
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>vin_high_warn_perc</strong>=<em>num</em>
+</dt>
+<dd>
+<p>
+Voltage In Percentage to calculate warning high level (default: 2.00).
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>vin_high_crit_perc</strong>=<em>num</em>
+</dt>
+<dd>
+<p>
+Voltage In Percentage to calculate critical high level (default: 2.00).
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>numbatteries</strong>=<em>num</em>
+</dt>
+<dd>
+<p>
+Num Batteries (override value from nobreak).
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>vbat</strong>=<em>num</em>
+</dt>
+<dd>
+<p>
+Battery Voltage (default: 12.00).
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>debug_pkt_raw</strong>
+</dt>
+<dd>
+<p>
+Optional flag to enable debug logging of packet bytes.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>debug_pkt_data</strong>
+</dt>
+<dd>
+<p>
+Optional flag to enable debug logging of data packet decoding.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>debug_pkt_hwinfo</strong>
+</dt>
+<dd>
+<p>
+Optional flag to enable debug logging of hwinfo packet decoding.
 </p>
 </dd>
 </dl></div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_diagnostics">DIAGNOSTICS</h2>
+<h2 id="_authors">AUTHORS</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>If the driver cannot find an UPS, first open System Preferences and see if
-there is an "UPS" tab on the Energy Saver panel. If so, re-run the driver
-with the <strong>-D</strong> flag to list the names of the power sources found.</p></div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_known_issues_and_bugs">KNOWN ISSUES AND BUGS</h2>
-<div class="sectionbody">
-<div class="paragraph"><p>This driver is a monitoring-only driver, and cannot shut down an UPS on its
-own. However, this should not be a problem in practice: it is monitoring the
-built-in Mac OS X UPS driver, which has configuration options for several
-shutdown scenarios. Consult the Energy Saver control panel or <strong>pmset</strong>(8) for
-more information.</p></div>
-<div class="paragraph"><p>The default distribution of <strong>apcupsd</strong> installs a kernel extension which
-prevents Mac OS X from attaching to the UPS. In order to use this driver after
-installing apcupsd, you must first run the <code>apcupsd-uninstall</code> script and
-reboot.</p></div>
-<div class="paragraph"><p>Note that other UPS monitoring solutions may show more detail than what is
-provided by the built-in Mac OS X driver. In particular, voltages other than
-the battery voltage, as well as current and frequency, are typically not
-shown. It may be possible to monitor these values with <strong>apcupsd</strong> (for APC
-hardware only) or <a href="usbhid-ups.html">usbhid-ups(8)</a>.</p></div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_author">AUTHOR</h2>
-<div class="sectionbody">
-<div class="paragraph"><p>Charles Lepple &lt;clepple+nut at gmail.com&gt;</p></div>
+<div class="paragraph"><p>Lucas Willian Bocchi &lt;<a href="mailto:lucas@lucas.inf.br">lucas@lucas.inf.br</a>&gt;</p></div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
-<div class="paragraph"><p><a href="usbhid-ups.html">usbhid-ups(8)</a>, <strong>pmset</strong>(8), <strong>regex</strong>(3)</p></div>
 <div class="sect2">
 <h3 id="_the_core_driver">The core driver:</h3>
 <div class="paragraph"><p><a href="nutupsdrv.html">nutupsdrv(8)</a></p></div>
 </div>
 <div class="sect2">
 <h3 id="_internet_resources">Internet resources:</h3>
-<div class="ulist"><ul>
-<li>
-<p>
-The NUT (Network UPS Tools) home page: <a href="https://www.networkupstools.org/">https://www.networkupstools.org/</a>
-</p>
-</li>
-<li>
-<p>
-The apcupsd home page: <a href="http://www.apcupsd.org/">http://www.apcupsd.org/</a>
-</p>
-</li>
-</ul></div>
+<div class="paragraph"><p>The NUT (Network UPS Tools) home page: <a href="https://www.networkupstools.org/">https://www.networkupstools.org/</a></p></div>
 </div>
 </div>
 </div>
@@ -860,7 +912,7 @@ The apcupsd home page: <a href="http://www.apcupsd.org/">http://www.apcupsd.org/
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-04-29 08:42:36 UTC -- Network UPS Tools 2.8.2.1523
+Last updated 2024-12-04 17:43:43 UTC -- Network UPS Tools 2.8.2.1523
 </div>
 </div>
 </body>

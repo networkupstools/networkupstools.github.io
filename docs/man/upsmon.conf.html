@@ -1159,6 +1159,39 @@ UPS no longer on bypass
 </p>
 </dd>
 <dt class="hdlist1">
+ECO
+</dt>
+<dd>
+<p>
+UPS in ECO or similar mode (as defined and named by vendor);
+for more details see <a href="upsmon.html">upsmon(8)</a>.
+</p>
+</dd>
+<dt class="hdlist1">
+NOTECO
+</dt>
+<dd>
+<p>
+UPS no longer in ECO mode (see above)
+</p>
+</dd>
+<dt class="hdlist1">
+ALARM
+</dt>
+<dd>
+<p>
+UPS is in an alarm state (has active alarms)
+</p>
+</dd>
+<dt class="hdlist1">
+NOTALARM
+</dt>
+<dd>
+<p>
+UPS is no longer in an alarm state (no active alarms)
+</p>
+</dd>
+<dt class="hdlist1">
 SUSPEND_STARTING
 </dt>
 <dd>
@@ -1365,6 +1398,23 @@ generate a NOTIFY_REPLBATT event.  By default, this happens every 43200
 seconds (12 hours).
 </p>
 <div class="paragraph"><p>If you need another value, set it here.</p></div>
+</dd>
+<dt class="hdlist1">
+<strong>ALARMCRITICAL</strong> <em>0 | 1</em>
+</dt>
+<dd>
+<p>
+NUT normally considers UPS with active alarms as volatile, meaning
+they are observed more closely and may be considered critical/dead
+earlier than in other regular UPS statuses. This is especially true
+for no-communication situations, where UPS in an <code>ALARM</code> status will
+be considered lost and system shutdowns may be triggered as a product.
+</p>
+<div class="paragraph"><p>As there is no common standard for what constitutes an alarm, such
+alarm states may in fact be mundane in nature and the behavior above
+unwanted due to possibly resulting in unwarranted system shutdowns.</p></div>
+<div class="paragraph"><p>When this setting is disabled, <code>upsmon</code> will consider a UPS in an alarm
+state as not volatile and make it treat the <code>ALARM</code> status as any other.</p></div>
 </dd>
 <dt class="hdlist1">
 <strong>RUN_AS_USER</strong> <em>username</em>
@@ -1584,7 +1634,7 @@ does not change the previously active logging verbosity.</td>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-08-23 09:31:03 UTC -- Network UPS Tools 2.8.2.1049
+Last updated 2024-11-15 08:43:08 UTC -- Network UPS Tools 2.8.2.1523
 </div>
 </div>
 </body>

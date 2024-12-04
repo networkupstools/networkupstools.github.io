@@ -1049,21 +1049,23 @@ number.
 <code>wDescriptorLength</code> values (roughly 600+ bytes) in reports of <code>lsusb</code> or
 similar tools.</p></div>
 </dd>
-</dl></div>
-<div class="admonitionblock">
-<table><tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">
-<div class="paragraph"><p>Run-time troubleshooting of USB-capable NUT drivers can involve not only
+<dt class="hdlist1">
+<strong>LIBUSB_DEBUG =</strong> <em>INTEGER</em>
+</dt>
+<dd>
+<p>
+Run-time troubleshooting of USB-capable NUT drivers can involve not only
 raising the common NUT debug verbosity (e.g. using the <code>DEBUG_MIN</code> setting
 in <a href="ups.conf.html">ups.conf(5)</a> or protocol commands to change the <code>driver.debug</code>
-value), but may also benefit from LibUSB specific debugging.</p></div>
-<div class="paragraph"><p>For the latter, currently you would have to export the environment variable
-<code>LIBUSB_DEBUG</code> before starting a NUT driver (may be set and "exported" via
-<a href="nut.conf.html">nut.conf(5)</a>), to a numeric value such as <code>4</code> ("All messages are
-emitted"). For more details, including the currently supported values, see:</p></div>
+value), but may also benefit from LibUSB specific debugging.
+</p>
+<div class="paragraph"><p>For the latter, you can set the <code>LIBUSB_DEBUG</code> driver option; alternatively
+you can classically export the environment variable <code>LIBUSB_DEBUG</code> before
+starting a NUT driver program (may be set and "exported" in driver init
+script or service method, perhaps via <a href="nut.conf.html">nut.conf(5)</a>), to a numeric
+value such as <code>4</code> ("All messages are emitted").</p></div>
+<div class="paragraph"><p>For more details, including the currently supported values for your version
+of the library, see e.g.:</p></div>
 <div class="ulist"><ul>
 <li>
 <p>
@@ -1076,10 +1078,7 @@ emitted"). For more details, including the currently supported values, see:</p><
 </p>
 </li>
 </ul></div>
-</td>
-</tr></table>
-</div>
-<div class="dlist"><dl>
+</dd>
 <dt class="hdlist1">
 <strong>subdriver</strong>=<em>regex</em>
 </dt>
@@ -1138,7 +1137,8 @@ sent (via the <strong>-k</strong> switch).
 <em>ondelay</em>, but the driver will <strong>not</strong> warn you upon startup if it isn&#8217;t.</p></div>
 <div class="paragraph"><p>Note that many Cyber Power Systems (CPS) models tend to divide this delay by
 60 and round down, so the minimum advisable value is 60 to avoid powering off
-immediately after NUT sends the shutdown command to the UPS.</p></div>
+immediately after NUT sends the shutdown command to the UPS. More details
+below.</p></div>
 </dd>
 <dt class="hdlist1">
 <strong>ondelay</strong>=<em>num</em>
@@ -1178,6 +1178,20 @@ variables.  The default value is 30 (in seconds).
 If this flag is set, the driver will not use Interrupt In transfers during the
 shorter "pollinterval" cycles (not recommended, but needed if these reports
 are broken on your UPS).
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>interrupt_pipe_no_events_tolerance</strong>=<em>num</em>
+</dt>
+<dd>
+<p>
+Set the tolerance for how many times in a row could we have "Got 0 HID objects"
+when using USB interrupt mode?  This may normally be due to a device having
+nothing urgent to report, so the default value is <code>-1</code> and this situation is
+not handled in any way specially.  However with some devices this was seen
+in conjunction with a frozen controller, where only a driver reconnection
+restored the data exchange (e.g. APC BXnnnnMI)&#8201;&#8212;&#8201;in such cases you may want
+to use a reasonable non-negative value here.
 </p>
 </dd>
 <dt class="hdlist1">
@@ -1429,6 +1443,19 @@ the Interrupt In transfers if they are known not to work.</p></div>
 <h2 id="_known_issues_and_bugs">KNOWN ISSUES AND BUGS</h2>
 <div class="sectionbody">
 <div class="sect2">
+<h3 id="_ups_reports_65535_sec_or_18_12_15_of_battery_runtime_capability">UPS reports 65535 sec (or 18:12:15) of battery.runtime capability</h3>
+<div class="paragraph"><p>From a number of reports, it seems that some devices either can not report
+more than a 16-bit unsigned value in the standard field for remaining run
+time (vendor extended fields may exist but be unknown to the mapping tables
+in your current NUT driver build), or return <code>-1</code> for error and that gets
+treated as an unsigned 16-bit 65535 value.</p></div>
+<div class="paragraph"><p>According to some issue discussions, passing a battery test (calibration)
+can help the UPS re-estimate the time more correctly.</p></div>
+<div class="paragraph"><p>This problem may also be linked to a very lightly loaded large-capacity UPS.
+In some cases vendor documentation explicitly states that runtime calculation
+is not reliable with loads under e.g. 10%.</p></div>
+</div>
+<div class="sect2">
 <h3 id="_repetitive_timeout_and_staleness">Repetitive timeout and staleness</h3>
 <div class="paragraph"><p>Some models tends to be unresponsive with the default polling frequency.
 The result is that your system log will have lots of messages like:</p></div>
@@ -1442,6 +1469,16 @@ ret -110</code></pre>
 value (such as 10 seconds). This should solve the issue.</p></div>
 <div class="paragraph"><p>Note that if you increase "pollinterval" beyond 10 or 15 seconds, you might
 also want to increase "pollfreq" by the same factor.</p></div>
+<div class="paragraph"><p>With certain devices and operating systems, notably MGE/Eaton USB Vendor ID
+(<code>0x0463</code>) on some versions of the Linux kernel, you might encounter poor
+interaction with the "USB HID quirk" mechanism, which precludes Linux from
+seeing the device as a <code>hid-generic</code> first, to hand it over to a NUT driver
+later. For more details, see the NUT FAQ document. This particular quirk can
+be tuned with a kernel boot parameter (via GRUB etc.):</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>usbhid.quirks=0x0463:0xffff:0x08</code></pre>
+</div></div>
 </div>
 <div class="sect2">
 <h3 id="_got_eperm_operation_not_permitted_upon_driver_startup">Got EPERM: Operation not permitted upon driver startup</h3>
@@ -1469,6 +1506,11 @@ again.</p></div>
 <div class="paragraph"><p>Note that many Cyber Power Systems (CPS) models tend to divide <code>offdelay</code>
 by 60 and round down, so the minimum advisable value is 60 (seconds) to avoid
 powering off immediately after NUT sends the shutdown command to the UPS.</p></div>
+<div class="paragraph"><p>For many Cyberpower UPSs, <code>offdelay</code> must be set to <code>0</code> for normal behavior
+(the load is restored when AC power returns).  Setting <code>offdelay</code> above <code>0</code>
+will restart the UPS load <strong>regardless of whether or not power has returned</strong>,
+and setting <code>offdelay</code> below <code>0</code> will disable the auto-power-on function of
+the UPS, keeping the load off even when power returns.</p></div>
 </div>
 <div class="sect2">
 <h3 id="_ups_does_not_set_battery_charge_low_but_says_ok">UPS does not set battery.charge.low but says OK</h3>
@@ -1540,7 +1582,7 @@ Arjen de Korte
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-09-14 23:42:59 UTC -- Network UPS Tools 2.8.2.1049
+Last updated 2024-11-17 14:44:24 UTC -- Network UPS Tools 2.8.2.1523
 </div>
 </div>
 </body>
