@@ -57,6 +57,13 @@ Fallback <code class="literal">localtime_r()</code> and <code class="literal">gm
 </li><li class="listitem">
 A recently introduced <code class="literal">allow_killpower</code> did not actually work as an
      <code class="literal">ups.conf</code> flag (only as a protocol command). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2605" target="_top">issue #2605</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/2606" target="_top">PR #2606</a>]
+</li><li class="listitem">
+The ability of two copies of the driver program to talk to each other
+     with <code class="literal">upsdrvquery.c</code> code was not complete for the case of indefinite
+     <code class="literal">select()</code> wait timeout. Now <code class="literal">upsdrvquery_read_timeout()</code> fixed private
+     use of <code class="literal">struct timeval={-1,-1}</code> as a trigger to <code class="literal">select(..., NULL)</code>,
+     as logged in one part of code and not handled in the other, for the
+     indefinite wait [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1922" target="_top">#1922</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2392" target="_top">#2392</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2686" target="_top">#2686</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2670" target="_top">#2670</a>]
 </li></ul></div></li><li class="listitem">
 development iterations of NUT should now identify with not only the semantic
    version of a preceding release, but with git-derived information about the
@@ -354,6 +361,20 @@ during a NUT build.
    * do not actively suggest <code class="literal">vendor(id)</code>, <code class="literal">product(id)</code>, and <code class="literal">serial</code> options
      for <code class="literal">bcmxcp_usb</code>, <code class="literal">richcomm_usb</code> and <code class="literal">nutdrv_atcl_usb</code> drivers for now
      [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1763" target="_top">#1763</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1764" target="_top">#1764</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1768" target="_top">#1768</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2580" target="_top">#2580</a>]</p></div></li></ul></div></li><li class="listitem"><p class="simpara">
+all drivers should now support the optional <code class="literal">sdcommands</code> setting with
+   a site-local list of instant commands to handle <code class="literal">upsdrv_shutdown()</code>,
+   which may be useful in cases when the driver’s built-in commands
+   (or their order) do not meet the goals of particular NUT deployment.
+   This can also help with shutdown endgame testing, using a mock command like
+   starting the beeper (where supported) to verify that the UPS communications
+   happen as expected, without compromising the load connected to the UPS.
+</p><p class="simpara">Also defined <code class="literal">EF_EXIT_SUCCESS</code> and <code class="literal">EF_EXIT_FAILURE</code> in <code class="literal">include/common.h</code>
+to avoid magic numbers in code like <code class="literal">set_exit_flag(-2)</code>, and revised whether
+it is getting set at all in "killpower" vs. other cases, based on new
+<code class="literal">handling_upsdrv_shutdown</code> internal flag.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>during this overhaul, many older drivers got their first ever supported
+INSTCMD such as <code class="literal">shutdown.return</code>, <code class="literal">shutdown.stayoff</code> or <code class="literal">load.off</code>. Default
+logic that was previously the content of <code class="literal">upsdrv_shutdown()</code> methods was often
+relocated into new <code class="literal">shutdown.default</code> INSTCMD definitions. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2670" target="_top">#2670</a>]</p></div></li><li class="listitem"><p class="simpara">
 common code:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 introduced a <code class="literal">NUT_DEBUG_SYSLOG</code> environment variable to tweak activation
@@ -3762,4 +3783,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.32. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2024-12-06 17:48:25 -- Network UPS Tools 2.8.2.1523</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2024-12-07 17:44:25 -- Network UPS Tools 2.8.2.1523</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

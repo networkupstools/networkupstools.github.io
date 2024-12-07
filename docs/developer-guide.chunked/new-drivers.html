@@ -91,9 +91,10 @@ vulnerable to a race if the power comes back on during the shutdown
 process.</p><p>This method should not directly <code class="literal">exit()</code> the driver program (neither
 should it call <code class="literal">fatalx()</code> nor <code class="literal">fatal_with_errno()</code> methods).  It can
 <code class="literal">upslogx(LOG_ERR, ...)</code> or <code class="literal">upslog_with_errno(LOG_ERR, ...)</code>, and then
-<code class="literal">set_exit_flag(N)</code> if required (<code class="literal">-1</code> for <code class="literal">EXIT_FAILURE</code> and <code class="literal">-2</code> for
-<code class="literal">EXIT_SUCCESS</code> which would be handled in the standard driver loop or
-<code class="literal">forceshutdown()</code> method of <code class="literal">main.c</code>).</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_data_types"></a>4.7. Data types</h3></div></div></div><p>To be of any use, you must supply data in <code class="literal">ups.status</code>.  That is the
+<code class="literal">set_exit_flag(N)</code> if required, using values <code class="literal">EF_EXIT_FAILURE</code> (<code class="literal">-1</code>)
+for eventual <code class="literal">exit(EXIT_FAILURE)</code> and <code class="literal">EF_EXIT_SUCCESS</code> (<code class="literal">-2</code>) for
+<code class="literal">exit(EXIT_SUCCESS)</code>, which would be handled in the standard driver
+loop or in <code class="literal">forceshutdown()</code> method of <code class="literal">main.c</code>.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_data_types"></a>4.7. Data types</h3></div></div></div><p>To be of any use, you must supply data in <code class="literal">ups.status</code>.  That is the
 minimum needed to let upsmon do its job.  Whenever possible, you should
 also provide anything else that can be monitored by the driver.  Some
 obvious things are the manufacturer name and model name, voltage data,
@@ -698,7 +699,7 @@ Read the NUT code, tracing through how each value gets processed looking
   for where the result deviates from expectations…
 </li><li class="listitem">
 Think, code, test, rinse, repeat, post a PR :)
-</li></ul></div><div class="example"><a id="idm1758"></a><p class="title"><strong>Example 1. Example direct use of REXX</strong></p><div class="example-contents"><p>Example adapted from <a class="ulink" href="https://github.com/networkupstools/nut/issues/2039" target="_top">https://github.com/networkupstools/nut/issues/2039</a></p><p>Run a NUT <code class="literal">usb-hid</code> driver with at least debug verbosity level 3 (<code class="literal">-DDD</code>)
+</li></ul></div><div class="example"><a id="idm1760"></a><p class="title"><strong>Example 1. Example direct use of REXX</strong></p><div class="example-contents"><p>Example adapted from <a class="ulink" href="https://github.com/networkupstools/nut/issues/2039" target="_top">https://github.com/networkupstools/nut/issues/2039</a></p><p>Run a NUT <code class="literal">usb-hid</code> driver with at least debug verbosity level 3 (<code class="literal">-DDD</code>)
 to get a report descriptor dump starting with a line like this:</p><pre class="screen">   3.670755     [D3] Report Descriptor: (909 bytes) =&gt; 05 84 09 04 a1 01 ...</pre><p>…and copy-paste those reported lines as input into <code class="literal">rexx</code> tool, which
 would generate a C source file including human-worded description and
 a relevant data structure:</p><pre class="screen">:; rexx rd.rex -d --hex 05 84 09 04 a1 01 85 01 09 18 ... 55 b1 02 c0 c0 c0
@@ -2436,4 +2437,4 @@ no 0 nibble is sent.</p></div></div><div class="section"><div class="titlepage">
 </li><li class="listitem">
 <code class="literal">nutdrv_qx_ablerex.</code>{<code class="literal">c</code>,<code class="literal">h</code>}
 </li></ul></div></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2024-12-06 17:48:06 -- Network UPS Tools 2.8.2.1523</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="developers.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="sock-protocol.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2024-12-07 17:44:25 -- Network UPS Tools 2.8.2.1523</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="developers.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="sock-protocol.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
