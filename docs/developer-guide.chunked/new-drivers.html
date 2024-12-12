@@ -70,7 +70,9 @@ into upsdrv_shutdown next.</p></div><div class="section"><div class="titlepage">
 possible for your hardware.  If there is a way to detect that hardware
 and it doesn’t appear to be connected, display an error and exit. This
 is the last time your driver is allowed to bail out.</p><p>This is usually a good place to create variables like <code class="literal">ups.mfr</code>,
-<code class="literal">ups.model</code>, <code class="literal">ups.serial</code>, and other "one time only" items.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_upsdrv_updateinfo"></a>upsdrv_updateinfo</h4></div></div></div><p>Poll the hardware, and update any variables that you care about
+<code class="literal">ups.model</code>, <code class="literal">ups.serial</code>, determine and declare supported instant
+commands (maybe model-dependent, typically for all devices supported
+by the driver), and other "one time only" items.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_upsdrv_updateinfo"></a>upsdrv_updateinfo</h4></div></div></div><p>Poll the hardware, and update any variables that you care about
 monitoring.  Use <code class="literal">dstate_setinfo()</code> to store the new values.</p><p>Do at most one pass of the variables.  You MUST return from this
 function or upsd will be unable to read data from your driver.  main
 will call this function at regular intervals.</p><p>Don’t spent more than a couple of seconds in this function. Typically
@@ -382,7 +384,9 @@ dstate_addrange("input.transfer.low", 100, 105);</pre></div><div class="section"
 flag set, and a maximum length (in bytes) set in the auxdata.</p><pre class="literallayout">dstate_setinfo("ups.id", "Big UPS");
 dstate_setflags("ups.id", ST_FLAG_STRING | ST_FLAG_RW);
 dstate_setaux("ups.id", 8);</pre><p>If the variable is not writable, don’t bother with the flags or the
-auxiliary data.  It won’t be used.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_instant_commands_2"></a>4.18. Instant commands</h3></div></div></div><p>If your hardware and driver can support a command, register it.</p><pre class="literallayout">dstate_addcmd("load.on");</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_delays_and_ser__functions"></a>4.19. Delays and ser_* functions</h3></div></div></div><p>The new ser_* functions may perform reads faster than the UPS is able to
+auxiliary data.  It won’t be used.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_instant_commands_2"></a>4.18. Instant commands</h3></div></div></div><p>If your hardware and driver can support a command, register it.</p><pre class="literallayout">dstate_addcmd("load.on");</pre><p>Don’t forget to define the implementation for such commands in a common
+method, and register that your driver has an instant command handler at
+all — with a line in <code class="literal">upsdrv_initinfo()</code> like:</p><pre class="literallayout">upsh.instcmd = blazer_instcmd;</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_delays_and_ser__functions"></a>4.19. Delays and ser_* functions</h3></div></div></div><p>The new ser_* functions may perform reads faster than the UPS is able to
 respond in some cases.  This means that your driver will call select()
 and read() numerous times if your UPS responds in bursts.  This also
 depends on how fast your system is.</p><p>You should check your driver with <code class="literal">strace</code> or its equivalent on your
@@ -699,7 +703,7 @@ Read the NUT code, tracing through how each value gets processed looking
   for where the result deviates from expectations…
 </li><li class="listitem">
 Think, code, test, rinse, repeat, post a PR :)
-</li></ul></div><div class="example"><a id="idm1760"></a><p class="title"><strong>Example 1. Example direct use of REXX</strong></p><div class="example-contents"><p>Example adapted from <a class="ulink" href="https://github.com/networkupstools/nut/issues/2039" target="_top">https://github.com/networkupstools/nut/issues/2039</a></p><p>Run a NUT <code class="literal">usb-hid</code> driver with at least debug verbosity level 3 (<code class="literal">-DDD</code>)
+</li></ul></div><div class="example"><a id="idm1763"></a><p class="title"><strong>Example 1. Example direct use of REXX</strong></p><div class="example-contents"><p>Example adapted from <a class="ulink" href="https://github.com/networkupstools/nut/issues/2039" target="_top">https://github.com/networkupstools/nut/issues/2039</a></p><p>Run a NUT <code class="literal">usb-hid</code> driver with at least debug verbosity level 3 (<code class="literal">-DDD</code>)
 to get a report descriptor dump starting with a line like this:</p><pre class="screen">   3.670755     [D3] Report Descriptor: (909 bytes) =&gt; 05 84 09 04 a1 01 ...</pre><p>…and copy-paste those reported lines as input into <code class="literal">rexx</code> tool, which
 would generate a C source file including human-worded description and
 a relevant data structure:</p><pre class="screen">:; rexx rd.rex -d --hex 05 84 09 04 a1 01 85 01 09 18 ... 55 b1 02 c0 c0 c0
@@ -2437,4 +2441,4 @@ no 0 nibble is sent.</p></div></div><div class="section"><div class="titlepage">
 </li><li class="listitem">
 <code class="literal">nutdrv_qx_ablerex.</code>{<code class="literal">c</code>,<code class="literal">h</code>}
 </li></ul></div></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2024-12-07 17:44:25 -- Network UPS Tools 2.8.2.1523</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="developers.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="sock-protocol.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2024-12-12 17:47:38 -- Network UPS Tools 2.8.2.1523</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="developers.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="sock-protocol.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
