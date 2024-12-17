@@ -1031,6 +1031,482 @@ The host should check if the command send to UPS been echo or not.</p></div>
 </div>
 </div>
 <div class="sect1">
+<h2 id="_additional_information_from_21st_century">Additional information from 21st century</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Some of the information below originates from research published at
+<a href="https://f2065.ru/soft/ups_lm_ru/#spravochnaja-informacija-po-protokolam-ups">f2065&#8217;s
+UPS LM project page</a>, whose sources included NUT documentation and more, and
+kindly curated (picking entries new for NUT) and translated by Viktor Drobot.
+Another part was obtained by his RS232 sniffer as well, during development
+of sub-driver updates for Ippon Innova RT 3/1 series.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img src="../images/note.png" alt="Note" />
+</td>
+<td class="content">not all UPSes are able to answer/consume some or all of these commands!</td>
+</tr></table>
+</div>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<thead>
+<tr>
+<th align="center" valign="middle"> Command       </th>
+<th align="left" valign="middle"> Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>AR?</code>, <code>AR0</code>, <code>AR1</code></code></p></td>
+<td align="left" valign="middle"><p class="table">Querying/disabling/enabling auto power-on feature
+                          (known as auto restart for some Ippon UPSes).</p>
+<p class="table">                          Enabled by default (<code>AR1</code>).</p>
+<p class="table">                          If option is off (<code>AR0</code>) then UPS will stay powered
+                          "off" even after mains return, and should be switched
+                          "on" manually by using the power button.</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>AT?</code>, <code>AT0</code>, <code>AT1</code></code></p></td>
+<td align="left" valign="middle"><p class="table">Querying/disabling/enabling auto test feature.</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>BL?</code>, <code>BL</code></code></p></td>
+<td align="left" valign="middle"><p class="table">Battery level (in percents), usually represented as
+                  a 3-digit number with leading zero where needed.</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>BPS</code></code></p></td>
+<td align="left" valign="middle"><div><div class="paragraph"><p>Query bypass status. Typical answer:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>(230.4 000.0 000.0 49.9</code></pre>
+</div></div>
+<div class="ulist"><ul>
+<li>
+<p>
+Fields 1..3 should be <code>L1-N</code>, <code>L2-N</code> and <code>L3-N</code> input bypass
+            voltages;
+</p>
+</li>
+<li>
+<p>
+field 4 is input bypass frequency.
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>EB?</code>, <code>EBnn</code></code></p></td>
+<td align="left" valign="middle"><p class="table">Query/set number of external battery packs.</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>EF?</code></code></p></td>
+<td align="left" valign="middle"><p class="table">Acceptable frequency deviations for HE/ECO mode (in percents).</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>EV?</code></code></p></td>
+<td align="left" valign="middle"><p class="table">Acceptable voltage deviations for HE/ECO mode (in percents).</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>FW?</code></code></p></td>
+<td align="left" valign="middle"><p class="table">Firmware version.</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>GR?</code>, <code>GR0</code>, <code>GR1</code></code></p></td>
+<td align="left" valign="middle"><p class="table">Query/disable/enable green mode
+                        (WinPower provides "Energy Saving" feature to control
+                        this mode).</p>
+<p class="table">                        Some UPS models switch themselves off after 5 minutes
+                        without load.</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>IP?</code>, <code>IPN</code>, <code>IPW</code>, <code>IPG</code></code></p></td>
+<td align="left" valign="middle"><div><div class="paragraph"><p>Query/set acceptable deviations for different
+                                  modes:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+normal (<code>IPN</code>);
+</p>
+</li>
+<li>
+<p>
+wide (<code>IPW</code>);
+</p>
+</li>
+<li>
+<p>
+generator (<code>IPG</code>).
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>Corresponding LEDs will be toggled for Smart Winner UPS models.</p></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>M</code></code></p></td>
+<td align="left" valign="middle"><p class="table">Query protocol type: the answer is usually <code>P</code>, <code>T</code>, <code>V</code>, <code>C</code>
+          and some others rarely.</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>Q2</code></code></p></td>
+<td align="left" valign="middle"><div><div class="paragraph"><p>Query UPS status (analogous to <code>Q1</code>). Typical answer:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>(226.6 224.3 228.0 226.6 229.9 000.0 000.0 000 000 000 49.9 327.6 18.0 00000000 999.24 100 02 00 00 00 00 00000000 11</code></pre>
+</div></div>
+<div class="paragraph"><p>As far as I was able to decipher this:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+first three fields correspond to the <code>L1-N</code>, <code>L2-N</code> and <code>L3-N</code>
+            input voltages;
+</p>
+</li>
+<li>
+<p>
+fifth field is output voltage (3/1 Ippon UPS was tested though,
+            maybe, fields 5..7 correspond to the <code>L1-N</code>, <code>L2-N</code> and <code>L3-N</code>
+            output voltages generally);
+</p>
+</li>
+<li>
+<p>
+eleventh field seems to be frequency (don&#8217;t know, input or output);
+</p>
+</li>
+<li>
+<p>
+twelfth field is battery voltage;
+</p>
+</li>
+<li>
+<p>
+thirteenth field is temperature;
+</p>
+</li>
+<li>
+<p>
+15th field may be estimated runtime (in minutes?) and
+</p>
+</li>
+<li>
+<p>
+16th field is battery level (in percents, with leading zero).
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>However, I&#8217;m not sure about fields 4, 6..11, 14..23.</p></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>Q4</code></code></p></td>
+<td align="left" valign="middle"><div><div class="paragraph"><p>Yet another UPS status query. Typical answer:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>(MMM.M ???.? ???.? NNN.N PPP.P ??? QQQ RR.R ??? ??? SS.S TT.T flags</code></pre>
+</div></div>
+<div class="paragraph"><p>Some flags:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>E</code>&#8201;&#8212;&#8201;test in progress;
+</p>
+</li>
+<li>
+<p>
+<code>A</code>&#8201;&#8212;&#8201;mains fault, on battery;
+</p>
+</li>
+<li>
+<p>
+<code>C</code>&#8201;&#8212;&#8201;bypass/AVR mode
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>Q6</code></code></p></td>
+<td align="left" valign="middle"><div><div class="paragraph"><p>Query UPS status, especially useful for three-phase models.
+          Typical answer:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>(227.0 225.6 230.0 50.0 229.9 000.0 000.0 49.9 007 000 000 327.8 000.0 23.0 06932 100 32 00000000 00000000 11</code></pre>
+</div></div>
+<div class="ulist"><ul>
+<li>
+<p>
+Fields 1..3 are <code>L1-N</code>, <code>L2-N</code> and <code>L3-N</code> input voltages,
+</p>
+</li>
+<li>
+<p>
+field 4 is input frequency,
+</p>
+</li>
+<li>
+<p>
+fields 5..7 should be <code>L1-N</code>, <code>L2-N</code> and <code>L3-N</code> output voltages,
+</p>
+</li>
+<li>
+<p>
+field 8 is output frequency,
+</p>
+</li>
+<li>
+<p>
+field 9 is load (in percents, with leading zero),
+</p>
+</li>
+<li>
+<p>
+field 12 is battery voltage,
+</p>
+</li>
+<li>
+<p>
+field 14 is temperature,
+</p>
+</li>
+<li>
+<p>
+field 15 is estimated runtime (in seconds),
+</p>
+</li>
+<li>
+<p>
+field 16 is battery level (in percents, with leading zero).
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>QBL</code></code></p></td>
+<td align="left" valign="middle"><div><div class="paragraph"><p>Query battery stats. Typical answer:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>(026.5 02 01 068 255</code></pre>
+</div></div>
+<div class="ulist"><ul>
+<li>
+<p>
+Field 1 is battery voltage;
+</p>
+</li>
+<li>
+<p>
+field 2 is a number of batteries connected in series;
+</p>
+</li>
+<li>
+<p>
+field 3 is a number of batteries connected in parallel;
+</p>
+</li>
+<li>
+<p>
+field 4 is battery level (in percents, with leading zero);
+</p>
+</li>
+<li>
+<p>
+field 5 is estimated runtime (in minutes?).
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>QI</code></code></p></td>
+<td align="left" valign="middle"><p class="table">Query serial number info.</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>QLDL</code></code></p></td>
+<td align="left" valign="middle"><p class="table">Query min and max load stats.</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>QMD</code></code></p></td>
+<td align="left" valign="middle"><p class="table">Query nominal UPS stats such as power capacity, number of batteries, etc.</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>QMF</code></code></p></td>
+<td align="left" valign="middle"><p class="table">Query manufacturer info.</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>QMOD</code></code></p></td>
+<td align="left" valign="middle"><p class="table">Query current status code.</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>QOF</code></code></p></td>
+<td align="left" valign="middle"><p class="table">Query output frequency info.</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>QP</code></code></p></td>
+<td align="left" valign="middle"><div><div class="paragraph"><p>Query acceptable bypass limits. Typical answer:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>(45.0 55.0 176 264 EpbraDokc</code></pre>
+</div></div>
+<div class="ulist"><ul>
+<li>
+<p>
+Fields 1 and 2 are low and high limits for input bypass frequency;
+</p>
+</li>
+<li>
+<p>
+fields 3 and 4 are the same but for the voltage;
+</p>
+</li>
+<li>
+<p>
+field 5 is flags.
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>QRI</code></code></p></td>
+<td align="left" valign="middle"><p class="table">Yet another query for nominal UPS stats.</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>QVFW</code></code></p></td>
+<td align="left" valign="middle"><p class="table">Yet another firmware version query.</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>SASV07?</code></code></p></td>
+<td align="left" valign="middle"><p class="table">Query for serial number.
+                  Typical answer starts with <code>GASV07D</code> string.</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>TC?</code></code></p></td>
+<td align="left" valign="middle"><p class="table">Query for temperature.</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>V</code></code></p></td>
+<td align="left" valign="middle"><div><div class="paragraph"><p>Query for AVR mode settings. Typical answer:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>165 200 220 240 275</code></pre>
+</div></div>
+<div class="ulist"><ul>
+<li>
+<p>
+Field 1 is low limit for battery transition;
+</p>
+</li>
+<li>
+<p>
+field 2 is low limit for engaging AVR boost;
+</p>
+</li>
+<li>
+<p>
+field 3 is nominal voltage;
+</p>
+</li>
+<li>
+<p>
+field 4 is high limit for engaging AVR buck;
+</p>
+</li>
+<li>
+<p>
+field 5 is high limit for battery transition.
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>V?</code></code></p></td>
+<td align="left" valign="middle"><p class="table">Query for output voltage mode.</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>V220</code>, <code>V230</code>, <code>V240</code></code></p></td>
+<td align="left" valign="middle"><p class="table">Set output voltage mode
+                                  (corresponding LED may be toggled).</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>WH</code></code></p></td>
+<td align="left" valign="middle"><div><div class="paragraph"><p>Query for model info and nominal specs. Typical answer:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>(00 00.00 00.00 INN3T20K                 2 3/1 6 230 50.00 024 02.00 005.00 015.00 005 00 40 110 276 45.00 55.00</code></pre>
+</div></div>
+<div class="paragraph"><p>Seems to be:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+model code (field 4);
+</p>
+</li>
+<li>
+<p>
+topology (field 6);
+</p>
+</li>
+<li>
+<p>
+nominal voltage (field 8);
+</p>
+</li>
+<li>
+<p>
+nominal frequency (field 9);
+</p>
+</li>
+<li>
+<p>
+number of batteries (field 10).
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>WA</code></code></p></td>
+<td align="left" valign="middle"><div><div class="paragraph"><p>Query for power/load stats. Typical answer:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>(001.4 000.0 000.0 001.4 000.0 000.0 001.4 001.4 006.5 000.0 000.0 007 00000000</code></pre>
+</div></div>
+<div class="ulist"><ul>
+<li>
+<p>
+Fields 1 and 7 seem to be real power measurements on output, while
+</p>
+</li>
+<li>
+<p>
+fields 4 and 8&#8201;&#8212;&#8201;the full one.
+</p>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img src="../images/note.png" alt="Note" />
+</td>
+<td class="content">
+<div class="paragraph"><p>This example a bit clumsy because in that case <code>cos(phi)</code> was about <code>1</code>,
+but in other measurements I was able to get differing readings.</p></div>
+<div class="paragraph"><p>Not sure why these fields are in pairs (maybe rolling average?).</p></div>
+</td>
+</tr></table>
+</div>
+</li>
+<li>
+<p>
+Field 9 is current (amps), field 12 is load (percents).
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_revision_history">Revision History</h2>
 <div class="sectionbody">
 <div class="tableblock">
@@ -1053,15 +1529,21 @@ cellspacing="0" cellpadding="4">
 <tbody>
 <tr>
 <td align="center" valign="middle"><p class="table">2.6</p></td>
-<td align="center" valign="middle"><p class="table">95-9-30</p></td>
+<td align="center" valign="middle"><p class="table">1995-09-30</p></td>
 <td align="left" valign="middle"><p class="table">UPDATE "<strong><code>D</code></strong>" COMMAND (<code>SS.SS</code> &#8594; <code>SSS.SS</code>)</p></td>
 <td align="left" valign="middle"><p class="table">Kevin Chiou</p></td>
 </tr>
 <tr>
 <td align="center" valign="middle"><p class="table">2.7</p></td>
-<td align="center" valign="middle"><p class="table">96-8-01</p></td>
+<td align="center" valign="middle"><p class="table">1996-08-01</p></td>
 <td align="left" valign="middle"><p class="table">Disable "<strong><code>D</code></strong>" COMMAND</p></td>
 <td align="left" valign="middle"><p class="table">Kevin Chiou</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">2.8</p></td>
+<td align="center" valign="middle"><p class="table">2024-12-17</p></td>
+<td align="left" valign="middle"><p class="table">Additional chapter from 21st century</p></td>
+<td align="left" valign="middle"><p class="table">"f2065", Viktor Drobot</p></td>
 </tr>
 </tbody>
 </table>
@@ -1072,7 +1554,7 @@ cellspacing="0" cellpadding="4">
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-05-10 20:20:04 UTC
+Last updated 2024-12-17 13:30:02 UTC
 </div>
 <div id="footer-badges">
 <a href="https://github.com/networkupstools/nut">
