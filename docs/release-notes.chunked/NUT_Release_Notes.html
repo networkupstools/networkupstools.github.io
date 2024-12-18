@@ -64,6 +64,16 @@ The ability of two copies of the driver program to talk to each other
      use of <code class="literal">struct timeval={-1,-1}</code> as a trigger to <code class="literal">select(..., NULL)</code>,
      as logged in one part of code and not handled in the other, for the
      indefinite wait [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1922" target="_top">#1922</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2392" target="_top">#2392</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2686" target="_top">#2686</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2670" target="_top">#2670</a>]
+</li><li class="listitem">
+The <code class="literal">disable_fix_report_desc</code> option introduced for <code class="literal">usbhid-ups</code> driver
+     since NUT v2.8.1 was not applied for early dialog with the device while
+     its report descriptors were being discovered. Now this flag, as well as
+     <code class="literal">interruptsize</code> and <code class="literal">interruptonly</code>, are considered before we first try
+     to open the USB device handle. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1575" target="_top">#1575</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1512" target="_top">#1512</a>]
+</li><li class="listitem">
+In <code class="literal">cps_fix_report_desc()</code> we intended to fix-up input and output voltages
+     in certain cases against high voltage transfer, we only fixed-up one of
+     them. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1245" target="_top">#1245</a>]
 </li></ul></div></li><li class="listitem">
 development iterations of NUT should now identify with not only the semantic
    version of a preceding release, but with git-derived information about the
@@ -188,6 +198,9 @@ MGE HID list of <code class="literal">mge_model_names[]</code> was extended for 
 Added <code class="literal">ups.beeper.status</code> support for Masterpower MF-UPS650VA using the
      MGE HID subdriver. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2662" target="_top">#2662</a>]
 </li><li class="listitem">
+Added support for <code class="literal">0x09D6:0x0001</code> devices using the MGE HID subdriver
+     assuming devices made by KSTAR (alternately using MGE vendor ID). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2661" target="_top">#2661</a>]
+</li><li class="listitem">
 <code class="literal">powercom-hid</code> subdriver sent UPS shutdown commands in wrong byte order,
      at least for devices currently in the field. A toggle was added to set
      the old behavior (if some devices do need it), while a fix is applied
@@ -195,6 +208,16 @@ Added <code class="literal">ups.beeper.status</code> support for Masterpower MF-
 </li><li class="listitem">
 <code class="literal">cps-hid</code> subdriver now supports more variables, as available on e.g.
      CP1350EPFCLCD model, including temperature. [PRs <a class="ulink" href="https://github.com/networkupstools/nut/issues/2540" target="_top">#2540</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2711" target="_top">#2711</a>]
+</li><li class="listitem">
+loudly suggest to set <code class="literal">pollonly</code> flag and default a shorter <code class="literal">pollfreq</code>
+     for CPS devices, to try avoiding device-driven timeouts. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1689" target="_top">#1689</a>]
+     Also adjust default <code class="literal">offdelay</code> and <code class="literal">ondelay</code> to reasonable values,
+     and warn the users with CPS devices if their configured values are
+     not multiples of 60. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/432" target="_top">#432</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1394" target="_top">#1394</a>]
+</li><li class="listitem">
+in <code class="literal">cps-hid</code> subdriver, <code class="literal">cps_fix_report_desc()</code> method should now handle
+     mismatched <code class="literal">LogMax</code> ranges for input and output voltages, whose USB Report
+     Descriptors are wrongly encoded by some firmware versions. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1512" target="_top">#1512</a>]
 </li><li class="listitem">
 USB parameters (per <code class="literal">usb_communication_subdriver_t</code>) are now set back to
      their default values during enumeration after probing each subdriver.
@@ -238,6 +261,9 @@ More work may be needed for other USB-capable drivers (<code class="literal">ric
 …should now not log "insufficient permissions on everything" alone when
      some devices were accessible but just did not match — clarify that case
      in the next line, when applicable. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/2699" target="_top">PR #2699</a>]
+</li><li class="listitem">
+…should now track the fact of <code class="literal">assumed_LogMax</code> (typically when firmware
+     encoding logic is wrong, and <code class="literal">-1</code> is resolved by parser). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1512" target="_top">#1512</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1040" target="_top">#1040</a>]
 </li></ul></div></li><li class="listitem">
 Introduced a new driver concept for interaction with OS-reported hardware
    monitoring readings. Currently instantiated as <code class="literal">hwmon_ina219</code> specifically
@@ -3791,4 +3817,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.32. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2024-12-16 17:47:01 -- Network UPS Tools 2.8.2.1523</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2024-12-18 14:46:32 -- Network UPS Tools 2.8.2.1523</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
