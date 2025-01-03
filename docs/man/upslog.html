@@ -758,6 +758,19 @@ asciidoc.install();
 variables that interest you, format them, and write them to a file.</p></div>
 <div class="paragraph"><p>The default format string includes variables that are supported by many
 common UPS models.  See the description below to make your own.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">Historically this daemon supported logging of data for one UPS system
+(specified by the <code>-s</code> option) into one log file name or <code>stdout</code> (specified
+by the <code>-l</code> option).  Later it allowed to log several devices (each into its
+destination) as specified by multiple <code>-m tuple</code> options.  The two modes are
+effectively exclusive of each other (single-UPS options are ignored if tuples
+are also provided).</td>
+</tr></table>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -872,6 +885,7 @@ Store the results in this file.
 </p>
 <div class="paragraph"><p>You can use "-" for stdout, but upslog will remain in the foreground
 by default.</p></div>
+<div class="paragraph"><p>Ignored if you also provide <code>-m tuple</code> option(s).</p></div>
 </dd>
 <dt class="hdlist1">
 <strong>-F</strong>
@@ -897,17 +911,31 @@ upslog will run in the background, regardless of logging target.
 Monitor this UPS.  The format for this option is
 <code>upsname[@hostname[:port]]</code>.  The default hostname is "localhost".
 </p>
+<div class="paragraph"><p>Ignored if you also provide <code>-m tuple</code> option(s).</p></div>
 </dd>
 <dt class="hdlist1">
 <strong>-m</strong> <em>tuple</em>
 </dt>
 <dd>
 <p>
-Monitor multiple UPSs. The format for this option is a tuple of
-ups and logfile separated by commas. An example would be:
-<code>upsname@hostname:9999,/var/log/nut/cps.log</code>
+Monitor multiple UPSs (provided several instances of such option).
 </p>
+<div class="paragraph"><p>Overrides the single-UPS settings passed by <code>-s</code> and <code>-l</code> options.</p></div>
+<div class="paragraph"><p>The format for this option is a tuple of UPS system and log file
+specification, separated by commas. An example would be:</p></div>
 </dd>
+</dl></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>upsname@hostname:9999,/var/log/nut/cps.log</code></pre>
+</div></div>
+<div class="paragraph"><p>+
+Tuples may specify <code>-</code> as the logfile, to emit messages on <code>stdout</code>
+(e.g. to be collected by the system journal for services).</p></div>
+<div class="paragraph"><p>+
+Use of <code>stdout</code> via tuple-based logging specifications does not
+imply that upslog will remain in the foreground by default.</p></div>
+<div class="dlist"><dl>
 <dt class="hdlist1">
 <strong>-u</strong> <em>username</em>
 </dt>
@@ -970,7 +998,7 @@ by an external program.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-04-29 08:42:36 UTC -- Network UPS Tools 2.8.2.1523
+Last updated 2025-01-03 20:45:05 UTC -- Network UPS Tools 2.8.2.1827
 </div>
 </div>
 </body>

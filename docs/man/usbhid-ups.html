@@ -1133,8 +1133,9 @@ helpful when the UPS sets this value to a lower percentage than intended.</p></d
 Set the timer before the UPS is turned off after the kill power command is
 sent (via the <strong>-k</strong> switch).
 </p>
-<div class="paragraph"><p>The default value is 20 (in seconds). Usually this <strong>must be lower</strong> than
-<em>ondelay</em>, but the driver will <strong>not</strong> warn you upon startup if it isn&#8217;t.</p></div>
+<div class="paragraph"><p>The default value is 20 (in seconds), or 60 for CPS devices.
+Usually this <strong>must be lower</strong> than <em>ondelay</em>, but the driver will <strong>not</strong> warn
+you upon startup if it isn&#8217;t.</p></div>
 <div class="paragraph"><p>Note that many Cyber Power Systems (CPS) models tend to divide this delay by
 60 and round down, so the minimum advisable value is 60 to avoid powering off
 immediately after NUT sends the shutdown command to the UPS. More details
@@ -1150,14 +1151,15 @@ kill power command had been sent, but before the actual switch off. This
 ensures the machines connected to the UPS are, in all cases, rebooted after
 a power failure.
 </p>
-<div class="paragraph"><p>The default value is 30 (in seconds). Usually this <strong>must be greater</strong>
-than offdelay, but the driver will <strong>not</strong> warn you upon startup if it
-isn&#8217;t. Some UPSes will restart no matter what, even if the power is
-(still) out at the moment this timer elapses. In that case, you could see
-whether setting <code>ondelay = -1</code> in <strong>ups.conf</strong> helps.</p></div>
+<div class="paragraph"><p>The default value is 30 (in seconds), or 120 for CPS devices.
+Usually this <strong>must be greater</strong> than offdelay, but the driver will <strong>not</strong> warn
+you upon startup if it isn&#8217;t. Some UPSes will restart no matter what, even
+if the power is (still) out at the moment this timer elapses. In that case,
+you could see whether setting <code>ondelay = -1</code> in <strong>ups.conf</strong> helps.</p></div>
 <div class="paragraph"><p>Note that many CPS models tend to divide this delay by 60 and round down, so
 the minimum advisable value is 120 to allow a short delay between when the UPS
-shuts down, and when the power returns.</p></div>
+shuts down, and when the power returns. According to support statement (for at
+least some CPS models), "our UPS systems are unable to set up power on delay".</p></div>
 </dd>
 <dt class="hdlist1">
 <strong>pollfreq</strong>=<em>num</em>
@@ -1167,7 +1169,7 @@ shuts down, and when the power returns.</p></div>
 Set polling frequency for full updates, in seconds. Compared to the quick
 updates performed every "pollinterval" (the latter option is described in
 <a href="ups.conf.html">ups.conf(5)</a>), the "pollfreq" interval is for polling the less-critical
-variables.  The default value is 30 (in seconds).
+variables.  The default value is 30 (in seconds), or 12 sec for CPS devices.
 </p>
 </dd>
 <dt class="hdlist1">
@@ -1479,6 +1481,10 @@ be tuned with a kernel boot parameter (via GRUB etc.):</p></div>
 <div class="content">
 <pre><code>usbhid.quirks=0x0463:0xffff:0x08</code></pre>
 </div></div>
+<div class="paragraph"><p>Conversely, some hardware controllers may "fall asleep" when not contacted
+for too long; CPS devices are commonly associated with such behaviour.
+In this case, consider enabling <code>pollonly</code> flag and/or keeping <code>pollfreq</code>
+and/or <code>pollinterval</code> small.</p></div>
 </div>
 <div class="sect2">
 <h3 id="_got_eperm_operation_not_permitted_upon_driver_startup">Got EPERM: Operation not permitted upon driver startup</h3>
@@ -1582,7 +1588,7 @@ Arjen de Korte
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-11-17 14:44:24 UTC -- Network UPS Tools 2.8.2.1523
+Last updated 2025-01-03 20:45:06 UTC -- Network UPS Tools 2.8.2.1827
 </div>
 </div>
 </body>
