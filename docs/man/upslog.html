@@ -758,19 +758,6 @@ asciidoc.install();
 variables that interest you, format them, and write them to a file.</p></div>
 <div class="paragraph"><p>The default format string includes variables that are supported by many
 common UPS models.  See the description below to make your own.</p></div>
-<div class="admonitionblock">
-<table><tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">Historically this daemon supported logging of data for one UPS system
-(specified by the <code>-s</code> option) into one log file name or <code>stdout</code> (specified
-by the <code>-l</code> option).  Later it allowed to log several devices (each into its
-destination) as specified by multiple <code>-m tuple</code> options.  The two modes are
-effectively exclusive of each other (single-UPS options are ignored if tuples
-are also provided).</td>
-</tr></table>
-</div>
 </div>
 </div>
 <div class="sect1">
@@ -804,6 +791,14 @@ Insert a single "%"
 </p>
 </dd>
 <dt class="hdlist1">
+%t
+</dt>
+<dd>
+<p>
+Insert a single TAB character (like <code>printf("\t")</code>)
+</p>
+</dd>
+<dt class="hdlist1">
 %TIME format%
 </dt>
 <dd>
@@ -834,6 +829,7 @@ insert the local hostname
 <dd>
 <p>
 insert the host of the UPS being monitored
+(the <code>&lt;system&gt;</code> part of your logging specification, e.g. <code>ups[@host[:port]]</code>)
 </p>
 </dd>
 <dt class="hdlist1">
@@ -894,7 +890,17 @@ Store the results in this file.
 </p>
 <div class="paragraph"><p>You can use "-" for stdout, but upslog will remain in the foreground
 by default.</p></div>
-<div class="paragraph"><p>Ignored if you also provide <code>-m tuple</code> option(s).</p></div>
+<div class="paragraph"><p>Requires that the <code>-s &lt;system&gt;</code> option is also used for the single-system
+logging.  Can be used with the <code>-m &lt;tuple&gt;</code>, will be added to the list.</p></div>
+</dd>
+<dt class="hdlist1">
+<strong>-D</strong>
+</dt>
+<dd>
+<p>
+Raise debugging verbosity level by one; upslog will remain in the foreground
+by default.
+</p>
 </dd>
 <dt class="hdlist1">
 <strong>-F</strong>
@@ -909,7 +915,7 @@ upslog will run in the foreground, regardless of logging target.
 </dt>
 <dd>
 <p>
-upslog will run in the background, regardless of logging target.
+upslog will run in the background, regardless of logging target or debugging.
 </p>
 </dd>
 <dt class="hdlist1">
@@ -920,7 +926,9 @@ upslog will run in the background, regardless of logging target.
 Monitor this UPS.  The format for this option is
 <code>upsname[@hostname[:port]]</code>.  The default hostname is "localhost".
 </p>
-<div class="paragraph"><p>Ignored if you also provide <code>-m tuple</code> option(s).</p></div>
+<div class="paragraph"><p>The upsname may be an asterisk <code>*</code> to query UPSes currently served by hostname.</p></div>
+<div class="paragraph"><p>Requires that the <code>-l &lt;logfile&gt;</code> option is also used for the single-system
+logging.  Can be used with the <code>-m &lt;tuple&gt;</code>, will be added to the list.</p></div>
 </dd>
 <dt class="hdlist1">
 <strong>-m</strong> <em>tuple</em>
@@ -929,7 +937,6 @@ Monitor this UPS.  The format for this option is
 <p>
 Monitor multiple UPSs (provided several instances of such option).
 </p>
-<div class="paragraph"><p>Overrides the single-UPS settings passed by <code>-s</code> and <code>-l</code> options.</p></div>
 <div class="paragraph"><p>The format for this option is a tuple of UPS system and log file
 specification, separated by commas. An example would be:</p></div>
 </dd>
@@ -939,11 +946,13 @@ specification, separated by commas. An example would be:</p></div>
 <pre><code>upsname@hostname:9999,/var/log/nut/cps.log</code></pre>
 </div></div>
 <div class="paragraph"><p>+
+The upsname may be an asterisk <code>*</code> to query UPSes currently served by hostname.</p></div>
+<div class="paragraph"><p>+
 Tuples may specify <code>-</code> as the logfile, to emit messages on <code>stdout</code>
 (e.g. to be collected by the system journal for services).</p></div>
 <div class="paragraph"><p>+
-Use of <code>stdout</code> via tuple-based logging specifications does not
-imply that upslog will remain in the foreground by default.</p></div>
+Use of <code>stdout</code> via tuple-based logging specifications also
+implies that upslog will remain in the foreground by default.</p></div>
 <div class="dlist"><dl>
 <dt class="hdlist1">
 <strong>-u</strong> <em>username</em>
@@ -978,11 +987,32 @@ than that specified by the <code>-i</code> argument.</p></div>
 </div>
 </div>
 <div class="sect1">
+<h2 id="_log_co_location">LOG CO-LOCATION</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>It is possible and safe to specify the same log file (including <code>-</code> for stdout)
+in several tuples, and it would only be opened or closed once without conflict.</p></div>
+<div class="paragraph"><p>Consider adding <code>%UPSHOST%</code> to your custom formatting string to differentiate
+lines corresponding to different systems, when logging them to same target.</p></div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_log_rotation">LOG ROTATION</h2>
 <div class="sectionbody">
 <div class="paragraph"><p><strong>upslog</strong> writes its PID to <code>upslog.pid</code>, and will reopen the log file if you
 send it a SIGHUP.  This allows it to keep running when the log is rotated
 by an external program.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_caveats">CAVEATS</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Historically this daemon supported logging of data for one UPS system per run
+(specified by the <code>-s</code> option) into one log file name or <code>stdout</code> (specified
+by the <code>-l</code> option).  Since NUT v2.8.1 it allowed to log several devices (each
+logged into its destination) as specified by multiple <code>-m tuple</code> options.
+The two modes were effectively exclusive of each other (single-UPS options
+were ignored if tuples are also provided) until NUT v2.8.3, but single-UPS
+options are added to the list of tuples since that release.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -1007,7 +1037,7 @@ by an external program.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-01-05 23:44:16 UTC -- Network UPS Tools 2.8.2.1827
+Last updated 2025-01-08 17:44:25 UTC -- Network UPS Tools 2.8.2.1871
 </div>
 </div>
 </body>

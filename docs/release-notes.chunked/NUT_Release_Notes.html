@@ -116,6 +116,10 @@ drivers started with the <code class="literal">-FF</code> command-line option (e
    now also handle an existing PID file to interact with the earlier instance
    of the driver program, if still running (e.g. started manually). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2384" target="_top">#2384</a>]
 </li><li class="listitem">
+Drivers executed to force an UPS shutdown (with <code class="literal">-k</code> CLI option) should
+   now try harder to kill off a daemonized sibling, if it still runs (and
+   did not handle a <code class="literal">driver.killpower</code> INSTCMD well). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2666" target="_top">#2666</a>]
+</li><li class="listitem">
 Extended instant commands for driver reloading with a <code class="literal">driver.exit</code>
    command for a protocol equivalent of sending a <code class="literal">SIGTERM</code>, e.g. when
    a newer instance of the driver program tries to start. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1903" target="_top">#1903</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2392" target="_top">#2392</a>]
@@ -347,6 +351,24 @@ upslog:
 Added support for limiting the loop count. Using in NIT (NUT Integration
      Test) suite for double profit (checking the tool and fallback in NIT).
 </li><li class="listitem">
+If you use the legacy CLI options for single-system logging (<code class="literal">-s &lt;system&gt;</code>
+     and <code class="literal">-l &lt;logfile&gt;</code>) along with newer tuple(s) for multiple-system logging
+     (repeatable <code class="literal">-m &lt;system,logfile&gt;</code>), previously the single-system options
+     were overridden by the tuple(s); now they become part of the list.
+</li><li class="listitem">
+The <code class="literal">upsname</code> in the <code class="literal">system=upsname[@hostname[:port]]</code> parameter may
+     be an asterisk <code class="literal">*</code> to query for devices currently served by the hostname.
+</li><li class="listitem">
+Same log file may safely be used in different logging tuples (it is
+     then recommended to use <code class="literal">%UPSHOST%</code> in a custom formatting string).
+</li><li class="listitem">
+Fixed printing of <code class="literal">%UPSHOST%</code> when multiple systems are being logged.
+</li><li class="listitem">
+A <code class="literal">%t</code> for a TAB character can now be used in the formatting string.
+</li><li class="listitem">
+Added <code class="literal">-D</code> for debugging (and foregrounding by default), like with
+     other NUT daemons.
+</li><li class="listitem">
 Added systemd and SMF service integration. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1803" target="_top">#1803</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 More systemd integration:
@@ -434,6 +456,9 @@ logic that was previously the content of <code class="literal">upsdrv_shutdown()
 relocated into new <code class="literal">shutdown.default</code> INSTCMD definitions. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2670" target="_top">#2670</a>]</p></div></li><li class="listitem"><p class="simpara">
 common code:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+<code class="literal">upscli_splitname()</code> should now recognize <code class="literal">upsname:port</code> typos (missing
+     the <code class="literal">@hostname</code> part) and error out gracefully.
+</li><li class="listitem">
 introduced a <code class="literal">NUT_DEBUG_SYSLOG</code> environment variable to tweak activation
      of syslog message emission (and related detachment of <code class="literal">stderr</code> when
      backgrounding), primarily useful for NIT and perhaps systemd. Most
@@ -483,7 +508,22 @@ codebase adapted to the liking of <code class="literal">clang-18</code> and newe
      <code class="literal">gcc-13</code>+ whose static analyzers on NUT CI farm complained about some
      imperfections after adding newer OS revisions to the population of
      build agents. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2585" target="_top">#2585</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2588" target="_top">#2588</a>]
+</li><li class="listitem">
+New checks in <code class="literal">clang-19</code> brought new findings about mismatched formatting
+     strings and <code class="literal">int</code>-ish parameters of respective methods.
+     Overall, had to change formatting strings in some cases, variable types
+     in others (e.g. flags or notification types do not make sense as signed)
+     and added casting in a few places that remained, because:
 </li></ul></div></li><li class="listitem">
+<code class="literal">%x</code> style formatting requires an <code class="literal">unsigned int</code> variable
+</li><li class="listitem">
+numeric literals and macros are <code class="literal">int</code> by default
+</li><li class="listitem">
+results of math with unsigned types like <code class="literal">uint16_t</code>, done in some
+       cases, are up-scaled into <code class="literal">int</code> by default
+</li><li class="listitem">
+<code class="literal">char</code>'s, <code class="literal">unsigned</code> or not, seem to be also up-scaled into <code class="literal">int</code>
+</li><li class="listitem">
 updated <code class="literal">docs/nut-names.txt</code> with items defined by 42ITy NUT fork. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2339" target="_top">#2339</a>]
 </li><li class="listitem">
 various recipe, documentation and source files were revised to address
@@ -3852,4 +3892,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.32. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-01-05 23:49:15 -- Network UPS Tools 2.8.2.1827</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2025-01-08 17:44:46 -- Network UPS Tools 2.8.2.1871</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
