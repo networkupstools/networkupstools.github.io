@@ -55,17 +55,24 @@ options.</p><p>If you alter paths with additional switches, be sure to use those
 new paths while reading the rest of the steps.</p><p>Reference: <a class="link" href="Configure_options.html" title="H. Configure options">Configure options</a> from the
 User Manual.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_build_the_programs"></a>Build the programs</h5></div></div></div><pre class="literallayout">make</pre><p>This will build the NUT client and server programs and the
 selected drivers. It will also build any other features that were
-selected during <a class="link" href="_installation_instructions.html#Configuration" title="Configuration">configuration</a> step above.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_installation"></a>Installation</h5></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>you should now gain privileges for installing software if necessary:</p><pre class="literallayout">su</pre></div><p>Install the files to a system level directory:</p><pre class="literallayout">make install</pre><p>This will install the compiled programs and man pages, as well as
+selected during <a class="link" href="_installation_instructions.html#Configuration" title="Configuration">configuration</a> step above.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_installation"></a>Installation</h5></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>You should now gain privileges for installing software if necessary, e.g.:</p><pre class="literallayout">su -</pre><p>or prefix installation (not build/check!) commands with <code class="literal">sudo</code>, e.g.:</p><pre class="literallayout">sudo make install ...</pre></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>If you install NUT for direct consumption on the system that has just
+built it from source, you might be aided for some of the steps listed
+and explained below by running (as <code class="literal">root</code>):</p><pre class="literallayout">make install-as-root</pre><p>This should not only install the software, but also create directories
+such as the state path, assign ownership and access permissions to
+certain directories and sample configuration files which NUT user
+and/or group accounts should be able to read and/or write, and, on
+some platforms, also (re-)start the NUT daemons/services.</p><p>See above "System User creation", that should be done first!</p></div><p>Install the files to a system level directory:</p><pre class="literallayout">make install</pre><p>This will install the compiled programs and man pages, as well as
 some data files required by NUT. Any optional features selected
 during configuration will also be installed.</p><p>This will also install sample versions of the NUT configuration
 files. Sample files are installed with names like ups.conf.sample
 so they will not overwrite any existing real config files you may
 have created.</p><p>If you are packaging this software, then you will probably want to
 use the DESTDIR variable to redirect the build into another place,
-i.e.:</p><pre class="literallayout">make DESTDIR=/tmp/package install
-make DESTDIR=/tmp/package install-conf</pre></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="StatePath"></a>State path creation</h5></div></div></div><p>Create the state path directory for the driver(s) and server to use
+also known as a "prototype directory" or a "staging area", i.e.:</p><pre class="literallayout">make DESTDIR=/tmp/package install
+make DESTDIR=/tmp/package install-conf</pre></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="StatePath"></a>State path creation</h5></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>See above about <code class="literal">make install-as-root</code>, if you use that — skip
+this step here.</p></div><p>Create the state path directory for the driver(s) and server to use
 for storing UPS status data and other auxiliary files, and make it
-group-writable by the group of the system user you created.</p><pre class="literallayout">mkdir -p /var/state/ups
+group-writable by the group of the system user you created, e.g.:</p><pre class="literallayout">mkdir -p /var/state/ups
 chmod 0770 /var/state/ups
 chown root:nut /var/state/ups</pre></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="Ownership"></a>Ownership and permissions</h5></div></div></div><p>Set ownership data and permissions on your serial or USB ports
 that go to your UPS hardware.  Be sure to limit access to just
@@ -325,4 +332,4 @@ for Windows, please see link:docs/config-prereqs.txt and/or
 link:scripts/Windows/README.adoc files. Note this is rather experimental
 at this point.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_runtime_configuration"></a>Runtime configuration</h4></div></div></div><p>You are now ready to configure NUT, and start testing and using it.</p><p>You can jump directly to the
 <a class="link" href="Configuration_notes.html" title="6. Configuration notes">NUT configuration</a>.</p></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-01-09 23:52:48 -- Network UPS Tools 2.8.2.1877</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="Download_instructions.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="Configuration_notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2025-01-15 23:48:21 -- Network UPS Tools 2.8.2.1898</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="Download_instructions.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="Configuration_notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

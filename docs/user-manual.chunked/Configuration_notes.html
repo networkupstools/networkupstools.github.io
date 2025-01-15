@@ -145,7 +145,12 @@ You can come back and add more to it later when it’s time to
 configure <code class="literal">upsmon</code> or run one of the management tools.</p><p>Do not make either file world-readable, since they both hold
 access control data and passwords.  They just need to be readable by
 the user you created in the preparation process.</p><p>The suggested configuration is to <code class="literal">chown</code> it to <code class="literal">root</code>, <code class="literal">chgrp</code> it to the
-group you created, then make it readable by the group.</p><pre class="literallayout">chown root:nut upsd.conf upsd.users
+group you created, then make it readable by the group.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>If you installed NUT from source and used <code class="literal">make install-as-root</code>,
+or if your distribution packaging did, the sample configuration files
+would have the suggested ownership and permissions assigned, so if you
+use e.g. <code class="literal">cp -pf upsd.users.sample upsd.users</code> (as <code class="literal">root</code>) to start out
+with some annotated comments and adapt that to your deployment, the
+copied files should also get the expected safe permissions.</p></div><pre class="literallayout">chown root:nut upsd.conf upsd.users
 chmod 0640 upsd.conf upsd.users</pre><p>References: man pages: <a class="ulink" href="../man/upsd.conf.html" target="_top">upsd.conf(5)</a>,
 <a class="ulink" href="../man/upsd.users.html" target="_top">upsd.users(5)</a>,
 <a class="ulink" href="../man/upsd.html" target="_top">upsd(8)</a></p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="Starting_upsd"></a>Starting the data server</h4></div></div></div><p>Start the network data server:</p><pre class="literallayout">upsd</pre><p>Make sure it is able to connect to the driver(s) on your system.
@@ -322,7 +327,12 @@ The <code class="literal">upsmon</code> will create this file when the UPS needs
 during a power failure when low battery is reached.</p><p>We will test for the presence of this file in a later step.</p><pre class="literallayout">POWERDOWNFLAG /etc/killpower</pre><p>References: man pages: <a class="ulink" href="../man/upsmon.html" target="_top">upsmon(8)</a>,
 <a class="ulink" href="../man/upsmon.conf.html" target="_top">upsmon.conf(5)</a></p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_securing_upsmon_conf"></a>Securing upsmon.conf</h5></div></div></div><p>The recommended setting is to have it owned by <code class="literal">root:nut</code>, then make it
 readable by the group and not by the world.  This file contains passwords
-that could be used by an attacker to start a shutdown, so keep it secure.</p><pre class="literallayout">chown root:nut upsmon.conf
+that could be used by an attacker to start a shutdown, so keep it secure.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>If you installed NUT from source and used <code class="literal">make install-as-root</code>,
+or if your distribution packaging did, the sample configuration files
+would have the suggested ownership and permissions assigned, so if you
+use e.g. <code class="literal">cp -pf upsmon.conf.sample upsmon.conf</code> (as <code class="literal">root</code>) to start out
+with some annotated comments and adapt that to your deployment, the
+copied files should also get the expected safe permissions.</p></div><pre class="literallayout">chown root:nut upsmon.conf
 chmod 0640 upsmon.conf</pre><p>This step has been placed early in the process so you secure this file
 before adding sensitive data in the next step.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_create_a_monitor_directive_for_upsmon"></a>Create a MONITOR directive for upsmon</h5></div></div></div><p>Edit <span class="emphasis"><em>upsmon.conf</em></span> and create a <code class="literal">MONITOR</code> line with the UPS definition
 (&lt;upsname&gt;@&lt;hostname&gt;), username and password from the
@@ -500,4 +510,4 @@ system with a 1:1 cord:supply ratio has more wires stuffed behind it, but
 it’s much easier to move things around since any given UPS drives a smaller
 percentage of the overall power.</p><p>More information can be found in the <a class="ulink" href="../user-manual.chunked/index.html" target="_top">NUT user manual</a>,
 and the various <a class="ulink" href="man/index.html" target="_top">user manual pages</a>.</p></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-01-09 23:52:48 -- Network UPS Tools 2.8.2.1877</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_installation_instructions.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="Advanced_usage_scheduling_notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2025-01-15 23:48:21 -- Network UPS Tools 2.8.2.1898</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_installation_instructions.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="Advanced_usage_scheduling_notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
