@@ -741,7 +741,7 @@ asciidoc.install();
 <div class="sect1">
 <h2 id="_name">NAME</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>upsdrvsvcctl - UPS driver service instance controller</p></div>
+<div class="paragraph"><p>upsdrvsvcctl - Network UPS Tools driver service instance controller</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -760,15 +760,16 @@ drivers wrapped into service instances on platforms which support that
 derived from Solaris 10 codebase, including proprietary Sun/Oracle
 Solaris and numerous open-source illumos distributions with SMF).
 It may be not installed in packaging for other operating systems.</p></div>
-<div class="paragraph"><p>When used properly, upsdrvsvcctl lets you maintain identical startup
+<div class="paragraph"><p>When used properly, <code>upsdrvsvcctl</code> lets you maintain identical startup
 scripts across multiple systems with different UPS configurations.</p></div>
-<div class="paragraph"><p>The goal of this solution is to allow the services of <strong>upsd</strong> data
-server to start up even if some of the power devices are currently
+<div class="paragraph"><p>The goal of this solution is to allow the services of <a href="upsd.html">upsd(8)</a>
+data server to start up even if some of the power devices are currently
 not accessible, and for NUT drivers to be automatically restarted
 by the system in case of problems (driver bug, startup failure).
 It also allows for faster startup of systems which monitor several
-devices, by letting each driver to start in parallel with others,
-and not with a sequential loop like was done previously.</p></div>
+devices, by letting each driver to start in parallel with others
+and as soon as the required subsystem for the specific driver&#8217;s media
+is available, i.e. not with a sequential loop like was done previously.</p></div>
 <div class="paragraph"><p>Independent service instances for each NUT driver also allow one
 to configure further dependencies, such as that networking must be
 available for SNMP and similar drivers (but is not needed for
@@ -779,15 +780,15 @@ UPSes, did not really work well for monitoring larger deployments.
 It was also not easy to strike a pre-packaged balance between early
 UPS protection for USB/serial home setups vs. waiting for network
 on larger ones.</p></div>
-<div class="paragraph"><p><strong>upsdrvsvcctl</strong> is a script which mimics the operation of <strong>upsdrvctl</strong>
+<div class="paragraph"><p><strong>upsdrvsvcctl</strong> is a script which mimics the operation of <a href="upsdrvctl.html">upsdrvctl(8)</a>
 program (where possible) to provide similar end-user experience when
 manipulating drivers wrapped into service instances rather than as
-directly executed daemons. It relies on <strong>nut-driver-enumerator.sh</strong>
+directly executed daemons. It relies on <a href="nut-driver-enumerator.html">nut-driver-enumerator(8)</a>
 for a large part of actual operations.</p></div>
-<div class="paragraph"><p>You should use upsdrvsvcctl instead of direct calls to the drivers
-and daemon-based management with <strong>upsdrvctl</strong> whenever possible (that
+<div class="paragraph"><p>You should use <code>upsdrvsvcctl</code> instead of direct calls to the drivers
+and daemon-based management with <a href="upsdrvctl.html">upsdrvctl(8)</a> whenever possible (that
 is, for "production" use on compatible OSes). Otherwise (testing,
-other OSes) the <strong>upsdrvctl</strong> is a recommended option.</p></div>
+other OSes) the <code>upsdrvctl</code> is a recommended option.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -852,28 +853,26 @@ directly.</p></div>
 </dt>
 <dd>
 <p>
-If starting a driver, this value will direct it to <strong>chroot</strong>(2) into
-<em>directory</em>.  This can be useful when securing systems.
+If starting a driver, this value will direct it to <ulink url="https://linux.die.net/man/2/chroot">chroot(2)</ulink>
+into <em>directory</em>.  This can be useful when securing systems.
 </p>
+<div class="paragraph"><p>This may be set in the <a href="ups.conf.html">ups.conf(5)</a> with the <code>chroot</code> directive
+in the global section.</p></div>
 </dd>
-</dl></div>
-<div class="paragraph"><p>This may be set in the ups.conf with "chroot" in the global section.</p></div>
-<div class="dlist"><dl>
 <dt class="hdlist1">
 <strong>-u</strong> <em>username</em>
 </dt>
 <dd>
 <p>
-If starting a driver, this value will direct it to <strong>setuid</strong>(2) to
+If starting a driver, this value will direct it to <ulink url="https://linux.die.net/man/2/setuid">setuid(2)</ulink> to
 the user id associated with <em>username</em>.
 </p>
-</dd>
-</dl></div>
-<div class="paragraph"><p>If the driver is started as root without specifying this value, it will
+<div class="paragraph"><p>If the driver is started as <em>root</em> without specifying this value, it will
 use the username that was compiled into the binary.  This defaults to
-"nobody", and is far from ideal.</p></div>
-<div class="paragraph"><p>This may be set in ups.conf with "user" in the global section.</p></div>
-<div class="dlist"><dl>
+<em>nobody</em> (if not otherwise configured), which is far from ideal.</p></div>
+<div class="paragraph"><p>This may be set in <a href="ups.conf.html">ups.conf(5)</a> with the <code>user</code> directive in the
+global section.</p></div>
+</dd>
 <dt class="hdlist1">
 <strong>-D</strong>
 </dt>
@@ -904,7 +903,7 @@ online.</p></div>
 <dd>
 <p>
 Start the UPS driver(s). In case of failure, further attempts may be executed
-by using the <em>maxretry</em> and <em>retrydelay</em> options - see <a href="ups.conf.html">ups.conf(5)</a>.
+by using the <em>maxretry</em> and <em>retrydelay</em> options&#8201;&#8212;&#8201;see <a href="ups.conf.html">ups.conf(5)</a>.
 </p>
 </dd>
 <dt class="hdlist1">
@@ -963,7 +962,7 @@ names used in <em>ups.conf</em> (register new instances, tear down obsoleted one
 <dd>
 <p>
 Command the UPS driver(s) to run their shutdown sequence.  Drivers are
-stopped according to their sdorder value - see <a href="ups.conf.html">ups.conf(5)</a>.
+stopped according to their <code>sdorder</code> value&#8201;&#8212;&#8201;see <a href="ups.conf.html">ups.conf(5)</a>.
 </p>
 </dd>
 </dl></div>
@@ -1027,14 +1026,12 @@ Messages will normally be kept in the service journal, so:
 <div class="content">
 <pre><code>journalctl -lu nut-driver@instance-name</code></pre>
 </div></div>
-</dd>
-</dl></div>
 <div class="paragraph"><p>Note that your local system configuration may be impacted by such
 nuances as passing the journal data to a standard syslog server,
 and/or by having a small cache for locally stored journal messages
 (so older entries would disappear). There may also be or not be a
-copy of the journals stored in the filesystem.</p></div>
-<div class="dlist"><dl>
+copy of the journals stored in the persistent filesystem at all.</p></div>
+</dd>
 <dt class="hdlist1">
 <strong>Solaris SMF</strong>
 </dt>
@@ -1067,7 +1064,7 @@ Look for <code>/var/svc/log/system-power-nut-driver:instance-name.log</code> fil
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-05 08:47:28 UTC -- Network UPS Tools 2.8.2.2040
+Last updated 2025-02-08 14:47:40 UTC -- Network UPS Tools 2.8.2.2132
 </div>
 </div>
 </body>

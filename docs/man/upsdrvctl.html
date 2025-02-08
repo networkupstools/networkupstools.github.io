@@ -741,7 +741,7 @@ asciidoc.install();
 <div class="sect1">
 <h2 id="_name">NAME</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>upsdrvctl - UPS driver controller</p></div>
+<div class="paragraph"><p>upsdrvctl - Network UPS Tools driver controller</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -757,25 +757,32 @@ asciidoc.install();
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
 <div class="paragraph"><p><strong>upsdrvctl</strong> provides a uniform interface for controlling your UPS drivers.
-You should use upsdrvctl instead of direct calls to the drivers
+You should use <code>upsdrvctl</code> command instead of direct calls to the drivers
 whenever possible.</p></div>
-<div class="paragraph"><p>When used properly, upsdrvctl lets you maintain identical startup
+<div class="paragraph"><p>When used properly, <code>upsdrvctl</code> lets you maintain identical startup
 scripts across multiple systems with different UPS configurations.</p></div>
 <div class="admonitionblock">
 <table><tr>
 <td class="icon">
-<div class="title">Note</div>
+<div class="title">Warning</div>
 </td>
-<td class="content">For operating systems with service management frameworks, such as
-Solaris SMF or Linux systemd, the <strong>upsdrvsvcctl</strong> may be a better choice.
-In fact, service instances prepared by <a href="nut-driver-enumerator.html">nut-driver-enumerator(8)</a>
+<td class="content">
+<div class="paragraph"><p>For operating systems with service management frameworks, such as
+Solaris/illumos SMF or Linux systemd, the <a href="upsdrvsvcctl.html">upsdrvsvcctl(8)</a>
+may be a better choice.</p></div>
+<div class="paragraph"><p>In fact, service instances prepared by <a href="nut-driver-enumerator.html">nut-driver-enumerator(8)</a>
 based on contents of your <a href="ups.conf.html">ups.conf(5)</a> file and automatically
 maintained by the respective framework can conflict with manual execution
-of drivers, so this tool would emit a warning in NUT builds with that
-capability (can be silenced by exporting a <code>NUT_QUIET_INIT_NDE_WARNING</code>
-environment variable with any value).</td>
+of drivers. In this case, <code>upsdrvctl</code> would emit a warning in NUT builds with
+that capability (can be silenced by exporting a <code>NUT_QUIET_INIT_NDE_WARNING</code>
+environment variable with any value).</p></div>
+</td>
 </tr></table>
 </div>
+<div class="paragraph"><p>You may be required to stop service units (if used) and run driver programs
+directly rather than via <code>upsdrvctl</code> for troubleshooting, e.g. to facilitate
+debug log collection or test any custom builds of drivers without conflict
+with a normally running packaged instance.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -795,13 +802,12 @@ Display the help text.
 </dt>
 <dd>
 <p>
-If starting a driver, this value will direct it to <strong>chroot</strong>(2) into
+If starting a driver, this value will direct it to <ulink url="https://linux.die.net/man/2/chroot">chroot(2)</ulink> into
 <em>directory</em>.  This can be useful when securing systems.
 </p>
+<div class="paragraph"><p>This may be set in the <a href="ups.conf.html">ups.conf(5)</a> with the <code>chroot</code> directive
+in the global section.</p></div>
 </dd>
-</dl></div>
-<div class="paragraph"><p>This may be set in the ups.conf with "chroot" in the global section.</p></div>
-<div class="dlist"><dl>
 <dt class="hdlist1">
 <strong>-t</strong>
 </dt>
@@ -810,34 +816,36 @@ If starting a driver, this value will direct it to <strong>chroot</strong>(2) in
 Enable testing mode.  This also enables debug mode.  Testing mode makes
 upsdrvctl display the actions it would execute without actually doing them.
 Use this to test out your configuration without actually doing anything
-to your UPS drivers.  This may be helpful when defining the <em>sdorder</em>
-directive in your <a href="ups.conf.html">ups.conf(5)</a>.
+to your UPS drivers.
 </p>
+<div class="paragraph"><p>This may be helpful when defining the <code>sdorder</code> directive in your
+<a href="ups.conf.html">ups.conf(5)</a> section for the device.</p></div>
 </dd>
 <dt class="hdlist1">
 <strong>-u</strong> <em>username</em>
 </dt>
 <dd>
 <p>
-If starting a driver, this value will direct it to <strong>setuid</strong>(2) to
+If starting a driver, this value will direct it to <ulink url="https://linux.die.net/man/2/setuid">setuid(2)</ulink> to
 the user id associated with <em>username</em>.
 </p>
-</dd>
-</dl></div>
-<div class="paragraph"><p>If the driver is started as root without specifying this value, it will
+<div class="paragraph"><p>If the driver is started as <em>root</em> without specifying this value, it will
 use the username that was compiled into the binary.  This defaults to
-"nobody", and is far from ideal.</p></div>
-<div class="paragraph"><p>This may be set in ups.conf with "user" in the global section.</p></div>
-<div class="dlist"><dl>
+<em>nobody</em> (if not otherwise configured), which is far from ideal.</p></div>
+<div class="paragraph"><p>This may be set in <a href="ups.conf.html">ups.conf(5)</a> with the <code>user</code> directive in the
+global section.</p></div>
+</dd>
 <dt class="hdlist1">
 <strong>-D</strong>
 </dt>
 <dd>
 <p>
 Raise the debug level.  Use this multiple times for additional details.
-Note that this does not preclude the <code>upsdrvctl</code> tool from exiting after
-its job is done (however an explicit <strong>-F</strong> option does).
 </p>
+<div class="paragraph"><p>Note that this does not preclude the <code>upsdrvctl</code> tool from exiting after
+its job is done (however an explicit <strong>-F</strong> option does).</p></div>
+<div class="paragraph"><p>Also note that this option alone modifies the debug verbosity of the tool,
+but not of the drivers it launches. See the additional <strong>-d</strong> option for that.</p></div>
 </dd>
 <dt class="hdlist1">
 <strong>-d</strong>
@@ -845,9 +853,9 @@ its job is done (however an explicit <strong>-F</strong> option does).
 <dd>
 <p>
 Pass the selected debug level from <code>upsdrvctl</code> to launched drivers.
-Note that by default for NUT daemons, enabled debugging means running
-in foreground mode; you can specify <strong>-B</strong> additionally to avoid that.
 </p>
+<div class="paragraph"><p>Note that by default for NUT daemons, enabled debugging means running
+in foreground mode; you can specify <strong>-B</strong> additionally to avoid that.</p></div>
 </dd>
 <dt class="hdlist1">
 <strong>-F</strong>
@@ -857,12 +865,12 @@ in foreground mode; you can specify <strong>-B</strong> additionally to avoid th
 Driver will run in the foreground (not fork away from the <code>upsdrvctl</code>
 process), regardless of debugging settings. It would also keep the tool
 program itself foregrounded with driver daemons running as its children
-(in case of a single driver startup, it would not even fork). It would
-also not wait for drivers to complete initialization, so <code>upsdrvctl</code>
-will warn about such situations.
-Specify twice (<code>-FF</code> or <code>-F -F</code>) to save the driver PID file even in
-this mode (not saved by default when staying in foreground).
+(in case of a single driver startup, it would not even fork).
 </p>
+<div class="paragraph"><p>It would also not wait for drivers to complete initialization, so
+<code>upsdrvctl</code> will warn about such situations.</p></div>
+<div class="paragraph"><p>Specify twice (<code>-FF</code> or <code>-F -F</code>) to save the driver PID file even in
+this mode (not saved by default when staying in foreground).</p></div>
 </dd>
 <dt class="hdlist1">
 <strong>-B</strong>
@@ -887,9 +895,10 @@ Alias for <code>list</code> command.
 <div class="sect1">
 <h2 id="_commands">COMMANDS</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>upsdrvctl supports three commands - start, stop and shutdown.
+<div class="paragraph"><p><code>upsdrvctl</code> supports three active commands&#8201;&#8212;&#8201;<code>start</code>, <code>stop</code> and <code>shutdown</code>.
 It also supports passing requests to running drivers using
-<code>-c COMMAND</code> syntax, similar to that in some other daemons.</p></div>
+<code>-c COMMAND</code> syntax, similar to that in some other daemons.
+A couple of helper commands are also available&#8201;&#8212;&#8201;<code>list</code> and <code>status</code>.</p></div>
 <div class="paragraph"><p>They all can take an optional argument which is a UPS name from
 <a href="ups.conf.html">ups.conf(5)</a>.  Without that argument, they operate on every
 UPS that is currently configured.</p></div>
@@ -909,7 +918,7 @@ UPS that is currently configured.</p></div>
 <dd>
 <p>
 Start the UPS driver(s). In case of failure, further attempts may be executed
-by using the <em>maxretry</em> and <em>retrydelay</em> options - see <a href="ups.conf.html">ups.conf(5)</a>.
+by using the <em>maxretry</em> and <em>retrydelay</em> options&#8201;&#8212;&#8201;see <a href="ups.conf.html">ups.conf(5)</a>.
 </p>
 </dd>
 <dt class="hdlist1">
@@ -927,9 +936,9 @@ Stop the UPS driver(s).  This does not send commands to the UPS.
 <p>
 Command the UPS driver(s) to run their shutdown sequence.  This
 assumes that the driver is no longer running, and starts a fresh
-instance via "driver -k".  It is intended to be used as the last step
-in system shutdown, after the filesystems are no longer mounted rw.
-Drivers are stopped according to their sdorder value - see
+instance via <code>drivername -k</code>.  It is intended to be used as the last step
+in system shutdown, after the filesystems are no longer mounted <em>rw</em>.
+Drivers are stopped according to their <code>sdorder</code> value&#8201;&#8212;&#8201;see
 <a href="ups.conf.html">ups.conf(5)</a>.
 </p>
 </dd>
@@ -939,7 +948,7 @@ Drivers are stopped according to their sdorder value - see
 <td class="icon">
 <div class="title">Warning</div>
 </td>
-<td class="content">this will probably power off your computers, so don&#8217;t
+<td class="content">This will probably power off your computers, so don&#8217;t
 play around with this option.  Only use it when your systems are prepared
 to lose power.</td>
 </tr></table>
@@ -949,7 +958,7 @@ to lose power.</td>
 <td class="icon">
 <div class="title">Note</div>
 </td>
-<td class="content">refer to <a href="ups.conf.html">ups.conf(5)</a> for using the <strong>nowait</strong> parameter.
+<td class="content">Refer to <a href="ups.conf.html">ups.conf(5)</a> for using the <strong>nowait</strong> parameter.
 It can be overridden by <code>NUT_IGNORE_NOWAIT</code> environment variable
 (e.g. used to work around certain issues with systemd otherwise).</td>
 </tr></table>
@@ -1013,13 +1022,13 @@ dummy             dummy-ups  N/A     -3      NOT_RESPONSIVE  N/A
 eco650           usbhid-ups  RUNNING 3559207 RESPONSIVE      3559207 "OL"
 UPS2              dummy-ups  RUNNING 31455   RESPONSIVE      31455   "OL BOOST"</code></pre>
 </div></div>
-</dd>
-</dl></div>
 <div class="paragraph"><p>Values are TAB-separated, but UPSNAME and UPSDRV may be padded by spaces
 on the right and on the left respectively. Any complex string values would
 be encased in double-quotes.</p></div>
 <div class="paragraph"><p>Fields reported (<code>PF_*</code> = according to PID file, if any; <code>S_*</code> = via socket
 protocol):</p></div>
+<div class="openblock">
+<div class="content">
 <div class="dlist"><dl>
 <dt class="hdlist1">
 <strong>UPSNAME</strong>
@@ -1091,9 +1100,10 @@ Quoted value of <code>ups.status</code> variable
 </p>
 </dd>
 </dl></div>
+</div></div>
 <div class="paragraph"><p>This mode does not discover drivers that are not in <code>ups.conf</code> (e.g. started
 manually for experiments with many <code>-x</code> CLI options).</p></div>
-<div class="dlist"><dl>
+</dd>
 <dt class="hdlist1">
 <strong>-c</strong> <em>command</em>
 </dt>
@@ -1102,6 +1112,8 @@ manually for experiments with many <code>-x</code> CLI options).</p></div>
 Send <em>command</em> to the background process as a signal.  Valid commands
 are:
 </p>
+<div class="openblock">
+<div class="content">
 <div class="dlist"><dl>
 <dt class="hdlist1">
 <strong>dump</strong>
@@ -1145,8 +1157,6 @@ reread configuration files, exiting the old
 </p>
 </dd>
 </dl></div>
-</dd>
-</dl></div>
 <div class="dlist"><dl>
 <dt class="hdlist1">
 <strong>exit</strong>
@@ -1157,6 +1167,9 @@ tell the currently running driver instance to just exit
                    (so an external caller like the new driver instance, or
                    the systemd or SMF frameworks would start another copy)
 </p>
+</dd>
+</dl></div>
+</div></div>
 </dd>
 </dl></div>
 <div class="paragraph"><p>If the <code>upsdrvctl</code> was launched to remain in memory and manage NUT driver
@@ -1182,7 +1195,7 @@ or otherwise the built-in default <strong>STATEPATH</strong>.</p></div>
 <div class="sect1">
 <h2 id="_diagnostics">DIAGNOSTICS</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>upsdrvctl will return a nonzero exit code if it encounters an error
+<div class="paragraph"><p><code>upsdrvctl</code> will return a nonzero exit code if it encounters an error
 while performing the desired operation.  This will also happen if a
 driver takes longer than the <em>maxstartdelay</em> period to enter the
 background.</p></div>
@@ -1203,7 +1216,7 @@ background.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-05 08:47:28 UTC -- Network UPS Tools 2.8.2.2040
+Last updated 2025-02-08 14:47:40 UTC -- Network UPS Tools 2.8.2.2132
 </div>
 </div>
 </body>

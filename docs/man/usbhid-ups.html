@@ -822,10 +822,10 @@ some TrippLite models.
 </li>
 </ul></div>
 <div class="paragraph"><p>For a more complete list, refer to the NUT hardware compatibility list,
-available in the source distribution as data/driver.list, or on the
-NUT website. You may use the "explore" driver option to gather
-information from HID UPSes which are not yet supported; see below for
-details.</p></div>
+available in the NUT source distribution as <code>data/driver.list</code>, or on the
+NUT website.</p></div>
+<div class="paragraph"><p>You may use the <code>explore</code> driver option to gather information from HID UPSes
+which are not yet supported, to help add such support; see below for details.</p></div>
 <div class="paragraph"><p>This driver is known to work on:</p></div>
 <div class="ulist"><ul>
 <li>
@@ -905,12 +905,12 @@ risky!)</p></div>
 <p>
 Select a specific UPS, in case there is more than one connected via
 USB. Each option specifies an extended regular expression (see
-<strong>regex(7)</strong> for more information on regular expressions), which
-must match the UPS&#8217;s entire respective vendor/product/serial string
-(minus any surrounding whitespace), or the whole 4-digit
+<ulink url="https://linux.die.net/man/7/regex">regex(7)</ulink> for more information on regular expressions), which
+must match the UPS&#8217;s entire respective <code>vendor</code>/<code>product</code>/<code>serial</code>
+string values (minus any surrounding whitespace), or the whole 4-digit
 hexadecimal code for <code>vendorid</code> and <code>productid</code>.
 </p>
-<div class="paragraph"><p>Try <strong>lsusb(8)</strong> or running this NUT driver with <strong>-DD</strong> command-line
+<div class="paragraph"><p>Try <ulink url="https://linux.die.net/man/8/lsusb">lsusb(8)</ulink> or running this NUT driver with <code>-DD</code> command-line
 argument for finding out the strings to match.</p></div>
 <div class="paragraph"><p>Examples:</p></div>
 <div class="ulist"><ul>
@@ -939,7 +939,7 @@ argument for finding out the strings to match.</p></div>
 Select a UPS on a specific USB bus or group of buses. The argument is
 a regular expression that must match the bus name where the UPS is
 connected (e.g. <code>bus="002"</code> or <code>bus="00[2-3]"</code>) as seen on Linux in
-<code>/sys/bus/usb/devices</code> or <strong>lsusb(8)</strong>; including leading zeroes.
+<code>/sys/bus/usb/devices</code> or <ulink url="https://linux.die.net/man/8/lsusb">lsusb(8)</ulink>; including leading zeroes.
 </p>
 </dd>
 <dt class="hdlist1">
@@ -950,7 +950,7 @@ connected (e.g. <code>bus="002"</code> or <code>bus="00[2-3]"</code>) as seen on
 Select a UPS on a specific USB device or group of devices. The argument is
 a regular expression that must match the device name where the UPS is
 connected (e.g. <code>device="001"</code> or <code>device="00[1-2]"</code>) as seen on Linux
-in <code>/sys/bus/usb/devices</code> or <strong>lsusb(8)</strong>; including leading zeroes.
+in <code>/sys/bus/usb/devices</code> or <ulink url="https://linux.die.net/man/8/lsusb">lsusb(8)</ulink>; including leading zeroes.
 </p>
 <div class="admonitionblock">
 <table><tr>
@@ -990,7 +990,7 @@ that NUT can run on.</td>
 <dd>
 <p>
 If you have several UPS devices which may not be uniquely identified by
-the options above (e.g. only VID:PID can be discovered there), this flag
+the options above (e.g. only <em>VID:PID</em> can be discovered there), this flag
 allows each driver instance where it is set to take the first match if
 available, or proceed to try another.
 </p>
@@ -1041,7 +1041,7 @@ by the interface number <code>0</code> (default).
 <dd>
 <p>
 Force use of specific interface, endpoint, descriptor index etc. numbers,
-rather than defaulting to 0 (rarely other values in certain drivers for
+rather than defaulting to <em>0</em> (rarely other values in certain drivers for
 some devices known to use non-zero numbers). Specified as a hexadecimal
 number.
 </p>
@@ -1074,11 +1074,13 @@ of the library, see e.g.:</p></div>
 </li>
 <li>
 <p>
-<a href="https://libusb.sourceforge.io/api-1.0/group">https://libusb.sourceforge.io/api-1.0/group</a><em>libusb</em>lib.html
+<a href="https://libusb.sourceforge.io/api-1.0/group__libusb__lib.html">https://libusb.sourceforge.io/api-1.0/group__libusb__lib.html</a>
 </p>
 </li>
 </ul></div>
 </dd>
+</dl></div>
+<div class="dlist"><dl>
 <dt class="hdlist1">
 <strong>subdriver</strong>=<em>regex</em>
 </dt>
@@ -1097,7 +1099,7 @@ interface chips, notably "phoenixtec/liebert" and "mge").
 <td class="icon">
 <div class="title">Note</div>
 </td>
-<td class="content">this option first checks for exact matches to subdriver identification
+<td class="content">This option first checks for exact matches to subdriver identification
 strings, such as <code>"TrippLite HID 0.85"</code> (which are prone to bit-rot), and if
 there was no exact match&#8201;&#8212;&#8201;retries with a case-insensitive extended regular
 expression.</td>
@@ -1392,14 +1394,15 @@ problem (while 20 seconds were not enough).</td>
 <div class="sect1">
 <h2 id="_installation">INSTALLATION</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>This driver is not built by default.  You can build it by using
-"configure --with-usb=yes". Note that it will also install other USB
-drivers.</p></div>
-<div class="paragraph"><p>You also need to install manually the legacy hotplug files (libhidups
-and libhid.usermap, generally in /etc/hotplug/usb/), or the udev file
-(nut-usbups.rules, generally in /etc/udev/rules.d/) to address the
-permission settings problem. For more information, refer to the README
-file in nut/scripts/hotplug or nut/scripts/udev.</p></div>
+<div class="paragraph"><p>This driver may be not built by default.  You can build it by installing
+prerequisites and using <code>configure --with-usb=yes</code>. Note that it will also
+install other USB drivers.</p></div>
+<div class="paragraph"><p>You also need to install manually the legacy <strong>hotplug</strong> files (<code>libhidups</code>
+and <code>libhid.usermap</code>, generally in <code>/etc/hotplug/usb/</code>), or the <strong>udev</strong> file
+(<code>nut-usbups.rules</code>, generally in <code>/etc/udev/rules.d/</code>) to address the
+permission settings problem. For more information, refer to the
+<code>scripts/hotplug/README.adoc</code> or <code>scripts/udev/README.adoc</code> files in NUT
+sources.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -1407,11 +1410,12 @@ file in nut/scripts/hotplug or nut/scripts/udev.</p></div>
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_selecting_a_specific_ups">Selecting a specific UPS</h3>
-<div class="paragraph"><p>As mentioned above, the driver ignores the "port" value in <strong>ups.conf</strong>.
-Unlike previous versions of this driver, it is now possible to control
-multiple UPS units simultaneously with this driver, provided they can
-be distinguished by setting some combination of the device-matching options.
-For instance:</p></div>
+<div class="paragraph"><p>As mentioned above, the driver ignores the "port" value in <strong>ups.conf</strong>.</p></div>
+<div class="paragraph"><p>Unlike previous versions of this driver, it is now possible to control
+multiple UPS units simultaneously with instances of this driver running
+in parallel, provided they can be distinguished by setting some combination
+of the device-matching options.</p></div>
+<div class="paragraph"><p>For example:</p></div>
 <div class="literalblock">
 <div class="content">
 <pre><code>[mge]
@@ -1423,6 +1427,27 @@ For instance:</p></div>
         port = auto
         vendorid = 09ae</code></pre>
 </div></div>
+<div class="paragraph"><p>To monitor devices using the same vendor and product identification (e.g.
+two pieces of the same model), you would need to find a reliable unique
+matching criteria:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+The <em>serial</em> number is the best option, if populated.
+</p>
+</li>
+<li>
+<p>
+Link-level <code>bus</code>/<code>device</code>/<code>busport</code> may be unreliable (due to re-enumeration
+  on a whim by the operating system).
+</p>
+</li>
+<li>
+<p>
+If nothing else helps, <code>allow_duplicates</code> may be an option in some cases.
+</p>
+</li>
+</ul></div>
 </div>
 <div class="sect2">
 <h3 id="_usb_polling_and_interrupt_transfers">USB Polling and Interrupt Transfers</h3>
@@ -1588,7 +1613,7 @@ Arjen de Korte
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-05 08:47:30 UTC -- Network UPS Tools 2.8.2.2040
+Last updated 2025-02-08 14:47:41 UTC -- Network UPS Tools 2.8.2.2132
 </div>
 </div>
 </body>

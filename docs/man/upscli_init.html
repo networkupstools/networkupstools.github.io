@@ -747,41 +747,52 @@ asciidoc.install();
 <div class="sect1">
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
-<div class="literalblock">
+<div class="listingblock">
 <div class="content">
-<pre><code>#include &lt;upsclient.h&gt;</code></pre>
-</div></div>
-<div class="literalblock">
-<div class="content">
-<pre><code>int upscli_init(int certverify, const char *certpath,
-                       const char *certname, const char *certpasswd);</code></pre>
+<pre><code>        #include &lt;upsclient.h&gt;
+
+        int upscli_init(
+                int certverify,
+                const char *certpath,
+                const char *certname,
+                const char *certpasswd);</code></pre>
 </div></div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>The <strong>upscli_init()</strong> function initialize upsclient module and set many
+<div class="paragraph"><p>The <strong>upscli_init()</strong> function initializes upsclient module and sets many
 TLS/SSL-related properties: <em>certverify</em> to 1 makes certificate verification
 required for all SSL connections and <em>certpath</em> is the location of
 certificate database.</p></div>
-<div class="paragraph"><p>If compiled with OpenSSL, certpath refers to directory containing
-certificates where the certificates must be named according to their
-hash values ending in a ".0" extension. If two certificates result in
-the same hash value (thus file name), the ".0" can be incremented to ".1"
-and so on, as needed. The bash command for creating links in this manner
-would be:</p></div>
-<div class="literalblock">
+<div class="ulist"><ul>
+<li>
+<p>
+If compiled with OpenSSL, <em>certpath</em> refers to directory containing
+  certificates where the certificates must be named according to their
+  hash values ending in a ".0" extension. If two certificates result in
+  the same hash value (thus file name), the ".0" can be incremented to ".1"
+  and so on, as needed. The shell command for creating links in this manner
+  would be:
+</p>
+<div class="listingblock">
 <div class="content">
-<pre><code>ln -s ca.pem ./$(openssl x509 -hash -noout -in ca.pem).0</code></pre>
+<pre><code>:; ln -s ca.pem ./$(openssl x509 -hash -noout -in ca.pem).0</code></pre>
 </div></div>
-<div class="paragraph"><p>Alternatively, the c_rehash utility (provided by openssl-perl) can take a
-directory and iterate it to link all certificates found in that directory,
-in the manner described above.</p></div>
-<div class="paragraph"><p>If compiled with NSS, certpath refers to a directory containing database
-files.</p></div>
-<div class="paragraph"><p>If compiled with NSS and using SSL, you can specify <em>certname</em> the name
-of the certificate to send to upsd and <em>certpasswd</em> the password used
+<div class="paragraph"><p>Alternatively, the <code>c_rehash</code> utility (provided by e.g. <code>openssl-perl</code>
+  package) can take a directory and iterate it to link all certificates
+  found in that directory, in the manner described above.</p></div>
+</li>
+<li>
+<p>
+If compiled with NSS, <em>certpath</em> refers to a directory containing its
+  database files.
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>If compiled with NSS and using SSL, you can specify <em>certname</em> with the name
+of the certificate to send to <code>upsd</code>, and <em>certpasswd</em> with the password used
 to decrypt certificate private key.</p></div>
 <div class="paragraph"><p>If compiled with NSS, it would normally log either the infamous message
 "Init SSL without certificate database" if no <em>certpath</em> was provided,
@@ -789,8 +800,8 @@ or "Init SSL with certificate database located at %s" otherwise.
 Since some programmatic consumers become confused by such extra text on
 the <code>stderr</code> of tools they call (such as monitoring systems doing <code>upsc</code>
 queries), you can export an environment variable <code>NUT_QUIET_INIT_SSL</code>
-with string values "true", "TRUE" or "1", to avoid logging these messages
-and just emit them as debug stream (at verbosity 1 or higher).</p></div>
+with string values <code>"true"</code>, <code>"TRUE"</code> or <code>"1"</code>, to avoid logging these
+messages and just emit them as debug stream (at verbosity 1 or higher).</p></div>
 <div class="paragraph"><p>You can call <a href="upscli_add_host_cert.html">upscli_add_host_cert(3)</a> to register specific host
 security policy before initialize connections to them.</p></div>
 <div class="paragraph"><p>You must call <a href="upscli_cleanup.html">upscli_cleanup(3)</a> when exiting application.</p></div>
@@ -799,7 +810,8 @@ security policy before initialize connections to them.</p></div>
 <div class="sect1">
 <h2 id="_return_value">RETURN VALUE</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>The <strong>upscli_init()</strong> function returns 1 on success, or -1 if an error occurs.</p></div>
+<div class="paragraph"><p>The <strong>upscli_init()</strong> function returns <em>1</em> on success, or <em>-1</em> if an error
+occurs.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -816,7 +828,7 @@ security policy before initialize connections to them.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-05 08:47:28 UTC -- Network UPS Tools 2.8.2.2040
+Last updated 2025-02-08 14:47:40 UTC -- Network UPS Tools 2.8.2.2132
 </div>
 </div>
 </body>

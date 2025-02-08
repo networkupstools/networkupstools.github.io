@@ -764,14 +764,31 @@ asciidoc.install();
 <div class="sect1">
 <h2 id="_supported_hardware">SUPPORTED HARDWARE</h2>
 <div class="sectionbody">
+<div class="paragraph"><p>The protocol originates from Mega System Technologies, Inc. in Taiwan
+and was used by numerous vendors, as well as evolved over time, growing
+both in features and nuance incompatibilities. NUT documentation usually
+refers to this large family of similar dialects as the <em>Megatec Q*</em> or
+<em>Megatec Qx</em> protocol family.</p></div>
 <div class="paragraph"><p>The <strong>nutdrv_qx</strong> driver is known to work with various UPSes from
 <em>Armac</em>, <em>Blazer</em>, <em>Energy Sistem</em>, <em>Fenton Technologies</em>, <em>General Electric</em>,
 <em>Hunnox</em>, <em>Masterguard</em>, <em>Mustek</em>, <em>Powercool</em>, <em>Voltronic Power</em>, <em>SKE</em>
-(rebranded by many, many - have I said many? - others&#8230;</p></div>
+(rebranded by many, many&#8201;&#8212;&#8201;have I said many?&#8201;&#8212;&#8201;others&#8230;</p></div>
 <div class="paragraph"><p>Long story short: if your UPS came with a software called <em>Viewpower</em>,
 chances are high that it works with this driver with one of the
 <a href="#_extra_arguments"><em>voltronic*</em> protocols or with the <em>mecer</em> one</a>),
 and many others.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">Due to historical reasons, two important tunables of this driver are
+somewhat inconveniently named <strong>protocol</strong> (for the Qx dialect) and <strong>subdriver</strong>
+(for USB to serial link conversion). Other multi-dialect drivers refer to their
+dialect modules as <strong>subdrivers</strong>, and actually the modular source code of
+<code>nutdrv_qx</code> also does.</td>
+</tr></table>
+</div>
 <div class="paragraph"><p>The <a href="#_internet_resources">NUT compatibility table</a> lists all the known
 supported models. Keep in mind, however, that other models not listed
 there may also be supported, but haven&#8217;t been tested or reported back.</p></div>
@@ -805,7 +822,7 @@ Time to wait before shutting down the UPS (seconds).
 This value is truncated to units of 6 seconds (less than 60 seconds) or 60 seconds (more than 60 seconds).
 Defaults to 30 seconds.
 </p>
-<div class="paragraph"><p>This option provides a default value for <strong>ups.delay.shutdown</strong> that will then be used by the driver in the automatic shutdown sequence (i.e. calling the driver with the <strong>-k</strong> option, calling <a href="upsdrvctl.html">upsdrvctl(8)</a> with the <strong>shutdown</strong> option or when the <code>FSD</code> flag is set and <a href="upsmon.html">upsmon(8)</a> enters its shutdown sequence): however you can change this value &#8216;on the fly&#8217; for the actual session, only for the use with instant commands, setting <strong>ups.delay.shutdown</strong> with <a href="upsrw.html">upsrw(8)</a>.</p></div>
+<div class="paragraph"><p>This option provides a default value for <strong>ups.delay.shutdown</strong> that will then be used by the driver in the automatic shutdown sequence (i.e. calling the driver with the <strong>-k</strong> option, calling <a href="upsdrvctl.html">upsdrvctl(8)</a> with the <strong>shutdown</strong> option or when the <code>FSD</code> flag is set and <a href="upsmon.html">upsmon(8)</a> enters its shutdown sequence): however you can change this value "on the fly" for the actual session, only for the use with instant commands, setting <strong>ups.delay.shutdown</strong> with <a href="upsrw.html">upsrw(8)</a>.</p></div>
 </dd>
 <dt class="hdlist1">
 <strong>stayoff</strong>
@@ -903,7 +920,7 @@ and <strong>voltronic-qs-hex</strong>) adjust their ultimately reported <strong>
 value as a multiple of <strong>battery.packs</strong> and "native" <strong>battery.voltage</strong>).</p></div>
 <div class="paragraph"><p>Note this is primarily useful for consistent diagnostics and graphing of the
 numbers, and should not impact the "guesstimation" of <code>battery.charge</code> and/or
-<code>battery.runtime</code> - so rather a cosmetic adjustment, than critical.</p></div>
+<code>battery.runtime</code>&#8201;&#8212;&#8201;so rather a cosmetic adjustment, than critical.</p></div>
 </dd>
 <dt class="hdlist1">
 <strong>runtimecal =</strong> <em>value,value,value,value</em>
@@ -1307,7 +1324,7 @@ Device grid working range for P31 UPSes [<code>Appliance</code>/<code>UPS</code>
 <h4 id="_testing">TESTING</h4>
 <div class="paragraph"><p>This protocol comes with a couple of functions that are not enabled by default because of the lack of knowledge of some part of the communication protocol used by these UPSes by your friendly neighborhood developer.
 Since these functions are supposed to be queries to the UPS for some kind of information, they <em>should</em> not make your UPS go boom.
-So if you are brave enough to risk your UPS and attached devices' life to help the developers, this will be very appreciated..
+So if you are brave enough to risk your UPS and attached devices' life to help the developers, this will be very appreciated.
 <strong>Do it at your own risk</strong>.</p></div>
 <div class="dlist"><dl>
 <dt class="hdlist1">
@@ -1387,12 +1404,12 @@ risky!)</p></div>
 <p>
 Select a specific UPS, in case there is more than one connected via
 USB. Each option specifies an extended regular expression (see
-<strong>regex(7)</strong> for more information on regular expressions), which
-must match the UPS&#8217;s entire respective vendor/product/serial string
-(minus any surrounding whitespace), or the whole 4-digit
+<ulink url="https://linux.die.net/man/7/regex">regex(7)</ulink> for more information on regular expressions), which
+must match the UPS&#8217;s entire respective <code>vendor</code>/<code>product</code>/<code>serial</code>
+string values (minus any surrounding whitespace), or the whole 4-digit
 hexadecimal code for <code>vendorid</code> and <code>productid</code>.
 </p>
-<div class="paragraph"><p>Try <strong>lsusb(8)</strong> or running this NUT driver with <strong>-DD</strong> command-line
+<div class="paragraph"><p>Try <ulink url="https://linux.die.net/man/8/lsusb">lsusb(8)</ulink> or running this NUT driver with <code>-DD</code> command-line
 argument for finding out the strings to match.</p></div>
 <div class="paragraph"><p>Examples:</p></div>
 <div class="ulist"><ul>
@@ -1421,7 +1438,7 @@ argument for finding out the strings to match.</p></div>
 Select a UPS on a specific USB bus or group of buses. The argument is
 a regular expression that must match the bus name where the UPS is
 connected (e.g. <code>bus="002"</code> or <code>bus="00[2-3]"</code>) as seen on Linux in
-<code>/sys/bus/usb/devices</code> or <strong>lsusb(8)</strong>; including leading zeroes.
+<code>/sys/bus/usb/devices</code> or <ulink url="https://linux.die.net/man/8/lsusb">lsusb(8)</ulink>; including leading zeroes.
 </p>
 </dd>
 <dt class="hdlist1">
@@ -1432,7 +1449,7 @@ connected (e.g. <code>bus="002"</code> or <code>bus="00[2-3]"</code>) as seen on
 Select a UPS on a specific USB device or group of devices. The argument is
 a regular expression that must match the device name where the UPS is
 connected (e.g. <code>device="001"</code> or <code>device="00[1-2]"</code>) as seen on Linux
-in <code>/sys/bus/usb/devices</code> or <strong>lsusb(8)</strong>; including leading zeroes.
+in <code>/sys/bus/usb/devices</code> or <ulink url="https://linux.die.net/man/8/lsusb">lsusb(8)</ulink>; including leading zeroes.
 </p>
 <div class="admonitionblock">
 <table><tr>
@@ -1472,7 +1489,7 @@ that NUT can run on.</td>
 <dd>
 <p>
 If you have several UPS devices which may not be uniquely identified by
-the options above (e.g. only VID:PID can be discovered there), this flag
+the options above (e.g. only <em>VID:PID</em> can be discovered there), this flag
 allows each driver instance where it is set to take the first match if
 available, or proceed to try another.
 </p>
@@ -1523,7 +1540,7 @@ by the interface number <code>0</code> (default).
 <dd>
 <p>
 Force use of specific interface, endpoint, descriptor index etc. numbers,
-rather than defaulting to 0 (rarely other values in certain drivers for
+rather than defaulting to <em>0</em> (rarely other values in certain drivers for
 some devices known to use non-zero numbers). Specified as a hexadecimal
 number.
 </p>
@@ -1556,11 +1573,13 @@ of the library, see e.g.:</p></div>
 </li>
 <li>
 <p>
-<a href="https://libusb.sourceforge.io/api-1.0/group">https://libusb.sourceforge.io/api-1.0/group</a><em>libusb</em>lib.html
+<a href="https://libusb.sourceforge.io/api-1.0/group__libusb__lib.html">https://libusb.sourceforge.io/api-1.0/group__libusb__lib.html</a>
 </p>
 </li>
 </ul></div>
 </dd>
+</dl></div>
+<div class="dlist"><dl>
 <dt class="hdlist1">
 <strong>subdriver =</strong> <em>string</em>
 </dt>
@@ -2071,7 +2090,7 @@ This option has been renamed to <strong>battery_number</strong>.
 </p>
 </dd>
 </dl></div>
-<div class="paragraph"><p>The following options are no longer supported by this driver, you can now change them more conveniently &#8216;on the fly&#8217; calling <a href="upsrw.html">upsrw(8)</a> with the appropriate NUT variable - provided that your UPS supports them.</p></div>
+<div class="paragraph"><p>The following options are no longer supported by this driver, you can now change them more conveniently "on the fly" calling <a href="upsrw.html">upsrw(8)</a> with the appropriate NUT variable&#8201;&#8212;&#8201;provided that your UPS supports them.</p></div>
 <div class="hdlist"><table>
 <tr>
 <td class="hdlist1">
@@ -2339,245 +2358,245 @@ cellspacing="0" cellpadding="4">
 <col />
 <thead>
 <tr>
-<th align="right" valign="top">#      </th>
+<th align="left" valign="top">#      </th>
 <th align="left" valign="top">Corresponding Warning</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td align="right" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
 <td align="left" valign="top"><p class="table">Battery disconnected</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">2</p></td>
+<td align="left" valign="top"><p class="table">2</p></td>
 <td align="left" valign="top"><p class="table">Neutral not connected</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">3</p></td>
+<td align="left" valign="top"><p class="table">3</p></td>
 <td align="left" valign="top"><p class="table">Site fault</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">4</p></td>
+<td align="left" valign="top"><p class="table">4</p></td>
 <td align="left" valign="top"><p class="table">Phase sequence incorrect</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">5</p></td>
+<td align="left" valign="top"><p class="table">5</p></td>
 <td align="left" valign="top"><p class="table">Phase sequence incorrect in bypass</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">6</p></td>
+<td align="left" valign="top"><p class="table">6</p></td>
 <td align="left" valign="top"><p class="table">Input frequency unstable in bypass</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">7</p></td>
+<td align="left" valign="top"><p class="table">7</p></td>
 <td align="left" valign="top"><p class="table">Battery overcharged</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">8</p></td>
+<td align="left" valign="top"><p class="table">8</p></td>
 <td align="left" valign="top"><p class="table">Low battery</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">9</p></td>
+<td align="left" valign="top"><p class="table">9</p></td>
 <td align="left" valign="top"><p class="table">Overload alarm</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">10</p></td>
+<td align="left" valign="top"><p class="table">10</p></td>
 <td align="left" valign="top"><p class="table">Fan alarm</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">11</p></td>
+<td align="left" valign="top"><p class="table">11</p></td>
 <td align="left" valign="top"><p class="table">EPO enabled</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">12</p></td>
+<td align="left" valign="top"><p class="table">12</p></td>
 <td align="left" valign="top"><p class="table">Unable to turn on UPS</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">13</p></td>
+<td align="left" valign="top"><p class="table">13</p></td>
 <td align="left" valign="top"><p class="table">Over temperature alarm</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">14</p></td>
+<td align="left" valign="top"><p class="table">14</p></td>
 <td align="left" valign="top"><p class="table">Charger alarm</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">15</p></td>
+<td align="left" valign="top"><p class="table">15</p></td>
 <td align="left" valign="top"><p class="table">Remote auto shutdown</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">16</p></td>
+<td align="left" valign="top"><p class="table">16</p></td>
 <td align="left" valign="top"><p class="table">L1 input fuse not working</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">17</p></td>
+<td align="left" valign="top"><p class="table">17</p></td>
 <td align="left" valign="top"><p class="table">L2 input fuse not working</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">18</p></td>
+<td align="left" valign="top"><p class="table">18</p></td>
 <td align="left" valign="top"><p class="table">L3 input fuse not working</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">19</p></td>
+<td align="left" valign="top"><p class="table">19</p></td>
 <td align="left" valign="top"><p class="table">Positive PFC abnormal in L1</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">20</p></td>
+<td align="left" valign="top"><p class="table">20</p></td>
 <td align="left" valign="top"><p class="table">Negative PFC abnormal in L1</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">21</p></td>
+<td align="left" valign="top"><p class="table">21</p></td>
 <td align="left" valign="top"><p class="table">Positive PFC abnormal in L2</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">22</p></td>
+<td align="left" valign="top"><p class="table">22</p></td>
 <td align="left" valign="top"><p class="table">Negative PFC abnormal in L2</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">23</p></td>
+<td align="left" valign="top"><p class="table">23</p></td>
 <td align="left" valign="top"><p class="table">Positive PFC abnormal in L3</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">24</p></td>
+<td align="left" valign="top"><p class="table">24</p></td>
 <td align="left" valign="top"><p class="table">Negative PFC abnormal in L3</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">25</p></td>
+<td align="left" valign="top"><p class="table">25</p></td>
 <td align="left" valign="top"><p class="table">Abnormal in CAN-bus communication</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">26</p></td>
+<td align="left" valign="top"><p class="table">26</p></td>
 <td align="left" valign="top"><p class="table">Abnormal in synchronous signal circuit</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">27</p></td>
+<td align="left" valign="top"><p class="table">27</p></td>
 <td align="left" valign="top"><p class="table">Abnormal in synchronous pulse signal circuit</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">28</p></td>
+<td align="left" valign="top"><p class="table">28</p></td>
 <td align="left" valign="top"><p class="table">Abnormal in host signal circuit</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">29</p></td>
+<td align="left" valign="top"><p class="table">29</p></td>
 <td align="left" valign="top"><p class="table">Male connector of parallel cable not connected well</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">30</p></td>
+<td align="left" valign="top"><p class="table">30</p></td>
 <td align="left" valign="top"><p class="table">Female connector of parallel cable not connected well</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">31</p></td>
+<td align="left" valign="top"><p class="table">31</p></td>
 <td align="left" valign="top"><p class="table">Parallel cable not connected well</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">32</p></td>
+<td align="left" valign="top"><p class="table">32</p></td>
 <td align="left" valign="top"><p class="table">Battery connection not consistent in parallel systems</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">33</p></td>
+<td align="left" valign="top"><p class="table">33</p></td>
 <td align="left" valign="top"><p class="table">AC connection not consistent in parallel systems</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">34</p></td>
+<td align="left" valign="top"><p class="table">34</p></td>
 <td align="left" valign="top"><p class="table">Bypass connection not consistent in parallel systems</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">35</p></td>
+<td align="left" valign="top"><p class="table">35</p></td>
 <td align="left" valign="top"><p class="table">UPS model types not consistent in parallel systems</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">36</p></td>
+<td align="left" valign="top"><p class="table">36</p></td>
 <td align="left" valign="top"><p class="table">Capacity of UPSs not consistent in parallel systems</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">37</p></td>
+<td align="left" valign="top"><p class="table">37</p></td>
 <td align="left" valign="top"><p class="table">Auto restart setting not consistent in parallel systems</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">38</p></td>
+<td align="left" valign="top"><p class="table">38</p></td>
 <td align="left" valign="top"><p class="table">Battery cell over charge</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">39</p></td>
+<td align="left" valign="top"><p class="table">39</p></td>
 <td align="left" valign="top"><p class="table">Battery protection setting not consistent in parallel systems</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">40</p></td>
+<td align="left" valign="top"><p class="table">40</p></td>
 <td align="left" valign="top"><p class="table">Battery detection setting not consistent in parallel systems</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">41</p></td>
+<td align="left" valign="top"><p class="table">41</p></td>
 <td align="left" valign="top"><p class="table">Bypass not allowed setting not consistent in parallel systems</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">42</p></td>
+<td align="left" valign="top"><p class="table">42</p></td>
 <td align="left" valign="top"><p class="table">Converter setting not consistent in parallel systems</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">43</p></td>
+<td align="left" valign="top"><p class="table">43</p></td>
 <td align="left" valign="top"><p class="table">High loss point for frequency in bypass mode not consistent in parallel systems</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">44</p></td>
+<td align="left" valign="top"><p class="table">44</p></td>
 <td align="left" valign="top"><p class="table">Low loss point for frequency in bypass mode not consistent in parallel systems</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">45</p></td>
+<td align="left" valign="top"><p class="table">45</p></td>
 <td align="left" valign="top"><p class="table">High loss point for voltage in bypass mode not consistent in parallel systems</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">46</p></td>
+<td align="left" valign="top"><p class="table">46</p></td>
 <td align="left" valign="top"><p class="table">Low loss point for voltage in bypass mode not consistent in parallel systems</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">47</p></td>
+<td align="left" valign="top"><p class="table">47</p></td>
 <td align="left" valign="top"><p class="table">High loss point for frequency in AC mode not consistent in parallel systems</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">48</p></td>
+<td align="left" valign="top"><p class="table">48</p></td>
 <td align="left" valign="top"><p class="table">Low loss point for frequency in AC mode not consistent in parallel systems</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">49</p></td>
+<td align="left" valign="top"><p class="table">49</p></td>
 <td align="left" valign="top"><p class="table">High loss point for voltage in AC mode not consistent in parallel systems</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">50</p></td>
+<td align="left" valign="top"><p class="table">50</p></td>
 <td align="left" valign="top"><p class="table">Low loss point for voltage in AC mode not consistent in parallel systems</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">51</p></td>
+<td align="left" valign="top"><p class="table">51</p></td>
 <td align="left" valign="top"><p class="table">Warning for locking in bypass mode after 3 consecutive overloads within 30 min</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">52</p></td>
+<td align="left" valign="top"><p class="table">52</p></td>
 <td align="left" valign="top"><p class="table">Warning for three-phase AC input current unbalance</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">53</p></td>
+<td align="left" valign="top"><p class="table">53</p></td>
 <td align="left" valign="top"><p class="table">Warning for a three-phase input current unbalance detected in battery mode</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">54</p></td>
+<td align="left" valign="top"><p class="table">54</p></td>
 <td align="left" valign="top"><p class="table">Warning for Inverter inter-current unbalance</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">55</p></td>
+<td align="left" valign="top"><p class="table">55</p></td>
 <td align="left" valign="top"><p class="table">Programmable outlets cut off pre-alarm</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">56</p></td>
+<td align="left" valign="top"><p class="table">56</p></td>
 <td align="left" valign="top"><p class="table">Warning for Battery replace</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">57</p></td>
+<td align="left" valign="top"><p class="table">57</p></td>
 <td align="left" valign="top"><p class="table">Abnormal warning on input phase angle</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">58</p></td>
+<td align="left" valign="top"><p class="table">58</p></td>
 <td align="left" valign="top"><p class="table">Warning!! Cover of maintain switch is open</p></td>
 </tr>
 <tr>
-<td align="right" valign="top"><p class="table">62</p></td>
+<td align="left" valign="top"><p class="table">62</p></td>
 <td align="left" valign="top"><p class="table">EEPROM operation error</p></td>
 </tr>
 </tbody>
@@ -2660,7 +2679,7 @@ The NUT HCL: <a href="https://www.networkupstools.org/stable-hcl.html">https://w
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-05 08:47:30 UTC -- Network UPS Tools 2.8.2.2040
+Last updated 2025-02-08 14:47:41 UTC -- Network UPS Tools 2.8.2.2132
 </div>
 </div>
 </body>

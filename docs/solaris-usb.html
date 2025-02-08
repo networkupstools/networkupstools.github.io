@@ -262,11 +262,9 @@ unavailable  usb-input    n        /devices/pci@0,0/pci103c,1609@13:1
 :; svcadm enable innotech</pre><p>When everything gets recovered, you should see it:</p><pre class="literallayout">Broadcast Message from nut (???) on n54l Mon May  9 12:12:30...
 Communications with UPS innotech@localhost established</pre><p>and <code class="literal">upsc innotech@localhost</code> would tell you what it sees :)</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_regular_auto_recovery_via_crontab"></a>3.2. Regular auto-recovery via crontab</h3></div></div></div><p>Additional tricks that can help involve <code class="literal">crontab</code> for regular automated
 checks if the device got lost. One is just an attempt to "clear" the
-service if its earlier startup failed (repetitively) so SMF gave up:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-* * * * svcadm clear innotech 2&gt;&amp;1 | grep -v <span class="emphasis"><em>is not in a maintenance</em></span>
-</li></ul></div><p>Another is more complicated and involves some custom scripting:</p><pre class="literallayout">0,5,10,15,20,25,30,35,40,45,50,55 * * * * MODE=optional /etc/nut/reset-ups-usb-solaris.sh</pre><p>…where the script would be a copy (customized to your device(s) and
+service if its earlier startup failed (repetitively) so SMF gave up:</p><pre class="screen">* * * * * svcadm clear innotech 2&gt;&amp;1 | grep -v 'is not in a maintenance'</pre><p>Another is more complicated and involves some custom scripting:</p><pre class="screen">0,5,10,15,20,25,30,35,40,45,50,55 * * * * MODE=optional /etc/nut/reset-ups-usb-solaris.sh</pre><p>…where the script would be a copy (customized to your device(s) and
 connection points!) of <code class="literal">reset-ups-usb-solaris.sh.sample</code> from either
 <code class="literal">scripts/Solaris/</code> directory in the NUT sources, or a copy which may be
 available in your system, e.g. under the <code class="literal">/usr/share/nut/solaris-init/</code>
 data directory.</p></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-02-05 09:07:27 -- Network UPS Tools 2.8.2.2040</div></body></html>
+		Last updated 2025-02-08 14:48:44 -- Network UPS Tools 2.8.2.2132</div></body></html>

@@ -741,20 +741,22 @@ asciidoc.install();
 <div class="sect1">
 <h2 id="_name">NAME</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>upscli_get - retrieve data from an UPS</p></div>
+<div class="paragraph"><p>upscli_get - Retrieve data from an UPS</p></div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
-<div class="literalblock">
+<div class="listingblock">
 <div class="content">
-<pre><code>#include &lt;upsclient.h&gt;</code></pre>
-</div></div>
-<div class="literalblock">
-<div class="content">
-<pre><code>int upscli_get(UPSCONN_t *ups, size_t numq, const char **query,
-                       size_t *numa, char ***answer)</code></pre>
+<pre><code>        #include &lt;upsclient.h&gt;
+
+        int upscli_get(
+                UPSCONN_t *ups,
+                size_t numq,
+                const char **query,
+                size_t *numa,
+                char ***answer)</code></pre>
 </div></div>
 </div>
 </div>
@@ -773,7 +775,7 @@ The number of usable answer components will be returned in <em>numa</em>.</p></d
 <div class="sect1">
 <h2 id="_uses">USES</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>This function implements the "GET" command in the protocol.
+<div class="paragraph"><p>This function implements the "GET" command in the NUT protocol.
 As a result, you can use it to request many different things
 from the server.</p></div>
 <div class="paragraph"><p>Some examples are:</p></div>
@@ -850,9 +852,10 @@ is handled for you inside this function.</p></div>
 <h2 id="_error_checking">ERROR CHECKING</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>This function will check your query against the response from
-<a href="upsd.html">upsd(8)</a>.  For example, if you send "VAR" "su700" "ups.status",
+<a href="upsd.html">upsd(8)</a> data server.</p></div>
+<div class="paragraph"><p>For example, if you send <code>"VAR"</code> <code>"su700"</code> <code>"ups.status"</code>,
 it will expect to see those at the beginning of the response.</p></div>
-<div class="paragraph"><p>If the results from <strong>upsd</strong> do not pass this case-insensitive test
+<div class="paragraph"><p>If the results from <code>upsd</code> do not pass this case-insensitive test
 against your request, this function will return an error.   When this
 happens, <a href="upscli_upserror.html">upscli_upserror(3)</a> will return <em>UPSCLI_ERR_PROTOCOL</em>.</p></div>
 </div>
@@ -861,7 +864,7 @@ happens, <a href="upscli_upserror.html">upscli_upserror(3)</a> will return <em>U
 <h2 id="_answer_array_lifetime">ANSWER ARRAY LIFETIME</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>The pointers contained within the <em>answer</em> array are only valid
-until the next call to a <em>upsclient</em> function which references them.
+until the next call to an <em>upsclient</em> function which references them.
 If you need to use data from multiple calls, you must copy it somewhere
 else first.</p></div>
 <div class="paragraph"><p>The <em>answer</em> array and its elements may change locations, so you
@@ -876,19 +879,19 @@ Any access after that point is also undefined.</p></div>
 <div class="sect1">
 <h2 id="_return_value">RETURN VALUE</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>The <strong>upscli_get()</strong> function returns 0 on success, or -1 if an
+<div class="paragraph"><p>The <strong>upscli_get()</strong> function returns <em>0</em> on success, or <em>-1</em> if an
 error occurs.</p></div>
 <div class="paragraph"><p>If <strong>upsd</strong> disconnects, you may need to handle or ignore <code>SIGPIPE</code>
 in order to prevent your program from terminating the next time that
 the library writes to the disconnected socket.</p></div>
 <div class="paragraph"><p>The following code in your initialization function will allow the
 <strong>upscli_get()</strong> call to return an error in that case:</p></div>
-<div class="literalblock">
+<div class="listingblock">
 <div class="content">
-<pre><code>#include &lt;signal.h&gt;
-...
-signal (SIGPIPE, SIG_IGN);
-...</code></pre>
+<pre><code>        #include &lt;signal.h&gt;
+        ...
+        signal (SIGPIPE, SIG_IGN);
+        ...</code></pre>
 </div></div>
 </div>
 </div>
@@ -903,7 +906,7 @@ signal (SIGPIPE, SIG_IGN);
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-05 08:47:28 UTC -- Network UPS Tools 2.8.2.2040
+Last updated 2025-02-08 14:47:40 UTC -- Network UPS Tools 2.8.2.2132
 </div>
 </div>
 </body>

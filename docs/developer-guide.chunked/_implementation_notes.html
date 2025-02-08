@@ -21,10 +21,10 @@ will only see the whole daisychain, as it would normally seem, and not
 nothing at all.</p><p>Moreover, this solution is generic, and not specific to the ePDU use case
 currently considered. It thus support both the current NUT scope, along with
 other use cases (parallel / serial UPS setups), and potential evolution and
-technology change (hybrid chain with UPS and PDU for example).</p><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_devices_status_handling"></a>Devices status handling</h5></div></div></div><p>To be clarified…</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_devices_alarms_handling"></a>Devices alarms handling</h5></div></div></div><p>Devices (master and slaves) alarms are published in <code class="literal">device.X.ups.alarm</code>,
+technology change (hybrid chain with UPS and PDU for example).</p><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_devices_status_handling"></a>Devices status handling</h5></div></div></div><p>FIXME: To be clarified…</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_devices_alarms_handling"></a>Devices alarms handling</h5></div></div></div><p>Devices (master and slaves) alarms are published in <code class="literal">device.X.ups.alarm</code>,
 which may evolve into <code class="literal">device.X.alarm</code>. If any of the devices has an alarm,
 the main <code class="literal">ups.status</code> will publish an <code class="literal">ALARM</code> flag. This flag is be cleared
-once all devices have no alarms anymore.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>ups.alarm behavior is not yet defined (all devices alarms vs. list of
+once all devices have no alarms anymore.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p><code class="literal">ups.alarm</code> behavior is not yet defined (all devices alarms vs. list of
 device(s) that have alarms vs. nothing?)</p></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_example"></a>Example</h5></div></div></div><p>Here is an example excerpt of three PDUs, connected in daisychain mode, with
 one master and two slaves:</p><pre class="literallayout">device.count: 3
 device.mfr: EATON
@@ -49,7 +49,7 @@ device.1.outlet.1.status: on
 device.2.outlet.1.status: off
 device.3.outlet.1.status: off
 ...
-ups.status: ALARM</pre></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_information_for_developers"></a>Information for developers</h4></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>these details are dedicated to the <code class="literal">snmp-ups</code> driver!</p></div><p>In order to enable daisychain support for a range of devices, developers
+ups.status: ALARM</pre></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_information_for_developers"></a>Information for developers</h4></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>These details are dedicated to the <code class="literal">snmp-ups</code> driver!</p></div><p>In order to enable daisychain support for a range of devices, developers
 have to do two things:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 Add a <code class="literal">device.count</code> entry in a mapping file (see <code class="literal">*-mib.c</code>)
 </li><li class="listitem">
@@ -83,11 +83,11 @@ driver:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-
 <code class="literal">device_alarm_init()</code>: clear the current alarm buffer
 </li><li class="listitem">
 <code class="literal">device_alarm_commit(const int device_number)</code>: commit the current alarm
-buffer to "device.&lt;device_number&gt;.ups.alarm", and increase the count of
-alarms. If the current alarms buffer is empty, the count of alarm is
-decreased, and the variable "device.&lt;device_number&gt;.ups.alarm" is removed
-from publication. Once the alarm count reaches "0", the main (device.0)
-ups.status will also remove the "ALARM" flag.
+  buffer to <code class="literal">device.&lt;device_number&gt;.ups.alarm</code>, and increase the count of
+  alarms. If the current alarms buffer is empty, the count of alarm is
+  decreased, and the variable <code class="literal">device.&lt;device_number&gt;.ups.alarm</code> is removed
+  from publication. Once the alarm count reaches "0", the main (<code class="literal">device.0</code>)
+  <code class="literal">ups.status</code> will also remove the "ALARM" flag.
 </li></ul></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>When implementing a new driver, the following functions have to be
 called:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 <code class="literal">alarm_init()</code> at the beginning of the main update loop, for the whole
@@ -108,4 +108,4 @@ be considered by other subsequent devices,
 daisychain. This will take care of publishing or not the "ALARM" flag
 in the main ups.status (<code class="literal">device.0</code>, root collection).
 </li></ul></div></div></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-02-05 09:06:50 -- Network UPS Tools 2.8.2.2040</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction_4.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="daisychain.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="lib-info.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2025-02-08 14:48:04 -- Network UPS Tools 2.8.2.2132</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction_4.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="daisychain.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="lib-info.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

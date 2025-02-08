@@ -756,12 +756,12 @@ asciidoc.install();
 <div class="sectionbody">
 <div class="paragraph"><p>This driver should work with older Tripp Lite UPSes which are detected
 as USB HID-class devices, but are not true HID Power-Device Class devices.
-So far, the devices supported by <code>tripplite_usb</code> have product ID 0001,
+So far, the devices supported by <code>tripplite_usb</code> have product ID <em>0001</em>,
 and the newer units (such as those with "LCD" in the model name) with
-product ID 2001 require the <a href="usbhid-ups.html">usbhid-ups(8)</a> driver instead.</p></div>
+product ID <em>2001</em> require the <a href="usbhid-ups.html">usbhid-ups(8)</a> driver instead.</p></div>
 <div class="paragraph"><p>Please report success or failure to the nut-upsuser mailing list.
 A key piece of information is the protocol number, returned in
-<code>ups.firmware.aux</code>.  Also, be sure to turn on debugging (<em>-DDD</em>)
+<code>ups.firmware.aux</code>.  Also, be sure to turn on debugging (<code>-DDD</code>)
 for more informative log messages.</p></div>
 <div class="paragraph"><p>If your Tripp Lite UPS uses a serial port, you may wish to investigate
 the <a href="tripplite.html">tripplite(8)</a> or <a href="tripplitesu.html">tripplitesu(8)</a> drivers.</p></div>
@@ -804,7 +804,7 @@ SMART3000RM2U
 </li>
 </ul></div>
 <div class="paragraph"><p>If you have used Tripp Lite&#8217;s PowerAlert software to connect to your UPS,
-there is a good chance that <em>tripplite_usb</em> will work if it uses one of the
+there is a good chance that <code>tripplite_usb</code> will work if it uses one of the
 following protocols:</p></div>
 <div class="ulist"><ul>
 <li>
@@ -894,12 +894,12 @@ risky!)</p></div>
 <p>
 Select a specific UPS, in case there is more than one connected via
 USB. Each option specifies an extended regular expression (see
-<strong>regex(7)</strong> for more information on regular expressions), which
-must match the UPS&#8217;s entire respective vendor/product/serial string
-(minus any surrounding whitespace), or the whole 4-digit
+<ulink url="https://linux.die.net/man/7/regex">regex(7)</ulink> for more information on regular expressions), which
+must match the UPS&#8217;s entire respective <code>vendor</code>/<code>product</code>/<code>serial</code>
+string values (minus any surrounding whitespace), or the whole 4-digit
 hexadecimal code for <code>vendorid</code> and <code>productid</code>.
 </p>
-<div class="paragraph"><p>Try <strong>lsusb(8)</strong> or running this NUT driver with <strong>-DD</strong> command-line
+<div class="paragraph"><p>Try <ulink url="https://linux.die.net/man/8/lsusb">lsusb(8)</ulink> or running this NUT driver with <code>-DD</code> command-line
 argument for finding out the strings to match.</p></div>
 <div class="paragraph"><p>Examples:</p></div>
 <div class="ulist"><ul>
@@ -928,7 +928,7 @@ argument for finding out the strings to match.</p></div>
 Select a UPS on a specific USB bus or group of buses. The argument is
 a regular expression that must match the bus name where the UPS is
 connected (e.g. <code>bus="002"</code> or <code>bus="00[2-3]"</code>) as seen on Linux in
-<code>/sys/bus/usb/devices</code> or <strong>lsusb(8)</strong>; including leading zeroes.
+<code>/sys/bus/usb/devices</code> or <ulink url="https://linux.die.net/man/8/lsusb">lsusb(8)</ulink>; including leading zeroes.
 </p>
 </dd>
 <dt class="hdlist1">
@@ -939,7 +939,7 @@ connected (e.g. <code>bus="002"</code> or <code>bus="00[2-3]"</code>) as seen on
 Select a UPS on a specific USB device or group of devices. The argument is
 a regular expression that must match the device name where the UPS is
 connected (e.g. <code>device="001"</code> or <code>device="00[1-2]"</code>) as seen on Linux
-in <code>/sys/bus/usb/devices</code> or <strong>lsusb(8)</strong>; including leading zeroes.
+in <code>/sys/bus/usb/devices</code> or <ulink url="https://linux.die.net/man/8/lsusb">lsusb(8)</ulink>; including leading zeroes.
 </p>
 <div class="admonitionblock">
 <table><tr>
@@ -979,7 +979,7 @@ that NUT can run on.</td>
 <dd>
 <p>
 If you have several UPS devices which may not be uniquely identified by
-the options above (e.g. only VID:PID can be discovered there), this flag
+the options above (e.g. only <em>VID:PID</em> can be discovered there), this flag
 allows each driver instance where it is set to take the first match if
 available, or proceed to try another.
 </p>
@@ -1030,7 +1030,7 @@ by the interface number <code>0</code> (default).
 <dd>
 <p>
 Force use of specific interface, endpoint, descriptor index etc. numbers,
-rather than defaulting to 0 (rarely other values in certain drivers for
+rather than defaulting to <em>0</em> (rarely other values in certain drivers for
 some devices known to use non-zero numbers). Specified as a hexadecimal
 number.
 </p>
@@ -1063,8 +1063,12 @@ of the library, see e.g.:</p></div>
 </li>
 <li>
 <p>
-<a href="https://libusb.sourceforge.io/api-1.0/group">https://libusb.sourceforge.io/api-1.0/group</a><em>libusb</em>lib.html
+<a href="https://libusb.sourceforge.io/api-1.0/group__libusb__lib.html">https://libusb.sourceforge.io/api-1.0/group__libusb__lib.html</a>
 </p>
+</li>
+</ul></div>
+</dd>
+</dl></div>
 <div class="ulist"><ul>
 <li>
 <p>
@@ -1072,10 +1076,6 @@ of the library, see e.g.:</p></div>
 </p>
 </li>
 </ul></div>
-</li>
-</ul></div>
-</dd>
-</dl></div>
 <div class="paragraph"><p>Select a specific UPS by its unique UPS ID. The argument is a regular expression
 that must match the UPS ID string. This allows for precise identification of UPS
 devices when multiple devices of the same make and model are connected.
@@ -1210,7 +1210,7 @@ To retrieve or set the upsid use the <a href="upsrw.html">upsrw(8)</a> utility.<
 <div class="sectionbody">
 <div class="paragraph"><p>Written by Charles Lepple, based on the <a href="tripplite.html">tripplite(8)</a> driver
 by Rickard E. (Rik) Faith and Nicholas Kain.</p></div>
-<div class="paragraph"><p>Please do not email the authors directly - use the nut-upsdev mailing list.</p></div>
+<div class="paragraph"><p>Please do not email the authors directly&#8201;&#8212;&#8201;use the nut-upsdev mailing list.</p></div>
 <div class="paragraph"><p>A Tripp Lite OMNIVS1000 was graciously donated to the NUT project by Bradley
 Feldman (<a href="http://www.bradleyloritheo.com">http://www.bradleyloritheo.com</a>)</p></div>
 </div>
@@ -1240,7 +1240,7 @@ Feldman (<a href="http://www.bradleyloritheo.com">http://www.bradleyloritheo.com
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-05 08:47:30 UTC -- Network UPS Tools 2.8.2.2040
+Last updated 2025-02-08 14:47:41 UTC -- Network UPS Tools 2.8.2.2132
 </div>
 </div>
 </body>

@@ -3,7 +3,11 @@
 Packagers have done an excellent and hard work at improving NUT integration
 into their operating system.  On the other hand, distributions and appliances
 tend to package "official releases" of projects such as NUT, and so do not
-deliver latest and greatest fixes, new drivers, bugs and other features.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="Installing_source"></a>5.1. Installing from source</h3></div></div></div><p>These are the essential steps for compiling and installing this software
+deliver latest and greatest fixes, new drivers, bugs and other features.</p><p>Stable distributions also tend to deliver minor fixes to the version of
+third-party software (like NUT) a particular release of the operating
+system has initially delivered, so those release lines can be years behind
+development in terms of new features (or bug fixes, if they are not trivial
+to patch into the old code base snapshot used to create the package).</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="Installing_source"></a>5.1. Installing from source</h3></div></div></div><p>These are the essential steps for compiling and installing this software
 from distribution archives (usually "release tarballs") which include a
 pre-built copy of the <code class="literal">configure</code> script and some other generated source
 files.</p><p>To build NUT from a Git checkout you may need some additional tools
@@ -55,7 +59,7 @@ options.</p><p>If you alter paths with additional switches, be sure to use those
 new paths while reading the rest of the steps.</p><p>Reference: <a class="link" href="Configure_options.html" title="H. Configure options">Configure options</a> from the
 User Manual.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_build_the_programs"></a>Build the programs</h5></div></div></div><pre class="literallayout">make</pre><p>This will build the NUT client and server programs and the
 selected drivers. It will also build any other features that were
-selected during <a class="link" href="_installation_instructions.html#Configuration" title="Configuration">configuration</a> step above.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_installation"></a>Installation</h5></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>You should now gain privileges for installing software if necessary, e.g.:</p><pre class="literallayout">su -</pre><p>or prefix installation (not build/check!) commands with <code class="literal">sudo</code>, e.g.:</p><pre class="literallayout">sudo make install ...</pre></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>If you install NUT for direct consumption on the system that has just
+selected during <a class="link" href="_installation_instructions.html#Configuration" title="Configuration">configuration</a> step above.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>NUT is regularly tested with GNU, BSD and Sun implementations of <code class="literal">make</code>.</p></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_installation"></a>Installation</h5></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>You should now gain privileges for installing software if necessary, e.g.:</p><pre class="literallayout">su -</pre><p>or prefix installation (not build/check!) commands with <code class="literal">sudo</code>, e.g.:</p><pre class="literallayout">sudo make install ...</pre></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>If you install NUT for direct consumption on the system that has just
 built it from source, you might be aided for some of the steps listed
 and explained below by running (as <code class="literal">root</code>):</p><pre class="literallayout">make install-as-root</pre><p>This should not only install the software, but also create directories
 such as the state path, assign ownership and access permissions to
@@ -92,7 +96,7 @@ will be installed automatically by "make install".</p><p>(If you want to try if 
 hotplugging, you can add the "-u root" option to upsd, upsmon, and
 drivers; this should allow you to follow the below
 instructions. However, don’t forget to set up the correct
-permissions later!).</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>if you are using something like udev or devd, make sure
+permissions later!).</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>If you are using something like udev or devd, make sure
 these permissions stay set across a reboot.  If they revert to the
 old values, your drivers may fail to start.</p></div><p>You are now ready to configure NUT, and start testing and using it.</p><p>You can jump directly to the <a class="link" href="Configuration_notes.html" title="6. Configuration notes">NUT configuration</a>.</p></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="Installing_inplace"></a>5.2. Building NUT for in‐place upgrades or non‐disruptive tests</h3></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>The NUT GitHub Wiki article at
 <a class="ulink" href="https://github.com/networkupstools/nut/wiki/Building-NUT-for-in%E2%80%90place-upgrades-or-non%E2%80%90disruptive-tests" target="_top">https://github.com/networkupstools/nut/wiki/Building-NUT-for-in%E2%80%90place-upgrades-or-non%E2%80%90disruptive-tests</a>
@@ -133,9 +137,14 @@ top of the PR page that says <code class="literal">... wants to merge ... from :
 copy the proposed-source URL of that "from" part.</p><p>For example, in some PR this says <code class="literal">jimklimov:issue-1234</code> and links to
 <code class="literal">https://github.com/jimklimov/nut/tree/issue-1234</code>.
 For manual git-cloning, just paste that URL into the shell and replace
-the <code class="literal">/tree/</code> with "<code class="literal">-b</code>" CLI option for branch selection, like this:</p><pre class="literallayout">:; cd /tmp
+the <code class="literal">/tree/</code> with "<code class="literal">-b</code>" CLI option for branch selection; it also helps
+to keep the workspace directory name dedicated to that PR, like this:</p><pre class="literallayout">:; cd /tmp
 ### Checkout https://github.com/jimklimov/nut/tree/issue-1234
-:; git clone https://github.com/jimklimov/nut -b issue-1234</pre></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_testing_with_ci_helper"></a>Testing with CI helper</h4></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>this uses the <code class="literal">ci_build.sh</code> script to arrange some rituals and
+:; git clone https://github.com/jimklimov/nut -b issue-1234 nut-issue-1234
+:; cd nut-issue-1234
+### OPTIONALLY fetch known git tags, so semantic versions look better
+:; git fetch --tags --all
+### Proceed with build (common instructions below)</pre></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_testing_with_ci_helper"></a>Testing with CI helper</h4></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>This uses the <code class="literal">ci_build.sh</code> script to arrange some rituals and
 settings, in this case primarily to default the choice of drivers to
 auto-detection of what can be built, and to skip building documentation.
 Also note that this script supports many other scenarios for CI and
@@ -143,6 +152,9 @@ developers, managed by <code class="literal">BUILD_TYPE</code> and other environ
 which are not explored here.</p></div><p>An "in-place" <span class="emphasis"><em>testing</em></span> build and run would probably go along these lines:</p><pre class="literallayout">:; cd /tmp
 :; git clone -b master https://github.com/networkupstools/nut
 :; cd nut
+### OPTIONALLY fetch known git tags, so semantic versions look better
+:; git fetch --tags --all
+### Proceed with build
 :; ./ci_build.sh inplace
 ### Temporarily stop your original drivers
 :; ./drivers/nutdrv_qx -a DEVNAME_FROM_UPS_CONF -d1 -DDDDDD \
@@ -172,6 +184,9 @@ would refer to new locations specified by the current build, so such old
 binaries would just consume disk space but not run.</p><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_replacing_any_nut_deployment"></a>Replacing any NUT deployment</h5></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>For deployments on OSes with <code class="literal">systemd</code> see the next section.</p></div><p>This goes similar to usual build and install from Git:</p><pre class="literallayout">:; cd /tmp
 :; git clone https://github.com/networkupstools/nut
 :; cd nut
+### OPTIONALLY fetch known git tags, so semantic versions look better
+:; git fetch --tags --all
+### Proceed with build
 :; ./autogen.sh
 :; ./configure --enable-inplace-runtime # --maybe-some-other-options
 :; make -j 4 all &amp;&amp; make -j 4 check &amp;&amp; sudo make install</pre><p>Note that <code class="literal">make install</code> does not currently handle all the nuances that
@@ -189,6 +204,9 @@ could be enhanced like below, to also re-enable services (creating proper
 symlinks) and to get them started:</p><pre class="literallayout">:; cd /tmp
 :; git clone https://github.com/networkupstools/nut
 :; cd nut
+### OPTIONALLY fetch known git tags, so semantic versions look better
+:; git fetch --tags --all
+### Proceed with build
 :; ./autogen.sh
 :; ./configure --enable-inplace-runtime # --maybe-some-other-options
 :; make -j 4 all &amp;&amp; make -j 4 check &amp;&amp; \
@@ -227,6 +245,9 @@ e.g.:</p><pre class="literallayout">:; cd /tmp
 :; git clone https://github.com/networkupstools/nut
 :; cd nut
 :; git checkout -b issue-1234 ### your PR branch name, arbitrary
+### OPTIONALLY fetch known git tags, so semantic versions look better
+:; git fetch --tags --all
+### Proceed with build
 :; ./autogen.sh
 :; ./configure --enable-inplace-runtime # --maybe-some-other-options
 ### Iterate your code changes (e.g. PR draft), build and install with:
@@ -235,13 +256,18 @@ e.g.:</p><pre class="literallayout">:; cd /tmp
     sudo systemctl daemon-reload &amp;&amp; \
     sudo systemd-tmpfiles --create &amp;&amp; \
     sudo systemctl restart \
-        nut-driver-enumerator.service nut-monitor nut-server</pre></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_next_steps_after_an_in_place_upgrade"></a>Next steps after an in-place upgrade</h4></div></div></div><p>You can jump directly to the <a class="link" href="Configuration_notes.html" title="6. Configuration notes">NUT configuration</a>
+        nut-driver-enumerator.service nut-monitor nut-server</pre><p>Note that to contribute your work back to upstream NUT codebase, you would
+need to create a "fork" of <a class="ulink" href="https://github.com/networkupstools/nut" target="_top">https://github.com/networkupstools/nut</a> on GitHub,
+then <code class="literal">git remote add USERNAME https://github.com/USERNAME/nut</code>, maybe refresh
+the workspace index with <code class="literal">git fetch --all</code>, and finally <code class="literal">git push USERNAME</code>
+(possibly follow further instructions from <code class="literal">git</code> tooling) to create the
+pull request. For more details, see <code class="literal">docs/developers.txt</code> in NUT sources.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_next_steps_after_an_in_place_upgrade"></a>Next steps after an in-place upgrade</h4></div></div></div><p>You can jump directly to the <a class="link" href="Configuration_notes.html" title="6. Configuration notes">NUT configuration</a>
 if you need to revise the settings for your new NUT version, take advantage
 of new configuration options, etc.</p><p>Check the <code class="code">NEWS.adoc</code> and <code class="code">UPGRADING.adoc</code> files
 in your checked-out Git workspace to review features that should be present
 in your new build.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="Installing_packages"></a>5.3. Installing from packages</h3></div></div></div><p>This chapter describes the specific installation steps when using
 binary packages that exist on various major systems.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="Debian"></a>Debian, Ubuntu and other derivatives</h4></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>NUT is packaged and well maintained in these systems.
-The official Debian packager is part of the NUT Team.</p></div><p>Using your preferred method (apt-get, aptitude, Synaptic, …), install
+The official Debian packager used to be part of the NUT Team.</p></div><p>Using your preferred method (apt-get, aptitude, Synaptic, …), install
 the <span class="emphasis"><em>nut</em></span> package, and optionally the following:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 <span class="emphasis"><em>nut-cgi</em></span>, if you need the CGI (HTML) option,
 </li><li class="listitem">
@@ -332,4 +358,4 @@ for Windows, please see link:docs/config-prereqs.txt and/or
 link:scripts/Windows/README.adoc files. Note this is rather experimental
 at this point.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_runtime_configuration"></a>Runtime configuration</h4></div></div></div><p>You are now ready to configure NUT, and start testing and using it.</p><p>You can jump directly to the
 <a class="link" href="Configuration_notes.html" title="6. Configuration notes">NUT configuration</a>.</p></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-02-05 09:06:50 -- Network UPS Tools 2.8.2.2040</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="Download_instructions.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="Configuration_notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2025-02-08 14:48:04 -- Network UPS Tools 2.8.2.2132</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="Download_instructions.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="Configuration_notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

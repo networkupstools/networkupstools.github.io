@@ -741,7 +741,7 @@ asciidoc.install();
 <div class="sect1">
 <h2 id="_name">NAME</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>upsd.users - Administrative user definitions for NUT upsd</p></div>
+<div class="paragraph"><p>upsd.users - Administrative user definitions for NUT upsd data server</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -750,10 +750,70 @@ asciidoc.install();
 <div class="paragraph"><p>Administrative commands such as setting variables and the instant
 commands are powerful, and access to them needs to be restricted.  This
 file defines who may access them, and what is available.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_important_notes">IMPORTANT NOTES</h2>
+<div class="sectionbody">
+<div class="ulist"><ul>
+<li>
+<p>
+Contents of this file should be pure ASCII (character codes
+  not in range would be ignored with a warning message).
+</p>
+</li>
+<li>
+<p>
+Balance the run-time user permissions to access the file (and perhaps the
+  directory it is in) for only <code>upsd</code> to be able to read it; write access
+  is not needed. It is common to use <code>chown root:nut</code> and <code>chmod 640</code>
+  to set up acceptable file permissions.
+</p>
+<div class="ulist"><ul>
+<li>
+<p>
+Packages (and build recipes) typically prepare one set of user and
+    group accounts for NUT. Custom builds with minimal configuration might
+    even use <code>nobody:nogroup</code> or similar, which is inherently insecure.
+</p>
+</li>
+<li>
+<p>
+On systems with extra security concerns, NUT drivers and data server
+    should run as separate user accounts which would be members of one
+    same group for shared access to local Unix socket files and the
+    directory they are in, but different groups for configuration file
+    access. This would need some daemons to use customized <code>user</code>, <code>group</code>,
+    <code>RUN_AS_USER</code> and/or <code>RUN_AS_GROUP</code> settings to override the single
+    built-in value.
+</p>
+</li>
+<li>
+<p>
+Note that the monitoring, logging, etc. clients are networked-only.
+    They do not need access to these files and directories, and can run
+    as an independent user and group altogether.
+</p>
+</li>
+<li>
+<p>
+Keep in mind the security of also any backup copies of this file,
+    e.g. the archive files it might end up in.
+</p>
+</li>
+</ul></div>
+</li>
+</ul></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sections">SECTIONS</h2>
+<div class="sectionbody">
 <div class="paragraph"><p>Each user gets its own section.  The fields in that section set the
 parameters associated with that user&#8217;s privileges.  The section begins
 with the name of the user in brackets, and continues until the next user
-name in brackets or EOF.  These users are independent of /etc/passwd.</p></div>
+name in brackets or EOF.  These users are independent of <code>/etc/passwd</code>
+or other OS account databases.</p></div>
 <div class="paragraph"><p>Here are some examples to get you started:</p></div>
 <div class="literalblock">
 <div class="content">
@@ -801,10 +861,12 @@ Set the password for this user.
 </dt>
 <dd>
 <p>
-Allow the user to do certain things with upsd.  To specify multiple
+Allow the user to do certain things with <code>upsd</code>.  To specify multiple
 actions, use multiple instances of the <strong>actions</strong> field.  Valid
 actions are:
 </p>
+<div class="openblock">
+<div class="content">
 <div class="dlist"><dl>
 <dt class="hdlist1">
 SET
@@ -820,15 +882,14 @@ FSD
 <dd>
 <p>
 set the forced shutdown flag in the UPS.  This is
-equivalent to an "on battery + low battery" situation for the purposes
-of monitoring.
+          equivalent to an "on battery + low battery" situation
+          for the purposes of monitoring.
 </p>
 </dd>
 </dl></div>
-</dd>
-</dl></div>
+</div></div>
 <div class="paragraph"><p>The list of actions is expected to grow in the future.</p></div>
-<div class="dlist"><dl>
+</dd>
 <dt class="hdlist1">
 <strong>instcmds</strong>
 </dt>
@@ -837,23 +898,26 @@ of monitoring.
 Let a user initiate specific instant commands.  Use "ALL" to grant all
 commands automatically.  To specify multiple commands, use multiple
 instances of the <strong>instcmds</strong> field.  For the full list of what your UPS
-supports, use "upscmd -l".
+supports, use <code>upscmd -l</code>.
 </p>
-<div class="paragraph"><p>The <code>cmdvartab</code> file supplied with the distribution contains a list
-of most of the known command names.</p></div>
+<div class="paragraph"><p>The <code>cmdvartab</code> file supplied with the NUT distribution contains a list
+of most of the generally known command names.</p></div>
 </dd>
 <dt class="hdlist1">
 <strong>upsmon</strong>
 </dt>
 <dd>
 <p>
-Add the necessary actions for a upsmon process to work.  This is either
-set to "primary" or "secondary".
+Add the necessary actions for an <code>upsmon</code> process, and can be viewed as a
+role of a particular client instance to work with this data server instance.
+This is either set to <em>primary</em> (may request FSD) or <em>secondary</em> (follows
+critical situations to shut down when needed).
 </p>
-<div class="paragraph"><p>Do not attempt to assign actions to upsmon by hand, as you may miss
+<div class="paragraph"><p>Do not attempt to assign actions to <code>upsmon</code> by hand, as you may miss
 something important.  This method of designating a "upsmon user" was
 created so internal capabilities could be changed later on without
-breaking existing installations.</p></div>
+breaking existing installations (potentially using actions that are
+not exposed for direct assignment).</p></div>
 </dd>
 </dl></div>
 </div>
@@ -872,7 +936,7 @@ breaking existing installations.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-05 08:47:28 UTC -- Network UPS Tools 2.8.2.2040
+Last updated 2025-02-08 14:47:40 UTC -- Network UPS Tools 2.8.2.2132
 </div>
 </div>
 </body>

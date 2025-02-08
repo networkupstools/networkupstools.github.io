@@ -826,12 +826,14 @@ Smart-UPS 900I
         on the other&#8201;&#8212;&#8201;then you have such model. Your only option to support
         it through <strong>NUT</strong> is to purchase a "legacy communications card"&#8201;&#8212;&#8201;        part #AP9620 (google <em>AP9620</em> for more details). Or if that&#8217;s not
         an option, rely on official software.
-       <br />
-        UPDATE: later releases of <strong>apcupsd</strong> claimed support for new APC
+</p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph"><div class="title">UPDATE:</div><p>Later releases of <strong>apcupsd</strong> claimed support for new APC
         protocols, so it is worth checking if <strong>apcupsd</strong> software would
         work with your device, and <strong>apcupsd-ups</strong> NUT driver would handle
-        it as part of NUT-managed ecosystem.
-</p>
+        it as part of NUT-managed ecosystem.</p></div>
+</div></div>
 </dd>
 <dt class="hdlist1">
 Microsol models
@@ -862,7 +864,7 @@ Back-UPS BZ2200BI-BR
 </dl></div>
 <div class="paragraph"><p>Another thing to remember is that Smart protocol is not USB protocol.
 If you have UPS with both USB and serial ports, then depending on how
-you connect it, you will need either apcsmart or usbhid-ups driver.</p></div>
+you connect it, you will need either <code>apcsmart</code> or <code>usbhid-ups</code> driver.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -887,9 +889,15 @@ wiring.</td>
 </tr></table>
 </div>
 <div class="paragraph"><p>You can specify alternate cable in <a href="ups.conf.html">ups.conf(5)</a>:</p></div>
-<div class="paragraph"><p><strong>cable</strong>=940-0095B</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>*cable*=940-0095B</code></pre>
+</div></div>
 <div class="paragraph"><p>Alternatively, you can also provide it on the command line using:</p></div>
-<div class="paragraph"><p>-x <strong>cable</strong>=940-0095B</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>-x *cable*=940-0095B</code></pre>
+</div></div>
 </div>
 </div>
 <div class="sect1">
@@ -900,9 +908,15 @@ problem in Windows systems. Furthermore there&#8217;s a possibility of some
 obscure serial cards or serial-USB converters that could cause problems
 as well. You can use <em>ttymode=</em> option to force non-canonical discipline
 in <a href="ups.conf.html">ups.conf(5)</a>:</p></div>
-<div class="paragraph"><p><strong>ttymode</strong>=raw</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>*ttymode*=raw</code></pre>
+</div></div>
 <div class="paragraph"><p>Alternatively, you can also provide it on the command line using:</p></div>
-<div class="paragraph"><p>-x <strong>ttymode</strong>=raw</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>-x *ttymode*=raw</code></pre>
+</div></div>
 <div class="admonitionblock">
 <table><tr>
 <td class="icon">
@@ -994,14 +1008,21 @@ command if your UPS supports it (and is not too old, see below).</p></div>
         The behaviour is&#8201;&#8212;&#8201;unfortunately&#8201;&#8212;&#8201;similarly primitive to <strong>S</strong>.
                 The UPS unconditionally wakes up after nnn*6 minutes:
                 <strong>it doesn&#8217;t care if the power returned !</strong>
-                If nnn = 000, then UPS will do precisely nothing.
-                On those models you&#8217;re better specifying nnn &gt; 0, if you can
-                estimate the kind of power problems that might be happening
-                in your environment.
-        Another thing to consider with "old" models&#8201;&#8212;&#8201;you might lose the
-        connection with the UPS, until it wakes up (with <strong>S</strong>, the serial
-        connection is kept alive).
 </p>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">If <em>nnn = 000</em>, then UPS will do precisely nothing.
+                On those models you should better specify <em>nnn &gt; 0</em>, if you can
+                estimate the kind of power problems that might be happening
+                in your environment.</td>
+</tr></table>
+</div>
+<div class="paragraph"><p>Another thing to consider with "old" models&#8201;&#8212;&#8201;you might lose the
+        connection with the UPS, until it wakes up (with <strong>S</strong>, the serial
+        connection is kept alive).</p></div>
 </dd>
 <dt class="hdlist1">
 "new" models: 
@@ -1009,7 +1030,7 @@ command if your UPS supports it (and is not too old, see below).</p></div>
 <dd>
 <p>
         All the usual variables defined in EEPROM are respected (see <strong>S</strong>).
-        Additionally, if nnn &gt; 0, the nnn*6 minutes are added to EEPROM
+        Additionally, if <em>nnn &gt; 0</em>, the nnn*6 minutes are added to EEPROM
         defined delay. UPS will not power up if it&#8217;s running on batteries,
         contrary to what "old" models used to do&#8201;&#8212;&#8201;the combined delay is
                 counted from the moment of power return.
@@ -1233,17 +1254,23 @@ actually shutdown PSU". Since version 2.6.2, NUT supports <strong>ignorelb</stro
 in driver&#8217;s section of <a href="ups.conf.html">ups.conf(5)</a>. When such option is in effect,
 the core driver will ignore LB state as reported by specific driver and
 start shutdown basing the decision <em>only</em> on two conditions:</p></div>
-<div class="paragraph"><p>battery.charge &lt; battery.charge.low</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>battery.charge &lt; battery.charge.low</code></pre>
+</div></div>
 <div class="paragraph"><p><strong>OR</strong></p></div>
-<div class="paragraph"><p>battery.runtime &lt; battery.runtime.low</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>battery.runtime &lt; battery.runtime.low</code></pre>
+</div></div>
 <div class="paragraph"><p>Of course&#8201;&#8212;&#8201;if any of the variables are not available, the appropriate
 condition is not checked. If you want to explicitly disable one of the
 conditions, simply override the right hand variable causing the condition
 to always evaluate to false (you can even provide negative numbers).</p></div>
-<div class="paragraph"><p>APC UPSes don&#8217;t have battery.charge.low&#8201;&#8212;&#8201;you will have to define it
+<div class="paragraph"><p>APC UPSes don&#8217;t have <code>battery.charge.low</code>&#8201;&#8212;&#8201;you will have to define it
 if you want to use such condition (prefix the variable with <code>override.</code>
 or <code>default.</code>).</p></div>
-<div class="paragraph"><p>"New" units have battery.runtime.low, but depending on battery quality,
+<div class="paragraph"><p>"New" units have <code>battery.runtime.low</code>, but depending on battery quality,
 firmware version, calibration and UPS load&#8201;&#8212;&#8201;this variable can be
 underestimated quite a bit&#8201;&#8212;&#8201;especially right after going into OB state.
 This in turn can cause LB to be asserted, which under normal conditions
@@ -1260,7 +1287,7 @@ actually the main motivation behind introduction of such feature).</p></div>
 </div></div>
 <div class="paragraph"><p>This would cause apcsmart to go into shutdown <em>only</em> if detected
 battery charge &lt; 15%. Runtime condition is always false in this example.</p></div>
-<div class="paragraph"><p>You could ask&#8201;&#8212;&#8201;why bother ? Well, the reason is already hinted above.
+<div class="paragraph"><p>You could ask&#8201;&#8212;&#8201;why bother? Well, the reason is already hinted above.
 APC units can be very picky about the batteries, and their firmware can
 underestimate the remaining runtime (especially right after going into
 OB state). <strong>ignorelb</strong> option and <strong>override.*</strong> let you remain in
@@ -1394,12 +1421,11 @@ switching from USB communication to serial, and perhaps vice versa.</p></div>
 <h2 id="_authors_and_history">AUTHORS AND HISTORY</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>Nigel Metheringham &lt;<a href="mailto:Nigel.Metheringham@Intechnology.co.uk">Nigel.Metheringham@Intechnology.co.uk</a>&gt; (drawing
-heavily on the original <code>apcsmart</code> driver by Russell Kroll).</p></div>
-<div class="paragraph"><p>This driver was called <code>newapc</code> for a time and was renamed in
-the 1.5 series.</p></div>
-<div class="paragraph"><p>In 2.6.2 it was renamed to <code>apcsmart-old</code>, being superseded by
-updated version with new features, which is maintained by Michal
-Soltys &lt;<a href="mailto:soltys@ziu.info">soltys@ziu.info</a>&gt;</p></div>
+heavily on the original <code>apcsmart</code> driver by Russell Kroll) wrote a
+driver called <code>newapc</code> for a time, which was renamed in the 1.5 series.</p></div>
+<div class="paragraph"><p>In 2.6.2 that driver was renamed finally to <code>apcsmart-old</code>, being superseded
+by this updated version with new features which currently holds the
+<code>apcsmart</code> name, and is maintained by Michal Soltys &lt;<a href="mailto:soltys@ziu.info">soltys@ziu.info</a>&gt;.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -1417,7 +1443,7 @@ Soltys &lt;<a href="mailto:soltys@ziu.info">soltys@ziu.info</a>&gt;</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-05 08:47:29 UTC -- Network UPS Tools 2.8.2.2040
+Last updated 2025-02-08 14:47:41 UTC -- Network UPS Tools 2.8.2.2132
 </div>
 </div>
 </body>

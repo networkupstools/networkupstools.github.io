@@ -852,23 +852,21 @@ it gets tired of waiting for the driver to return.</td>
 <div class="sect1">
 <h2 id="_custom_configurations">CUSTOM CONFIGURATIONS</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>You may override the values for CP, OL, LB, and SD by defining them in
-the <a href="ups.conf.html">ups.conf(5)</a> after the upstype setting.</p></div>
-<div class="paragraph"><p>For example, to set the cable power to DTR and the low battery value to
-DCD, it would look like this:</p></div>
-<div class="literalblock">
+<div class="paragraph"><p>You may override the values for <code>CP</code>, <code>OL</code>, <code>LB</code>, and <code>SD</code> by defining them in
+the <a href="ups.conf.html">ups.conf(5)</a> after the <code>upstype</code> setting.</p></div>
+<div class="paragraph"><p>For example, to set the cable power to <code>DTR</code> and the low battery value to
+<code>DCD</code>, it would look like this:</p></div>
+<div class="listingblock">
 <div class="content">
-<pre><code>CP = DTR</code></pre>
+<pre><code>        CP = DTR
+
+        LB = DCD</code></pre>
 </div></div>
-<div class="literalblock">
-<div class="content">
-<pre><code>LB = DCD</code></pre>
-</div></div>
-<div class="paragraph"><p>Recognized values for input lines are CTS, DCD, and RNG.  Recognized
-values for output lines are DTR, RTS, and ST.  See below for more about
+<div class="paragraph"><p>Recognized values for input lines are <code>CTS</code>, <code>DCD</code>, and <code>RNG</code>.  Recognized
+values for output lines are <code>DTR</code>, <code>RTS</code>, and <code>ST</code>.  See below for more about
 what these signals mean.</p></div>
-<div class="paragraph"><p>These values may be negated for active low signals.  That is, "LB=-DCD"
-recognizes a low battery condition when DCD is not held high.</p></div>
+<div class="paragraph"><p>These values may be negated for active low signals.  That is, <code>LB=-DCD</code>
+recognizes a low battery condition when <code>DCD</code> is not held high.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -882,7 +880,7 @@ OL
 </dt>
 <dd>
 <p>
-On line (no power failure) (opposite of OB - on battery)
+On line (no power failure) (opposite of <em>OB</em>&#8201;&#8212;&#8201;on battery)
 </p>
 </dd>
 <dt class="hdlist1">
@@ -986,7 +984,7 @@ NULL
 </dt>
 <dd>
 <p>
-Disable this signal.  Disabled signal will always be low except for OL
+Disable this signal.  Disabled signal will always be low except for <em>OL</em>
        which will always be high.
 </p>
 </dd>
@@ -999,8 +997,8 @@ Alias to <code>NULL</code> which matches some other documentation.
 </p>
 </dd>
 </dl></div>
-<div class="paragraph"><p>A "-" in front of a signal name (like -RNG) means that the indicated
-condition is signaled with an active low signal.  For example, [LB=-RNG]
+<div class="paragraph"><p>A <code>-</code> in front of a signal name (like <code>-RNG</code>) means that the indicated
+condition is signaled with an active low signal.  For example, <code>[LB=-RNG]</code>
 means the battery is low when the ring indicate line goes low, and that
 the battery is OK when that line is held high.</p></div>
 </div>
@@ -1018,14 +1016,11 @@ the battery is OK when that line is held high.</p></div>
 <div class="content">
 <pre><code>[CP=DTR] [OL=-RNG] [LB=DCD] [SD=RTS]</code></pre>
 </div></div>
-<div class="paragraph"><p>2 = APC Back-UPS/Back-UPS Pro/Smart-UPS with 940-0020B cable</p></div>
+<div class="paragraph"><p>2 = APC Back-UPS/Back-UPS Pro/Smart-UPS with 940-0020B cable
+(Note: Type 2 has also been reported to work with the 940-0020C cable).</p></div>
 <div class="literalblock">
 <div class="content">
 <pre><code>[CP=RTS] [OL=-CTS] [LB=DCD] [SD=DTR+RTS]</code></pre>
-</div></div>
-<div class="literalblock">
-<div class="content">
-<pre><code>Type 2 has also been reported to work with the 940-0020C cable.</code></pre>
 </div></div>
 <div class="paragraph"><p>3 = PowerTech Comp1000 with DTR cable power</p></div>
 <div class="literalblock">
@@ -1049,7 +1044,7 @@ the battery is OK when that line is held high.</p></div>
 </div></div>
 <div class="paragraph"><p>7 = CyberPower Power99
     Also Upsonic Power Guardian PG-500, Belkin Belkin Home Office,
-    F6H350-SER, F6H500-SER, F6H650-SER, Eaton Management Card Contact - Config3
+    F6H350-SER, F6H500-SER, F6H650-SER, Eaton Management Card Contact&#8201;&#8212;&#8201;Config3
     with cable 66033 (shutdown does not work)</p></div>
 <div class="literalblock">
 <div class="content">
@@ -1115,14 +1110,10 @@ the battery is OK when that line is held high.</p></div>
 <div class="content">
 <pre><code>[CP=DTR] [OL=CTS] [LB=-DCD] [SD=RTS]</code></pre>
 </div></div>
-<div class="paragraph"><p>20 = Powerware 5119 RM</p></div>
+<div class="paragraph"><p>20 = Powerware 5119 RM (check <code>docs/cables/powerware.txt</code> in NUT sources)</p></div>
 <div class="literalblock">
 <div class="content">
 <pre><code>[CP=DTR] [OL=-CTS] [LB=DCD] [SD=ST]</code></pre>
-</div></div>
-<div class="literalblock">
-<div class="content">
-<pre><code>Check docs/cables/powerware.txt</code></pre>
 </div></div>
 <div class="paragraph"><p>21 = Generic RUPS 2000 (Megatec M2501 cable)</p></div>
 <div class="literalblock">
@@ -1150,7 +1141,7 @@ the battery is OK when that line is held high.</p></div>
 RUPS cable seems to be especially popular in the "power strip" variety of
 UPS found in office supply stores.  If your UPS works with an entry in the
 table above, but the model or manufacturer information don&#8217;t match,
-don&#8217;t despair.  You can fix that easily by using the mfr and model
+don&#8217;t despair.  You can fix that easily by using the <code>mfr</code> and <code>model</code>
 variables documented above in your <a href="ups.conf.html">ups.conf(5)</a>.</p></div>
 </div>
 </div>
@@ -1170,19 +1161,19 @@ documentation your manufacturer has provided (if any), or just start
 going down the list.</p></div>
 <div class="sect2">
 <h3 id="_step_1">Step 1</h3>
-<div class="paragraph"><p>Pick a driver to try from the list (genericups -h) and go to step 2.</p></div>
+<div class="paragraph"><p>Pick a driver to try from the list (run <code>genericups -h</code>) and go to step 2.</p></div>
 </div>
 <div class="sect2">
 <h3 id="_step_2">Step 2</h3>
-<div class="paragraph"><p>Start the driver with the type you want to try -</p></div>
+<div class="paragraph"><p>Start the driver with the type you want to try, e.g.:</p></div>
 <div class="literalblock">
 <div class="content">
 <pre><code>genericups -x upstype=n /dev/port</code></pre>
 </div></div>
-<div class="paragraph"><p>Let upsd sync up (watch the syslog), and then run upsc to see what it
-found.  If the STATUS is right (should be OL for on line), continue to
-<a href="#_step_3">Step 3</a>, otherwise go back to step 1.</p></div>
-<div class="paragraph"><p>Alternatively, you can run genericups in debug mode -</p></div>
+<div class="paragraph"><p>Let <a href="upsd.html">upsd(8)</a> sync up (watch the syslog), and then run <a href="upsc.html">upsc(8)</a>
+to see what it found.  If the <code>STATUS</code> is correct (should be "OL" for online),
+continue to <a href="#_step_3">Step 3</a>, otherwise go back to step 1.</p></div>
+<div class="paragraph"><p>Alternatively, you can run <code>genericups</code> in debug mode, e.g.:</p></div>
 <div class="literalblock">
 <div class="content">
 <pre><code>genericups -DDDDD -x upstype=n /dev/port</code></pre>
@@ -1240,7 +1231,7 @@ Here is a quick example:</p></div>
 <div class="sectionbody">
 <div class="paragraph"><p>If the above testing sequence fails, you will probably need to create a
 new entry to support your hardware.  All UPS types are determined from the
-table in the genericups.h file in the source tree.</p></div>
+table in the <code>genericups.h</code> file in the source tree.</p></div>
 <div class="paragraph"><p>On a standard 9 pin serial port, there are 6 lines that are used as the
 standard "high/low" signal levels.  4 of them are incoming (to the PC,
 from the UPS), and the other 2 are outgoing (to the UPS, from the PC).
@@ -1262,7 +1253,7 @@ with the UPS running on battery as the default line settings contain the
 shutdown sequence.  - Neil Muller</p></div>
 <div class="paragraph"><p>The Tripp-Lite Internet Office 700 must be used with the black 73-0844
 cable instead of the gray 73-0743 cable.  This entry should work with any
-of their models with the Lan 2.2 interface - see the sticker by the DB9
+of their models with the Lan 2.2 interface&#8201;&#8212;&#8201;see the sticker by the DB9
 connector on the UPS.  - Stephen Brown</p></div>
 <div class="paragraph"><p>Type 5 should work with the Tripp-Lite Lan 2.1 interface and the 73-0724
 cable.  This was tested with the OmniSmart 675 PNP on Red Hat 7.2.  - Q
@@ -1301,7 +1292,7 @@ UPS of some kind that allows detection and proper load cycling on command.</p></
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-05 08:47:29 UTC -- Network UPS Tools 2.8.2.2040
+Last updated 2025-02-08 14:47:41 UTC -- Network UPS Tools 2.8.2.2132
 </div>
 </div>
 </body>

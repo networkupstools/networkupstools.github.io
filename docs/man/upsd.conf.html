@@ -741,15 +741,15 @@ asciidoc.install();
 <div class="sect1">
 <h2 id="_name">NAME</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>upsd.conf - Configuration for Network UPS Tools upsd</p></div>
+<div class="paragraph"><p>upsd.conf - Configuration for Network UPS Tools upsd data server</p></div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>upsd uses this file to control access to the server and set some other
-miscellaneous configuration values.  This file contains details on
-access controls, so keep it secure.  Ideally, only the upsd process
+<div class="paragraph"><p><a href="upsd.html">upsd(8)</a> uses this file to control access to the server and set some
+other miscellaneous configuration values.  This file contains details on
+access controls, so keep it secure.  Ideally, only the <code>upsd</code> process
 should be able to read it.</p></div>
 </div>
 </div>
@@ -763,6 +763,47 @@ Contents of this file should be pure ASCII (character codes
   not in range would be ignored with a warning message).
 </p>
 </li>
+<li>
+<p>
+Balance the run-time user permissions to access the file (and perhaps the
+  directory it is in) for only <code>upsd</code> to be able to read it; write access
+  is not needed. It is common to use <code>chown root:nut</code> and <code>chmod 640</code>
+  to set up acceptable file permissions.
+</p>
+<div class="ulist"><ul>
+<li>
+<p>
+Packages (and build recipes) typically prepare one set of user and
+    group accounts for NUT. Custom builds with minimal configuration might
+    even use <code>nobody:nogroup</code> or similar, which is inherently insecure.
+</p>
+</li>
+<li>
+<p>
+On systems with extra security concerns, NUT drivers and data server
+    should run as separate user accounts which would be members of one
+    same group for shared access to local Unix socket files and the
+    directory they are in, but different groups for configuration file
+    access. This would need some daemons to use customized <code>user</code>, <code>group</code>,
+    <code>RUN_AS_USER</code> and/or <code>RUN_AS_GROUP</code> settings to override the single
+    built-in value.
+</p>
+</li>
+<li>
+<p>
+Note that the monitoring, logging, etc. clients are networked-only.
+    They do not need access to these files and directories, and can run
+    as an independent user and group altogether.
+</p>
+</li>
+<li>
+<p>
+Keep in mind the security of also any backup copies of this file,
+    e.g. the archive files it might end up in.
+</p>
+</li>
+</ul></div>
+</li>
 </ul></div>
 </div>
 </div>
@@ -771,19 +812,19 @@ Contents of this file should be pure ASCII (character codes
 <div class="sectionbody">
 <div class="dlist"><dl>
 <dt class="hdlist1">
-"MAXAGE <em>seconds</em>"
+<strong>MAXAGE <em>seconds</em></strong>
 </dt>
 <dd>
 <p>
-upsd usually allows a driver to stop responding for up to 15 seconds
+<code>upsd</code> usually allows a driver to stop responding for up to 15 seconds
 before declaring the data "stale".  If your driver takes a very long
-time to process updates but is otherwise operational, you can use MAXAGE
-to make upsd wait longer.
+time to process updates but is otherwise operational, you can use <code>MAXAGE</code>
+to make <code>upsd</code> wait longer.
 </p>
 <div class="paragraph"><p>Most users should leave this at the default value.</p></div>
 </dd>
 <dt class="hdlist1">
-"TRACKINGDELAY <em>seconds</em>"
+<strong>TRACKINGDELAY <em>seconds</em></strong>
 </dt>
 <dd>
 <p>
@@ -793,7 +834,7 @@ This defaults to 3600 (1 hour).
 </p>
 </dd>
 <dt class="hdlist1">
-"ALLOW_NO_DEVICE <em>Boolean</em>"
+<strong>ALLOW_NO_DEVICE <em>Boolean</em></strong>
 </dt>
 <dd>
 <p>
@@ -811,7 +852,7 @@ for the current run. One way this can happen is somebody un-commenting it in
 the <em>nut.conf</em> file used by init-scripts and service unit method scripts.</p></div>
 </dd>
 <dt class="hdlist1">
-"ALLOW_NOT_ALL_LISTENERS <em>Boolean</em>"
+<strong>ALLOW_NOT_ALL_LISTENERS <em>Boolean</em></strong>
 </dt>
 <dd>
 <p>
@@ -820,7 +861,7 @@ moment the daemon starts. If your LAN IP address (or host name) used in one
 of the <code>LISTEN</code> directives may be not always accessible, and for some reason
 do not want to just <code>LISTEN *</code> on the wildcard interface, but e.g. you still
 want to use <code>upsmon</code> on <code>localhost</code>, this option can help. Note you would
-have to restart <code>upsd</code> to pick up the `LISTEN`ed IP address if it appears
+have to restart <code>upsd</code> to pick up the <code>LISTEN</code>'ed IP address if it appears
 later.
 </p>
 <div class="paragraph"><p>Boolean values <em>true</em>, <em>yes</em>, <em>on</em> and <em>1</em> mean that the server would not
@@ -833,11 +874,11 @@ One way this can happen is somebody un-commenting it in the <em>nut.conf</em> fi
 used by init-scripts and service unit method scripts.</p></div>
 </dd>
 <dt class="hdlist1">
-"STATEPATH <em>path</em>"
+<strong>STATEPATH <em>path</em></strong>
 </dt>
 <dd>
 <p>
-Tell upsd to look for the driver state sockets in <em>path</em> rather
+Tell <code>upsd</code> to look for the driver state sockets in <em>path</em> rather
 than the default that was compiled into the program.
 </p>
 <div class="paragraph"><p>Note that the drivers must use the same path, so <code>upsd</code> would prefer the
@@ -846,7 +887,7 @@ same-named setting from <code>ups.conf</code> global section, if present, over i
 or service method) can override this setting.</p></div>
 </dd>
 <dt class="hdlist1">
-"LISTEN <em>interface</em> <em>port</em>"
+<strong>LISTEN <em>interface</em> <em>port</em></strong>
 </dt>
 <dd>
 <p>
@@ -857,10 +898,10 @@ on many systems.
 </p>
 <div class="paragraph"><p>Optionally listen on TCP port <em>port</em> instead of the default value which was
 compiled into the code.  This overrides any value you may have set with
-<em>configure --with-port</em>.  If you don&#8217;t change it with configure or this value,
-upsd will listen on port 3493 for this interface.</p></div>
-<div class="paragraph"><p>Multiple LISTEN addresses may be specified.  The default is to bind to
-<code>127.0.0.1</code> if no LISTEN addresses are specified (and also <code>::1</code> if IPv6
+<code>configure --with-port</code>.  If you don&#8217;t change it with configure or this value,
+<code>upsd</code> will listen on port <em>3493</em> for this interface.</p></div>
+<div class="paragraph"><p>Multiple <code>LISTEN</code> addresses may be specified.  The default is to bind to
+<code>127.0.0.1</code> if no <code>LISTEN</code> addresses are specified (and also <code>::1</code> if IPv6
 support is compiled in).</p></div>
 <div class="paragraph"><p>To listen on all available interfaces and configured IP addresses of your
 system, you may also use <code>::</code> for IPv6 and <code>0.0.0.0</code> for IPv4, respectively.
@@ -879,7 +920,7 @@ LISTEN ::1
 LISTEN 2001:0db8:1234:08d3:1319:8a2e:0370:7344</code></pre>
 </div></div>
 <div class="paragraph"><p>This parameter will only be read at startup.  You&#8217;ll need to restart
-(rather than reload) upsd to apply any changes made here.</p></div>
+(rather than merely reload) <code>upsd</code> to apply any changes made here.</p></div>
 <div class="paragraph"><p>Please note that older NUT releases could have been using the IPv4-mapped
 IPv6 addressing (sometimes also known as "dual-stack") mode, if provided
 by the system. Current versions (since NUT v2.8.1 release) explicitly try
@@ -887,18 +928,18 @@ to restrict their listening sockets to only support one address family on
 each socket, and so avoid IPv4-mapped mode where possible.</p></div>
 </dd>
 <dt class="hdlist1">
-"MAXCONN <em>connections</em>"
+<strong>MAXCONN <em>connections</em></strong>
 </dt>
 <dd>
 <p>
 This defaults to maximum number allowed on your system.  Each UPS, each
-LISTEN address and each client count as one connection.  If the server
+<code>LISTEN</code> address and each client count as one connection.  If the server
 runs out of connections, it will no longer accept new incoming client
 connections.  Only set this if you know exactly what you&#8217;re doing.
 </p>
 </dd>
 <dt class="hdlist1">
-"CERTFILE <em>certificate file</em>"
+<strong>CERTFILE <em>certificate file</em></strong>
 </dt>
 <dd>
 <p>
@@ -907,12 +948,13 @@ certificate file here.
 </p>
 <div class="paragraph"><p>The certificates must be in PEM format and must be sorted starting with
 the subject&#8217;s certificate (server certificate), followed by intermediate
-CA certificates (if applicable_ and the highest level (root) CA. It should
-end with the server key. See <em>docs/security.txt</em> or the Security chapter of
-NUT user manual for more information on the SSL support in NUT.</p></div>
+CA certificates (if applicable) and the highest level (root) CA. It should
+end with the server key. See <code>docs/security.txt</code> in NUT sources, or the
+Security chapter of NUT user manual, for more information on the SSL
+support in NUT.</p></div>
 </dd>
 <dt class="hdlist1">
-"CERTPATH <em>certificate database</em>"
+<strong>CERTPATH <em>certificate database</em></strong>
 </dt>
 <dd>
 <p>
@@ -923,7 +965,7 @@ certificate path here.
 Specify the path of the database directory.</p></div>
 </dd>
 <dt class="hdlist1">
-"CERTIDENT <em>certificate name</em> <em>database password</em>"
+<strong>CERTIDENT <em>certificate name</em> <em>database password</em></strong>
 </dt>
 <dd>
 <p>
@@ -942,25 +984,39 @@ are using a value with spaces in it.</td>
 </div>
 </dd>
 <dt class="hdlist1">
-"CERTREQUEST <em>certificate request level</em>"
+<strong>CERTREQUEST <em>certificate request level</em></strong>
 </dt>
 <dd>
 <p>
 When compiled with SSL support with NSS backend and client certificate
-validation (disabled by default, see <em>docs/security.txt</em>),
-you can specify if upsd requests or requires client&#8217;s' certificates.
+validation (disabled by default, see &#8216;docs/security.txt` in NUT sources),
+you can specify if <code>upsd</code> requests or requires clients&#8217; certificates.
 </p>
-<div class="paragraph"><p>Possible values are :
-- <em>0</em> to not request to clients to provide any certificate
-- <em>1</em> to require to all clients a certificate
-- <em>2</em> to require to all clients a valid certificate</p></div>
+<div class="paragraph"><p>Possible values are:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<em>0</em> to not request to clients to provide any certificate
+</p>
+</li>
+<li>
+<p>
+<em>1</em> to require to all clients a certificate
+</p>
+</li>
+<li>
+<p>
+<em>2</em> to require to all clients a valid certificate
+</p>
+</li>
+</ul></div>
 </dd>
 <dt class="hdlist1">
-"DISABLE_WEAK_SSL <em>BOOLEAN</em>"
+<strong>DISABLE_WEAK_SSL <em>BOOLEAN</em></strong>
 </dt>
 <dd>
 <p>
-Tell upsd to disable older/weak SSL/TLS protocols and ciphers.
+Tell <code>upsd</code> to disable older/weak SSL/TLS protocols and ciphers.
 With relatively recent versions of OpenSSL or NSS it will be restricted
 to TLSv1.2 or better.
 </p>
@@ -968,7 +1024,7 @@ to TLSv1.2 or better.
 Currently disabled by default to ensure compatibility with existing setups.</p></div>
 </dd>
 <dt class="hdlist1">
-"DEBUG_MIN <em>INTEGER</em>"
+<strong>DEBUG_MIN <em>INTEGER</em></strong>
 </dt>
 <dd>
 <p>
@@ -982,7 +1038,7 @@ verbosity level.
 <td class="icon">
 <div class="title">Note</div>
 </td>
-<td class="content">if the running daemon receives a <code>reload</code> command, presence of the
+<td class="content">If the running daemon receives a <code>reload</code> command, presence of the
 <code>DEBUG_MIN NUMBER</code> value in the configuration file can be used to tune
 debugging verbosity in the running service daemon (it is recommended to
 comment it away or set the minimum to explicit zero when done, to avoid
@@ -1012,7 +1068,7 @@ does not change the previously active logging verbosity.</td>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-05 08:47:28 UTC -- Network UPS Tools 2.8.2.2040
+Last updated 2025-02-08 14:47:40 UTC -- Network UPS Tools 2.8.2.2132
 </div>
 </div>
 </body>

@@ -741,7 +741,7 @@ asciidoc.install();
 <div class="sect1">
 <h2 id="_name">NAME</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>nutdrv_siemens_sitop - driver for the Siemens SITOP UPS500 series UPS</p></div>
+<div class="paragraph"><p>nutdrv_siemens_sitop - Driver for the Siemens SITOP UPS500 series UPS</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -845,7 +845,7 @@ supply power from its batteries.
 <div class="sectionbody">
 <div class="paragraph"><p>The USB-versions of the UPS contain an FTDI USB-to-serial converter chip.
 It is programmed with a non-standard product ID (for example <em>0403:e0e3</em>),
-but can still be used with the normal ftdi_sio driver.</p></div>
+but can still be used with the normal <code>ftdi_sio</code> driver.</p></div>
 <div class="admonitionblock">
 <table><tr>
 <td class="icon">
@@ -862,7 +862,7 @@ Product ID.</p></div>
 <pre><code>modprobe ftdi_sio
 echo 0403 e0e3 &gt; /sys/bus/usb-serial/drivers/ftdi_sio/new_id</code></pre>
 </div></div>
-<div class="paragraph"><p>If your system uses <strong>udev</strong>, this can be automated via a udev rule:</p></div>
+<div class="paragraph"><p>If your system uses <strong>udev</strong>, this can be automated via an <strong>udev</strong> rule:</p></div>
 <div class="listingblock">
 <div class="content">
 <pre><code>ACTION=="add", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="e0e3", \
@@ -870,7 +870,7 @@ echo 0403 e0e3 &gt; /sys/bus/usb-serial/drivers/ftdi_sio/new_id</code></pre>
   RUN+="/bin/sh -c 'echo 0403 e0e3 &gt; /sys/bus/usb-serial/drivers/ftdi_sio/new_id'"</code></pre>
 </div></div>
 <div class="paragraph"><p>You can use the following udev rule to obtain a predictable device name,
-for example <em>/dev/ttyUPS</em>:</p></div>
+for example <code>/dev/ttyUPS</code>:</p></div>
 <div class="listingblock">
 <div class="content">
 <pre><code>SUBSYSTEM=="tty" ATTRS{idVendor}=="0403", ATTRS{idProduct}=="e0e3" SYMLINK+="ttyUPS"</code></pre>
@@ -901,9 +901,9 @@ relatively low value. The recommended value is 1 (second).</p></div>
 The serial port is polled periodically for new data (see <strong>Polling</strong>).
 If there is no valid new data after <em>num</em> polls, it is assumed that
 communication with the UPS is lost.
-The default value is 2. Lower values may cause spurious <em>Data stale</em>
-messages, especially at startup.
 </p>
+<div class="paragraph"><p>The default value is <em>2</em>. Lower values may cause spurious <em>Data stale</em>
+messages, especially at startup.</p></div>
 </dd>
 </dl></div>
 </div>
@@ -967,7 +967,7 @@ has been removed for at least 1 second, and has been re-applied.
 <div class="paragraph"><p>Make sure that your operating system has created a serial device for the UPS.
 See the section <strong>USB driver</strong> for more information.</p></div>
 <div class="paragraph"><p>Next, make sure that NUT has access rights to this device file.
-For example, by creating a udev rule that grants permission to the NUT user,
+For example, by creating an udev rule that grants permission to the NUT user,
 or by adding the NUT user to a user group that can access serial devices
 (e.g. the <strong>dialout</strong> group on Debian-based systems).</p></div>
 </div>
@@ -976,10 +976,10 @@ or by adding the NUT user to a user group that can access serial devices
 <h2 id="_diagnostics">DIAGNOSTICS</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>You can verify the correct functioning of the hardware, by monitoring the
-serial port with a terminal program, for example picocom:</p></div>
+serial port with a terminal program, for example <code>picocom</code>:</p></div>
 <div class="literalblock">
 <div class="content">
-<pre><code>picocom -b 9600 -d 8 -p n /dev/ttyUPS</code></pre>
+<pre><code>:; picocom -b 9600 -d 8 -p n /dev/ttyUPS</code></pre>
 </div></div>
 <div class="paragraph"><p>NUT must not be running when you do this.
 You should now see a continuous stream of 5-character texts coming in,
@@ -1015,13 +1015,13 @@ The firmware in these UPSes is quite buggy. After sending data to the UPS,
 it sometimes stops sending status updates. This driver tries to prevent this
 (e.g. by sending commands twice, and by sending additional LF characters after
 each command).
-Once the UPS is in this state, communication can only be restored by rebooting
-the UPS, or by unplugging and reconnecting the USB cable.
-During normal operation, no commands are sent to the UPS at all
-(only at shutdown), so this issue is expected to have little impact on
-usability.
-It is not sure if the serial models are affected by this issue as well.
 </p>
+<div class="paragraph"><p>Once the UPS is in this state, communication can only be restored by rebooting
+the UPS, or by unplugging and reconnecting the USB cable.</p></div>
+<div class="paragraph"><p>During normal operation, no commands are sent to the UPS at all
+(only at shutdown), so this issue is expected to have little impact on
+usability.</p></div>
+<div class="paragraph"><p>It is not certain if the serial models are affected by this issue as well.</p></div>
 </dd>
 </dl></div>
 </div>
@@ -1049,7 +1049,7 @@ It is not sure if the serial models are affected by this issue as well.
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-05 08:47:30 UTC -- Network UPS Tools 2.8.2.2040
+Last updated 2025-02-08 14:47:41 UTC -- Network UPS Tools 2.8.2.2132
 </div>
 </div>
 </body>

@@ -741,7 +741,8 @@ asciidoc.install();
 <div class="sect1">
 <h2 id="_name">NAME</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>clone-outlet - clone an UPS, treating its outlet as if it were an UPS (monitoring only)</p></div>
+<div class="paragraph"><p>clone-outlet - Clone an UPS, treating its outlet as if it were an UPS
+               (monitoring only)</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -764,15 +765,16 @@ clone-outlet driver.  For information about the core driver, see
 <div class="sect1">
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>This driver, which sits on top of another driver socket, allows users to group
-clients to a particular outlet of a device and deal with this output as if it
-were a normal UPS.  Unlike the <a href="clone.html">clone(8)</a> driver or <a href="dummy-ups.html">dummy-ups(8)</a>
+<div class="paragraph"><p>This driver, which sits on top of another driver&#8217;s local UNIX socket file
+(or Windows named pipe), allows users to group clients to a particular
+outlet of a device and deal with this output as if it were a normal UPS.</p></div>
+<div class="paragraph"><p>Unlike the <a href="clone.html">clone(8)</a> driver or <a href="dummy-ups.html">dummy-ups(8)</a> driver running
 in repeater mode, this driver represents a read-only device for monitoring and
 shutdowns (it does not accept setting any values or sending instant commands
 during run time).</p></div>
-<div class="paragraph"><p>Unlike <a href="dummy-ups.html">dummy-ups(8)</a>, this driver does not require a running <code>upsd</code>
-data server nor use the networked NUT protocol to talk to the "real" driver
-(which may be remote in case of <code>dummy-ups</code> repeater mode).</p></div>
+<div class="paragraph"><p>Unlike <a href="dummy-ups.html">dummy-ups(8)</a> generally, this driver does not require a running
+<code>upsd</code> data server nor use the networked NUT protocol to talk to the "real"
+driver (which may be remote in case of <code>dummy-ups</code> repeater mode).</p></div>
 <div class="paragraph"><p>This driver does not create a completely new virtual device, but replaces or
 extends some of the original readings reported by the "real" driver using
 information from the specified outlet, and relays all other readings as they
@@ -907,14 +909,14 @@ or "as is" if the outlet power state is "not critical".
 <h2 id="_important">IMPORTANT</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>Unlike a real UPS, you should <strong>not</strong> configure a upsmon primary mode for this
-driver.  When a upsmon primary sees the OB LB flags and tells the upsd server
-it is OK to initiate the shutdown sequence, the server will latch the FSD
-status and it will not be possible to restart the systems connected without
-restarting the upsd server.</p></div>
+driver.  When a <a href="upsmon.html">upsmon(8)</a> primary sees the OB LB flags and tells the
+<a href="upsd.html">upsd(8)</a> server it is OK to initiate the shutdown sequence, the server
+will latch the FSD status, and it will not be possible to restart the systems
+connected without restarting the <code>upsd</code> server.</p></div>
 <div class="paragraph"><p>This will be a problem if the power returns after the clone UPS initiated
-the shutdown sequence on it&#8217;s outlet, but returns before the real UPS begins
-shutting down. The solution is in the clone driver, that will insert the
-FSD flag if needed without the help of a upsmon primary.</p></div>
+the shutdown sequence on its outlet, but returns before the real UPS begins
+shutting down. The solution is in the <code>clone</code> driver, that will insert the
+FSD flag if needed without the help of an <code>upsmon</code> primary.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -966,7 +968,7 @@ or remotely running "real" device driver (and NUT data server).</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-05 08:47:29 UTC -- Network UPS Tools 2.8.2.2040
+Last updated 2025-02-08 14:47:41 UTC -- Network UPS Tools 2.8.2.2132
 </div>
 </div>
 </body>

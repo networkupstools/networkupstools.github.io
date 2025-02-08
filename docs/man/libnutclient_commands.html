@@ -751,42 +751,30 @@ access library</p></div>
 <div class="sect1">
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
-<div class="literalblock">
+<div class="listingblock">
 <div class="content">
-<pre><code>#include &lt;nutclient.h&gt;</code></pre>
-</div></div>
-<div class="literalblock">
-<div class="content">
-<pre><code>typedef void* NUTCLIENT_t;</code></pre>
-</div></div>
-<div class="literalblock">
-<div class="content">
-<pre><code>typedef char** strarr;</code></pre>
-</div></div>
-<div class="literalblock">
-<div class="content">
-<pre><code>strarr nutclient_get_device_commands(
-        NUTCLIENT_t client,
-        const char* dev);</code></pre>
-</div></div>
-<div class="literalblock">
-<div class="content">
-<pre><code>int nutclient_has_device_command(
-        NUTCLIENT_t client,
-        const char* dev, const char* cmd);</code></pre>
-</div></div>
-<div class="literalblock">
-<div class="content">
-<pre><code>char* nutclient_get_device_command_description(
-        NUTCLIENT_t client,
-        const char* dev, const char* cmd);</code></pre>
-</div></div>
-<div class="literalblock">
-<div class="content">
-<pre><code>void nutclient_execute_device_command(
-        NUTCLIENT_t client,
-        const char* dev, const char* cmd,
-        const char* param="");</code></pre>
+<pre><code>        #include &lt;nutclient.h&gt;
+
+        typedef void* NUTCLIENT_t;
+
+        typedef char** strarr;
+
+        strarr nutclient_get_device_commands(
+                NUTCLIENT_t client,
+                const char* dev);
+
+        int nutclient_has_device_command(
+                NUTCLIENT_t client,
+                const char* dev, const char* cmd);
+
+        char* nutclient_get_device_command_description(
+                NUTCLIENT_t client,
+                const char* dev, const char* cmd);
+
+        void nutclient_execute_device_command(
+                NUTCLIENT_t client,
+                const char* dev, const char* cmd,
+                const char* param="");</code></pre>
 </div></div>
 </div>
 </div>
@@ -807,14 +795,15 @@ The <strong>nutclient_get_device_commands()</strong> function retrieves
 The <strong>nutclient_has_device_command</strong> function tests if the
   specified command is supported by the device.
 </p>
-<div class="paragraph"><p>Return 1 is supported and 0 if not.</p></div>
+<div class="paragraph"><p>Return <em>1</em> if supported and <em>0</em> if not.</p></div>
 </li>
 <li>
 <p>
 The <strong>nutclient_get_device_command_description</strong> function
   retrieves the command description, if any.
 </p>
-<div class="paragraph"><p>The returned string must be freed.</p></div>
+<div class="paragraph"><p>The returned string must be freed by <ulink url="https://linux.die.net/man/3/free">free(3)</ulink>
+(see <a href="libnutclient_general.html">libnutclient_general(3)</a>).</p></div>
 </li>
 <li>
 <p>
@@ -850,7 +839,7 @@ The <strong>nutclient_execute_device_command</strong> intends to execute
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-05 08:47:28 UTC -- Network UPS Tools 2.8.2.2040
+Last updated 2025-02-08 14:47:40 UTC -- Network UPS Tools 2.8.2.2132
 </div>
 </div>
 </body>

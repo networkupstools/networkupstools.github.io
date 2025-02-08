@@ -741,7 +741,7 @@ asciidoc.install();
 <div class="sect1">
 <h2 id="_name">NAME</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>upsc - example lightweight UPS client</p></div>
+<div class="paragraph"><p>upsc - Lightweight read-only NUT client</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -779,9 +779,9 @@ want to include the full interface.</p></div>
 <dd>
 <p>
   As above, list all UPS names configured at <em>host</em>, including their description
-  provided by the remote upsd(8) from ups.conf(5). The hostname defaults to
-  "localhost".  You may optionally add a colon and a port number to override the
-  default port.
+  provided by the remote <a href="upsd.html">upsd(8)</a> from its <a href="ups.conf.html">ups.conf(5)</a>.
+  The hostname defaults to "localhost".  You may optionally add a colon and
+  a port number to override the default port.
 </p>
 </dd>
 <dt class="hdlist1">
@@ -806,9 +806,10 @@ want to include the full interface.</p></div>
 </dt>
 <dd>
 <p>
-  Display the value of this variable only.  By default, upsc retrieves the list
-  of variables from the server and then displays the value for each.  This may
-  be useful in shell scripts to save an additional pipe into grep.
+  Display the value of this variable only.  By default, <code>upsc</code> retrieves the
+  list of variables from the server and then displays the value for each.
+  This option may be useful in shell scripts to save an additional pipe into
+  <code>grep</code>.
 </p>
 </dd>
 </dl></div>
@@ -818,10 +819,10 @@ want to include the full interface.</p></div>
 <h2 id="_examples">EXAMPLES</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>To list all variables on an UPS named "myups" on a host
-called "mybox", with upsd(8) running on port 1234:</p></div>
+called "mybox", with <a href="upsd.html">upsd(8)</a> running on port <em>1234</em>:</p></div>
 <div class="literalblock">
 <div class="content">
-<pre><code>$ upsc myups@mybox:1234
+<pre><code>:; upsc myups@mybox:1234
 battery.charge: 100.0
 battery.voltage: 13.9
 battery.voltage.nominal: 13.6
@@ -830,7 +831,7 @@ battery.voltage.nominal: 13.6
 <div class="paragraph"><p>To list the UPSes configured on this system, along with their descriptions:</p></div>
 <div class="literalblock">
 <div class="content">
-<pre><code>$ upsc -L
+<pre><code>:; upsc -L
 apc: Back-UPS 500
 ppro2: Patriot Pro II</code></pre>
 </div></div>
@@ -838,14 +839,14 @@ ppro2: Patriot Pro II</code></pre>
 syntax:</p></div>
 <div class="literalblock">
 <div class="content">
-<pre><code>$ for UPS in `upsc -l mybox:1234`; do
+<pre><code>:; for UPS in `upsc -l mybox:1234`; do
     upsc $UPS ups.status
 done</code></pre>
 </div></div>
 <div class="paragraph"><p>To list clients connected on "myups":</p></div>
 <div class="literalblock">
 <div class="content">
-<pre><code>$ upsc -c myups
+<pre><code>:; upsc -c myups
 127.0.0.1
 ::1
 192.168.1.2</code></pre>
@@ -856,17 +857,17 @@ done</code></pre>
 <h2 id="_scripted_mode">SCRIPTED MODE</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>If you run this program inside a shell script or similar to get the list of
-devices and variables, you should only consider using output from stdout,
-not stderr.</p></div>
+devices and variables, you should only consider using output from <code>stdout</code>,
+not <code>stderr</code>.</p></div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_diagnostics">DIAGNOSTICS</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>upsc will either print a list of UPS names, a list of all supported variables
-and their values on the UPS, or an error message.  If you receive an error,
+<div class="paragraph"><p><code>upsc</code> will either print a list of UPS names, a list of all supported variables
+and their values on the UPS, or an error message.  If you do receive an error,
 make sure you have specified a valid UPS on the command line, that
-<a href="upsd.html">upsd(8)</a> is really running on the other host and that no firewalls are
+<a href="upsd.html">upsd(8)</a> is really running on the other host, and that no firewalls are
 blocking you.</p></div>
 </div>
 </div>
@@ -881,7 +882,9 @@ only talks TCP.  This is why <em>upsct</em> no longer exists.</p></div>
 <div class="sect1">
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
-<div class="paragraph"><p><a href="upsd.html">upsd(8)</a></p></div>
+<div class="paragraph"><p><a href="upslog.html">upslog(8)</a>,
+<a href="ups.conf.html">ups.conf(5)</a>,
+<a href="upsd.html">upsd(8)</a></p></div>
 <div class="sect2">
 <h3 id="_internet_resources">Internet resources:</h3>
 <div class="paragraph"><p>The NUT (Network UPS Tools) home page: <a href="https://www.networkupstools.org/">https://www.networkupstools.org/</a></p></div>
@@ -892,7 +895,7 @@ only talks TCP.  This is why <em>upsct</em> no longer exists.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-05 08:47:28 UTC -- Network UPS Tools 2.8.2.2040
+Last updated 2025-02-08 14:47:40 UTC -- Network UPS Tools 2.8.2.2132
 </div>
 </div>
 </body>

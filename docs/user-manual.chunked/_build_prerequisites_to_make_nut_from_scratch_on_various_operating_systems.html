@@ -232,8 +232,8 @@ Alternative packaging, such as Temurin from the Adoptium project, is possible
 instructions</a> for specific details. This may require updated library package
 versions as dependencies from the OS distribution, so you may also have to make
 sure that  your <code class="literal">/etc/yum.repos.d/*</code> files (certainly <code class="literal">CentOS-Base.repo</code>, maybe
-also <code class="literal">CentOS-fasttrack.repo</code> and/or <code class="literal">CentOS-CR.repo</code>) to use e.g.</p></div><pre class="screen">baseurl=https://vault.centos.org/centos/$releasever/os/$basearch/</pre><p>lines if the <code class="literal">mirrorlist</code> ones do not suffice to find living mirrors (WARNING:
-the <code class="literal">/os/</code> part of the URL would vary for different repository types).</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_arch_linux"></a>Arch Linux</h4></div></div></div><p>Update the lower-level OS and package databases:</p><pre class="screen">:; pacman -Syu</pre><p>Install tools and prerequisites for NUT:</p><pre class="screen">:; pacman -S --needed \
+also <code class="literal">CentOS-fasttrack.repo</code> and/or <code class="literal">CentOS-CR.repo</code>) to use e.g.</p><pre class="screen">baseurl=https://vault.centos.org/centos/$releasever/os/$basearch/</pre><p>lines if the <code class="literal">mirrorlist</code> ones do not suffice to find living mirrors (WARNING:
+the <code class="literal">/os/</code> part of the URL would vary for different repository types).</p></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_arch_linux"></a>Arch Linux</h4></div></div></div><p>Update the lower-level OS and package databases:</p><pre class="screen">:; pacman -Syu</pre><p>Install tools and prerequisites for NUT:</p><pre class="screen">:; pacman -S --needed \
     base-devel \
     autoconf automake libtool libltdl \
     clang gcc \
@@ -359,7 +359,7 @@ choice menu), e.g.:</p><pre class="screen">:; for P in \
 # Note there is no direct "asciidoc" nor "a2x", just the competing project
 # "rubygem-asciidoctor" that NUT currently has no recipes for, so you can
 # not compile man/html/pdf docs here, per the default repository. See below
-# for tools from alternative repositories, which seem to work well. Manpage
+# for tools from alternative repositories, which seem to work well. Man page
 # compilation would require docbook-xml resources; older versions are in
 # this package https://slackbuilds.org/repository/15.0/system/docbook-xml/
 # and recent ones are in not-installed part of main repository:
@@ -425,9 +425,8 @@ if not all of the dependencies required for NUT building (including PowerMan,
 IPMI etc.)</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>If setting up a CI farm agent with builds in RAM disk, keep in mind that
 default mount options for <code class="literal">/dev/shm</code> preclude script execution. Either set up
 the agent in a non-standard fashion (to use another work area), or if this is
-a dedicated machine — relax the mount options in <code class="literal">/etc/fstab</code>. Here is an
-example with <code class="literal">noexec</code> which we <span class="strong"><strong>must avoid</strong></span> for such use-case:</p></div><pre class="screen">:; mount | grep /dev/shm
-tmpfs on /dev/shm type tmpfs (rw,nosuid,nodev,noexec,relatime,inode64)</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_freebsd_12_2"></a>FreeBSD 12.2</h4></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>As of 2024, this version is way beyond EOL — packages have been
+a dedicated machine — relax the mount options in <code class="literal">/etc/fstab</code>.</p><p>Here is an example with <code class="literal">noexec</code> which we <span class="strong"><strong>must avoid</strong></span> for such use-case:</p><pre class="screen">:; mount | grep /dev/shm
+tmpfs on /dev/shm type tmpfs (rw,nosuid,nodev,noexec,relatime,inode64)</pre></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_freebsd_12_2"></a>FreeBSD 12.2</h4></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>As of 2024, this version is way beyond EOL — packages have been
 removed from mirrors. A discussion at
 <a class="ulink" href="https://forums.freebsd.org/threads/easy-upgrading-from-12-2-rel-in-2024.92695/" target="_top">https://forums.freebsd.org/threads/easy-upgrading-from-12-2-rel-in-2024.92695/</a>
 touches on upgrades in such situation. An alternate mirror (that worked to
@@ -821,7 +820,7 @@ build works for that however.</p><p>It also lacks out-of-the-box Tex suite and <
 from third-party repositories (e.g. SFE) and/or build from sources.</p><p>No pre-packaged <code class="literal">cppcheck</code> was found, either.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>For Jenkins agents, also need to <code class="literal">pkg install runtime/java/openjdk17</code>
 for JRE/JDK 17. Java 17 or 21 is required to run Jenkins agents after
 autumn 2024. If updating from older releases, you may need to update default
-implementation, e.g.:</p></div><pre class="screen">:; pkg set-mediator -V 17 java</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_omnios_ce_as_of_release_151036"></a>OmniOS CE (as of release 151036)</h4></div></div></div><p>Being a minimal-footprint system, OmniOS CE provides very few packages out
+implementation, e.g.:</p><pre class="screen">:; pkg set-mediator -V 17 java</pre></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_omnios_ce_as_of_release_151036"></a>OmniOS CE (as of release 151036)</h4></div></div></div><p>Being a minimal-footprint system, OmniOS CE provides very few packages out
 of the box. There are additional repositories supported by the project, as
 well as third-party repositories such as SFE. For some dependencies, it may
 happen that you would need to roll and install your own builds in accordance
@@ -873,8 +872,8 @@ and the library+symlinks for all architectures you would need).</p><div class="n
 <code class="literal">omnios-extra</code> repository (NUT itself and further dependencies may also
 appear there, per
 <a class="ulink" href="https://github.com/networkupstools/nut/issues/1498" target="_top">issue #1498</a>),
-and is available as of release 151046:</p></div><pre class="screen">:; pkg install \
-    libusb-1</pre><p>You may need to set up <code class="literal">ccache</code> with the same <code class="literal">/usr/lib/ccache</code> dir used
+and is available as of release 151046 and later on:</p><pre class="screen">:; pkg install \
+    libusb-1</pre></div><p>You may need to set up <code class="literal">ccache</code> with the same <code class="literal">/usr/lib/ccache</code> dir used
 in other OS recipes. Assuming your Build Essentials pulled GCC 11 version,
 and ccache is under <code class="literal">/opt/ooce</code> namespace, that would be like:</p><pre class="screen">:; GCCVER=11
 :; mkdir -p /usr/lib/ccache
@@ -897,9 +896,9 @@ any large scope easily, so avoid docs and "all drivers" unless you provide
 whatever they need to happen.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>For Jenkins agents, also need to <code class="literal">pkg install runtime/java/openjdk21</code>
 for JRE/JDK 17. Java 17 or 21 is required to run Jenkins agents after
 autumn 2024. If updating from older releases, you may need to update default
-implementation, e.g.:</p></div><pre class="screen">:; pkg set-mediator -V 21 java</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_solaris_8"></a>Solaris 8</h4></div></div></div><p>Builds for a platform as old as this are not currently covered by CI, however
-since the very possibility of doing this was recently verified, some notes
-follow.</p><p>For context: Following a discussion in the mailing list starting at
+implementation, e.g.:</p><pre class="screen">:; pkg set-mediator -V 21 java</pre></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_solaris_8"></a>Solaris 8</h4></div></div></div><p>Builds for a platform as old as this are not currently covered by regular
+NUT CI farm runs, however since the very possibility of doing this was
+recently verified, some notes follow.</p><p>For context: Following a discussion in the mailing list starting at
 <a class="ulink" href="https://alioth-lists.debian.net/pipermail/nut-upsuser/2022-December/013051.html" target="_top">https://alioth-lists.debian.net/pipermail/nut-upsuser/2022-December/013051.html</a>
 and followed up by GitHub issues and PR:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 <a class="ulink" href="https://github.com/networkupstools/nut/issues/1736" target="_top">https://github.com/networkupstools/nut/issues/1736</a>
@@ -975,7 +974,7 @@ setup, and <a class="ulink" href="https://brew.sh" target="_top">https://brew.sh
 (note that its default packaged locations known as <code class="literal">HOMEBREW_PREFIX</code> differ
 depending on architecture — see <a class="ulink" href="https://docs.brew.sh/Installation" target="_top">https://docs.brew.sh/Installation</a> for more
 details; find via <code class="literal">brew config | grep HOMEBREW_PREFIX: | awk '{print $2}'</code>).</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>The quickest pre-configuration for <code class="literal">ci_build.sh</code> integration with this
-non-default build system would be to add this line into your shell profile:</p></div><pre class="screen">eval "$(brew shellenv)"</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>Homebrew is not the only build/packaging system available for MacOS,
+non-default build system would be to add this line into your shell profile:</p><pre class="screen">eval "$(brew shellenv)"</pre></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>Homebrew is not the only build/packaging system available for MacOS,
 so NUT scripts do not make any assumptions nor try to find a build system
 they were not told about (via <code class="literal">HOMEBREW_PREFIX</code> in this case).</p></div><p>Currently known dependencies for basic build include:</p><pre class="screen"># Optional for a quick spin:
 :; HOMEBREW_NO_AUTO_UPDATE=1; export HOMEBREW_NO_AUTO_UPDATE
@@ -993,7 +992,7 @@ the location of packaged resources (<code class="literal">${HOMEBREW_PREFIX}/etc
 On one test system, man page builds spewed warnings like
 <code class="literal">&lt;unknown&gt;:1: SyntaxWarning: invalid escape sequence '\S'</code>
 due to incompatibility of older asciidoc with new Python syntax requirements,
-but seemed to produce reasonable results otherwise.</p></div><p>Note that ccache is installed in a different location than expected by default
+but seemed to produce reasonable results otherwise.</p></div><p>Note that <code class="literal">ccache</code> is installed in a different location than expected by default
 in the <code class="literal">ci_build.sh</code> script, so if your system allows to add the symbolic link
 to <code class="literal">/opt/homebrew/opt/ccache/libexec</code> (<code class="literal">/usr/local/opt/ccache/libexec</code> on x86)
 as <code class="literal">/usr/lib/ccache</code> — please do so as the easiest way out.</p><p>Alternatively, to prepare building sessions with <code class="literal">ci_build.sh</code> you can:</p><pre class="screen">:; export CI_CCACHE_SYMLINKDIR="/opt/homebrew/opt/ccache/libexec"
@@ -1147,10 +1146,9 @@ ipmi
 </li></ul></div><p>Note that <code class="literal">ccache</code> symlinks for MSYS2 are installed into <code class="literal">/usr/lib/ccache/bin</code>
 directory (not plain <code class="literal">/usr/lib/ccache</code> as elsewhere).</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>After you successfully build NUT (perhaps using <code class="literal">ci_build.sh</code>), if you
 install it into a prototype area by <code class="literal">make DESTDIR=... install</code> then you should
-add the third-party shared libraries involved, for that file set to be usable.
-Something along these lines:</p></div><pre class="screen">:; find "$DESTDIR" -name '*.exe' -type f  | while read F ; do ldd "$F" \
+add the third-party shared libraries involved, for that file set to be usable.</p><p>Something along these lines:</p><pre class="screen">:; find "$DESTDIR" -name '*.exe' -type f  | while read F ; do ldd "$F" \
    | grep ' /mingw64/' ; done  | awk '{print $3}' | sort | uniq \
    | while read LIB ; do cp -pf "$LIB" "$DESTDIR/mingw64/bin/" ; done</pre><p>Keep in mind that a similar trick (or links to <code class="literal">*.dll</code> — and symlinks are
 problematic on that platform) may be needed in other directories, such as
-<code class="literal">sbin</code> and <code class="literal">cgi-bin</code>:</p><pre class="screen">:; ( cd "$DESTDIR/mingw64/bin/" &amp;&amp; ln *.dll ../sbin &amp;&amp; ln *.dll ../cgi-bin )</pre></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-02-05 09:06:50 -- Network UPS Tools 2.8.2.2040</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_general_call_to_test_the_ability_to_configure_and_build.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="Config_Prereqs.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="CI_Farm_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+<code class="literal">sbin</code> and <code class="literal">cgi-bin</code>:</p><pre class="screen">:; ( cd "$DESTDIR/mingw64/bin/" &amp;&amp; ln *.dll ../sbin &amp;&amp; ln *.dll ../cgi-bin )</pre></div></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
+		Last updated 2025-02-08 14:48:04 -- Network UPS Tools 2.8.2.2132</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_general_call_to_test_the_ability_to_configure_and_build.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="Config_Prereqs.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="CI_Farm_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

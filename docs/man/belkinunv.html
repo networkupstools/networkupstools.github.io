@@ -793,7 +793,7 @@ are supported using the <a href="genericups.html">genericups(8)</a> driver with
 soft shutdown (shut down the load until AC power returns) unless the
 batteries are completely depleted. Thus, one cannot just shut off the
 UPS after operating system shutdown; it will not come back on when the
-power comes back on. Therefore, the belkinunv driver should never be
+power comes back on. Therefore, the <strong>belkinunv</strong> driver should never be
 used with the <strong>-k</strong> option. Instead, the <strong>-x wait</strong> option is
 provided as a workaround.</p></div>
 <div class="paragraph"><p>When called with the <strong>-x wait</strong> option, <strong>belkinunv</strong> behaves as
@@ -802,7 +802,7 @@ performs one simple task: it connects to the UPS, waits for AC power
 to return, and then exits with status 0.</p></div>
 <div class="paragraph"><p>This is meant to be used in a shutdown script as follows: during a
 shutdown, after all filesystems have been remounted read-only, and
-just before the system would normally be halted: check /etc/killpower
+just before the system would normally be halted: check <code>/etc/killpower</code>
 (or similar) to see if this shutdown was caused by <a href="upsmon.html">upsmon(8)</a>,
 and if yes, call <strong>belkinunv -x wait</strong>. If AC power comes back on,
 <strong>belkinunv</strong> exits, and things should be arranged so that the
@@ -1240,34 +1240,32 @@ part of the shutdown script, after all file systems have been mounted
 read-only, and just before the computer halts. Note that
 <strong>belkinunv</strong> must be installed in a directory which is still
 readable at that point.</p></div>
-<div class="literalblock">
+<div class="listingblock">
 <div class="content">
-<pre><code># NEAR END OF SHUTDOWN SCRIPT:
-# if shutdown was caused by UPS, perform Belkin UPS workaround.
-if [ -f /etc/killpower ] || /usr/sbin/upsmon -K ; then
-   echo "Waiting for AC power, or for UPS batteries to run out..."
-   /usr/bin/belkinunv -x wait /dev/ttyS1</code></pre>
-</div></div>
-<div class="literalblock">
-<div class="content">
-<pre><code>   # we get here if the power came back on. Reboot.
-   echo "Power is back. Rebooting..."
-   reboot
-fi</code></pre>
+<pre><code> # NEAR END OF SHUTDOWN SCRIPT:
+ # if shutdown was caused by UPS, perform Belkin UPS workaround.
+ if [ -f /etc/killpower ] || /usr/sbin/upsmon -K ; then
+    echo "Waiting for AC power, or for UPS batteries to run out..."
+    /usr/bin/belkinunv -x wait /dev/ttyS1
+
+    # we get here if the power came back on. Reboot.
+    echo "Power is back. Rebooting..."
+    reboot
+ fi</code></pre>
 </div></div>
 <div class="paragraph"><p>And here is an example of how to use <strong>belkinunv</strong> in the startup
 script. These commands should go near the beginning of the startup
 script, before any file systems are mounted read/write, and before any
 file system integrity checks are done.</p></div>
-<div class="literalblock">
+<div class="listingblock">
 <div class="content">
-<pre><code># NEAR BEGINNING OF STARTUP SCRIPT:
-# if we are recovering from a power failure, wait for the UPS to
-# charge to a comfortable level before writing anything to disk
-if [ -f /etc/killpower ] || /usr/sbin/upsmon -K ; then
-   echo "Waiting for UPS battery charge to reach 60%..."
-   /usr/bin/belkinunv -x wait=60 -x nohang /dev/ttyS1
-fi</code></pre>
+<pre><code> # NEAR BEGINNING OF STARTUP SCRIPT:
+ # if we are recovering from a power failure, wait for the UPS to
+ # charge to a comfortable level before writing anything to disk
+ if [ -f /etc/killpower ] || /usr/sbin/upsmon -K ; then
+    echo "Waiting for UPS battery charge to reach 60%..."
+    /usr/bin/belkinunv -x wait=60 -x nohang /dev/ttyS1
+ fi</code></pre>
 </div></div>
 </div>
 </div>
@@ -1334,7 +1332,7 @@ The documentation for the protocol used by this UPS:
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-05 08:47:29 UTC -- Network UPS Tools 2.8.2.2040
+Last updated 2025-02-08 14:47:41 UTC -- Network UPS Tools 2.8.2.2132
 </div>
 </div>
 </body>

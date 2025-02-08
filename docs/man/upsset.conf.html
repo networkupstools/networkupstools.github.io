@@ -747,7 +747,7 @@ asciidoc.install();
 <div class="sect1">
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>This file only does one job&#8212;it lets you convince <a href="upsset.cgi.html">upsset.cgi(8)</a>
+<div class="paragraph"><p>This file only does one job&#8201;&#8212;&#8201;it lets you convince <a href="upsset.cgi.html">upsset.cgi(8)</a>
 that your system&#8217;s CGI directory is secure.  The program will not run
 until this file has been properly defined.</p></div>
 </div>
@@ -771,25 +771,28 @@ Contents of this file should be pure ASCII (character codes
 <div class="paragraph"><p><a href="upsset.cgi.html">upsset.cgi(8)</a> allows you to try login name and password combinations.
 There is no rate limiting, as the program shuts down between every request.
 Such is the nature of CGI programs.</p></div>
+<div class="paragraph"><p>Credentials are provided to <code>upsset.cgi</code> as part of your browsing session,
+so it is highly recommended to set up HTTPS on the web server; ways to do
+so are outside the scope of this document.</p></div>
 <div class="paragraph"><p>Normally, attackers would not be able to access your <a href="upsd.html">upsd(8)</a> server
-directly as it would be protected by the LISTEN directives in
-your <a href="upsd.conf.html">upsd.conf(5)</a> file, tcp-wrappers (if available when NUT was built),
+directly, as it would be protected by the LISTEN directives in your
+<a href="upsd.conf.html">upsd.conf(5)</a> file, tcp-wrappers (if available when NUT was built),
 and hopefully local firewall settings in your OS.</p></div>
-<div class="paragraph"><p><strong>upsset</strong> runs on your web server, so upsd will see it as a connection from
+<div class="paragraph"><p><strong>upsset</strong> runs on your web server, so <code>upsd</code> will see it as a connection from
 a host on an internal network.  It doesn&#8217;t know that the connection is
-actually coming from someone on the outside.  This is why you must
+actually initiated by someone further outside.  This is why you must
 secure it.</p></div>
-<div class="paragraph"><p>On Apache, you can use the .htaccess file or put the directives in your
-httpd.conf.  It looks something like this, assuming the .htaccess
+<div class="paragraph"><p>On Apache, you can use the <code>.htaccess</code> file or put the directives in your
+<code>httpd.conf</code>.  It looks something like this, assuming the <code>.htaccess</code>
 method for older Apache releases:</p></div>
 <div class="literalblock">
 <div class="content">
 <pre><code>&lt;Files upsset.cgi&gt;
-deny from all
-allow from your.network.addresses
+        deny from all
+        allow from your.network.addresses
 &lt;/Files&gt;</code></pre>
 </div></div>
-<div class="paragraph"><p>You will probably have to set "AllowOverride Limit" for this directory
+<div class="paragraph"><p>You will probably have to set <code>AllowOverride Limit</code> for this directory
 in your server-level configuration file as well.</p></div>
 <div class="paragraph"><p>Modern Apache enjoys a more detailed syntax, like this:</p></div>
 <div class="literalblock">
@@ -813,7 +816,7 @@ you may add the following directive to this file:</p></div>
 <div class="content">
 <pre><code>I_HAVE_SECURED_MY_CGI_DIRECTORY</code></pre>
 </div></div>
-<div class="paragraph"><p>If you lie to the program and someone beats on your upsd through your
+<div class="paragraph"><p>If you lie to the program and someone beats on your <code>upsd</code> through your
 web server, don&#8217;t blame me.</p></div>
 </div>
 </div>
@@ -831,7 +834,7 @@ web server, don&#8217;t blame me.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-05 08:47:28 UTC -- Network UPS Tools 2.8.2.2040
+Last updated 2025-02-08 14:47:40 UTC -- Network UPS Tools 2.8.2.2132
 </div>
 </div>
 </body>

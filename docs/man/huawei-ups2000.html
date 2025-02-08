@@ -934,7 +934,7 @@ operating system.</p></div>
 <div class="sect1">
 <h2 id="_installation">INSTALLATION</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>This driver is not built by default.  You can build it by installing libmodbus
+<div class="paragraph"><p>This driver may be not built by default.  You can build it by installing libmodbus
 (with development packages) and running</p></div>
 <div class="literalblock">
 <div class="content">
@@ -1245,26 +1245,29 @@ cannot be ruled out. If you have encountered "data stale" problems during
 normal uses, please file a bug report with full logs attached.</p></div>
 <div class="paragraph"><p>Before troubleshooting or reporting a problem, it&#8217;s important to check
 your <strong>dmesg</strong> log for USB connect and disconnect events to avoid wasting
-time on the NUT driver when the actual problem is USB. For example, if
-someone yanks the cable out of the USB port, or if a new USB device is
-plugged into a USB host/hub that is struggling to power its ports
-(common on single-board computers like Raspberry Pi), or if you have
-flaky cabling or EMI noise, the serial converter can get disconnected
-from USB, at least briefly. This creates a permanent data stale, the driver
-must be restarted (plugging the USB back won&#8217;t fix it, since the driver
-is still using the nonexistent serial device). These USB problems usually
-have nothing to do with NUT. If it&#8217;s the case, you should solve the
-underlying USB problem - check the cable, check the converter, try a
-powered USB hub, try a full-speed USB isolator, etc.</p></div>
+time on the NUT driver when the actual problem is USB.</p></div>
+<div class="paragraph"><p>For example, if someone yanks the cable out of the USB port, or if a
+new USB device is plugged into a USB host/hub that is struggling to
+power its ports (common on single-board computers like Raspberry Pi),
+or if you have flaky cabling or EMI noise, due to all these and similar
+reasons the serial converter can get disconnected from USB, at least
+briefly.</p></div>
+<div class="paragraph"><p>This creates a permanent data stale situation, and the driver must be
+restarted (plugging the USB back won&#8217;t fix it, since the driver is still
+using the nonexistent serial device, if the system kernel initializes
+a new device driver instance internally).</p></div>
+<div class="paragraph"><p>These USB problems usually have nothing to do with NUT. If it&#8217;s the case,
+you should solve the underlying USB problem&#8201;&#8212;&#8201;check the cable, check the
+converter, try a powered USB hub, try a full-speed USB isolator, etc.</p></div>
 </div>
 <div class="sect2">
 <h3 id="_serial_port_becomes_unresponsive">Serial port becomes unresponsive</h3>
 <div class="paragraph"><p>Some malformed commands are known to lock up the serial port (including
 USB, which is a USB-to-serial device). Upon receiving them, UPS2000 stops
 all serial communications. The result is a completely unresponsive UPS,
-regardless of what you do - restarting NUT, rebooting the computer -
-cannot restore connectivity, as if someone has unplugged the RS-232 cable.
-To recover, simply power cycle the UPS: Turn off the UPS output via the
+regardless of what you do&#8201;&#8212;&#8201;restarting NUT, rebooting the computer&#8201;&#8212;&#8201;can
+not restore connectivity, as if someone has unplugged the RS-232 cable.</p></div>
+<div class="paragraph"><p>To recover, simply power cycle the UPS: Turn off the UPS output via the
 front panel, then unplug the UPS from line power. Wait for the LCD front
 screen to go black. Finally reconnect line power and restart your UPS.</p></div>
 <div class="paragraph"><p>That being said, a serial port lockup is unlikely to happen. To our best
@@ -1274,8 +1277,8 @@ they&#8217;re unlikely to be accidentally generated.</p></div>
 <div class="paragraph"><p>Still, we recommend to power cycle your UPS after making a cabling change,
 especially after changing from RS-485/USB to RS-232, just to ensure the
 UPS selects the correct communication interface. Also, if you have
-discovered a reproducible serial port lockup problem, it can be an
-previously unknown bug, make sure to file a bug report.</p></div>
+discovered a reproducible serial port lockup problem, it can be a
+previously unknown bug, so please make sure to file a bug report.</p></div>
 </div>
 <div class="sect2">
 <h3 id="_usb_chip_maxlinear_exar_rx21v1410_is_unsupported">USB chip (MaxLinear/Exar RX21V1410) is unsupported</h3>
@@ -1343,7 +1346,7 @@ libmodbus home page: <a href="http://libmodbus.org">http://libmodbus.org</a>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-05 08:47:30 UTC -- Network UPS Tools 2.8.2.2040
+Last updated 2025-02-08 14:47:41 UTC -- Network UPS Tools 2.8.2.2132
 </div>
 </div>
 </body>

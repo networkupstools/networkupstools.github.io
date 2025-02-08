@@ -741,7 +741,7 @@ asciidoc.install();
 <div class="sect1">
 <h2 id="_name">NAME</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>nutupsdrv - generic manual for unified NUT drivers</p></div>
+<div class="paragraph"><p>nutupsdrv - Generic manual for unified NUT drivers</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -773,17 +773,19 @@ cases when it is known that the UPS is running out of battery power and the
 systems attached must be turned off to ensure a proper reboot when power
 returns.</p></div>
 <div class="paragraph"><p>In the third mode, using <strong>-d</strong>, the driver will exit after some update loops,
-dumping the data tree (in upsc-like format) to stdout.  This can be useful to
-complement the nut-scanner to discover devices, along with in-depth data.</p></div>
+dumping the data tree (in <a href="upsc.html">upsc(8)</a>-like format) to <code>stdout</code>.
+This can be useful to complement the <a href="nut-scanner.html">nut-scanner(8)</a> to discover
+devices, along with in-depth data.</p></div>
 <div class="admonitionblock">
 <table><tr>
 <td class="icon">
 <div class="title">Note</div>
 </td>
-<td class="content">You probably don&#8217;t want to use any of these options directly.  You
-should use <a href="upsdrvctl.html">upsdrvctl(8)</a> to control your drivers, and
-<a href="ups.conf.html">ups.conf(5)</a> to configure them.  The rest of this manual describes
-options and parameters that generally are not needed by normal users.</td>
+<td class="content">You probably don&#8217;t want to use any of these options directly.
+You should use <a href="upsdrvctl.html">upsdrvctl(8)</a> (or <a href="upsdrvsvcctl.html">upsdrvsvcctl(8)</a> on systems
+with a service management framework like systemd or SMF) to control your
+drivers, and <a href="ups.conf.html">ups.conf(5)</a> to configure them.  The rest of this manual
+describes options and parameters that generally are not needed by normal users.</td>
 </tr></table>
 </div>
 </div>
@@ -820,8 +822,8 @@ Configure this driver only with command line arguments instead of reading
 <a href="ups.conf.html">ups.conf(5)</a>. To be used instead of <strong>-a</strong> option when need to run
 a driver not present in driver configuration file. Instead, driver
 configuration have to be set with <strong>-x</strong> options directly in the command line.
-As the driver instance cannot be controlled by <a href="upsdrvctl.html">upsdrvctl(8)</a>,
-this option should be used for specific needs only.
+As such driver instance cannot be controlled by <a href="upsdrvctl.html">upsdrvctl(8)</a> or
+<a href="upsdrvsvcctl.html">upsdrvsvcctl(8)</a>, this option should be used for specific needs only.
 </p>
 </dd>
 <dt class="hdlist1">
@@ -832,7 +834,7 @@ this option should be used for specific needs only.
 Raise the debugging level.  Use this multiple times to see more details.
 Running a driver in debug mode will (by default) prevent it from backgrounding
 after startup.  It will keep on logging information to the console until it
-receives a SIGINT (usually Ctrl-C) or SIGTERM signal.
+receives a <strong>SIGINT</strong> (usually Ctrl-C) or <strong>SIGTERM</strong> signal.
 </p>
 <div class="paragraph"><p>The level of debugging needed depends both on the driver and the
 problem you&#8217;re trying to diagnose.  Therefore, first explain the problem you
@@ -845,12 +847,13 @@ either too limited or too verbose to be of any use.</p></div>
 </dt>
 <dd>
 <p>
-Dump the data tree (in upsc-like format) to stdout after running the driver
-update loop for <em>update_count</em> times and exit.
-By default this prevents the driver process from backgrounding after startup.
-Note that the driver banner will be printed too, so when using this option in
-scripts, don&#8217;t forget to trim the first line.
+Dump the data tree (in <a href="upsc.html">upsc(8)</a>-like format) to <code>stdout</code> after running
+the driver update loop for the specified <em>update_count</em> times and exit.
 </p>
+<div class="paragraph"><p>By default this prevents the driver process from backgrounding after startup.
+Note that the driver banner will be printed too, so when using this option in
+scripts, don&#8217;t forget to trim the first line, or use the <code>NUT_QUIET_INIT_BANNER</code>
+environment variable.</p></div>
 </dd>
 <dt class="hdlist1">
 <strong>-q</strong>
@@ -917,7 +920,7 @@ tell the currently running driver instance to just exit
 </p>
 </dd>
 </dl></div>
-<div class="paragraph"><p>With recent NUT releases, such commands can be sent using the Unix socket
+<div class="paragraph"><p>With recent NUT v2.8.x releases, such commands can be sent using the Unix socket
 for driver-server interaction. As a fallback, like older releases, signals
 can be sent to the old driver instance&#8217;s PID (where possible).</p></div>
 <div class="dlist"><dl>
@@ -985,20 +988,23 @@ wizard programs.
 attached load, if possible.
 </p>
 <div class="paragraph"><p>You should use <code>upsdrvctl shutdown</code> whenever possible instead of
-calling this directly.</p></div>
+calling this directly. Note that the constrained operating system
+context for shutdown typically rules out use of <code>upsdrvsvcctl shutdown</code>.</p></div>
 </dd>
 <dt class="hdlist1">
 <strong>-r</strong> <em>directory</em>
 </dt>
 <dd>
 <p>
-The driver will chroot(2) to <em>directory</em> during initialization.
+The driver will <ulink url="https://linux.die.net/man/2/chroot">chroot(2)</ulink> to <em>directory</em> during initialization.
 This can be useful when securing systems.
 </p>
-<div class="paragraph"><p>In addition to the state path, many systems will require /dev/null to
+<div class="paragraph"><p>In addition to the state path, many systems will require <code>/dev/null</code> to
 exist within <em>directory</em> for this to work.  The serial ports are
-opened before the chroot call, so you do not need to create them inside
-the jail.  In fact, it is somewhat safer if you do not.</p></div>
+opened before the <code>chroot</code> call, so you do not need to create them inside
+the jail.  In fact, it is somewhat safer if you do not (but reconnection
+to devices may be no longer possible and could require a full restart of
+the driver).</p></div>
 </dd>
 <dt class="hdlist1">
 <strong>-u</strong> <em>username</em>
@@ -1007,7 +1013,7 @@ the jail.  In fact, it is somewhat safer if you do not.</p></div>
 <p>
 Override the unprivileged username that the driver may use after startup.  If
 started as root, after opening configuration files (and optionally calling
-chroot(2), as described in the previous option), the driver will look up
+<ulink url="https://linux.die.net/man/2/chroot">chroot(2)</ulink>, as described in the previous option), the driver will look up
 <em>username</em> in the <code>passwd</code> database, then change to the user and group
 identities associated with <em>username</em>. (If started with a nonzero UID or
 effective UID, the driver will silently ignore this option.)
@@ -1035,8 +1041,8 @@ if the run-time <code>user</code> of the driver normally would deny that access.
 </dt>
 <dd>
 <p>
-Define a variable called <em>var</em> with the value of <em>var</em> in the
-driver.  This varies from driver to driver - see the specific man pages
+Define a variable called <em>var</em> with the value of <em>var</em> in the driver.
+This varies from driver to driver&#8201;&#8212;&#8201;see their specific man pages
 for more information.
 </p>
 <div class="paragraph"><p>This is like setting <em>var</em>=<em>val</em> in <a href="ups.conf.html">ups.conf(5)</a>, but
@@ -1048,18 +1054,20 @@ for more information.
 <div class="sect1">
 <h2 id="_diagnostics">DIAGNOSTICS</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>Information about the startup process is printed to stdout.  Additional
-messages after that point are available in the syslog.  After <a href="upsd.html">upsd(8)</a>
-starts, the UPS clients such as <a href="upsc.html">upsc(8)</a> can be used to query the status
-of an UPS.</p></div>
+<div class="paragraph"><p>Information about the startup process is printed to <code>stdout</code> and/or <code>stderr</code>.
+Additional messages after that point are only available in the syslog, unless
+the driver remains in foreground (e.g. due to raised debugging verbosity).</p></div>
+<div class="paragraph"><p>After <a href="upsd.html">upsd(8)</a> starts, the UPS clients such as <a href="upsc.html">upsc(8)</a> can
+be used to query the status of an UPS.</p></div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_program_control">PROGRAM CONTROL</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>You should always use <a href="upsdrvctl.html">upsdrvctl(8)</a> to control the drivers.  While
-drivers can be started by hand for testing purposes, it is not recommended for
-production use.</p></div>
+<div class="paragraph"><p>You should always use <a href="upsdrvctl.html">upsdrvctl(8)</a> (or <a href="upsdrvsvcctl.html">upsdrvsvcctl(8)</a> on
+systems with a service management framework like systemd or SMF) to control
+the drivers.  While drivers can be started by hand for testing purposes,
+it is not recommended for production use.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -1096,6 +1104,14 @@ The <strong>STATEPATH</strong> directive in <a href="upsd.conf.html">upsd.conf(5
 <strong>upsd</strong> and drivers store .pid files.  If this variable is not set,
 <strong>upsd</strong> and drivers use either <strong>NUT_STATEPATH</strong> if set, or ALTPIDPATH if set,
 or otherwise the built-in default <strong>STATEPATH</strong>.</p></div>
+<div class="paragraph"><p><strong>NUT_QUIET_INIT_UPSNOTIFY=true</strong> can be used to prevent daemons which can
+notify service management frameworks (such as systemd) about passing
+their lifecycle milestones from emitting such notifications (including
+those about lack of system support for such modern features, once per run).</p></div>
+<div class="paragraph"><p><strong>NUT_QUIET_INIT_BANNER=true</strong> can be used to suppress NUT tool name and
+version banner. NOT recommended for services due to adverse troubleshooting
+impact, but may be helpful in shell profiles or scripts which process NUT
+tool outputs.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -1108,6 +1124,21 @@ information.</p></div>
 <div class="sect1">
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="_configuration">Configuration:</h3>
+<div class="ulist"><ul>
+<li>
+<p>
+<a href="ups.conf.html">ups.conf(5)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="nut.conf.html">nut.conf(5)</a>
+</p>
+</li>
+</ul></div>
+</div>
 <div class="sect2">
 <h3 id="_server">Server:</h3>
 <div class="ulist"><ul>
@@ -1533,7 +1564,7 @@ information.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-05 08:47:28 UTC -- Network UPS Tools 2.8.2.2040
+Last updated 2025-02-08 14:47:40 UTC -- Network UPS Tools 2.8.2.2132
 </div>
 </div>
 </body>

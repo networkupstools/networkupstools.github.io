@@ -741,7 +741,7 @@ asciidoc.install();
 <div class="sect1">
 <h2 id="_name">NAME</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>nut-scanner - scan communication buses for NUT devices</p></div>
+<div class="paragraph"><p>nut-scanner - Tool to scan communication buses for NUT devices</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -757,7 +757,7 @@ asciidoc.install();
 <div class="paragraph"><p><strong>nut-scanner</strong> scans available communication buses and displays any
 NUT-compatible devices it has found.</p></div>
 <div class="paragraph"><p><strong>nut-scanner</strong> can also display the detected devices in various formats,
-including ups.conf, and ensures that the generated devices name are unique
+including <code>ups.conf</code>, and ensures that the generated devices name are unique
 across buses.</p></div>
 </div>
 </div>
@@ -765,10 +765,12 @@ across buses.</p></div>
 <h2 id="_installation">INSTALLATION</h2>
 <div class="sectionbody">
 <div class="paragraph"><p><strong>nut-scanner</strong> is only built if libltdl (part of libtool development suite)
-is available. Available options (USB, SNMP, IPMI, &#8230;) will vary according
-to the available compile time and runtime dependencies. For example, if
-Net-SNMP is installed, thus providing libsnmp (.so or .dll) and headers,
-both during compilation and runtime, then SNMP discovery will be available.</p></div>
+is available.</p></div>
+<div class="paragraph"><p>Available scanning options (USB, SNMP, IPMI, &#8230;) will vary according
+to the available compile-time and run-time dependencies. For example, if
+Net-SNMP is installed, thus providing libsnmp libraries (<code>*.so</code> or <code>*.dll</code>)
+and header files during compilation, and at least the library files on the
+monitoring system, then SNMP discovery will be available.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -795,7 +797,7 @@ Display the help text.
 </dt>
 <dd>
 <p>
-Display result in the <em>ups.conf</em> format with sanity-check warnings (if any)
+Display result in the <code>ups.conf</code> format with sanity-check warnings (if any)
 as comments (default).
 </p>
 </dd>
@@ -804,7 +806,7 @@ as comments (default).
 </dt>
 <dd>
 <p>
-Display result in the <em>ups.conf</em> format.
+Display result in the <code>ups.conf</code> format.
 </p>
 </dd>
 <dt class="hdlist1">
@@ -840,10 +842,52 @@ List all NUT-compatible USB devices currently plugged in.
 <div class="paragraph"><p>This option can be specified several times, for more hardware link-specific
 details; these can be counter-productive in case of USB enumeration changes
 over time:</p></div>
-<div class="paragraph"><p>| <code>-U</code>    | do not report any bus/device/busport details |
-| <code>-UU</code>   | report bus and busport, if available |
-| <code>-UUU</code>  | report bus/device/busport details |
-| <code>-UUUU</code> | report bus/device/busport details, and bcdDevice (limited use and benefit) |</p></div>
+<div class="tableblock">
+<table rules="all"
+width="100%"
+frame="border"
+cellspacing="0" cellpadding="4">
+<col width="25%" />
+<col width="75%" />
+<thead>
+<tr>
+<th align="left" valign="top"> Option count </th>
+<th align="left" valign="top"> Practical meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table"><code>-U</code></p></td>
+<td align="left" valign="top"><div><div class="literalblock">
+<div class="content">
+<pre><code>do not report any `bus`/`device`/`busport` details</code></pre>
+</div></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table"><code>-UU</code></p></td>
+<td align="left" valign="top"><div><div class="literalblock">
+<div class="content">
+<pre><code>report `bus` and `busport`, if available</code></pre>
+</div></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table"><code>-UUU</code></p></td>
+<td align="left" valign="top"><div><div class="literalblock">
+<div class="content">
+<pre><code>report `bus`/`device`/`busport` details</code></pre>
+</div></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table"><code>-UUUU</code></p></td>
+<td align="left" valign="top"><div><div class="literalblock">
+<div class="content">
+<pre><code>report `bus`/`device`/`busport` details,
+           and `bcdDevice` (limited use and benefit)</code></pre>
+</div></div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
 <div class="admonitionblock">
 <table><tr>
 <td class="icon">
@@ -878,7 +922,7 @@ If IP address ranges are specified, they would be scanned instead of a broadcast
 </dt>
 <dd>
 <p>
-Scan NUT devices (i.e. upsd daemon) on IP ranging from <em>start IP</em> to <em>end IP</em>.
+Scan NUT devices (i.e. <code>upsd</code> daemon) on IP ranging from <em>start IP</em> to <em>end IP</em>.
 </p>
 </dd>
 <dt class="hdlist1">
@@ -886,8 +930,17 @@ Scan NUT devices (i.e. upsd daemon) on IP ranging from <em>start IP</em> to <em>
 </dt>
 <dd>
 <p>
-Scan NUT simulated devices (<code>.dev</code> files in <code>$NUT_CONFPATH</code>).
+Scan NUT simulated devices (<code>.dev</code> files in the built-in "sysconfig" location).
 </p>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Warning</div>
+</td>
+<td class="content">The <code>NUT_CONFPATH</code> environment variable override is not currently
+supported.</td>
+</tr></table>
+</div>
 </dd>
 <dt class="hdlist1">
 <strong>-A</strong> | <strong>--avahi_scan</strong>
@@ -924,14 +977,16 @@ This option must be requested explicitly, even for a complete scan.
 </li>
 <li>
 <p>
-a single character indicating a port number (<em>0</em> (zero) for /dev/ttyS0 and
-  /dev/ttyUSB0 on Linux, <em>1</em> for COM1 on Windows, <em>a</em> for /dev/ttya on Solaris&#8230;)
+a single character indicating a port number (<em>0</em> (zero) for <code>/dev/ttyS0</code> and
+  <code>/dev/ttyUSB0</code> on Linux, <em>1</em> for <code>COM1</code> on Windows, <em>a</em> for <code>/dev/ttya</code>
+  on Solaris&#8230;)
 </p>
 </li>
 <li>
 <p>
 a range of N characters, hyphen separated, describing the range of
-  ports using <em>X-Y</em>, where X and Y are characters referring to the port number.
+  ports using <code>X-Y</code> syntax, where <em>X</em> and <em>Y</em> are characters referring
+  to the port number.
 </p>
 </li>
 <li>
@@ -941,7 +996,7 @@ a single port name.
 </li>
 <li>
 <p>
-a list of ports name, coma separated, like <em>/dev/ttyS1,/dev/ttyS4</em>.
+a list of ports name, comma separated, like <code>/dev/ttyS1,/dev/ttyS4</code>.
 </p>
 </li>
 </ul></div>
@@ -957,28 +1012,29 @@ a list of ports name, coma separated, like <em>/dev/ttyS1,/dev/ttyS4</em>.
 <td class="icon">
 <div class="title">Note</div>
 </td>
-<td class="content">The networked buses (such as SNMP, NetXML, IPMI and "Old NUT") allow to
+<td class="content">
+<div class="paragraph"><p>The networked buses (such as SNMP, NetXML, IPMI and "Old NUT") allow to
 specify several IP (IPv4 or IPv6) address ranges, down to individual single
-IP addresses.  Normally a new range is specified by a set of one <code>-s</code> and one
-<code>-e</code> options following each other (in any order).  Lone or consecutive <code>-s</code> or
-<code>-e</code> options present on the command line would translate to single-IP queries.
-Also a <code>-m</code> option squashed between two <code>-s</code> and <code>-e</code> options would be a new
+IP addresses.</p></div>
+<div class="paragraph"><p>Normally a new range is specified by a set of one <code>-s</code> and one <code>-e</code> options
+following each other (in any order on the command line).</p></div>
+<div class="paragraph"><p>Lone or consecutive <code>-s</code> or <code>-e</code> options present on the command line would
+translate to single-IP queries.</p></div>
+<div class="paragraph"><p>Also, a <code>-m</code> option squashed between two <code>-s</code> and <code>-e</code> options would be a new
 range, turning those two into single-IP queries.  This feature does not by
 itself recombine "neighboring" addresses into one range, nor even check for
-duplicate or overlapping specifications.</td>
-</tr></table>
-</div>
-<div class="paragraph"><p>+
-Also note that some buses require IP address(es) to scan, and others have a
-different behavior when exactly no addresses are specified (it is not currently
-possible to mix the two behaviors in one invocation of the <code>nut-scanner</code> tool).</p></div>
-<div class="paragraph"><p>+
-A single-address range may be a host name which would be resolved into one IP
+duplicate or overlapping specifications.</p></div>
+<div class="paragraph"><p>A single-address range may be a host name which would be resolved into one IP
 address by the system resolver. A CIDR using a host name and netmask length
 would be resolved into an IP address and subjected to the mask application,
 to query hosts "near" the named one.</p></div>
-<div class="paragraph"><p>+
-Finally note that currently even if multi-threaded support is available, each
+</td>
+</tr></table>
+</div>
+<div class="paragraph"><p>Also note that some buses require IP address(es) to scan, and others have a
+different behavior when exactly no addresses are specified (it is not currently
+possible to mix the two behaviors in one invocation of the <code>nut-scanner</code> tool).</p></div>
+<div class="paragraph"><p>Finally note that currently even if multi-threaded support is available, each
 range specification is a separate fan-out of queries constrained by the timeout.
 Requests to scan many single IP addresses will take a while to complete, much
 longer than if they were a single range.  This will be hopefully fixed in later
@@ -1295,7 +1351,7 @@ Raise the debugging level.  Use this multiple times to see more details.
 <td class="icon">
 <div class="title">Note</div>
 </td>
-<td class="content">The level of debugging needed depends both on nut-scanner and the
+<td class="content">The level of debugging needed depends both on <code>nut-scanner</code> and the
 problem you&#8217;re trying to diagnose.  Therefore, first explain the problem you
 have with <code>nut-scanner</code> to a developer/maintainer, before sending them debugging
 output.  More often than not, if you just pick a level, the output may be
@@ -1316,8 +1372,8 @@ either too limited or too verbose to be of any use.</td>
         driver = "snmp-ups"
         port = "192.168.0.42"</code></pre>
 </div></div>
-<div class="paragraph"><p>To scan SNMP v1 device with public community on address range 192.168.0.0
-to 192.168.0.255:</p></div>
+<div class="paragraph"><p>To scan SNMP v1 device with <em>public</em> (default) community on address range
+<em>192.168.0.0 to 192.168.0.255</em>:</p></div>
 <div class="listingblock">
 <div class="content">
 <pre><code>:; nut-scanner -S -s 192.168.0.0 -e 192.168.0.255
@@ -1335,8 +1391,8 @@ to 192.168.0.255:</p></div>
         driver = "snmp-ups"
         port = "192.168.0.42"</code></pre>
 </div></div>
-<div class="paragraph"><p>To scan NUT servers with a timeout of 10 seconds on IP range 192.168.0.0
-to 192.168.0.127 using CIDR notation:</p></div>
+<div class="paragraph"><p>To scan NUT servers with a timeout of <em>10</em> seconds on IP range <em>192.168.0.0
+to 192.168.0.127</em> using CIDR notation:</p></div>
 <div class="listingblock">
 <div class="content">
 <pre><code>:; nut-scanner -O -t 10 -m 192.168.0.0/25
@@ -1346,18 +1402,19 @@ to 192.168.0.127 using CIDR notation:</p></div>
         port = "dummy-test@192.168.1.28"</code></pre>
 </div></div>
 <div class="paragraph"><p>To scan for power supplies, through IPMI (1.5 mode) over the network,
-on address range 192.168.0.0 to 192.168.0.255 using CIDR notation:</p></div>
+on address range <em>192.168.0.0 to 192.168.0.255</em> using CIDR notation:</p></div>
 <div class="listingblock">
 <div class="content">
 <pre><code>:; nut-scanner -I -m 192.168.0.0/24 -b username -B password</code></pre>
 </div></div>
-<div class="paragraph"><p>To scan for Eaton serial devices on ports 0 and 1 (<code>/dev/ttyS0</code>,
+<div class="paragraph"><p>To scan for Eaton serial devices on ports <em>0</em> and <em>1</em> (<code>/dev/ttyS0</code>,
 <code>/dev/ttyUSB0</code>, <code>/dev/ttyS1</code> and <code>/dev/ttyUSB1</code> on Linux):</p></div>
 <div class="listingblock">
 <div class="content">
 <pre><code>:; nut-scanner --eaton_serial 0-1</code></pre>
 </div></div>
-<div class="paragraph"><p>To scan for Eaton serial devices on ports 1 and 2 (<code>COM1</code> and <code>COM2</code> on Windows):</p></div>
+<div class="paragraph"><p>To scan for Eaton serial devices on ports <em>1</em> and <em>2</em> (<code>COM1</code> and <code>COM2</code>
+on Windows):</p></div>
 <div class="listingblock">
 <div class="content">
 <pre><code>:; nut-scanner --eaton_serial 1-2</code></pre>
@@ -1378,7 +1435,7 @@ on address range 192.168.0.0 to 192.168.0.255 using CIDR notation:</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-05 08:47:28 UTC -- Network UPS Tools 2.8.2.2040
+Last updated 2025-02-08 14:47:40 UTC -- Network UPS Tools 2.8.2.2132
 </div>
 </div>
 </body>

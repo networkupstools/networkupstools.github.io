@@ -747,22 +747,18 @@ asciidoc.install();
 <div class="sect1">
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
-<div class="literalblock">
+<div class="listingblock">
 <div class="content">
-<pre><code>#include &lt;nut-scan.h&gt;</code></pre>
-</div></div>
-<div class="literalblock">
-<div class="content">
-<pre><code>nutscan_device_t * nutscan_scan_ipmi(
-       const char * startIP,
-       const char * stopIP,
-       nutscan_ipmi_t * sec);</code></pre>
-</div></div>
-<div class="literalblock">
-<div class="content">
-<pre><code>nutscan_device_t * nutscan_scan_ip_range_ipmi(
-       nutscan_ip_range_list_t * irl,
-       nutscan_ipmi_t * sec);</code></pre>
+<pre><code>        #include &lt;nut-scan.h&gt;
+
+        nutscan_device_t * nutscan_scan_ipmi(
+                const char * startIP,
+                const char * stopIP,
+                nutscan_ipmi_t * sec);
+
+        nutscan_device_t * nutscan_scan_ip_range_ipmi(
+                nutscan_ip_range_list_t * irl,
+                nutscan_ipmi_t * sec);</code></pre>
 </div></div>
 </div>
 </div>
@@ -774,11 +770,13 @@ try to detect IPMI manageable devices.</p></div>
 <div class="paragraph"><p>If <em>start_ip</em> for the former or <em>irl</em> for the latter are NULL, the
 respective function searches for a local PSU.</p></div>
 <div class="paragraph"><p>Otherwise, it searches for remote hosts that would serve IPMI protocols,
-and would try to authenticate using the data in <em>sec</em> structure.
-The former issues an IPMI request on every IP ranging from <em>startIP</em> to
-<em>stopIP</em>, where <em>stopIP</em> is optional; the latter can walk several IP
-address ranges represented by a <code>nutscan_ip_range_list_t</code> structure.
-Those IP arguments may be either IPv4 or IPv6 addresses or host names.</p></div>
+and would try to authenticate using the data in <em>sec</em> structure.</p></div>
+<div class="paragraph"><p>The former issues an IPMI request on every IP ranging from <em>startIP</em> to
+<em>stopIP</em>, where <em>startIP</em> is mandatory and <em>stopIP</em> is optional (one
+<em>startIP</em> address is scanned if <em>stopIP</em> is NULL); while the latter can
+walk several IP address ranges represented by a <code>nutscan_ip_range_list_t</code>
+structure.</p></div>
+<div class="paragraph"><p>Those IP arguments may be either IPv4 or IPv6 addresses or host names.</p></div>
 <div class="paragraph"><p>You MUST call <a href="nutscan_init.html">nutscan_init(3)</a> before using this function.</p></div>
 </div>
 </div>
@@ -820,7 +818,7 @@ or hidden with <code>#if 0</code>.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-05 08:47:29 UTC -- Network UPS Tools 2.8.2.2040
+Last updated 2025-02-08 14:47:40 UTC -- Network UPS Tools 2.8.2.2132
 </div>
 </div>
 </body>

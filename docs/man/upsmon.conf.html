@@ -741,20 +741,20 @@ asciidoc.install();
 <div class="sect1">
 <h2 id="_name">NAME</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>upsmon.conf - Configuration for Network UPS Tools upsmon</p></div>
+<div class="paragraph"><p>upsmon.conf - Configuration for Network UPS Tools upsmon client</p></div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>This file&#8217;s primary job is to define the systems that <a href="upsmon.html">upsmon(8)</a>
-will monitor and to tell it how to shut down the system when necessary.
-It will contain passwords, so keep it secure.  Ideally, only the upsmon
+will monitor, and to tell it how to shut down the system when necessary.
+It will contain passwords, so keep it secure.  Ideally, only the <code>upsmon</code>
 process should be able to read it.</p></div>
 <div class="paragraph"><p>A minimal configuration should include at least one <code>MONITOR</code> instruction,
-<code>MINSUPPLIES</code> (may be 0 if this system is only monitoring other NUT servers),
-and a <code>POWERDOWNFLAG</code> if this machine is a "primary" system connected to
-the UPS and drives its late-shutdown power-off command in an emergency.</p></div>
+<code>MINSUPPLIES</code> (may be <em>0</em> if this system is only monitoring other NUT servers),
+and a <code>POWERDOWNFLAG</code> if this machine is a "primary" system connected to the
+UPS and drives its late-shutdown power-off command in case of an emergency.</p></div>
 <div class="paragraph"><p>Additionally, other optional configuration values can be set in this
 file.</p></div>
 </div>
@@ -768,6 +768,38 @@ file.</p></div>
 Contents of this file should be pure ASCII (character codes
   not in range would be ignored with a warning message).
 </p>
+</li>
+<li>
+<p>
+Balance the run-time user permissions to access the file (and perhaps the
+  directory it is in) for only <code>upsmon</code> to be able to read it; write access
+  is not needed. It is common to use <code>chown root:nut</code> and <code>chmod 640</code> to
+  set up acceptable file permissions.
+</p>
+<div class="ulist"><ul>
+<li>
+<p>
+Packages (and build recipes) typically prepare one set of user and
+    group accounts for NUT. Custom builds with minimal configuration might
+    even use <code>nobody:nogroup</code> or similar, which is inherently insecure.
+</p>
+</li>
+<li>
+<p>
+On systems with extra security concerns, NUT drivers, data server,
+    and any other monitoring, logging, etc. clients, should run as separate
+    user accounts. This would need some daemons to use customized  <code>user</code>,
+    <code>group</code>, <code>RUN_AS_USER</code> and/or <code>RUN_AS_GROUP</code> settings to override the
+    single built-in value.
+</p>
+</li>
+<li>
+<p>
+Keep in mind the security of also any backup copies of this file,
+    e.g. the archive files it might end up in.
+</p>
+</li>
+</ul></div>
 </li>
 </ul></div>
 </div>
@@ -1237,7 +1269,7 @@ de-activating obsolete UPS readings to avoid an unfortunate shutdown
 <p>
 By default, upsmon sends walls global messages to all logged in users)
 via <code>/bin/wall</code> and writes to the syslog when things happen.
-Except for Windows where upsmon only writes to the syslog by default.
+Except for Windows where upsmon only writes to the Event Log by default.
 You can change this.
 </p>
 <div class="paragraph"><p>Examples:</p></div>
@@ -1491,7 +1523,7 @@ to cut power for the load. ("Yes" by default)
 to stop (e.g. virtual machines or large databases) can benefit from
 reporting (by virtue of logging off the data server) that they are
 ready for the "primary" system to begin its own shutdown and eventually
-to tell the UPS to cut the power - not as soon as they have triggered
+to tell the UPS to cut the power&#8201;&#8212;&#8201;not as soon as they have triggered
 their own shutdown, but at a later point (e.g. when the upsmon service
 is stopped AFTER the heavier workloads).</p></div>
 <div class="paragraph"><p>Note that the actual ability to complete such shutdown depends on the
@@ -1654,7 +1686,7 @@ does not change the previously active logging verbosity.</td>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-05 08:47:28 UTC -- Network UPS Tools 2.8.2.2040
+Last updated 2025-02-08 14:47:40 UTC -- Network UPS Tools 2.8.2.2132
 </div>
 </div>
 </body>

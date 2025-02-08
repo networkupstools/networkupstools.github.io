@@ -756,7 +756,7 @@ asciidoc.install();
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
 <div class="paragraph"><p><strong>upsmon</strong> is the client process that is responsible for the most important part
-of UPS monitoring&#8212;shutting down the system when the power goes out.  It
+of UPS monitoring&#8201;&#8212;&#8201;shutting down the system when the power goes out.  It
 can call out to other helper programs for notification purposes during
 power events.</p></div>
 <div class="paragraph"><p>upsmon can monitor multiple systems using a single process.  Every UPS
@@ -882,12 +882,13 @@ have a very good reason.</p></div>
 Set the user for the unprivileged monitoring process.  This has no effect
 when using -p.
 </p>
-<div class="paragraph"><p>The default user is set at configure time with <em>configure
---with-user=&#8230;</em>.  Typically this is <em>nobody</em>, but other distributions
-will probably have a specific <em>nut</em> user for this task.  If your
-notification scripts need to run as a specific user, set it here.</p></div>
+<div class="paragraph"><p>The default <em>user</em> is set at build configuration time with
+<code>configure --with-user=...</code>.  Typically this is <em>nobody</em> (if not
+otherwise configured), which is far from ideal, so most packaged
+distributions will probably have a specific <em>nut</em> user for this task.
+If your notification scripts need to run as a specific user, set it here.</p></div>
 <div class="paragraph"><p>You can also set this in the <a href="upsmon.conf.html">upsmon.conf(5)</a> file with the
-RUN_AS_USER directive.</p></div>
+<code>RUN_AS_USER</code> directive.</p></div>
 </dd>
 </dl></div>
 </div>
@@ -896,14 +897,14 @@ RUN_AS_USER directive.</p></div>
 <h2 id="_ups_definitions">UPS DEFINITIONS</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>In the <a href="upsmon.conf.html">upsmon.conf(5)</a>, you must specify at least one UPS that will
-be monitored.  Use the MONITOR directive.</p></div>
+be monitored.  Use the MONITOR directive like this:</p></div>
 <div class="literalblock">
 <div class="content">
 <pre><code>MONITOR 'system' 'powervalue' 'username' 'password' 'type'</code></pre>
 </div></div>
 <div class="paragraph"><p>The <em>system</em> refers to a <a href="upsd.html">upsd(8)</a> server, in the form
-<code>upsname[@hostname[:port]]</code>.  The default hostname is "localhost".  Some
-examples follow:</p></div>
+<code>upsname[@hostname[:port]]</code>.  The default <em>hostname</em> is "localhost",
+and default <em>port</em> is <em>3493</em>.  Some examples follow:</p></div>
 <div class="ulist"><ul>
 <li>
 <p>
@@ -918,23 +919,25 @@ This is the normal form.
 </p>
 </li>
 </ul></div>
-<div class="paragraph"><p>The <em>powervalue</em> refers to how many power supplies on this system are
-being driven this UPS.  This is typically set to 1, but see the section
+<div class="paragraph"><p>The <em>powervalue</em> refers to how many power supplies on this client system are
+being driven this UPS.  This is typically set to <em>1</em>, but see the section
 on power values below.</p></div>
 <div class="paragraph"><p>The <em>username</em> is a section in your <a href="upsd.users.html">upsd.users(5)</a> file.
 Whatever password you set in that section must match the <em>password</em>
-set in this file.</p></div>
-<div class="paragraph"><p>The type set in that section must also match the <em>type</em> here&#8201;&#8212;&#8201;<strong>primary</strong> or <strong>secondary</strong>.  In general, a primary process is one
-running on the system with the UPS actually plugged into a serial
-port, and a secondary is drawing power from the UPS but can&#8217;t
-talk to it directly.  See the section on UPS types for more.</p></div>
+set in this file for the corresponding data server instance.</p></div>
+<div class="paragraph"><p>The type set in that section of the data server configuration must also match
+the <em>type</em> here&#8201;&#8212;&#8201;<strong>primary</strong> or <strong>secondary</strong> (consider it an "upsmon role").
+In general, a "primary" client process is one running on the system with the
+UPS actually plugged into a serial or USB port, and a "secondary" is drawing
+power from the UPS but can&#8217;t talk to it directly.
+See the section on UPS types for more.</p></div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_notify_events">NOTIFY EVENTS</h2>
 <div class="sectionbody">
 <div class="paragraph"><p><strong>upsmon</strong> senses several events as it monitors each UPS.  They are called
-notify events as they can be used to tell the users and admins about the
+"notify events", as they can be used to tell the users and admins about the
 change in status.  See the additional NOTIFY-related sections below for
 information on customizing the delivery of these messages.</p></div>
 <div class="dlist"><dl>
@@ -1146,9 +1149,17 @@ obsolete UPS readings to avoid an unfortunate shutdown.
 <div class="sectionbody">
 <div class="paragraph"><p>In <a href="upsmon.conf.html">upsmon.conf(5)</a>, you can configure a program called the NOTIFYCMD
 that will handle events that occur.</p></div>
-<div class="paragraph"><p><code>NOTIFYCMD</code> "<em>path to program</em>"</p></div>
-<div class="paragraph"><p><code>NOTIFYCMD "/usr/local/bin/notifyme"</code></p></div>
-<div class="paragraph"><p>Remember to wrap the path in "quotes" if it contains any spaces.</p></div>
+<div class="paragraph"><p>The syntax is: <code>NOTIFYCMD</code> "<em>path to program</em>"</p></div>
+<div class="paragraph"><p>Example:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>NOTIFYCMD "/usr/local/bin/notifyme"</code>
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>Remember to wrap the path in "double quotes" if it contains any spaces.
+It should probably not rely on receiving any command-line arguments.</p></div>
 <div class="paragraph"><p>The program you run as your NOTIFYCMD can use the environment variables
 NOTIFYTYPE and UPSNAME to know what has happened and on which UPS.  It
 also receives the notification message (see below) as the first (and
@@ -1164,7 +1175,7 @@ the EXEC flag by using the notify flags, as detailed below.</p></div>
 (wall) to all users, plus they are logged via the syslog.
 Except for Windows where upsmon only writes to the syslog by default.
 You can change this with the NOTIFYFLAG directive in the configuration file:</p></div>
-<div class="paragraph"><p><code>NOTIFYFLAG</code> <em>notifytype</em> <em>flags</em></p></div>
+<div class="paragraph"><p>The syntax is: <code>NOTIFYFLAG</code> <em>notifytype</em> <em>flags</em></p></div>
 <div class="paragraph"><p>Examples:</p></div>
 <div class="ulist"><ul>
 <li>
@@ -1198,7 +1209,7 @@ Write this message to the syslog.
 </dt>
 <dd>
 <p>
-Send this message to all users on the system via <strong>wall</strong>(1).
+Send this message to all users on the system via <ulink url="https://linux.die.net/man/1/wall">wall(1)</ulink>.
 </p>
 </dd>
 <dt class="hdlist1">
@@ -1218,8 +1229,8 @@ Don&#8217;t do anything.  If you use this, don&#8217;t use any of the other flag
 </p>
 </dd>
 </dl></div>
-<div class="paragraph"><p>You can mix these flags.  "SYSLOG+WALL+EXEC" does all three for a given
-event.</p></div>
+<div class="paragraph"><p>You can mix these flags; for example,  <code>SYSLOG+WALL+EXEC</code> does all three
+for a given event.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -1227,7 +1238,7 @@ event.</p></div>
 <div class="sectionbody">
 <div class="paragraph"><p>upsmon comes with default messages for each of the NOTIFY events.  These
 can be changed with the NOTIFYMSG directive.</p></div>
-<div class="paragraph"><p><code>NOTIFYMSG</code> <em>type</em> "<em>message</em>"</p></div>
+<div class="paragraph"><p>The syntax is: <code>NOTIFYMSG</code> <em>type</em> "<em>message</em>"</p></div>
 <div class="paragraph"><p>Examples:</p></div>
 <div class="ulist"><ul>
 <li>
@@ -1237,13 +1248,23 @@ can be changed with the NOTIFYMSG directive.</p></div>
 </li>
 <li>
 <p>
-` NOTIFYMSG ONBATT "Someone pulled the plug on %s"`
+<code>NOTIFYMSG ONBATT "Someone pulled the plug on %s"</code>
 </p>
 </li>
 </ul></div>
-<div class="paragraph"><p>The first instance of %s is replaced with the identifier of the UPS that
+<div class="paragraph"><p>The first instance of <code>%s</code> is replaced with the identifier of the UPS that
 generated the event.  These messages are used when sending walls to the
 users directly from upsmon, and are also passed to the NOTIFYCMD.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">Certain notifications, such as <code>NOTIFY_ALARM</code> and <code>NOTIFY_OTHER</code>,
+can accept a second instance of <code>%s</code> that would be replaced with the
+alarm text or the unrecognized token, respectively.</td>
+</tr></table>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -1254,35 +1275,103 @@ currently able to supply power to the system hosting upsmon.  Any
 UPS that is either on line or just on battery contributes to this
 number.  If a UPS is critical (on battery and low battery) or has been
 put into "forced shutdown" mode, it no longer contributes.</p></div>
+<div class="paragraph"><p>The syntax is: <code>MONITOR</code> <em>upsname</em> <em>powervalue</em> <em>username</em> <em>password</em> <em>type</em></p></div>
 <div class="paragraph"><p>A "power value" on a MONITOR line in the config file is the number of
 power supplies that the UPS runs on the current system.</p></div>
-<div class="paragraph"><p><code>MONITOR</code> <em>upsname</em> <em>powervalue</em> <em>username</em> <em>password</em> <em>type</em></p></div>
-<div class="paragraph"><p>Normally, you only have one power supply, so it will be set to 1.</p></div>
-<div class="paragraph"><p><code>MONITOR <a href="mailto:myups@myhost">myups@myhost</a> 1 username mypassword primary</code></p></div>
-<div class="paragraph"><p>On a large server with redundant power supplies, the power value for a UPS
-may be greater than 1.  You may also have more than one of them defined.</p></div>
-<div class="paragraph"><p><code>MONITOR <a href="mailto:ups-alpha@myhost">ups-alpha@myhost</a> 2 username mypassword primary</code></p></div>
-<div class="paragraph"><p><code>MONITOR <a href="mailto:ups-beta@myhost">ups-beta@myhost</a> 2 username mypassword primary</code></p></div>
-<div class="paragraph"><p>You can also set the power value for a UPS to 0 if it does not supply any
+<div class="ulist"><ul>
+<li>
+<p>
+Normally, you only have one power supply, so it will be set to <em>1</em>.
+</p>
+<div class="paragraph"><p>Example:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>MONITOR myups@myhost 1 username mypassword primary</code>
+</p>
+</li>
+</ul></div>
+</li>
+<li>
+<p>
+On a large server with redundant power supplies, the power value for a UPS
+may be greater than 1.  You may also have more than one of them defined.
+</p>
+<div class="paragraph"><p>Examples for a server with four power supply modules and two UPSes (each
+feeding two power supplies of that server):</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>MONITOR ups-alpha@myhost 2 username mypassword primary</code>
+</p>
+</li>
+<li>
+<p>
+<code>MONITOR ups-beta@myhost 2 username mypassword primary</code>
+</p>
+</li>
+</ul></div>
+</li>
+<li>
+<p>
+You can also set the power value for a UPS to <em>0</em> if it does not supply any
 power to that system.  This is generally used when you want to use the
 upsmon notification features for a UPS even though it&#8217;s not actually
-running the system that hosts upsmon.  Don&#8217;t set this to "primary" unless
-you really want to power this UPS off when this instance of upsmon needs
-to shut down for its own reasons.</p></div>
-<div class="paragraph"><p><code>MONITOR <a href="mailto:faraway@anotherbox">faraway@anotherbox</a> 0 username mypassword secondary</code></p></div>
+powering the system that hosts this instance of the upsmon client.
+</p>
+<div class="paragraph"><p>Don&#8217;t set this to "primary" unless you really want to power this UPS off
+when this instance of upsmon needs to shut down for its own reasons.</p></div>
+<div class="paragraph"><p>Example:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>MONITOR faraway@anotherbox 0 username mypassword secondary</code>
+</p>
+</li>
+</ul></div>
+</li>
+</ul></div>
 <div class="paragraph"><p>The "minimum power value" is the number of power supplies that must be
-receiving power in order to keep the computer running.</p></div>
-<div class="paragraph"><p><code>MINSUPPLIES</code> <em>value</em></p></div>
-<div class="paragraph"><p>Typical PCs only have 1, so most users will leave this at the default.</p></div>
-<div class="paragraph"><p><code>MINSUPPLIES 1</code></p></div>
-<div class="paragraph"><p>If you have a server or similar system with redundant power, then this
+receiving power in order to keep this <code>upsmon</code> client&#8217;s computer running.</p></div>
+<div class="paragraph"><p>The syntax is: <code>MINSUPPLIES</code> <em>value</em></p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+Typical PCs only have 1, so most users will leave this at the default.
+</p>
+<div class="paragraph"><p>Example:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>MINSUPPLIES 1</code>
+</p>
+</li>
+</ul></div>
+</li>
+<li>
+<p>
+If you have a server or similar system with redundant power, then this
 value will usually be set higher.  One that requires three power supplies
-to be running at all times would simply set it to 3.</p></div>
-<div class="paragraph"><p><code>MINSUPPLIES 3</code></p></div>
-<div class="paragraph"><p>When the current overall power value drops below the minimum power value,
-upsmon starts the shutdown sequence.  This design allows you to lose some
-of your power supplies in a redundant power environment without bringing
-down the entire system while still working properly for smaller systems.</p></div>
+out of 4 to be running at all times would simply set it to 3.
+</p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph"><p>Example:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>MINSUPPLIES 3</code>
+</p>
+</li>
+</ul></div>
+</div></div>
+<div class="paragraph"><p>When the current overall healthy UPS-protected external power value drops
+below the minimum required power value, <code>upsmon</code> starts the shutdown sequence.
+This design allows you to lose some of your power supplies in a redundant
+power environment without bringing down the entire system, while still
+working properly for smaller systems.</p></div>
+</li>
+</ul></div>
 </div>
 </div>
 <div class="sect1">
@@ -1293,7 +1382,7 @@ do, any UPSes that are directly attached to the upsmon host should be
 monitored in "primary" mode.  This makes upsmon take charge of that equipment,
 and it will wait for the "secondary" systems to disconnect before shutting
 down the local system.  This allows the distant systems (monitoring over
-the network) to shut down cleanly before <code>upsdrvctl shutdown</code> runs
+the network) to shut down cleanly before <code>upsdrvctl shutdown</code> runs locally
 and turns them all off.</p></div>
 <div class="paragraph"><p>When upsmon runs as a secondary, it is relying on the distant system to tell
 it about the state of the UPS.  When that UPS goes critical (on battery
@@ -1303,10 +1392,10 @@ needs to happen quickly.  Once all secondaries disconnect from the distant
 process.  Your secondary systems must all quiesce and shut down before the
 primary turns off the shared power source, or filesystem damage may result.</p></div>
 <div class="paragraph"><p>upsmon deals with secondaries that get wedged, hang, or otherwise fail to
-disconnect from <a href="upsd.html">upsd(8)</a> in a timely manner with the HOSTSYNC
-timer.  During a shutdown situation, the primary upsmon will give up after
-this interval and it will shut down anyway.  This keeps the primary from
-sitting there forever (which would endanger that host) if a secondary
+gracefully disconnect from <a href="upsd.html">upsd(8)</a> in a timely manner with the
+HOSTSYNC timer.  During a shutdown situation, the primary upsmon will give
+up after this interval and it will shut down anyway.  This keeps the primary
+from sitting there forever (which would endanger that host) if a secondary
 should break somehow.  This defaults to 15 seconds.</p></div>
 <div class="paragraph"><p>If your primary system is shutting down too quickly, set the FINALDELAY
 interval to something greater than the default 15 seconds.  Don&#8217;t set
@@ -1421,7 +1510,10 @@ check to remove it won&#8217;t fire.)</p></div>
 <div class="paragraph"><p>To test a synchronized shutdown without pulling the plug on your UPS(es),
 you need only set the forced shutdown (FSD) flag on them.  You can do this
 by calling upsmon again to set the flag, i.e.:</p></div>
-<div class="paragraph"><p><code>upsmon -c fsd</code></p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>:; upsmon -c fsd</code></pre>
+</div></div>
 <div class="paragraph"><p>After that, the primary and the secondary will do their usual shutdown
 sequence as if the battery had gone critical, while you can time how long
 it takes for them.  This is much easier on your UPS equipment, and it beats
@@ -1433,7 +1525,7 @@ systems would shut down at this point, without actually disrupting their work.</
 <td class="icon">
 <div class="title">Warning</div>
 </td>
-<td class="content">after such "dummy" experiments you may have to restart the NUT data
+<td class="content">After such "dummy" experiments you may have to restart the NUT data
 server <code>upsd</code> to clear its "FSD" flag for the devices and clients involved,
 and make sure no files named by <code>POWERDOWNFLAG</code> option (e.g. <code>/etc/killpower</code>)
 remain on the <code>upsmon primary</code> systems under test.</td>
@@ -1511,6 +1603,14 @@ runs in foreground mode.</p></div>
 <div class="paragraph"><p><strong>NUT_CONFPATH</strong> is the path name of the directory that contains
 <code>upsmon.conf</code> and other configuration files.  If this variable is not set,
 <strong>upsmon</strong> uses a built-in default, which is often <code>/usr/local/ups/etc</code>.</p></div>
+<div class="paragraph"><p><strong>NUT_QUIET_INIT_UPSNOTIFY=true</strong> can be used to prevent daemons which can
+notify service management frameworks (such as systemd) about passing
+their lifecycle milestones from emitting such notifications (including
+those about lack of system support for such modern features, once per run).</p></div>
+<div class="paragraph"><p><strong>NUT_QUIET_INIT_BANNER=true</strong> can be used to suppress NUT tool name and
+version banner. NOT recommended for services due to adverse troubleshooting
+impact, but may be helpful in shell profiles or scripts which process NUT
+tool outputs.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -1545,7 +1645,7 @@ runs in foreground mode.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-05 08:47:28 UTC -- Network UPS Tools 2.8.2.2040
+Last updated 2025-02-08 14:47:40 UTC -- Network UPS Tools 2.8.2.2132
 </div>
 </div>
 </body>

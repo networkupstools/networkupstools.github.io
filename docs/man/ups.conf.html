@@ -754,7 +754,7 @@ The file begins with global directives, and then each UPS has a section
 which contains a number of directives that set parameters for that UPS.</p></div>
 <div class="paragraph"><p>A UPS section begins with the name of the UPS in brackets, and continues
 until the next UPS name in brackets or until EOF.  The name "default" is
-used internally in upsd, so you can&#8217;t use it in this file.</p></div>
+used internally in <a href="upsd.html">upsd(8)</a>, so you can&#8217;t use it in this file.</p></div>
 <div class="paragraph"><p>You must define the <em>driver</em> and <em>port</em> elements for each entry.  Anything
 after that in a section is optional.  A simple example might look like this:</p></div>
 <div class="literalblock">
@@ -797,6 +797,47 @@ your driver(s) to learn which variables are supported and what they do.</p></div
 Contents of this file should be pure ASCII (character codes
   not in range would be ignored with a warning message).
 </p>
+</li>
+<li>
+<p>
+Balance the run-time user permissions to access the file (and perhaps the
+  directory it is in) for only <code>upsd</code> and the drivers to be able to read it;
+  write access is not needed. It is common to use <code>chown root:nut</code> and
+  <code>chmod 640</code> to set up acceptable file permissions.
+</p>
+<div class="ulist"><ul>
+<li>
+<p>
+Packages (and build recipes) typically prepare one set of user and
+    group accounts for NUT. Custom builds with minimal configuration might
+    even use <code>nobody:nogroup</code> or similar, which is inherently insecure.
+</p>
+</li>
+<li>
+<p>
+On systems with extra security concerns, NUT drivers, data server
+    should run as separate user accounts which would be members of one
+    same group for shared access to local Unix socket files and the
+    directory they are in, as well for reading <code>ups.conf</code>, but different
+    groups for other configuration file access. This would need some
+    daemons to use customized <code>user</code>, <code>group</code>, <code>RUN_AS_USER</code> and/or
+    <code>RUN_AS_GROUP</code> settings to override the single built-in value.
+</p>
+</li>
+<li>
+<p>
+Note that the monitoring, logging, etc. clients are networked-only.
+    They do not need access to these files and directories, and can run
+    as an independent user and group altogether.
+</p>
+</li>
+<li>
+<p>
+Keep in mind the security of also any backup copies of this file,
+    e.g. the archive files it might end up in.
+</p>
+</li>
+</ul></div>
 </li>
 </ul></div>
 </div>
@@ -981,7 +1022,7 @@ version of the library, see e.g.:</p></div>
 </li>
 <li>
 <p>
-<a href="https://libusb.sourceforge.io/api-1.0/group">https://libusb.sourceforge.io/api-1.0/group</a><em>libusb</em>lib.html
+<a href="https://libusb.sourceforge.io/api-1.0/group__libusb__lib.html">https://libusb.sourceforge.io/api-1.0/group__libusb__lib.html</a>
 </p>
 </li>
 </ul></div>
@@ -1281,7 +1322,7 @@ version of the library, see e.g.:</p></div>
 </li>
 <li>
 <p>
-<a href="https://libusb.sourceforge.io/api-1.0/group">https://libusb.sourceforge.io/api-1.0/group</a><em>libusb</em>lib.html
+<a href="https://libusb.sourceforge.io/api-1.0/group__libusb__lib.html">https://libusb.sourceforge.io/api-1.0/group__libusb__lib.html</a>
 </p>
 </li>
 </ul></div>
@@ -1316,7 +1357,7 @@ from <a href="upsc.html">upsc(8)</a> or similar as "snoopy@doghouse".</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-05 08:47:28 UTC -- Network UPS Tools 2.8.2.2040
+Last updated 2025-02-08 14:47:40 UTC -- Network UPS Tools 2.8.2.2132
 </div>
 </div>
 </body>

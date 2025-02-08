@@ -793,13 +793,16 @@ More information about this UPS can be found here:
 <p>
 A string consisting of sub-strings. Each sub-string describes GPIO line
 states conversion formula to specific NUT state, like
-<code>nut_state=[^]line_num[logical_operation[^]line_num]...;</code>. Not (^) , and (&amp;) , or
-(|)operations are supported for now. nut_state should correspond to NUT
-state, line_num to GPIO line number connected to UPS open collector pin.
-CyberShield CSN27U12V describes pins as:
 </p>
-</dd>
-</dl></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>nut_state=[^]line_num[logical_operation[^]line_num]...;</code></pre>
+</div></div>
+<div class="paragraph"><p>The logical "Not" (<code>^</code>), "And" (<code>&amp;</code>), and "Or" (<code>|</code>) operations are
+supported for now.</p></div>
+<div class="paragraph"><p>The <code>nut_state</code> should correspond to NUT state, and <code>line_num</code> to the
+GPIO line number connected to UPS open collector pin.</p></div>
+<div class="paragraph"><p>CyberShield CSN27U12V describes pins as:</p></div>
 <div class="tableblock">
 <table rules="all"
 width="100%"
@@ -841,11 +844,19 @@ cellspacing="0" cellpadding="4">
 </tbody>
 </table>
 </div>
-<div class="paragraph"><p>and rules might be defined as</p></div>
-<div class="paragraph"><p><code>rules = "OL=^0;OB=0;LB=3;RB=1;DISCHRG=0&amp;^6;BYPASS=6;"</code></p></div>
-<div class="paragraph"><p>assuming battery pin connection to GPIO lines as listed in table. Expecting simple formula
-to be used for each state, extra may increase state reliability and may need to be
-checked on each specific UPS.</p></div>
+</dd>
+</dl></div>
+<div class="paragraph"><p>and then the <em>rules</em> value might be defined as</p></div>
+<div class="paragraph"><p>+</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>rules = "OL=^0;OB=0;LB=3;RB=1;DISCHRG=0&amp;^6;BYPASS=6;"</code></pre>
+</div></div>
+<div class="paragraph"><p>+
+assuming battery pin connection to GPIO lines as listed in table.</p></div>
+<div class="paragraph"><p>+
+Expecting simple formula to be used for each state, extra may increase
+state reliability and may need to be checked on each specific UPS.</p></div>
 </div>
 <div class="sect2">
 <h3 id="_battery_charge">Battery Charge:</h3>
@@ -888,15 +899,16 @@ An integer specifying the battery charge level reported in LB case.
 <div class="sect1">
 <h2 id="_installation">INSTALLATION</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>This driver is not built by default. You can build it by installing
+<div class="paragraph"><p>This driver may be not built by default. You can build it by installing
 libgpiod and running <code>configure --with-gpio=yes</code>.</p></div>
 <div class="paragraph"><p>You also need to give proper permissions on the local serial device
-file (/dev/gpiochip0 for example) to allow the run-time NUT driver user
-account to access it, like by adding the following rule to Linux rules.d directory:</p></div>
+file (<code>/dev/gpiochip0</code> for example) to allow the run-time NUT driver user
+account to access it, like by adding the following rule to Linux <code>rules.d</code>
+directory:</p></div>
 <div class="literalblock">
 <div class="content">
 <pre><code>SUBSYSTEM=="gpio*", PROGRAM="/bin/sh -c '\
-chown -R nut:nut /dev/gpiochip0 &amp;&amp; chmod -R 700 /dev/gpiochip0\</code></pre>
+chown -R nut:nut /dev/gpiochip0 &amp;&amp; chmod -R 700 /dev/gpiochip0'</code></pre>
 </div></div>
 </div>
 </div>
@@ -934,7 +946,7 @@ libgpiod home page: <a href="https://git.kernel.org/pub/scm/libs/libgpiod/libgpi
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-05 08:47:30 UTC -- Network UPS Tools 2.8.2.2040
+Last updated 2025-02-08 14:47:41 UTC -- Network UPS Tools 2.8.2.2132
 </div>
 </div>
 </body>

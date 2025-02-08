@@ -108,7 +108,7 @@ functions.  All access and modifications must happen through those
 functions.  Any other changes are forbidden, as they will not pushed out
 as updates to things like upsd.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_adding_variables"></a>Adding variables</h4></div></div></div><pre class="literallayout">dstate_setinfo("ups.model", "Mega-Zapper 1500");</pre><p>Many of these functions take format strings, so you can build the new
 values right there:</p><pre class="literallayout">dstate_setinfo("ups.model", "Mega-Zapper %d", rating);</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_setting_flags"></a>Setting flags</h4></div></div></div><p>Some variables have special properties.  They can be writable, and some
-are strings.  The ST_FLAG_* values can be used to tell upsd more about
+are strings.  The <code class="literal">ST_FLAG_*</code> values can be used to tell upsd more about
 what it can do.</p><pre class="literallayout">dstate_setflags("input.transfer.high", ST_FLAG_RW);</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_status_data"></a>Status data</h4></div></div></div><p>UPS status flags like on line (OL) and on battery (OB) live in
 ups.status.  Don’t manipulate this by hand.  There are functions which
 will do this for you.</p><pre class="literallayout">status_init()   -- before doing anything else (clear internal buffers,
@@ -150,7 +150,7 @@ the <code class="literal">OL</code> and <code class="literal">OB</code> flags ar
 </li><li class="listitem">
 the <code class="literal">CHRG</code> and <code class="literal">DISCHRG</code> flags are being replaced with
 <code class="literal">battery.charger.status</code>.  See the <a class="ulink" href="../user-manual.chunked/index.html#nut-names" target="_top">NUT command and variable naming scheme</a> for more information.
-</li></ul></div></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_ups_alarms"></a>4.9. UPS alarms</h3></div></div></div><p>These work like ups.status, and have three special functions which you
+</li></ul></div></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_ups_alarms"></a>4.9. UPS alarms</h3></div></div></div><p>These work like <code class="literal">ups.status</code>, and have three special functions which you
 must use to manage them.</p><pre class="literallayout">alarm_init() -- before doing anything else</pre><pre class="literallayout">alarm_set() -- add an alarm word</pre><pre class="literallayout">alarm_commit() -- push the value into ups.alarm</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>the ALARM flag in ups.status is automatically set whenever you use
 alarm_set.  To remove that flag from ups.status, call alarm_init and
 alarm_commit without calling alarm_set in the middle.</p></div><p>You should never try to set or unset the ALARM flag manually.</p><p>If you use UPS alarms, the call to status_commit() should be after
@@ -175,150 +175,150 @@ various places in your code.  Basically, don’t call them from any other
 function than from within upsdrv_updateinfo().  There is no need to call
 either of these regularly as was stated in previous versions of this
 document (that requirement has long gone).</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_serial_port_handling"></a>4.11. Serial port handling</h3></div></div></div><p>Drivers which use serial port functions should include serial.h and use
-these functions (and cross-platform data types) whenever possible:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+these functions (and cross-platform data types) whenever possible:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
 TYPE_FD
-</li></ul></div><p>Cross-platform data type to represent a serial-port connection.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</p><p class="simpara">Cross-platform data type to represent a serial-port connection.</p></li><li class="listitem"><p class="simpara">
 ERROR_FD_SER
-</li></ul></div><p>Macro value representing an invalid serial-port connection.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</p><p class="simpara">Macro value representing an invalid serial-port connection.</p></li><li class="listitem"><p class="simpara">
 VALID_FD_SER(TYPE_FD_SER fd)
-</li></ul></div><p>This macro evaluates to <code class="literal">true</code> if <code class="literal">fd</code> currently has a "valid" value
+</p><p class="simpara">This macro evaluates to <code class="literal">true</code> if <code class="literal">fd</code> currently has a "valid" value
 (e.g. represents a connected device). You should invalidate the <code class="literal">fd</code>
 when you initialize the variable or close the connection, by assigning
-<code class="literal">fd = ERROR_FD</code>.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<code class="literal">fd = ERROR_FD</code>.</p></li><li class="listitem"><p class="simpara">
 INVALID_FD_SER(TYPE_FD_SER fd)
-</li></ul></div><p>This macro evaluates to <code class="literal">true</code> if <code class="literal">fd</code> does not currently have a
-"valid" value.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</p><p class="simpara">This macro evaluates to <code class="literal">true</code> if <code class="literal">fd</code> does not currently have a
+"valid" value.</p></li><li class="listitem"><p class="simpara">
 TYPE_FD_SER ser_open(const char *port)
-</li></ul></div><p>This opens the port and locks it if possible, using one of fcntl, lockf,
+</p><p class="simpara">This opens the port and locks it if possible, using one of fcntl, lockf,
 or uu_lock depending on what may be available.  If something fails, it
 calls fatal for you.  If it succeeds, it always returns the fd that was
-opened.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+opened.</p></li><li class="listitem"><p class="simpara">
 TYPE_FD_SER ser_open_nf(const char *port)
-</li></ul></div><p>This is a non-fatal version of ser_open(), that does not call fatal if
-something fails.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</p><p class="simpara">This is a non-fatal version of ser_open(), that does not call fatal if
+something fails.</p></li><li class="listitem"><p class="simpara">
 int ser_set_speed(TYPE_FD_SER fd, const char *port, speed_t speed)
-</li></ul></div><p>This sets the speed of the port and also does some basic configuring
+</p><p class="simpara">This sets the speed of the port and also does some basic configuring
 with tcgetattr and tcsetattr.  If you have a special serial
-configuration (other than 8N1), then this may not be what you want.</p><p>The port name is provided again here so failures in tcgetattr() provide
+configuration (other than 8N1), then this may not be what you want.</p><p class="simpara">The port name is provided again here so failures in tcgetattr() provide
 a useful error message.  This is the only place that will generate a
 message if someone passes a non-serial port /dev entry to your driver,
-so it needs the extra detail.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+so it needs the extra detail.</p></li><li class="listitem"><p class="simpara">
 int ser_set_speed_nf(TYPE_FD_SER fd, const char *port, speed_t speed)
-</li></ul></div><p>This is a non-fatal version of ser_set_speed(), that does not call fatal
-if something fails.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</p><p class="simpara">This is a non-fatal version of ser_set_speed(), that does not call fatal
+if something fails.</p></li><li class="listitem">
 int ser_set_dtr(TYPE_FD_SER fd, int state)
-</li><li class="listitem">
+</li><li class="listitem"><p class="simpara">
 int ser_set_rts(TYPE_FD_SER fd, int state)
-</li></ul></div><p>These functions can be used to set the modem control lines to provide
+</p><p class="simpara">These functions can be used to set the modem control lines to provide
 cable power on the RS232 interface. Use state = 0 to set the line to 0
-and any other value to set it to 1.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+and any other value to set it to 1.</p></li><li class="listitem">
 int ser_get_dsr(TYPE_FD_SER fd)
 </li><li class="listitem">
 int ser_get_cts(TYPE_FD_SER fd)
-</li><li class="listitem">
+</li><li class="listitem"><p class="simpara">
 int ser_get_dcd(TYPE_FD_SER fd)
-</li></ul></div><p>These functions read the state of the modem control lines. They will
+</p><p class="simpara">These functions read the state of the modem control lines. They will
 return 0 if the line is logic 0 and a non-zero value if the line is
-logic 1.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+logic 1.</p></li><li class="listitem"><p class="simpara">
 int ser_close(TYPE_FD_SER fd, const char *port)
-</li></ul></div><p>This function unlocks the port if possible and closes the fd.  You
-should call this in your upsdrv_cleanup handler.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</p><p class="simpara">This function unlocks the port if possible and closes the fd.  You
+should call this in your upsdrv_cleanup handler.</p></li><li class="listitem"><p class="simpara">
 ssize_t ser_send_char(TYPE_FD_SER fd, unsigned char ch)
-</li></ul></div><p>This attempts to write one character and returns the return value from
+</p><p class="simpara">This attempts to write one character and returns the return value from
 write.  You could call write directly, but using this function allows
-for future error handling in one place.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+for future error handling in one place.</p></li><li class="listitem"><p class="simpara">
 ssize_t ser_send_pace(TYPE_FD_SER fd, useconds_t d_usec,
                                 const char *fmt, …)
-</li></ul></div><p>If you need to send a formatted buffer with an intercharacter delay, use
+</p><p class="simpara">If you need to send a formatted buffer with an intercharacter delay, use
 this function.  There are a number of UPS controllers which can’t take
 commands at the full speed that would normally be possible at a given
 bit rate.  Adding a small delay usually turns a flaky UPS into a solid
-one.</p><p>The return value is the number of characters that was sent to the port,
-or -1 if something failed.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+one.</p><p class="simpara">The return value is the number of characters that was sent to the port,
+or <span class="emphasis"><em>-1</em></span> if something failed.</p></li><li class="listitem"><p class="simpara">
 ssize_t ser_send(TYPE_FD_SER fd, const char *fmt, …)
-</li></ul></div><p>Like ser_send_pace, but without a delay.  Only use this if you’re sure
-that your UPS can handle characters at the full line rate.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</p><p class="simpara">Like ser_send_pace, but without a delay.  Only use this if you’re sure
+that your UPS can handle characters at the full line rate.</p></li><li class="listitem"><p class="simpara">
 ssize_t ser_send_buf(TYPE_FD_SER fd, const void *buf, size_t buflen)
-</li></ul></div><p>This sends a raw buffer to the fd.  It is typically used for binary
-transmissions.  It returns the results of the call to write.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</p><p class="simpara">This sends a raw buffer to the fd.  It is typically used for binary
+transmissions.  It returns the results of the call to write.</p></li><li class="listitem"><p class="simpara">
 ssize_t ser_send_buf_pace(TYPE_FD_SER fd, useconds_t d_usec,
                                     const void *buf, size_t buflen)
-</li></ul></div><p>This is just ser_send_buf with an intercharacter delay.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</p><p class="simpara">This is just ser_send_buf with an intercharacter delay.</p></li><li class="listitem"><p class="simpara">
 ssize_t ser_get_char(TYPE_FD_SER fd, void *ch, time_t d_sec, useconds_t d_usec)
-</li></ul></div><p>This will wait up to d_sec seconds + d_usec microseconds for one
+</p><p class="simpara">This will wait up to d_sec seconds + d_usec microseconds for one
 character to arrive, storing it at ch.  It returns 1 on success, -1
-if something fails and 0 on a timeout.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>the delay value must not be too large, or your driver will not get
+if something fails and 0 on a timeout.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>The delay value must not be too large, or your driver will not get
 back to the usual idle loop in main in time to answer the PINGs from
 upsd.  That will cause an oscillation between staleness and normal
-behavior.</p></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+behavior.</p></div></li><li class="listitem"><p class="simpara">
 ssize_t ser_get_buf(TYPE_FD_SER fd, void *buf, size_t buflen,
                               time_t d_sec, useconds_t d_usec)
-</li></ul></div><p>Like ser_get_char, but this one reads up to buflen bytes storing all of
+</p><p class="simpara">Like ser_get_char, but this one reads up to buflen bytes storing all of
 them in buf.  The buffer is zeroed regardless of success or failure.  It
-returns the number of bytes read, -1 on failure and 0 on a timeout.</p><p>This is essentially a single read() function with a timeout.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+returns the number of bytes read, -1 on failure and 0 on a timeout.</p><p class="simpara">This is essentially a single read() function with a timeout.</p></li><li class="listitem"><p class="simpara">
 ssize_t ser_get_buf_len(TYPE_FD_SER fd, void *buf, size_t buflen,
                                   time_t d_sec, useconds_t d_usec)
-</li></ul></div><p>Like ser_get_buf, but this one waits for buflen bytes to arrive,
+</p><p class="simpara">Like ser_get_buf, but this one waits for buflen bytes to arrive,
 storing all of them in buf.  The buffer is zeroed regardless of success
 or failure.  It returns the number of bytes read, -1 on failure
-and 0 on a timeout.</p><p>This should only be used for binary reads.  See ser_get_line for
-protocols that are terminated by characters like CR or LF.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+and 0 on a timeout.</p><p class="simpara">This should only be used for binary reads.  See ser_get_line for
+protocols that are terminated by characters like CR or LF.</p></li><li class="listitem"><p class="simpara">
 ssize_t ser_get_line(TYPE_FD_SER fd, void *buf, size_t buflen,
                                char endchar, const char *ignset,
                                time_t d_sec, useconds_t d_usec)
-</li></ul></div><p>This is the reading function you should use if your UPS tends to send
+</p><p class="simpara">This is the reading function you should use if your UPS tends to send
 responses like "OK\r" or "1234\n".  It reads up to buflen bytes and
 stores them in buf, but it will return immediately if it encounters
 endchar.  The endchar will not be stored in the buffer.  It will also
 return if it manages to collect a full buffer before reaching the
 endchar.  It returns the number of bytes stored in the buffer, -1 on
-failure and 0 on a timeout.</p><p>If the character matches the ignset with strchr(), it will not be added
+failure and 0 on a timeout.</p><p class="simpara">If the character matches the ignset with strchr(), it will not be added
 to the buffer.  If you don’t need to ignore any characters, just pass it
-an empty string — <code class="literal">""</code>.</p><p>The buffer is always cleared and is always <code class="literal">null</code>-terminated.  It does
-this by reading at most <code class="literal">(buflen - 1)</code> bytes.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>any other data which is read after the endchar in the serial
+an empty string — <code class="literal">""</code>.</p><p class="simpara">The buffer is always cleared and is always <code class="literal">null</code>-terminated.  It does
+this by reading at most <code class="literal">(buflen - 1)</code> bytes.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>Any other data which is read after the endchar in the serial
 buffer will be lost forever.  As a result, you should not use this
-unless your UPS uses a polled protocol.</p></div><p>Let’s say your endchar is <code class="literal">\n</code> and your UPS sends <code class="literal">"OK\n1234\nabcd\n"</code>.
+unless your UPS uses a polled protocol.</p></div><p class="simpara">Let’s say your endchar is <code class="literal">\n</code> and your UPS sends <code class="literal">"OK\n1234\nabcd\n"</code>.
 This function will <code class="literal">read()</code> all of that, find the first <code class="literal">\n</code>, and stop
-there.  Your driver will get <code class="literal">"OK"</code>, and the rest is gone forever.</p><p>This also means that you should not "pipeline" commands to the UPS.
-Send a query, then read the response, then send the next query.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+there.  Your driver will get <code class="literal">"OK"</code>, and the rest is gone forever.</p><p class="simpara">This also means that you should not "pipeline" commands to the UPS.
+Send a query, then read the response, then send the next query.</p></li><li class="listitem"><p class="simpara">
 ssize_t ser_get_line_alert(TYPE_FD_SER fd, void *buf, size_t buflen,
                                      char endchar, const char *ignset,
                                      const char *alertset,
                                      void handler(char ch),
                                      time_t d_sec, useconds_t d_usec)
-</li></ul></div><p>This is just like ser_get_line, but it allows you to specify a set of
+</p><p class="simpara">This is just like ser_get_line, but it allows you to specify a set of
 alert characters which may be received at any time.  They are not added
 to the buffer, and this function will call your handler function,
-passing the character as an argument.</p><p>Implementation note: this function actually does all of the work, and
+passing the character as an argument.</p><p class="simpara">Implementation note: this function actually does all of the work, and
 ser_get_line is just a wrapper that sets an empty alertset and a NULL
-handler.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+handler.</p></li><li class="listitem"><p class="simpara">
 ssize_t ser_flush_in(TYPE_FD_SER fd, const char *ignset, int verbose)
-</li></ul></div><p>This function will drain the input buffer.  If verbose is set to a
+</p><p class="simpara">This function will drain the input buffer.  If verbose is set to a
 positive number, then it will announce the characters which have been
 read in the syslog.  You should not set verbose unless debugging is
-enabled, since it could be very noisy.</p><p>This function returns the number of characters which were read, so you
+enabled, since it could be very noisy.</p><p class="simpara">This function returns the number of characters which were read, so you
 can check for extra bytes by looking for a nonzero return value.  Zero
-will also be returned if the read fails for some reason.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+will also be returned if the read fails for some reason.</p></li><li class="listitem"><p class="simpara">
 int ser_flush_io(TYPE_FD_SER fd)
-</li></ul></div><p>This function drains both the in- and output buffers. Return zero on
-success.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</p><p class="simpara">This function drains both the in- and output buffers. Return zero on
+success.</p></li><li class="listitem"><p class="simpara">
 void ser_comm_fail(const char *fmt, …)
-</li></ul></div><p>Call this whenever your serial communications fail for some reason.  It
+</p><p class="simpara">Call this whenever your serial communications fail for some reason.  It
 takes a format string, so you can use variables and other things to
 clarify the error.  This function does built-in rate-limiting so you
-can’t spam the syslog.</p><p>By default, it will write 10 messages, then it will stop and only write
+can’t spam the syslog.</p><p class="simpara">By default, it will write 10 messages, then it will stop and only write
 1 in 100.  This allows the driver to keep calling this function while
-the problem persists without filling the logs too quickly.</p><p>In the old days, drivers would report a failure once, and then would be
+the problem persists without filling the logs too quickly.</p><p class="simpara">In the old days, drivers would report a failure once, and then would be
 silent until things were fixed again.  Users had to figure out what was
 happening by finding that single error message, or by looking at the
-repeated complaints from upsd or the clients.</p><p>If your UPS frequently fails to acknowledge polls and this is a known
+repeated complaints from upsd or the clients.</p><p class="simpara">If your UPS frequently fails to acknowledge polls and this is a known
 situation, you should make a couple of attempts before calling this
-function.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>this does not call dstate_datastale.  You still need to do that.</p></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+function.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>This does not call dstate_datastale.  You still need to do that.</p></div></li><li class="listitem"><p class="simpara">
 void ser_comm_good(void)
-</li></ul></div><p>This will clear the error counter and write a "re-established" message
+</p><p class="simpara">This will clear the error counter and write a "re-established" message
 to the syslog after communications have been lost.  Your driver should
 call this whenever it has successfully contacted the UPS.  A good place
-for most drivers is where it calls dstate_dataok.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_usb_port_handling"></a>4.12. USB port handling</h3></div></div></div><p>Drivers which use USB functions should include usb-common.h and use these:</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_structure_and_macro"></a>Structure and macro</h4></div></div></div><p>You should use the usb_device_id_t structure, and the USB_DEVICE macro to
+for most drivers is where it calls dstate_dataok.</p></li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_usb_port_handling"></a>4.12. USB port handling</h3></div></div></div><p>Drivers which use USB functions should include usb-common.h and use these:</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_structure_and_macro"></a>Structure and macro</h4></div></div></div><p>You should use the usb_device_id_t structure, and the USB_DEVICE macro to
 declare the supported devices. This allows the automatic extraction of
 USB information, to generate the Hotplug, udev and UPower support files.</p><p>The structure allows to convey <code class="literal">uint16_t</code> values of VendorID and ProductID,
 and an optional matching-function callback to interrogate the device in
@@ -336,22 +336,22 @@ static usb_device_id_t sv_usb_device_table [] = {
 
         /* Terminating entry */
         { 0, 0, NULL }
-};</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_function"></a>Function</h4></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+};</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_function"></a>Function</h4></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
 is_usb_device_supported(usb_device_id_t *usb_device_id_list,
                                   USBDevice_t *device)
-</li></ul></div><p>Call this in your device opening / matching function. Pass your usb_device_id_t
+</p><p class="simpara">Call this in your device opening / matching function. Pass your usb_device_id_t
 list structure, and a set of VendorID, DeviceID, as well as Vendor, Product and
 Serial strings, possibly also Bus, bcdDevice (device release number) and Device
 name on the bus strings, in the USBDevice_t fields describing the specific piece
-of hardware you are inspecting.</p><p>This function returns one of the following value:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+of hardware you are inspecting.</p><p class="simpara">This function returns one of the following value:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 NOT_SUPPORTED (0),
 </li><li class="listitem">
-POSSIBLY_SUPPORTED (1,  returned when the VendorID is matched, but the
-DeviceID is unknown),
+POSSIBLY_SUPPORTED (1, returned when the VendorID is matched,
+                  but the DeviceID is unknown),
 </li><li class="listitem">
 or SUPPORTED (2).
-</li></ul></div><p>For implementation examples, refer to the various USB drivers, and search for
-the above patterns.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>This set of USB helpers is due to expand is the near future…</p></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_variable_names"></a>4.13. Variable names</h3></div></div></div><p>PLEASE don’t make up new variables and commands just because you can.
+</li></ul></div><p class="simpara">For implementation examples, refer to the various USB drivers, and search for
+the above patterns.</p></li></ul></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>This set of USB helpers is due to expand is the near future…</p></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_variable_names"></a>4.13. Variable names</h3></div></div></div><p>PLEASE don’t make up new variables and commands just because you can.
 The new dstate functions give us the power to create just about
 anything, but that is a privilege and not a right.  Imagine the mess
 that would happen if every developer decided on their own way to
@@ -513,7 +513,7 @@ beeper enabled/disabled/muted status) can be read and written. These
 variables are usually grouped together and arranged in a hierarchical
 tree shape, similar to directories in a file system. This tree is
 called the "usage" tree. For example, here is part of the usage tree
-for a typical APC device. Variable components are separated by ".".
+for a typical APC device. Variable components are separated by <code class="literal">.</code>.
 Typical values for each variable are also shown for illustrative
 purposes.</p><div class="informaltable"><table class="informaltable" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; " width="35%"><colgroup><col class="col_1" /><col class="col_2" /></colgroup><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>UPS.Battery.Voltage</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>11.4 V</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>UPS.Battery.ConfigVoltage</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>12 V</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>UPS.Input.Voltage</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>117 V</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>UPS.Input.ConfigVoltage</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>120 V</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>UPS.AudibleAlarmControl</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>2 (=enabled)</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>UPS.PresentStatus.Charging</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>1 (=yes)</p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>UPS.PresentStatus.Discharging</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>0 (=no)</p></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p>UPS.PresentStatus.ACPresent</p></td><td style="" align="left" valign="top"><p>1 (=yes)</p></td></tr></tbody></table></div><p>As you can see, variables that describe the battery status might be
 grouped together under "Battery", variables that describe the input
@@ -582,8 +582,8 @@ This will produce a bunch of debugging information, including a number
 of lines starting with "Path:" that describe the device’s usage tree.
 This information forms the initial basis for a new subdriver.</p><p>You should save this information to a file, e.g.:</p><pre class="literallayout">drivers/usbhid-ups -DD -u root -x explore -x vendorid=XXXX \
         -x port=auto -s ups -d1 2&gt;&amp;1 | tee /tmp/info</pre><p>You can now create an initial "stub" subdriver for your device by using
-helper script <code class="literal">scripts/subdriver/gen-usbhid-subdriver.sh</code>.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>this only creates a driver code "stub" which needs to be further
-customized to be actually useful (see "Customization" below).</p></div><p>Use the script as follows:</p><pre class="literallayout">scripts/subdriver/gen-usbhid-subdriver.sh &lt; /tmp/info</pre><p>where /tmp/info is the file where you previously saved the debugging
+helper script <code class="literal">scripts/subdriver/gen-usbhid-subdriver.sh</code>.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>This only creates a driver code "stub" which needs to be further
+customized to be actually useful (see "Customization" below).</p></div><p>Use the script as follows:</p><pre class="literallayout">scripts/subdriver/gen-usbhid-subdriver.sh &lt; /tmp/info</pre><p>where <code class="literal">/tmp/info</code> is the file where you previously saved the debugging
 information.</p><p>This script prompts you for a name for the subdriver; use only letters
 and digits, and use natural capitalization such as "Belkin" (not
 "belkin" or "BELKIN"). The script may prompt you for additional
@@ -703,7 +703,7 @@ Read the NUT code, tracing through how each value gets processed looking
   for where the result deviates from expectations…
 </li><li class="listitem">
 Think, code, test, rinse, repeat, post a PR :)
-</li></ul></div><div class="example"><a id="idm1763"></a><p class="title"><strong>Example 1. Example direct use of REXX</strong></p><div class="example-contents"><p>Example adapted from <a class="ulink" href="https://github.com/networkupstools/nut/issues/2039" target="_top">https://github.com/networkupstools/nut/issues/2039</a></p><p>Run a NUT <code class="literal">usb-hid</code> driver with at least debug verbosity level 3 (<code class="literal">-DDD</code>)
+</li></ul></div><div class="example"><a id="idm1777"></a><p class="title"><strong>Example 1. Example direct use of REXX</strong></p><div class="example-contents"><p>Example adapted from <a class="ulink" href="https://github.com/networkupstools/nut/issues/2039" target="_top">https://github.com/networkupstools/nut/issues/2039</a></p><p>Run a NUT <code class="literal">usb-hid</code> driver with at least debug verbosity level 3 (<code class="literal">-DDD</code>)
 to get a report descriptor dump starting with a line like this:</p><pre class="screen">   3.670755     [D3] Report Descriptor: (909 bytes) =&gt; 05 84 09 04 a1 01 ...</pre><p>…and copy-paste those reported lines as input into <code class="literal">rexx</code> tool, which
 would generate a C source file including human-worded description and
 a relevant data structure:</p><pre class="screen">:; rexx rd.rex -d --hex 05 84 09 04 a1 01 85 01 09 18 ... 55 b1 02 c0 c0 c0
@@ -851,7 +851,7 @@ pointed by sysOID. For example:
 </p><pre class="literallayout">snmpwalk -On -c foobar W.X.Y.Z .1.3.6.1.4.1.705.1 &gt; snmpwalk-On.log</pre></li><li class="listitem"><p class="simpara">
 a textual SNMP walk (OIDs in string format) of the tree pointed by
 sysOID. For example:
-</p><pre class="literallayout">snmpwalk -Os -c foobar W.X.Y.Z .1.3.6.1.4.1.705.1 &gt; snmpwalk-Os.log</pre></li></ul></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>if the OID are only partially resolved (i.e, there are still parts
+</p><pre class="literallayout">snmpwalk -Os -c foobar W.X.Y.Z .1.3.6.1.4.1.705.1 &gt; snmpwalk-Os.log</pre></li></ul></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>If the OID are only partially resolved (i.e, there are still parts
 expressed in numeric form), then try using <span class="strong"><strong>-M</strong></span> to point your .mib file.</p></div><p>Then call the script using:</p><pre class="literallayout">$ gen-snmp-subdriver.sh -s &lt;sysOID value&gt; &lt;numeric SNMP walk&gt; &lt;string SNMP walk&gt;</pre><p>For example:</p><pre class="literallayout">$ gen-snmp-subdriver.sh -s .1.3.6.1.4.1.705.1 snmpwalk-On.log snmpwalk-Os.log</pre><p>This script prompts you for a name for the subdriver if you don’t provide it
 with <span class="strong"><strong>-n</strong></span>. Use only letters and digits, and use natural capitalization such
 as "Camel" (not "camel" or "CAMEL", apart if it natural). The script may
@@ -2459,4 +2459,4 @@ no 0 nibble is sent.</p></div></div><div class="section"><div class="titlepage">
 </li><li class="listitem">
 <code class="literal">nutdrv_qx_ablerex.</code>{<code class="literal">c</code>,<code class="literal">h</code>}
 </li></ul></div></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-02-05 09:06:50 -- Network UPS Tools 2.8.2.2040</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="developers.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="sock-protocol.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2025-02-08 14:48:04 -- Network UPS Tools 2.8.2.2132</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="developers.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="sock-protocol.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

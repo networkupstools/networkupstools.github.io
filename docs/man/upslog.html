@@ -781,6 +781,8 @@ Monitor the UPS using this format string.  Be sure to enclose
 <em>format</em> in quotes so your shell doesn&#8217;t split it up. Valid escapes
 within this string are:
 </p>
+<div class="openblock">
+<div class="content">
 <div class="dlist"><dl>
 <dt class="hdlist1">
 %%
@@ -803,7 +805,7 @@ Insert a single TAB character (like <code>printf("\t")</code>)
 </dt>
 <dd>
 <p>
-Insert the time with strftime formatting
+Insert the time with <code>strftime</code> formatting
 </p>
 </dd>
 <dt class="hdlist1">
@@ -811,8 +813,8 @@ Insert the time with strftime formatting
 </dt>
 <dd>
 <p>
-Insert the number of seconds, ala time_t.  This is now a
-10 digit number.
+Insert the number of seconds since the start of "Epoch",
+ala <code>time_t</code>.  This is now a 10-digit number.
 </p>
 </dd>
 <dt class="hdlist1">
@@ -820,7 +822,7 @@ Insert the number of seconds, ala time_t.  This is now a
 </dt>
 <dd>
 <p>
-insert the local hostname
+Insert the local hostname
 </p>
 </dd>
 <dt class="hdlist1">
@@ -828,7 +830,7 @@ insert the local hostname
 </dt>
 <dd>
 <p>
-insert the host of the UPS being monitored
+Insert the host of the UPS being monitored
 (the <code>&lt;system&gt;</code> part of your logging specification, e.g. <code>ups[@host[:port]]</code>)
 </p>
 </dd>
@@ -837,7 +839,7 @@ insert the host of the UPS being monitored
 </dt>
 <dd>
 <p>
-insert the pid of upslog
+Insert the PID of <code>upslog</code> itself
 </p>
 </dd>
 <dt class="hdlist1">
@@ -845,15 +847,14 @@ insert the pid of upslog
 </dt>
 <dd>
 <p>
-insert the value of variable varname
+Insert the value of variable varname
 (see NUT developer documentation chapter "Variables" on-line or in
 the <code>docs/nut-names.txt</code> file in sources of the NUT version you have
 installed for more details)
 </p>
 </dd>
 </dl></div>
-</dd>
-</dl></div>
+</div></div>
 <div class="paragraph"><p>The default format string is:</p></div>
 <div class="literalblock">
 <div class="content">
@@ -861,7 +862,7 @@ installed for more details)
 %VAR ups.load% [%VAR ups.status%] %VAR ups.temperature%
 %VAR input.frequency%</code></pre>
 </div></div>
-<div class="dlist"><dl>
+</dd>
 <dt class="hdlist1">
 <strong>-N</strong>
 </dt>
@@ -870,15 +871,24 @@ installed for more details)
 Prefix <code>%UPSHOST%%t</code> before the format string (whether default or custom).
 Useful when logging many systems into same target.
 </p>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">This option DOES NOT currently check if you already have <code>%UPSHOST%</code>
+in the formatting string (e.g. specified explicitly).</td>
+</tr></table>
+</div>
 </dd>
 <dt class="hdlist1">
 <strong>-i</strong> <em>interval</em>
 </dt>
 <dd>
 <p>
-Wait this many seconds between polls.  This defaults to 30 seconds.
+Wait this many seconds between polls.  This defaults to <em>30</em> seconds.
 </p>
-<div class="paragraph"><p>If you require tighter timing, you should write your own logger using
+<div class="paragraph"><p>If you require tighter timing, consider writing your own logger using
 the <a href="upsclient.html">upsclient(3)</a> library.</p></div>
 </dd>
 <dt class="hdlist1">
@@ -886,7 +896,7 @@ the <a href="upsclient.html">upsclient(3)</a> library.</p></div>
 </dt>
 <dd>
 <p>
-Exit after specified amount of updates.  Default is 0 for infinite loop
+Exit after specified amount of updates.  Default is <em>0</em> for infinite loop
 (until interrupted otherwise).
 </p>
 </dd>
@@ -897,18 +907,19 @@ Exit after specified amount of updates.  Default is 0 for infinite loop
 <p>
 Store the results in this file.
 </p>
-<div class="paragraph"><p>You can use "-" for stdout, but upslog will remain in the foreground
+<div class="paragraph"><p>You can use <code>-</code> for stdout, but <code>upslog</code> will remain in the foreground
 by default.</p></div>
 <div class="paragraph"><p>Requires that the <code>-s &lt;system&gt;</code> option is also used for the single-system
-logging.  Can be used with the <code>-m &lt;tuple&gt;</code>, will be added to the list.</p></div>
+logging.</p></div>
+<div class="paragraph"><p>Can be used with the <code>-m &lt;tuple&gt;</code>, will be added to the list.</p></div>
 </dd>
 <dt class="hdlist1">
 <strong>-D</strong>
 </dt>
 <dd>
 <p>
-Raise debugging verbosity level by one; upslog will remain in the foreground
-by default.
+Raise debugging verbosity level by one; <code>upslog</code> will remain in the
+foreground by default.
 </p>
 </dd>
 <dt class="hdlist1">
@@ -935,9 +946,11 @@ upslog will run in the background, regardless of logging target or debugging.
 Monitor this UPS.  The format for this option is
 <code>upsname[@hostname[:port]]</code>.  The default hostname is "localhost".
 </p>
-<div class="paragraph"><p>The upsname may be an asterisk <code>*</code> to query UPSes currently served by hostname.</p></div>
+<div class="paragraph"><p>The <em>upsname</em> may be an asterisk <code>*</code> to query UPSes currently served by
+<em>hostname</em>, and monitor each of them (into the same logging destination).</p></div>
 <div class="paragraph"><p>Requires that the <code>-l &lt;logfile&gt;</code> option is also used for the single-system
-logging.  Can be used with the <code>-m &lt;tuple&gt;</code>, will be added to the list.</p></div>
+logging.</p></div>
+<div class="paragraph"><p>Can be used with the <code>-m &lt;tuple&gt;</code>, will be added to the list.</p></div>
 </dd>
 <dt class="hdlist1">
 <strong>-m</strong> <em>tuple</em>
@@ -948,31 +961,28 @@ Monitor multiple UPSs (provided several instances of such option).
 </p>
 <div class="paragraph"><p>The format for this option is a tuple of UPS system and log file
 specification, separated by commas. An example would be:</p></div>
-</dd>
-</dl></div>
 <div class="listingblock">
 <div class="content">
 <pre><code>upsname@hostname:9999,/var/log/nut/cps.log</code></pre>
 </div></div>
-<div class="paragraph"><p>+
-The upsname may be an asterisk <code>*</code> to query UPSes currently served by hostname.</p></div>
-<div class="paragraph"><p>+
-Tuples may specify <code>-</code> as the logfile, to emit messages on <code>stdout</code>
+<div class="paragraph"><p>The <em>upsname</em> may be an asterisk <code>*</code> to query UPSes currently served by
+<em>hostname</em>, and monitor each of them (into the same logging destination).</p></div>
+<div class="paragraph"><p>Tuples may specify <code>-</code> as the logfile, to emit messages on <code>stdout</code>
 (e.g. to be collected by the system journal for services).</p></div>
-<div class="paragraph"><p>+
-Use of <code>stdout</code> via tuple-based logging specifications also
+<div class="paragraph"><p>Use of <code>stdout</code> via tuple-based logging specifications also
 implies that upslog will remain in the foreground by default.</p></div>
-<div class="dlist"><dl>
+</dd>
 <dt class="hdlist1">
 <strong>-u</strong> <em>username</em>
 </dt>
 <dd>
 <p>
-If started as root, upslog will <strong>setuid</strong>(2) to the user id
+If started as <em>root</em>, <code>upslog</code> will <ulink url="https://linux.die.net/man/2/setuid">setuid(2)</ulink> to the user id
 associated with <em>username</em> for security.
 </p>
 <div class="paragraph"><p>If <em>username</em> is not defined, it will use the value that was compiled into
-the program.  This defaults to "nobody", which is less than ideal.</p></div>
+the program.  This defaults to <em>nobody</em> (if not otherwise configured),
+which is far from ideal.</p></div>
 </dd>
 </dl></div>
 </div>
@@ -980,7 +990,7 @@ the program.  This defaults to "nobody", which is less than ideal.</p></div>
 <div class="sect1">
 <h2 id="_service_delays">SERVICE DELAYS</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>The interval value is merely the number given to <strong>sleep</strong>(3) after running
+<div class="paragraph"><p>The interval value is merely the number given to <ulink url="https://linux.die.net/man/3/sleep">sleep(3)</ulink> after running
 through the format string.  Therefore, a query will actually take slightly
 longer than the interval, depending on the speed of your system.</p></div>
 </div>
@@ -988,7 +998,7 @@ longer than the interval, depending on the speed of your system.</p></div>
 <div class="sect1">
 <h2 id="_on_demand_logging">ON-DEMAND LOGGING</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>Sending a USR1 signal to a running <strong>upslog</strong> process makes it wake from the
+<div class="paragraph"><p>Sending a <code>SIGUSR1</code> to a running <strong>upslog</strong> process makes it wake from the
 current sleep and log immediately.  This is useful when triggered from a
 <strong>upssched</strong> event trigger (e.g. <code>AT ONBATT</code> or <code>AT ONLINE</code>) to ensure that an
 entry always exists, even if the power goes away for a period of time shorter
@@ -1000,15 +1010,16 @@ than that specified by the <code>-i</code> argument.</p></div>
 <div class="sectionbody">
 <div class="paragraph"><p>It is possible and safe to specify the same log file (including <code>-</code> for stdout)
 in several tuples, and it would only be opened or closed once without conflict.</p></div>
-<div class="paragraph"><p>Consider adding <code>%UPSHOST%</code> to your custom formatting string to differentiate
-lines corresponding to different systems, when logging them to same target.</p></div>
+<div class="paragraph"><p>Consider adding <code>%UPSHOST%</code> to your custom formatting string (e.g. by using
+the <strong>-N</strong> command-line option), in order to easily differentiate lines
+corresponding to different systems, when logging them to the same target.</p></div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_log_rotation">LOG ROTATION</h2>
 <div class="sectionbody">
 <div class="paragraph"><p><strong>upslog</strong> writes its PID to <code>upslog.pid</code>, and will reopen the log file if you
-send it a SIGHUP.  This allows it to keep running when the log is rotated
+send it a <code>SIGHUP</code>.  This allows it to keep running when the log is rotated
 by an external program.</p></div>
 </div>
 </div>
@@ -1017,11 +1028,14 @@ by an external program.</p></div>
 <div class="sectionbody">
 <div class="paragraph"><p>Historically this daemon supported logging of data for one UPS system per run
 (specified by the <code>-s</code> option) into one log file name or <code>stdout</code> (specified
-by the <code>-l</code> option).  Since NUT v2.8.1 it allowed to log several devices (each
-logged into its destination) as specified by multiple <code>-m tuple</code> options.
-The two modes were effectively exclusive of each other (single-UPS options
-were ignored if tuples are also provided) until NUT v2.8.3, but single-UPS
-options are added to the list of tuples since that release.</p></div>
+by the <code>-l</code> option).</p></div>
+<div class="paragraph"><p>Since NUT v2.8.1 it allowed to log several devices (each logged into its
+individual destination file or common <code>stdout</code>) as specified by multiple
+<code>-m tuple</code> options.  But the two modes were effectively exclusive of each
+other (single-UPS options were ignored if tuples are also provided).</p></div>
+<div class="paragraph"><p>Since NUT v2.8.3, the single-UPS options are added to the list of tuples,
+so both legacy and new options can be reliably used to monitor multiple
+devices in the same run.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -1046,7 +1060,7 @@ options are added to the list of tuples since that release.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-05 08:47:28 UTC -- Network UPS Tools 2.8.2.2040
+Last updated 2025-02-08 14:47:40 UTC -- Network UPS Tools 2.8.2.2132
 </div>
 </div>
 </body>

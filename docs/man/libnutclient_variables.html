@@ -753,52 +753,34 @@ library</p></div>
 <div class="sect1">
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
-<div class="literalblock">
+<div class="listingblock">
 <div class="content">
-<pre><code>#include &lt;nutclient.h&gt;</code></pre>
-</div></div>
-<div class="literalblock">
-<div class="content">
-<pre><code>typedef void* NUTCLIENT_t;</code></pre>
-</div></div>
-<div class="literalblock">
-<div class="content">
-<pre><code>typedef char** strarr;</code></pre>
-</div></div>
-<div class="literalblock">
-<div class="content">
-<pre><code>strarr nutclient_get_device_variables(NUTCLIENT_t client,
-        const char* dev);</code></pre>
-</div></div>
-<div class="literalblock">
-<div class="content">
-<pre><code>strarr nutclient_get_device_rw_variables(NUTCLIENT_t client,
-        const char* dev);</code></pre>
-</div></div>
-<div class="literalblock">
-<div class="content">
-<pre><code>int nutclient_has_device_variable(NUTCLIENT_t client,
-        const char* dev, const char* var);</code></pre>
-</div></div>
-<div class="literalblock">
-<div class="content">
-<pre><code>char* nutclient_get_device_variable_description(NUTCLIENT_t client,
-        const char* dev, const char* var);</code></pre>
-</div></div>
-<div class="literalblock">
-<div class="content">
-<pre><code>strarr nutclient_get_device_variable_values(NUTCLIENT_t client,
-        const char* dev, const char* var);</code></pre>
-</div></div>
-<div class="literalblock">
-<div class="content">
-<pre><code>void nutclient_set_device_variable_value(NUTCLIENT_t client,
-        const char* dev, const char* var, const char* value);</code></pre>
-</div></div>
-<div class="literalblock">
-<div class="content">
-<pre><code>void nutclient_set_device_variable_values(NUTCLIENT_t client,
-        const char* dev, const char* var, const strarr values);</code></pre>
+<pre><code>        #include &lt;nutclient.h&gt;
+
+        typedef void* NUTCLIENT_t;
+
+        typedef char** strarr;
+
+        strarr nutclient_get_device_variables(NUTCLIENT_t client,
+                const char* dev);
+
+        strarr nutclient_get_device_rw_variables(NUTCLIENT_t client,
+                const char* dev);
+
+        int nutclient_has_device_variable(NUTCLIENT_t client,
+                const char* dev, const char* var);
+
+        char* nutclient_get_device_variable_description(NUTCLIENT_t client,
+                const char* dev, const char* var);
+
+        strarr nutclient_get_device_variable_values(NUTCLIENT_t client,
+                const char* dev, const char* var);
+
+        void nutclient_set_device_variable_value(NUTCLIENT_t client,
+                const char* dev, const char* var, const char* value);
+
+        void nutclient_set_device_variable_values(NUTCLIENT_t client,
+                const char* dev, const char* var, const strarr values);</code></pre>
 </div></div>
 </div>
 </div>
@@ -806,25 +788,58 @@ library</p></div>
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>These functions allow to manage variables of devices.</p></div>
-<div class="paragraph"><p>The <strong>nutclient_get_device_variables()</strong> function retrieves the list
-of variables names for a device.
-The returned strarr must be freed by <em>strarr_free</em>.</p></div>
-<div class="paragraph"><p>The <strong>nutclient_get_device_rw_variables</strong> function retrieves the list
-of read-write variables names for a device.
-The returned strarr must be freed by <em>strarr_free</em>.</p></div>
-<div class="paragraph"><p>The <strong>nutclient_has_device_variable</strong> function tests if the specified
-variable is supported by the device.
-Return 1 is supported and 0 if not.</p></div>
-<div class="paragraph"><p>The <strong>nutclient_get_device_variable_description</strong> function retrieves
-the variable description, if any.
-The returned string must be freed.</p></div>
-<div class="paragraph"><p>The <strong>nutclient_get_device_variable_values</strong> returns variable values
-(generally only one).
-The returned strarr must be freed by <em>strarr_free</em>.</p></div>
-<div class="paragraph"><p>The <strong>nutclient_set_device_variable_value</strong> intends to set the value
-of the specified variable.</p></div>
-<div class="paragraph"><p>The <strong>nutclient_set_device_variable_values</strong> intends to set multiple
-values of the specified variable.</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+The <strong>nutclient_get_device_variables()</strong> function retrieves the list
+  of variables names for a device.
+</p>
+<div class="paragraph"><p>The returned strarr must be freed by <em>strarr_free</em>
+(see <a href="libnutclient_general.html">libnutclient_general(3)</a>).</p></div>
+</li>
+<li>
+<p>
+The <strong>nutclient_get_device_rw_variables</strong> function retrieves the list
+  of read-write variables names for a device.
+</p>
+<div class="paragraph"><p>The returned strarr must be freed by <em>strarr_free</em>
+(see <a href="libnutclient_general.html">libnutclient_general(3)</a>).</p></div>
+</li>
+<li>
+<p>
+The <strong>nutclient_has_device_variable</strong> function tests if the specified
+  variable is supported by the device.
+</p>
+<div class="paragraph"><p>Return <em>1</em> if supported and <em>0</em> if not.</p></div>
+</li>
+<li>
+<p>
+The <strong>nutclient_get_device_variable_description</strong> function retrieves
+  the variable description, if any.
+</p>
+<div class="paragraph"><p>The returned string must be freed by <ulink url="https://linux.die.net/man/3/free">free(3)</ulink>.</p></div>
+</li>
+<li>
+<p>
+The <strong>nutclient_get_device_variable_values</strong> returns variable values
+  (generally only one).
+</p>
+<div class="paragraph"><p>The returned strarr must be freed by <em>strarr_free</em>
+(see <a href="libnutclient_general.html">libnutclient_general(3)</a>).</p></div>
+</li>
+<li>
+<p>
+The <strong>nutclient_set_device_variable_value</strong> intends to set the value
+  of the specified variable.
+</p>
+</li>
+<li>
+<p>
+The <strong>nutclient_set_device_variable_values</strong> intends to set multiple
+  values of the specified variable.
+</p>
+</li>
+</ul></div>
 <div class="paragraph"><p>Common arguments:</p></div>
 <div class="ulist"><ul>
 <li>
@@ -862,7 +877,7 @@ values of the specified variable.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-05 08:47:28 UTC -- Network UPS Tools 2.8.2.2040
+Last updated 2025-02-08 14:47:40 UTC -- Network UPS Tools 2.8.2.2132
 </div>
 </div>
 </body>
