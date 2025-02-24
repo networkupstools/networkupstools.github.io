@@ -102,6 +102,14 @@ Handling of per-UPS <code class="literal">ALARM</code> state was introduced to <
   other devices using that MIB (negatively, if the older mappings were
   indeed correct for any practical cases, and were not a typo). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2803" target="_top">#2803</a>]
 </li><li class="listitem">
+mge-utalk driver will no longer set non-standard status values <code class="literal">COMMFAULT</code>
+  and <code class="literal">ALARM</code> (for a specific status bit); instead, it will set modern
+  <code class="literal">ups.alarm</code> with values <code class="literal">COMMFAULT</code> and/or <code class="literal">DEVICEALARM</code> (and raise
+  an <code class="literal">ALARM</code> in <code class="literal">ups.status</code> for either, as standard alarms go). If your
+  clients (e.g. custom parsing scripts) for devices supported by this driver
+  depended on those non-standard tokens in <code class="literal">ups.status</code>, they would have to
+  be updated to handle the new token values in <code class="literal">ups.alarm</code> instead. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2708" target="_top">#2708</a>]
+</li><li class="listitem">
 Added support for <code class="literal">lbrb_log_delay_sec=N</code> setting to delay propagation of
   <code class="literal">LB</code> or <code class="literal">LB+RB</code> state (buggy with APC BXnnnnMI devices/firmwares issued
   circa 2023-2024 which flood the logs with spurious LOWBATT and REPLACEBATT
@@ -741,4 +749,4 @@ The newapc driver has been renamed to apcsmart.  If you previously
   used newapc, make sure you delete the old binary and fix your
   ups.conf.  Otherwise, you may run the old driver from 1.4.
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_file_trimmed_here_on_changes_from_1_2_2_to_1_4_0"></a>3.28. File trimmed here on changes from 1.2.2 to 1.4.0</h3></div></div></div><p>For information before this point, start with version 2.4.1 and work back.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-02-14 19:24:02 -- Network UPS Tools 2.8.2.2155</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="NUT_Release_Notes.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="Project_History.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2025-02-24 11:45:06 -- Network UPS Tools 2.8.2.2155</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="NUT_Release_Notes.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="Project_History.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
