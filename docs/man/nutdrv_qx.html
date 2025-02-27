@@ -771,8 +771,8 @@ refers to this large family of similar dialects as the <em>Megatec Q*</em> or
 <em>Megatec Qx</em> protocol family.</p></div>
 <div class="paragraph"><p>The <strong>nutdrv_qx</strong> driver is known to work with various UPSes from
 <em>Armac</em>, <em>Blazer</em>, <em>Energy Sistem</em>, <em>Fenton Technologies</em>, <em>General Electric</em>,
-<em>Hunnox</em>, <em>Masterguard</em>, <em>Mustek</em>, <em>Powercool</em>, <em>Voltronic Power</em>, <em>SKE</em>
-(rebranded by many, many&#8201;&#8212;&#8201;have I said many?&#8201;&#8212;&#8201;others&#8230;</p></div>
+<em>Gtec</em>, <em>Hunnox</em>, <em>Masterguard</em>, <em>Mustek</em>, <em>Powercool</em>, <em>Voltronic Power</em>,
+<em>SKE</em> (rebranded by many, many&#8201;&#8212;&#8201;have I said many?&#8201;&#8212;&#8201;others&#8230;</p></div>
 <div class="paragraph"><p>Long story short: if your UPS came with a software called <em>Viewpower</em>,
 chances are high that it works with this driver with one of the
 <a href="#_extra_arguments"><em>voltronic*</em> protocols or with the <em>mecer</em> one</a>),
@@ -838,7 +838,7 @@ If you set stayoff in <a href="ups.conf.html">ups.conf(5)</a> when FSD arises th
 <dd>
 <p>
 Skip autodetection of the protocol to use and only use the one specified.
-Supported values: <em>bestups</em>, <em>hunnox</em>, <em>innovart31</em>, <em>masterguard</em>, <em>mecer</em>, <em>megatec</em>, <em>megatec/old</em>, <em>mustek</em>, <em>q1</em>, <em>q2</em>, <em>q6</em>, <em>voltronic</em>, <em>voltronic-qs</em>, <em>voltronic-qs-hex</em> and <em>zinto</em>.
+Supported values: <em>bestups</em>, <em>gtec</em>, <em>hunnox</em>, <em>innovart31</em>, <em>masterguard</em>, <em>mecer</em>, <em>megatec</em>, <em>megatec/old</em>, <em>mustek</em>, <em>q1</em>, <em>q2</em>, <em>q6</em>, <em>voltronic</em>, <em>voltronic-qs</em>, <em>voltronic-qs-hex</em> and <em>zinto</em>.
 </p>
 <div class="paragraph"><p>Run the driver program with the <code>--help</code> option to see the exact list of
 <code>protocol</code> values it would currently recognize.</p></div>
@@ -1599,7 +1599,7 @@ of the library, see e.g.:</p></div>
 <dd>
 <p>
 Select a serial-over-USB subdriver to use.
-You have a choice between <strong>cypress</strong>, <strong>fabula</strong>, <strong>fuji</strong>, <strong>hunnox</strong>, <strong>ippon</strong>, <strong>krauler</strong>, <strong>phoenix</strong>, <strong>phoenixtec</strong>, <strong>sgs</strong>, <strong>snr</strong>,  <strong>armac</strong> and <strong>ablerex</strong>.
+You have a choice between <strong>ablerex</strong>, <strong>armac</strong>, <strong>cypress</strong>, <strong>fabula</strong>, <strong>fuji</strong>, <strong>gtec</strong>, <strong>hunnox</strong>, <strong>ippon</strong>, <strong>krauler</strong>, <strong>phoenix</strong>, <strong>phoenixtec</strong>, <strong>sgs</strong> and <strong>snr</strong>.
 </p>
 <div class="paragraph"><p>Run the driver program with the <code>--help</code> option to see the exact list of
 <code>subdriver</code> values it would currently recognize.</p></div>
@@ -1655,6 +1655,66 @@ the older standalone <code>richcomm_usb</code> driver.
 This subdriver, meant to be used with the <em>megatec</em> protocol, does <strong>not</strong> support the various <strong>test.battery</strong> commands.
 Plus, the <strong>shutdown.return</strong> command ignores the values set in <em>ups.delay.start</em>/<strong>ondelay</strong> and makes the UPS turn on the load as soon as power is back.
 </p>
+</dd>
+<dt class="hdlist1">
+<strong><em>gtec</em> subdriver</strong>
+</dt>
+<dd>
+<p>
+Currently, the Gtec specific support is only known to work with USB devices
+(tested with a Gtec ZP120N), and was not seen with Serial port.
+</p>
+<div class="paragraph"><p>This mode is not automatically detected, and should be enabled manually in
+your <em>ups.conf</em>, e.g.:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>[gtec-ups]
+    driver = "nutdrv_qx"
+    port = "auto"
+    subdriver = "gtec"
+    protocol = "gtec"</code></pre>
+</div></div>
+<div class="paragraph"><p>Other subdrivers and protocol implementations (including <a href="blazer_usb.html">blazer_usb(8)</a>)
+sort of work, but both have two problems:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+They use the simple "Q1" query, which doesn&#8217;t report the result of
+  the latest battery test.
+</p>
+<div class="ulist"><ul>
+<li>
+<p>
+For some reason the UPS reports normal battery voltage even when
+    the battery is completely disconnected.
+    So you won&#8217;t know the battery is dead until a power failure.
+</p>
+</li>
+<li>
+<p>
+This driver sends the more advanced "Q4" request instead.
+    Here the answer includes status letters with more information
+    than the Q1 binary flags, including battery status.
+</p>
+</li>
+</ul></div>
+</li>
+<li>
+<p>
+USB reply is read in 8-byte chunks, which causes the UPS to disconnect
+  from USB. The UPS reconnects in a second, but it still breaks the
+  initialization of <code>nutdrv_qx</code>, where the query is sent twice in a
+  short time (unlike <code>blazer_usb</code>).
+</p>
+<div class="ulist"><ul>
+<li>
+<p>
+The solution is simple: read the whole reply at once.
+</p>
+</li>
+</ul></div>
+</li>
+</ul></div>
 </dd>
 <dt class="hdlist1">
 <strong><em>hunnox</em> subdriver</strong>
@@ -2692,7 +2752,7 @@ The NUT HCL: <a href="https://www.networkupstools.org/stable-hcl.html">https://w
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-02-25 10:01:48 UTC -- Network UPS Tools 2.8.2.2211
+Last updated 2025-02-27 09:25:01 UTC -- Network UPS Tools 2.8.2.2229
 </div>
 </div>
 </body>
