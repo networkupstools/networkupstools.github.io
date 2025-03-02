@@ -101,7 +101,28 @@ SMF manifests and systemd units now refer to man pages and their online
      (development or release snapshot); many programs now display such
      references in their command-line usage help, method <code class="literal">suggest_doc_links()</code>
      was introduced for this purpose. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/722" target="_top">issue #722</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/2733" target="_top">PR #2733</a>]
-</li></ul></div></li><li class="listitem">
+</li></ul></div></li><li class="listitem"><p class="simpara">
+A technologically and practically interesting revamp of NUT mesh of
+   <a class="ulink" href="https://www.gnu.org/software/automake/" target="_top">automake</a> (<code class="literal">Makefile.am</code>)
+   recipes was completed, allowing for a more parallelizable build routine
+   on multi-CPU machines — utilizing more cores and completing in less
+   "wall-clock" time that the standard <code class="literal">SUBDIRS</code> driven approach — when
+   running <code class="literal">make -j (N)</code> from the project root directory to build everything
+   enabled by the <code class="literal">configure</code> script.
+</p><p class="simpara">This was tested with several (GNU, BSD, Sun) implementations of the
+   "make" program on the few dozen platforms that NUT CI farm tests on.
+   Notably, GNU make 4.x and newer seems to process parallel high-level
+   goals and sub-<code class="literal">make</code> runs better than the competition (including GNU
+   make 3.x).</p><p class="simpara">It is not a radical rewrite like some other research suggested, and so retains
+   the general structure and certain benefits and flexibility of that standard
+   <code class="literal">automake</code> approach, including developer build workflows with a bespoke
+   <code class="literal">Makefile</code> in every significant directory.  This also retains (and builds
+   upon) the benefits of older work done in NUT, for builds in one directory
+   to depend on libraries and other artifacts built (once) in another.</p><p class="simpara">Overall, NUT CI farm build times got 25%+ shorter (which is important as
+   some scenarios had hit the 1-hour timeout imposed by providers of free
+   CI hosting coupled with the weak machines provided in their free layer),
+   and we suppose this is an interesting case for other projects to draw
+   inspiration from for their recipe refactoring. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/2825" target="_top">PR #2825</a>]</p></li><li class="listitem">
 the <code class="literal">upsnotify()</code> common code introduced in recent NUT releases (integrating
    with service management frameworks, etc.) was a bit cryptic when it reported
    a <span class="strong"><strong>failure to notify</strong></span> (e.g. when not running as a service currently), fixed
@@ -3961,4 +3982,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.32. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-03-01 12:00:15 -- Network UPS Tools 2.8.2.2229</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2025-03-02 17:44:23 -- Network UPS Tools 2.8.2.2321</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

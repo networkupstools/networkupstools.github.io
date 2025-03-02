@@ -2,7 +2,15 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>H.4. Optional features</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><link rel="home" href="index.html" title="Network UPS Tools User Manual" /><link rel="up" href="Configure_options.html" title="H. Configure options" /><link rel="prev" href="_driver_selection.html" title="H.3. Driver selection" /><link rel="next" href="_other_configuration_options.html" title="H.5. Other configuration options" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="_driver_selection.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="_other_configuration_options.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_optional_features"></a>H.4. Optional features</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_cgi_client_interface"></a>CGI client interface</h4></div></div></div><pre class="literallayout">--with-cgi (default: no)</pre><p>Build and install the optional CGI programs, HTML files, and sample
 CGI configuration files. This is not enabled by default, as they
 are only useful on web servers. See <a class="ulink" href="data/html/README" target="_top">data/html/README</a> for additional
-information on how to set up CGI programs.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_pretty_documentation_and_man_pages"></a>Pretty documentation and man pages</h4></div></div></div><pre class="literallayout">--with-docs=&lt;output-format(s)&gt;  (default: no)
+information on how to set up CGI programs.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_nut_scanner_tool"></a>NUT Scanner tool</h4></div></div></div><pre class="literallayout">--with-nut-scanner (default: auto)</pre><p>Build and install the optional <a class="ulink" href="../man/nut-scanner.html" target="_top">nut-scanner(8)</a> tool to discover some
+types of UPS or ePDU devices on locally or remotely connected media (such as
+Serial, USB, SNMP, IPMI, NetXML), as well as NUT data servers (by Avahi/mDNS
+broadcasts or "old" NUT port polling) and simulation device configurations
+that can be relayed by a local <a class="ulink" href="../man/dummy-ups.html" target="_top">dummy-ups(8)</a> driver instance.</p><p>Many of the features depend on third-party libraries that are loosely linked
+at run-time using libltdl, and due to that, the build, delivery and use of the
+tool does not depend on <span class="strong"><strong>all</strong></span> of them being available in the final deployment.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_nut_configuration_tool"></a>NUT Configuration tool</h4></div></div></div><pre class="literallayout">--with-nutconf (default: auto)</pre><p>Build and install the optional <a class="ulink" href="../man/nutconf.html" target="_top">nutconf(8)</a> tool to create and manipulate
+NUT configuration files.  It also optionally supports device scanning, using
+the <a class="ulink" href="../man/nutscan.html" target="_top">nutscan(3)</a> library (if built), to suggest configuration of devices.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_pretty_documentation_and_man_pages"></a>Pretty documentation and man pages</h4></div></div></div><pre class="literallayout">--with-docs=&lt;output-format(s)&gt;  (default: no)
 --with-doc=&lt;output-format(s)&gt;  (default: no)</pre><p>Build and install NUT documentation file(s). Note: <code class="literal">--with-doc</code> is a legacy
 NUT option, and <code class="literal">--with-docs</code> is an alias that matches the more wide-spread
 equivalent in different packaging frameworks and projects.</p><p>This feature requires AsciiDoc 8.6.3 or newer (see <a class="ulink" href="https://asciidoc.org" target="_top">https://asciidoc.org</a>).</p><p>The possible documentation type values are:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
@@ -121,7 +129,28 @@ If the preferred Python version in the deployed system changes later (so the
 <code class="literal">python2</code> symlink for this example would point elsewhere) the module import
 would become not resolvable for such consumers, until it is installed into
 that other Python’s "site-packages" location.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_development_files"></a>Development files</h4></div></div></div><pre class="literallayout">--with-dev (default: no)</pre><p>Build and install the upsclient and nutclient library and header files, to
-build further projects against NUT (such as wmNUT client and many others).</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_options_for_developers"></a>Options for developers</h4></div></div></div><pre class="literallayout">--enable-spellcheck (default: auto)</pre><p>Activate recipes for documentation source file spelling checks with <code class="literal">aspell</code>
+build further projects against NUT (such as wmNUT client and many others).</p><p>Also delivers <code class="literal">libnutscan</code> library and header files, if <code class="literal">--with-nut-scanner</code>
+is enabled.</p><p>Disabled development file delivery, in particular, disables installation of
+static libraries.</p><pre class="literallayout">--with-dev-libnutconf (yes/no/auto, default: no)</pre><p>Build and install the nutconf library and header files, to build further
+projects against NUT (especially those that need to set it up).  This is
+currently not automatically tied into either <code class="literal">--with-dev</code> nor <code class="literal">--with-nutconf</code>
+(note below on <code class="literal">--with-all</code>), because the tool and library are experimental
+and the API may yet undergo significant changes in the coming years.</p><p>It is more recommended to use the CLI tool as a presumably more stable API
+for third-party integrations, than the library directly.</p><p>This feature may however be enabled or disabled implicitly, using
+<code class="literal">--with-all(=yes/no/auto)</code> request, based on a combination of
+<code class="literal">--with-nutconf</code> and <code class="literal">--with-dev</code> options:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+if <code class="literal">--without-all</code>, default to set <code class="literal">--with-dev-libnutconf=no</code>; otherwise…
+</li><li class="listitem">
+if either <code class="literal">--without-dev</code> or <code class="literal">--without-nutconf</code>,
+  default to set <code class="literal">--with-dev-libnutconf=no</code>; otherwise…
+</li><li class="listitem">
+if either <code class="literal">--without-dev=auto</code> and/or <code class="literal">--without-nutconf=auto</code>,
+  default to set <code class="literal">--with-dev-libnutconf=auto</code>; otherwise…
+</li><li class="listitem">
+if both <code class="literal">--with-dev</code> and <code class="literal">--with-nutconf</code>,
+  default to set <code class="literal">--with-dev-libnutconf=yes</code>.
+</li></ul></div><p>Requires C++11 support to be enabled (available in compiler, not neutered
+by explicit selection of an older standard).</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_options_for_developers"></a>Options for developers</h4></div></div></div><pre class="literallayout">--enable-spellcheck (default: auto)</pre><p>Activate recipes for documentation source file spelling checks with <code class="literal">aspell</code>
 tool. Default behavior depends on availability of the tool, so if present — it would run for <code class="literal">make check</code> by default, to facilitate quicker acceptance
 of contributions.</p><pre class="literallayout">--enable-check-NIT (default: no)</pre><p>Add <code class="literal">make check-NIT</code> to default activity of <code class="literal">make check</code> to run the
 NUT Integration Testing suite. This is potentially dangerous (e.g. due
@@ -148,4 +177,4 @@ Core and Client parts.</p></div><div class="section"><div class="titlepage"><div
 dynamically, based on requested scanning options. This allows to build and
 package the tool without requiring all possible dependencies to be installed
 in each run-time environment.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-03-01 12:00:15 -- Network UPS Tools 2.8.2.2229</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_driver_selection.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="Configure_options.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="_other_configuration_options.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2025-03-02 17:44:23 -- Network UPS Tools 2.8.2.2321</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_driver_selection.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="Configure_options.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="_other_configuration_options.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
