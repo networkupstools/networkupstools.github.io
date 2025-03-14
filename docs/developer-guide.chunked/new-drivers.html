@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>4. Creating a new driver to support another device</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><link rel="home" href="index.html" title="Network UPS Tools Developer Guide" /><link rel="up" href="index.html" title="Network UPS Tools Developer Guide" /><link rel="prev" href="developers.html" title="3. Information for developers" /><link rel="next" href="sock-protocol.html" title="5. Driver/server socket protocol" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="developers.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="sock-protocol.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="new-drivers"></a>4. Creating a new driver to support another device</h2></div></div></div><p>This chapter will present the process of creating a new driver to support
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>5. Creating a new driver to support another device</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><link rel="home" href="index.html" title="Network UPS Tools Developer Guide" /><link rel="up" href="index.html" title="Network UPS Tools Developer Guide" /><link rel="prev" href="developers.html" title="4. Information for developers" /><link rel="next" href="sock-protocol.html" title="6. Driver/server socket protocol" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="developers.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="sock-protocol.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="new-drivers"></a>5. Creating a new driver to support another device</h2></div></div></div><p>This chapter will present the process of creating a new driver to support
 another device.</p><p>Since NUT already supports many major power device protocols through
 several generic drivers (<code class="literal">genericups</code>, <code class="literal">usbhid-ups</code>, <code class="literal">snmp-ups</code>, <code class="literal">blazer_*</code>
 and <code class="literal">nutdrv_qx</code>), creation of new drivers has become rare.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>We have yet to unify modbus drivers under same umbrella like <code class="literal">nutdrv_qx</code>
 covering the Megatec Qx protocol family.</p></div><p>So most of the time, this process will be limited to completing one of these
-generic drivers.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_smart_vs_contact_closure"></a>4.1. Smart vs. Contact-closure</h3></div></div></div><p>If your UPS only does contact closure readings over an RS-232 serial port, then
-go straight to the <a class="link" href="new-drivers.html#contact-closure" title="4.22. Contact closure hardware information">Contact closure hardware</a> chapter for
+generic drivers.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_smart_vs_contact_closure"></a>5.1. Smart vs. Contact-closure</h3></div></div></div><p>If your UPS only does contact closure readings over an RS-232 serial port, then
+go straight to the <a class="link" href="new-drivers.html#contact-closure" title="5.22. Contact closure hardware information">Contact closure hardware</a> chapter for
 information on adding support.  It’s a lot easier to add a few lines to a
-header file than it is to create a whole new driver.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_serial_vs_usb_vs_snmp_and_more"></a>4.2. Serial vs. USB vs. SNMP and more</h3></div></div></div><p>If your UPS connects to your computer via a USB port, then it most likely
+header file than it is to create a whole new driver.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_serial_vs_usb_vs_snmp_and_more"></a>5.2. Serial vs. USB vs. SNMP and more</h3></div></div></div><p>If your UPS connects to your computer via a USB port, then it most likely
 appears as a USB HID device (this is the simplest way for the vendor to write
 a Windows control program for it). What comes next depends on whether the
 vendor implemented the HID PDC (Power Device Class) specification, or simply
@@ -16,20 +16,20 @@ used the HID protocol to transport serial data to the UPS microcontroller.</p><p
 the UPS probably has a glorified USB-to-serial converter built in. Since the
 query strings often start with the letter <code class="literal">Q</code>, this family of protocols is
 often referred to as <code class="literal">Q*</code> in the NUT documentation. See the
-<a class="link" href="new-drivers.html#nutdrv_qx-subdrivers" title="4.25. How to make a new subdriver to support another Q* UPS">Q* UPS</a> chapter for more details.</p><p>Otherwise, if the HID Descriptor is longer, you can go to the
-<a class="link" href="new-drivers.html#hid-subdrivers" title="4.23. How to make a new subdriver to support another USB/HID UPS">HID subdrivers</a> chapter. You can probably add support for
+<a class="link" href="new-drivers.html#nutdrv_qx-subdrivers" title="5.25. How to make a new subdriver to support another Q* UPS">Q* UPS</a> chapter for more details.</p><p>Otherwise, if the HID Descriptor is longer, you can go to the
+<a class="link" href="new-drivers.html#hid-subdrivers" title="5.23. How to make a new subdriver to support another USB/HID UPS">HID subdrivers</a> chapter. You can probably add support for
 your device by writing a new subdriver to the existing usbhid-ups driver,
 which is easier (and more maintainable) than writing an entire new driver.</p><p>If your USB UPS does not appear to fall into either of these two categories,
 feel free to contact the <code class="literal">nut-upsdev</code> mailing list with details of your
 device.</p><p>Similarly, if your UPS connects to your computer via an SNMP network
 card, you can probably add support for your device by adding a new
 subdriver to the existing snmp-ups driver. Instructions are provided
-in the <a class="link" href="new-drivers.html#snmp-subdrivers" title="4.24. How to make a new subdriver to support another SNMP device">SNMP subdrivers</a> chapter.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_overall_concept"></a>4.3. Overall concept</h3></div></div></div><p>The basic design of drivers is simple.  <code class="literal">main.c</code> handles most of the work
+in the <a class="link" href="new-drivers.html#snmp-subdrivers" title="5.24. How to make a new subdriver to support another SNMP device">SNMP subdrivers</a> chapter.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_overall_concept"></a>5.3. Overall concept</h3></div></div></div><p>The basic design of drivers is simple.  <code class="literal">main.c</code> handles most of the work
 for you.  You don’t have to worry about arguments, config files, or
 anything else like that.  Your only concern is talking to the hardware
-and providing data to the outside world.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_skeleton_driver"></a>4.4. Skeleton driver</h3></div></div></div><p>Familiarize yourself with the design of <code class="literal">skel.c</code> in the drivers directory.
+and providing data to the outside world.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_skeleton_driver"></a>5.4. Skeleton driver</h3></div></div></div><p>Familiarize yourself with the design of <code class="literal">skel.c</code> in the drivers directory.
 It shows a few examples of the functions that <code class="literal">main.c</code> will call to obtain
-updated information from the hardware.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_essential_structure"></a>4.5. Essential structure</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_upsdrv_info_t"></a>upsdrv_info_t</h4></div></div></div><p>This structure tracks several description information about the driver:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+updated information from the hardware.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_essential_structure"></a>5.5. Essential structure</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_upsdrv_info_t"></a>upsdrv_info_t</h4></div></div></div><p>This structure tracks several description information about the driver:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 <span class="strong"><strong>name</strong></span>:    the driver full name, for banner printing and "driver.name" variable.
 </li><li class="listitem">
 <span class="strong"><strong>version</strong></span>: the driver’s own version. For sub driver information, refer below
@@ -63,7 +63,7 @@ DRV_COMPLETE: this is the gold level! It implies that 100 % of
 </li></ul></div></li><li class="listitem">
 <span class="strong"><strong>subdrv_info</strong></span>: array of upsdrv_info_t for sub driver(s) information. For
               example, this is used by usbhid-ups.
-</li></ul></div><p>This information is currently used for the startup banner printing and tests.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_essential_functions"></a>4.6. Essential functions</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_upsdrv_initups"></a>upsdrv_initups</h4></div></div></div><p>Open the port (<code class="literal">device_path</code>) and do any low-level things that it may need
+</li></ul></div><p>This information is currently used for the startup banner printing and tests.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_essential_functions"></a>5.6. Essential functions</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_upsdrv_initups"></a>upsdrv_initups</h4></div></div></div><p>Open the port (<code class="literal">device_path</code>) and do any low-level things that it may need
 to start using that port.  If you have to set DTR or RTS on a serial
 port, do it here.</p><p>Don’t do any sort of hardware detection here, since you may be going
 into upsdrv_shutdown next.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_upsdrv_initinfo"></a>upsdrv_initinfo</h4></div></div></div><p>Try to detect what kind of UPS is out there, if any, assuming that’s
@@ -96,14 +96,14 @@ should it call <code class="literal">fatalx()</code> nor <code class="literal">f
 <code class="literal">set_exit_flag(N)</code> if required, using values <code class="literal">EF_EXIT_FAILURE</code> (<code class="literal">-1</code>)
 for eventual <code class="literal">exit(EXIT_FAILURE)</code> and <code class="literal">EF_EXIT_SUCCESS</code> (<code class="literal">-2</code>) for
 <code class="literal">exit(EXIT_SUCCESS)</code>, which would be handled in the standard driver
-loop or in <code class="literal">forceshutdown()</code> method of <code class="literal">main.c</code>.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_data_types"></a>4.7. Data types</h3></div></div></div><p>To be of any use, you must supply data in <code class="literal">ups.status</code>.  That is the
+loop or in <code class="literal">forceshutdown()</code> method of <code class="literal">main.c</code>.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_data_types"></a>5.7. Data types</h3></div></div></div><p>To be of any use, you must supply data in <code class="literal">ups.status</code>.  That is the
 minimum needed to let upsmon do its job.  Whenever possible, you should
 also provide anything else that can be monitored by the driver.  Some
 obvious things are the manufacturer name and model name, voltage data,
 and so on.</p><p>If you can’t figure out some value automatically, use the <code class="literal">ups.conf</code>
 options to let the user tell you.  This can be useful when a driver
 needs to support many similar hardware models, but can’t probe to see
-what is actually attached.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_manipulating_the_data"></a>4.8. Manipulating the data</h3></div></div></div><p>All status data lives in structures that are managed by the dstate
+what is actually attached.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_manipulating_the_data"></a>5.8. Manipulating the data</h3></div></div></div><p>All status data lives in structures that are managed by the dstate
 functions.  All access and modifications must happen through those
 functions.  Any other changes are forbidden, as they will not pushed out
 as updates to things like upsd.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_adding_variables"></a>Adding variables</h4></div></div></div><pre class="literallayout">dstate_setinfo("ups.model", "Mega-Zapper 1500");</pre><p>Many of these functions take format strings, so you can build the new
@@ -152,7 +152,7 @@ the <code class="literal">OL</code> and <code class="literal">OB</code> flags ar
 </li><li class="listitem">
 the <code class="literal">CHRG</code> and <code class="literal">DISCHRG</code> flags are being replaced with
 <code class="literal">battery.charger.status</code>.  See the <a class="ulink" href="../user-manual.chunked/index.html#nut-names" target="_top">NUT command and variable naming scheme</a> for more information.
-</li></ul></div></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_ups_alarms"></a>4.9. UPS alarms</h3></div></div></div><p>These work like <code class="literal">ups.status</code>, and have three special functions which you
+</li></ul></div></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_ups_alarms"></a>5.9. UPS alarms</h3></div></div></div><p>These work like <code class="literal">ups.status</code>, and have three special functions which you
 must use to manage them.</p><pre class="literallayout">alarm_init() -- before doing anything else</pre><pre class="literallayout">alarm_set() -- add an alarm word</pre><pre class="literallayout">alarm_commit() -- push the value into ups.alarm</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>the ALARM flag in ups.status is automatically set whenever you use
 alarm_set.  To remove that flag from ups.status, call alarm_init and
 alarm_commit without calling alarm_set in the middle.</p></div><p>You should never try to set or unset the ALARM flag manually.</p><p>If you use UPS alarms, the call to status_commit() should be after
@@ -160,7 +160,7 @@ alarm_commit(), otherwise there will be a delay in setting the ALARM
 flag in ups.status.</p><p>There is no official list of alarm words as of this writing, so don’t
 use these functions until you check with the upsdev list.</p><p>Also refer to the <a class="link" href="daisychain.html" title="B. NUT daisychain support notes">NUT daisychain support notes</a> chapter
 of the user manual and developer guide for information related to alarms
-handling in daisychain mode.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_staleness_control"></a>4.10. Staleness control</h3></div></div></div><p>If you’re not talking to a polled UPS, then you must ensure that it
+handling in daisychain mode.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_staleness_control"></a>5.10. Staleness control</h3></div></div></div><p>If you’re not talking to a polled UPS, then you must ensure that it
 is still out there and is alive before calling dstate_dataok().  Even
 if nothing is changing, you should still "ping" it or do something
 else to ensure that it is really available.  If the attempts to
@@ -176,7 +176,7 @@ very hard to find the origin of staleness warnings, if you call these from
 various places in your code.  Basically, don’t call them from any other
 function than from within upsdrv_updateinfo().  There is no need to call
 either of these regularly as was stated in previous versions of this
-document (that requirement has long gone).</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_serial_port_handling"></a>4.11. Serial port handling</h3></div></div></div><p>Drivers which use serial port functions should include serial.h and use
+document (that requirement has long gone).</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_serial_port_handling"></a>5.11. Serial port handling</h3></div></div></div><p>Drivers which use serial port functions should include serial.h and use
 these functions (and cross-platform data types) whenever possible:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
 TYPE_FD
 </p><p class="simpara">Cross-platform data type to represent a serial-port connection.</p></li><li class="listitem"><p class="simpara">
@@ -320,7 +320,7 @@ void ser_comm_good(void)
 </p><p class="simpara">This will clear the error counter and write a "re-established" message
 to the syslog after communications have been lost.  Your driver should
 call this whenever it has successfully contacted the UPS.  A good place
-for most drivers is where it calls dstate_dataok.</p></li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_usb_port_handling"></a>4.12. USB port handling</h3></div></div></div><p>Drivers which use USB functions should include usb-common.h and use these:</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_structure_and_macro"></a>Structure and macro</h4></div></div></div><p>You should use the usb_device_id_t structure, and the USB_DEVICE macro to
+for most drivers is where it calls dstate_dataok.</p></li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_usb_port_handling"></a>5.12. USB port handling</h3></div></div></div><p>Drivers which use USB functions should include usb-common.h and use these:</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_structure_and_macro"></a>Structure and macro</h4></div></div></div><p>You should use the usb_device_id_t structure, and the USB_DEVICE macro to
 declare the supported devices. This allows the automatic extraction of
 USB information, to generate the Hotplug, udev and UPower support files.</p><p>The structure allows to convey <code class="literal">uint16_t</code> values of VendorID and ProductID,
 and an optional matching-function callback to interrogate the device in
@@ -353,13 +353,13 @@ POSSIBLY_SUPPORTED (1, returned when the VendorID is matched,
 </li><li class="listitem">
 or SUPPORTED (2).
 </li></ul></div><p class="simpara">For implementation examples, refer to the various USB drivers, and search for
-the above patterns.</p></li></ul></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>This set of USB helpers is due to expand is the near future…</p></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_variable_names"></a>4.13. Variable names</h3></div></div></div><p>PLEASE don’t make up new variables and commands just because you can.
+the above patterns.</p></li></ul></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>This set of USB helpers is due to expand is the near future…</p></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_variable_names"></a>5.13. Variable names</h3></div></div></div><p>PLEASE don’t make up new variables and commands just because you can.
 The new dstate functions give us the power to create just about
 anything, but that is a privilege and not a right.  Imagine the mess
 that would happen if every developer decided on their own way to
 represent a common status element.</p><p>Check the <a class="link" href="nut-names.html" title="A. NUT command and variable naming scheme">NUT command and variable naming scheme</a> section first to
 find the closest fit. If nothing matches, contact the upsdev list, and we’ll
-figure it out.</p><p>Patches which introduce unlisted names may be modified or dropped.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="commands"></a>4.14. Message passing support</h3></div></div></div><p>upsd can call drivers to store values in read/write variables and to kick
+figure it out.</p><p>Patches which introduce unlisted names may be modified or dropped.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="commands"></a>5.14. Message passing support</h3></div></div></div><p>upsd can call drivers to store values in read/write variables and to kick
 off instant commands.  This is how you register handlers for those events.</p><p>The driver core (drivers/main.c) has a structure called upsh.  You
 should populate it with function pointers in your upsdrv_initinfo()
 function.  Right now, there are only two possibilities:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
@@ -376,19 +376,19 @@ const char * -- (reserved)</pre><p>You should return either STAT_INSTCMD_HANDLED
 depending on whether your driver can handle the requested command.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_notes"></a>Notes</h4></div></div></div><p>Use strcasecmp.  The command names arriving from upsd should be treated
 without regards to case.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_responses"></a>Responses</h4></div></div></div><p>Drivers will eventually be expected to send responses to commands.
 Right now, there is no channel to get these back through upsd to
-the client, so this is not implemented.</p><p>This will probably be implemented with a polling scheme in the clients.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_enumerated_types"></a>4.15. Enumerated types</h3></div></div></div><p>If you have a variable that can have several specific values, it is
+the client, so this is not implemented.</p><p>This will probably be implemented with a polling scheme in the clients.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_enumerated_types"></a>5.15. Enumerated types</h3></div></div></div><p>If you have a variable that can have several specific values, it is
 enumerated.  You should add each one to make it available to the client:</p><pre class="literallayout">dstate_addenum("input.transfer.low", "92");
 dstate_addenum("input.transfer.low", "95");
 dstate_addenum("input.transfer.low", "99");
-dstate_addenum("input.transfer.low", "105");</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_range_values"></a>4.16. Range values</h3></div></div></div><p>If you have a variable that support values comprised in one or more ranges,
+dstate_addenum("input.transfer.low", "105");</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_range_values"></a>5.16. Range values</h3></div></div></div><p>If you have a variable that support values comprised in one or more ranges,
 you should add each one to make it available to the client:</p><pre class="literallayout">dstate_addrange("input.transfer.low", 90, 95);
-dstate_addrange("input.transfer.low", 100, 105);</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_writable_strings"></a>4.17. Writable strings</h3></div></div></div><p>Strings that may be changed by the client should have the ST_FLAG_STRING
+dstate_addrange("input.transfer.low", 100, 105);</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_writable_strings"></a>5.17. Writable strings</h3></div></div></div><p>Strings that may be changed by the client should have the ST_FLAG_STRING
 flag set, and a maximum length (in bytes) set in the auxdata.</p><pre class="literallayout">dstate_setinfo("ups.id", "Big UPS");
 dstate_setflags("ups.id", ST_FLAG_STRING | ST_FLAG_RW);
 dstate_setaux("ups.id", 8);</pre><p>If the variable is not writable, don’t bother with the flags or the
-auxiliary data.  It won’t be used.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_instant_commands_2"></a>4.18. Instant commands</h3></div></div></div><p>If your hardware and driver can support a command, register it.</p><pre class="literallayout">dstate_addcmd("load.on");</pre><p>Don’t forget to define the implementation for such commands in a common
+auxiliary data.  It won’t be used.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_instant_commands_2"></a>5.18. Instant commands</h3></div></div></div><p>If your hardware and driver can support a command, register it.</p><pre class="literallayout">dstate_addcmd("load.on");</pre><p>Don’t forget to define the implementation for such commands in a common
 method, and register that your driver has an instant command handler at
-all — with a line in <code class="literal">upsdrv_initinfo()</code> like:</p><pre class="literallayout">upsh.instcmd = blazer_instcmd;</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_delays_and_ser__functions"></a>4.19. Delays and ser_* functions</h3></div></div></div><p>The new ser_* functions may perform reads faster than the UPS is able to
+all — with a line in <code class="literal">upsdrv_initinfo()</code> like:</p><pre class="literallayout">upsh.instcmd = blazer_instcmd;</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_delays_and_ser__functions"></a>5.19. Delays and ser_* functions</h3></div></div></div><p>The new ser_* functions may perform reads faster than the UPS is able to
 respond in some cases.  This means that your driver will call select()
 and read() numerous times if your UPS responds in bursts.  This also
 depends on how fast your system is.</p><p>You should check your driver with <code class="literal">strace</code> or its equivalent on your
@@ -401,7 +401,7 @@ nanosleep({0, 300000000}, NULL)         = 0
 select(5, [4], NULL, NULL, {3, 0})      = 1 (in [4], left {3, 0})
 read(4, "(120.0 084.0 120.0   0 60.0 22.6"..., 64) = 47</pre><p>Without that delay, that turns into a mess of selects and reads.
 The select returns almost instantly, and read gets a tiny chunk of the
-data.  Add the delay and you get a nice four-line status poll.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_canonical_input_mode_processing"></a>4.20. Canonical input mode processing</h3></div></div></div><p>If your UPS uses "\n" and/or "\r" as endchar, consider the use of
+data.  Add the delay and you get a nice four-line status poll.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_canonical_input_mode_processing"></a>5.20. Canonical input mode processing</h3></div></div></div><p>If your UPS uses "\n" and/or "\r" as endchar, consider the use of
 Canonical Input Mode Processing instead of the ser_get_line* functions.</p><p>Using a serial port in this mode means that select() will wait until
 a full line is received (or times out). This relieves you from waiting
 between sending a command and reading the reply. Another benefit is,
@@ -412,7 +412,7 @@ is an often forgotten side effect of the ser_get_line* functions).</p><p>Current
 upscode2 drivers. The first uses a single "\r" as endchar, while the
 latter accepts either "\n", "\n\r" or "\r\n" as line termination. You
 can define other termination characters as well, but can’t undefine
-"\r" and "\n" (so if you need these as data, this is not for you).</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_adding_the_driver_into_the_tree"></a>4.21. Adding the driver into the tree</h3></div></div></div><p>In order to build your new driver, it needs to be added to
+"\r" and "\n" (so if you need these as data, this is not for you).</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_adding_the_driver_into_the_tree"></a>5.21. Adding the driver into the tree</h3></div></div></div><p>In order to build your new driver, it needs to be added to
 <code class="literal">drivers/Makefile.am</code>. At the moment, there are several driver list variables
 corresponding to the general protocol of the driver (<code class="literal">SERIAL_DRIVERLIST</code>,
 <code class="literal">SNMP_DRIVERLIST</code>, etc.). If your driver does not fit into one of these
@@ -421,8 +421,8 @@ files, and any additional linker flags. If your driver uses the C math
 library, be sure to add <code class="literal">-lm</code>, since this flag is not always included by
 default on embedded systems.</p><p>When you add a driver to one of these lists, pay attention to the backslash
 continuation characters (<code class="literal">\\</code>) at the end of the lines.</p><p>The <code class="literal">automake</code> program converts the <code class="literal">Makefile.am</code> files into <code class="literal">Makefile.in</code>
-files to be processed by <code class="literal">./configure</code>. See the discussion in <a class="xref" href="developers.html#building" title="3.16. Building the Code">Section 3.16, “Building the Code”</a>
-about automating the rebuild process for these files.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="contact-closure"></a>4.22. Contact closure hardware information</h3></div></div></div><p>This is a collection of notes that apply to contact closure UPS
+files to be processed by <code class="literal">./configure</code>. See the discussion in <a class="xref" href="developers.html#building" title="4.16. Building the Code">Section 4.16, “Building the Code”</a>
+about automating the rebuild process for these files.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="contact-closure"></a>5.22. Contact closure hardware information</h3></div></div></div><p>This is a collection of notes that apply to contact closure UPS
 hardware, specifically those monitored by the genericups driver.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_definitions"></a>Definitions</h4></div></div></div><p>"Contact closure" refers to a situation where one line is connected to
 another inside UPS hardware to indicate some sort of situation.  These
 can be relays, or some other form of switching electronics.  The generic
@@ -489,7 +489,7 @@ upsdrv_updateinfo() to see how it really works.</p></div><div class="section"><d
 custom monitoring settings without editing the model table.  Just set
 upstype to something close, then use settings in ups.conf to adjust the
 rest.  See the <a class="ulink" href="../man/genericups.html" target="_top">genericups(8)</a> man page for more
-details.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="hid-subdrivers"></a>4.23. How to make a new subdriver to support another USB/HID UPS</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_overall_concept_2"></a>Overall concept</h4></div></div></div><p>USB (Universal Serial Port) devices can be divided into several
+details.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="hid-subdrivers"></a>5.23. How to make a new subdriver to support another USB/HID UPS</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_overall_concept_2"></a>Overall concept</h4></div></div></div><p>USB (Universal Serial Port) devices can be divided into several
 different classes (audio, imaging, mass storage etc). Almost all UPS
 devices belong to the "HID" class, which means "Human Interface
 Device", and also includes things like keyboards and mice. What HID
@@ -705,7 +705,7 @@ Read the NUT code, tracing through how each value gets processed looking
   for where the result deviates from expectations…
 </li><li class="listitem">
 Think, code, test, rinse, repeat, post a PR :)
-</li></ul></div><div class="example"><a id="idm1781"></a><p class="title"><strong>Example 1. Example direct use of REXX</strong></p><div class="example-contents"><p>Example adapted from <a class="ulink" href="https://github.com/networkupstools/nut/issues/2039" target="_top">https://github.com/networkupstools/nut/issues/2039</a></p><p>Run a NUT <code class="literal">usb-hid</code> driver with at least debug verbosity level 3 (<code class="literal">-DDD</code>)
+</li></ul></div><div class="example"><a id="idm2630"></a><p class="title"><strong>Example 1. Example direct use of REXX</strong></p><div class="example-contents"><p>Example adapted from <a class="ulink" href="https://github.com/networkupstools/nut/issues/2039" target="_top">https://github.com/networkupstools/nut/issues/2039</a></p><p>Run a NUT <code class="literal">usb-hid</code> driver with at least debug verbosity level 3 (<code class="literal">-DDD</code>)
 to get a report descriptor dump starting with a line like this:</p><pre class="screen">   3.670755     [D3] Report Descriptor: (909 bytes) =&gt; 05 84 09 04 a1 01 ...</pre><p>…and copy-paste those reported lines as input into <code class="literal">rexx</code> tool, which
 would generate a C source file including human-worded description and
 a relevant data structure:</p><pre class="screen">:; rexx rd.rex -d --hex 05 84 09 04 a1 01 85 01 09 18 ... 55 b1 02 c0 c0 c0
@@ -769,7 +769,7 @@ define the <code class="literal">shutdown.return</code> and/or <code class="lite
 that case. Commands defined in the subdriver will take precedence over
 the ones that are composed in the driver.</p><p>When running the driver with the <span class="emphasis"><em>-k</em></span> flag, it will first attempt to
 send a <code class="literal">shutdown.return</code> command and if that fails, will fallback to
-<code class="literal">shutdown.reboot</code>.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="snmp-subdrivers"></a>4.24. How to make a new subdriver to support another SNMP device</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_overall_concept_3"></a>Overall concept</h4></div></div></div><p>The SNMP protocol allow for a common way to interact with devices over
+<code class="literal">shutdown.reboot</code>.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="snmp-subdrivers"></a>5.24. How to make a new subdriver to support another SNMP device</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_overall_concept_3"></a>Overall concept</h4></div></div></div><p>The SNMP protocol allow for a common way to interact with devices over
 the network.</p><p>The NUT "snmp-ups" driver is a meta-driver that handles many SNMP devices,
 such as UPS and PDU. It consists of a core driver that handles most of the
 work of talking to the SNMP agent, and several sub-drivers to handle
@@ -919,7 +919,7 @@ contact the upsdev list, and we’ll figure it out.</p><p>In the above example, 
 along with the possible enumerated values.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>To test existing data points (including those not yet translated
 to standard NUT mappings conforming to <a class="link" href="nut-names.html" title="A. NUT command and variable naming scheme">NUT command and variable naming scheme</a>), you can use custom drivers built after you
 <code class="literal">./configure --with-unmapped-data-points</code>.
-Production driver builds must not include any non-standard names.</p></div></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="nutdrv_qx-subdrivers"></a>4.25. How to make a new subdriver to support another Q* UPS</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_overall_concept_4"></a>Overall concept</h4></div></div></div><p>The NUT "<span class="strong"><strong>nutdrv_qx</strong></span>" driver is a meta-driver that handles Q* UPS devices.</p><p>It consists of a core driver that handles most of the work of talking to the hardware, and several sub-drivers to handle specific UPS manufacturers.</p><p>Adding support for a new UPS device is easy, because it requires only the creation of a new sub-driver.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>Due to historic reasons, there is a bit of a mess with terminology here:
+Production driver builds must not include any non-standard names.</p></div></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="nutdrv_qx-subdrivers"></a>5.25. How to make a new subdriver to support another Q* UPS</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_overall_concept_4"></a>Overall concept</h4></div></div></div><p>The NUT "<span class="strong"><strong>nutdrv_qx</strong></span>" driver is a meta-driver that handles Q* UPS devices.</p><p>It consists of a core driver that handles most of the work of talking to the hardware, and several sub-drivers to handle specific UPS manufacturers.</p><p>Adding support for a new UPS device is easy, because it requires only the creation of a new sub-driver.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>Due to historic reasons, there is a bit of a mess with terminology here:
 among the set of driver parameters passed on command-line or via <code class="literal">ups.conf</code>,
 the <code class="literal">subdriver</code> value is for Serial-over-USB dialect ("usbsubdriver" in code),
 and the <code class="literal">protocol</code> value is for Qx dialect (but referred to as "subdriver"
@@ -2465,4 +2465,4 @@ no 0 nibble is sent.</p></div></div><div class="section"><div class="titlepage">
 </li><li class="listitem">
 <code class="literal">nutdrv_qx_ablerex.</code>{<code class="literal">c</code>,<code class="literal">h</code>}
 </li></ul></div></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-03-14 14:26:52 -- Network UPS Tools 2.8.2.2379</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="developers.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="sock-protocol.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2025-03-14 14:48:12 -- Network UPS Tools 2.8.2.2390</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="developers.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="sock-protocol.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

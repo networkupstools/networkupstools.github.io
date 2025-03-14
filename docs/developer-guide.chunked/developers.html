@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>3. Information for developers</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><link rel="home" href="index.html" title="Network UPS Tools Developer Guide" /><link rel="up" href="index.html" title="Network UPS Tools Developer Guide" /><link rel="prev" href="design.html" title="2. NUT design document" /><link rel="next" href="new-drivers.html" title="4. Creating a new driver to support another device" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="design.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="new-drivers.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="developers"></a>3. Information for developers</h2></div></div></div><p>This document is intended to explain some of the more useful things
-within the tree, and provide a standard for working on the code.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_general_stuff_8201_8212_8201_common_subdirectory"></a>3.1. General stuff — common subdirectory</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_string_handling"></a>String handling</h4></div></div></div><p>Use <code class="literal">snprintf()</code>.  It’s even provided with a compatibility module if the
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>4. Information for developers</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><link rel="home" href="index.html" title="Network UPS Tools Developer Guide" /><link rel="up" href="index.html" title="Network UPS Tools Developer Guide" /><link rel="prev" href="versioning.html" title="3. NUT versioning" /><link rel="next" href="new-drivers.html" title="5. Creating a new driver to support another device" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="versioning.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="new-drivers.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="developers"></a>4. Information for developers</h2></div></div></div><p>This document is intended to explain some of the more useful things
+within the tree, and provide a standard for working on the code.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_general_stuff_8201_8212_8201_common_subdirectory"></a>4.1. General stuff — common subdirectory</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_string_handling"></a>String handling</h4></div></div></div><p>Use <code class="literal">snprintf()</code>.  It’s even provided with a compatibility module if the
 target system doesn’t have it natively.</p><p>If you use <code class="literal">snprintf()</code> to load some value into a buffer, make sure you
 provide the format string.  Don’t use user-provided format strings without
 delicate verification, since that’s an easy way to open yourself up to an
@@ -32,11 +32,11 @@ mapping tables, or similar.  The difference between a data file and a
 config file is that users should never be expected to edit a data file
 under normal circumstances.  This technique might be used to add more
 hardware support to a driver without recompiling.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_lt_time_h_gt_vs_lt_sys_time_h_gt"></a>&lt;time.h&gt; vs. &lt;sys/time.h&gt;</h4></div></div></div><p>This is already handled by autoconf, so just <code class="literal">#include "timehead.h"</code> and
-you will get the right headers on every system.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_device_drivers_8201_8212_8201_main_c"></a>3.2. Device drivers — main.c</h3></div></div></div><p>The device drivers use <code class="literal">main.c</code> as their core.</p><p>To write a new driver, you create a file with a series of support
+you will get the right headers on every system.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_device_drivers_8201_8212_8201_main_c"></a>4.2. Device drivers — main.c</h3></div></div></div><p>The device drivers use <code class="literal">main.c</code> as their core.</p><p>To write a new driver, you create a file with a series of support
 functions that will be called by main.  These all have names that start
 with <code class="literal">upsdrv_</code>, and they will be called at different times by main
-depending on what needs to happen.</p><p>See the <a class="link" href="new-drivers.html" title="4. Creating a new driver to support another device">driver documentation</a> for information on writing
-drivers, and also refer to the skeletal driver in <code class="literal">skel.c</code>.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_portability"></a>3.3. Portability</h3></div></div></div><p>Avoid things that will break on other systems.  All the world is not an
+depending on what needs to happen.</p><p>See the <a class="link" href="new-drivers.html" title="5. Creating a new driver to support another device">driver documentation</a> for information on writing
+drivers, and also refer to the skeletal driver in <code class="literal">skel.c</code>.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_portability"></a>4.3. Portability</h3></div></div></div><p>Avoid things that will break on other systems.  All the world is not an
 x86 Linux box.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_c_comments"></a>C comments</h4></div></div></div><p>There are still older systems out there that don’t do C++ style comments.</p><pre class="screen">/* Comments look like this. */
 // Not like this.</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_variable_declarations_go_on_top"></a>Variable declarations go on top</h4></div></div></div><p>Newer versions of gcc allow you to declare a variable inside a function
 after code, somewhat like the way C++ operates, like this:</p><pre class="screen">function do_stuff(void)
@@ -96,7 +96,7 @@ in regular CI builds or one-off local builds for community members with
 a zoo of old systems.</p><p>If somebody in the community actually requires to build and run NUT on
 systems that old, where newer compilers are not available, pull requests
 to fix the offending coding issues in some way that does not break other
-use-cases are welcome.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_continuous_integration_and_automated_builds"></a>3.4. Continuous Integration and Automated Builds</h3></div></div></div><p>To ease and automate the build scenarios which were deemed important for
+use-cases are welcome.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_continuous_integration_and_automated_builds"></a>4.4. Continuous Integration and Automated Builds</h3></div></div></div><p>To ease and automate the build scenarios which were deemed important for
 quality assurance and non-regression checks of NUT, several solutions
 were introduced over time.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_build_automation_tools_and_scripts"></a>Build automation tools and scripts</h4></div></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_ci_build_sh"></a>ci_build.sh</h5></div></div></div><p>This script was originally introduced (following ZeroMQ/ZProject example)
 to automate CI builds, by automating certain scenarios driven by exported
@@ -267,7 +267,7 @@ the maintainer team does not intend to spend much time on that.</p><p>Hopefully 
 would need to add more compilers and/or "difficulty levels" in the
 future.</p><p>Finally, note that such pre-set warnings can be mixed with options
 passed through <code class="literal">CFLAGS</code> or <code class="literal">CXXFLAGS</code> values to your local <code class="literal">configure</code>
-run, but it is up to your compiler how it interprets the resulting mix.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_integrated_development_environments_ides_and_debugging_nut"></a>3.5. Integrated Development Environments (IDEs) and debugging NUT</h3></div></div></div><p>Much of NUT has been coded using classic editors of developers' preference,
+run, but it is up to your compiler how it interprets the resulting mix.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_integrated_development_environments_ides_and_debugging_nut"></a>4.5. Integrated Development Environments (IDEs) and debugging NUT</h3></div></div></div><p>Much of NUT has been coded using classic editors of developers' preference,
 like <code class="literal">vi</code>, <code class="literal">nano</code>, Midnight Commander <code class="literal">mcedit</code>, <code class="literal">gedit</code>/<code class="literal">pluma</code>, NotePad++
 and tools like <code class="literal">meld</code> or WinMerge for file comparison and merge.</p><p>Modern IDEs however do offer benefits, specifically for live debugging
 sessions in a more convenient fashion than with command-line <code class="literal">gdb</code> directly.
@@ -522,7 +522,7 @@ IntelliJ portfolio is dedicated to that), so for the core NUT project sources
 it is just a fancy text editor (with <code class="literal">.editorconfig</code> support) without syntax
 highlighting or codebase cross-reference aids, build/run/debug support, etc.</p><p>Still, it is possible to run builds and tests in embedded or external terminal
 session — so it is not worse than editing with legacy tools, and navigation
-or code-base-wide search is arguably easier.</p></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_coding_style"></a>3.6. Coding style</h3></div></div></div><p>This is how we do things:</p><pre class="screen">int open_subspace(char *ship, int privacy)
+or code-base-wide search is arguably easier.</p></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_coding_style"></a>4.6. Coding style</h3></div></div></div><p>This is how we do things:</p><pre class="screen">int open_subspace(char *ship, int privacy)
 {
         if (!privacy)
                 return insecure_channel(ship);
@@ -614,7 +614,7 @@ should happen below the declarations.</p><p>To display in a rough example:</p><p
                 return;
         }</pre><p>All this having been said, we do detect and use the support for pragmas
 to quiesce the complaints about such situations, but limit their use to
-processing of certain third-party header files.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_miscellaneous_coding_style_tools"></a>3.7. Miscellaneous coding style tools</h3></div></div></div><p>NUT codebase includes an <code class="literal">.editorconfig</code> file which should be supported
+processing of certain third-party header files.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_miscellaneous_coding_style_tools"></a>4.7. Miscellaneous coding style tools</h3></div></div></div><p>NUT codebase includes an <code class="literal">.editorconfig</code> file which should be supported
 by most of the IDEs and text editors nowadays. Many support this format
 specification (at least partially) out of the box, possibly with some
 configuration toggle in the GUI. Others may need a plugin, see more at
@@ -741,7 +741,7 @@ memory anywhere.</p><p>For NUT, there are prepared integrations like <code class
 See also <code class="literal">scripts/valgrind</code> in NUT sources for a helper tool and resource
 files to suppress common third-party problems.</p><p>For more information, refer to the <a class="ulink" href="http://valgrind.kde.org" target="_top">Valgrind</a>
 project.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_conclusion"></a>Conclusion</h4></div></div></div><p>The summary: please be kind to our eyes.  There’s a lot of stuff in here,
-and many people have put a lot of time and energy to improve it.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_submitting_patches"></a>3.8. Submitting patches</h3></div></div></div><p>Current preference for suggesting changes is to open a pull request on
+and many people have put a lot of time and energy to improve it.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_submitting_patches"></a>4.8. Submitting patches</h3></div></div></div><p>Current preference for suggesting changes is to open a pull request on
 GitHub for the <a class="ulink" href="https://github.com/networkupstools/nut/" target="_top">https://github.com/networkupstools/nut/</a> project.</p><p>For some cases, small patches that arrive by mailing list in unified
 format (<code class="literal">diff -Naur</code>) as plain text attachments with no HTML and a brief
 summary at the top are easy to handle, but sadly also easy to overlook.</p><p>If a patch is sent to the nut-upsdev mailing list, it stands a better
@@ -753,14 +753,14 @@ pull request or create an
 for clarifications or a review process, over a longer period of time,
 and it is less likely that a patch will fall through the cracks.
 Posting a reminder to the developers (via the nut-upsdev list) about a
-patch on GitHub is fair game, if the maintainers do not react in a few days.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_patch_cohesion"></a>3.9. Patch cohesion</h3></div></div></div><p>Patches should have some kind of unifying element.  One patch set is one
+patch on GitHub is fair game, if the maintainers do not react in a few days.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_patch_cohesion"></a>4.9. Patch cohesion</h3></div></div></div><p>Patches should have some kind of unifying element.  One patch set is one
 message, and it should all touch similar things.  If you have to edit 6
 files to add support for neutrino detection in UPS hardware, that’s
 fine.</p><p>However, sending one huge patch that does massive separate changes all over
 the tree is not recommended.  That kind of patch has to be split up and
 evaluated separately, assuming the core developers care enough to do that
 instead of just dropping it.</p><p>If you have to make big changes in lots of places, send multiple
-patches — one per item.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_the_finishing_touches_manual_pages_and_device_entry_in_hcl"></a>3.10. The finishing touches: manual pages and device entry in HCL</h3></div></div></div><p>If you change something that involves an argument to a program or
+patches — one per item.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_the_finishing_touches_manual_pages_and_device_entry_in_hcl"></a>4.10. The finishing touches: manual pages and device entry in HCL</h3></div></div></div><p>If you change something that involves an argument to a program or
 configuration file parsing, the man page is probably now out of date.
 If you don’t update it, we have to, and we have enough to do as it is.</p><p>If you write a new driver, send in the man page when you send us the
 source code for your driver.  Otherwise, we will be forced to write a
@@ -777,7 +777,7 @@ useful.</p><p>It is nice to update the <a class="ulink" href="NEWS.adoc" target=
 to be seen as part of next release, as well as to update the
 <a class="ulink" href="UPGRADING.adoc" target="_top">UPGRADING.adoc</a> file for potentially breaking changes and similar
 heads-up notes for third-party teams (distribution packagers, clients
-and bindings, etc.)</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_source_code_management"></a>3.11. Source code management</h3></div></div></div><p>We currently use a Git repository hosted at GitHub to track changes to
+and bindings, etc.)</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_source_code_management"></a>4.11. Source code management</h3></div></div></div><p>We currently use a Git repository hosted at GitHub to track changes to
 the NUT source code. This allows you to "fork" the repository (in GitHub
 parlance), "clone" it to your workstation(s), make a new "branch" with
 your changes, and post them back online for peer review prior to integration.</p><p>To obtain permission to commit directly to the common upstream NUT repository,
@@ -803,7 +803,9 @@ before merging.</p><p>The <a class="ulink" href="https://git.wiki.kernel.org/ind
 wiki page has some useful information for long-time users of Subversion.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_git_access"></a>Git access</h4></div></div></div><p>Anonymous Git checkouts are possible:</p><pre class="literallayout">:; git clone git://github.com/networkupstools/nut.git</pre><p>or</p><pre class="literallayout">:; git clone https://github.com/networkupstools/nut.git</pre><p>if it is necessary to get around a pesky firewall that blocks the native
 Git protocol.</p><p>For a quicker checkout (when you don’t need the entire repository history),
 you can limit the depth of the clone:</p><pre class="literallayout">:; git clone --depth 1 git://github.com/networkupstools/nut.git</pre><p>OPTIONALLY you can then fetch known git tags, so semantic versions look
-better (based off a recent release):</p><pre class="literallayout">:; cd nut
+better (based off a recent release, see
+<a class="ulink" href="../developer-guide.chunked/index.html#versioning" target="_top">NUT Versioning</a> (or <code class="code">docs/nut-versioning.adoc</code> in NUT sources for up-to-date information)
+for more details):</p><pre class="literallayout">:; cd nut
 :; git fetch --tags --all</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_mercurial_hg_access"></a>Mercurial (hg) access</h4></div></div></div><p>There are those who prefer the simplicity and self-consistency of the
 Mercurial SCM client over the hodgepodge of unique commands which make
 up Git. Rather than debate the merits of each system, we will gently
@@ -815,7 +817,7 @@ has a <a class="ulink" href="https://github.com/blog/966-improved-subversion-cli
 interface to Git repositories</a> hosted on their servers. You can fork a copy
 of the NUT repository and commit to your fork with SVN.</p><p>Be aware that the examples in the GitHub blog post might result in a
 checkout that includes all of the current branches, as well as the trunk.
-You are most likely interested in a command line similar to the following:</p><pre class="literallayout">:; svn co https://github.com/networkupstools/nut/trunk nut-trunk-svn</pre></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_ignoring_generated_files"></a>3.12. Ignoring generated files</h3></div></div></div><p>The NUT repository generally only holds files which are not generated from
+You are most likely interested in a command line similar to the following:</p><pre class="literallayout">:; svn co https://github.com/networkupstools/nut/trunk nut-trunk-svn</pre></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_ignoring_generated_files"></a>4.12. Ignoring generated files</h3></div></div></div><p>The NUT repository generally only holds files which are not generated from
 other files. This prevents spurious differences from being recorded in the
 repository history.</p><p>If you add a driver, it is recommended that you add the driver executable
 name to the <code class="literal">.gitignore</code> file in that directory. Similarly, files generated
@@ -823,7 +825,7 @@ from <code class="literal">*.in</code> and <code class="literal">*.am</code> sou
 We try to include a number of generated files in the tarball releases with
 <code class="literal">make dist</code> hooks in order to minimize the number of dependencies for end
 users, but the assumption is that a developer can install the packages
-needed to regenerate those files.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_commit_message_formatting"></a>3.13. Commit message formatting</h3></div></div></div><p>From the <code class="literal">git commit</code> man page:</p><div class="blockquote"><blockquote class="blockquote"><p>Though not required, it’s a good idea to begin the commit message with a
+needed to regenerate those files.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_commit_message_formatting"></a>4.13. Commit message formatting</h3></div></div></div><p>From the <code class="literal">git commit</code> man page:</p><div class="blockquote"><blockquote class="blockquote"><p>Though not required, it’s a good idea to begin the commit message with a
 single short (less than 50 character) line summarizing the change, followed
 by a blank line and then a more thorough description. The text up to the
 first blank line in a commit message is treated as the commit title, and
@@ -838,7 +840,7 @@ commit.) For other commits, even though tools like gitk and GitHub’s
 repository viewers recognize Git hashes and create links automatically, it is
 best to add some context such as the commit title or a date.</p><p>You may notice that some older commits have <code class="literal">[[SVN:####]]</code> tags and Fossil-ID
 footers. These were lifted from the old SVN commit messages using reposurgeon,
-and should <span class="strong"><strong>not</strong></span> be used as a guide for future commits.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_commit_sign_off"></a>3.14. Commit sign-off</h3></div></div></div><p>Please also note that since 2023 we explicitly ask for contributions to be
+and should <span class="strong"><strong>not</strong></span> be used as a guide for future commits.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_commit_sign_off"></a>4.14. Commit sign-off</h3></div></div></div><p>Please also note that since 2023 we explicitly ask for contributions to be
 "Signed Off" according to "Developer Certificate of Origin" as represented
 in the <code class="literal">LICENSE-DCO</code> file in the root of NUT source tree (verbatim copy of
 Version 1.1 of DCO published at <a class="ulink" href="https://developercertificate.org/" target="_top">https://developercertificate.org/</a> web site).
@@ -868,7 +870,7 @@ Numerous public articles can walk you through this ordeal, including:</p><div cl
 <a class="ulink" href="https://docs.github.com/en/authentication/managing-commit-signature-verification/telling-git-about-your-signing-key" target="_top">https://docs.github.com/en/authentication/managing-commit-signature-verification/telling-git-about-your-signing-key</a>
 </li><li class="listitem">
 <a class="ulink" href="https://www.kernel.org/doc/html/v4.19/process/maintainer-pgp-guide.html" target="_top">https://www.kernel.org/doc/html/v4.19/process/maintainer-pgp-guide.html</a>
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_repository_etiquette_and_quality_assurance"></a>3.15. Repository etiquette and quality assurance</h3></div></div></div><p>For developers who have commit access to the common upstream NUT repository:
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_repository_etiquette_and_quality_assurance"></a>4.15. Repository etiquette and quality assurance</h3></div></div></div><p>For developers who have commit access to the common upstream NUT repository:
 Please keep the Git "master" branch in working condition at all times.
 The "master" branch may be used to generate daily tarballs, it provides the
 baseline for new contributions, and occasionally is tagged for a new release.
@@ -878,7 +880,7 @@ and merge the changes back into "master" once they are complete.</p><p>To help k
 in various conditions, including older compilers, different C/C++ standard
 revisions, and an assortment of operating systems; a section below elaborates
 on this in more detail.</p><p>You are encouraged to use <code class="literal">git rebase -i</code> on your private Git branches to
-separate your changes into <a class="link" href="developers.html#_patch_cohesion" title="3.9. Patch cohesion">logical changes</a>.</p><p>From there, you can generate patches for the issue tracker, or the nut-upsdev
+separate your changes into <a class="link" href="developers.html#_patch_cohesion" title="4.9. Patch cohesion">logical changes</a>.</p><p>From there, you can generate patches for the issue tracker, or the nut-upsdev
 mailing list.</p><p>Note that once you rebase a branch, anyone else who has a copy of this branch
 will need to rebase on top of your rebased branch. Obviously, this hinders
 collaboration. In this case, we recommend that you rebase only in your private
@@ -927,7 +929,7 @@ may be of use:</p><div class="itemizedlist"><ul class="itemizedlist" style="list
 <a class="ulink" href="https://www.git-tower.com/learn/git/ebook/en/command-line/appendix/from-subversion-to-git" target="_top">Switching from Subversion to Git</a>
 </li><li class="listitem">
 <a class="ulink" href="https://www.atlassian.com/git/tutorials/migrating-overview" target="_top">Migrate from SVN to Git</a>
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="building"></a>3.16. Building the Code</h3></div></div></div><p>For a developer, the NUT build process starts with <code class="literal">./autogen.sh</code>.</p><p>This script generates the <code class="literal">./configure</code> script that end users typically
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="building"></a>4.16. Building the Code</h3></div></div></div><p>For a developer, the NUT build process starts with <code class="literal">./autogen.sh</code>.</p><p>This script generates the <code class="literal">./configure</code> script that end users typically
 invoke to build NUT. If you are making a number of changes to the NUT
 source tree, configuring with the <code class="literal">--enable-maintainer-mode</code> flag will
 ensure that after you change a <code class="literal">Makefile.am</code>, nearby <code class="literal">Makefile.in</code> and
@@ -981,4 +983,4 @@ scenarios automatically. If your code adds a substantial feature, consider
 extending the <code class="literal">Jenkinsfile-dynamatrix</code> and/or <code class="literal">ci_build.sh</code> scripts in the
 workspace root to add another <code class="literal">BUILD_TYPE</code> to the matrix of tests run in
 parallel.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-03-14 14:26:52 -- Network UPS Tools 2.8.2.2379</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="design.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="new-drivers.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2025-03-14 14:48:12 -- Network UPS Tools 2.8.2.2390</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="versioning.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="new-drivers.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
