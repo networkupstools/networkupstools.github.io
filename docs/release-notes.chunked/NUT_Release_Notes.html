@@ -124,7 +124,24 @@ A technologically and practically interesting revamp of NUT mesh of
    some scenarios had hit the 1-hour timeout imposed by providers of free
    CI hosting coupled with the weak machines provided in their free layer),
    and we suppose this is an interesting case for other projects to draw
-   inspiration from for their recipe refactoring. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/2825" target="_top">PR #2825</a>]</p></li><li class="listitem">
+   inspiration from for their recipe refactoring. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/2825" target="_top">PR #2825</a>]</p></li><li class="listitem"><p class="simpara">
+The <code class="literal">make dist</code> goal now takes more care to require availability of the man
+   pages to put into the prepared distribution archive. These may come either
+   from the current build, or inherited from its sources (if using a tarball
+   initially) on a platform without tooling required for man page generation.
+</p><p class="simpara">This requirement compromises usability of <code class="literal">make distcheck</code> on platforms without
+   such tools from sources without pre-built man pages (e.g. builds from git),
+   so a couple of new goals were introduced in <a class="ulink" href="https://github.com/networkupstools/nut/pull/2842" target="_top">PR #2842</a>:
+   - <code class="literal">make distcheck-fake-man</code> generates placeholder files named like pre-built
+      man pages for any missing files, just for the purpose of constructing
+      a sane-looking dist archive to <code class="literal">distcheck</code> strictly otherwise;
+   - <code class="literal">make distcheck-ci</code> is routed to <code class="literal">distcheck</code> or <code class="literal">distcheck-fake-man</code>
+     based on build circumstances (ability to build man pages or presence
+     of pre-built pages, or lack of either);
+   - Similarly, <code class="literal">make dist-ci</code> is routed to provide a strict or faked tarball;
+   - Earlier defined goals like <code class="literal">distcheck-light</code> or <code class="literal">distcheck-valgrind</code> now
+     take advantage of these mechanisms to also produce usable dist archives
+     for their relaxed or purpose-specific tests.</p></li><li class="listitem">
 the <code class="literal">upsnotify()</code> common code introduced in recent NUT releases (integrating
    with service management frameworks, etc.) was a bit cryptic when it reported
    a <span class="strong"><strong>failure to notify</strong></span> (e.g. when not running as a service currently), fixed
@@ -4003,4 +4020,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.32. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-03-16 03:01:13 -- Network UPS Tools 2.8.2.2393</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2025-03-16 20:19:13 -- Network UPS Tools 2.8.2.2454</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
