@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>2. Code and recipe analysis</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><link rel="home" href="index.html" title="NUT Quality Assurance and Build Automation Guide" /><link rel="up" href="index.html" title="NUT Quality Assurance and Build Automation Guide" /><link rel="prev" href="nut-qa.html" title="1. NUT Quality Assurance" /><link rel="next" href="_test_automation.html" title="3. Test automation" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="nut-qa.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="_test_automation.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_code_and_recipe_analysis"></a>2. Code and recipe analysis</h2></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_gnu_autotools_distcheck"></a>2.1. GNU Autotools distcheck</h3></div></div></div><p><a id="CI_distcheck"></a>The Network UPS Tools project code base is managed by the
+<a class="ulink" href="https://www.gnu.org/software/automake/manual/html_node/GNU-Build-System.html" target="_top">GNU
+Build System</a> colloquially known as "The Autotools", which include <code class="literal">autoconf</code>,
+<code class="literal">automake</code> and many other components. Some of their important roles are to
+generate the portable shell <code class="literal">configure</code> script to detect build environment
+capabilities and other nuances, and to help actually build the project with
+<code class="literal">Makefile</code> recipes (supported by many implementations of the standard POSIX
+<code class="literal">make</code> tool) generated from the <code class="literal">Makefile.am</code> templates by the <code class="literal">automake</code> tool.</p><p>Among the many standard recipes promulgated by the Autotools, <code class="literal">make dist</code>
+handles creation of archive files with a release (or other) snapshot of a
+software project, which "distribute" all the original or generated files
+needed to build and install that project on a minimally capable end-user
+system (should have a compiler, <code class="literal">make</code>, and dependency libraries/headers,
+but is not required to have autotools, manual page generation tools, etc.)</p><p>The <code class="literal">make distcheck</code> goal allows to validate that the constructed archive
+is in fact sufficient for such a build (includes all required files), and
+also that the code structure and its recipes properly support out-of-tree
+builds (as used on multi-platform and cross-build environments) without
+contaminating the source code directory structure.</p><p>NUT’s root ‘Makefile.am` defines the <code class="literal">DISTCHECK_FLAGS</code> eventually passed
+to the <code class="literal">configure</code> script executed as part of <code class="literal">distcheck</code> validation, and
+the default set of the flags requires to build everything.  This in turn
+constrains the set of systems where this validation can be performed to
+build environments that have all dependency projects installed, have the
+documentation generation tools, etc. in order to make sure that for all
+files that are compiled or otherwise processed by the build routine, we
+actually distribute the sources (implicitly as calculated by programs’
+listed sources, or via explicit <code class="literal">EXTRA_DIST</code> and similar statements)
+regardless of features enabled or not to be built in the original run.</p><p>To avoid this constraint and allow the relevant <code class="literal">distcheck</code>-like validation
+to happen on environments without "everything and a kitchen sink" installed,
+further recipes are defined by NUT, such as:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<code class="literal">distcheck-light</code>: does not <span class="strong"><strong>require</strong></span> the optional features to be built,
+  but just allow them (using <code class="literal">--with-all=auto --with-ssl=auto --with-doc=auto</code>
+  etc. flags);
+</li><li class="listitem">
+<code class="literal">distcheck-light-man</code>: similar to the above, but require validation that
+  manual pages can all be built (do not build PDF or HTML formats, though);
+</li><li class="listitem">
+<code class="literal">distcheck-fake-man</code>: for formal validation on systems without documentation
+  processing tools used by NUT recipes, populate the distribution archive
+  with "PLACEHOLDER" contents of missing pre-generated manual pages (such an
+  archive SHOULD NOT be delivered to end-users as a fully functional release),
+  so the validation of <span class="strong"><strong>recipes</strong></span> around pre-built documentation installation
+  can be performed;
+</li><li class="listitem">
+<code class="literal">distcheck-ci</code>: based on current build circumstances, dispatch to standard
+  strict <code class="literal">distcheck</code> or to <code class="literal">distcheck-fake-man</code>.
+</li></ul></div><p>Other recipes based on this concept are also defined, including:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<code class="literal">distcheck-valgrind</code>: build whatever code we can, and do not waste time on
+  documentation processing (<code class="literal">--with-all=auto --with-ssl=auto --with-doc=skip</code>),
+  to run the NUT test programs (<code class="literal">make check</code> in the built environment) through
+  the <a class="link" href="_code_and_recipe_analysis.html#CI_VALGRIND">Valgrind</a> memory-checking tool.
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_valgrind_checks"></a>2.2. Valgrind checks</h3></div></div></div><p><a id="CI_VALGRIND"></a>NUT sources include a helper script and a suppression file which allow
+developers and CI alike to easily run built programs through the popular
+<a class="ulink" href="https://valgrind.org/" target="_top">Valgrind</a> tool and check for memory leaks,
+un-closed file descriptors, and more.</p><p>One use-case to cover the population of <a class="link" href="_test_automation.html#CI_NUT_SELFTESTS">NUT self-test programs</a> (and the common code they pull in from NUT libraries and drivers)
+is automated as the <code class="literal">make distcheck-valgrind</code> goal.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_valgrind_resources"></a>VALGRIND resources</h4></div></div></div><p>Helper script and suppression file to analyze NUT binaries.</p><p>Example use-case:</p><pre class="screen">:; make -ks -j &amp;&amp; LD_LIBRARY_PATH=`pwd`/clients/.libs \
+    ./scripts/valgrind/valgrind.sh ./tools/nut-scanner/nut-scanner -DDDDDD -m auto</pre><p>Note that the script is generated under <code class="literal">${top_builddir}</code> by <code class="literal">configure</code> from
+a template file located in <code class="literal">${top_srcdir}/scripts/valgrind/valgrind.sh.in</code>.
+You might be able to run it directly, falling back to a <code class="literal">valgrind</code> program in
+your <code class="literal">PATH</code>, if any.</p><p>See also:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
+<a class="ulink" href="https://wiki.wxwidgets.org/Valgrind_Suppression_File_Howto" target="_top">Valgrind Suppression File How-to</a>
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Notably, add <code class="literal">--gen-suppressions=all --error-limit=no</code> to <code class="literal">valgrind</code>
+    program options to generate suppression snippets
+</li></ul></div></li></ul></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_cppcheck"></a>2.3. cppcheck</h3></div></div></div><p><a id="CI_cppcheck"></a>The root <code class="literal">Makefile.am</code> includes a recipe to run a special build of NUT
+analyzed by the <code class="literal">cppcheck</code> tool (if detected by <code class="literal">configure</code> script) and
+produce a <code class="literal">cppcheck.xml</code> report for further tools to use, e.g. visualize
+it by the Jenkins Warnings plugin.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_static_analysis_by_compilers"></a>2.4. Static analysis by compilers</h3></div></div></div><p><a id="CI_compiler_warnings"></a>As compilers like GCC and LLVM/CLANG evolve, so do their built-in code
+analyzers and warnings.  In fact, this is a large part of the reasoning
+behind using a vast array of systems along with the compilers they have
+(many points of view on the same code discover different issues in it),
+and on another — behind the certain complexity pattern in NUT’s own code
+base, where code recommended by one compiler seems offensive to another
+(so stacks of <code class="literal">pragma</code> expressions are used to quiesce certain warnings
+around certain lines).</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_pre_set_warning_options"></a>Pre-set warning options</h4></div></div></div><p>The options chosen into pre-sets that can be selected by <code class="literal">configure</code>
+script options are ones we use for different layers of CI tests.</p><p>Values to note include:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<code class="literal">--enable-Werror(=yes/no)</code> — make warnings fatal;
+</li><li class="listitem"><p class="simpara">
+<code class="literal">--enable-warnings(=.../no)</code> — enable certain warning presets:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+<code class="literal">gcc-hard</code>, <code class="literal">clang-hard</code>, <code class="literal">gcc-medium</code>, <code class="literal">clang-medium</code>, <code class="literal">gcc-minimal</code>,
+<code class="literal">clang-minimal</code>, <code class="literal">all</code> — actual definitions that are compiler-dependent
+(the latter just adds <code class="literal">-Wall</code> which may be relatively portable);
+</li><li class="listitem">
+<code class="literal">hard</code>, <code class="literal">medium</code> or <code class="literal">minimal</code> — if current compiler is detected as
+CLANG or GCC, apply corresponding setting from above (or <code class="literal">all</code> otherwise);
+</li><li class="listitem">
+<code class="literal">gcc</code> or <code class="literal">clang</code> — apply the set of options (regardless of detected
+compiler) with default "difficulty" hard-coded in <code class="literal">configure</code> script,
+to tweak as our codebase becomes cleaner;
+</li><li class="listitem">
+<code class="literal">yes</code>/<code class="literal">auto</code> (also takes effect if <code class="literal">--enable-warnings</code> is requested
+without an <code class="literal">=ARG</code> part) — if current compiler is detected as CLANG
+or GCC, apply corresponding setting with default "difficulty" from
+above (or <code class="literal">all</code> otherwise).
+</li></ul></div></li></ul></div><p>Note that for backwards-compatibility reasons and to help filter out
+introduction of blatant errors, builds with compilers that claim GCC
+compatibility can enable a few easy warning presets by default. This
+can be avoided with an explicit argument to <code class="literal">--disable-warnings</code> (or
+<code class="literal">--enable-warnings=no</code>).</p><p>All levels of warnings pre-sets for GCC in particular do not enforce
+the <code class="literal">-pedantic</code> mode for builds with C89/C90/ANSI standard revision
+(as guesstimated by <code class="literal">CFLAGS</code> content), because nowadays it complains
+more about the system and third-party library headers, than about NUT
+codebase quality (and "our offenses" are mostly something not worth
+fixing in this era, such as the use of <code class="literal">__func__</code> in debug commands).
+If there still are practical use-cases that require builds of NUT on
+pre-C99 compiler toolkits, pull requests are of course welcome — but
+the maintainer team does not intend to spend much time on that.</p><p>Hopefully this warnings pre-set mechanism is extensible enough if we
+would need to add more compilers and/or "difficulty levels" in the
+future.</p><p>Finally, note that such pre-set warnings can be mixed with options
+passed through <code class="literal">CFLAGS</code> or <code class="literal">CXXFLAGS</code> values to your local <code class="literal">configure</code>
+run, but it is up to your compiler how it interprets the resulting mix.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_shell_script_checks"></a>2.5. Shell script checks</h3></div></div></div><p><a id="CI_shellcheck"></a>The <code class="literal">make shellcheck</code> recipe finds files which the <code class="literal">file</code> tool determines
+to be POSIX or Bourne-Again shell scripts, and runs them through respective
+interpreter’s (<code class="literal">bash</code> or system <code class="literal">/bin/sh</code>) test mode to validate the syntax
+works.</p><p>Given that the <code class="literal">/bin/sh</code> implementation varies wildly on different systems
+(e.g. Korn shell, BASH, DASH and many others), this goal performed by CI on
+a large number of available platforms makes sure that the lowest-denominator
+syntax we use is actually understood everywhere.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>At a later time additional tests, perhaps using the <code class="literal">shellcheck</code> tool,
+can be introduced into the stack.</p></div><p>The <code class="literal">make shellcheck-nde</code> recipe calls <code class="literal">tests/nut-driver-enumerator-test.sh</code>
+to self-test the <code class="literal">scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in</code> against
+an array of <code class="literal">SHELL_PROGS</code> (e.g. a list of interpreters provided by specific
+CI agents), and make sure that shell-script based processing of <code class="literal">ups.conf</code>
+in various interpreters provides the exact spelling of expected results.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_documentation_spelling_checks"></a>2.6. Documentation spelling checks</h3></div></div></div><p><a id="CI_spellcheck"></a>NUT recipes rely on the <code class="literal">aspell</code> tool (with <code class="literal">aspell-en</code> dictionary, default
+but different on numerous platforms), and a custom maintained dictionary file
+(specified in <code class="literal">Makefile</code> variables as <code class="literal">NUT_SPELL_DICT</code> — by default, it is
+<code class="literal">${top_srcdir}/docs/nut.dict</code>) for additional words either unique to NUT or
+quite common but absent in older standard dictionaries on some systems.
+Operations are done according to <code class="literal">LANG</code> and <code class="literal">LC_ALL</code> values, both specified
+in <code class="literal">Makefile</code> variables as <code class="literal">ASPELL_ENV_LANG</code>, by default <code class="literal">en.UTF-8</code>.</p><p>The "nut-website" generation has similar recipes and relies on integration
+with those provided by the main NUT code base, but maintains its own custom
+dictionary for words only present in the website sources.</p><p>The root <code class="literal">Makefile.am</code> includes recipes which allow developers and maintainers
+to check spelling of all documentation (and/or update the custom dictionary),
+while recipes in numerous subdirectories (where <code class="literal">README.adoc</code> or other specific
+documentation files exist) have similar goals to check just their files.</p><p>The actual implementation of the goals is in <code class="literal">docs/Makefile.am</code>, and either
+calls the tool if it was detected by the <code class="literal">configure</code> script, or skips work.</p><p>For each checked file, a <code class="literal">*-spellchecked</code> touch-file is created in respective
+<code class="literal">${builddir}</code>, so it is not re-checked until the source document, the custom
+dictionary, or the <code class="literal">Makefile</code> recipe is updated.</p><p>The ecosystem of <code class="literal">Makefile.am</code> files includes the following useful recipes:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<code class="literal">spellcheck</code>: passively check that all used words are in some dictionary
+  known to this system, or report errors for unknown words;
+</li><li class="listitem"><p class="simpara">
+<code class="literal">spellcheck-interactive</code>: actively check the documents, and for unknown
+  words start the interactive mode of <code class="literal">aspell</code> so you can either edit the
+  source text (replace typos with suggested correct spelling), update the
+  custom dictionary, or ignore the hit (to rephrase the paragraph later, etc.)
+</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>This recipe can update the timestamp of the custom dictionary file,
+causing all documents to become fair game for re-checks of their spelling.
+* <code class="literal">spellcheck-sortdict</code>: make sure the custom dictionary file is sorted
+  alphanumerically (helpful in case of manual edits) and the word count
+  in the heading line is correct (helpful in case of manual edits or git
+  branch merges).</p></div></li></ul></div><p>The root <code class="literal">Makefile.am</code> also provides some aids for maintainers:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<code class="literal">spellcheck-interactive-quick</code>: runs "passive" <code class="literal">spellcheck</code> in parallel
+  <code class="literal">make</code> mode, and only if it errors out — runs <code class="literal">spellcheck-interactive</code>;
+</li><li class="listitem">
+<code class="literal">spellcheck-report-dict-usage</code>: prepares a <code class="literal">nut.dict.usage-report</code> file
+  to validate that words used in a custom dictionary are actually present
+  in any NUT documentation source file.
+</li></ul></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
+		Last updated 2025-03-30 21:50:46 -- Network UPS Tools 2.8.2.2575</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="nut-qa.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="_test_automation.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

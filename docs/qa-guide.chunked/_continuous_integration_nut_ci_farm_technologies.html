@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>4. Continuous Integration (NUT CI farm) technologies</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><link rel="home" href="index.html" title="NUT Quality Assurance and Build Automation Guide" /><link rel="up" href="index.html" title="NUT Quality Assurance and Build Automation Guide" /><link rel="prev" href="_test_automation.html" title="3. Test automation" /><link rel="next" href="_continuous_integration_nut_ci_farm_build_agent_preparation.html" title="5. Continuous Integration (NUT CI farm) build agent preparation" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="_test_automation.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="_continuous_integration_nut_ci_farm_build_agent_preparation.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_continuous_integration_nut_ci_farm_technologies"></a>4. Continuous Integration (NUT CI farm) technologies</h2></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="NUTCI_farm_technologies"></a>4.1. CI Farm configuration notes</h3></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title"><a id="CI_Farm_Notes"></a>Note</h3><p>This chapter contains information about NUT CI farm setup tricks
+that were applied at different times by the maintainer team to ensure
+regular builds and tests of the codebase.  Whether these are used in
+daily production today or not, similar setup should be possible locally
+on developer and contributor machines.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_multiple_foss_ci_providers_and_technologies"></a>4.2. Multiple FOSS CI providers and technologies</h3></div></div></div><p>While there are many FOSS-friendly CI offerings, they are usually (and
+reasonably) focused on the OS market leaders — offering recent releases
+of Linux, Windows and MacOS build agents, and sometimes a way to "bring
+your own device" to cover other systems.  The NUT CI farm does benefit
+from those offerings as well, using GitHub Actions with CodeQL for Linux
+code quality inspection, AppVeyor CI for Windows, and CircleCI for MacOS,
+to name a few.</p><p>But on the other hand, being a massively multi-platform effort (and aiming
+to support older boxes that are still alive even if their vendors and/or
+distro versions are not), a comprehensive NUT CI approach requires many
+machines running uncommon operating systems.  This is where custom virtual
+machines help, and more so — a core set of those hosted in the cloud and
+dedicated to the project, rather than only some resources intermittently
+contributed by community members which come and go.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>Community-provided builders running on further systems are also
+welcome, and the option is of course supported, as managed by the
+<a class="ulink" href="https://github.com/networkupstools/jenkins-dynamatrix" target="_top">Jenkins-Dynamatrix</a>
+effort which appeared due to such need, and runs the core NUT CI farm.</p></div><p>We have also had historic experience with FOSS CI providers (and community
+members' machines) disappearing, so having NUT CI farm goals covered by
+multiple independent implementations is also a feature beyond having yet
+another set of digital eyes looking at our code quality (which is also a
+goal in itself).</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_jenkins_is_the_way"></a>4.3. Jenkins is the way</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<a class="ulink" href="https://stories.jenkins.io/user-story/jenkins-is-the-way-for-networkupstools/" target="_top">https://stories.jenkins.io/user-story/jenkins-is-the-way-for-networkupstools/</a>
+</li><li class="listitem">
+<a class="ulink" href="https://github.com/jenkins-infra/stories/blob/main/src/user-story/jenkins-is-the-way-for-networkupstools/index.yaml" target="_top">https://github.com/jenkins-infra/stories/blob/main/src/user-story/jenkins-is-the-way-for-networkupstools/index.yaml</a>
+</li></ul></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_the_jenkins_dynamatrix_library"></a>The jenkins-dynamatrix library</h4></div></div></div><p><a id="Jenkins_Dynamatrix_Library"></a>FIXME: Write the chapter text.</p><p>For now, see <a class="ulink" href="https://github.com/networkupstools/jenkins-dynamatrix" target="_top">https://github.com/networkupstools/jenkins-dynamatrix</a> sources
+(note the README and large comments at start of files may be obsolete, as
+of this writing — documenting the initial ideas, but the implementation
+might differ from that over time).</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_jenkinsfile_dynamatrix_cases_in_nut_sources"></a>Jenkinsfile-dynamatrix cases in NUT sources</h4></div></div></div><p><a id="Jenkins_Dynamatrix_Pipeline"></a>FIXME: Write the chapter text.</p><p>For now, see the <code class="literal">Jenkinsfile-dynamatrix</code> in the NUT sources (maybe only git),
+e.g. <a class="ulink" href="https://github.com/networkupstools/nut/blob/master/Jenkinsfile-dynamatrix" target="_top">https://github.com/networkupstools/nut/blob/master/Jenkinsfile-dynamatrix</a>
+for the practical pipeline preparation and hand-off to library implementation.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_jenkins_ci"></a>Jenkins CI</h4></div></div></div><p><a id="NUT_CI_JENKINS"></a>Since mid-2021, the NUT CI farm is implemented by several virtual servers
+courteously provided originally by <a class="ulink" href="http://fosshost.org" target="_top">Fosshost</a> and
+later by
+<a class="ulink" href="https://www.digitalocean.com/?refcode=d2fbf2b9e082&amp;utm_campaign=Referral_Invite&amp;utm_medium=Referral_Program&amp;utm_source=badge" target="_top">DigitalOcean</a>.</p><p>These run various operating systems as build agents, and a Jenkins instance
+to orchestrate the builds of NUT branches and pull requests on those agents.</p><p>This is driven by <code class="literal">Jenkinsfile-dynamatrix</code> and a Jenkins Shared Library called
+<a class="ulink" href="https://github.com/networkupstools/jenkins-dynamatrix" target="_top">jenkins-dynamatrix</a>
+which prepares a matrix of builds across as many operating systems,
+bitnesses/architectures, compilers, make programs and C/C++ revisions
+as it can — based on the population of currently available build agents
+and capabilities which they expose as agent labels.</p><p>This hopefully means that people interested in NUT can contribute to the
+build farm (and ensure NUT is and remains compatible with their platform)
+by running a Jenkins Swarm agent with certain labels, which would dial
+into <a class="ulink" href="https://ci.networkupstools.org/" target="_top">https://ci.networkupstools.org/</a> controller. Please contact the NUT
+maintainer if you want to participate in this manner.</p><p>The <code class="literal">Jenkinsfile-dynamatrix</code> recipe allows NUT CI farm to run different sets
+of build scenarios based on various conditions, such as the name of branch
+being built (or PR’ed against), changed files (e.g. C/C++ sources vs. just
+docs), and some build combinations may be not required to succeed.</p><p>For example, the main development branch and pull requests against it must
+cleanly pass all specified builds and tests on various platforms with the
+default level of warnings specified in the <code class="literal">configure</code> script. These are
+balanced to not run too many build scenarios overall, but just a quick and
+sufficiently representative set.</p><p>As another example, there is special handling for "fightwarn" pattern in
+the branch names to run many more builds with varying warning levels and
+more variants of intermediate language revisions, and so expose concerns
+deliberately missed by default warnings levels in "master" branch builds
+(the bar moves over time, as some classes of warnings become extinct from
+our codebase).</p><p>Further special handling for branches named like <code class="literal">fightwarn.*89.*</code> regex
+enables more intensive warning levels for a GNU89 build specifically (which
+are otherwise disabled as noisy yet not useful for supported C99+ builds),
+and is intended to help develop fixes for support of this older language
+revision, if anyone would dare.</p><p>Many of those unsuccessful build stages are precisely the focus of the
+"fightwarn" effort, and are currently marked as "may fail", so they end
+up as "UNSTABLE" (seen as orange bubbles in the Jenkins BlueOcean UI, or
+orange cells in the tabular list of stages in the legacy UI), rather than
+as "FAILURE" (red bubbles) for build scenarios that were not expected to
+fail and usually represent higher-priority problems that would block a PR.</p><p>Developers whose PR builds (or attempts to fix warnings) did not succeed in
+some cell of such build matrix, can look at the individual logs of that cell.
+Beside indication from the compiler about the failure, the end of log text
+includes the command which was executed by CI worker and can be reproduced
+locally by the developer, e.g.:</p><pre class="screen">22:26:01  FINISHED with exit-code 2 cmd:  (
+22:26:01  [ -x ./ci_build.sh ] || exit
+22:26:01
+22:26:01  eval BUILD_TYPE="default-alldrv" BUILD_WARNOPT="hard" \
+    BUILD_WARNFATAL="yes" MAKE="make"  CC=gcc-10 CXX=g++-10 \
+    CPP=cpp-10 CFLAGS='-std=gnu99 -m64' CXXFLAGS='-std=gnu++11 -m64' \
+    LDFLAGS='-m64' ./ci_build.sh
+22:26:01  )</pre><p>or for autotools-driven scenarios (which prep, configure, build and test
+in separate stages — so for reproducing a failed build you should also
+look at its configuration step separately):</p><pre class="screen">22:28:18  FINISHED with exit-code 0 cmd:  ( [ -x configure ] || exit; \
+    eval  CC=clang-9 CXX=clang++-9 CPP=clang-cpp-9 CFLAGS='-std=c11 -m64' \
+    CXXFLAGS='-std=c++11 -m64' LDFLAGS='-m64' time ./configure )</pre><p>To re-run such scenario locally, you can copy the line from <code class="literal">eval</code> (but
+without the <code class="literal">eval</code> keyword itself) up to and including the executed script
+or tool, into your shell. Depending on locally available compilers, you
+may have to tweak the <code class="literal">CC</code>, <code class="literal">CXX</code> and <code class="literal">CPP</code> arguments; note that a <code class="literal">CPP</code>
+may be specified as <code class="literal">/path/to/CC -E</code> for GCC and CLANG based toolkits
+at least, if they lack a standalone preprocessor program (e.g. IntelCC).</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>While NUT recipes do not currently recognize a separate <code class="literal">CXXCPP</code>,
+it would follow similar semantics.</p></div><p>Some further details about the NUT CI farm workers are available in
+<a class="ulink" href="../qa-guide.chunked/index.html#NUT_Config_Prereqs" target="_top">Prerequisites for building NUT on different OSes</a> (or <code class="code">docs/config-prereqs.txt</code> in NUT sources for up-to-date information) and
+<a class="ulink" href="../qa-guide.chunked/index.html#CI_LXC" target="_top">Custom NUT CI farm build agents: LXC multi-arch containers</a> (or <code class="code">docs/ci-farm-lxc-setup.txt</code> in NUT sources for up-to-date information) documentation.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_appveyor_ci"></a>4.4. AppVeyor CI</h3></div></div></div><p><a id="NUT_CI_APPVEYOR"></a>Primarily used for building NUT for Windows on Windows instances provided
+in the cloud — and so ensure non-regression as well as downloadable archives
+with binary installation prototype area, intended for enthusiastic testing
+(proper packaging to follow). NUT for Windows build-ability was re-introduced
+soon after NUT 2.8.0 release.</p><p>This relies on a few prerequisite packages and a common NUT configuration,
+as coded in the <code class="literal">appveyor.yml</code> file in the NUT codebase.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_circleci"></a>4.5. CircleCI</h3></div></div></div><p><a id="NUT_CI_CIRCLE"></a>Primarily used for building NUT for MacOS on instances provided in the cloud,
+and so ensure non-regression across several Xcode releases.</p><p>This relies on a few prerequisite packages and a common NUT configuration,
+as coded in the <code class="literal">.circleci/config.yml</code> file in the NUT codebase.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_travis_ci"></a>4.6. Travis CI</h3></div></div></div><p><a id="NUT_CI_TRAVIS"></a>See the <code class="literal">.travis.yml</code> file in project sources for a detailed list of third
+party dependencies and a large matrix of <code class="literal">CFLAGS</code> and compiler versions
+last known to work or to not (yet) work on operating systems available
+to that CI solution.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>The cloud Travis CI offering became effectively defunct for
+open-source projects in mid-2021, so the <code class="literal">.travis.yml</code> file in NUT
+codebase is not actively maintained.</p><p>Local private deployments of Travis CI are possible, so if anybody does
+use it and has updated markup to share, they are welcome to post PRs.</p></div><p>The NUT project on GitHub had integration with Travis CI to test a large
+set of compiler and option combinations, covering different versions of
+gcc and clang, C standards, and requiring to pass builds at least in a
+mode without warnings (and checking the other cases where any warnings
+are made fatal).</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_codeql"></a>4.7. CodeQL</h3></div></div></div><p><a id="NUT_CI_CODEQL"></a>(Earlier this role was performed by LGTM.com) Run GitHub Actions for static
+analysis of C, C++ and Python code and recipes, to produce suggestions based
+on common coding flaws and best-practice security patterns.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
+		Last updated 2025-03-30 21:50:46 -- Network UPS Tools 2.8.2.2575</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_test_automation.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="_continuous_integration_nut_ci_farm_build_agent_preparation.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
