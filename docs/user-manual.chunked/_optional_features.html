@@ -150,7 +150,23 @@ if either <code class="literal">--without-dev=auto</code> and/or <code class="li
 if both <code class="literal">--with-dev</code> and <code class="literal">--with-nutconf</code>,
   default to set <code class="literal">--with-dev-libnutconf=yes</code>.
 </li></ul></div><p>Requires C++11 support to be enabled (available in compiler, not neutered
-by explicit selection of an older standard).</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_options_for_developers"></a>Options for developers</h4></div></div></div><pre class="literallayout">--enable-spellcheck (default: auto)</pre><p>Activate recipes for documentation source file spelling checks with <code class="literal">aspell</code>
+by explicit selection of an older standard).</p><pre class="literallayout">--enable-ldflags-nut-rpath (yes/no/auto/flags, default: auto)
+--enable-ldflags-nut-rpath-cxx (yes/no/auto/flags, default: auto)</pre><p>NUT development files include the <code class="literal">*.pc</code> metadata for <code class="literal">pkg-config</code> ecosystem
+and a legacy <code class="literal">libupsclient-config</code> script, both used to deliver compiler and
+linker options for third-party programs to build against NUT libraries.</p><p>There can be a problem during run-time, when NUT is installed into a location
+that the system linker does not know to look into, e.g. the default <code class="literal">--prefix</code>
+value of <code class="literal">/usr/local/ups</code>, that the built programs fail to dynamically link
+with the shared objects of NUT libraries, unless deprecated tricks like the
+<code class="literal">LD_LIBRARY_PATH</code> setting are applied.</p><p>These options allow NUT to add linker options, which set "RPATH" in consumer
+binaries, to the announced metadata.  As a result, third-party programs or
+libraries are hard-coded to look for NUT libraries in a certain location, in
+addition to system locations and similar paths added by other dependencies.</p><p>By default (in <code class="literal">auto</code> mode), the <code class="literal">configure</code> script queries the compiler for
+known system library paths (currently supported with GCC and CLANG builds),
+and checks the NUT <code class="literal">libdir</code> against that list.  If there is a hit, no extra
+flags are announced; otherwise, the format detected for currently used linker
+by autoconf libtool macros is added to the announced metadata for builds
+against NUT.  If this causes problems, you can either <code class="literal">--disable-...</code> these
+flags or provide the desired string explicitly.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_options_for_developers"></a>Options for developers</h4></div></div></div><pre class="literallayout">--enable-spellcheck (default: auto)</pre><p>Activate recipes for documentation source file spelling checks with <code class="literal">aspell</code>
 tool. Default behavior depends on availability of the tool, so if present — it would run for <code class="literal">make check</code> by default, to facilitate quicker acceptance
 of contributions.</p><pre class="literallayout">--enable-check-NIT (default: no)</pre><p>Add <code class="literal">make check-NIT</code> to default activity of <code class="literal">make check</code> to run the
 NUT Integration Testing suite. This is potentially dangerous (e.g. due
@@ -177,4 +193,4 @@ Core and Client parts.</p></div><div class="section"><div class="titlepage"><div
 dynamically, based on requested scanning options. This allows to build and
 package the tool without requiring all possible dependencies to be installed
 in each run-time environment.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-03-28 11:14:29 -- Network UPS Tools 2.8.2.2575</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_driver_selection.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="Configure_options.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="_other_configuration_options.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2025-03-30 19:07:38 -- Network UPS Tools 2.8.2.2575</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_driver_selection.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="Configure_options.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="_other_configuration_options.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

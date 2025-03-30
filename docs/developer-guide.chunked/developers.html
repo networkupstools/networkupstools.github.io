@@ -98,176 +98,13 @@ systems that old, where newer compilers are not available, pull requests
 to fix the offending coding issues in some way that does not break other
 use-cases are welcome.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_continuous_integration_and_automated_builds"></a>4.4. Continuous Integration and Automated Builds</h3></div></div></div><p>To ease and automate the build scenarios which were deemed important for
 quality assurance and non-regression checks of NUT, several solutions
-were introduced over time.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_build_automation_tools_and_scripts"></a>Build automation tools and scripts</h4></div></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_ci_build_sh"></a>ci_build.sh</h5></div></div></div><p>This script was originally introduced (following ZeroMQ/ZProject example)
-to automate CI builds, by automating certain scenarios driven by exported
-environment variables to set particular <code class="literal">configure</code> options and <code class="literal">make</code>
-some targets (chosen by the <code class="literal">BUILD_TYPE</code> envvar). It can also be used
-locally to avoid much typing to re-run those scenarios during development.</p><p>Developers can directly use the scripts involved in CI builds to fix
-existing code on their workstations or to ensure support for new
-compilers and C standard revisions, e.g. save a local file like this
-to call the common script with pre-sets:</p><pre class="screen">$ cat _fightwarn-gcc10-gnu17.sh
-#!/bin/sh
-
-BUILD_TYPE=default-all-errors \
-CFLAGS="-Wall -Wextra -Werror -pedantic -std=gnu17" \
-CXXFLAGS="-Wall -Wextra -Werror -std=gnu++17" \
-CC=gcc-10 CXX=g++-10 \
-        ./ci_build.sh</pre><p>…and then execute it to prepare a workspace, after which you can go
-fixing bugs file-by-file running a <code class="literal">make</code> after each save to confirm
-your solutions and uncover the next issue to address :-)</p><p>Helpfully, the NUT CI farm build logs report the configuration used for
-each executed stage, so if some build combination fails — you can just
-scroll to the end of that section and copy-paste the way to reproduce
-an issue locally (on an OS similar to that build case).</p><p>Note that while spelling out sets of warnings can help in a quest to
-fix certain bugs during development (if only by removing noise from
-classes of warnings not relevant to the issue one is working on), there
-is a reasonable set of warnings which NUT codebase actively tries to
-be clean about (and checks in CI), detailed in the next section.</p><p>For the <code class="literal">ci_build.sh</code> usage like above, one can instead pass the setting
-via <code class="literal">BUILD_WARNOPT=...</code>, and require that all emitted warnings are fatal
-for their build, e.g.:</p><pre class="screen">$ cat _fightwarn-clang9-gnu11.sh
-#!/bin/sh
-
-BUILD_TYPE=default-all-errors \
-BUILD_WARNOPT=hard BUILD_WARNFATAL=yes \
-CFLAGS="-std=gnu11" \
-CXXFLAGS="-std=gnu++11" \
-CC=clang-9 CXX=clang++-9 CPP=clang-cpp \
-        ./ci_build.sh</pre><p>Finally, for refactoring effort geared particularly for fighting the
-warnings which exist in current codebase, the script contains some
-presets (which would evolve along with codebase quality improvements)
-as <code class="literal">BUILD_TYPE=fightwarn-gcc</code>, <code class="literal">BUILD_TYPE=fightwarn-clang</code> or plain
-<code class="literal">BUILD_TYPE=fightwarn</code>:</p><pre class="literallayout">:; BUILD_TYPE=fightwarn-clang ./ci_build.sh</pre><p>As a rule of thumb, new contributions must not emit any warnings when
-built in GNU99 mode with a <code class="literal">minimal</code> "difficulty" level of warnings.
-Technically they must survive the part of test matrix across the several
-platforms tested by NUT CI and marked in project settings as required
-to pass, to be accepted for a pull request merge.</p><p>Developers aiming to post successful pull requests to improve NUT can
-pass the <code class="literal">--enable-warnings</code> option to the <code class="literal">configure</code> script in local
-builds to see how that behaves and ensure that at least in some set-up
-their contribution is viable. Note that different compiler versions and
-vendors (gcc/clang/…), building against different OS and third-party
-dependencies, with different CPU architectures and different language
-specification revisions, might all complain about different issues — and catching this in as diverse range of set-ups as possible is why we
-have CI tests.</p><p>It can be beneficial for serial developers to set up a local BuildBot,
-Travis or a Jenkins instance with a matrix test job, to test their local
-git repository branches with whatever systems they have available.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-<a class="ulink" href="https://github.com/networkupstools/nut/issues/823" target="_top">https://github.com/networkupstools/nut/issues/823</a>
-</li></ul></div><p>While <code class="literal">autoconf</code> tries its best to provide portable shell code, sometimes
-there are builds of system shell that just fail under stress. If you are
-seeing random failures of <code class="literal">./configure</code> script in different spots with
-the same inputs, try telling <code class="literal">./ci_build.sh</code> to loop configuring until
-success (instead of quickly failing), and/or tell <code class="literal">./configure</code> to use
-another shell at least for the system call-outs, with options like these:</p><pre class="literallayout">:; SHELL=/bin/bash CONFIG_SHELL=/bin/bash CI_SHELL_IS_FLAKY=true \
-   ./ci_build.sh</pre></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_jenkins_ci"></a>Jenkins CI</h5></div></div></div><p>Since mid-2021, the NUT CI farm is implemented by several virtual servers
-courteously provided originally by <a class="ulink" href="http://fosshost.org" target="_top">Fosshost</a> and
-later by
-<a class="ulink" href="https://www.digitalocean.com/?refcode=d2fbf2b9e082&amp;utm_campaign=Referral_Invite&amp;utm_medium=Referral_Program&amp;utm_source=badge" target="_top">DigitalOcean</a>.</p><p>These run various operating systems as build agents, and a Jenkins instance
-to orchestrate the builds of NUT branches and pull requests on those agents.</p><p>This is driven by <code class="literal">Jenkinsfile-dynamatrix</code> and a Jenkins Shared Library called
-<a class="ulink" href="https://github.com/networkupstools/jenkins-dynamatrix" target="_top">jenkins-dynamatrix</a>
-which prepares a matrix of builds across as many operating systems,
-bitnesses/architectures, compilers, make programs and C/C++ revisions
-as it can — based on the population of currently available build agents
-and capabilities which they expose as agent labels.</p><p>This hopefully means that people interested in NUT can contribute to the
-build farm (and ensure NUT is and remains compatible with their platform)
-by running a Jenkins Swarm agent with certain labels, which would dial
-into <a class="ulink" href="https://ci.networkupstools.org/" target="_top">https://ci.networkupstools.org/</a> controller. Please contact the NUT
-maintainer if you want to participate in this manner.</p><p>The <code class="literal">Jenkinsfile-dynamatrix</code> recipe allows NUT CI farm to run different sets
-of build scenarios based on various conditions, such as the name of branch
-being built (or PR’ed against), changed files (e.g. C/C++ sources vs. just
-docs), and some build combinations may be not required to succeed.</p><p>For example, the main development branch and pull requests against it must
-cleanly pass all specified builds and tests on various platforms with the
-default level of warnings specified in the <code class="literal">configure</code> script. These are
-balanced to not run too many build scenarios overall, but just a quick and
-sufficiently representative set.</p><p>As another example, there is special handling for "fightwarn" pattern in
-the branch names to run many more builds with varying warning levels and
-more variants of intermediate language revisions, and so expose concerns
-deliberately missed by default warnings levels in "master" branch builds
-(the bar moves over time, as some classes of warnings become extinct from
-our codebase).</p><p>Further special handling for branches named like <code class="literal">fightwarn.*89.*</code> regex
-enables more intensive warning levels for a GNU89 build specifically (which
-are otherwise disabled as noisy yet not useful for supported C99+ builds),
-and is intended to help develop fixes for support of this older language
-revision, if anyone would dare.</p><p>Many of those unsuccessful build stages are precisely the focus of the
-"fightwarn" effort, and are currently marked as "may fail", so they end
-up as "UNSTABLE" (seen as orange bubbles in the Jenkins BlueOcean UI, or
-orange cells in the tabular list of stages in the legacy UI), rather than
-as "FAILURE" (red bubbles) for build scenarios that were not expected to
-fail and usually represent higher-priority problems that would block a PR.</p><p>Developers whose PR builds (or attempts to fix warnings) did not succeed in
-some cell of such build matrix, can look at the individual logs of that cell.
-Beside indication from the compiler about the failure, the end of log text
-includes the command which was executed by CI worker and can be reproduced
-locally by the developer, e.g.:</p><pre class="screen">22:26:01  FINISHED with exit-code 2 cmd:  (
-22:26:01  [ -x ./ci_build.sh ] || exit
-22:26:01
-22:26:01  eval BUILD_TYPE="default-alldrv" BUILD_WARNOPT="hard" \
-    BUILD_WARNFATAL="yes" MAKE="make"  CC=gcc-10 CXX=g++-10 \
-    CPP=cpp-10 CFLAGS='-std=gnu99 -m64' CXXFLAGS='-std=gnu++11 -m64' \
-    LDFLAGS='-m64' ./ci_build.sh
-22:26:01  )</pre><p>or for autotools-driven scenarios (which prep, configure, build and test
-in separate stages — so for reproducing a failed build you should also
-look at its configuration step separately):</p><pre class="screen">22:28:18  FINISHED with exit-code 0 cmd:  ( [ -x configure ] || exit; \
-    eval  CC=clang-9 CXX=clang++-9 CPP=clang-cpp-9 CFLAGS='-std=c11 -m64' \
-    CXXFLAGS='-std=c++11 -m64' LDFLAGS='-m64' time ./configure )</pre><p>To re-run such scenario locally, you can copy the line from <code class="literal">eval</code> (but
-without the <code class="literal">eval</code> keyword itself) up to and including the executed script
-or tool, into your shell. Depending on locally available compilers, you
-may have to tweak the <code class="literal">CC</code>, <code class="literal">CXX</code> and <code class="literal">CPP</code> arguments; note that a <code class="literal">CPP</code>
-may be specified as <code class="literal">/path/to/CC -E</code> for GCC and CLANG based toolkits
-at least, if they lack a standalone preprocessor program (e.g. IntelCC).</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>While NUT recipes do not currently recognize a separate <code class="literal">CXXCPP</code>,
-it would follow similar semantics.</p></div><p>Some further details about the NUT CI farm workers are available in
-<a class="ulink" href="config-prereqs.txt" target="_top">config-prereqs.txt</a> and
-<a class="ulink" href="ci-farm-lxc-setup.txt" target="_top">ci-farm-lxc-setup.txt</a> documents.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_appveyor_ci"></a>AppVeyor CI</h5></div></div></div><p>Primarily used for building NUT for Windows on Windows instances provided
-in the cloud — and so ensure non-regression as well as downloadable archives
-with binary installation prototype area, intended for enthusiastic testing
-(proper packaging to follow). NUT for Windows build-ability was re-introduced
-soon after NUT 2.8.0 release.</p><p>This relies on a few prerequisite packages and a common NUT configuration,
-as coded in the <code class="literal">appveyor.yml</code> file in the NUT codebase.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_circleci"></a>CircleCI</h5></div></div></div><p>Primarily used for building NUT for MacOS on instances provided in the cloud,
-and so ensure non-regression across several Xcode releases.</p><p>This relies on a few prerequisite packages and a common NUT configuration,
-as coded in the <code class="literal">.circleci/config.yml</code> file in the NUT codebase.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_travis_ci"></a>Travis CI</h5></div></div></div><p>See the <code class="literal">.travis.yml</code> file in project sources for a detailed list of third
-party dependencies and a large matrix of <code class="literal">CFLAGS</code> and compiler versions
-last known to work or to not (yet) work on operating systems available
-to that CI solution.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>The cloud Travis CI offering became effectively defunct for
-open-source projects in mid-2021, so the <code class="literal">.travis.yml</code> file in NUT
-codebase is not actively maintained.</p><p>Local private deployments of Travis CI are possible, so if anybody does
-use it and has updated markup to share, they are welcome to post PRs.</p></div><p>The NUT project on GitHub had integration with Travis CI to test a large
-set of compiler and option combinations, covering different versions of
-gcc and clang, C standards, and requiring to pass builds at least in a
-mode without warnings (and checking the other cases where any warnings
-are made fatal).</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_pre_set_warning_options"></a>Pre-set warning options</h4></div></div></div><p>The options chosen into pre-sets that can be selected by <code class="literal">configure</code>
-script options are ones we use for different layers of CI tests.</p><p>Values to note include:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-<code class="literal">--enable-Werror(=yes/no)</code> — make warnings fatal;
-</li><li class="listitem"><p class="simpara">
-<code class="literal">--enable-warnings(=.../no)</code> — enable certain warning presets:
-</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
-<code class="literal">gcc-hard</code>, <code class="literal">clang-hard</code>, <code class="literal">gcc-medium</code>, <code class="literal">clang-medium</code>, <code class="literal">gcc-minimal</code>,
-   <code class="literal">clang-minimal</code>, <code class="literal">all</code> — actual definitions that are compiler-dependent
-   (the latter just adds <code class="literal">-Wall</code> which may be relatively portable);
-</li><li class="listitem">
-<code class="literal">hard</code>, <code class="literal">medium</code> or <code class="literal">minimal</code> — if current compiler is detected as
-   CLANG or GCC, apply corresponding setting from above (or <code class="literal">all</code> otherwise);
-</li><li class="listitem">
-<code class="literal">gcc</code> or <code class="literal">clang</code> — apply the set of options (regardless of detected
-   compiler) with default "difficulty" hard-coded in <code class="literal">configure</code> script,
-   to tweak as our codebase becomes cleaner;
-</li><li class="listitem">
-<code class="literal">yes</code>/<code class="literal">auto</code> (also takes effect if <code class="literal">--enable-warnings</code> is requested
-   without an <code class="literal">=ARG</code> part) — if current compiler is detected as CLANG
-   or GCC, apply corresponding setting with default "difficulty" from
-   above (or <code class="literal">all</code> otherwise).
-</li></ul></div></li></ul></div><p>Note that for backwards-compatibility reasons and to help filter out
-introduction of blatant errors, builds with compilers that claim GCC
-compatibility can enable a few easy warning presets by default. This
-can be avoided with an explicit argument to <code class="literal">--disable-warnings</code> (or
-<code class="literal">--enable-warnings=no</code>).</p><p>All levels of warnings pre-sets for GCC in particular do not enforce
-the <code class="literal">-pedantic</code> mode for builds with C89/C90/ANSI standard revision
-(as guesstimated by <code class="literal">CFLAGS</code> content), because nowadays it complains
-more about the system and third-party library headers, than about NUT
-codebase quality (and "our offenses" are mostly something not worth
-fixing in this era, such as the use of <code class="literal">__func__</code> in debug commands).
-If there still are practical use-cases that require builds of NUT on
-pre-C99 compiler toolkits, pull requests are of course welcome — but
-the maintainer team does not intend to spend much time on that.</p><p>Hopefully this warnings pre-set mechanism is extensible enough if we
-would need to add more compilers and/or "difficulty levels" in the
-future.</p><p>Finally, note that such pre-set warnings can be mixed with options
-passed through <code class="literal">CFLAGS</code> or <code class="literal">CXXFLAGS</code> values to your local <code class="literal">configure</code>
-run, but it is up to your compiler how it interprets the resulting mix.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_integrated_development_environments_ides_and_debugging_nut"></a>4.5. Integrated Development Environments (IDEs) and debugging NUT</h3></div></div></div><p>Much of NUT has been coded using classic editors of developers' preference,
+were introduced over time.</p><p>For more information, and perhaps inspiration for building a similar
+solution, please see the <span class="strong"><strong>NUT Quality Assurance and Build Automation Guide</strong></span>,
+and specifically its chapters on
+<a class="ulink" href="../qa-guide.chunked/index.html#CI_compiler_warnings" target="_top">Static analysis by compilers</a>,
+<a class="ulink" href="../qa-guide.chunked/index.html#CI_BUILD_SH" target="_top">ci_build.sh script</a> (or <code class="code">ci_build.adoc</code> in NUT sources for up-to-date information),
+<a class="ulink" href="../qa-guide.chunked/index.html#NUTCI_farm_technologies" target="_top">Continuous Integration (NUT CI farm) technologies</a> and
+<a class="ulink" href="../qa-guide.chunked/index.html#NUTCI_farm_agents" target="_top">Continuous Integration (NUT CI farm) build agent preparation</a>.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_integrated_development_environments_ides_and_debugging_nut"></a>4.5. Integrated Development Environments (IDEs) and debugging NUT</h3></div></div></div><p>Much of NUT has been coded using classic editors of developers' preference,
 like <code class="literal">vi</code>, <code class="literal">nano</code>, Midnight Commander <code class="literal">mcedit</code>, <code class="literal">gedit</code>/<code class="literal">pluma</code>, NotePad++
 and tools like <code class="literal">meld</code> or WinMerge for file comparison and merge.</p><p>Modern IDEs however do offer benefits, specifically for live debugging
 sessions in a more convenient fashion than with command-line <code class="literal">gdb</code> directly.
@@ -304,7 +141,7 @@ You may want to do this in a dedicated user account!</p></div><p>Examples below 
 are using the "MinGW X64" profile for GCC builds (nuances may differ for
 32-bit, CLANG, UCRT and other profile variants).</p><p>Also keep in mind that not all dependencies and tools involved in a
 fully-fledged NUT build are easily available or usable on Windows (e.g.
-the spell checker). See the <a class="ulink" href="config-prereqs.txt" target="_top">config-prereqs.txt</a> for better detailed
+the spell checker). See <a class="ulink" href="../qa-guide.chunked/index.html#NUT_Config_Prereqs" target="_top">Prerequisites for building NUT on different OSes</a> (or <code class="code">docs/config-prereqs.txt</code> in NUT sources for up-to-date information) for better detailed
 package lists for different operating systems including Windows, and feel
 welcome to post pull requests with suggestions about new tool-chains that
 might fare better than those already tried and documented.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
@@ -943,8 +780,8 @@ libtool
 Python
 </li><li class="listitem">
 Perl
-</li></ul></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>See the <a class="ulink" href="config-prereqs.txt" target="_top">config-prereqs.txt</a> for better detailed package lists for
-different operating systems.</p><p>See <code class="literal">ci_build.sh</code> for automating many practical scenarios, for easier
+</li></ul></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>See <a class="ulink" href="../qa-guide.chunked/index.html#NUT_Config_Prereqs" target="_top">Prerequisites for building NUT on different OSes</a> (or <code class="code">docs/config-prereqs.txt</code> in NUT sources for up-to-date information) for better detailed
+package lists for different operating systems.</p><p>See <code class="literal">ci_build.sh</code> for automating many practical scenarios, for easier
 iterations.</p><p>It is optional, but highly recommended, to have Python 2.x or 3.x, and Perl,
 to generate some files included into the <code class="literal">configure</code> script whose presence
 is checked by autotools when it is generated. Neutered files can be just
@@ -983,4 +820,4 @@ scenarios automatically. If your code adds a substantial feature, consider
 extending the <code class="literal">Jenkinsfile-dynamatrix</code> and/or <code class="literal">ci_build.sh</code> scripts in the
 workspace root to add another <code class="literal">BUILD_TYPE</code> to the matrix of tests run in
 parallel.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-03-28 11:14:29 -- Network UPS Tools 2.8.2.2575</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="versioning.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="new-drivers.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2025-03-30 19:07:38 -- Network UPS Tools 2.8.2.2575</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="versioning.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="new-drivers.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
