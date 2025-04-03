@@ -741,7 +741,7 @@ asciidoc.install();
 <div class="sect1">
 <h2 id="_name">NAME</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>upscli_connect - Open a connection to a NUT upsd data server</p></div>
+<div class="paragraph"><p>upscli_connect, upscli_tryconnect - Open a connection to a NUT upsd data server</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -751,7 +751,12 @@ asciidoc.install();
 <div class="content">
 <pre><code>        #include &lt;upsclient.h&gt;
 
-        int upscli_connect(UPSCONN_t *ups, const char *host, uint16_t port, int flags);</code></pre>
+        /* Open a connection to a NUT upsd data server (blocking by default) */
+        int upscli_connect(UPSCONN_t *ups, const char *host, uint16_t port, int flags);
+
+        /* Open a connection to a NUT upsd data server with specified timeout */
+        int upscli_tryconnect(UPSCONN_t *ups, const char *host, uint16_t port, int flags,
+                struct timeval * timeout);</code></pre>
 </div></div>
 </div>
 </div>
@@ -761,6 +766,26 @@ asciidoc.install();
 <div class="paragraph"><p>The <strong>upscli_connect()</strong> function takes the pointer <em>ups</em> to a
 <code>UPSCONN_t</code> state structure and opens a TCP connection to the <em>host</em> on
 the given <em>port</em>.</p></div>
+<div class="paragraph"><p>By default this makes a blocking connection attempt (until the system
+transport layer times out the underlying <ulink url="https://linux.die.net/man/2/select">select(2)</ulink> call).
+A program-wide default timeout for this method can be configured with
+the <a href="upscli_set_default_connect_timeout.html">upscli_set_default_connect_timeout(3)</a> or
+<a href="upscli_init_default_connect_timeout.html">upscli_init_default_connect_timeout(3)</a> methods.
+For operations with explicit operation-specific timeout please use
+the <strong>upscli_tryconnect()</strong> method instead.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">As part of general initialization, both the <a href="upscli_init.html">upscli_init(3)</a>
+function or the first call to <strong>upscli_connect()</strong> function, can call the
+<a href="upscli_init_default_connect_timeout.html">upscli_init_default_connect_timeout(3)</a> method (if it was never used before):
+this allows unmodified (legacy) NUT clients to consistently benefit from
+presence of the <code>NUT_DEFAULT_CONNECT_TIMEOUT</code> environment variable for
+<a href="upscli_connect.html">upscli_connect(3)</a> attempts to be not blocking (as per default).</td>
+</tr></table>
+</div>
 <div class="paragraph"><p><em>flags</em> may be either <code>UPSCLI_CONN_TRYSSL</code> to try a SSL
 connection, or <code>UPSCLI_CONN_REQSSL</code> to require a SSL connection.</p></div>
 <div class="paragraph"><p>Introduced in version 2.7, an additional flag <code>UPSCLI_CONN_CERTVERIF</code>
@@ -787,9 +812,12 @@ returns <em>0</em> on success, or <em>-1</em> if an error occurs.</p></div>
 <div class="sect1">
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
-<div class="paragraph"><p><a href="upscli_disconnect.html">upscli_disconnect(3)</a>, <a href="upscli_fd.html">upscli_fd(3)</a>,
+<div class="paragraph"><p><a href="upscli_disconnect.html">upscli_disconnect(3)</a>, <a href="upscli_fd.html">upscli_fd(3)</a>, <a href="upscli_init.html">upscli_init(3)</a>,
 <a href="upscli_splitaddr.html">upscli_splitaddr(3)</a>, <a href="upscli_splitname.html">upscli_splitname(3)</a>,
 <a href="upscli_ssl.html">upscli_ssl(3)</a>, <a href="upscli_strerror.html">upscli_strerror(3)</a>,
+<a href="upscli_get_default_connect_timeout.html">upscli_get_default_connect_timeout(3)</a>,
+<a href="upscli_set_default_connect_timeout.html">upscli_set_default_connect_timeout(3)</a>,
+<a href="upscli_init_default_connect_timeout.html">upscli_init_default_connect_timeout(3)</a>,
 <a href="upscli_upserror.html">upscli_upserror(3)</a></p></div>
 </div>
 </div>
@@ -797,7 +825,7 @@ returns <em>0</em> on success, or <em>-1</em> if an error occurs.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-04-02 13:05:11 UTC -- Network UPS Tools 2.8.2.2628
+Last updated 2025-04-03 02:45:25 UTC -- Network UPS Tools 2.8.2.2705
 </div>
 </div>
 </body>

@@ -137,7 +137,16 @@ A technologically and practically interesting revamp of NUT mesh of
    some scenarios had hit the 1-hour timeout imposed by providers of free
    CI hosting coupled with the weak machines provided in their free layer),
    and we suppose this is an interesting case for other projects to draw
-   inspiration from for their recipe refactoring. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/2825" target="_top">PR #2825</a>]</p></li><li class="listitem"><p class="simpara">
+   inspiration from for their recipe refactoring. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/2825" target="_top">PR #2825</a>]</p></li><li class="listitem">
+As an aid for developers and maintainers, a new spell-checking recipe was
+   added to first run non-interactive spelling checks in parallel, and <span class="strong"><strong>only</strong></span>
+   if something fails — run an interactive check to edit the text and/or the
+   dictionary file. The <code class="literal">make spellcheck</code> rule now also benefits from the
+   rewritten recipes, as detailed above, to visit directories with text files
+   in parallel. Overall, these changes may save time on multi-CPU systems, if
+   compared to a sequential walk of all texts (or their directories) as was
+   done before. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2871" target="_top">#2871</a>]
+</li><li class="listitem"><p class="simpara">
 The <code class="literal">make dist</code> goal now takes more care to require availability of the man
    pages to put into the prepared distribution archive. These may come either
    from the current build, or inherited from its sources (if using a tarball
@@ -429,10 +438,35 @@ Updated <code class="literal">upsmon</code> client with ability to report enteri
 </li><li class="listitem">
 Updated <code class="literal">upsmon</code> client with setting to toggle whether an <code class="literal">ALARM</code>
      status can prompt the UPS to become critical in certain situations.
+</li></ul></div></li><li class="listitem"><p class="simpara">
+New <code class="literal">libupsclient</code> API methods added:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+<code class="literal">upscli_str_add_unique_token()</code> and <code class="literal">upscli_str_contains_token()</code>,
+     to help C NUT clients process <code class="literal">ups.status</code> and similarly structured
+     strings same way as NUT core code base. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2852" target="_top">#2852</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2859" target="_top">#2859</a>]
+</li><li class="listitem">
+<code class="literal">upscli_connect()</code> was previously always blocking; now this is sort of
+     optional, with new <code class="literal">upscli_set_default_connect_timeout()</code> able to change
+     the implicit timeout from default zero (meaning blocking) to a positive
+     value (or back to 0). Several NUT clients (<code class="literal">upsc</code>, <code class="literal">upscmd</code>, <code class="literal">upsrw</code>,
+     <code class="literal">upslog</code>, <code class="literal">upsmon</code>, <code class="literal">upsimage</code>, <code class="literal">upsset</code> and <code class="literal">upsstats</code>) were updated
+     to default with a 10-second timeout in case of name resolution lags or
+     unresponsive hosts (notably a problem with <code class="literal">upsmon</code> contacting many
+     remote systems at once). The <code class="literal">NUT_DEFAULT_CONNECT_TIMEOUT</code> environment
+     variable can be used to modify this timeout for all clients. Further
+     new methods here include <code class="literal">upscli_get_default_connect_timeout()</code> to
+     retrieve a copy of the last stored timeout, and
+     <code class="literal">upscli_init_default_connect_timeout()</code> to initialize the value from
+     a number of sources with different priorities. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2847" target="_top">#2847</a>]
+</li><li class="listitem">
+Symbols exported from <code class="literal">libupsclient</code> now include <code class="literal">nut_debug_level*</code> so
+     that NUT clients can be usefully debugged (e.g. using <code class="literal">NUT_DEBUG_LEVEL</code>
+     environment variable). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2847" target="_top">#2847</a>]
 </li></ul></div></li><li class="listitem">
-New <code class="literal">libupsclient</code> API methods added, <code class="literal">upscli_str_add_unique_token()</code> and
-   <code class="literal">upscli_str_contains_token()</code>, to help C NUT clients process <code class="literal">ups.status</code> and
-   similarly structured strings same way as NUT core code base. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2852" target="_top">#2852</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2859" target="_top">#2859</a>]
+Several NUT clients including <code class="literal">upscmd</code>, <code class="literal">upsrw</code>, <code class="literal">upsimage</code>, <code class="literal">upsset</code>,
+   <code class="literal">upsstats</code>, and <code class="literal">upslog</code> (during reconnection), did not <code class="literal">UPSCLI_CONN_TRYSSL</code>
+   so went plaintext even when secure connections were possible. Fixed to at
+   least try being secure, same way as <code class="literal">upsc</code> does for a long time. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2847" target="_top">#2847</a>]
 </li><li class="listitem"><p class="simpara">
 upsmon:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -4044,4 +4078,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.32. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-04-02 13:05:24 -- Network UPS Tools 2.8.2.2628</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2025-04-03 02:45:46 -- Network UPS Tools 2.8.2.2705</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

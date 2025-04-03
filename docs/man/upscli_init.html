@@ -802,6 +802,11 @@ the <code>stderr</code> of tools they call (such as monitoring systems doing <co
 queries), you can export an environment variable <code>NUT_QUIET_INIT_SSL</code>
 with string values <code>"true"</code>, <code>"TRUE"</code> or <code>"1"</code>, to avoid logging these
 messages and just emit them as debug stream (at verbosity 1 or higher).</p></div>
+<div class="paragraph"><p>As part of general initialization, <strong>upscli_init()</strong> function can call the
+<a href="upscli_init_default_connect_timeout.html">upscli_init_default_connect_timeout(3)</a> method (if it was never used
+before): this allows unmodified (legacy) NUT clients to consistently benefit
+from presence of the <code>NUT_DEFAULT_CONNECT_TIMEOUT</code> environment variable for
+<a href="upscli_connect.html">upscli_connect(3)</a> attempts to be not blocking (as per default).</p></div>
 <div class="paragraph"><p>You can call <a href="upscli_add_host_cert.html">upscli_add_host_cert(3)</a> to register specific host
 security policy before initialize connections to them.</p></div>
 <div class="paragraph"><p>You must call <a href="upscli_cleanup.html">upscli_cleanup(3)</a> when exiting application.</p></div>
@@ -818,7 +823,8 @@ occurs.</p></div>
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
 <div class="paragraph"><p><a href="upscli_add_host_cert.html">upscli_add_host_cert(3)</a>, <a href="upscli_cleanup.html">upscli_cleanup(3)</a>,
-<a href="upscli_disconnect.html">upscli_disconnect(3)</a>, <a href="upscli_fd.html">upscli_fd(3)</a>,
+<a href="upscli_connect.html">upscli_connect(3)</a>, <a href="upscli_disconnect.html">upscli_disconnect(3)</a>,
+<a href="upscli_init_default_connect_timeout.html">upscli_init_default_connect_timeout(3)</a>, <a href="upscli_fd.html">upscli_fd(3)</a>,
 <a href="upscli_splitaddr.html">upscli_splitaddr(3)</a>, <a href="upscli_splitname.html">upscli_splitname(3)</a>,
 <a href="upscli_ssl.html">upscli_ssl(3)</a>, <a href="upscli_strerror.html">upscli_strerror(3)</a>,
 <a href="upscli_upserror.html">upscli_upserror(3)</a></p></div>
@@ -828,7 +834,7 @@ occurs.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-04-02 13:05:11 UTC -- Network UPS Tools 2.8.2.2628
+Last updated 2025-04-03 02:45:26 UTC -- Network UPS Tools 2.8.2.2705
 </div>
 </div>
 </body>

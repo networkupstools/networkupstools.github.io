@@ -708,26 +708,49 @@ below would not include something a bare-minimum system would
 require to build NUT.</p><p>Note that <code class="literal">PATH</code> for builds on NetBSD should include <code class="literal">local</code> and
 <code class="literal">pkg</code>; the default after installation of the test system was:</p><pre class="screen">:; PATH="/sbin:/usr/sbin:/bin:/usr/bin:/usr/pkg/sbin:/usr/pkg/bin:/usr/X11R7/bin:/usr/local/sbin:/usr/local/bin"
 :; export PATH</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>You may want to reference <code class="literal">ccache</code> even before all that,
+e.g. in the system-wide <code class="literal">/etc/profile</code> or build-user’s <code class="literal">~/.profile</code>,
 as detailed below:</p></div><pre class="screen">:; PATH="/usr/lib/ccache:$PATH"
 :; export PATH</pre><p>To use the <code class="literal">ci_build.sh</code> don’t forget <code class="literal">bash</code> which may be not part of NetBSD
 base installation. It is not required for "legacy" builds arranged by just
 <code class="literal">autogen.sh</code> and <code class="literal">configure</code> scripts.</p><p>Also note that the <code class="literal">install-sh</code> helper added by autotools from OS-provided
 resources when generating the <code class="literal">configure</code> script may be old and its directory
 creation mode is not safe for parallel-<code class="literal">make</code> installations. If this happens,
-you can work around by <code class="literal">make MKDIRPROG="mkdir -p" install -j 8</code> for example.</p><pre class="screen">:; pkgin install \
+you can work around by <code class="literal">make MKDIRPROG="mkdir -p" install -j 8</code> for example.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>Instructions below rely on <code class="literal">pkgin</code>, an <code class="literal">apt</code>/<code class="literal">yum</code>-like front-end tool for
+managing pkgsrc binary packages.  It is available out of the box on the system
+this document describes, but if an e.g. older release lacks it, it can be added
+using the older tooling:</p><pre class="screen">:; PKG_PATH="http://cdn.NetBSD.org/pub/pkgsrc/packages/NetBSD/$(uname -p)/$(uname -r|cut -f '1 2' -d.)/All/"
+:; export PKG_PATH
+:; pkg_add pkgin</pre><p>For more details, see <a class="ulink" href="https://www.pkgsrc.org/#index1h1" target="_top">https://www.pkgsrc.org/#index1h1</a> and
+<a class="ulink" href="https://www.librebyte.net/en/cli-en/pkgin-a-netbsd-package-manager/" target="_top">https://www.librebyte.net/en/cli-en/pkgin-a-netbsd-package-manager/</a>
+(the latter also provides a nice cheat-sheet about <code class="literal">pkgin</code> operations).</p></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>On NetBSD 9.2 the <code class="literal">openpimi</code> and <code class="literal">net-snmp</code> packages complain that
+they require either OS ABI 9.0, or that <code class="literal">CHECK_OSABI=no</code> is set in
+a <code class="literal">pkg_install.conf</code>. Such file was not found in the test system,
+but can be created in <code class="literal">/etc/</code> and is honoured by <code class="literal">pkgin</code>:</p><pre class="screen">:; grep CHECK_OSABI /etc/pkg_install.conf || \
+    ( echo CHECK_OSABI=no &gt;&gt; /etc/pkg_install.conf )</pre></div><pre class="screen">:; pkgin install \
     git perl curl \
-    make gmake autoconf automake libltdl libtool \
+    mozilla-rootcerts mozilla-rootcerts-openssl \
+    bmake gmake autoconf automake libltdl libtool \
     cppcheck \
     pkgconf \
-    gcc7 clang
+    gcc7 gcc14 clang
 
 # See comments below, python version and package naming depends on distro
 :; pkgin install \
-    python27 python39
+    python27 python39 python312 python313
 
-;; ( cd /usr/pkg/bin &amp;&amp; ( ln -fs python2.7 python2 ; ln -fs python3.9 python3 ) )
+:; ( cd /usr/pkg/bin &amp;&amp; ( ln -fs python2.7 python2 ; ln -fs python3.13 python3 ) )
 # You can find a list of what is (pre-)installed with:
 #   :; pkgin list | grep -Ei 'perl|python'
+
+# For localization maintenance (currently in Python NUT-Monitor app),
+# provide an `msgfmt` implementation, e.g.:
+#   :; pkgin install gettext
+#
+# To install the Python NUT-Monitor app, you may need some modules:
+# For Python2:
+#   :; pkgin install py27-gtk2
+# For Python3:
+#   :; pkgin install py312-qt5 py313-qt5
 
 # For spell-checking, highly recommended if you would propose pull requests:
 :; pkgin install \
@@ -737,9 +760,10 @@ you can work around by <code class="literal">make MKDIRPROG="mkdir -p" install -
 :; pkgin install \
     asciidoc
 
+# FIXME: Missing packages?
 # For other doc types (PDF, HTML) generation - massive packages (TEX, X11):
-:; pkgin install \
-    source-highlight py39-pygments dblatex
+# :; pkgin install \
+#    source-highlight py39-pygments dblatex
 
 # For CGI graph generation - massive packages (X11):
 :; pkgin install \
@@ -756,40 +780,50 @@ you can work around by <code class="literal">make MKDIRPROG="mkdir -p" install -
 
 # Select a LUA-5.1 (or possibly 5.2?) version
 :; pkgin install \
-    lua51
+    lua51 # lua52
 
 :; pkgin install \
-    bash dash ast-ksh oksh</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>(TBD) On NetBSD 9.2 this package complains that it requires
-OS ABI 9.0, or that <code class="literal">CHECK_OSABI=no</code> is set in <code class="literal">pkg_install.conf</code>.
-Such file was not found in the test system…</p><pre class="screen">:; pkgin install \
-    openipmi</pre></div><p>Recommended: For compatibility with common setups on other operating
+    bash dash ast-ksh oksh</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>There seems to be no FreeIPMI for NetBSD, but there’s OpenIPMI
+(can help someone implementing actual support for it):</p><pre class="screen">:; pkgin install \
+    openipmi</pre><p>It still seems to not work for NUT’s expectations of FreeIPMI
+(we have basic detection support for OpenIPMI but no code yet).</p></div><p>Recommended: For compatibility with common setups on other operating
 systems, can add dash-number suffixed symlinks to compiler tools (e.g.
 <code class="literal">gcc-7</code> beside the <code class="literal">gcc</code> installed by package) near the original
-binaries and into <code class="literal">/usr/lib/ccache</code>:</p><pre class="screen">:; ( cd /usr/bin &amp;&amp; for TOOL in cpp gcc g++ ; do \
-        ln -s "$TOOL" "$TOOL-7" ; \
+binaries and into <code class="literal">/usr/lib/ccache</code>:</p><pre class="screen">:; ( cd /usr/pkg/bin &amp;&amp; for TOOL in cpp gcc g++ ; do \
+        for VER in "7" "14" ; do \
+            ln -fs "../gcc$VER/bin/$TOOL" "${TOOL}-${VER}" ; \
+        done ; \
      done )
 
-# Note that the one delivered binary is `clang-13` and many (unnumbered)
-# symlinks to it. For NUT CI style of support for builds with many
-# compilers, complete the known numbers:
+# Note that the one delivered binary is `clang-13` (in originally described
+# installation; `clang-18` after an update in 2025 which auto-removed the
+# older version) and many (unnumbered) symlinks to it. For NUT CI style of
+# support for builds with many compilers, complete the known numbers:
 :; ( cd /usr/pkg/bin &amp;&amp; for TOOL in clang-cpp clang++ ; do \
-        ln -s clang-13 "$TOOL-13" ; \
+        for VER in "-18" ; do \
+            ln -s clang-18 "$TOOL$VER" ; \
+        done ; \
      done )
 
 :; pkgin install ccache
 :; ( mkdir -p /usr/lib/ccache &amp;&amp; cd /usr/lib/ccache &amp;&amp; \
         for TOOL in cpp gcc g++ clang ; do \
-            for VER in "" "-7" ; do \
+            for VER in "" "-7" "-14" ; do \
                 ln -s ../../pkg/bin/ccache "$TOOL$VER" ; \
             done ; \
         done ; \
         for TOOL in clang clang++ clang-cpp ; do \
-            for VER in "" "-13" ; do \
+            for VER in "" "-18" ; do \
                 ln -s ../../pkg/bin/ccache "$TOOL$VER" ; \
             done ; \
         done ; \
-   )</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>For Jenkins agents, also need to <code class="literal">pkgin install openjdk17</code> (will be
-in <code class="literal">JAVA_HOME=/usr/pkg/java/openjdk17</code>).</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_openindiana_as_of_releases_2021_10_to_2024_04"></a>OpenIndiana as of releases 2021.10 to 2024.04</h4></div></div></div><p>Note that due to IPS and <code class="literal">pkg(5)</code>, a version of python is part of baseline
+   )</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>For Jenkins agents, also need to <code class="literal">pkgin install openjdk21</code> (will be
+in <code class="literal">JAVA_HOME=/usr/pkg/java/openjdk21</code>). Note that the location may be not
+exposed in <code class="literal">PATH</code> by default, so you may want to edit your system-wide
+<code class="literal">/etc/profile</code> or build user’s <code class="literal">~/.profile</code> with:</p></div><pre class="screen">JAVA_HOME="/usr/pkg/java/openjdk21"
+export JAVA_HOME
+PATH="${JAVA_HOME}/bin:${PATH}"
+export PATH</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_openindiana_as_of_releases_2021_10_to_2024_04"></a>OpenIndiana as of releases 2021.10 to 2024.04</h4></div></div></div><p>Note that due to IPS and <code class="literal">pkg(5)</code>, a version of python is part of baseline
 illumos-based OS; this may not be the case on some other illumos distributions
 which do not use IPS however. Currently they use python 3.7 or newer.</p><p>To build older NUT releases (2.7.4 and before), you may need to explicitly
 <code class="literal">pkg install python-27</code>.</p><p>Typical tooling would include:</p><pre class="screen">:; pkg install \
@@ -1265,4 +1299,4 @@ add the third-party shared libraries involved, for that file set to be usable.</
    | while read LIB ; do cp -pf "$LIB" "$DESTDIR/mingw64/bin/" ; done</pre><p>Keep in mind that a similar trick (or links to <code class="literal">*.dll</code> — and symlinks are
 problematic on that platform) may be needed in other directories, such as
 <code class="literal">sbin</code> and <code class="literal">cgi-bin</code>:</p><pre class="screen">:; ( cd "$DESTDIR/mingw64/bin/" &amp;&amp; ln *.dll ../sbin &amp;&amp; ln *.dll ../cgi-bin )</pre></div></div></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-04-02 13:05:24 -- Network UPS Tools 2.8.2.2628</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_continuous_integration_nut_ci_farm_build_agent_preparation.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> </td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2025-04-03 02:45:46 -- Network UPS Tools 2.8.2.2705</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_continuous_integration_nut_ci_farm_build_agent_preparation.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> </td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
