@@ -1,6 +1,62 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>2. Very detailed Change Log</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><link rel="home" href="index.html" title="Network UPS Tools Change Log" /><link rel="up" href="index.html" title="Network UPS Tools Change Log" /><link rel="prev" href="_introduction.html" title="1. Introduction" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> </td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="Change_Log"></a>2. Very detailed Change Log</h2></div></div></div><p>This document intends to detail the change log for relatively recent work
 (roughly since the source code was tracked in Git).</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_07_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.1. 2025-04-07  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+tools/gitlog2version.sh: bump NUT_VERSION_DEFAULT=2.8.3.1 for next
+          development cycle
+</li><li class="listitem">
+NEWS.adoc, UPGRADING.adoc, docs/docinfo.xml.in: Revert "NEWS.adoc,
+          UPGRADING.adoc, docs/docinfo.xml.in: finalize text before NUT
+          v2.8.3 release"  This reverts commit
+          d3427d7fd3c83b8f5b61c8e369139e2bd6168203 after the NUT release
+          v2.8.3.
+</li><li class="listitem">
+.github/workflows/PyNUTClient.yml, appveyor.yml,
+          scripts/Windows/build-mingw-nut.sh, tools/gitlog2version.sh: Update
+          versions for release of NUT v2.8.3
+</li><li class="listitem">
+docs/maintainer-guide.txt: update correct way of setting
+          VERSION_FORCED* files
+</li><li class="listitem">
+tools/gitlog2version.sh: rephrase comments about
+          NUT_VERSION_FORCED(_SEMVER)
+</li><li class="listitem">
+docs/nut-versioning.adoc: rephrase about
+          NUT_VERSION_FORCED(_SEMVER)
+</li><li class="listitem">
+docs/maintainer-guide.txt: revise procedure on version-bump commit
+          vs. docinfo increment  …and that edits of <code class="literal">configure.ac</code>
+          (<code class="literal">AC_INIT</code> macro) forth and back are no longer needed
+</li><li class="listitem">
+docs/maintainer-guide.txt: make use of "make dist-files" goal
+</li><li class="listitem">
+docs/docinfo.xml.in: add docs increment summary for NUT v2.8.3
+          release
+</li><li class="listitem">
+docs/maintainer-guide.txt: update markup and a bit of contents
+</li><li class="listitem">
+NEWS.adoc: remove "PLANNED" from section title before NUT v2.8.3
+          release
+</li><li class="listitem">
+NEWS.adoc, UPGRADING.adoc, docs/docinfo.xml.in: finalize text
+          before NUT v2.8.3 release
+</li><li class="listitem">
+Makefile.am: revise dependency for all-libs-local/tools/nut-scanner
+</li><li class="listitem">
+include/wincompat.h: fix NUT_WIN32_INCOMPLETE*() printout [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1479" target="_top">#1479</a>,
+          <a class="ulink" href="https://github.com/networkupstools/nut/issues/2882" target="_top">#2882</a>]  The <span class="emphasis"><em>LINE</em></span> is an integer, not string
+</li><li class="listitem">
+INSTALL.nut.adoc, docs/nut.dict: INSTALL.nut.adoc: Windows
+          installation: suggest Zadig tool for USB drivers [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1690" target="_top">#1690</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2881" target="_top">#2881</a>]
+</li><li class="listitem">
+drivers/libusb0.c, drivers/libusb1.c: drivers/libusb{0,1}.c: in
+          WIN32 builds, suggest Zadig tool if failed to find any drivers
+          [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2881" target="_top">#2881</a>]  May be duplicated if we issued the suggestion also for
+          suspicious report descriptor sizes and ultimately failed to find a
+          device.
+</li><li class="listitem">
+include/timehead.h: tag fallback gmtime_r()/localtime_r() with
+          NUT_WIN32_INCOMPLETE [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1483" target="_top">#1483</a>]
+</li><li class="listitem">
 clients/message.c, clients/nutclient.cpp, clients/upsc.c,
           clients/upsclient.c, clients/upscmd.c, clients/upslog.c,
           clients/upsmon.c, clients/upsmon.h, clients/upsrw.c,
@@ -54,6 +110,9 @@ drivers/belkinunv.c: use NUT_WIN32_INCOMPLETE_DETAILED() [<a class="ulink" href=
 include/wincompat.h: introduce NUT_WIN32_INCOMPLETE() and
           NUT_WIN32_INCOMPLETE_DETAILED(str) macros [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1479" target="_top">#1479</a>]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_06_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.2. 2025-04-06  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+docs/Makefile.am: docinfo-since-v2.8.3.xml: bump OLDEST_REL to
+          2.8.3 actually
+</li><li class="listitem">
 Jenkinsfile-dynamatrix: typo in comment
 </li><li class="listitem">
 configure.ac: hide back CONFIGURE-DEVEL-DEBUG of SCRIPTFILE parsing
@@ -5571,7 +5630,7 @@ clients/upsmon.c: barebone structure for OS-sleep inhibition
 common/common.c, include/common.h, m4/nut_check_libsystemd.m4:
           introduce Uninhibit() and isPreparingForSleep() methods [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1070" target="_top">#1070</a>]
 </li><li class="listitem">
-common/common.c: comment about <span class="emphasis"><em>attribute</em></span><a id="idm5325" class="indexterm"></a>cleanup(f) usage
+common/common.c: comment about <span class="emphasis"><em>attribute</em></span><a id="idm5370" class="indexterm"></a>cleanup(f) usage
           [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1070" target="_top">#1070</a>]
 </li><li class="listitem">
 m4/nut_check_libsystemd.m4: check for sd-bus.h auto-cleanup methods
@@ -11395,7 +11454,7 @@ conf/ups.conf.sample, docs/man/ups.conf.txt: clarify behavior of
           maxstartdelay [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2134" target="_top">#2134</a>]
 </li><li class="listitem">
 clients/upsmon.c: Revert "clients/upsmon.c: remove doshutdown()
-          <span class="emphasis"><em>attribute</em></span><a id="idm10404" class="indexterm"></a>noreturn annotation, now it can [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2133" target="_top">#2133</a>]"  This
+          <span class="emphasis"><em>attribute</em></span><a id="idm10449" class="indexterm"></a>noreturn annotation, now it can [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2133" target="_top">#2133</a>]"  This
           reverts commit 2e7263812b4f97cb0d667550e0e660ab50c2ed9e.
 </li><li class="listitem">
 NEWS.adoc, clients/upsmon.c, conf/upsmon.conf.sample.in,
@@ -11403,7 +11462,7 @@ NEWS.adoc, clients/upsmon.c, conf/upsmon.conf.sample.in,
           of SHUTDOWNEXIT to allow a finite delay between SHUTDOWNCMD and
           exit() [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2133" target="_top">#2133</a>]
 </li><li class="listitem">
-clients/upsmon.c: remove doshutdown() <span class="emphasis"><em>attribute</em></span><a id="idm10413" class="indexterm"></a>noreturn
+clients/upsmon.c: remove doshutdown() <span class="emphasis"><em>attribute</em></span><a id="idm10458" class="indexterm"></a>noreturn
           annotation, now it can [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2133" target="_top">#2133</a>]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2023_10_27_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.497. 2023-10-27  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 NEWS.adoc, clients/upsmon.c, conf/upsmon.conf.sample.in,
@@ -27796,7 +27855,7 @@ server/upsd.c: wrap unreachable exit() added due to earlier
 include/attribute.h: align with AX_C<span class="emphasis"><em>_ATTRIBUTE</em></span> autoconf macro
 </li><li class="listitem">
 m4/ax_c<span class="emphasis"><em>_attribute</em></span>.m4: extend to declare support for certain
-          <span class="emphasis"><em>attribute</em></span><a id="idm25196" class="indexterm"></a>… use-cases of interest to NUT
+          <span class="emphasis"><em>attribute</em></span><a id="idm25241" class="indexterm"></a>… use-cases of interest to NUT
 </li><li class="listitem">
 configure.ac, m4/ax_c<span class="emphasis"><em>_attribute</em></span>.m4: configure.ac: introduce
           AX_C<span class="emphasis"><em>_ATTRIBUTE</em></span> from gnu.org
@@ -42313,4 +42372,4 @@ clients/Makefile.am, clients/upsc.c, clients/upsclient.c,
           server/upstype.h, server/user.c: Initial commit (preliminary
           investigation)
 </li></ul></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-04-07 15:29:37 -- Network UPS Tools 2.8.2.2743</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> </td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2025-04-07 20:44:52 -- Network UPS Tools 2.8.2.2743</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> </td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
