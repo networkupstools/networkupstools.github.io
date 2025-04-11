@@ -54,7 +54,7 @@ below detail how to provide its directory with symlinks as <code class="literal"
 which is not the default case in all OS distributions. Recent versions of
 the NUT <code class="literal">ci_build.sh</code> script allow to override the location by using the
 <code class="literal">CI_CCACHE_SYMLINKDIR</code> environment variable, which is cumbersome and only
-recommended for build agents with immutable system areas, etc.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_build_prerequisites_to_make_nut_from_scratch_on_various_operating_systems"></a>6.2. Build prerequisites to make NUT from scratch on various Operating Systems</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_debian_10_11_12"></a>Debian 10/11/12</h4></div></div></div><p>Being a popular baseline among Linux distributions, Debian is an
+recommended for build agents with immutable system areas, etc.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_build_prerequisites_to_make_nut_from_scratch_on_various_operating_systems"></a>6.2. Build prerequisites to make NUT from scratch on various Operating Systems</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_debian_10_11_12_13"></a>Debian 10/11/12/13</h4></div></div></div><p>Being a popular baseline among Linux distributions, Debian is an
 important build target. Related common operating systems include
 Ubuntu and customized distros for Raspberry Pi, Proxmox, as well
 as many others.</p><p>For some (newer) distributions, <code class="literal">apt</code> or other front-ends may be
@@ -114,7 +114,11 @@ metadata about recently published package revisions:</p><pre class="screen">:; a
 # provide an `msgfmt` implementation, e.g.:
 #   :; apt-get install gettext
 #
-# To install the Python NUT-Monitor app, you may need some modules:
+# To install the Python NUT-Monitor app, you may need some modules.
+# Ideally, they would be packaged, named according to major Python version:
+#   :; apt-get install python3-pyqt5
+#
+# If not packaged for your distro:
 #   :; apt-get install pip
 # For Python3:
 #   :; python3 -m pip install PyQt5 configparser
@@ -130,6 +134,12 @@ metadata about recently published package revisions:</p><pre class="screen">:; a
 # For CGI graph generation - massive packages (X11):
 :; apt-get install \
     libgd-dev
+
+# Debian 13 serves metadata needed for NUT to find where to install the
+# service unit files in a separate development package; earlier distro
+# releases did not seem to require it explicitly:
+:; apt-get install \
+    systemd-dev
 
 # Optionally for sd_notify integration:
 :; apt-get install \
@@ -173,7 +183,7 @@ complete environments):</p><pre class="screen">:; apt-get install \
     gcc-multilib g++-multilib \
     crossbuild-essential \
     gcc-10:armhf gcc-10-base:armhf \
-    qemu-user-static</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>For Jenkins agents, also need to <code class="literal">apt-get install openjdk-17-jdk-headless</code>.
+    qemu-user-static</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>For Jenkins agents, also need to <code class="literal">apt-get install openjdk-21-jdk-headless</code>.
 You may have to ensure that <code class="literal">/proc</code> is mounted in the target chroot
 (or do this from the running container).</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_centos_6_and_7"></a>CentOS 6 and 7</h4></div></div></div><p>CentOS is another popular baseline among Linux distributions, being a free
 derivative of the RedHat Linux, upon which many other distros are based as
@@ -1299,4 +1309,4 @@ add the third-party shared libraries involved, for that file set to be usable.</
    | while read LIB ; do cp -pf "$LIB" "$DESTDIR/mingw64/bin/" ; done</pre><p>Keep in mind that a similar trick (or links to <code class="literal">*.dll</code> — and symlinks are
 problematic on that platform) may be needed in other directories, such as
 <code class="literal">sbin</code> and <code class="literal">cgi-bin</code>:</p><pre class="screen">:; ( cd "$DESTDIR/mingw64/bin/" &amp;&amp; ln *.dll ../sbin &amp;&amp; ln *.dll ../cgi-bin )</pre></div></div></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-04-10 14:01:03 -- Network UPS Tools 2.8.2.2743</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_continuous_integration_nut_ci_farm_build_agent_preparation.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> </td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2025-04-11 11:48:52 -- Network UPS Tools 2.8.2.2743</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_continuous_integration_nut_ci_farm_build_agent_preparation.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> </td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
