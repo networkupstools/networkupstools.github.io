@@ -142,26 +142,36 @@ The <code class="literal">make dist</code> goal now takes more care to require a
    - Similarly, <code class="literal">make dist-ci</code> is routed to provide a strict or faked tarball;
    - Earlier defined goals like <code class="literal">distcheck-light</code> or <code class="literal">distcheck-valgrind</code> now
      take advantage of these mechanisms to also produce usable dist archives
-     for their relaxed or purpose-specific tests.</p></li><li class="listitem">
-the <code class="literal">upsnotify()</code> common code introduced in recent NUT releases (integrating
-   with service management frameworks, etc.) was a bit cryptic when it reported
-   a <span class="strong"><strong>failure to notify</strong></span> (e.g. when not running as a service currently), fixed
-   now to report human-friendly text instead of internal enum codes. Follow-up
-   to [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1590" target="_top">issue #1590</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/1777" target="_top">PR #1777</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/2136" target="_top">PR #2136</a>]
+     for their relaxed or purpose-specific tests.</p></li><li class="listitem"><p class="simpara">
+Revised behaviors for the <code class="literal">upsnotify()</code> common code introduced in recent NUT
+   releases (integrating with service management frameworks, etc.):
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+It was a bit cryptic when it reported a <span class="strong"><strong>failure to notify</strong></span> (e.g. when a
+     NUT program was not running as a service currently), fixed now to report
+     human-friendly text instead of internal enum codes. Follow-up to [issue
+     <a class="ulink" href="https://github.com/networkupstools/nut/issues/1590" target="_top">#1590</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/1777" target="_top">PR #1777</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/2136" target="_top">PR #2136</a>]
 </li><li class="listitem">
-drivers should no longer print warning messages about not-initializing the
-   notification subsystem because not running as a service when they are either
-   started explicitly to show the help message, or when their CLI arguments
-   are fatally wrong (no UPS name, no <code class="literal">port</code>, invalid trailing keywords…)
+Drivers should no longer print warning messages about not-initializing
+     the notification subsystem because not running as a service when they
+     are either started explicitly to show the help message, or when their
+     CLI arguments are fatally wrong (no UPS name, no <code class="literal">port</code>, invalid trailing
+     keywords…)
 </li><li class="listitem">
-drivers, <code class="literal">upsd</code>, <code class="literal">upsmon</code>: reduce "scary noise" about failure to <code class="literal">fopen()</code>
+NUT programs generally should default to not "spam" about lack of known
+     notification technology if our first message to be suppressed is already
+     about stopping that program.  This might help nag distros into getting
+     a service framework, or integrating theirs with NUT, but is generally
+     annoying to end-users where there’s little they can do about it (other
+     than suppressing the message with <code class="literal">NUT_QUIET_INIT_UPSNOTIFY</code> envvar).
+</li></ul></div></li><li class="listitem">
+Drivers, <code class="literal">upsd</code>, <code class="literal">upsmon</code>: reduce "scary noise" about failure to <code class="literal">fopen()</code>
    the PID file (which most of the time means that no previous instance of
    the daemon was running to potentially conflict with), especially useless
    since in recent NUT releases the verdicts from <code class="literal">sendsignal*()</code> methods
    are analyzed and lead to layman worded situation reports in these programs.
    [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1782" target="_top">issue #1782</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/2384" target="_top">PR #2384</a>]
 </li><li class="listitem">
-drivers started with the <code class="literal">-FF</code> command-line option (e.g. wrapped into the
+Drivers started with the <code class="literal">-FF</code> command-line option (e.g. wrapped into the
    systemd units to stay "foregrounded" <span class="strong"><strong>and</strong></span> save a PID file anyway) should
    now also handle an existing PID file to interact with the earlier instance
    of the driver program, if still running (e.g. started manually). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2384" target="_top">#2384</a>]
@@ -204,15 +214,15 @@ Fixed support of <code class="literal">maxstartdelay</code> at the level of driv
      accommodate for longer device initialization (e.g. due to support of
      more Megatec Qx dialects by <code class="literal">nutdrv_qx</code>). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2885" target="_top">#2885</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2888" target="_top">#2888</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
-riello_ser updates:
+<code class="literal">riello_ser</code> updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
-added <code class="literal">localcalculation</code> option to compute <code class="literal">battery.runtime</code> and
+Added <code class="literal">localcalculation</code> option to compute <code class="literal">battery.runtime</code> and
      <code class="literal">battery.charge</code> if the device provides bogus values [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2390" target="_top">issue #2390</a>,
      following in the footsteps of <a class="ulink" href="https://github.com/networkupstools/nut/issues/1692" target="_top">#1692</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1685" target="_top">#1685</a> done for <code class="literal">riello_usb</code>]
      (similar to <code class="literal">runtimecal</code> in some other drivers, may be refactored
      to that configuration and logic model in later NUT releases)
 </li></ul></div></li><li class="listitem"><p class="simpara">
-apcsmart updates:
+<code class="literal">apcsmart</code> updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 Revised code to use <code class="literal">strncpy()</code> and avoid potential overflows that are
      possible with <code class="literal">strcpy()</code> used before. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/2564" target="_top">PR #2564</a>]
@@ -221,42 +231,52 @@ Lost communications led to a logging flood, should not anymore.
      In fact, the driver should try fully reconnecting upon getting into
      a prolonged data stale condition. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/704" target="_top">issue #704</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/2564" target="_top">PR #2564</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
-nutdrv_qx updates:
+<code class="literal">nutdrv_qx</code> updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
-added Visench C1K (using serial port converter with USB ID <code class="literal">1a86:7523</code>)
+Added Visench C1K (using serial port converter with USB ID <code class="literal">1a86:7523</code>)
      as known supported by <code class="literal">nutdrv_qx</code> (Megatec protocol) since at least
      NUT v2.7.4 release. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2395" target="_top">#2395</a>]
 </li><li class="listitem">
-introduced <code class="literal">innovart31</code> protocol support for Innova RT 3/1 UPSes. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2712" target="_top">#2712</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2798" target="_top">#2798</a>]
+Introduced <code class="literal">innovart31</code> protocol support for Innova RT 3/1 UPSes. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2712" target="_top">#2712</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2798" target="_top">#2798</a>]
 </li><li class="listitem">
-introduced <code class="literal">q2</code> and <code class="literal">q6</code> protocol support; currently also based/tested
+Introduced <code class="literal">q2</code> and <code class="literal">q6</code> protocol support; currently also based/tested
      on Innova devices, but other models than RT 3/1. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2798" target="_top">#2798</a>]
 </li><li class="listitem">
-introduced a <code class="literal">gtec</code> subdriver and protocol, tested over USB with a
+Introduced a <code class="literal">gtec</code> subdriver and protocol, tested over USB with a
      Gtec ZP120N device. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2818" target="_top">#2818</a>]
 </li><li class="listitem">
-fixed <code class="literal">hunnox_protocol()</code> to honour the optional <code class="literal">novendor</code> setting for
+Fixed <code class="literal">hunnox_protocol()</code> to honour the optional <code class="literal">novendor</code> setting for
      devices that are confused by such query, e.g. DEXP LCD EURO 1200VA. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2839" target="_top">#2839</a>]
 </li><li class="listitem">
-extended Voltronic protocol to support longer numbers as remaining
+Extended Voltronic protocol to support longer numbers as remaining
      <code class="literal">battery.runtime</code> value. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2765" target="_top">#2765</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 GPIO drivers:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
-extending to support library API of not only libgpiod v1.x releases,
+Extended to support library API of not only libgpiod v1.x releases,
      but also v2.x; introduced a NUT <code class="literal">WITH_LIBGPIO_VERSION</code> C macro (in
      <code class="literal">config.h</code>) to differentiate the library variants. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2833" target="_top">issue #2833</a>]
+</li></ul></div></li><li class="listitem"><p class="simpara">
+New NUT drivers:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+<code class="literal">bicker_ser</code>: added new driver for Bicker 12/24Vdc UPS via RS-232 serial
+     communication protocol, which supports any UPS shipped with the PSZ-1053
+     extension module. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/2448" target="_top">PR #2448</a>]
+</li><li class="listitem">
+<code class="literal">liebert-gxe</code>: added new driver with support for Liebert GXE Series UPS
+     (serial or USB posing as a serial port). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2629" target="_top">#2629</a>]
+</li><li class="listitem">
+<code class="literal">nhs_ser</code>: added new driver for numerous NHS Nobreaks, senoidal line — UPS
+     models with serial port, made by NHS Sistemas Eletronicos LTDA and popular
+     in Brazil. Currently this driver only builds on Linux. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2692" target="_top">#2692</a>]
+</li><li class="listitem">
+<code class="literal">phoenixcontact_modbus</code> driver: Introduced Phoenix Contact QUINT4-UPS/24DC
+     management (only new modbus addresses). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2689" target="_top">#2689</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2716" target="_top">#2716</a>]
 </li></ul></div></li><li class="listitem">
-bicker_ser: added new driver for Bicker 12/24Vdc UPS via RS-232 serial
-   communication protocol, which supports any UPS shipped with the PSZ-1053
-   extension module. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/2448" target="_top">PR #2448</a>]
-</li><li class="listitem">
-liebert-gxe: added new driver with support for Liebert GXE Series UPS
-   (serial or USB posing as a serial port). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2629" target="_top">#2629</a>]
-</li><li class="listitem">
-nhs_ser: added new driver for numerous NHS Nobreaks, senoidal line — UPS
-   models with serial port, made by NHS Sistemas Eletronicos LTDA and popular
-   in Brazil. Currently this driver only builds on Linux. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2692" target="_top">#2692</a>]
+Added <code class="literal">scripts/external_apis</code> with an example script integrating a
+   non-native protocol with NUT (as live-stream input for <code class="literal">dummy-ups</code>
+   NUT driver to publish further); that example can be installed using
+   <code class="literal">configure --enable-extapi-enphase</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2807" target="_top">issue #2807</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/2813" target="_top">PR #2813</a>]
 </li><li class="listitem">
 <code class="literal">usbhid-ups</code> and <code class="literal">netxml-ups</code> updated to handle "No battery installed!"
    alarm also to set the <code class="literal">RB</code> (Replace Battery) value in <code class="literal">ups.status</code>.
@@ -264,7 +284,7 @@ nhs_ser: added new driver for numerous NHS Nobreaks, senoidal line — UPS
    and as an important <code class="literal">REPLBATT</code> status in particular) in <code class="literal">upsmon</code>, but
    better safe than sorry. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/415" target="_top">#415</a>]
 </li><li class="listitem"><p class="simpara">
-usbhid-ups updates:
+<code class="literal">usbhid-ups</code> updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 Support of the <code class="literal">onlinedischarge_log_throttle_hovercharge</code> in the NUT
      v2.8.2 release was found to be incomplete. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2423" target="_top">#2423</a>, follow-up to <a class="ulink" href="https://github.com/networkupstools/nut/issues/2215" target="_top">#2215</a>]
@@ -309,17 +329,17 @@ Added support for <code class="literal">0x09D6:0x0001</code> devices using the M
 <code class="literal">cps-hid</code> subdriver now supports more variables, as available on e.g.
      CP1350EPFCLCD model, including temperature. [PRs <a class="ulink" href="https://github.com/networkupstools/nut/issues/2540" target="_top">#2540</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2711" target="_top">#2711</a>]
 </li><li class="listitem">
-loudly suggest to set <code class="literal">pollonly</code> flag and default a shorter <code class="literal">pollfreq</code>
+Loudly suggest to set <code class="literal">pollonly</code> flag and default a shorter <code class="literal">pollfreq</code>
      for CPS devices, to try avoiding device-driven timeouts. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1689" target="_top">#1689</a>]
      Also adjust default <code class="literal">offdelay</code> and <code class="literal">ondelay</code> to reasonable values,
      and warn the users with CPS devices if their configured values are
      not multiples of 60. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/432" target="_top">#432</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1394" target="_top">#1394</a>]
 </li><li class="listitem">
-in <code class="literal">cps-hid</code> subdriver, <code class="literal">cps_fix_report_desc()</code> method should now handle
+In <code class="literal">cps-hid</code> subdriver, <code class="literal">cps_fix_report_desc()</code> method should now handle
      mismatched <code class="literal">LogMax</code> ranges for input and output voltages, whose USB Report
      Descriptors are wrongly encoded by some firmware versions. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1512" target="_top">#1512</a>]
 </li><li class="listitem">
-in <code class="literal">cps-hid</code> subdriver, try to fix frequency scaling based on the values
+In <code class="literal">cps-hid</code> subdriver, try to fix frequency scaling based on the values
      we see from the device and/or configuration overrides (low, nominal, high)
      so <code class="literal">499.0 Hz</code> reading that comes from some firmware versions gets reported
      properly as <code class="literal">49.9Hz</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2717" target="_top">#2717</a>]
@@ -370,17 +390,17 @@ More work may be needed for other USB-capable drivers (<code class="literal">ric
 …should now track the fact of <code class="literal">assumed_LogMax</code> (typically when firmware
      encoding logic is wrong, and <code class="literal">-1</code> is resolved by parser). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1512" target="_top">#1512</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1040" target="_top">#1040</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
-snmp-ups updates:
+<code class="literal">snmp-ups</code> updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
-added support to monitor BayTech RPC3-NC PDUs, with <code class="literal">baytech-rpc3nc-mib</code>
+Added support to monitor BayTech RPC3-NC PDUs, with <code class="literal">baytech-rpc3nc-mib</code>
      serving same basic data points as were available in <code class="literal">baytech-mib.c</code>,
      but checking for a different model OID subtree and different OIDs for
      the device model information. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2779" target="_top">#2779</a>]
 </li><li class="listitem">
-fixed <code class="literal">netvision-mib</code>: sync <code class="literal">netvision_output_info</code> with currently
+Fixed <code class="literal">netvision-mib</code>: sync <code class="literal">netvision_output_info</code> with currently
      available <code class="literal">SOCOMECUPS-MIB.txt</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2803" target="_top">#2803</a>]
 </li></ul></div></li><li class="listitem">
-mge-utalk driver will no longer set non-standard status values <code class="literal">COMMFAULT</code>
+<code class="literal">mge-utalk</code> driver will no longer set non-standard status values <code class="literal">COMMFAULT</code>
    and <code class="literal">ALARM</code> (for a specific status bit); instead, it will set modern
    <code class="literal">ups.alarm</code> with values <code class="literal">COMMFAULT</code> and/or <code class="literal">DEVICEALARM</code> (and raise
    an <code class="literal">ALARM</code> in <code class="literal">ups.status</code> for either, as standard alarms go). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2708" target="_top">#2708</a>]
@@ -428,7 +448,9 @@ Updated <code class="literal">upsmon</code> client with setting to toggle whethe
 </li></ul></div></li><li class="listitem">
 The <code class="literal">upsmon</code> client can now also report entering and exiting the <code class="literal">OVER</code>
    (UPS overloaded), <code class="literal">TRIM</code> and <code class="literal">BOOST</code> (adjusting for bad input voltage)
-   states. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1074" target="_top">#1074</a>]
+   states. A setting <code class="literal">OVERDURATION</code> was introduced to define a timeout
+   after which a non-communicating UPS that was last seen in state <code class="literal">OVER</code>
+   should be considered critical (or not). [<a class="ulink" href="https://github.com/networkupstools/nut/pull/1074" target="_top">PR #1074</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2877" target="_top">issue #2877</a>]
 </li><li class="listitem">
 Revised <code class="literal">upssched</code> timer handler that can be called from <code class="literal">upsmon</code> as its
    <code class="literal">NOTIFYCMD</code> to not report confusing environment variable values of
@@ -468,29 +490,29 @@ Several NUT clients including <code class="literal">upscmd</code>, <code class="
    so went plaintext even when secure connections were possible. Fixed to at
    least try being secure, same way as <code class="literal">upsc</code> does for a long time. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2847" target="_top">#2847</a>]
 </li><li class="listitem"><p class="simpara">
-upsmon:
+<code class="literal">upsmon</code> updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
-it was realized that the <code class="literal">POWERDOWNFLAG</code> must be explicitly set in the
+It was realized that the <code class="literal">POWERDOWNFLAG</code> must be explicitly set in the
      configuration file, there is no built-in default in the binary program
      (the settings facilitated by the <code class="literal">configure</code> script during build "only"
      impact the <code class="literal">upsmon.conf.sample</code>, init-scripts and similar files generated
      from templates). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/321" target="_top">issue #321</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/2383" target="_top">PR #2383</a>]
 </li><li class="listitem">
-added an <code class="literal">OBLBDURATION</code> (seconds) setting to optionally delay raising
+Added an <code class="literal">OBLBDURATION</code> (seconds) setting to optionally delay raising
      the alarm for immediate shutdown in critical situation. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/321" target="_top">#321</a>]
 </li><li class="listitem">
-optimized <code class="literal">parse_status()</code> by not checking further strings if we had
+Optimized <code class="literal">parse_status()</code> by not checking further strings if we had
      a match; report unexpected tokens in debug log. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/415" target="_top">#415</a>]
 </li><li class="listitem">
-revised internal <code class="literal">do_notify()</code> method to support formatting strings
+Revised internal <code class="literal">do_notify()</code> method to support formatting strings
      with two <code class="literal">%s</code> placeholders, to use if certain use-cases pass any extra
      information (e.g. not just "we have alarms" but their values too). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/415" target="_top">#415</a>]
 </li><li class="listitem">
-introduced handling for "unknown" <code class="literal">ups.status</code> tokens, reporting them
+Introduced handling for "unknown" <code class="literal">ups.status</code> tokens, reporting them
      as "OTHER" notification type (whenever the set of such tokens appears
      or changes) or "NOTOTHER" when they disappear. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/415" target="_top">#415</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
-upslog:
+<code class="literal">upslog</code> updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 Added support for limiting the loop count. Using in NIT (NUT Integration
      Test) suite for double profit (checking the tool and fallback in NIT).
@@ -553,14 +575,11 @@ A <code class="literal">nut-udev-settle.service</code> was introduced to replace
      <code class="literal">systemd-udev-settle.service</code> which is deprecated and causes warnings on
      some systems. It was shown to benefit NUT use-cases however. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2638" target="_top">#2638</a>]
 </li></ul></div></li><li class="listitem">
-gamatronic driver revised for safer memory operations; this was reported
+<code class="literal">gamatronic</code> driver revised for safer memory operations; this was reported
    to have fixed a Segmentation Fault seen in earlier NUT releases with
    some of the devices supported by this driver. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2427" target="_top">#2427</a>]
-</li><li class="listitem">
-phoenixcontact_modbus driver: Introduced Phoenix Contact QUINT4-UPS/24DC
-   management (only new modbus addresses). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2689" target="_top">#2689</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2716" target="_top">#2716</a>]
 </li><li class="listitem"><p class="simpara">
-upsd:
+<code class="literal">upsd</code> updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 <code class="literal">upsd_cleanup()</code> is now traced, to more easily see that the daemon is
      exiting (and/or start-up has aborted due to configuration or run-time
@@ -569,9 +588,9 @@ upsd:
 Failure to <code class="literal">LISTEN</code> on an invalid host name (e.g. <code class="literal">localhost:3493</code> or
      <code class="literal">1.2.3.4/24</code>) is now logged in a more actionable manner. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2665" target="_top">#2665</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
-nut-scanner:
+<code class="literal">nut-scanner</code> updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><p class="simpara">
-the tool relies on dynamic loading of shared objects (library files)
+The tool relies on dynamic loading of shared objects (library files)
      orchestrated at run-time rather than pre-compiled, to avoid excessively
      huge package footprints. This however relies on knowing (or sufficiently
      safely guessing) the library file names to use, and short <code class="literal">libname.so</code>
@@ -580,10 +599,10 @@ the tool relies on dynamic loading of shared objects (library files)
      system, while we search for a suitable library. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2431" target="_top">#2431</a>]
 </p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>A different but functionally equivalent trick is done for <code class="literal">libupsclient</code>
 during a NUT build.
-   * fixed support for IPv6 addresses (passed in square brackets) for both
+   * Fixed support for IPv6 addresses (passed in square brackets) for both
      <code class="literal">-s</code> start/<code class="literal">-e</code> end command-line options, and for <code class="literal">-m cidr/mask</code> option.
      [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2512" target="_top">issue #2512</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/2518" target="_top">PR #2518</a>]
-   * newly added support to scan several IP addresses (single or ranges)
+   * Newly added support to scan several IP addresses (single or ranges)
      with the same call, by repeating command-line options; also <code class="literal">-m auto{,4,6}</code>
      can be specified (once) to select IP (all, IPv4, IPv6) address ranges of
      configured local network interfaces.
@@ -591,14 +610,14 @@ during a NUT build.
      subnets with too many bits available for the host address part (avoiding
      millions of scans in the extreme cases).
      [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2244" target="_top">issue #2244</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2511" target="_top">issue #2511</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/2509" target="_top">PR #2509</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/2513" target="_top">PR #2513</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/2517" target="_top">PR #2517</a>]
-   * implemented parallel scanning for IPMI bus, otherwise default scan for
+   * Implemented parallel scanning for IPMI bus, otherwise default scan for
      all supported buses with <code class="literal">-m auto</code> takes unbearably long. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2523" target="_top">#2523</a>]
-   * bumped version of <code class="literal">libnutscan</code> to 2.6.0, it now includes a few more
+   * Bumped version of <code class="literal">libnutscan</code> to 2.6.0, it now includes a few more
      methods and symbols from <code class="literal">libcommon</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2244" target="_top">issue #2244</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/2509" target="_top">PR #2509</a>]
-   * do not actively suggest <code class="literal">vendor(id)</code>, <code class="literal">product(id)</code>, and <code class="literal">serial</code> options
+   * Do not actively suggest <code class="literal">vendor(id)</code>, <code class="literal">product(id)</code>, and <code class="literal">serial</code> options
      for <code class="literal">bcmxcp_usb</code>, <code class="literal">richcomm_usb</code> and <code class="literal">nutdrv_atcl_usb</code> drivers for now
      [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1763" target="_top">#1763</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1764" target="_top">#1764</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1768" target="_top">#1768</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2580" target="_top">#2580</a>]</p></div></li></ul></div></li><li class="listitem"><p class="simpara">
-all drivers should now support the optional <code class="literal">sdcommands</code> setting with
+All drivers should now support the optional <code class="literal">sdcommands</code> setting with
    a site-local list of instant commands to handle <code class="literal">upsdrv_shutdown()</code>,
    which may be useful in cases when the driver’s built-in commands
    (or their order) do not meet the goals of particular NUT deployment.
@@ -612,12 +631,12 @@ it is getting set at all in "killpower" vs. other cases, based on new
 INSTCMD such as <code class="literal">shutdown.return</code>, <code class="literal">shutdown.stayoff</code> or <code class="literal">load.off</code>. Default
 logic that was previously the content of <code class="literal">upsdrv_shutdown()</code> methods was often
 relocated into new <code class="literal">shutdown.default</code> INSTCMD definitions. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2670" target="_top">#2670</a>]</p></div></li><li class="listitem"><p class="simpara">
-common code:
+Common code:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 <code class="literal">upscli_splitname()</code> should now recognize <code class="literal">upsname:port</code> typos (missing
      the <code class="literal">@hostname</code> part) and error out gracefully.
 </li><li class="listitem">
-introduced a <code class="literal">NUT_DEBUG_SYSLOG</code> environment variable to tweak activation
+Introduced a <code class="literal">NUT_DEBUG_SYSLOG</code> environment variable to tweak activation
      of syslog message emission (and related detachment of <code class="literal">stderr</code> when
      backgrounding), primarily useful for NIT and perhaps systemd. Most
      methods relied on logging bits being set, so this change aims to be
@@ -629,12 +648,12 @@ introduced a <code class="literal">NUT_DEBUG_SYSLOG</code> environment variable 
      <code class="literal">NUT_PIDPATH</code> environment variable in certain use-cases (such as
      tests). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2407" target="_top">#2407</a>]
 </li><li class="listitem">
-allow drivers to set <code class="literal">STATEPATH</code> via <code class="literal">ups.conf</code> to match <code class="literal">upsd</code>
+Allow drivers to set <code class="literal">STATEPATH</code> via <code class="literal">ups.conf</code> to match <code class="literal">upsd</code>
      custom configuration ability; the data server would prefer the value
      from <code class="literal">ups.conf</code> over the one in <code class="literal">upsd.conf</code>, if both are present.
      Note that <code class="literal">NUT_STATEPATH</code> environment variable trumps both. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/694" target="_top">issue #694</a>]
 </li><li class="listitem">
-introduced a check for daemons working with PID files to double-check
+Introduced a check for daemons working with PID files to double-check
      that if they can resolve the program name of a running process with
      this identifier, that such name matches the current program (avoid
      failures to start NUT daemons if PID files are on persistent storage,
@@ -647,22 +666,22 @@ introduced a check for daemons working with PID files to double-check
      Also the NUT daemons should request to double-check against their
      run-time process name (if it can be detected). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2463" target="_top">issue #2463</a>]
 </li><li class="listitem">
-introduced <code class="literal">m4</code> macros to check during <code class="literal">configure</code> phase for the
+Introduced <code class="literal">m4</code> macros to check during <code class="literal">configure</code> phase for the
      platform, and a <code class="literal">nut_bool.h</code> header with <code class="literal">nut_bool_t</code> type to use
      during build, to avoid the numerous definitions of Boolean types
      and values (or macros) in the NUT codebase. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1176" target="_top">issue #1176</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/31" target="_top">issue #31</a>]
 </li><li class="listitem">
-custom <code class="literal">distcheck-something</code> targets did not inherit <code class="literal">DISTCHECK_FLAGS</code>
+Custom <code class="literal">distcheck-something</code> targets did not inherit <code class="literal">DISTCHECK_FLAGS</code>
      properly. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2541" target="_top">#2541</a>]
 </li><li class="listitem">
-added <code class="literal">status_get()</code> in NUT driver state API, to check if a status
+Added <code class="literal">status_get()</code> in NUT driver state API, to check if a status
      token string had been set recently, and to avoid duplicate settings;
      fixed <code class="literal">status_set()</code> for multi-token arguments. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/2565" target="_top">PR #2565</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2708" target="_top">issue #2708</a>]
 </li><li class="listitem">
-local socket/pipe protocol introduced a <code class="literal">LOGOUT</code> command for cleaner
+Local socket/pipe protocol introduced a <code class="literal">LOGOUT</code> command for cleaner
      disconnection handling. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2572" target="_top">#2572</a>]
 </li><li class="listitem">
-codebase adapted to the liking of <code class="literal">clang-18</code> and newer revisions of
+Codebase adapted to the liking of <code class="literal">clang-18</code> and newer revisions of
      <code class="literal">gcc-13</code>+ whose static analyzers on NUT CI farm complained about some
      imperfections after adding newer OS revisions to the population of
      build agents. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2585" target="_top">#2585</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2588" target="_top">#2588</a>]
@@ -675,116 +694,116 @@ New checks in <code class="literal">clang-19</code> brought new findings about m
 </li></ul></div></li><li class="listitem">
 <code class="literal">%x</code> style formatting requires an <code class="literal">unsigned int</code> variable
 </li><li class="listitem">
-numeric literals and macros are <code class="literal">int</code> by default
+Numeric literals and macros are <code class="literal">int</code> by default
 </li><li class="listitem">
-results of math with unsigned types like <code class="literal">uint16_t</code>, done in some
+Results of math with unsigned types like <code class="literal">uint16_t</code>, done in some
        cases, are up-scaled into <code class="literal">int</code> by default
 </li><li class="listitem">
 <code class="literal">char</code>'s, <code class="literal">unsigned</code> or not, seem to be also up-scaled into <code class="literal">int</code>
 </li><li class="listitem">
-updated <code class="literal">docs/nut-names.txt</code> with items defined by 42ITy NUT fork. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2339" target="_top">#2339</a>]
+Updated <code class="literal">docs/nut-names.txt</code> with items defined by 42ITy NUT fork. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2339" target="_top">#2339</a>]
 </li><li class="listitem">
-various recipe, documentation and source files were revised to address
+Various recipe, documentation and source files were revised to address
    respective warnings issued by the new generations of analysis tools.
    [<a class="ulink" href="https://github.com/networkupstools/nut/issues/823" target="_top">#823</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2437" target="_top">#2437</a>, <a class="ulink" href="https://github.com/networkupstools/nut-website/issues/52" target="_top">nut-website issue #52</a>]
 </li><li class="listitem">
-fixed <code class="literal">configure</code> script to use default (target-specific) values of
+Fixed <code class="literal">configure</code> script to use default (target-specific) values of
    <code class="literal">CFLAGS</code>, <code class="literal">LIBS</code> etc. when probing relevant settings for each third-party
    dependency; as a consequence, on systems that support building for many
    targets, we check relevant build-ability for that target and not for the
    building system itself. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2673" target="_top">issue #2673</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/2675" target="_top">PR #2675</a>]
 </li><li class="listitem">
-fixed dynamic linking of Mozilla NSS on systems like Solaris/illumos,
+Fixed dynamic linking of Mozilla NSS on systems like Solaris/illumos,
    where the shared objects are not packaged into the common RPATH.
    [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2674" target="_top">issue #2674</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/2675" target="_top">PR #2675</a>]
 </li><li class="listitem">
-added <code class="literal">scripts/external_apis</code> with an example script integrating a
-   non-native protocol with NUT; that example can be installed using
-   <code class="literal">configure --enable-extapi-enphase</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2807" target="_top">issue #2807</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/2813" target="_top">PR #2813</a>]
-</li><li class="listitem">
-added <code class="literal">scripts/valgrind</code> with a helper script and suppression file to
+Added <code class="literal">scripts/valgrind</code> with a helper script and suppression file to
    ignore common third-party problems. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2511" target="_top">#2511</a>]
 </li><li class="listitem">
-fixed <code class="literal">configure --with-valgrind=PATH</code> vs. detection of its usability;
+Fixed <code class="literal">configure --with-valgrind=PATH</code> vs. detection of its usability;
    fixed some portability issues with detection of usability per se, tried
    <code class="literal">--with-valgrind=auto</code> the default to auto-detect and use the feature
    (in tests) wherever possible, but too many NUT CI farm agents disagreed;
    so for now the default is <code class="literal">no</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2823" target="_top">#2823</a>]
 </li><li class="listitem">
-when drivers dump collected data (during troubleshooting), flush <code class="literal">stdout</code>
+When drivers dump collected data (during troubleshooting), flush <code class="literal">stdout</code>
    buffer immediately for sane logging (especially on Windows). [<a class="ulink" href="https://github.com/networkupstools/nut/pull/2699" target="_top">PR #2699</a>]
 </li><li class="listitem">
-revised <code class="literal">nut.exe</code> (the NUT for Windows wrapper for all-in-one service)
+Revised <code class="literal">nut.exe</code> (the NUT for Windows wrapper for all-in-one service)
    to be more helpful with command-line use (report that it failed to start
    as a service, have a help message, pass debug verbosity to launched NUT
    programs…) and add a man page for it. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2432" target="_top">issue #2432</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/2446" target="_top">PR #2446</a>]
 </li><li class="listitem">
-the <code class="literal">scripts/Windows/build-mingw-nut.sh</code> helper script was extended to
+The <code class="literal">scripts/Windows/build-mingw-nut.sh</code> helper script was extended to
    use <code class="literal">nut_build_${ARCH}</code> and <code class="literal">nut_install_${ARCH}</code> directories by default,
    with the older <code class="literal">nut_build</code> and <code class="literal">nut_install</code> short names becoming just a
    symbolic link to the latest executed build: this should help compare the
    differences of 32/64-bit builds, without them stepping on each other’s toes.
+</li><li class="listitem"><p class="simpara">
+NUT binding for Python and the <code class="literal">NUT-Monitor</code> Python UI client updates:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+The <code class="literal">PyNUTClient</code> module should no longer rely on presence of a <code class="literal">telnetlib</code>
+     module in the build or execution environment (deprecated in Python 3.11,
+     removed since Python 3.13). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2183" target="_top">issue #2183</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/2792" target="_top">PR #2792</a>]
 </li><li class="listitem">
-the <code class="literal">PyNUTClient</code> module should no longer rely on presence of a <code class="literal">telnetlib</code>
-   module in the build or execution environment (deprecated in Python 3.11,
-   removed since Python 3.13). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2183" target="_top">issue #2183</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/2792" target="_top">PR #2792</a>]
+The PyPI distribution of the <code class="literal">PyNUTClient</code> module tarball should now use a
+     lower-cased file name (and immediate versioned directory name inside) to
+     match the requirements of <a class="ulink" href="https://peps.python.org/pep-0625/" target="_top">PEP-0625</a>.
+     The Python module name (and its directory) should remain camel-cased. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2773" target="_top">#2773</a>]
 </li><li class="listitem">
-the PyPI distribution of the <code class="literal">PyNUTClient</code> module tarball should now use a
-   lower-cased file name (and immediate versioned directory name inside) to
-   match the requirements of <a class="ulink" href="https://peps.python.org/pep-0625/" target="_top">PEP-0625</a>.
-   The Python module name (and its directory) should remain camel-cased. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2773" target="_top">#2773</a>]
-</li><li class="listitem">
-added man page for the <code class="literal">NUT-Monitor</code> Python UI client.
+Added man page for the <code class="literal">NUT-Monitor</code> Python UI client.
 </li><li class="listitem">
 The <code class="literal">NUT-Monitor</code> Python UI client itself was revised to report the
-   <code class="literal">PACKAGE_VERSION</code> and <code class="literal">NUT_WEBSITE_BASE</code> strings in the "About" dialog
-   contents; localization support for the dialog and some other resources
-   was revised to work in Py3Qt5 variant of the script. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/722" target="_top">#722</a>]
+     <code class="literal">PACKAGE_VERSION</code> and <code class="literal">NUT_WEBSITE_BASE</code> strings in the "About" dialog
+     contents; localization support for the dialog and some other resources
+     was revised to work in Py3Qt5 variant of the script. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/722" target="_top">#722</a>]
+</li></ul></div></li><li class="listitem"><p class="simpara">
+Documentation recipe updates:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><p class="simpara">
+Enabled installation of built single-file PDF and HTML (including man
+     page renditions) under the configured <code class="literal">docdir</code>. It seems that previously
+     they were only built (if requested) but not installed via <code class="literal">make</code>, unlike
+     the common man pages which are delivered automatically. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2445" target="_top">#2445</a>]
+</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>The <code class="literal">html-chunked</code> documents are currently still not installed.</p></div></li><li class="listitem">
+Added support to <code class="literal">./configure --with-doc=man=dist-auto</code> to use the
+     distributed manual page files if present; only fall back to (re-)building
+     them if we can. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2473" target="_top">#2473</a>]
+</li><li class="listitem">
+Added a <code class="literal">make distcheck-light-man</code> recipe to require verification that
+     the manual page files can be built using the prepared "tarball" archive.
+     [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2473" target="_top">#2473</a>]
 </li><li class="listitem"><p class="simpara">
-enabled installation of built single-file PDF and HTML (including man page
-   renditions) under the configured <code class="literal">docdir</code>. It seems previously they were
-   only built (if requested) but not installed via <code class="literal">make</code>, unlike the common
-   man pages which are delivered automatically. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2445" target="_top">#2445</a>]
-</p><pre class="literallayout">NOTE: The `html-chunked` documents are currently still not installed.</pre></li><li class="listitem">
-added support to <code class="literal">./configure --with-doc=man=dist-auto</code> to use distributed
-   manual page files if present; only fall back to build them if we can. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2473" target="_top">#2473</a>]
-</li><li class="listitem">
-added a <code class="literal">make distcheck-light-man</code> recipe to require verification that the
-   manual page files can be built using the prepared "tarball" archive. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2473" target="_top">#2473</a>]
-</li><li class="listitem">
-revised the documentation building recipes, with the goal to avoid building
-   the <code class="literal">ChangeLog</code> products and their intermediate files more than once (but
-   still react to <code class="literal">git</code> metadata changes during development), and to sanity
-   check the resulting final document (currently only for <code class="literal">html-single</code> mode).
-   As part of this, the <code class="literal">CHANGELOG_REQUIRE_GROUP_BY_DATE_AUTHOR</code> setting was
-   added (for <code class="literal">make</code> calls and used by <code class="literal">tools/gitlog2changelog.py.in</code> script),
-   and it defaults to <code class="literal">true</code> allowing for better ordered documents at the cost
-   of some memory during document generation. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2510" target="_top">#2510</a>]
-</li><li class="listitem">
-updated man page generation with <code class="literal">configure</code> script options to specify that
-   manual sections on the target platform differ from (Linux-based) defaults
-   hard-coded into page sources; this should allow to simplify NUT packaging
-   recipe maintenance in distributions (no more updating patches for changed
-   or added documentation sources).
-</li><li class="listitem">
-lines in first section of NUT configuration report (can optionally remain as
-   <code class="literal">config.nut_report_feature.log</code> and be installed into shared documentation
-   of a NUT package) are now better grouped as miscellaneous features and
-   detection results, then drivers and programs/tools. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2676" target="_top">#2676</a>]
-</li><li class="listitem">
-added a <code class="literal">common/Makefile.am</code> build product for a new internal library
+Revised the documentation building recipes, with the goal to avoid
+     building the <code class="literal">ChangeLog</code> products and their intermediate files more
+     than once (but still react to <code class="literal">git</code> metadata changes during development),
+     and to sanity-check the resulting final document (currently only for
+     <code class="literal">html-single</code> mode).
+</p><p class="simpara">As part of this, the <code class="literal">CHANGELOG_REQUIRE_GROUP_BY_DATE_AUTHOR</code> setting was
+     added (for <code class="literal">make</code> calls and used by <code class="literal">tools/gitlog2changelog.py.in</code>
+     script), and it defaults to <code class="literal">true</code> allowing for better ordered documents
+     at the cost of some memory during document generation. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2510" target="_top">#2510</a>]
+   * Updated man page generation with <code class="literal">configure</code> script options to specify
+     that manual section codes on the target platform differ from (Linux-based)
+     defaults hard-coded into page sources; this should allow to simplify NUT
+     packaging recipe maintenance in those diverse distributions (no more need
+     to update patches for changed or added documentation sources).
+   * Lines in first section of NUT configuration report (which can optionally
+     remain as <code class="literal">config.nut_report_feature.log</code> and be installed into shared
+     documentation of a NUT package) are now better grouped as miscellaneous
+     features and detection results, then drivers and programs/tools. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2676" target="_top">#2676</a>]</p></li></ul></div></li><li class="listitem">
+Added a <code class="literal">common/Makefile.am</code> build product for a new internal library
    <code class="literal">libcommonstr.la</code> which allows a smaller selection of helper methods
    for tools like <code class="literal">nut-scanner</code> which do not need the full <code class="literal">libcommon.la</code>
    nor <code class="literal">libcommonclient.la</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2478" target="_top">#2478</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2491" target="_top">#2491</a>]
 </li><li class="listitem">
-added a <code class="literal">drivers/Makefile.am</code> build product for a new internal library
+Added a <code class="literal">drivers/Makefile.am</code> build product for a new internal library
    <code class="literal">libserial-nutscan.la</code> to simplify <code class="literal">tools/nut-scanner/Makefile.am</code> recipes.
    [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2490" target="_top">#2490</a>]
 </li><li class="listitem">
-build of <code class="literal">snmp-ups</code> and <code class="literal">netxml-ups</code> drivers now explicitly brings linker
+Build of <code class="literal">snmp-ups</code> and <code class="literal">netxml-ups</code> drivers now explicitly brings linker
    dependency on chosen SSL libraries. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2479" target="_top">#2479</a>]
 </li><li class="listitem">
-introduced <code class="literal">configure --with-modbus+usb</code> option to require an USB-capable
+Introduced <code class="literal">configure --with-modbus+usb</code> option to require an USB-capable
    libmodbus, and defaulted a couple of specific situations as if this was
    required (implicitly): <code class="literal">configure --with-modbus --with-usb</code> and
    either <code class="literal">--with-drivers=*apc_modbus*</code> (actually implies <code class="literal">--with-modbus</code>)
@@ -793,14 +812,20 @@ introduced <code class="literal">configure --with-modbus+usb</code> option to re
    USB-capable <code class="literal">apc_modbus</code> driver (currently this requires a custom-built
    libmodbus). Also fixed (re-)detection of libmodbus RTU USB support with
    static libmodbus builds. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2666" target="_top">#2666</a>]
+</li><li class="listitem">
+Drivers built with libmodbus (<code class="literal">phoenixcontact_modbus</code>, <code class="literal">generic_modbus</code>,
+   <code class="literal">huawei-ups2000</code>, <code class="literal">socomec_jbus</code>, <code class="literal">adelsystem_cbi</code>, <code class="literal">apc_modbus</code>) should
+   now report whether the library is linked dynamically or statically — this
+   can help in troubleshooting (especially of <code class="literal">apc_modbus</code> which may be using
+   a custom build of the library not delivered by the operating system). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2897" target="_top">#2897</a>]
 </li><li class="listitem"><p class="simpara">
-brought keyword dictionaries of <code class="literal">nutconf</code> and <code class="literal">augeas</code> NUT configuration
+Brought keyword dictionaries of <code class="literal">nutconf</code> and <code class="literal">augeas</code> NUT configuration
    file parsers up to date; restored automated checks for <code class="literal">augeas</code> lenses.
    [<a class="ulink" href="https://github.com/networkupstools/nut/issues/657" target="_top">issue #657</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2294" target="_top">issue #2294</a>]
-</p><pre class="literallayout">NOTE: Some known issues remain with augeas lens definitions so currently
-they should be able to parse common simple use-cases but not certain types
-of more complex configurations (e.g. some line patterns that involve too
-many double-quote characters) which are valid for NUT proper. [link:https://github.com/networkupstools/nut/issues/657[#657]]</pre></li><li class="listitem">
+</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>Some known issues remain with augeas lens definitions, so currently
+   they should be able to parse common simple use-cases but not certain types
+   of more complex configurations (e.g. some line patterns that involve too
+   many double-quote characters) which are valid for NUT proper. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/657" target="_top">#657</a>]</p></div></li><li class="listitem">
 Cross-builds using only a host implementation of <code class="literal">pkg-config</code> program
    should now ignore host <code class="literal">*.pc</code> files and avoid confusion.
 </li><li class="listitem">
@@ -4082,4 +4107,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.31. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-04-15 21:16:16 -- Network UPS Tools 2.8.3.84</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2025-04-21 02:48:54 -- Network UPS Tools 2.8.3.119</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
