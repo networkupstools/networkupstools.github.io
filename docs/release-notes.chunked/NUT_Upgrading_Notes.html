@@ -8,7 +8,9 @@ out on new NUT features as they come with new releases. Some may require
 that you update your build environment with new third-party dependencies,
 so a broken build of a new NUT release would let you know how to act.</p><p>This is a good time to point out that for stricter packaging systems, it may
 be beneficial to add <code class="literal">--enable-option-checking=fatal</code> to the <code class="literal">./configure</code>
-command line, in order to quickly pick up any other removed option flags.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_8_2_to_2_8_3"></a>3.1. Changes from 2.8.2 to 2.8.3</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+command line, in order to quickly pick up any other removed option flags.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_8_3_to_2_8_4"></a>3.1. Changes from 2.8.3 to 2.8.4</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+PLANNED: Keep track of any further API clean-up?
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_8_2_to_2_8_3"></a>3.2. Changes from 2.8.2 to 2.8.3</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 NUT development snapshots can now have more version components than the
   standard semantic versioning triplet, optionally adding the amount of
   commits on the development trunk since previous release, and the amount
@@ -33,6 +35,10 @@ When packaging or custom-building for (Linux) distributions with systemd,
   disable certain NUT units by default; its comments document each choice.
   [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2721" target="_top">issue #2721</a>]
 </li><li class="listitem">
+A <code class="literal">nut-udev-settle.service</code> was introduced to replace dependency on the
+  <code class="literal">systemd-udev-settle.service</code> which is deprecated and causes warnings on
+  some systems. It was shown to benefit NUT use-cases however. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2638" target="_top">#2638</a>]
+</li><li class="listitem">
 Reference packages prepared by <code class="literal">make package</code> should now separate the
   <code class="literal">PACKAGE_VERSION</code> from the platform-dependent prefix by a dash character
   in the ultimate package file name. Previously they were glued together
@@ -47,7 +53,7 @@ The <code class="literal">make dist</code> goal now takes more care to require a
   (and <code class="literal">make dist-ci</code>) to fake presence of pre-built man pages with placeholder
   files, to complete other aspects of <code class="literal">distcheck</code> validation. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2842" target="_top">#2842</a>]
 </li><li class="listitem">
-the PyPI distribution of the <code class="literal">PyNUTClient</code> module tarball should now use a
+The PyPI distribution of the <code class="literal">PyNUTClient</code> module tarball should now use a
   lower-cased file name (and immediate versioned directory name inside) to
   match the requirements of <a class="ulink" href="https://peps.python.org/pep-0625/" target="_top">PEP-0625</a>.
   The Python module name (and its directory) should remain camel-cased.
@@ -71,6 +77,10 @@ New <code class="literal">libupsclient</code> API methods added:
     positive values should time-limit the connection attempts), and
     <code class="literal">upscli_get_default_connect_timeout()</code> to retrieve its copy. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2847" target="_top">#2847</a>]
 </li></ul></div></li><li class="listitem">
+API versions of <code class="literal">libupsclient</code> and <code class="literal">libnutscan</code> export more symbols now,
+  and so were bumped to new "current" numbers; this may impact the naming
+  of shared object files to be delivered by updated packaging. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2895" target="_top">#2895</a>]
+</li><li class="listitem">
 Standard NUT clients including <code class="literal">upsc</code>, <code class="literal">upscmd</code>, <code class="literal">upsrw</code>, <code class="literal">upslog</code>, <code class="literal">upsmon</code>,
   <code class="literal">upsimage</code>, <code class="literal">upsset</code> and <code class="literal">upsstats</code>) were updated to default with a 10-second
   connection establishment timeout in case of name resolution lags or
@@ -153,7 +163,7 @@ Handling of per-UPS <code class="literal">ALARM</code> state was introduced to <
   1200VA); it may be remotely possible that some other devices could begin
   to misbehave due to this fix — please let us know then. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2839" target="_top">#2839</a>]
 </li><li class="listitem">
-mge-utalk driver will no longer set non-standard status values <code class="literal">COMMFAULT</code>
+<code class="literal">mge-utalk</code> driver will no longer set non-standard status values <code class="literal">COMMFAULT</code>
   and <code class="literal">ALARM</code> (for a specific status bit); instead, it will set modern
   <code class="literal">ups.alarm</code> with values <code class="literal">COMMFAULT</code> and/or <code class="literal">DEVICEALARM</code> (and raise
   an <code class="literal">ALARM</code> in <code class="literal">ups.status</code> for either, as standard alarms go). If your
@@ -261,7 +271,7 @@ A <code class="literal">configure</code> script option to <code class="literal">
   even if system libraries seem to safely support this behavior natively.
   This should primarily help against overly zealous static analysis tools
   in recent compiler generations. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2585" target="_top">#2585</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_8_1_to_2_8_2"></a>3.2. Changes from 2.8.1 to 2.8.2</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_8_1_to_2_8_2"></a>3.3. Changes from 2.8.1 to 2.8.2</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 Builds requested with a specific C/C<code class="literal"> language standard revision via
   <code class="literal">CFLAGS</code> and <code class="literal">CXXFLAGS</code> should again be honoured. There was a mishap
   with the <code class="literal">m4</code> scripting for <code class="literal">autoconf</code> which could have caused use of
@@ -282,7 +292,7 @@ The <code class="literal">tools/gitlog2changelog.py.in</code> script was revised
   of non-trivial characters in sections. A number of other projects seem to
   use the NUT version of the script, and are encouraged to look at related
   changes in <code class="literal">configure.ac</code> and <code class="literal">Makefile.am</code> recipes. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/2360" target="_top">PR #2360</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/2366" target="_top">PR #2366</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_8_0_to_2_8_1"></a>3.3. Changes from 2.8.0 to 2.8.1</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_8_0_to_2_8_1"></a>3.4. Changes from 2.8.0 to 2.8.1</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 NUT documentation recipes were revised, so many of the text source files
   were renamed to <code class="literal">*.adoc</code> pattern. Newly, a <code class="literal">release-notes.pdf</code> and HTML
   equivalents are generated. Packages which deliver documentation may need
@@ -446,7 +456,7 @@ The <code class="literal">tools/gitlog2changelog.py.in</code> script was revised
   NUT release archives is expected to considerably differ on first glance
   from its earlier released versions (not just adding lines for the new
   release, but changing lines in the older releases too) [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1945" target="_top">#1945</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1955" target="_top">#1955</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_7_4_to_2_8_0"></a>3.4. Changes from 2.7.4 to 2.8.0</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_7_4_to_2_8_0"></a>3.5. Changes from 2.7.4 to 2.8.0</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 Note to distribution packagers: this version hopefully learns from many
   past mistakes, so many custom patches may be no longer needed. If some
   remain, please consider making pull requests for upstream NUT codebase
@@ -569,7 +579,7 @@ libraries, tools and protocol now support a <code class="literal">TRACKING</code
 upsrw: display the variable type beside ENUM / RANGE
 </li><li class="listitem">
 Augeas: new <code class="literal">--with-augeas-lenses-dir</code> configure option.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_7_3_to_2_7_4"></a>3.5. Changes from 2.7.3 to 2.7.4</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_7_3_to_2_7_4"></a>3.6. Changes from 2.7.3 to 2.7.4</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 scripts/systemd/nut-server.service.in: Restore systemd relationship since it
   was preventing upsd from starting whenever one or more drivers, among several,
   was failing to start
@@ -582,7 +592,7 @@ macosx-ups: the "port" driver option no longer has any effect
 Network protocol information: default to type NUMBER for variables that are
   not flagged as STRING . This point is subject to improvements or change in
   the next release 2.7.5.  Refer to docs/net-protocol.txt for more information
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_7_2_to_2_7_3"></a>3.6. Changes from 2.7.2 to 2.7.3</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_7_2_to_2_7_3"></a>3.7. Changes from 2.7.2 to 2.7.3</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 The <a class="ulink" href="../man/nutdrv_qx.html" target="_top">nutdrv_qx(8)</a> driver will eventually supersede <a class="ulink" href="../man/bestups.html" target="_top">bestups(8)</a>.
   It has been tested on a U-series Patriot Pro II. Please test the new driver
   on your hardware during your next maintenance window, and report any bugs.
@@ -603,7 +613,7 @@ The systemd nut-server.service does not Require nut-driver to be started
   successfully.  This was previously preventing upsd startup, even for just
   one driver failure among many.  This also matches the behavior of sysV
   initscripts.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_7_1_to_2_7_2"></a>3.7. Changes from 2.7.1 to 2.7.2</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_7_1_to_2_7_2"></a>3.8. Changes from 2.7.1 to 2.7.2</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 upsdrvctl is now installed to $prefix/sbin rather than $driverexec.
   This usually means moving from /bin to /sbin, apart from few exceptions.
   In all cases, please adapt your scripts.
@@ -615,7 +625,7 @@ FreeDesktop Hardware Abstraction Layer (HAL) support was removed.
 This is a good time to point out that for stricter packaging systems, it may
   be beneficial to add "--enable-option-checking=fatal" to the ./configure
   command line, in order to quickly pick up any other removed option flags.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_6_5_to_2_7_1"></a>3.8. Changes from 2.6.5 to 2.7.1</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_6_5_to_2_7_1"></a>3.9. Changes from 2.6.5 to 2.7.1</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 The <a class="ulink" href="../man/apcsmart.html" target="_top">apcsmart(8)</a> driver has been replaced by a new implementation. There is a new
   parameter, <span class="emphasis"><em>ttymode</em></span>, which may help if you have a non-standard serial port,
   or Windows.  In case of issues with this new version, users can revert to
@@ -634,35 +644,35 @@ Mozilla NSS support has been added. The OpenSSL configuration options should
   NUT libraries, or implement the network protocol yourself.
 </li><li class="listitem">
 The jNut source is now here: <a class="ulink" href="https://github.com/networkupstools/jNut" target="_top">https://github.com/networkupstools/jNut</a>
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_6_4_to_2_6_5"></a>3.9. Changes from 2.6.4 to 2.6.5</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_6_4_to_2_6_5"></a>3.10. Changes from 2.6.4 to 2.6.5</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 users are encouraged to update to NUT 2.6.5, to fix a regression in
   upssched.
 </li><li class="listitem">
 mge-shut driver has been replaced by a new implementation (newmge-shut).
   In case of issue with this new version, users can revert to oldmge-shut.
   UPDATE: oldmge-shut was dropped between 2.7.4 and 2.8.0 releases.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_6_3_to_2_6_4"></a>3.10. Changes from 2.6.3 to 2.6.4</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_6_3_to_2_6_4"></a>3.11. Changes from 2.6.3 to 2.6.4</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 users are encouraged to update to NUT 2.6.4, to fix upsd vulnerability
   (CVE-2012-2944: upsd can be remotely crashed).
 </li><li class="listitem">
 users of the bestups driver are encouraged to switch to blazer_ser,
   since bestups will soon be deprecated.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_6_2_to_2_6_3"></a>3.11. Changes from 2.6.2 to 2.6.3</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_6_2_to_2_6_3"></a>3.12. Changes from 2.6.2 to 2.6.3</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 nothing that affects upgraded systems.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_6_1_to_2_6_2"></a>3.12. Changes from 2.6.1 to 2.6.2</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_6_1_to_2_6_2"></a>3.13. Changes from 2.6.1 to 2.6.2</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 apcsmart driver has been replaced by a new implementation. In case of issue
   with this new version, users can revert to apcsmart-old.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_6_0_to_2_6_1"></a>3.13. Changes from 2.6.0 to 2.6.1</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_6_0_to_2_6_1"></a>3.14. Changes from 2.6.0 to 2.6.1</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 nothing that affects upgraded systems.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_4_3_to_2_6_0"></a>3.14. Changes from 2.4.3 to 2.6.0</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_4_3_to_2_6_0"></a>3.15. Changes from 2.4.3 to 2.6.0</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 users of the megatec and megatec_usb drivers must respectively switch to
   blazer_ser and blazer_usb.
 </li><li class="listitem">
 users of the liebertgxt2 driver are advised that the driver name has changed
   to liebert-esp2.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_4_2_to_2_4_3"></a>3.15. Changes from 2.4.2 to 2.4.3</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_4_2_to_2_4_3"></a>3.16. Changes from 2.4.2 to 2.4.3</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 nothing that affects upgraded systems.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_4_1_to_2_4_2"></a>3.16. Changes from 2.4.1 to 2.4.2</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_4_1_to_2_4_2"></a>3.17. Changes from 2.4.1 to 2.4.2</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 The default subdriver for the blazer_usb driver USB id 06da:0003 has changed.
   If you use such a device and it is no longer working with this driver,
   override the <span class="emphasis"><em>subdriver</em></span> default in <span class="emphasis"><em>ups.conf</em></span> (see man 8 blazer).
@@ -670,9 +680,9 @@ The default subdriver for the blazer_usb driver USB id 06da:0003 has changed.
 NUT ACL and the allowfrom mechanism has been replaced in 2.4.0 by the LISTEN
   directive and tcp-wrappers respectively. This information was missing below,
   so a double note has been added.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_4_0_to_2_4_1"></a>3.17. Changes from 2.4.0 to 2.4.1</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_4_0_to_2_4_1"></a>3.18. Changes from 2.4.0 to 2.4.1</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 nothing that affects upgraded systems.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_2_2_to_2_4_0"></a>3.18. Changes from 2.2.2 to 2.4.0</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_2_2_to_2_4_0"></a>3.19. Changes from 2.2.2 to 2.4.0</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 The nut.conf file has been introduced to standardize startup configuration
   across the various systems.
 </li><li class="listitem">
@@ -695,7 +705,7 @@ The files under scripts/python/client are distributed under GPL 3+, whereas
 </li><li class="listitem">
 The generated udev rules file has been renamed with dash only, no underscore
   anymore (i.e. 52-nut-usbups.rules instead of 52_nut-usbups.rules)
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_2_1_to_2_2_2"></a>3.19. Changes from 2.2.1 to 2.2.2</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_2_1_to_2_2_2"></a>3.20. Changes from 2.2.1 to 2.2.2</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 The configure option "--with-lib" has been replaced by "--with-dev".
   This enable the additional build and distribution of the static
   version of libupsclient, along with the pkg-config helper and manual
@@ -707,14 +717,14 @@ The UPS poweroff handling of the usbhid-ups driver has been reworked.
   Though regression is not expected, users of this driver are
   encouraged to test this feature by calling "upsmon -c fsd" and
   report any issue on the NUT mailing lists.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_2_0_to_2_2_1"></a>3.20. Changes from 2.2.0 to 2.2.1</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_2_0_to_2_2_1"></a>3.21. Changes from 2.2.0 to 2.2.1</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 nothing that affects upgraded systems.
   (The below message is repeated due to previous omission)
 </li><li class="listitem">
 Developers of external client application using libupsclient are
   encouraged to rename their "UPSCONN" client structure to "UPSCONN_t"
   since the former will disappear by the release of NUT 2.4.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_0_5_to_2_2_0"></a>3.21. Changes from 2.0.5 to 2.2.0</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_0_5_to_2_2_0"></a>3.22. Changes from 2.0.5 to 2.2.0</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 users of the newhidups driver are advised that the driver name has changed
   to usbhid-ups.
 </li><li class="listitem">
@@ -740,29 +750,29 @@ specifying <span class="emphasis"><em>-a &lt;id&gt;</em></span> is now mandatory
 Developers of external client application using libupsclient are
   encouraged to rename the "UPSCONN" client structure to "UPSCONN_t"
   since the former will disappear by the release of NUT 2.4.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_0_4_to_2_0_5"></a>3.22. Changes from 2.0.4 to 2.0.5</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_0_4_to_2_0_5"></a>3.23. Changes from 2.0.4 to 2.0.5</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 users of the newhidups driver: the driver is now more strict about
   refusing to connect to unknown devices. If your device was
   previously supported, but fails to be recognized now, add
   <span class="emphasis"><em>productid=XXXX</em></span> to ups.conf. Please report the device to the NUT
   developer’s mailing list.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_0_3_to_2_0_4"></a>3.23. Changes from 2.0.3 to 2.0.4</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_0_3_to_2_0_4"></a>3.24. Changes from 2.0.3 to 2.0.4</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 nothing that affects upgraded systems.
 </li><li class="listitem">
 users of the following drivers (powermust, blazer, fentonups, mustek,
   esupssmart, ippon, sms, masterguard) are encouraged to switch to megatec,
   which should replace all these drivers by nut 2.2. For more information,
   please refer to doc/megatec.txt
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_0_2_to_2_0_3"></a>3.24. Changes from 2.0.2 to 2.0.3</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_0_2_to_2_0_3"></a>3.25. Changes from 2.0.2 to 2.0.3</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 nothing that affects upgraded systems.
 </li><li class="listitem">
 hidups users are encouraged to switch to newhidups, as hidups will be
   removed by nut 2.2.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_0_1_to_2_0_2"></a>3.25. Changes from 2.0.1 to 2.0.2</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_0_1_to_2_0_2"></a>3.26. Changes from 2.0.1 to 2.0.2</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 The newhidups driver, which is the long run USB support approach,
   needs hotplug files installed to setup the right permissions on
   device file to operate. Check newhidups manual page for more information.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_0_0_to_2_0_1"></a>3.26. Changes from 2.0.0 to 2.0.1</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_0_0_to_2_0_1"></a>3.27. Changes from 2.0.0 to 2.0.1</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 The cyberpower1100 driver is now called cpsups since it supports
   more than just one model.  If you use this driver, be sure to remove
   the old binary and update your ups.conf <span class="emphasis"><em>driver=</em></span> setting with the
@@ -772,7 +782,7 @@ The upsstats.html template page has been changed slightly to reflect
   better HTML compliance, so you may want to update your installed copy
   accordingly.  If you’ve customized your file, don’t just copy the new
   one over it, or your changes will be lost!
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_1_4_0_to_2_0_0"></a>3.27. Changes from 1.4.0 to 2.0.0</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_1_4_0_to_2_0_0"></a>3.28. Changes from 1.4.0 to 2.0.0</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 The sample config files are no longer installed by default.  If you
   want to install them, use <span class="emphasis"><em>make install-conf</em></span> for the main programs,
   and <span class="emphasis"><em>make install-cgi-conf</em></span> for the CGI programs.
@@ -810,5 +820,5 @@ Nobody needed UDP mode, so it has been removed.  The only users
 The newapc driver has been renamed to apcsmart.  If you previously
   used newapc, make sure you delete the old binary and fix your
   ups.conf.  Otherwise, you may run the old driver from 1.4.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_file_trimmed_here_on_changes_from_1_2_2_to_1_4_0"></a>3.28. File trimmed here on changes from 1.2.2 to 1.4.0</h3></div></div></div><p>For information before this point, start with version 2.4.1 and work back.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-04-10 13:55:28 -- Network UPS Tools 2.8.2.2784</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="NUT_Release_Notes.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="Project_History.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_file_trimmed_here_on_changes_from_1_2_2_to_1_4_0"></a>3.29. File trimmed here on changes from 1.2.2 to 1.4.0</h3></div></div></div><p>For information before this point, start with version 2.4.1 and work back.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
+		Last updated 2025-04-22 11:50:12 -- Network UPS Tools 2.8.3.126</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="NUT_Release_Notes.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="Project_History.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
