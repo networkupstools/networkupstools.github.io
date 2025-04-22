@@ -1,0 +1,4403 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<title>Network UPS Tools - UPS Standard Protocol System Enhancement Corporation</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="generator" content="AsciiDoc 10.1.2" />
+<meta name="description" content="Power Devices support" />
+<meta name="keywords" content="NUT, Network UPS Tools, Eaton, APC, Free Software, UPS, Uninterruptible Power Supplies, PDU, Power Distributions Units, Solar Controllers, power, power devices, control, monitor, Linux, Unix, Windows, Mac OS X" />
+<meta name="format-detection" content="telephone=no" />
+<link rel="stylesheet" href="../css/xhtml11.css" type="text/css" />
+<link rel="stylesheet" href="../css/web-layout.css" type="text/css" />
+<link rel="shortcut icon" href="../faviconut.ico" />
+<link rel="icon" type="image/png" href="../faviconut.png" />
+<script type="text/javascript" src="../scripts/asciidoc.js"></script>
+<script type="text/javascript">
+/*<![CDATA[*/
+asciidoc.install(2);
+/*]]>*/
+</script>
+<!--[if lte IE 7]>
+<link rel="stylesheet" href="../css/ie-overrides.css" type="text/css" />
+<![endif]-->
+<!--[if lte IE 6]>
+<script type="text/javascript" src="../scripts/filter_png.js"></script>
+<![endif]-->
+</head>
+<body>
+<div id="layout-banner-box">
+<div id="layout-banner">
+  <div id="layout-logo"><img src="../images/nut-logo.png" alt="NUT logo" /></div>
+  <div id="layout-title">Network UPS Tools</div>
+  <div id="layout-description">Power Devices support</div>
+</div>
+</div>
+<div id="layout-menu-box">
+  <ul id="layout-menu">
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="../download.html">Download</a></li>
+    <li><a href="../projects.html">Related projects</a></li>
+    <li><a href="../stable-hcl.html">Compatibility</a></li>
+    <li><a href="../features.html">Features</a></li>
+    <li><a href="../documentation.html">Documentation</a></li>
+    <li><a href="../support.html">Support</a></li>
+    <li>* <a href="https://alioth-lists.debian.net/pipermail/nut-upsuser/">NUT UPS User archive</a></li>
+    <li>* <a href="https://alioth-lists.debian.net/pipermail/nut-upsdev/">NUT UPS Dev archive</a></li>
+    <li>* <a href="https://github.com/networkupstools/nut/">GitHub</a>:<a
+        href="https://github.com/networkupstools/nut/issues">issues</a>,<a
+        href="https://github.com/networkupstools/nut/wiki">wiki</a>
+        and more</li>
+    <li><a href="..//historic/index.html">Sub-sites for historic releases</a></li>
+    <li><a href="https://opencollective.com/networkupstools/">Sponsor NUT</a></li>
+  </ul>
+  <!-- div id="sponsor"><span>Hosted by<br/></span>
+    <a href="http://sponsor.com"><img src="../images/sponsor-logo.png" alt="Sponsor" /></a>
+  </div -->
+</div>
+<div id="layout-content-box">
+<div id="layout-content">
+<div id="header">
+<h1>UPS Standard Protocol System Enhancement Corporation</h1>
+</div>
+<div id="toc">
+  <div id="toctitle">Table of Contents</div>
+  <noscript><p><b>JavaScript must be enabled in your browser to display the table of contents.</b></p></noscript>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_introduction">Introduction</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>This document specifies a standard protocol for UPS manufacturers to use in the design and implementation of a UPS serial interface.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_definition_of_available_ups_parameters">Definition of available UPS parameters</h2>
+<div class="sectionbody">
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img src="../images/note.png" alt="Note" />
+</td>
+<td class="content"><strong>Length</strong> is defined as the number of bytes that may be sent from the UPS to the host.
+The UPS may send less than the maximum number of bytes.
+<strong>Length</strong> will apply only to variables of the type <strong>string</strong>.
+<strong>Range</strong> is defined as the minimum and maximum integer values which may be sent from the UPS to the host.
+The integer values may be zero padded, but this is not required.
+<strong>Range</strong> will apply only to variables of the type <strong>integer</strong>.
+In some instances, only a defined set of integer values will be accepted by the host.
+This set will be specified in the description field.</td>
+</tr></table>
+</div>
+<div class="sect2">
+<h3 id="_identification_group">Identification Group</h3>
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Parameter Name         </th>
+<th align="left" valign="top">Type   </th>
+<th align="left" valign="top">Length         </th>
+<th align="left" valign="top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Manufacturer</p></td>
+<td align="left" valign="top"><p class="table">string</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>32</code></p></td>
+<td align="left" valign="top"><p class="table">Name of the UPS manufacturer.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Model</p></td>
+<td align="left" valign="top"><p class="table">string</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>64</code></p></td>
+<td align="left" valign="top"><p class="table">UPS Model designation.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Software version</p></td>
+<td align="left" valign="top"><p class="table">string</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>32</code></p></td>
+<td align="left" valign="top"><p class="table">UPS firmware/software version.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Identification</p></td>
+<td align="left" valign="top"><p class="table">string</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>64</code></p></td>
+<td align="left" valign="top"><p class="table">String identifying the UPS.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="s22">Battery Group</h3>
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Parameter Name         </th>
+<th align="left" valign="top">Type           </th>
+<th align="left" valign="top">Range          </th>
+<th align="left" valign="top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Battery Condition</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>2</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> = Good
+</p>
+</li>
+<li>
+<p>
+<code>1</code> = Weak
+</p>
+</li>
+<li>
+<p>
+<code>2</code> = Replace
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Battery Status</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>2</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> = Battery OK
+</p>
+</li>
+<li>
+<p>
+<code>1</code> = Battery Low
+</p>
+</li>
+<li>
+<p>
+<code>2</code> = Battery Depleted
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Battery Charge</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>3</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> = Floating
+</p>
+</li>
+<li>
+<p>
+<code>1</code> = Charging
+</p>
+</li>
+<li>
+<p>
+<code>2</code> = Resting
+</p>
+</li>
+<li>
+<p>
+<code>3</code> = Discharging
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Seconds on Battery</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>99999</code></p></td>
+<td align="left" valign="top"><p class="table">Seconds since UPS switched to battery.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Estimated Minutes</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table">Estimated time to battery charge depletion.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Estimated Charge</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table">Estimate of percent battery charge remaining.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Battery Voltage</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>9999</code></p></td>
+<td align="left" valign="top"><p class="table">Battery voltage in 0.1 volts DC.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Battery Current</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>9999</code></p></td>
+<td align="left" valign="top"><p class="table">Battery current in 0.1 amps DC.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Battery Temperature</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>99</code></p></td>
+<td align="left" valign="top"><p class="table">Battery temperature in degrees Celsius.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_input_group">Input Group</h3>
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Parameter Name         </th>
+<th align="left" valign="top">Type           </th>
+<th align="left" valign="top">Range          </th>
+<th align="left" valign="top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Input Line Bads</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table">Number of out of tolerance conditions.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Input Num Lines</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>9</code></p></td>
+<td align="left" valign="top"><p class="table">Number of input lines used in this device.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Input Frequency 1</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table">Present input frequency in 0.1 Hz.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Input Voltage 1</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>9999</code></p></td>
+<td align="left" valign="top"><p class="table">Present input voltage in 0.1 volts.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Input Current 1</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>9999</code></p></td>
+<td align="left" valign="top"><p class="table">Present input current in 0.1 RMS Amps.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Input Power 1</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>99999</code></p></td>
+<td align="left" valign="top"><p class="table">Present input true power in Watts.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Input Frequency 2</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table">Present input frequency in 0.1 Hz.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Input Voltage 2</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>9999</code></p></td>
+<td align="left" valign="top"><p class="table">Present input voltage in 0.1 volts.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Input Current 2</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>9999</code></p></td>
+<td align="left" valign="top"><p class="table">Present input current in 0.1 RMS Amps.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Input Power 2</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>99999</code></p></td>
+<td align="left" valign="top"><p class="table">Present input true power in Watts.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Input Frequency 3</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table">Present input frequency in 0.1 Hz.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Input Voltage 3</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>9999</code></p></td>
+<td align="left" valign="top"><p class="table">Present input voltage in 0.1 volts.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Input Current 3</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>9999</code></p></td>
+<td align="left" valign="top"><p class="table">Present input current in 0.1 RMS Amps.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Input Power 3</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>99999</code></p></td>
+<td align="left" valign="top"><p class="table">Present input true power in Watts.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_output_group">Output Group</h3>
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Parameter Name         </th>
+<th align="left" valign="top">Type           </th>
+<th align="left" valign="top">Range          </th>
+<th align="left" valign="top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Output Source</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>5</code></p></td>
+<td align="left" valign="top"><div><div class="paragraph"><p>Present source of output power</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> = Normal
+</p>
+</li>
+<li>
+<p>
+<code>1</code> = On Bypass
+</p>
+</li>
+<li>
+<p>
+<code>2</code> = Boosting
+</p>
+</li>
+<li>
+<p>
+<code>3</code> = On Battery
+</p>
+</li>
+<li>
+<p>
+<code>4</code> = Reducing
+</p>
+</li>
+<li>
+<p>
+<code>5</code> = Other
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Frequency</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table">Present output frequency in 0.1 Hz.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Num Lines</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>9</code></p></td>
+<td align="left" valign="top"><p class="table">Number of output lines used in this device.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Voltage 1</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>9999</code></p></td>
+<td align="left" valign="top"><p class="table">Present output voltage in 0.1 volts.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Current 1</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>9999</code></p></td>
+<td align="left" valign="top"><p class="table">Present output current in 0.1 RMS Amps.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Power 1</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>99999</code></p></td>
+<td align="left" valign="top"><p class="table">Present output true power in Watts.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Load 1</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table">Percent of UPS power capacity presently used.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Voltage 2</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>9999</code></p></td>
+<td align="left" valign="top"><p class="table">Present output voltage in 0.1 volts.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Current 2</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>9999</code></p></td>
+<td align="left" valign="top"><p class="table">Present output current in 0.1 RMS Amps.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Power 2</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>99999</code></p></td>
+<td align="left" valign="top"><p class="table">Present output true power in Watts.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Load 2</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table">Percent of UPS power capacity presently used.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Voltage 3</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>9999</code></p></td>
+<td align="left" valign="top"><p class="table">Present output voltage in 0.1 volts.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Current 3</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>9999</code></p></td>
+<td align="left" valign="top"><p class="table">Present output current in 0.1 RMS Amps.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Power 3</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>99999</code></p></td>
+<td align="left" valign="top"><p class="table">Present output true power in Watts.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Load 3</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table">Percent of UPS power capacity presently used.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_bypass_group">Bypass Group</h3>
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Parameter Name         </th>
+<th align="left" valign="top">Type           </th>
+<th align="left" valign="top">Range          </th>
+<th align="left" valign="top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Bypass Frequency</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table">Present bypass frequency in 0.1 Hz.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Bypass Num Lines</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>9</code></p></td>
+<td align="left" valign="top"><p class="table">Number of bypass lines used in this device.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Bypass Voltage 1</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>9999</code></p></td>
+<td align="left" valign="top"><p class="table">Present bypass voltage in 0.1 volts.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Bypass Current 1</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>9999</code></p></td>
+<td align="left" valign="top"><p class="table">Present bypass current in 0.1 RMS Amps.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Bypass Power 1</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>99999</code></p></td>
+<td align="left" valign="top"><p class="table">Present bypass true power in Watts.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Bypass Voltage 2</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>9999</code></p></td>
+<td align="left" valign="top"><p class="table">Present bypass voltage in 0.1 volts.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Bypass Current 2</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>9999</code></p></td>
+<td align="left" valign="top"><p class="table">Present bypass current in 0.1 RMS Amps.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Bypass Power 2</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>99999</code></p></td>
+<td align="left" valign="top"><p class="table">Present bypass true power in Watts.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Bypass Voltage 3</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>9999</code></p></td>
+<td align="left" valign="top"><p class="table">Present bypass voltage in 0.1 volts.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Bypass Current 3</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>9999</code></p></td>
+<td align="left" valign="top"><p class="table">Present bypass current in 0.1 RMS Amps.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Bypass Power 3</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>99999</code></p></td>
+<td align="left" valign="top"><p class="table">Present bypass true power in Watts.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_alarm_group">Alarm Group</h3>
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Parameter Name                 </th>
+<th align="left" valign="top">Type           </th>
+<th align="left" valign="top">Range          </th>
+<th align="left" valign="top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Alarm Temperature</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> or <code>1</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> = Temperature OK
+</p>
+</li>
+<li>
+<p>
+<code>1</code> = Over Temperature
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Alarm Input Bad</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> or <code>1</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> = Input OK
+</p>
+</li>
+<li>
+<p>
+<code>1</code> = Input Fault
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Alarm Output Bad</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> or <code>1</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> = Output OK
+</p>
+</li>
+<li>
+<p>
+<code>1</code> = Output Fault
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Alarm Overload</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> or <code>1</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> = UPS not Overloaded
+</p>
+</li>
+<li>
+<p>
+<code>1</code> = UPS Overloaded
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Alarm Bypass Bad</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> or <code>1</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> = Bypass OK
+</p>
+</li>
+<li>
+<p>
+<code>1</code> = Bypass Fault
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Alarm Output Off</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> or <code>1</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> = Output On
+</p>
+</li>
+<li>
+<p>
+<code>1</code> = Output Off
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Alarm UPS Shutdown</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> or <code>1</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> = UPS not Shutdown
+</p>
+</li>
+<li>
+<p>
+<code>1</code> = UPS Shutdown
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Alarm Charger Failure</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> or <code>1</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> = Charger OK
+</p>
+</li>
+<li>
+<p>
+<code>1</code> = Charger Fault
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Alarm System Off</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> or <code>1</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> = System On
+</p>
+</li>
+<li>
+<p>
+<code>1</code> = System Off
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Alarm Fan Failure</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> or <code>1</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> = Fan OK
+</p>
+</li>
+<li>
+<p>
+<code>1</code> = Fan Fault
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Alarm Fuse Failure</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> or <code>1</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> = Fuse OK
+</p>
+</li>
+<li>
+<p>
+<code>1</code> = Fuse Fault
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Alarm General Fault</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> or <code>1</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> = General system OK
+</p>
+</li>
+<li>
+<p>
+<code>1</code> = General system Fault
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Alarm Awaiting Power</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> or <code>1</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> = Not Awaiting Power
+</p>
+</li>
+<li>
+<p>
+<code>1</code> = Awaiting Power
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Alarm Shutdown Pending</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> or <code>1</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> = No Shutdown Pending
+</p>
+</li>
+<li>
+<p>
+<code>1</code> = Shutdown Pending
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Alarm Shutdown Imminent</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> or <code>1</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> = No Shutdown Imminent
+</p>
+</li>
+<li>
+<p>
+<code>1</code> = Shutdown Imminent
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_test_group">Test Group</h3>
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Parameter Name         </th>
+<th align="left" valign="top">Type           </th>
+<th align="left" valign="top">Length/Range   </th>
+<th align="left" valign="top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Test Results Summary</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>5</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> = No test performed
+</p>
+</li>
+<li>
+<p>
+<code>1</code> = Test Passed
+</p>
+</li>
+<li>
+<p>
+<code>2</code> = Test in progress
+</p>
+</li>
+<li>
+<p>
+<code>3</code> = General Test failed
+</p>
+</li>
+<li>
+<p>
+<code>4</code> = Battery Test failed
+</p>
+</li>
+<li>
+<p>
+<code>5</code> = Deep Battery Test failed
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Test Results Detail</p></td>
+<td align="left" valign="top"><p class="table">string</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>64</code></p></td>
+<td align="left" valign="top"><p class="table">Additional information about the last self test.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Test Type</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>-1</code> to <code>3</code></p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>-1</code> = Abort test in progress
+</p>
+</li>
+<li>
+<p>
+<code>0</code> = No test
+</p>
+</li>
+<li>
+<p>
+<code>1</code> = General System Test
+</p>
+</li>
+<li>
+<p>
+<code>2</code> = Quick Battery Test
+</p>
+</li>
+<li>
+<p>
+<code>3</code> = Deep Battery Calibration
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_control_group">Control Group</h3>
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Parameter Name         </th>
+<th align="left" valign="top">Type           </th>
+<th align="left" valign="top">Range                  </th>
+<th align="left" valign="top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Shutdown Type</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>1</code> or <code>2</code></p></td>
+<td align="left" valign="top"><div><div class="paragraph"><p>Shutdown action to be taken:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>1</code> = UPS output only
+</p>
+</li>
+<li>
+<p>
+<code>2</code> = Entire UPS
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Shutdown After Delay</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>-1</code> to <code>9999999</code></p></td>
+<td align="left" valign="top"><div><div class="paragraph"><p>Perform shutdown action defined by Shutdown Type after indicated number seconds.</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>-1</code> = Cancel shutdown
+</p>
+</li>
+<li>
+<p>
+<code>0</code> = Shutdown immediately
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Startup After Delay</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>-1</code> to <code>9999999</code></p></td>
+<td align="left" valign="top"><div><div class="paragraph"><p>Start output after indicated number of seconds.</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>-1</code> = Cancel countdown
+</p>
+</li>
+<li>
+<p>
+<code>0</code> = Start output immediately
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Reboot With Duration</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>9999999</code></p></td>
+<td align="left" valign="top"><p class="table">Perform immediate shutdown action defined by Shutdown Type and wait indicated number of seconds before restarting.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Auto Restart</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>1</code> or <code>2</code></p></td>
+<td align="left" valign="top"><div><div class="paragraph"><p>Flag indicating whether UPS should be automatically restarted after a shutdown.</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>1</code> = Automatic Restart
+</p>
+</li>
+<li>
+<p>
+<code>2</code> = Manual Restart
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_configuration_group">Configuration Group</h3>
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Parameter Name                 </th>
+<th align="left" valign="top">Type           </th>
+<th align="left" valign="top">Range/Length   </th>
+<th align="left" valign="top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Nominal Input Voltage</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table">Nominal input voltage in Volts.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Nominal Input Frequency</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table">Nominal input frequency in 0.1 Hz.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Nominal Output Voltage</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table">Nominal output voltage in Volts.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Nominal Output Frequency</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table">Nominal output frequency in 0.1 Hz.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Nominal Volt-Amp Rating</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>99999</code></p></td>
+<td align="left" valign="top"><p class="table">Nominal Volt-Amp rating.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Nominal Output Power</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>99999</code></p></td>
+<td align="left" valign="top"><p class="table">Nominal true power rating in Watts.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Nominal Low Battery Time</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>99</code></p></td>
+<td align="left" valign="top"><p class="table">Number of estimated minutes remaining at which a low battery condition is declared.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Audible Alarm</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>4</code></p></td>
+<td align="left" valign="top"><div><div class="paragraph"><p>State of the audible alarm</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>1</code> = Disabled
+</p>
+</li>
+<li>
+<p>
+<code>2</code> = Enabled
+</p>
+</li>
+<li>
+<p>
+<code>3</code> = Muted
+</p>
+</li>
+<li>
+<p>
+<code>4</code> = Disabled Until Low Battery Warning
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Low Voltage Transfer Point</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table">Minimum input line voltage in Volts before UPS transfers to battery backup.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">High Voltage Transfer Point</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>999</code></p></td>
+<td align="left" valign="top"><p class="table">Maximum input line voltage in Volts before UPS transfers to battery backup.</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Battery Installed Date</p></td>
+<td align="left" valign="top"><p class="table">string</p></td>
+<td align="left" valign="top"><p class="table"><code>8</code></p></td>
+<td align="left" valign="top"><p class="table">The date that the battery was installed in the UPS [format <code>mmddyyyy</code>]</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Nominal Battery Life</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table"><code>0</code> to <code>99999</code></p></td>
+<td align="left" valign="top"><p class="table">The length of nominal useful battery life in days.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_baud_rate">Baud Rate</h3>
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Parameter Name </th>
+<th align="left" valign="top">Type           </th>
+<th align="left" valign="top">Range                  </th>
+<th align="left" valign="top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">UPS Baud Rate</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+<td align="left" valign="top"><p class="table">See Description</p></td>
+<td align="left" valign="top"><p class="table">Baud rate of the UPS.
+Valid values are <code>1200</code>, <code>2400</code>, <code>4800</code>, <code>9600</code> and <code>19200</code>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_id_number_assignments">ID Number Assignments</h3>
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="center" valign="top">ID #   </th>
+<th align="left" valign="top">Parameter                      </th>
+<th align="center" valign="top">Command        </th>
+<th align="center" valign="top">Group</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">Alarm Awaiting Power</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST5</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Alarm</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">2</p></td>
+<td align="left" valign="top"><p class="table">Alarm Bypass Bad</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST5</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Alarm</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">3</p></td>
+<td align="left" valign="top"><p class="table">Alarm Charger Failure</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST5</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Alarm</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">4</p></td>
+<td align="left" valign="top"><p class="table">Alarm Fan Failure</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST5</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Alarm</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">5</p></td>
+<td align="left" valign="top"><p class="table">Alarm Fuse Failure</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST5</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Alarm</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">6</p></td>
+<td align="left" valign="top"><p class="table">Alarm General Fault</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST5</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Alarm</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">7</p></td>
+<td align="left" valign="top"><p class="table">Alarm Input Bad</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST5</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Alarm</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">8</p></td>
+<td align="left" valign="top"><p class="table">Alarm Output Bad</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST5</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Alarm</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">9</p></td>
+<td align="left" valign="top"><p class="table">Alarm Output Off</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST5</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Alarm</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">10</p></td>
+<td align="left" valign="top"><p class="table">Alarm Overload</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST5</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Alarm</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">11</p></td>
+<td align="left" valign="top"><p class="table">Alarm Shutdown Imminent</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST5</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Alarm</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">12</p></td>
+<td align="left" valign="top"><p class="table">Alarm Shutdown Pending</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST5</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Alarm</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">13</p></td>
+<td align="left" valign="top"><p class="table">Alarm System Off</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST5</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Alarm</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">14</p></td>
+<td align="left" valign="top"><p class="table">Alarm Temperature</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST5</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Alarm</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">15</p></td>
+<td align="left" valign="top"><p class="table">Alarm UPS Shutdown</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST5</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Alarm</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">16</p></td>
+<td align="left" valign="top"><p class="table">Audible Alarm</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>NOM</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Configuration</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">17</p></td>
+<td align="left" valign="top"><p class="table">Auto Restart</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ATR</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Control</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">18</p></td>
+<td align="left" valign="top"><p class="table">Battery Charge</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST1</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Battery</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">19</p></td>
+<td align="left" valign="top"><p class="table">Battery Condition</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST1</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Battery</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">20</p></td>
+<td align="left" valign="top"><p class="table">Battery Current</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST1</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Battery</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">21</p></td>
+<td align="left" valign="top"><p class="table">Battery Installed Date</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>NOM</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Configuration</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">22</p></td>
+<td align="left" valign="top"><p class="table">Battery Status</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST1</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Battery</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">23</p></td>
+<td align="left" valign="top"><p class="table">Battery Temperature</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST1</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Battery</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">24</p></td>
+<td align="left" valign="top"><p class="table">Battery Voltage</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST1</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Battery</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">25</p></td>
+<td align="left" valign="top"><p class="table">Bypass Current 1</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST4</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Bypass</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">26</p></td>
+<td align="left" valign="top"><p class="table">Bypass Current 2</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST4</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Bypass</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">27</p></td>
+<td align="left" valign="top"><p class="table">Bypass Current 3</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST4</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Bypass</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">28</p></td>
+<td align="left" valign="top"><p class="table">Bypass Frequency</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST4</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Bypass</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">29</p></td>
+<td align="left" valign="top"><p class="table">Bypass Num Lines</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST4</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Bypass</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">30</p></td>
+<td align="left" valign="top"><p class="table">Bypass Power 1</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST4</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Bypass</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">31</p></td>
+<td align="left" valign="top"><p class="table">Bypass Power 2</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST4</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Bypass</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">32</p></td>
+<td align="left" valign="top"><p class="table">Bypass Power 3</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST4</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Bypass</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">33</p></td>
+<td align="left" valign="top"><p class="table">Bypass Voltage 1</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST4</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Bypass</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">34</p></td>
+<td align="left" valign="top"><p class="table">Bypass Voltage 2</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST4</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Bypass</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">35</p></td>
+<td align="left" valign="top"><p class="table">Bypass Voltage 3</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST4</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Bypass</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">36</p></td>
+<td align="left" valign="top"><p class="table">Estimated Charge</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST1</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Bypass</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">37</p></td>
+<td align="left" valign="top"><p class="table">Estimated Minutes</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST1</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Bypass</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">38</p></td>
+<td align="left" valign="top"><p class="table">High Voltage Transfer Point</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>NOM</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Configuration</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">39</p></td>
+<td align="left" valign="top"><p class="table">Identification</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>UID</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Identification</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">40</p></td>
+<td align="left" valign="top"><p class="table">Input Current 1</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST2</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Input</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">41</p></td>
+<td align="left" valign="top"><p class="table">Input Current 2</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST2</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Input</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">42</p></td>
+<td align="left" valign="top"><p class="table">Input Current 3</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST2</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Input</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">43</p></td>
+<td align="left" valign="top"><p class="table">Input Frequency 1</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST2</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Input</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">44</p></td>
+<td align="left" valign="top"><p class="table">Input Frequency 2</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST2</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Input</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">45</p></td>
+<td align="left" valign="top"><p class="table">Input Frequency 3</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST2</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Input</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">46</p></td>
+<td align="left" valign="top"><p class="table">Input Line Bads</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST2</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Input</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">47</p></td>
+<td align="left" valign="top"><p class="table">Input Num Lines</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST2</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Input</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">48</p></td>
+<td align="left" valign="top"><p class="table">Input Power 1</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST2</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Input</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">49</p></td>
+<td align="left" valign="top"><p class="table">Input Power 2</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST2</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Input</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">50</p></td>
+<td align="left" valign="top"><p class="table">Input Power 3</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST2</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Input</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">51</p></td>
+<td align="left" valign="top"><p class="table">Input Voltage 1</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST2</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Input</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">52</p></td>
+<td align="left" valign="top"><p class="table">Input Voltage 2</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST2</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Input</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">53</p></td>
+<td align="left" valign="top"><p class="table">Input Voltage 3</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST2</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Input</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">54</p></td>
+<td align="left" valign="top"><p class="table">Low Voltage Transfer Point</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>NOM</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Configuration</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">55</p></td>
+<td align="left" valign="top"><p class="table">Manufacturer</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>MAN</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Identification</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">56</p></td>
+<td align="left" valign="top"><p class="table">Model</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>MOD</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Identification</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">57</p></td>
+<td align="left" valign="top"><p class="table">Nominal Battery Life</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>NOM</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Configuration</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">58</p></td>
+<td align="left" valign="top"><p class="table">Nominal Input Frequency</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>NOM</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Configuration</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">59</p></td>
+<td align="left" valign="top"><p class="table">Nominal Input Voltage</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>NOM</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Configuration</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">60</p></td>
+<td align="left" valign="top"><p class="table">Nominal Low Battery Time</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>NOM</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Configuration</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">61</p></td>
+<td align="left" valign="top"><p class="table">Nominal Output Frequency</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>NOM</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Configuration</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">62</p></td>
+<td align="left" valign="top"><p class="table">Nominal Output Power</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>NOM</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Configuration</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">63</p></td>
+<td align="left" valign="top"><p class="table">Nominal Output Voltage</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>NOM</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Configuration</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">64</p></td>
+<td align="left" valign="top"><p class="table">Nominal Volt-Amp Rating</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>NOM</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Configuration</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">65</p></td>
+<td align="left" valign="top"><p class="table">Output Current 1</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST3</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Output</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">66</p></td>
+<td align="left" valign="top"><p class="table">Output Current 2</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST3</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Output</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">67</p></td>
+<td align="left" valign="top"><p class="table">Output Current 3</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST3</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Output</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">68</p></td>
+<td align="left" valign="top"><p class="table">Output Frequency</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST3</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Output</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">69</p></td>
+<td align="left" valign="top"><p class="table">Output Load 1</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST3</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Output</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">70</p></td>
+<td align="left" valign="top"><p class="table">Output Load 2</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST3</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Output</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">71</p></td>
+<td align="left" valign="top"><p class="table">Output Load 3</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST3</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Output</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">72</p></td>
+<td align="left" valign="top"><p class="table">Output Num Lines</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST3</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Output</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">73</p></td>
+<td align="left" valign="top"><p class="table">Output Power 1</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST3</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Output</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">74</p></td>
+<td align="left" valign="top"><p class="table">Output Power 2</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST3</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Output</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">75</p></td>
+<td align="left" valign="top"><p class="table">Output Power 3</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST3</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Output</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">76</p></td>
+<td align="left" valign="top"><p class="table">Output Source</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST3</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Output</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">77</p></td>
+<td align="left" valign="top"><p class="table">Output Voltage 1</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST3</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Output</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">78</p></td>
+<td align="left" valign="top"><p class="table">Output Voltage 2</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST3</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Output</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">79</p></td>
+<td align="left" valign="top"><p class="table">Output Voltage 3</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST3</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Output</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">80</p></td>
+<td align="left" valign="top"><p class="table">Reboot With Duration</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>RWD</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Control</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">81</p></td>
+<td align="left" valign="top"><p class="table">Seconds on Battery</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>ST1</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Battery</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">82</p></td>
+<td align="left" valign="top"><p class="table">Shutdown Type</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>SDA</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Control</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">83</p></td>
+<td align="left" valign="top"><p class="table">Shutdown After Delay</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>PSD</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Control</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">84</p></td>
+<td align="left" valign="top"><p class="table">Software Version</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>VER</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Identification</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">85</p></td>
+<td align="left" valign="top"><p class="table">Startup After Delay</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>STD</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Control</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">86</p></td>
+<td align="left" valign="top"><p class="table">Test Results Detail</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>STR</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Test</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">87</p></td>
+<td align="left" valign="top"><p class="table">Test Results Summary</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>STR</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Test</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">88</p></td>
+<td align="left" valign="top"><p class="table">Test Type</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>TST</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Test</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">89</p></td>
+<td align="left" valign="top"><p class="table">UPS Baud Rate</p></td>
+<td align="center" valign="top"><p class="table"><code><strong>UBR</strong></code></p></td>
+<td align="center" valign="top"><p class="table">Configuration</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_communications">Communications</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_operating_parameters">Operating Parameters</h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Baud Rate
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+2400 (default - can be modified with the <strong><code>UBR</code></strong> command)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Data Bits
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+8
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Stop Bits
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+1
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Parity
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+None
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="s32">Message Format</h3>
+<div class="tableblock">
+<table rules="none"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="center" valign="top">Header         </th>
+<th align="center" valign="top">Message Type   </th>
+<th align="center" valign="top">Data Length    </th>
+<th align="center" valign="top">Data</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center" valign="top"><p class="table">(1 byte)</p></td>
+<td align="center" valign="top"><p class="table">(1 byte)</p></td>
+<td align="center" valign="top"><p class="table">(3 bytes)</p></td>
+<td align="center" valign="top"><p class="table">(128 bytes max)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>Header</strong>
+</dt>
+<dd>
+<p>
+The message header is a single byte of data.
+The header will be a <strong><code>^</code></strong> (carat) character.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>Message Type</strong>
+</dt>
+<dd>
+<p>
+The message type is a single byte of data.
+The type will be one of the following:
+</p>
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<tbody>
+<tr>
+<td align="center" valign="top"><p class="table"><code><strong>0</strong></code></p></td>
+<td align="left" valign="top"><p class="table">Command rejected</p></td>
+<td align="left" valign="top"><p class="table">(from UPS to attached system)</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code><strong>1</strong></code></p></td>
+<td align="left" valign="top"><p class="table">Command accepted</p></td>
+<td align="left" valign="top"><p class="table">(from UPS to attached system)</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code><strong>P</strong></code></p></td>
+<td align="left" valign="top"><p class="table">Poll command</p></td>
+<td align="left" valign="top"><p class="table">(from attached system to UPS)</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code><strong>S</strong></code></p></td>
+<td align="left" valign="top"><p class="table">Set command</p></td>
+<td align="left" valign="top"><p class="table">(from attached system to UPS)</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code><strong>*</strong></code></p></td>
+<td align="left" valign="top"><p class="table">Unsolicited data</p></td>
+<td align="left" valign="top"><p class="table">(from UPS to attached system)</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code><strong>D</strong></code></p></td>
+<td align="left" valign="top"><p class="table">Data returned</p></td>
+<td align="left" valign="top"><p class="table">(from UPS to attached system)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</dd>
+<dt class="hdlist1">
+<strong>Data Length</strong>
+</dt>
+<dd>
+<p>
+The data length is the number of bytes of data passed.
+</p>
+</dd>
+<dt class="hdlist1">
+<a id="s324"></a><strong>Data</strong>
+</dt>
+<dd>
+<p>
+All data will be comma delimited.
+The variables should comply with the order specified in sections <a href="#s331"><em>Poll Commands</em></a> and <a href="#s334"><em>Set Commands</em></a>.
+If a variable value is not currently available, a comma with no data should be placed in the variable location.
+It is not necessary to provide commas beyond the last data value.
+For example, the <strong><code>ST1</code></strong> command (Battery group) can return up to 9 data values.
+If only the 2nd, 4th and 6th variables have valid data, the UPS response will have the following format:
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>^D010,1,,22,,82</code></pre>
+</div></div>
+<div class="paragraph"><p>Note that it is not necessary to provide the final 3 commas since there is no valid data for the final 3 variables.</p></div>
+</dd>
+</dl></div>
+</div>
+<div class="sect2">
+<h3 id="_messages_from_the_attached_system_to_the_ups">Messages from the attached system to the UPS</h3>
+<div class="sect3">
+<h4 id="s331">Poll Commands</h4>
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="center" valign="top">Command        </th>
+<th align="left" valign="top">Description                    </th>
+<th align="center" valign="top">Max Data Length (bytes)        </th>
+<th align="left" valign="top">Parameters Returned</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center" valign="top"><p class="table"><code><strong>AP1</strong></code></p></td>
+<td align="left" valign="top"><p class="table">Available Parameters 1</p></td>
+<td align="center" valign="top"><p class="table">128</p></td>
+<td align="left" valign="top"><p class="table">Comma delimited parameter ID numbers indicating which parameters are available from the UPS. (ID #'s 1-46)</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code><strong>AP2</strong></code></p></td>
+<td align="left" valign="top"><p class="table">Available Parameters 1</p></td>
+<td align="center" valign="top"><p class="table">128</p></td>
+<td align="left" valign="top"><p class="table">Comma delimited parameter ID numbers indicating which parameters are available from the UPS. (ID #'s 47-89)</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code><strong>ATR</strong></code></p></td>
+<td align="left" valign="top"><p class="table">Auto Reboot</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">Auto reboot parameter</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code><strong>MAN</strong></code></p></td>
+<td align="left" valign="top"><p class="table">UPS Manufacturer</p></td>
+<td align="center" valign="top"><p class="table">32</p></td>
+<td align="left" valign="top"><p class="table">Manufacturer</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code><strong>MOD</strong></code></p></td>
+<td align="left" valign="top"><p class="table">UPS Model</p></td>
+<td align="center" valign="top"><p class="table">64</p></td>
+<td align="left" valign="top"><p class="table">UPS Model</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code><strong>NOM</strong></code></p></td>
+<td align="left" valign="top"><p class="table">UPS Nominal Values</p></td>
+<td align="center" valign="top"><p class="table">55</p></td>
+<td align="left" valign="top"><p class="table">Nominal Input Voltage, Nominal Input Frequency, Nominal Output Voltage, Nominal Output Frequency, Nominal VA Rating, Nominal Output Power, Low Battery Time, Audible Alarm, Low Voltage Transfer Point, High Voltage Transfer Point, Battery Installed Date, Nominal Battery Life</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code><strong>SDA</strong></code></p></td>
+<td align="left" valign="top"><p class="table">Shutdown Action</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">Shutdown Type</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code><strong>ST1</strong></code></p></td>
+<td align="left" valign="top"><p class="table">Status group 1 (Battery)</p></td>
+<td align="center" valign="top"><p class="table">32</p></td>
+<td align="left" valign="top"><p class="table">Battery Condition, Battery Status, Battery Charge, Seconds on Battery, Estimated Minutes, Estimated Charge, Battery Voltage, Battery Current, Battery Temperature</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code><strong>ST2</strong></code></p></td>
+<td align="left" valign="top"><p class="table">Status group 2 (Input)</p></td>
+<td align="center" valign="top"><p class="table">65</p></td>
+<td align="left" valign="top"><p class="table">Input Line Bads, Input Num Lines, Input Frequency 1, Input Voltage 1, Input Current 1, Input Power 1, Input Frequency 2, Input Voltage 2, Input Current 2, Input Power 2, Input Frequency 3, Input Voltage 3, Input Current 3, Input Power 3</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code><strong>ST3</strong></code></p></td>
+<td align="left" valign="top"><p class="table">Status group 3 (Output)</p></td>
+<td align="center" valign="top"><p class="table">66</p></td>
+<td align="left" valign="top"><p class="table">Output Source, Output Frequency, Output Num Lines, Output Voltage 1, Output Current 1, Output Power 1, Output Load 1, Output Voltage 2, Output Current 2, Output Power 2, Output Load 2, Output Voltage 3, Output Current 3, Output Power 3, Output Load 3</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code><strong>ST4</strong></code></p></td>
+<td align="left" valign="top"><p class="table">Status group 4 (Bypass)</p></td>
+<td align="center" valign="top"><p class="table">53</p></td>
+<td align="left" valign="top"><p class="table">Bypass Frequency, Bypass Num Lines, Bypass Voltage 1, Bypass Current 1, Bypass Power 1, Bypass Voltage 2, Bypass Current 2, Bypass Power 2, Bypass Voltage 3, Bypass Current 3, Bypass Power 3</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code><strong>ST5</strong></code></p></td>
+<td align="left" valign="top"><p class="table">Status group 5 (Alarm)</p></td>
+<td align="center" valign="top"><p class="table">29</p></td>
+<td align="left" valign="top"><p class="table">Alarm Temperature, Alarm Input Bad, Alarm Output Bad, Alarm Overload, Alarm Bypass Bad, Alarm Output Off, Alarm UPS Shutdown, Alarm Charger Failure, Alarm System Off, Alarm Fan Failure, Alarm Fuse Failure, Alarm General Fault, Alarm Awaiting Power, Alarm Shutdown Pending, Alarm Shutdown Imminent</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code><strong>STR</strong></code></p></td>
+<td align="left" valign="top"><p class="table">Self Test Results</p></td>
+<td align="center" valign="top"><p class="table">66</p></td>
+<td align="left" valign="top"><p class="table">Self Test Result Summary, Self Test Result Details</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code><strong>UBR</strong></code></p></td>
+<td align="left" valign="top"><p class="table">UPS Baud Rate</p></td>
+<td align="center" valign="top"><p class="table">5</p></td>
+<td align="left" valign="top"><p class="table">UPS Baud Rate</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code><strong>UID</strong></code></p></td>
+<td align="left" valign="top"><p class="table">UPS Identification</p></td>
+<td align="center" valign="top"><p class="table">64</p></td>
+<td align="left" valign="top"><p class="table">UPS Identification</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code><strong>VER</strong></code></p></td>
+<td align="left" valign="top"><p class="table">UPS Version</p></td>
+<td align="center" valign="top"><p class="table">32</p></td>
+<td align="left" valign="top"><p class="table">UPS firmware and/or software version</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>Available Parameters</strong>
+</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph"><p>The <strong><code>AP1</code></strong> command will return a string of data which specifies which of the parameters (1-46) are available from the UPS.
+The data will be a list of supported ID numbers separated by commas.
+If a parameter is supported, that ID number is included in this list.
+If the parameter is not supported, that ID number will not be returned.</p></div>
+<div class="paragraph"><p>The <strong><code>AP2</code></strong> command is identical to the <strong><code>AP1</code></strong> command except that it specifies which of the parameters (47-89) are available from the UPS.</p></div>
+</div></div>
+</dd>
+<dt class="hdlist1">
+<a id="s3312"></a><strong>UPS Identification</strong>
+</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph"><p>The <strong><code>ATR</code></strong> poll command will return 1 byte of data which provides the Auto Reboot value stored in the UPS.</p></div>
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Parameter Name </th>
+<th align="center" valign="top">Max Length     </th>
+<th align="left" valign="top">Units</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Auto Reboot</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="paragraph"><p>The <strong><code>MAN</code></strong> command will return up to 32 bytes of data which provide the UPS Manufacturer value stored in the UPS.</p></div>
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Parameter Name </th>
+<th align="center" valign="top">Max Length     </th>
+<th align="left" valign="top">Units</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Manufacturer</p></td>
+<td align="center" valign="top"><p class="table">32</p></td>
+<td align="left" valign="top"><p class="table">string</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="paragraph"><p>The <strong><code>MOD</code></strong> command will return up to 64 bytes of data which provide the UPS Model Number value stored in the UPS.</p></div>
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Parameter Name </th>
+<th align="center" valign="top">Max Length     </th>
+<th align="left" valign="top">Units</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Model</p></td>
+<td align="center" valign="top"><p class="table">64</p></td>
+<td align="left" valign="top"><p class="table">string</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="paragraph"><p>The <strong><code>SDA</code></strong> poll command will return 1 byte of data which provides the Shutdown Type value stored in the UPS.</p></div>
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Parameter Name </th>
+<th align="center" valign="top">Max Length     </th>
+<th align="left" valign="top">Units</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Shutdown Type</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="paragraph"><p>The <strong><code>UID</code></strong> command will return up to 64 bytes of data which provide the UPS Identification string value stored in the UPS.</p></div>
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Parameter Name         </th>
+<th align="center" valign="top">Max Length     </th>
+<th align="left" valign="top">Units</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">UPS Identification</p></td>
+<td align="center" valign="top"><p class="table">64</p></td>
+<td align="left" valign="top"><p class="table">string</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="paragraph"><p>The <strong><code>VER</code></strong> command will return up to 32 bytes of data which provide the UPS Software/Hardware version value(s) stored in the UPS.</p></div>
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Parameter Name         </th>
+<th align="center" valign="top">Max Length     </th>
+<th align="left" valign="top">Units</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Software Version</p></td>
+<td align="center" valign="top"><p class="table">32</p></td>
+<td align="left" valign="top"><p class="table">string</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="paragraph"><p>The <strong><code>NOM</code></strong> command will return up to 55 bytes of data (including commas) which provide the UPS Nominal values stored in the UPS.
+All values are comma delimited.</p></div>
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Parameter Name                 </th>
+<th align="center" valign="top">Max Length     </th>
+<th align="left" valign="top">Units</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Nominal Input Voltage</p></td>
+<td align="center" valign="top"><p class="table">3</p></td>
+<td align="left" valign="top"><p class="table">volts</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Nominal Input Frequency</p></td>
+<td align="center" valign="top"><p class="table">3</p></td>
+<td align="left" valign="top"><p class="table">0.1 Hz</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Nominal Output Voltage</p></td>
+<td align="center" valign="top"><p class="table">3</p></td>
+<td align="left" valign="top"><p class="table">volts</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Nominal Output Frequency</p></td>
+<td align="center" valign="top"><p class="table">3</p></td>
+<td align="left" valign="top"><p class="table">0.1 Hz</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Nominal VA Rating</p></td>
+<td align="center" valign="top"><p class="table">5</p></td>
+<td align="left" valign="top"><p class="table">volt-amps</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Nominal Output Power</p></td>
+<td align="center" valign="top"><p class="table">5</p></td>
+<td align="left" valign="top"><p class="table">watts</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Low Battery Time</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+<td align="left" valign="top"><p class="table">minutes</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Audible Alarm</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>1</code> = disabled
+</p>
+</li>
+<li>
+<p>
+<code>2</code> = enabled
+</p>
+</li>
+<li>
+<p>
+<code>3</code> = muted
+</p>
+</li>
+<li>
+<p>
+<code>4</code> = disabled until low battery
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Low Voltage Transfer Point</p></td>
+<td align="center" valign="top"><p class="table">3</p></td>
+<td align="left" valign="top"><p class="table">volts</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">High Voltage Transfer Point</p></td>
+<td align="center" valign="top"><p class="table">3</p></td>
+<td align="left" valign="top"><p class="table">volts</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Battery Installed Date</p></td>
+<td align="center" valign="top"><p class="table">8</p></td>
+<td align="left" valign="top"><p class="table"><code>mmddyyyy</code></p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Nominal Battery Life</p></td>
+<td align="center" valign="top"><p class="table">5</p></td>
+<td align="left" valign="top"><p class="table">days</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div></div>
+</dd>
+<dt class="hdlist1">
+<a id="s3313"></a><strong>UPS Status</strong>
+</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph"><p>The <strong><code>ST1</code></strong> command will return up to 32 bytes of data (including commas) which provide dynamic information about the status of the UPS.
+All values are comma delimited.</p></div>
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Parameter Name         </th>
+<th align="center" valign="top">Max Length     </th>
+<th align="left" valign="top">Units</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Battery Condition</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> = Good
+</p>
+</li>
+<li>
+<p>
+<code>1</code> = Weak
+</p>
+</li>
+<li>
+<p>
+<code>2</code> = Replace
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Battery Status</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> = Battery OK
+</p>
+</li>
+<li>
+<p>
+<code>1</code> = Battery Low
+</p>
+</li>
+<li>
+<p>
+<code>2</code> = Battery Depleted
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Battery Charge</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> = Floating
+</p>
+</li>
+<li>
+<p>
+<code>1</code> = Charging
+</p>
+</li>
+<li>
+<p>
+<code>2</code> = Resting
+</p>
+</li>
+<li>
+<p>
+<code>3</code> = Discharging
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Seconds On Battery</p></td>
+<td align="center" valign="top"><p class="table">5</p></td>
+<td align="left" valign="top"><p class="table">seconds</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Estimated Minutes</p></td>
+<td align="center" valign="top"><p class="table">3</p></td>
+<td align="left" valign="top"><p class="table">minutes</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Estimated Charge</p></td>
+<td align="center" valign="top"><p class="table">3</p></td>
+<td align="left" valign="top"><p class="table">percent</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Battery Voltage</p></td>
+<td align="center" valign="top"><p class="table">4</p></td>
+<td align="left" valign="top"><p class="table">0.1 volts</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Battery Current</p></td>
+<td align="center" valign="top"><p class="table">4</p></td>
+<td align="left" valign="top"><p class="table">0.1 amps</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Battery Temperature</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+<td align="left" valign="top"><p class="table">degrees</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="paragraph"><p>The <strong><code>ST2</code></strong> command will return up to 65 bytes of data (including commas) which provide dynamic information about the status of the UPS.
+All values are comma delimited.</p></div>
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Parameter Name         </th>
+<th align="center" valign="top">Max Length     </th>
+<th align="left" valign="top">Units</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Input Line Bads</p></td>
+<td align="center" valign="top"><p class="table">3</p></td>
+<td align="left" valign="top"><p class="table">integer</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Input Num Lines</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">integer (<code>1</code>-<code>3</code>)</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Input Frequency 1</p></td>
+<td align="center" valign="top"><p class="table">3</p></td>
+<td align="left" valign="top"><p class="table">0.1 Hz</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Input Voltage 1</p></td>
+<td align="center" valign="top"><p class="table">4</p></td>
+<td align="left" valign="top"><p class="table">0.1 volts</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Input Current 1</p></td>
+<td align="center" valign="top"><p class="table">4</p></td>
+<td align="left" valign="top"><p class="table">0.1 amps</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Input Power 1</p></td>
+<td align="center" valign="top"><p class="table">5</p></td>
+<td align="left" valign="top"><p class="table">watts</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Input Frequency 2</p></td>
+<td align="center" valign="top"><p class="table">3</p></td>
+<td align="left" valign="top"><p class="table">0.1 Hz</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Input Voltage 2</p></td>
+<td align="center" valign="top"><p class="table">4</p></td>
+<td align="left" valign="top"><p class="table">0.1 volts</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Input Current 2</p></td>
+<td align="center" valign="top"><p class="table">4</p></td>
+<td align="left" valign="top"><p class="table">0.1 amps</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Input Power 2</p></td>
+<td align="center" valign="top"><p class="table">5</p></td>
+<td align="left" valign="top"><p class="table">watts</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Input Frequency 3</p></td>
+<td align="center" valign="top"><p class="table">3</p></td>
+<td align="left" valign="top"><p class="table">0.1 Hz</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Input Voltage 3</p></td>
+<td align="center" valign="top"><p class="table">4</p></td>
+<td align="left" valign="top"><p class="table">0.1 volts</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Input Current 3</p></td>
+<td align="center" valign="top"><p class="table">4</p></td>
+<td align="left" valign="top"><p class="table">0.1 amps</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Input Power 3</p></td>
+<td align="center" valign="top"><p class="table">5</p></td>
+<td align="left" valign="top"><p class="table">watts</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="paragraph"><p>The <strong><code>ST3</code></strong> command will return up to 66 bytes of data (including commas) which provide dynamic information about the status of the UPS.
+All values are comma delimited.</p></div>
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Parameter Name         </th>
+<th align="center" valign="top">Max Length     </th>
+<th align="left" valign="top">Units</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Output Source</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> = Normal
+</p>
+</li>
+<li>
+<p>
+<code>1</code> = On Battery
+</p>
+</li>
+<li>
+<p>
+<code>2</code> = On Bypass
+</p>
+</li>
+<li>
+<p>
+<code>3</code> = Reducing
+</p>
+</li>
+<li>
+<p>
+<code>4</code> = Boosting
+</p>
+</li>
+<li>
+<p>
+<code>5</code> = Other
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Frequency</p></td>
+<td align="center" valign="top"><p class="table">3</p></td>
+<td align="left" valign="top"><p class="table">0.1 Hz</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Num Lines</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">integer (<code>1</code>-<code>3</code>)</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Voltage 1</p></td>
+<td align="center" valign="top"><p class="table">4</p></td>
+<td align="left" valign="top"><p class="table">0.1 volts</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Current 1</p></td>
+<td align="center" valign="top"><p class="table">4</p></td>
+<td align="left" valign="top"><p class="table">0.1 amps</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Power 1</p></td>
+<td align="center" valign="top"><p class="table">5</p></td>
+<td align="left" valign="top"><p class="table">watts</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Load 1</p></td>
+<td align="center" valign="top"><p class="table">3</p></td>
+<td align="left" valign="top"><p class="table">percent</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Voltage 2</p></td>
+<td align="center" valign="top"><p class="table">4</p></td>
+<td align="left" valign="top"><p class="table">0.1 volts</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Current 2</p></td>
+<td align="center" valign="top"><p class="table">4</p></td>
+<td align="left" valign="top"><p class="table">0.1 amps</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Power 2</p></td>
+<td align="center" valign="top"><p class="table">5</p></td>
+<td align="left" valign="top"><p class="table">watts</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Load 2</p></td>
+<td align="center" valign="top"><p class="table">3</p></td>
+<td align="left" valign="top"><p class="table">percent</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Voltage 3</p></td>
+<td align="center" valign="top"><p class="table">4</p></td>
+<td align="left" valign="top"><p class="table">0.1 volts</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Current 3</p></td>
+<td align="center" valign="top"><p class="table">4</p></td>
+<td align="left" valign="top"><p class="table">0.1 amps</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Power 3</p></td>
+<td align="center" valign="top"><p class="table">5</p></td>
+<td align="left" valign="top"><p class="table">watts</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Load 3</p></td>
+<td align="center" valign="top"><p class="table">3</p></td>
+<td align="left" valign="top"><p class="table">percent</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="paragraph"><p>The <strong><code>ST4</code></strong> command will return up to 53 bytes of data (including commas) which provide dynamic information about the status of the UPS.
+All values are comma delimited.</p></div>
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Parameter Name         </th>
+<th align="center" valign="top">Max Length     </th>
+<th align="left" valign="top">Units</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Bypass Frequency</p></td>
+<td align="center" valign="top"><p class="table">3</p></td>
+<td align="left" valign="top"><p class="table">0.1 Hz</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Bypass Num Lines</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">integer (<code>1</code>-<code>3</code>)</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Bypass Voltage 1</p></td>
+<td align="center" valign="top"><p class="table">4</p></td>
+<td align="left" valign="top"><p class="table">0.1 volts</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Bypass Current 1</p></td>
+<td align="center" valign="top"><p class="table">4</p></td>
+<td align="left" valign="top"><p class="table">0.1 amps</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Bypass Power 1</p></td>
+<td align="center" valign="top"><p class="table">5</p></td>
+<td align="left" valign="top"><p class="table">watts</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Bypass Voltage 2</p></td>
+<td align="center" valign="top"><p class="table">4</p></td>
+<td align="left" valign="top"><p class="table">0.1 volts</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Bypass Current 2</p></td>
+<td align="center" valign="top"><p class="table">4</p></td>
+<td align="left" valign="top"><p class="table">0.1 amps</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Bypass Power 2</p></td>
+<td align="center" valign="top"><p class="table">5</p></td>
+<td align="left" valign="top"><p class="table">watts</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Bypass Voltage 3</p></td>
+<td align="center" valign="top"><p class="table">4</p></td>
+<td align="left" valign="top"><p class="table">0.1 volts</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Bypass Current 3</p></td>
+<td align="center" valign="top"><p class="table">4</p></td>
+<td align="left" valign="top"><p class="table">0.1 amps</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Bypass Power 3</p></td>
+<td align="center" valign="top"><p class="table">5</p></td>
+<td align="left" valign="top"><p class="table">watts</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="paragraph"><p>The <strong><code>ST5</code></strong> command will return up to 29 bytes of data (including commas) which provide dynamic information about the status of the UPS.
+All values are comma delimited.</p></div>
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Parameter Name                 </th>
+<th align="center" valign="top">Max Length     </th>
+<th align="left" valign="top">Units</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Alarm Temperature</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> = No Alarm Active
+</p>
+</li>
+<li>
+<p>
+<code>1</code> = Alarm Active
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Alarm Input Bad</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> = No Alarm Active
+</p>
+</li>
+<li>
+<p>
+<code>1</code> = Alarm Active
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Alarm Output Bad</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> = No Alarm Active
+</p>
+</li>
+<li>
+<p>
+<code>1</code> = Alarm Active
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Alarm Overload</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> = No Alarm Active
+</p>
+</li>
+<li>
+<p>
+<code>1</code> = Alarm Active
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Alarm Bypass Bad</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> = No Alarm Active
+</p>
+</li>
+<li>
+<p>
+<code>1</code> = Alarm Active
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Alarm Output Off</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> = No Alarm Active
+</p>
+</li>
+<li>
+<p>
+<code>1</code> = Alarm Active
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Alarm UPS Shutdown</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> = No Alarm Active
+</p>
+</li>
+<li>
+<p>
+<code>1</code> = Alarm Active
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Alarm Charger Failure</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> = No Alarm Active
+</p>
+</li>
+<li>
+<p>
+<code>1</code> = Alarm Active
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Alarm System Off</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> = No Alarm Active
+</p>
+</li>
+<li>
+<p>
+<code>1</code> = Alarm Active
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Alarm Fan Failure</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> = No Alarm Active
+</p>
+</li>
+<li>
+<p>
+<code>1</code> = Alarm Active
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Alarm Fuse Failure</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> = No Alarm Active
+</p>
+</li>
+<li>
+<p>
+<code>1</code> = Alarm Active
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Alarm General Fault</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> = No Alarm Active
+</p>
+</li>
+<li>
+<p>
+<code>1</code> = Alarm Active
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Alarm Awaiting Power</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> = No Alarm Active
+</p>
+</li>
+<li>
+<p>
+<code>1</code> = Alarm Active
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Alarm Shutdown Pending</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> = No Alarm Active
+</p>
+</li>
+<li>
+<p>
+<code>1</code> = Alarm Active
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Alarm Shutdown Imminent</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> = No Alarm Active
+</p>
+</li>
+<li>
+<p>
+<code>1</code> = Alarm Active
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="paragraph"><p>The <strong><code>STR3</code></strong> command will return up to 66 bytes of data (including commas) which provide the detailed result of the most recent UPS self test performed.
+All values are comma delimited.</p></div>
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Parameter Name         </th>
+<th align="center" valign="top">Max Length     </th>
+<th align="left" valign="top">Units</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Test Results Summary</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> = No test performed
+</p>
+</li>
+<li>
+<p>
+<code>1</code> = Test passed
+</p>
+</li>
+<li>
+<p>
+<code>2</code> = Test in progress
+</p>
+</li>
+<li>
+<p>
+<code>3</code> = General test failed
+</p>
+</li>
+<li>
+<p>
+<code>4</code> = Battery test failed
+</p>
+</li>
+<li>
+<p>
+<code>5</code> = Deep test failed
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Test Results Detail</p></td>
+<td align="center" valign="top"><p class="table">64</p></td>
+<td align="left" valign="top"><p class="table">string</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="paragraph"><p>The <strong><code>UBR</code></strong> command will return up to 5 bytes of data showing the UPS baud rate.</p></div>
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="left" valign="top">Parameter Name </th>
+<th align="center" valign="top">Max Length     </th>
+<th align="left" valign="top">Units</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">UPS Baud Rate</p></td>
+<td align="center" valign="top"><p class="table">5</p></td>
+<td align="left" valign="top"><p class="table"><code>1200</code>, <code>2400</code>, <code>4800</code>, <code>9600</code>, <code>19200</code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div></div>
+</dd>
+</dl></div>
+</div>
+<div class="sect3">
+<h4 id="s334">Set Commands</h4>
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="center" valign="top">Command        </th>
+<th align="left" valign="top">Description    </th>
+<th align="center" valign="top">Max Length     </th>
+<th align="left" valign="top">Data   </th>
+<th align="left" valign="top">Parameter Set</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center" valign="top"><p class="table"><code><strong>ATR</strong></code></p></td>
+<td align="left" valign="top"><p class="table">If ON, UPS system will restart after a shutdown.</p>
+<p class="table">If OFF, UPS must be restart manually.</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>1</code> = ON (auto)
+</p>
+</li>
+<li>
+<p>
+<code>2</code> = OFF (manual)
+</p>
+</li>
+</ul></div></div></td>
+<td align="left" valign="top"><p class="table">Auto Reboot</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code><strong>NOM</strong></code></p></td>
+<td align="left" valign="top"><p class="table">Sets configuration group values.</p></td>
+<td align="center" valign="top"><p class="table">55</p></td>
+<td align="left" valign="top"><p class="table">Configuration group parameters (comma delimited)</p></td>
+<td align="left" valign="top"><p class="table">Nominal Input Voltage, Nominal Input Frequency, Nominal Output Voltage, Nominal Output Frequency, Nominal volt-amp rating, Nominal Output Power, Nominal Low Battery Time, Audible alarm state, Low Volt Transfer Point, High Volt Transfer Point, Battery Installed Date, Nominal Battery Life</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code><strong>PSD</strong></code></p></td>
+<td align="left" valign="top"><p class="table">Performs shutdown action defined by the <em>Shutdown Type</em> after the indicated number of seconds.</p></td>
+<td align="center" valign="top"><p class="table">7</p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>-1</code> = Abort
+</p>
+</li>
+<li>
+<p>
+<code>0</code> = Immediate
+</p>
+</li>
+<li>
+<p>
+<code>&gt;0</code> = seconds until shutdown
+</p>
+</li>
+</ul></div></div></td>
+<td align="left" valign="top"><p class="table">Shutdown After Delay</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code><strong>RWD</strong></code></p></td>
+<td align="left" valign="top"><p class="table">Immediately performs shutdown action defined by <em>Shutdown Type</em>, then restarts after indicated number of seconds.</p></td>
+<td align="center" valign="top"><p class="table">7</p></td>
+<td align="left" valign="top"><p class="table">Seconds</p></td>
+<td align="left" valign="top"><p class="table">Reboot With Duration</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code><strong>SDA</strong></code></p></td>
+<td align="left" valign="top"><p class="table">Defines action to be taken at UPS shutdown.</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>1</code> = UPS output
+</p>
+</li>
+<li>
+<p>
+<code>2</code> = UPS system
+</p>
+</li>
+</ul></div></div></td>
+<td align="left" valign="top"><p class="table">Shutdown Type</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code><strong>STD</strong></code></p></td>
+<td align="left" valign="top"><p class="table">Starts UPS output after indicated number of seconds.</p></td>
+<td align="center" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>-1</code> = Abort
+</p>
+</li>
+<li>
+<p>
+<code>0</code> = Immediate
+</p>
+</li>
+<li>
+<p>
+<code>&gt;0</code> = seconds until startup
+</p>
+</li>
+</ul></div></div></td>
+<td align="left" valign="top"><p class="table">Startup After Delay</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code><strong>TST</strong></code></p></td>
+<td align="left" valign="top"><p class="table">Test</p></td>
+<td align="center" valign="top"><p class="table">2</p></td>
+<td align="left" valign="top"><div><div class="ulist"><ul>
+<li>
+<p>
+<code>-1</code> = Abort Test
+</p>
+</li>
+<li>
+<p>
+<code>0</code> = No effect
+</p>
+</li>
+<li>
+<p>
+<code>1</code> = General Test
+</p>
+</li>
+<li>
+<p>
+<code>2</code> = Battery Test
+</p>
+</li>
+<li>
+<p>
+<code>3</code> = Deep Test
+</p>
+</li>
+</ul></div></div></td>
+<td align="left" valign="top"><p class="table">Test Type</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code><strong>UBR</strong></code></p></td>
+<td align="left" valign="top"><p class="table">Sets UPS baud rate</p></td>
+<td align="center" valign="top"><p class="table">5</p></td>
+<td align="left" valign="top"><p class="table"><code>1200</code>, <code>2400</code>, <code>4800</code>, <code>9600</code>, <code>19200</code></p></td>
+<td align="left" valign="top"><p class="table">UPS baud rate</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code><strong>UID</strong></code></p></td>
+<td align="left" valign="top"><p class="table">Sets UPS ID string</p></td>
+<td align="center" valign="top"><p class="table">64</p></td>
+<td align="left" valign="top"><p class="table">ID string</p></td>
+<td align="left" valign="top"><p class="table">Identification</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_communication_examples">Communication Examples</h3>
+<div class="paragraph"><p>Following are examples of commands that may be sent to a UPS, and responses to those commands from the UPS.</p></div>
+<div class="sect3">
+<h4 id="_poll_commands_examples">Poll commands examples</h4>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>Host requests the Available parameters (part 1):</strong>
+</dt>
+<dd>
+<div class="listingblock">
+<div class="content">
+<pre><code>^P003AP1</code></pre>
+</div></div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>^</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Header character
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>P</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Record type (poll request)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>003</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Number of data bytes to follow
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>AP1</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Request for Available parameters (part 1)
+</p>
+</td>
+</tr>
+</table></div>
+</dd>
+<dt class="hdlist1">
+<strong>UPS responds:</strong>
+</dt>
+<dd>
+<div class="listingblock">
+<div class="content">
+<pre><code>^D0196,10,21,22,23,36,37</code></pre>
+</div></div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>^</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Header character
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>D</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Record type (Data returned in response to poll)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>019</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+number of data bytes to follow
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>6</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Alarm General fault supported
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>10</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Alarm overload supported
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>21</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Battery installed date supported
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>22</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Battery status supported
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>23</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Battery Temperature supported
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>36</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Estimated charge supported
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>37</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Estimated minutes supported
+</p>
+</td>
+</tr>
+</table></div>
+</dd>
+<dt class="hdlist1">
+<strong>Host requests the UPS Manufacturer:</strong>
+</dt>
+<dd>
+<div class="listingblock">
+<div class="content">
+<pre><code>^P003MAN</code></pre>
+</div></div>
+</dd>
+<dt class="hdlist1">
+<strong>UPS responds:</strong>
+</dt>
+<dd>
+<div class="listingblock">
+<div class="content">
+<pre><code>^0</code></pre>
+</div></div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>^</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Header character
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>0</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Record type (command rejected/not supported)
+</p>
+</td>
+</tr>
+</table></div>
+</dd>
+<dt class="hdlist1">
+<strong>Host requests the UPS Model:</strong>
+</dt>
+<dd>
+<div class="listingblock">
+<div class="content">
+<pre><code>^P003MOD</code></pre>
+</div></div>
+</dd>
+<dt class="hdlist1">
+<strong>UPS responds:</strong>
+</dt>
+<dd>
+<div class="listingblock">
+<div class="content">
+<pre><code>^D010Model 9999</code></pre>
+</div></div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>010</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Number of data bytes to follow
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>Model 9999</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Model number
+</p>
+</td>
+</tr>
+</table></div>
+</dd>
+<dt class="hdlist1">
+<strong>Host requests the Nominal parameters:</strong>
+</dt>
+<dd>
+<div class="listingblock">
+<div class="content">
+<pre><code>^P003NOM</code></pre>
+</div></div>
+</dd>
+<dt class="hdlist1">
+<strong>UPS responds:</strong>
+</dt>
+<dd>
+<div class="listingblock">
+<div class="content">
+<pre><code>^D025,,,,900,,,,,,04171995,750</code></pre>
+</div></div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>025</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Number of data bytes to follow
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>900</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Nominal Volt/amp rating
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>04171995</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Battery installed date
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>750</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Nominal Battery Life
+</p>
+</td>
+</tr>
+</table></div>
+</dd>
+<dt class="hdlist1">
+<strong>Host requests the Status parameters (part 1 - Battery):</strong>
+</dt>
+<dd>
+<div class="listingblock">
+<div class="content">
+<pre><code>^P003ST1</code></pre>
+</div></div>
+</dd>
+<dt class="hdlist1">
+<strong>UPS responds:</strong>
+</dt>
+<dd>
+<div class="listingblock">
+<div class="content">
+<pre><code>^D015,0,,,10,90,,,35</code></pre>
+</div></div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>015</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Number of data bytes to follow
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>0</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Battery status normal
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>10</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Estimated minutes
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>90</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Estimated charge
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>35</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Battery temperature
+</p>
+</td>
+</tr>
+</table></div>
+</dd>
+<dt class="hdlist1">
+<strong>Host requests the Status parameters (part 2 - Input):</strong>
+</dt>
+<dd>
+<div class="listingblock">
+<div class="content">
+<pre><code>^P003ST2</code></pre>
+</div></div>
+</dd>
+<dt class="hdlist1">
+<strong>UPS responds:</strong>
+</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre><code>^D007,,,1180</code></pre>
+</div></div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>007</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Number of data bytes to follow
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>1180</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Input voltage 1 (118.0 volts)
+</p>
+</td>
+</tr>
+</table></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img src="../images/note.png" alt="Note" />
+</td>
+<td class="content">Since no other parameters after Input Voltage 1 are returned, it is not necessary to provide the comma delimiters.</td>
+</tr></table>
+</div>
+</div></div>
+</dd>
+<dt class="hdlist1">
+<strong>Host requests the Status parameters (part 3 - Output):</strong>
+</dt>
+<dd>
+<div class="listingblock">
+<div class="content">
+<pre><code>^P003ST3</code></pre>
+</div></div>
+</dd>
+<dt class="hdlist1">
+<strong>UPS responds:</strong>
+</dt>
+<dd>
+<div class="listingblock">
+<div class="content">
+<pre><code>^D007,,,1200</code></pre>
+</div></div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>007</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Number of data bytes to follow
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>1200</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Output voltage 1 (120.0 volts)
+</p>
+</td>
+</tr>
+</table></div>
+</dd>
+<dt class="hdlist1">
+<strong>Host requests the Status parameters (part 5 - Alarms):</strong>
+</dt>
+<dd>
+<div class="listingblock">
+<div class="content">
+<pre><code>^P003ST5</code></pre>
+</div></div>
+</dd>
+<dt class="hdlist1">
+<strong>UPS responds:</strong>
+</dt>
+<dd>
+<div class="listingblock">
+<div class="content">
+<pre><code>^D013,,,1,,,,,,,,0</code></pre>
+</div></div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>013</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Number of data bytes to follow
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>1</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Alarm overload (true)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>0</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Alarm general fault (false)
+</p>
+</td>
+</tr>
+</table></div>
+</dd>
+<dt class="hdlist1">
+<strong>Host requests the UPS Self test results:</strong>
+</dt>
+<dd>
+<div class="listingblock">
+<div class="content">
+<pre><code>^P003STR</code></pre>
+</div></div>
+</dd>
+<dt class="hdlist1">
+<strong>UPS responds:</strong>
+</dt>
+<dd>
+<div class="listingblock">
+<div class="content">
+<pre><code>^D0011</code></pre>
+</div></div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>^</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Header character
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>D</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Record type (Data returned in response to poll)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>001</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Number of data bytes to follow
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>1</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Self test passed
+</p>
+</td>
+</tr>
+</table></div>
+</dd>
+</dl></div>
+</div>
+<div class="sect3">
+<h4 id="s342">SET Commands Examples</h4>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>Host attempts to set the UPS identification string:</strong>
+</dt>
+<dd>
+<div class="listingblock">
+<div class="content">
+<pre><code>^S008UIDA UPS</code></pre>
+</div></div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>^</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Header character
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>S</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Record type (set request)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>008</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Number of data bytes to follow
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>UID</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Request to set UPS Identification string
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>A UPS</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+UPS Identification string
+</p>
+</td>
+</tr>
+</table></div>
+</dd>
+<dt class="hdlist1">
+<strong>Host attempts to set the UPS Baud Rate:</strong>
+</dt>
+<dd>
+<div class="listingblock">
+<div class="content">
+<pre><code>^S007UBR9600</code></pre>
+</div></div>
+</dd>
+<dt class="hdlist1">
+<strong>Host attempts to set the perform test variable:</strong>
+</dt>
+<dd>
+<div class="listingblock">
+<div class="content">
+<pre><code>^S004TST1</code></pre>
+</div></div>
+</dd>
+<dt class="hdlist1">
+<strong>Host attempts to set the Shutdown action:</strong>
+</dt>
+<dd>
+<div class="listingblock">
+<div class="content">
+<pre><code>^S004SDA1</code></pre>
+</div></div>
+</dd>
+<dt class="hdlist1">
+<strong>Host attempts to set the Perform Shutdown:</strong>
+</dt>
+<dd>
+<div class="listingblock">
+<div class="content">
+<pre><code>^S006PSD120</code></pre>
+</div></div>
+</dd>
+<dt class="hdlist1">
+<strong>Host attempts to set the Nominal values:</strong>
+</dt>
+<dd>
+<div class="listingblock">
+<div class="content">
+<pre><code>^S015NOM120,60,,,600</code></pre>
+</div></div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>015</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Number of data bytes to follow
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>NOM</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Request to set nominal values
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>120</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Nominal Input Voltage
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>60</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Nominal Input Frequency
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>600</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Nominal VA Rating
+</p>
+</td>
+</tr>
+</table></div>
+</dd>
+</dl></div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_revision_history">Revision History</h2>
+<div class="sectionbody">
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="center" valign="top">Revision       </th>
+<th align="center" valign="top">Date           </th>
+<th align="left" valign="top">Comments</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center" valign="top"><p class="table">1.0</p></td>
+<td align="center" valign="top"><p class="table">10/15/94</p></td>
+<td align="left" valign="top"><p class="table">Initial draft.</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">1.1</p></td>
+<td align="center" valign="top"><p class="table">11/01/94</p></td>
+<td align="left" valign="top"><p class="table">Downsized packet sizes.</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">1.2</p></td>
+<td align="center" valign="top"><p class="table">12/01/94</p></td>
+<td align="left" valign="top"><p class="table">Increased packet sized.</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">1.3</p></td>
+<td align="center" valign="top"><p class="table">01/14/95</p></td>
+<td align="left" valign="top"><p class="table">Added <strong><code>RWD</code></strong> command.</p>
+<p class="table">Added ID# assignment table.</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">1.4</p></td>
+<td align="center" valign="top"><p class="table">01/25/95</p></td>
+<td align="left" valign="top"><p class="table">Split <strong><code>ST</code></strong> command into <strong><code>ST1</code></strong>, <strong><code>ST2</code></strong>, <strong><code>ST3</code></strong>, <strong><code>ST4</code></strong>.</p>
+<p class="table">Split AP command into <strong><code>AP1</code></strong>, <strong><code>AP2</code></strong>.</p>
+<p class="table">Replaced ID command with <strong><code>MAN</code></strong>, <strong><code>MOD</code></strong>, <strong><code>VER</code></strong>, <strong><code>UID</code></strong>, <strong><code>NOM</code></strong>.</p>
+<p class="table">Removed checksum from packets.</p>
+<p class="table">Increased the command length to 3 characters.</p>
+<p class="table">Modified data lengths so all packets are &lt;= 64 bytes.</p>
+<p class="table">Added <strong><code>STR</code></strong> command to retrieve self test result details.</p>
+<p class="table">Split &#8216;bitwise&#8217; integers into separate integer fields.</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">1.5</p></td>
+<td align="center" valign="top"><p class="table">02/01/95</p></td>
+<td align="left" valign="top"><p class="table">Modified <strong><code>ST1</code></strong> description in sections <a href="#s331"><em>Poll Commands</em></a> and <a href="#s3313"><em>UPS Status</em></a>.</p>
+<p class="table">Split out Battery Status integer to multiple status integers to match sections <a href="#s22"><em>Battery Group</em></a> and <a href="#s331"><em>Poll Commands</em></a>.</p>
+<p class="table">Modified <strong><code>ST4</code></strong> description in sections <a href="#s331"><em>Poll Commands</em></a> and <a href="#s3313"><em>UPS Status</em></a>.</p>
+<p class="table">Moved the Test Results Summary from the <strong><code>ST4</code></strong> response into the <strong><code>STR</code></strong> response.</p>
+<p class="table">Modified the <strong><code>STR</code></strong> description in <a href="#s3313">section <em>UPS Status</em></a>.</p>
+<p class="table">Split <strong><code>ST4</code></strong> command into <strong><code>ST4</code></strong> and <strong><code>ST5</code></strong>.</p>
+<p class="table">Changed temperature scale from centigrade to Celsius.</p>
+<p class="table">Corrected spelling errors in Rev 1.4.</p>
+<p class="table">Changed &#8216;Header&#8217; Character to <code>^</code> character.</p>
+<p class="table">Changed &#8216;NAK&#8217; to <code>0</code> for <code>NAK, +1</code> for <code>ACK</code>.</p>
+<p class="table">Modified Nominal Output Power to length of 5.</p>
+<p class="table">Modified Input Power 1, 2, 3 to length of 5.</p>
+<p class="table">Modified Output Power 1, 2, 3 to length of 5.</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">2.0</p></td>
+<td align="center" valign="top"><p class="table">04/17/95</p></td>
+<td align="left" valign="top"><p class="table">Modified <strong><code>ST1</code></strong> command to make battery status 1 byte.</p>
+<p class="table">Added example communication loops between host and UPS.</p>
+<p class="table">Modified <strong><code>TST</code></strong> to accept 9 as the abort test in progress.</p>
+<p class="table">Modified Input power fields to be a maximum of 5 digits.</p>
+<p class="table">Modified Input current fields to be a maximum of 4 digits.</p>
+<p class="table">Added Battery Installed date - 8 characters (<code>MMDDYYYY</code>).</p>
+<p class="table">Added Nominal Battery Life - 5 characters (in days).</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">2.1</p></td>
+<td align="center" valign="top"><p class="table">04/20/95</p></td>
+<td align="left" valign="top"><div><div class="paragraph"><p>Modified Bypass power data length to 5 bytes maximum.</p></div>
+<div class="paragraph"><p>Increased all voltage data to 4 bytes maximum (Voltage values will now represent voltages in .1 volts).</p></div>
+<div class="paragraph"><p>Added poll commands:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<strong><code>UBR</code></strong>&#8201;&#8212;&#8201;UPS Baud Rate
+</p>
+</li>
+<li>
+<p>
+<strong><code>SDA</code></strong>&#8201;&#8212;&#8201;Shutdown Action
+</p>
+</li>
+<li>
+<p>
+<strong><code>SDT</code></strong>&#8201;&#8212;&#8201;Shutoff delay time
+</p>
+</li>
+<li>
+<p>
+<strong><code>RWD</code></strong>&#8201;&#8212;&#8201;Reboot with delay
+</p>
+</li>
+<li>
+<p>
+<strong><code>TST</code></strong>&#8201;&#8212;&#8201;Test type
+</p>
+</li>
+<li>
+<p>
+<strong><code>PSD</code></strong>&#8201;&#8212;&#8201;Perform Shutdown
+</p>
+</li>
+<li>
+<p>
+<strong><code>STD</code></strong>&#8201;&#8212;&#8201;Startup delay
+</p>
+</li>
+<li>
+<p>
+<strong><code>ATR</code></strong>&#8201;&#8212;&#8201;Auto Reboot
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">2.2</p></td>
+<td align="center" valign="top"><p class="table">05/10/95</p></td>
+<td align="left" valign="top"><p class="table">Corrected data lengths of the set commands <strong><code>TST</code></strong>, <strong><code>PSD</code></strong> and <strong><code>STD</code></strong>.
+(<a href="#s334">Section <em>Set Commands</em></a>).</p>
+<p class="table">Replaced Abort Test in Progress, Deep Battery Calibration, General Systems Test and Quick Battery test with Test Type.</p>
+<p class="table">Made the lengths of Nominal Input Frequency and Nominal Output Frequency consistently 3 digits throughout the protocol.</p>
+<p class="table">Made the length of Nominal Output Power consistently 5 digits throughout the protocol.</p>
+<p class="table">Replaced the <strong><code>INV</code></strong>, <strong><code>INF</code></strong>, <strong><code>ONV</code></strong>, <strong><code>ONF</code></strong>, <strong><code>NVA</code></strong>, <strong><code>NOP</code></strong>, <strong><code>LBT</code></strong>, <strong><code>AAS</code></strong>, <strong><code>LVT</code></strong>, <strong><code>HVT</code></strong>, <strong><code>BID</code></strong> and <strong><code>NBF</code></strong> set commands with the <strong><code>NOM</code></strong> set command.</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">2.3</p></td>
+<td align="center" valign="top"><p class="table">06/05/95</p></td>
+<td align="left" valign="top"><p class="table">Minor clean-up changes-</p>
+<p class="table">Changed data length to 3 bytes.</p>
+<p class="table">Removed <strong><code>PSD</code></strong>, <strong><code>RWD</code></strong>, <strong><code>STD</code></strong> and <strong><code>TST</code></strong> poll commands.</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">2.4</p></td>
+<td align="center" valign="top"><p class="table">06/09/95</p></td>
+<td align="left" valign="top"><p class="table">Changed Shutdown UPS parameter to Shutdown After Delay.</p>
+<p class="table">Moved UPS Baud Rate from the Configuration group.</p>
+<p class="table">Modified description of Auto Restart.</p>
+<p class="table">Removed Shutoff Delay Time parameter and <strong><code>STD</code></strong> command.</p>
+<p class="table">Modified parameter return order for <strong><code>ST1</code></strong> and <strong><code>NOM</code></strong>.</p>
+<p class="table">Increased range of Bypass Currents to <code>9999</code>.</p>
+<p class="table">Changed Power units from 0.1 watts to watts.</p>
+<p class="table">Modified <strong><code>PSD</code></strong> command.</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">2.5</p></td>
+<td align="center" valign="top"><p class="table">06/13/95</p></td>
+<td align="left" valign="top"><p class="table">Minor clean-up changes.</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table">2.6</p></td>
+<td align="center" valign="top"><p class="table">06/22/95</p></td>
+<td align="left" valign="top"><p class="table">Added <a href="#s324">section <em>Message Format &#8594; Data</em></a> to explain comma delimited data.</p>
+<p class="table">Modified maximum data size in <a href="#s32">section <em>Message Format</em></a>.</p>
+<p class="table">Added Discharging (3) to sections <a href="#s22"><em>Battery Group</em></a> and <a href="#s3313"><em>UPS Status</em></a>.</p>
+<p class="table">Added Disabled Until Low Battery (4) to Audible Alarm in <a href="#s3312">section <em>UPS Identification</em></a>.</p>
+<p class="table">Added <strong><code>NOM</code></strong> example to <a href="#s342">section <em>SET Commands Examples</em></a>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div id="footnotes"><hr /></div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2024-07-15 14:44:46 UTC
+</div>
+<div id="footer-badges">
+<a href="https://github.com/networkupstools/nut">
+  <img style="border:0;height:20"
+    src="https://img.shields.io/github/checks-status/networkupstools/nut/master"
+    alt="Latest GitHub checks status: master branch"/>
+</a>
+<!--
+<a href="https://travis-ci.org/github/networkupstools/nut">
+  <img style="border:0;height:20"
+    src="https://api.travis-ci.org/networkupstools/nut.svg?branch=master"
+    alt="Latest Travis CI build status: master branch"/>
+</a>
+-->
+<a href="https://ci.networkupstools.org/job/nut/job/nut/job/master/">
+  <img style="border:0;height:20"
+    src="https://ci.networkupstools.org/buildStatus/icon?job=nut%2Fnut%2Fmaster"
+    alt="Latest NUT CI build status: master branch"/>
+</a>
+<!-- MacOS, maybe later Windows builds: -->
+<a href="https://app.circleci.com/pipelines/github/networkupstools">
+  <img style="border:0;height:20"
+    src="https://circleci.com/gh/networkupstools/nut/tree/master.svg?style=svg"
+    alt="Latest Circle CI build status: master branch"/>
+</a>
+<!-- Windows, maybe later MacOS builds: -->
+<a href="https://ci.appveyor.com/project/nut-travis/nut/build/artifacts">
+  <img style="border:0;height:20"
+    src="https://ci.appveyor.com/api/projects/status/vrhkatid9hr7lq7r/branch/master?svg=true&failingText=Windows-FAIL&passingText=Windows-OK&pendingText-Windows-PENDING"
+    alt="Latest AppVeyor build status (NUT for Windows iterations)"/>
+</a>
+<!--
+<a href="https://ci.networkupstools.org/job/nut/job/nut/job/fightwarn/">
+  <img style="border:0;height:20"
+    src="https://ci.networkupstools.org/buildStatus/icon?job=nut%2Fnut%2Ffightwarn&subject=Fightwarn%20Branch"
+    alt="Latest NUT CI build status: fightwarn branch"/>
+</a>
+-->
+<!--
+<a href="https://github.com/networkupstools/nut/releases">
+  <img style="border:0;height:20"
+    src="https://img.shields.io/github/v/release/networkupstools/nut"
+    alt="Latest GitHub drafted NUT source release"/>
+</a>
+-->
+<a href="https://github.com/networkupstools/nut/releases">
+  <img style="border:0;height:20"
+    src="https://img.shields.io/github/v/tag/networkupstools/nut?sort=semver"
+    alt="Latest Git-tagged NUT source release"/>
+</a>
+<!-- Maintainer note: for the counter below to work, a git tag
+     is not sufficient -- a release must be drafted and published
+     at https://github.com/networkupstools/nut/releases
+     Counter URL may also be .../latest/BRANCHNAME -->
+<a href="https://github.com/networkupstools/nut">
+  <img style="border:0;height:20"
+    src="https://img.shields.io/github/commits-since/networkupstools/nut/latest.svg"
+    alt="Commits on master branch since latest release on GitHub"/>
+</a>
+<!-- See also:
+ // https://web.archive.org/web/20200731075618/http://www.methods.co.nz/asciidoc/
+ // https://github.com/asciidoc-py/asciidoc-py
+ -->
+<a href="https://asciidoc.org/">
+  <img style="border:0;width:88px;height:31px"
+    src="../images/asciidoc.png"
+    alt="Powered by AsciiDoc"/>
+</a>
+<a href="https://validator.w3.org/check?uri=referer">
+  <img style="border:0;width:88px;height:31px"
+    src="https://www.w3.org/Icons/valid-xhtml11-blue"
+    alt="Valid XHTML 1.1"/>
+</a>
+<a href="https://jigsaw.w3.org/css-validator/check?uri=referer">
+  <img style="border:0;width:88px;height:31px"
+    src="https://jigsaw.w3.org/css-validator/images/vcss-blue"
+    alt="Valid CSS!"/>
+</a>
+<a href="https://www.gandi.net/">
+  <img style="border:0;height:38px;"
+       src="../images/gandi-ar21.svg"
+       alt="DNS, redirection and related services Hoster"/>
+</a>
+<!--
+// FH web site defunct since ~Apr 2024
+<a href="https://fosshost.org/">
+  <img style="border:0;width:112px;height:38px;"
+       src="../images/ci/fosshost.org_Host_Light_38px.png"
+       alt="Dedicated Hosting for NUT CI"/>
+</a>
+-->
+<a href="https://www.digitalocean.com/?refcode=d2fbf2b9e082&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge">
+  <img style="border:0;height:38px;"
+       src="https://opensource.nyc3.cdn.digitaloceanspaces.com/attribution/assets/PoweredByDO/DO_Powered_by_Badge_blue.svg"
+       alt="Dedicated Hosting for NUT CI"/>
+</a>
+</div>
+</div>
+</div>
+</div>
+<!-- Google Analytics integration -->
+<script type="text/javascript">
+
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-9664272-1']);
+        _gaq.push(['_trackPageview']);
+
+        (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+
+</script>
+</body>
+</html>

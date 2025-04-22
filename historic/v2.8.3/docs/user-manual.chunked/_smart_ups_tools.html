@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>J.2. Smart UPS Tools</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><link rel="home" href="index.html" title="Network UPS Tools User Manual" /><link rel="up" href="Project_History.html" title="J. Project history" /><link rel="prev" href="_prototypes_and_experiments.html" title="J.1. Prototypes and experiments" /><link rel="next" href="_network_ups_tools.html" title="J.3. Network UPS Tools" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="_prototypes_and_experiments.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="_network_ups_tools.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_smart_ups_tools"></a>J.2. Smart UPS Tools</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_march_1998_first_public_release"></a>March 1998: first public release</h4></div></div></div><p>Version 0.10 was released on March 10, 1998. It used the same design as
+the pre-release prototype. This made expansion difficult as the binary
+structure used for network communications would break any time a new
+variable was added. Due to byte-ordering and struct alignment issues,
+the code usually couldn’t talk over the network to a system with a
+different architecture. It was also hopelessly bound to one type of UPS
+hardware.</p><p>Five more releases followed with this design followed. The last was
+0.34, released October 27, 1998.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_june_1999_redesigned_rewritten"></a>June 1999: Redesigned, rewritten</h4></div></div></div><p>Following a long period of inactivity and two months of prerelease
+testing versions, 0.40.0 was released on June 5, 1999. It featured a
+complete redesign and rewrite of all of the code. The layering was now
+in three pieces, with the single driver (smartups) separate from the
+server (upsd).</p><p>Clients remained separate as before and still used UDP to talk to the
+server, but they now used a text-based protocol instead of the brittle
+binary structs. A typical request like "REQ UTILITY" would be answered
+with "ANS UTILITY 120.0".</p><p>The ups-trust425-625 driver appeared shortly after the release of
+0.40.0, marking the first expansion beyond APC hardware.</p><p>Over the months that followed, the backupspro driver would be forked
+from the smartups driver to handle the APC Back-UPS Pro line. Then the
+backups driver was written to handle the APC Back-UPS contact-closure
+models. These drivers would later be renamed and recombined, with
+smartups and backupspro becoming apcsmart, and backups became genericups.</p><p>The drivers stored status data in an array. At first, they passed this data to
+upsd by saving it to a file. upsd would reread this file every few seconds to
+keep a copy for itself. This was later expanded to allow shared memory mode,
+where only a stub would remain on the disk. The drivers and server then passed
+data through the shared memory space.</p><p>upsd picked up the ability to monitor multiple drivers on the system, and the
+"upsname@hostname" scheme was born. Access controls were added, and then the
+network code was expanded to allow TCP communications, which at this point were
+on port 3305.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
+		Last updated 2025-04-22 10:20:26 -- Network UPS Tools 2.8.3</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_prototypes_and_experiments.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="Project_History.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="_network_ups_tools.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

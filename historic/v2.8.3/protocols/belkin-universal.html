@@ -1,0 +1,1923 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<title>Network UPS Tools - Belkin Universal UPS protocol description</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="generator" content="AsciiDoc 10.1.2" />
+<meta name="description" content="Power Devices support" />
+<meta name="keywords" content="NUT, Network UPS Tools, Eaton, APC, Free Software, UPS, Uninterruptible Power Supplies, PDU, Power Distributions Units, Solar Controllers, power, power devices, control, monitor, Linux, Unix, Windows, Mac OS X" />
+<meta name="format-detection" content="telephone=no" />
+<link rel="stylesheet" href="../css/xhtml11.css" type="text/css" />
+<link rel="stylesheet" href="../css/web-layout.css" type="text/css" />
+<link rel="shortcut icon" href="../faviconut.ico" />
+<link rel="icon" type="image/png" href="../faviconut.png" />
+<script type="text/javascript" src="../scripts/asciidoc.js"></script>
+<script type="text/javascript">
+/*<![CDATA[*/
+asciidoc.install(2);
+/*]]>*/
+</script>
+<!--[if lte IE 7]>
+<link rel="stylesheet" href="../css/ie-overrides.css" type="text/css" />
+<![endif]-->
+<!--[if lte IE 6]>
+<script type="text/javascript" src="../scripts/filter_png.js"></script>
+<![endif]-->
+</head>
+<body>
+<div id="layout-banner-box">
+<div id="layout-banner">
+  <div id="layout-logo"><img src="../images/nut-logo.png" alt="NUT logo" /></div>
+  <div id="layout-title">Network UPS Tools</div>
+  <div id="layout-description">Power Devices support</div>
+</div>
+</div>
+<div id="layout-menu-box">
+  <ul id="layout-menu">
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="../download.html">Download</a></li>
+    <li><a href="../projects.html">Related projects</a></li>
+    <li><a href="../stable-hcl.html">Compatibility</a></li>
+    <li><a href="../features.html">Features</a></li>
+    <li><a href="../documentation.html">Documentation</a></li>
+    <li><a href="../support.html">Support</a></li>
+    <li>* <a href="https://alioth-lists.debian.net/pipermail/nut-upsuser/">NUT UPS User archive</a></li>
+    <li>* <a href="https://alioth-lists.debian.net/pipermail/nut-upsdev/">NUT UPS Dev archive</a></li>
+    <li>* <a href="https://github.com/networkupstools/nut/">GitHub</a>:<a
+        href="https://github.com/networkupstools/nut/issues">issues</a>,<a
+        href="https://github.com/networkupstools/nut/wiki">wiki</a>
+        and more</li>
+    <li><a href="..//historic/index.html">Sub-sites for historic releases</a></li>
+    <li><a href="https://opencollective.com/networkupstools/">Sponsor NUT</a></li>
+  </ul>
+  <!-- div id="sponsor"><span>Hosted by<br/></span>
+    <a href="http://sponsor.com"><img src="../images/sponsor-logo.png" alt="Sponsor" /></a>
+  </div -->
+</div>
+<div id="layout-content-box">
+<div id="layout-content">
+<div id="header">
+<h1>Belkin Universal UPS protocol description</h1>
+<span id="author">Peter Selinger</span><br />
+<span id="email"><tt>&lt;<a href="mailto:selinger@users.sourceforge.net">selinger@users.sourceforge.net</a>&gt;</tt></span><br />
+<span id="revision">version 7,</span>
+2004
+</div>
+<div id="toc">
+  <div id="toctitle">Table of Contents</div>
+  <noscript><p><b>JavaScript must be enabled in your browser to display the table of contents.</b></p></noscript>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph"><p>This document describes the serial port communication protocol used by the Belkin "Universal UPS" and compatible models.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_summary">Summary</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>This document describes the serial port communication protocol used by the Belkin "Universal UPS".
+This protocol is known to work with the F6C800-UNV and F6C120-UNV models, and presumably also works with the other Universal UPS models, such as the F6C500-UNV, F6C100-UNV, and so forth.
+Note that this protocol does not work with the Belkin "Home Office" series, nor with the "Regulator Pro" series.
+For some pointers to information on other Belkin protocols, see <a href="#otherprotocols">Note: Other Belkin Protocols</a> below.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_general_information">General Information</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>I bought a Belkin "Universal UPS" because, next to APC, Belkin systems are among the most widely available in stores, at least in Canada.
+For instance, they are available from Radio Shack, Target, Office Depot, etc.</p></div>
+<div class="paragraph"><p>On the surface, Belkin seems Linux-friendly, because they provide a Linux version of their "Bulldog Plus" UPS management software.
+This software is not included on the CD Rom which ships with the UPS, but one can download it from <a href="http://www.belkin.com/pyramid/AdvancedInfo/UPS/Bulldog/">Belkin&#8217;s website</a>.</p></div>
+<div class="paragraph"><p>However, unfortunately, the Bulldog Plus software is not as useful as it might seem.
+It has many bugs (see <a href="https://web.archive.org/web/20050408231453/http://quasar.mathstat.uottawa.ca/~selinger/ups/#bulldog">Bugs in Bulldog</a>), and it cannot be configured to allow an unsupervised recovery (the user must press the front panel button to restart the UPS after a power failure).</p></div>
+<div class="paragraph"><p>Since the specifications of the protocol were not available, I decided to do some detective work and to decipher the protocol myself.
+The results are described in this document.
+The information reported here is necessarily incomplete, but it seems that the most important aspects of the protocol have been covered.</p></div>
+<div class="paragraph"><p>Unfortunately, there is one serious problem with the "Universal UPS" firmware: there is no command which causes the UPS to go into "soft shutdown" mode, which means, to shut off the load until AC power returns.
+This makes unsupervised recovery from power failures tricky and awkward (see <a href="#workaround">Soft Shutdown Workaround</a> for a suggested solution).</p></div>
+<div class="paragraph"><p>On balance, the Belkin UPS works fine, but the lack of a "soft shutdown" command is annoying.
+If you are thinking about buying a UPS, I think currently APC is a better choice than Belkin at approximately the same price.
+Maybe Belkin will come up with an improved version of their firmware in the future.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="otherprotocols">Note: Other Belkin Protocols</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Belkin uses different communication protocols for different UPS hardware.
+Belkin&#8217;s "Bulldog Plus" software apparently knows several of these protocols, and automatically figures out which one to use based on the responses it receives from the UPS.
+I know of the following protocols.
+The "NUT Driver" entries below refer to the Network UPS Tools software.</p></div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>Universal UPS and compatible</strong>
+</dt>
+<dd>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<em>Typical message:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>0x7e 03 02 01 00 84</code>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>Described in:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+this document
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>NUT Driver:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<em>belkinunv</em>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>Product code:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+F6C800-UNV, F6C120-UNV etc.
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>Date:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+2004
+</p>
+</td>
+</tr>
+</table></div>
+</dd>
+<dt class="hdlist1">
+<strong>Home Office UPS and compatible</strong>
+</dt>
+<dd>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<em>Typical message:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+None (dumb UPS only?)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>NUT Driver:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<em>genericups</em>, with <code>upstype=7</code>.
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>Product code:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+F6H350-SER, F6H500-SER etc.
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>Date:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+2003
+</p>
+</td>
+</tr>
+</table></div>
+</dd>
+<dt class="hdlist1">
+<strong>Regulator pro Gold series and compatible</strong>
+</dt>
+<dd>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<em>Typical message:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>~00P003MNU</code>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>Described in:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<a href="belkin.html">Belkin Regulator Pro smart protocol</a>
+</p>
+<div class="paragraph"><p><a href="belkin-protocol.html">Belkin UPS Protocol</a></p></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>NUT Driver:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<em>belkin</em>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>Date:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+ca. 2000
+</p>
+</td>
+</tr>
+</table></div>
+</dd>
+<dt class="hdlist1">
+<strong>Older Belkin USVs, compatible with Trust425&amp;625 UPS</strong>
+</dt>
+<dd>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<em>Typical message:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>0x01</code>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>Described in:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+ups-trust425+625.txt by Peter Bieringer &lt;<a href="mailto:pb@bieringer.de">pb@bieringer.de</a>&gt; (distributed with nut-0.41.2)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>NUT Driver:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<em>powercom</em> (?)
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>Date:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+ca. 1999
+</p>
+</td>
+</tr>
+</table></div>
+</dd>
+</dl></div>
+<div class="paragraph"><p>The following information was provided by Dean Gibson about the "Home Office" models:</p></div>
+<div class="quoteblock">
+<div class="content">From my testing with Belkin&#8217;s software, the F6C units and F6H units appear to NOT be software compatible.
+Belkin&#8217;s Bulldog Plus software (Windows or UNIX, either from the included CD or from the web site) refuses to talk to the F6H units, but the basic Bulldog software (Windows or UNIX) on the CD that comes with the F6H units works just fine (although appears to be extremely limited in capability) with those units.</div>
+<div class="attribution">
+</div></div>
+<div class="paragraph"><p>Only the "Universal UPS" is described in this document.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="workaround">Soft Shutdown Workaround</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>The main problem with the Belkin Universal UPS is that there appears to be no software way to put the UPS into "soft shutdown" mode.
+This makes unsupervised recovery from power failures tricky.
+There is a reliable workaround, as described in this section, but it is awkward.
+One must conclude that Belkin&#8217;s engineers do not understand the purpose of a UPS very well, at least as it relates to unsupervised recovery.</p></div>
+<div class="paragraph"><p>To understand the issue, consider what should normally happen to an unsupervised computer (such as a server) during a power failure:</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+The AC power fails, and the UPS goes on battery mode.
+</p>
+</li>
+<li>
+<p>
+When the battery gets low, the computer enters its normal shutdown sequence.
+</p>
+</li>
+<li>
+<p>
+As the very last step of the shutdown process, the computer signals the UPS to do a "soft shutdown", i.e., to turn its load off and await AC power.
+This kills the computer&#8217;s power supply, and thus the computer is turned off.
+</p>
+</li>
+<li>
+<p>
+When the power comes back on, the UPS load comes back on, restoring the computer&#8217;s power supply, and thus causing the computer to reboot.
+(Note that there is a BIOS setting by which one can tell the computer to reboot after power loss).
+</p>
+</li>
+</ol></div>
+<div class="paragraph"><p>Moreover, if AC power happens to be restored during step 2, the UPS should still turn its load off briefly in step 3, to allow the computer to reboot.</p></div>
+<div class="paragraph"><p>The problem with the Belkin UPS is that step 3 is not possible.
+One cannot signal the UPS to do a "soft shutdown".
+One can only signal it to do a "final shutdown", which means, the UPS stays off even if the power returns.
+This leaves the entire system in a state where a human needs to press the button on the UPS front panel to restart the system.</p></div>
+<div class="paragraph"><p>There is one way around this problem.
+Namely, the UPS will enter "soft shutdown" mode when its batteries run out.
+Thus, it is possible to handle a power failure as follows:</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+The AC power fails, and the UPS goes on battery mode.
+</p>
+</li>
+<li>
+<p>
+When the battery gets low, the computer enters its normal shutdown sequence.
+</p>
+</li>
+<li>
+<p>
+As the very last step of the shutdown process, we call a special program which does nothing but to monitor the UPS status.
+</p>
+</li>
+<li>
+<p>
+If the AC power comes back on before the batteries run out, our program notices this and causes the computer to reboot.
+</p>
+</li>
+<li>
+<p>
+If the batteries run out before the AC power comes back on, then the UPS shuts off its load, thereby killing the computer&#8217;s power supply.
+The UPS is now in "soft shutdown" mode and everything will reboot when the power comes back on.
+</p>
+</li>
+</ol></div>
+<div class="paragraph"><p>The major practical drawback of this solution is that the battery level is guaranteed to be 0% when the system reboots.
+Thus, if another power failure happens before the batteries are recharged, the system will crash with not enough warning to do an orderly shutdown.
+We can solve this problem by adding another special purpose program to the startup script, before anything is written to the hard disks, which monitors the UPS and waits for the battery level to reach a minimum amount before allowing the boot process to resume.
+This ensures that the system is in a safe state, should the power fail again.</p></div>
+<div class="paragraph"><p>I have implemented the required functionality as part of the NUT <em>belkinunv</em> driver.
+The <em>belkinunv</em> driver can be used as a standalone program by calling it with the "<code>-x wait</code>" option.
+When called with this option, the driver does not fork into the background, but simply connects to the UPS and waits for AC power to be restored.
+The intention is that one puts commands such as the following as the last part of the computer&#8217;s shutdown script:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code># NEAR END OF SHUTDOWN SCRIPT:
+# if shutdown was caused by UPS, perform Belkin UPS workaround.
+if [ -f /etc/killpower ] ; then
+    echo "Waiting for AC power, or for UPS batteries to run out..."
+    /usr/bin/belkinunv -x wait /dev/ttyS1
+
+    # we get here if the power came back on. Reboot.
+    echo "Power is back. Rebooting..."
+    reboot
+fi</code></pre>
+</div></div>
+<div class="paragraph"><p>In addition, when called with the "<code>-x wait=level</code>" option, the belkinunv driver waits for the battery charge to reach the specified level.
+This can be used in a startup script as follows.
+Put this before any disks are mounted read/write, and before any file system integrity checks, so that the system is in a safe state.</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code># NEAR BEGINNING OF STARTUP SCRIPT:
+# if we are recovering from a power failure, wait for the UPS to
+# charge to a comfortable level before writing anything to disk
+if [ -f /etc/killpower ] ; then
+    echo "Waiting for UPS battery charge to reach 60%..."
+    /usr/bin/belkinunv -x wait=60 -x nohang /dev/ttyS1
+fi</code></pre>
+</div></div>
+<div class="paragraph"><p>Here, the "<code>-x nohang</code>" option ensures that the computer will boot properly in case the UPS is no longer attached.
+There might be many reasons to remove the UPS during a power failure, for instance, you take your computer to a friend&#8217;s house, or you attach it to a generator, or whatever.
+Giving the "<code>-x nohang</code>" option ensures that your computer is always bootable.</p></div>
+<div class="paragraph"><p>For a detailed description of the "<code>-x wait</code>" and related options, please see the <em>belkinunv(8)</em> man page.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_description_of_the_protocol">Description of the Protocol</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_opening_the_serial_communication_link">Opening the serial communication link</h3>
+<div class="paragraph"><p>The serial port parameters are: 2400 baud, 8 bits, 1 stop bit, no parity.
+More precisely, the following parameters are used: <code>B2400 | CS8 | CREAD | HUPCL | CLOCAL</code>.</p></div>
+<div class="paragraph"><p>In order to get the UPS to switch to "smart" mode, one first needs to set RTS and drop DTR for at least 0.25 seconds (RTS and DTR refer to two specific pins in the 9-pin serial connector).
+This signals the UPS to switch to serial mode.
+Without this step, there will be no serial communication possible.
+In experimenting with my own UPS, I found that 0.25 seconds is the minimum time required for the UPS to react; however, the time required may differ for different UPS hardware.
+The Bulldog software waits 1 second, so this is probably a safe bet.</p></div>
+<div class="paragraph"><p>After this, flush any unread garbage bytes from the serial port.
+Thereafter, simply communicate with the port via usual "read" and "write" operations.</p></div>
+<div class="paragraph"><p>The following C procedure shows exactly how the serial port should be opened and prepared:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>#include &lt;fcntl.h&gt;
+#include &lt;sys/ioctl.h&gt;
+#include &lt;string.h&gt;
+#include &lt;errno.h&gt;
+#include &lt;termios.h&gt;
+#include &lt;unistd.h&gt;
+
+/* Open and prepare a serial port for communication with a Belkin
+   Universal UPS. DEVICE is the name of the serial port. It will be
+   opened in blocking read/write mode, and the appropriate
+   communications parameters will be set. The device will also be
+   sent a special signal (clear DTR, set RTS) to cause the UPS to
+   switch from "dumb" to "smart" mode, and any pending data (=garbage)
+   will be discarded. After this call, the device is ready for reading
+   and writing via read(2) and write(2). Return a valid file
+   descriptor on success, or else -1 with errno set. */
+
+int belkin_open_tty(char *device) {
+  int fd;
+  struct termios tios;
+  struct flock flock;
+  char buf[128];
+  const int tiocm_dtr = TIOCM_DTR;
+  const int tiocm_rts = TIOCM_RTS;
+  int r;
+
+  /* open the device */
+  fd = open(device, O_RDWR | O_NONBLOCK);
+  if (fd == -1) {
+    return -1;
+  }
+
+  /* set communications parameters: 2400 baud, 8 bits, 1 stop bit, no
+     parity, enable reading, hang up when done, ignore modem control
+     lines. */
+  memset(&amp;tios, 0, sizeof(tios));
+  tios.c_cflag = B2400 | CS8 | CREAD | HUPCL | CLOCAL;
+  tios.c_cc[VMIN] = 1;
+  tios.c_cc[VTIME] = 0;
+  r = tcsetattr(fd, TCSANOW, &amp;tios);
+  if (r == -1) {
+    close(fd);
+    return -1;
+  }
+
+  /* signal the UPS to enter "smart" mode. This is done by setting RTS
+     and dropping DTR for at least 0.25 seconds. RTS and DTR refer to
+     two specific pins in the 9-pin serial connector. Note: this must
+     be done for at least 0.25 seconds for the UPS to react. */
+  r = ioctl(fd, TIOCMBIC, &amp;tiocm_dtr);
+  if (r == -1) {
+    close(fd);
+    return -1;
+  }
+  r = ioctl(fd, TIOCMBIS, &amp;tiocm_rts);
+  if (r == -1) {
+    close(fd);
+    return -1;
+  }
+
+  /* flush both directions of serial port: throw away all data in
+     transit */
+  r = tcflush(fd, TCIOFLUSH);
+  if (r == -1) {
+    close(fd);
+    return -1;
+  }
+
+  /* lock the port */
+  memset(&amp;flock, 0, sizeof(flock));
+  flock.l_type = F_RDLCK;
+  r = fcntl(fd, F_SETLK, &amp;flock);
+  if (r == -1) {
+    close(fd);
+    return -1;
+  }
+
+  /* sleep at least 0.25 seconds for the UPS to wake up. Belkin's own
+     software sleeps 1 second, so that's what we do, too. */
+  usleep(1000000);
+
+  /* flush incoming data again, and read any remaining garbage
+     bytes. There should not be any. */
+  r = tcflush(fd, TCIFLUSH);
+  if (r == -1) {
+    close(fd);
+    return -1;
+  }
+
+  r = read(fd, buf, 127);
+  if (r == -1 &amp;&amp; errno != EAGAIN) {
+    close(fd);
+    return -1;
+  }
+
+  /* finally, switch to blocking i/o, so that future read/write calls
+     will read or write at least one byte */
+
+  r = fcntl(fd, F_SETFL, 0);   /* clear O_NONBLOCK */
+  if (r == -1 &amp;&amp; errno != EAGAIN) {
+    close(fd);
+    return -1;
+  }
+
+  return fd;
+}</code></pre>
+</div></div>
+</div>
+<div class="sect2">
+<h3 id="_structure_of_messages">Structure of messages</h3>
+<div class="paragraph"><p>The same basic format is used for messages from the computer to the UPS ("commands") and from the UPS to the computers ("responses").
+Communication takes place as a sequence of command/response pairs.
+Communication is always initiated by the computer, and the UPS reacts to each command by sending a single, matching, response.</p></div>
+<div class="paragraph"><p>The format of all messages is:</p></div>
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="center" valign="middle">Header </th>
+<th align="center" valign="middle">Type   </th>
+<th align="center" valign="middle">Length </th>
+<th align="center" valign="middle">Register ID    </th>
+<th align="center" valign="middle">Data           </th>
+<th align="center" valign="middle">Checksum</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center" valign="middle"><p class="table">1 byte</p></td>
+<td align="center" valign="middle"><p class="table">1 byte</p></td>
+<td align="center" valign="middle"><p class="table">1 byte</p></td>
+<td align="center" valign="middle"><p class="table">1 byte</p></td>
+<td align="center" valign="middle"><p class="table">variable</p></td>
+<td align="center" valign="middle"><p class="table">1 byte</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="paragraph"><p>The message fields are explained as follows:</p></div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<strong>Header</strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+The literal byte <code>0x7e</code>, or ASCII &#8216;<code>~</code>&#8217;
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong>Type</strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+There are five possible message types:
+</p>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>3</code>: 
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+read command (computer to UPS): polls the value of a register
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>5</code>: 
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+read response (UPS to computer): returns data from read command
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>4</code>: 
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+write command (computer to UPS): write the value of a register
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>2</code>: 
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+write response (UPS to computer): write was successful
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>1</code>: 
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+error response (UPS to computer): sent in response to a bad command
+</p>
+</td>
+</tr>
+</table></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong>Length</strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+The number of bytes in the <strong>Data</strong> field, plus 1.
+Equivalently, the length of the entire message, minus 4.
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong>Register ID</strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+The number of the register to be read or written.
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong>Data</strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+The argument of the message.
+The precise meaning depends on the type of message.
+</p>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+read command (type=<code>3</code>)
+</dt>
+<dd>
+<p>
+the argument is the single byte <code>00</code>.
+</p>
+</dd>
+<dt class="hdlist1">
+read response (type=<code>5</code>)
+</dt>
+<dd>
+<p>
+the argument depends on the type of data stored in the register in question (see <a href="#registers">Individual UPS registers</a> below):
+</p>
+<div class="ulist"><ul>
+<li>
+<p>
+For a 1-byte register, it is a single byte.
+</p>
+</li>
+<li>
+<p>
+For a 2-byte register, it is a little-endian 2-byte integer (i.e., with the lower order byte sent first).
+</p>
+</li>
+<li>
+<p>
+For a string register, the data is the string itself (not null-terminated).
+</p>
+</li>
+</ul></div>
+</dd>
+<dt class="hdlist1">
+write command (type=<code>4</code>)
+</dt>
+<dd>
+<p>
+the argument is always encoded as a 2-byte, little-endian integer, regardless of whether the corresponding register holds a 1-byte or 2-byte value.
+In case of a 1-byte register, the higher-order byte of the argument (i.e., the second byte) is set to <code>0</code>.
+Write commands do not occur for string registers, since such registers are read-only.
+</p>
+</dd>
+<dt class="hdlist1">
+write response (type=<code>2</code>)
+</dt>
+<dd>
+<p>
+the argument is the same as that of the write command which is being responded to.
+</p>
+</dd>
+<dt class="hdlist1">
+error response (type=<code>1</code>)
+</dt>
+<dd>
+<p>
+the argument is the same as that of the command which caused the error.
+</p>
+</dd>
+</dl></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong>Checksum</strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+The checksum for this message.
+It equals the sum of all previous bytes of the message (including the initial <code>7e</code>), modulo <code>0x100</code>.
+</p>
+</td>
+</tr>
+</table></div>
+<div class="sect3">
+<h4 id="_format_of_responses">Format of responses</h4>
+<div class="paragraph"><p>Each command (computer to UPS) is followed by a single response (UPS to computer).
+A read command (type=<code>3</code>) is normally followed by a read response (type=<code>5</code>), or sometimes by an error response (type=<code>1</code>).
+A write command (type=<code>4</code>) is normally followed by a write response (type=<code>2</code>), or sometimes by an error response (type=<code>1</code>).</p></div>
+<div class="paragraph"><p>The Register ID field of the response is identical to the Register ID field of the command being responded to.
+Moreover, the Data field of the response is identical to the Data field of the command being responded to, in case of an error response or a write response.
+In case of a read response, the Data field is of course the value being read.</p></div>
+<div class="paragraph"><p>An error response is only sent if the corresponding command was well-formed (including a correct checksum), but cannot be obeyed for some reason (e.g., the corresponding register is not implemented).
+Ill-formed commands are silently ignored.</p></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_examples">Examples</h3>
+<div class="sect3">
+<h4 id="_reading_a_1_byte_register">Reading a 1-byte register</h4>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Command
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>7e 03 02 01 00 84</code>
+</p>
+<div class="paragraph"><p>read register <code>01</code>, voltage rating</p></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Response
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>7e 05 02 01 78 fe</code>
+</p>
+<div class="paragraph"><p>register <code>01</code> is <code>0x78</code> = 120 = 120V</p></div>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect3">
+<h4 id="_reading_a_2_byte_register">Reading a 2-byte register</h4>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Command
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>7e 03 02 20 00 a3</code>
+</p>
+<div class="paragraph"><p>read register <code>20</code>, battery voltage</p></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Response
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>7e 05 03 20 0e 01 b5</code>
+</p>
+<div class="paragraph"><p>register <code>20</code> is <code>0x010e</code> = 269 = 26.9V</p></div>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect3">
+<h4 id="_reading_a_string_register">Reading a string register</h4>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Command
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>7e 03 02 0d 00 90</code>
+</p>
+<div class="paragraph"><p>read register <code>0d</code>, UPS model</p></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Response
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>7e 05 0e 0d 46 36 43 38 30</code>
+</p>
+<div class="paragraph"><p><code>30 2d 55 4e 56 20 20 20 7b</code></p></div>
+<div class="paragraph"><p>register <code>0d</code> is "F6C800-UNV   "</p></div>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect3">
+<h4 id="_reading_a_non_existent_register">Reading a non-existent register</h4>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Command
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>7e 03 02 1a 00 9d</code>
+</p>
+<div class="paragraph"><p>read register <code>1a</code>, temperature</p></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Response
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>7e 01 02 1a 00 9b</code>
+</p>
+<div class="paragraph"><p>error: cannot read register <code>1a</code></p></div>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect3">
+<h4 id="_writing_to_a_register">Writing to a register</h4>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Command
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>7e 04 03 0c 02 00 93</code>
+</p>
+<div class="paragraph"><p>write <code>0x02</code> to register <code>0c</code>, voltage sensitivity</p></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Response
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>7e 02 03 0c 02 00 91</code>
+</p>
+<div class="paragraph"><p>written successfully</p></div>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect3">
+<h4 id="_writing_to_a_non_existent_register">Writing to a non-existent register</h4>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+Command
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>7e 04 03 00 00 00 85</code>
+</p>
+<div class="paragraph"><p>write <code>0x00</code> to register <code>00</code></p></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+Response
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>7e 01 03 00 00 00 82</code>
+</p>
+<div class="paragraph"><p>error: cannot write to register <code>00</code></p></div>
+</td>
+</tr>
+</table></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="registers">Individual UPS registers</h3>
+<div class="paragraph"><p>The UPS has a number of internal registers, which can be read and/or written.
+Some registers are read-only.
+There either hold hard-coded values (such as the UPS model name or nominal voltage rating), or they describe the state of the UPS, such as the current battery voltage or whether certain events have occurred.
+Some other registers can be read and written.
+These registers control or configure aspects of the UPS&#8217;s behavior, such as its voltage sensitivity, or whether the audible alarm is enabled.
+In some cases, setting the value of a writable register triggers an event, such as a battery self-test or a UPS shutdown.</p></div>
+<div class="paragraph"><p>Each register is identified by a unique number, the register ID.
+We always write register ID&#8217;s as hexadecimal values.</p></div>
+<div class="paragraph"><p>Registers can hold different types of data.
+Some registers hold a 1-byte integer, others hold a 2-byte integer, and others hold a variable length string.</p></div>
+<div class="paragraph"><p>Some registers are read only once (during startup) by the Bulldog software, and thereafter ignored.
+These registers are marked "startup" in the list below.
+All other registers are read periodically.</p></div>
+<div class="paragraph"><p>We now describe the individual registers:</p></div>
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="center" valign="top">Reg.ID </th>
+<th align="left" valign="top">Name                                   </th>
+<th align="left" valign="top">Data           </th>
+<th align="center" valign="top">Flags          </th>
+<th align="center" valign="top">Typical Value  </th>
+<th align="left" valign="top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center" valign="top"><p class="table"><code>00:</code></p></td>
+<td align="left" valign="top"><p class="table">unknown / does not exist</p></td>
+<td align="left" valign="top"><p class="table">n/a</p></td>
+<td align="center" valign="top"><p class="table">n/a</p></td>
+<td align="center" valign="top"><p class="table">n/a</p></td>
+<td align="left" valign="top"><p class="table">This register does not really exist.
+It is written by the linux driver when the user requests to set the voltage sensitivity.
+However, this is a bug and the UPS responds with an error message.
+The Windows driver correctly writes register <code>0c</code> instead.</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code>01:</code></p></td>
+<td align="left" valign="top"><p class="table">voltage rating</p></td>
+<td align="left" valign="top"><p class="table">1 byte</p></td>
+<td align="center" valign="top"><p class="table"><code>RO HC ST</code></p></td>
+<td align="center" valign="top"><p class="table"><code>120</code></p></td>
+<td align="left" valign="top"><p class="table">The nominal voltage in V.
+In North America, this is <code>120</code>.</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code>02:</code></p></td>
+<td align="left" valign="top"><p class="table">frequency rating</p></td>
+<td align="left" valign="top"><p class="table">1 byte</p></td>
+<td align="center" valign="top"><p class="table"><code>RO HC</code></p></td>
+<td align="center" valign="top"><p class="table"><code>60</code></p></td>
+<td align="left" valign="top"><p class="table">The nominal AC frequency in Hz.
+In North America, this is <code>60</code>.</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code>03:</code></p></td>
+<td align="left" valign="top"><p class="table">power rating</p></td>
+<td align="left" valign="top"><p class="table">2 bytes</p></td>
+<td align="center" valign="top"><p class="table"><code>RO HC ST</code></p></td>
+<td align="center" valign="top"><p class="table"><code>800</code></p></td>
+<td align="left" valign="top"><p class="table">The nominal power rating in VA.
+For a 800VA UPS, this is <code>800</code>.</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code>04:</code></p></td>
+<td align="left" valign="top"><p class="table">battery voltage rating</p></td>
+<td align="left" valign="top"><p class="table">1 byte</p></td>
+<td align="center" valign="top"><p class="table"><code>RO HC ST</code></p></td>
+<td align="center" valign="top"><p class="table"><code>24</code></p></td>
+<td align="left" valign="top"><p class="table">The nominal battery voltage in V.
+For my system, this is <code>24</code>.</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code>05:</code></p></td>
+<td align="left" valign="top"><p class="table">unknown</p></td>
+<td align="left" valign="top"><p class="table">1 byte</p></td>
+<td align="center" valign="top"><p class="table"><code>RO ST</code></p></td>
+<td align="center" valign="top"><p class="table"><code>100</code></p></td>
+<td align="left" valign="top"><p class="table">I don&#8217;t know the function of this register.
+On my system, it takes value <code>0x64</code> = 100.</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code>06:</code></p></td>
+<td align="left" valign="top"><p class="table">low transfer voltage</p></td>
+<td align="left" valign="top"><p class="table">2 bytes</p></td>
+<td align="center" valign="top"><p class="table"><code>RW</code></p></td>
+<td align="center" valign="top"><p class="table"><code>90</code></p></td>
+<td rowspan="6" align="left" valign="top"><p class="table">I am not entirely sure about the meaning of registers <code>06</code>-<code>0b</code>, but I think that they are voltage transfer points.
+<code>06</code> and <code>09</code> are read/write, the others are read-only.</p>
+<p class="table">The only way to test whether these "transfer points" actually work would be to vary the UPS input voltage and observe what happens.
+I don&#8217;t have equipment to do this.
+Ditto for register <code>0c</code>, voltage sensitivity.</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code>07:</code></p></td>
+<td align="left" valign="top"><p class="table">low transfer voltage upper bound</p></td>
+<td align="left" valign="top"><p class="table">2 bytes</p></td>
+<td align="center" valign="top"><p class="table"><code>RO HC ST</code></p></td>
+<td align="center" valign="top"><p class="table"><code>95</code></p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code>08:</code></p></td>
+<td align="left" valign="top"><p class="table">low transfer voltage lower bound</p></td>
+<td align="left" valign="top"><p class="table">2 bytes</p></td>
+<td align="center" valign="top"><p class="table"><code>RO HC ST</code></p></td>
+<td align="center" valign="top"><p class="table"><code>85</code></p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code>09:</code></p></td>
+<td align="left" valign="top"><p class="table">high transfer voltage</p></td>
+<td align="left" valign="top"><p class="table">2 bytes</p></td>
+<td align="center" valign="top"><p class="table"><code>RW</code></p></td>
+<td align="center" valign="top"><p class="table"><code>136</code></p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code>0a:</code></p></td>
+<td align="left" valign="top"><p class="table">high transfer voltage upper bound</p></td>
+<td align="left" valign="top"><p class="table">2 bytes</p></td>
+<td align="center" valign="top"><p class="table"><code>RO HC ST</code></p></td>
+<td align="center" valign="top"><p class="table"><code>141</code></p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code>0b:</code></p></td>
+<td align="left" valign="top"><p class="table">high transfer voltage lower bound</p></td>
+<td align="left" valign="top"><p class="table">2 bytes</p></td>
+<td align="center" valign="top"><p class="table"><code>RO HC ST</code></p></td>
+<td align="center" valign="top"><p class="table"><code>131</code></p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code>0c:</code></p></td>
+<td align="left" valign="top"><p class="table">voltage sensitivity</p></td>
+<td align="left" valign="top"><p class="table">1 byte</p></td>
+<td align="center" valign="top"><p class="table"><code>RW</code></p></td>
+<td align="center" valign="top"><p class="table"><code>0</code></p></td>
+<td align="left" valign="top"><p class="table">The voltage sensitivity can be read and written.
+Admissible values are <code>0</code> = normal, <code>1</code> = medium, <code>2</code> = low.
+Presumably this influences how tolerant the UPS is to deviations from the "nominal" voltage; however, I have not found this point elaborated in Belkin&#8217;s documentation.
+I am not sure how this interacts with registers <code>06</code>-<code>0b</code>.</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code>0d:</code></p></td>
+<td align="left" valign="top"><p class="table">UPS model</p></td>
+<td align="left" valign="top"><p class="table">string</p></td>
+<td align="center" valign="top"><p class="table"><code>RO HC ST</code></p></td>
+<td align="center" valign="top"><p class="table"><code></code></p></td>
+<td rowspan="2" align="left" valign="top"><p class="table">The UPS model name as a sequence of ASCII characters, not null-terminated.
+For my system, registers <code>0d</code> and <code>0e</code> are identical, and both contain the string "<code>F6C800-UNV   </code>" (with three space characters at the end of the string).</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code>0e:</code></p></td>
+<td align="left" valign="top"><p class="table">UPS model</p></td>
+<td align="left" valign="top"><p class="table">string</p></td>
+<td align="center" valign="top"><p class="table"><code>RO HC ST</code></p></td>
+<td align="center" valign="top"><p class="table"><code></code></p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code>0f:</code></p></td>
+<td align="left" valign="top"><p class="table">firmware/ups type</p></td>
+<td align="left" valign="top"><p class="table">1 byte</p></td>
+<td align="center" valign="top"><p class="table"><code>RO HC ST</code></p></td>
+<td align="center" valign="top"><p class="table"><code>0x41</code></p></td>
+<td align="left" valign="top"><div><div class="paragraph"><p>The higher 4 bits determine the firmware version.</p></div>
+<div class="paragraph"><p>The lower 4 bits determine the UPS type: <code>0</code> = online, <code>1</code> = offline, <code>2</code> = line-interactive.
+In the Belkin Monitor, this is used to determine the type of "wiring diagram" displayed (and does not affect anything else, as far as I can tell).</p></div>
+<div class="paragraph"><p>Online:</p></div>
+<div class="imageblock" style="text-align:center;">
+<div class="content">
+<img src="images/belkin-universal_figonline.png" alt="Wiring Diagram: AC Input->Charger->Battery->Inverter->AC Output" />
+</div>
+</div>
+<div class="paragraph"><p>Offline:</p></div>
+<div class="imageblock" style="text-align:center;">
+<div class="content">
+<img src="images/belkin-universal_figoffline.png" alt="Wiring Diagram: AC Input->Charger->Battery->Inverter->AC Output and AC Input->AC Output" />
+</div>
+</div>
+<div class="paragraph"><p>Line-interactive:</p></div>
+<div class="imageblock" style="text-align:center;">
+<div class="content">
+<img src="images/belkin-universal_figlineint.png" alt="Wiring Diagram: AC Input->AC Output and Battery->AC Output" />
+</div>
+</div>
+<div class="paragraph"><p>Example: a value of <code>0x41</code> means firmware version = 4, UPS type = offline.</p></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code>10:</code></p></td>
+<td align="left" valign="top"><p class="table">battery test status</p></td>
+<td align="left" valign="top"><p class="table">1 byte</p></td>
+<td align="center" valign="top"><p class="table"><code>RW</code></p></td>
+<td align="center" valign="top"><p class="table"><code>0</code></p></td>
+<td align="left" valign="top"><div><div class="paragraph"><p>When read, this register takes the following values:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> = no test performed
+</p>
+</li>
+<li>
+<p>
+<code>1</code> = test passed (this is also sometimes used for canceled tests)
+</p>
+</li>
+<li>
+<p>
+<code>2</code> = test failed
+</p>
+</li>
+<li>
+<p>
+<code>3</code> = test failed
+</p>
+</li>
+<li>
+<p>
+<code>4</code> = test aborted
+</p>
+</li>
+<li>
+<p>
+<code>5</code> = test in progress
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>When written, this register triggers the following events:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>1</code> = initiate 10-second battery test
+</p>
+</li>
+<li>
+<p>
+<code>2</code> = initiate deep battery test
+</p>
+</li>
+<li>
+<p>
+<code>3</code> = cancel test
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code>11:</code></p></td>
+<td align="left" valign="top"><p class="table">audible alarm status</p></td>
+<td align="left" valign="top"><p class="table">1 byte</p></td>
+<td align="center" valign="top"><p class="table"><code>RW</code></p></td>
+<td align="center" valign="top"><p class="table"><code>2</code></p></td>
+<td align="left" valign="top"><div><div class="paragraph"><p>A flag which determines whether the audible alarm of the UPS system is enabled.</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>2</code> = audible alarm enabled
+</p>
+</li>
+<li>
+<p>
+<code>3</code> = audible alarm disabled
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>My UPS allows this value to be set to any value in the range <code>0</code>-<code>255</code>.
+For val&lt;=<code>2</code>, the alarm is enabled, for val&gt;=<code>3</code>, it is disabled.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img src="../images/note.png" alt="Note" />
+</td>
+<td class="content">the alarm can only be disabled when it is already ringing.
+In other words, the alarm is enabled each time an alarm-worthy event occurs, but can then be disabled during the event.</td>
+</tr></table>
+</div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img src="../images/note.png" alt="Note" />
+</td>
+<td class="content">during a critical event (e.g., low battery), the alarm rings faster and cannot be disabled.</td>
+</tr></table>
+</div></div></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code>12:</code></p></td>
+<td align="left" valign="top"><p class="table">unknown</p></td>
+<td align="left" valign="top"><p class="table">1 byte</p></td>
+<td align="center" valign="top"><p class="table"><code>RW</code></p></td>
+<td align="center" valign="top"><p class="table"><code>0</code></p></td>
+<td rowspan="3" align="left" valign="top"><p class="table">I don&#8217;t know the function of registers <code>12</code>-<code>14</code>.
+On my system, they all take value <code>0</code>.
+Setting these registers has no apparent effect; subsequent reads will still return <code>0</code>.</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code>13:</code></p></td>
+<td align="left" valign="top"><p class="table">unknown</p></td>
+<td align="left" valign="top"><p class="table">1 byte</p></td>
+<td align="center" valign="top"><p class="table"><code>RW</code></p></td>
+<td align="center" valign="top"><p class="table"><code>0</code></p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code>14:</code></p></td>
+<td align="left" valign="top"><p class="table">unknown</p></td>
+<td align="left" valign="top"><p class="table">1 byte</p></td>
+<td align="center" valign="top"><p class="table"><code>RW</code></p></td>
+<td align="center" valign="top"><p class="table"><code>0</code></p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code>15:</code></p></td>
+<td align="left" valign="top"><p class="table">shutdown timer</p></td>
+<td align="left" valign="top"><p class="table">2 bytes</p></td>
+<td align="center" valign="top"><p class="table"><code>RW</code></p></td>
+<td align="center" valign="top"><p class="table"><code>0</code></p></td>
+<td align="left" valign="top"><div><div class="paragraph"><p>This register holds the time, in seconds, until the UPS shuts down its load, or <code>0</code> if no shutdown is scheduled.
+It can be read and written.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img src="../images/note.png" alt="Note" />
+</td>
+<td class="content">A scheduled shutdown cannot be stopped.
+Setting a running shutdown timer to <code>0</code> causes it to continue to count down from <code>0xffff</code> = 65535.
+This is idiotic in my opinion, but it is what my Belkin UPS does.</td>
+</tr></table>
+</div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img src="../images/note.png" alt="Note" />
+</td>
+<td class="content">When this counter reaches <code>0</code>, the UPS either performs a "final shutdown" or a "timed shutdown", never a "soft shutdown" as far as I can tell (see <a href="#workaround">Soft Shutdown Workaround</a> above for more information).
+Which kind of shutdown is performed depends on the state of the restart timer, see register <code>16</code> below.</td>
+</tr></table>
+</div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img src="../images/warning.png" alt="Warning" />
+</td>
+<td class="content">The Bulldog software panics and wants to shut down the operating system immediately if it sees that register <code>15</code> is non-zero.</td>
+</tr></table>
+</div></div></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code>16:</code></p></td>
+<td align="left" valign="top"><p class="table">restart timer</p></td>
+<td align="left" valign="top"><p class="table">2 bytes</p></td>
+<td align="center" valign="top"><p class="table"><code>RW, ST</code></p></td>
+<td align="center" valign="top"><p class="table"><code>0</code></p></td>
+<td align="left" valign="top"><div><div class="paragraph"><p>This register holds the time, in minutes (not seconds!), until the UPS will restart its load, or <code>0</code> if the timer is not set.</p></div>
+<div class="paragraph"><p>Once this timer is set, it will be decremented once a minute; however, one cannot predict when the first decrement will happen (it happens between 0 and 60 seconds after the counter was set).
+There is no way to stop a running timer: setting it to <code>0</code> will cause it to loop back to <code>0xfff</code> = 65535.</p></div>
+<div class="paragraph"><p>When the shutdown timer (register <code>15</code>) reaches 0, then the value of the restart timer (register <code>16</code>) at that particular time determines what kind of shutdown the UPS performs.
+If the restart timer is <code>0</code>, a "final shutdown" will be performed, otherwise a "timed shutdown".</p></div>
+<div class="paragraph"><p>After a "final shutdown", flag <code>0x0020</code> in register <code>22</code> will be set, and the UPS will remain off permanently until the front panel button is pressed.
+It do not currently know a way of re-starting it through the serial port.
+Also, the system remains off irrespective of what happens to the AC power.
+In the "final shutdown" state, all timers (register <code>15</code> and <code>16</code>) are stopped and no longer work; thus there is no way of ending a final shutdown in software.
+If AC power is lost during a final shutdown, the UPS loses communication on its serial port.</p></div>
+<div class="paragraph"><p>During a "timed shutdown", flag <code>0x0020</code> in register <code>22</code> will not be set.
+Register <code>23</code> will be <code>0x10</code> if AC power is on, or else <code>0x00</code>.
+The system load will be turned back on as soon as the restart timer reaches 0.
+If any non-zero value is written to the restart timer during a timed shutdown, the system load will be immediately turned on (and the restart timer is reset to 0).</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img src="../images/note.png" alt="Note" />
+</td>
+<td class="content">To initiate a timed shutdown, write <code>2</code> to register <code>16</code>, then write <code>1</code> to register <code>15</code>.
+The reason we write "<code>2</code>" and not "<code>1</code>" to register <code>16</code> is that there is no guarantee it is not decremented between the two writes.</td>
+</tr></table>
+</div></div></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code>17:</code></p></td>
+<td align="left" valign="top"><p class="table">unknown</p></td>
+<td align="left" valign="top"><p class="table">1 byte</p></td>
+<td align="center" valign="top"><p class="table"><code>RW</code></p></td>
+<td align="center" valign="top"><p class="table"><code>0</code></p></td>
+<td align="left" valign="top"><p class="table">I don&#8217;t know the function of this register.
+On my system, it takes value <code>0</code>.
+I found that if this register is non-zero, then the Bulldog software initiates an immediate shutdown.
+But it does not specify the reason.
+Setting this register has no apparent effect; subsequent reads will still return <code>0</code>.</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code>18:</code></p></td>
+<td align="left" valign="top"><p class="table">AC input voltage</p></td>
+<td align="left" valign="top"><p class="table">2 bytes</p></td>
+<td align="center" valign="top"><p class="table"><code>RO</code></p></td>
+<td align="center" valign="top"><p class="table"><code>1176</code></p></td>
+<td align="left" valign="top"><p class="table">The current AC input voltage in 0.1V, or <code>0</code> on loss of utility power.
+Note that this value is non-zero as long as AC power is present, even during a battery test.
+Example: <code>1176</code> = 117.6V</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code>19:</code></p></td>
+<td align="left" valign="top"><p class="table">AC input frequency</p></td>
+<td align="left" valign="top"><p class="table">2 bytes</p></td>
+<td align="center" valign="top"><p class="table"><code>RO</code></p></td>
+<td align="center" valign="top"><p class="table"><code>599</code></p></td>
+<td align="left" valign="top"><p class="table">The current AC input frequency in 0.1Hz, or <code>0</code> on loss of utility power.
+Note that this value is non-zero as long as AC power is present, even during a battery test.
+Example: <code>599</code> = 59.9Hz.</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code>1a:</code></p></td>
+<td align="left" valign="top"><p class="table">temperature</p></td>
+<td align="left" valign="top"><p class="table">1 byte</p></td>
+<td align="center" valign="top"><p class="table"><code>RO</code></p></td>
+<td align="center" valign="top"><p class="table"><code>23</code></p></td>
+<td align="left" valign="top"><p class="table">The current UPS temperature, in degrees C.
+My UPS does not actually implement this register, but the Bulldog software recognizes it.</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code>1b:</code></p></td>
+<td align="left" valign="top"><p class="table">AC output voltage</p></td>
+<td align="left" valign="top"><p class="table">2 bytes</p></td>
+<td align="center" valign="top"><p class="table"><code>RO</code></p></td>
+<td align="center" valign="top"><p class="table"><code>1168</code></p></td>
+<td align="left" valign="top"><p class="table">The current AC output voltage in 0.1V, both during on-line and battery operation.
+Example: <code>1168</code> = 116.8V.</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code>1c:</code></p></td>
+<td align="left" valign="top"><p class="table">AC output frequency</p></td>
+<td align="left" valign="top"><p class="table">2 bytes</p></td>
+<td align="center" valign="top"><p class="table"><code>RO</code></p></td>
+<td align="center" valign="top"><p class="table"><code>598</code></p></td>
+<td align="left" valign="top"><p class="table">The current AC output frequency in 0.1Hz, both during on-line and battery operation.
+Example: <code>598</code> = 59.8Hz.</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code>1d:</code></p></td>
+<td align="left" valign="top"><p class="table">unknown</p></td>
+<td align="left" valign="top"><p class="table">1 byte</p></td>
+<td align="center" valign="top"><p class="table"><code>RO</code></p></td>
+<td align="center" valign="top"><p class="table"><code>250</code></p></td>
+<td align="left" valign="top"><p class="table">I don&#8217;t know the function of this register.
+On my system, it takes value <code>250</code>.</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code>1e:</code></p></td>
+<td align="left" valign="top"><p class="table">loading level</p></td>
+<td align="left" valign="top"><p class="table">1 byte</p></td>
+<td align="center" valign="top"><p class="table"><code>RO</code></p></td>
+<td align="center" valign="top"><p class="table"><code>35</code></p></td>
+<td align="left" valign="top"><p class="table">The current loading level in percent.</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code>1f:</code></p></td>
+<td align="left" valign="top"><p class="table">battery status</p></td>
+<td align="left" valign="top"><p class="table">1 byte</p></td>
+<td align="center" valign="top"><p class="table"><code>RO ST</code></p></td>
+<td align="center" valign="top"><p class="table"><code>0x10</code></p></td>
+<td align="left" valign="top"><p class="table">Apparently identical to register <code>23</code>.</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code>20:</code></p></td>
+<td align="left" valign="top"><p class="table">battery voltage</p></td>
+<td align="left" valign="top"><p class="table">2 bytes</p></td>
+<td align="center" valign="top"><p class="table"><code>RO</code></p></td>
+<td align="center" valign="top"><p class="table"><code>248</code></p></td>
+<td align="left" valign="top"><p class="table">The current battery voltage in 0.1V.
+Example: <code>248</code> = 24.8V.</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code>21:</code></p></td>
+<td align="left" valign="top"><p class="table">battery level</p></td>
+<td align="left" valign="top"><p class="table">1 byte</p></td>
+<td align="center" valign="top"><p class="table"><code>RO</code></p></td>
+<td align="center" valign="top"><p class="table"><code>86</code></p></td>
+<td align="left" valign="top"><p class="table">The current battery level in percent.</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code>22:</code></p></td>
+<td align="left" valign="top"><p class="table">UPS status</p></td>
+<td align="left" valign="top"><p class="table">2 bytes</p></td>
+<td align="center" valign="top"><p class="table"><code>RO</code></p></td>
+<td align="center" valign="top"><p class="table"><code>0x8000</code></p></td>
+<td align="left" valign="top"><div><div class="paragraph"><p>This register holds the following flags.
+Since some of these conditions rarely occur, I am not sure whether my UPS implements all of them; anyway, the Bulldog Monitor recognizes them.</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>0x0001</code>: AC Failure
+</p>
+</li>
+<li>
+<p>
+<code>0x0004</code>: ? - this is used, but I am not sure what it means.
+</p>
+</li>
+<li>
+<p>
+<code>0x0008</code>: ?
+</p>
+</li>
+<li>
+<p>
+<code>0x0010</code>: Overload
+</p>
+</li>
+<li>
+<p>
+<code>0x0020</code>: UPS System Off (i.e., load is off)
+</p>
+</li>
+<li>
+<p>
+<code>0x0040</code>: Overheat
+</p>
+</li>
+<li>
+<p>
+<code>0x0080</code>: UPS Fault
+</p>
+</li>
+<li>
+<p>
+<code>0x2000</code>: Awaiting Power
+</p>
+</li>
+<li>
+<p>
+<code>0x8000</code>: Buzzer status (see below)
+</p>
+</li>
+</ul></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img src="../images/note.png" alt="Note" />
+</td>
+<td class="content">
+<div class="paragraph"><p>The AC Failure flag is set whenever the input AC power fails.
+This flag is not set during battery self-tests (unless the power fails at the same time).
+The Bulldog driver uses the AC Failure flag as the sole means to determine whether to initiate shutdown procedures, and also as the sole means to determine the drawing of the "Diagram" display, as well as the AC Source status line in the "Main" display.</p></div>
+<div class="paragraph"><p>The Buzzer status flag is somewhat strange.
+On my UPS, it seems to be set precisely if (1) the UPS is operating on Battery power and the alarm is physically ringing, including during a test, or (2) the UPS is operating on AC power.
+The Bulldog software uses this flag as the basis for the "Buzzer Alarm" status flag (in the "Status" display), with the annoying effect that this flag is almost always on, even when the buzzer is not ringing.
+Maybe this is a bug in my UPS&#8217;s firmware.
+In any case, it seems that the buzzer is actually ringing if and only if flag <code>0x8000</code> in register <code>22</code> and flag <code>0x20</code> in register <code>23</code> are both set.</p></div>
+<div class="paragraph"><p>Also note that my UPS sets <code>0x0005</code> on AC Failure; however, the <code>0x0004</code> bit is apparently ignored by the Bulldog software.</p></div>
+<div class="paragraph"><p>Finally, if the <code>0x0008</code> flag is set during an AC Failure, then the "UPS Health" status line in the "Main" display will turn orange.
+If <code>0x0008</code> is not set, this is not necessarily the case (unless, strangely, register <code>1f</code> was <code>0x00</code> or <code>0x20</code> during startup).
+It is not clear to what extent this behavior means anything, and to what extent it just reveals idiosyncrasies in the Bulldog software.</p></div>
+</td>
+</tr></table>
+</div></div></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code>23:</code></p></td>
+<td align="left" valign="top"><p class="table">battery status</p></td>
+<td align="left" valign="top"><p class="table">1 byte</p></td>
+<td align="center" valign="top"><p class="table"><code>RO</code></p></td>
+<td align="center" valign="top"><p class="table"><code>0x10</code></p></td>
+<td align="left" valign="top"><div><div class="paragraph"><p>This register holds the following flags.</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>0x04</code>: battery low
+</p>
+</li>
+<li>
+<p>
+<code>0x10</code>: battery charging
+</p>
+</li>
+<li>
+<p>
+<code>0x20</code>: operating on battery power (including during tests)
+</p>
+</li>
+<li>
+<p>
+<code>0x40</code>: battery depleted
+</p>
+</li>
+<li>
+<p>
+<code>0x80</code>: battery needs to be replaced
+</p>
+</li>
+</ul></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img src="../images/note.png" alt="Note" />
+</td>
+<td class="content">The Bulldog software ignores flags <code>0x10</code> and <code>0x20</code>, and relies solely on flag <code>0x0001</code> of register <code>22</code> to determine the current operating mode.
+This is strictly speaking wrong.</td>
+</tr></table>
+</div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img src="../images/note.png" alt="Note" />
+</td>
+<td class="content">After switching from battery powered mode to AC powered mode, it takes a few seconds until the battery starts being charged, i.e., the UPS status / AC Failure flag will go off a while before the battery status flag goes from <code>0x20</code> to <code>0x10</code>.
+A battery status flag of <code>0x00</code> has also been observed, for instance, when turning off the load during a test (so that the battery is neither charging nor discharging).</td>
+</tr></table>
+</div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img src="../images/note.png" alt="Note" />
+</td>
+<td class="content">
+<div class="paragraph"><p>Here is what happens if AC power gets disconnected and we continue the load:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+First, the UPS will switch to battery power (and the buzzer will beep every 10 seconds unless disabled).
+</p>
+</li>
+<li>
+<p>
+The UPS status becomes <code>0x8005</code> (or <code>0x0005</code> if the buzzer is disabled).
+</p>
+</li>
+<li>
+<p>
+The battery status becomes <code>0x20</code>.
+</p>
+</li>
+<li>
+<p>
+The battery voltage and battery level will decrease continually.
+</p>
+</li>
+<li>
+<p>
+When the battery level falls below 15, the "battery low" flag will come on, thus the battery status become <code>0x24</code>.
+</p>
+</li>
+<li>
+<p>
+At the same time the buzzer will start ringing fast and can no longer be disabled.
+</p>
+</li>
+<li>
+<p>
+The UPS status is unchanged at <code>0x8005</code>.
+</p>
+</li>
+<li>
+<p>
+The battery voltage and level will continue to drop, and the UPS will continue to supply power, even when the battery level reaches 0.
+</p>
+</li>
+<li>
+<p>
+Finally, after the battery level has been 0 for a while, the UPS turns its load off and does a "soft shutdown".
+</p>
+</li>
+<li>
+<p>
+At this point, the battery status becomes <code>0x40</code> (battery depleted) and the UPS status becomes <code>0xa001</code> (AC failure and awaiting power).
+</p>
+</li>
+<li>
+<p>
+If one now turns the AC power back on, the UPS will power up and enter UPS status <code>0x8000</code> and battery status <code>0x10</code>.
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>This is the only scenario in which I have observed a "soft shutdown", as indicated by UPS status flag <code>0x2000</code>.
+I still don&#8217;t know how to bring about a soft shutdown manually.
+Therefore, the workaround under <a href="#workaround">Soft Shutdown Workaround</a> above is necessary.</p></div>
+</td>
+</tr></table>
+</div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img src="../images/note.png" alt="Note" />
+</td>
+<td class="content">
+<div class="paragraph"><p>Based just on registers <code>22</code> and <code>23</code>, it is not in general possible to determine whether the UPS is "online", i.e., whether the load is currently powered by AC power.</p></div>
+<div class="paragraph"><p>Indeed, if the load has been turned off manually (e.g. due to a timed shutdown), the UPS status may well be <code>0x8000</code>, and the battery status may be <code>0x10</code>, just as during normal operation.</p></div>
+<div class="paragraph"><p>We therefore use the following method for determining whether the system is "online", "on battery", or "off load": if battery status flag <code>0x20</code> is set, the system of "on battery", else if the output voltage is non-zero, the system is "online", else the system is "off load".</p></div>
+</td>
+</tr></table>
+</div></div></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code>24:</code></p></td>
+<td align="left" valign="top"><p class="table">unknown</p></td>
+<td align="left" valign="top"><p class="table">1 byte</p></td>
+<td align="center" valign="top"><p class="table"><code>RW</code></p></td>
+<td align="center" valign="top"><p class="table"><code>0</code></p></td>
+<td rowspan="4" align="left" valign="top"><p class="table">I don&#8217;t know the function of registers <code>24</code>-<code>27</code>.
+On my system, they all take value <code>0</code>.
+Setting these registers has no apparent effect; subsequent reads will still return <code>0</code>.
+The Bulldog driver does not attempt to read these registers.</p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code>25:</code></p></td>
+<td align="left" valign="top"><p class="table">unknown</p></td>
+<td align="left" valign="top"><p class="table">1 byte</p></td>
+<td align="center" valign="top"><p class="table"><code>RW</code></p></td>
+<td align="center" valign="top"><p class="table"><code>0</code></p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code>26:</code></p></td>
+<td align="left" valign="top"><p class="table">unknown</p></td>
+<td align="left" valign="top"><p class="table">1 byte</p></td>
+<td align="center" valign="top"><p class="table"><code>RW</code></p></td>
+<td align="center" valign="top"><p class="table"><code>0</code></p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code>27:</code></p></td>
+<td align="left" valign="top"><p class="table">unknown</p></td>
+<td align="left" valign="top"><p class="table">1 byte</p></td>
+<td align="center" valign="top"><p class="table"><code>RW</code></p></td>
+<td align="center" valign="top"><p class="table"><code>0</code></p></td>
+</tr>
+<tr>
+<td align="center" valign="top"><p class="table"><code>3f:</code></p></td>
+<td align="left" valign="top"><p class="table">time remaining</p></td>
+<td align="left" valign="top"><p class="table">1 byte</p></td>
+<td align="center" valign="top"><p class="table"><code>RO</code></p></td>
+<td align="center" valign="top"><p class="table"><code>0</code></p></td>
+<td align="left" valign="top"><p class="table">The estimated backup time until the battery runs out, in minutes.
+My UPS does not actually implement this register, but the Bulldog software recognizes it.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_open_questions">Open Questions</h2>
+<div class="sectionbody">
+<div class="ulist"><ul>
+<li>
+<p>
+There should be a way of initiating a soft shutdown without waiting for the batteries to run out.
+</p>
+</li>
+<li>
+<p>
+Some information is still missing.
+There must be some flags which I have not observed during my tests, in particular, there should be flags for: Bypass Active, Fan Failure, Fuse Break, Inverter Bad, Charger Bad, Bypass Bad.
+</p>
+</li>
+<li>
+<p>
+I am not sure how registers <code>06</code>-<code>0b</code> interact with register <code>0c</code>.
+</p>
+</li>
+</ul></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_firmware_problems">Firmware Problems</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Here are some areas in which the Belkin Universal UPS firmware could be improved:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+add a command to shut down the load and put UPS into "awaiting power" mode.
+This should "flash" the load briefly (shut the load off and back on) in case AC power is already present.
+</p>
+</li>
+<li>
+<p>
+allow shutdown timer and restart timer to be reset to <code>0</code> to cancel a pending shutdown, rather than starting to count from 65535.
+</p>
+</li>
+<li>
+<p>
+allow timers to be set more accurately.
+Currently, by setting the restart timer to <code>1</code>, it might expire anywhere between immediately and 60 seconds.
+In particular, it is not possible to set both the shutdown timer and the restart timer to <code>1</code> at the same time, because there is no guarantee that the first timer won&#8217;t expire before the second one is set.
+Thus, it is not possible to do a reliable timed shutdown of less than 2 minutes.
+</p>
+</li>
+<li>
+<p>
+Calculate battery level more accurately.
+Currently, this is a simple function of battery voltage, which means that the levels are interpreted very differently in battery mode than in line mode.
+This could be compensated for in software, but not reliably, as the battery levels might differ from one hardware/firmware version to the next.
+</p>
+</li>
+</ul></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_disclaimer">Disclaimer</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>This document is distributed in the hope that it will be useful, but without any warranty.
+It is provided "as is", without warranty of any kind, either expressed or implied, including, but not limited to, the implied warranties of merchantability and fitness for a particular purpose.
+The entire risk as to the usage of information contained in this document is with you.
+Should the information prove incorrect, it may damage your UPS, your computer, or other equipment.
+You assume the cost of all necessary servicing, repair or correction.</p></div>
+<div class="paragraph"><p>In no event unless required by applicable law or agreed to in writing will any of the authors of this document, or any other party who may modify and/or redistribute this document, be liable to you for damages, including any general, special, incidental or consequential damages arising out of the use or inability to use the information (including but not limited to loss of data or data being rendered inaccurate or losses sustained by you or third parties), even if such author or other party has been advised of the possibility of such damages.</p></div>
+</div>
+</div>
+</div>
+<div id="footnotes"><hr /></div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2024-07-15 14:44:43 UTC
+</div>
+<div id="footer-badges">
+<a href="https://github.com/networkupstools/nut">
+  <img style="border:0;height:20"
+    src="https://img.shields.io/github/checks-status/networkupstools/nut/master"
+    alt="Latest GitHub checks status: master branch"/>
+</a>
+<!--
+<a href="https://travis-ci.org/github/networkupstools/nut">
+  <img style="border:0;height:20"
+    src="https://api.travis-ci.org/networkupstools/nut.svg?branch=master"
+    alt="Latest Travis CI build status: master branch"/>
+</a>
+-->
+<a href="https://ci.networkupstools.org/job/nut/job/nut/job/master/">
+  <img style="border:0;height:20"
+    src="https://ci.networkupstools.org/buildStatus/icon?job=nut%2Fnut%2Fmaster"
+    alt="Latest NUT CI build status: master branch"/>
+</a>
+<!-- MacOS, maybe later Windows builds: -->
+<a href="https://app.circleci.com/pipelines/github/networkupstools">
+  <img style="border:0;height:20"
+    src="https://circleci.com/gh/networkupstools/nut/tree/master.svg?style=svg"
+    alt="Latest Circle CI build status: master branch"/>
+</a>
+<!-- Windows, maybe later MacOS builds: -->
+<a href="https://ci.appveyor.com/project/nut-travis/nut/build/artifacts">
+  <img style="border:0;height:20"
+    src="https://ci.appveyor.com/api/projects/status/vrhkatid9hr7lq7r/branch/master?svg=true&failingText=Windows-FAIL&passingText=Windows-OK&pendingText-Windows-PENDING"
+    alt="Latest AppVeyor build status (NUT for Windows iterations)"/>
+</a>
+<!--
+<a href="https://ci.networkupstools.org/job/nut/job/nut/job/fightwarn/">
+  <img style="border:0;height:20"
+    src="https://ci.networkupstools.org/buildStatus/icon?job=nut%2Fnut%2Ffightwarn&subject=Fightwarn%20Branch"
+    alt="Latest NUT CI build status: fightwarn branch"/>
+</a>
+-->
+<!--
+<a href="https://github.com/networkupstools/nut/releases">
+  <img style="border:0;height:20"
+    src="https://img.shields.io/github/v/release/networkupstools/nut"
+    alt="Latest GitHub drafted NUT source release"/>
+</a>
+-->
+<a href="https://github.com/networkupstools/nut/releases">
+  <img style="border:0;height:20"
+    src="https://img.shields.io/github/v/tag/networkupstools/nut?sort=semver"
+    alt="Latest Git-tagged NUT source release"/>
+</a>
+<!-- Maintainer note: for the counter below to work, a git tag
+     is not sufficient -- a release must be drafted and published
+     at https://github.com/networkupstools/nut/releases
+     Counter URL may also be .../latest/BRANCHNAME -->
+<a href="https://github.com/networkupstools/nut">
+  <img style="border:0;height:20"
+    src="https://img.shields.io/github/commits-since/networkupstools/nut/latest.svg"
+    alt="Commits on master branch since latest release on GitHub"/>
+</a>
+<!-- See also:
+ // https://web.archive.org/web/20200731075618/http://www.methods.co.nz/asciidoc/
+ // https://github.com/asciidoc-py/asciidoc-py
+ -->
+<a href="https://asciidoc.org/">
+  <img style="border:0;width:88px;height:31px"
+    src="../images/asciidoc.png"
+    alt="Powered by AsciiDoc"/>
+</a>
+<a href="https://validator.w3.org/check?uri=referer">
+  <img style="border:0;width:88px;height:31px"
+    src="https://www.w3.org/Icons/valid-xhtml11-blue"
+    alt="Valid XHTML 1.1"/>
+</a>
+<a href="https://jigsaw.w3.org/css-validator/check?uri=referer">
+  <img style="border:0;width:88px;height:31px"
+    src="https://jigsaw.w3.org/css-validator/images/vcss-blue"
+    alt="Valid CSS!"/>
+</a>
+<a href="https://www.gandi.net/">
+  <img style="border:0;height:38px;"
+       src="../images/gandi-ar21.svg"
+       alt="DNS, redirection and related services Hoster"/>
+</a>
+<!--
+// FH web site defunct since ~Apr 2024
+<a href="https://fosshost.org/">
+  <img style="border:0;width:112px;height:38px;"
+       src="../images/ci/fosshost.org_Host_Light_38px.png"
+       alt="Dedicated Hosting for NUT CI"/>
+</a>
+-->
+<a href="https://www.digitalocean.com/?refcode=d2fbf2b9e082&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge">
+  <img style="border:0;height:38px;"
+       src="https://opensource.nyc3.cdn.digitaloceanspaces.com/attribution/assets/PoweredByDO/DO_Powered_by_Badge_blue.svg"
+       alt="Dedicated Hosting for NUT CI"/>
+</a>
+</div>
+</div>
+</div>
+</div>
+<!-- Google Analytics integration -->
+<script type="text/javascript">
+
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-9664272-1']);
+        _gaq.push(['_trackPageview']);
+
+        (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+
+</script>
+</body>
+</html>

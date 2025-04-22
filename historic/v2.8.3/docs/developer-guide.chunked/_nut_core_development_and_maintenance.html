@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>12. NUT core development and maintenance</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><link rel="home" href="index.html" title="Network UPS Tools Developer Guide" /><link rel="up" href="index.html" title="Network UPS Tools Developer Guide" /><link rel="prev" href="dev-tools.html" title="11. NUT developers tools" /><link rel="next" href="nut-names.html" title="A. NUT command and variable naming scheme" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="dev-tools.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="nut-names.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_nut_core_development_and_maintenance"></a>12. NUT core development and maintenance</h2></div></div></div><p>This section is intended to people who want to develop new core features,
+or to do some maintenance.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_nut_specific_autoconf_macros"></a>12.1. NUT-specific autoconf macros</h3></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Two NUT websites</h3><p>This version of the page reflects NUT release <span class="emphasis"><em>v2.8.3</em></span>
+with codebase commited c0acf09af at 2025-04-21T23:59:59+00:00</p><p>Options, features and capabilities in current development (and future
+releases) are detailed on the main site and may differ from ones
+described here.</p></div><p>The following NUT-specific autoconf macros are defined in the <code class="literal">m4/</code>
+directory.</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+<span class="strong"><strong>NUT_TYPE_SOCKLEN_T</strong></span>
+, </span><span class="term">
+<span class="strong"><strong>NUT_TYPE_UINT8_T</strong></span>
+, </span><span class="term">
+<span class="strong"><strong>NUT_TYPE_UINT16_T</strong></span>
+</span></dt><dd>
+        Check for the corresponding type in the system header files, and
+        <code class="literal">#define</code> a replacement if necessary.
+</dd><dt><span class="term">
+<span class="strong"><strong>NUT_CHECK_LIBGD</strong></span>
+, </span><span class="term">
+<span class="strong"><strong>NUT_CHECK_LIBNEON</strong></span>
+, </span><span class="term">
+<span class="strong"><strong>NUT_CHECK_LIBNETSNMP</strong></span>
+, </span><span class="term">
+<span class="strong"><strong>NUT_CHECK_LIBPOWERMAN</strong></span>
+, </span><span class="term">
+<span class="strong"><strong>NUT_CHECK_LIBOPENSSL</strong></span>
+, </span><span class="term">
+<span class="strong"><strong>NUT_CHECK_LIBNSS</strong></span>
+, </span><span class="term">
+<span class="strong"><strong>NUT_CHECK_LIBUSB</strong></span>
+, </span><span class="term">
+<span class="strong"><strong>NUT_CHECK_LIBWRAP</strong></span>
+, </span><span class="term">
+<span class="strong"><strong>et al</strong></span>
+</span></dt><dd><p class="simpara">
+        Determine the compiler flags for the corresponding library. On
+        success, set <code class="literal">nut_have_libxxx="yes"</code> and set <code class="literal">LIBXXX_CFLAGS</code> and
+        <code class="literal">LIBXXX_LDFLAGS</code>. On failure, set <code class="literal">nut_have_libxxx="no"</code>. This macro
+        can be run multiple times, but will do the checking only once.
+        Here "xxx" should of course be replaced by the respective library name.
+</p><p class="simpara">The checks for each library grow organically to compensate for
+        various bugs in the libraries, pkg-config, etc. This is why we have
+        a separate macro for each library.</p></dd><dt><span class="term">
+<span class="strong"><strong>NUT_CHECK_IPV6</strong></span>
+</span></dt><dd><p class="simpara">
+        Check for various features required to compile the IPv6 support.
+        Define a preprocessor symbol for each individual feature
+        (<code class="literal">HAVE_GETADDRINFO</code>, <code class="literal">HAVE_FREEADDRINFO</code>, <code class="literal">HAVE_STRUCT_ADDRINFO</code>,
+        <code class="literal">HAVE_SOCKADDR_STORAGE</code>, <code class="literal">SOCKADDR_IN6</code>, <code class="literal">IN6_ADDR</code>,
+        <code class="literal">HAVE_IN6_IS_ADDR_V4MAPPED</code>, <code class="literal">HAVE_AI_ADDRCONFIG</code>).
+</p><p class="simpara">Also set the shell variable <code class="literal">nut_have_ipv6=yes</code> if all the required
+        features are present. Set <code class="literal">nut_have_ipv6=no</code> otherwise.</p></dd><dt><span class="term">
+<span class="strong"><strong>NUT_CHECK_OS</strong></span>
+</span></dt><dd>
+        Check for the exact system name and type.
+        This was only used in the past to determine the packaging rule to be
+        used through the <code class="literal">OS_NAME</code> variable, but may be useful for other purposes
+        in the future.
+</dd><dt><span class="term">
+<span class="strong"><strong>NUT_REPORT_FEATURE(FEATURE, VALUE, VARIABLE, DESCRIPTION)</strong></span>
+</span></dt><dd><p class="simpara">
+        Schedule a line for the end-of-configuration feature summary.  The
+        <span class="emphasis"><em>FEATURE</em></span> is a descriptive string such that the sentence "Checking
+        whether to FEATURE" makes sense, and <span class="emphasis"><em>VALUE</em></span> describes the decision
+        taken (typically <span class="emphasis"><em>yes</em></span> or <span class="emphasis"><em>no</em></span>). The feature is also reported to the
+        terminal.
+</p><p class="simpara">Also use <span class="emphasis"><em>VARIABLE</em></span> and <span class="emphasis"><em>DESCRIPTION</em></span> for defining <code class="literal">AM_CONDITIONAL</code> and
+        <code class="literal">AC_DEFINE</code> (only if <code class="literal">VALUE = "yes"</code>).
+    The <span class="emphasis"><em>VARIABLE</em></span> is of the form <code class="literal">WITH_&lt;NAME&gt;</code>.</p></dd><dt><span class="term">
+<span class="strong"><strong>NUT_REPORT(FEATURE, VALUE)</strong></span>
+</span></dt><dd>
+        Schedule a line for the end-of-configuration feature summary, without
+        printing anything to the terminal immediately.
+</dd><dt><span class="term">
+<span class="strong"><strong>NUT_PRINT_FEATURE_REPORT</strong></span>
+</span></dt><dd>
+        Print out a list of the features that have been reported by
+        previous <code class="literal">NUT_REPORT_FEATURE</code> macro calls.
+</dd><dt><span class="term">
+<span class="strong"><strong>NUT_ARG_WITH(FEATURE, DESCRIPTION, DEFAULT)</strong></span>
+</span></dt><dd>
+        Declare a simple <code class="literal">--with-FEATURE</code> option with the given <span class="emphasis"><em>DESCRIPTION</em></span>
+        and <span class="emphasis"><em>DEFAULT</em></span>. Sets the variable <code class="literal">nut_with_FEATURE</code>.
+</dd></dl></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="roadmap"></a>12.2. NUT roadmap and ideas for future expansion</h3></div></div></div><p>Here are some ideas that have come up over the years but haven’t
+been implemented yet.  This may be a good place to start if you’re
+looking for a rainy day hacking project.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_roadmap"></a>Roadmap</h4></div></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_2_6"></a>2.6</h5></div></div></div><p>This release is focused on the website and documentation rewrite, using
+the excellent <a class="ulink" href="https://asciidoc.org/" target="_top">AsciiDoc</a>.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_2_8"></a>2.8</h5></div></div></div><p>This branch will focus on configuration and user interface improvements.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_3_0"></a>3.0</h5></div></div></div><p>This major transition will mark the final switch to a complete power
+device broker.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_non_network_upsmon"></a>Non-network "upsmon"</h4></div></div></div><p>Some systems don’t want a daemon listening to the network.  This can be
+for security reasons, or perhaps because the system has been squashed
+down and doesn’t have TCP/IP available.  For these situations you could
+run a driver and program that sits on top of the driver socket to do
+local monitoring.</p><p>This also makes monitoring extremely easy to automate - you don’t need
+to worry about usernames, passwords or firewalling.  Just start a driver
+and drop this program on top of it.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Parse ups.conf and open the state socket for a driver
+</li><li class="listitem">
+Send DUMPALL and enter a select loop
+</li><li class="listitem">
+Parse SETINFOs that change ups.status
+</li><li class="listitem">
+When you get OB LB, shut down
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_completely_unprivileged_upsmon"></a>Completely unprivileged upsmon</h4></div></div></div><p>upsmon currently retains root in a forked process so it can call the
+shutdown command.  The only reason it needs root on most systems is that
+only privileged users can signal init or send a message on /dev/initctl.</p><p>In the case of systems running sysvinit (Slackware, others?), upsmon
+could just open /dev/initctl while it has root and then drop it
+completely.  When it’s time to shut down, fire a control structure at
+init across the lingering socket and tell it to enter runlevel 0.</p><p>This has been shown to work in local tests, but it’s not portable.  It
+could only be offered as an option for those systems which run that
+flavor of init.  It also needs to be tested to see what happens to
+the lingering fd over time, such as when init restarts after an upgrade.</p><p>For other systems, there is always the possibility of having a suid
+program which does nothing but prod init into starting a shutdown.  Lock
+down the group access so only upsmon’s unprivileged user can access it,
+and make that your SHUTDOWNCMD.  Then it could drop root completely.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_chrooted_upsmon"></a>Chrooted upsmon</h4></div></div></div><p>upsmon could run the network monitoring part in a chroot jail if it had
+a pipe to another process running outside for NOTIFY dispatches.  Such a
+pipe would have to be constructed extremely carefully so an attacker
+could not compromise it from the jailed process.</p><p>A state machine with a tightly defined sequence could do this safely.
+All it has to do is dispatch the UPS name and event type.</p><pre class="literallayout">[start] [type] [length] &lt;name&gt; [stop]</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_monitor_program_with_interpreted_language"></a>Monitor program with interpreted language</h4></div></div></div><p>Once in awhile, I get requests for a way to shut down based on the UPS
+temperature, or ambient humidity, or at a certain battery charge level,
+or any number of things other than an "OB LB" status.  It should be
+obvious that adding a way to monitor all of that in upsmon would bloat
+upsmon for all those people who really don’t need anything like that.</p><p>A separate program that interprets a list of rules and uses it to
+monitor the UPS equipment is the way to solve this.  If you have a
+condition that needs to be tested, add a rule.</p><p>Some of the tools that such a language would need include simple
+greater-than/less-than testing (if battery.charge &lt; 20), equivalence
+testing (if ups.model = "SMART-UPS 700"), and some way to set and clear
+timers.</p><p>Due to the expected size and limited audience for such a program, it
+might have to be distributed separately.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>Python may be a good candidate.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_sandbox"></a>Sandbox</h4></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+check to refresh and integrate the <a class="ulink" href="https://alioth.debian.org/pm/?group_id=30602" target="_top">tasks</a> list
+and <a class="ulink" href="https://alioth.debian.org/tracker/?atid=411545&amp;group_id=30602&amp;func=browse" target="_top">feature requests</a> list from Alioth
+</li><li class="listitem">
+add "Generic ?Ascii? driver": I’ve got to think more about that, but the recent
+solar panel driver, and the powerman internal approach of a generic engine with
+a scripting interface is a cool idea.
+Ref <a class="ulink" href="http://powerman.svn.sourceforge.net/viewvc/powerman/trunk/etc/apcpdu.dev?revision=969&amp;view=markup" target="_top">http://powerman.svn.sourceforge.net/viewvc/powerman/trunk/etc/apcpdu.dev?revision=969&amp;view=markup</a>
+</li><li class="listitem">
+integrate the (future) new powerman LUA engine (maybe/must-be used for the driver above?)
+for native PDU support
+</li><li class="listitem">
+see how we can help and collaborate with DeviceKit-power
+</li></ul></div></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
+		Last updated 2025-04-22 10:20:32 -- Network UPS Tools 2.8.3</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="dev-tools.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="nut-names.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

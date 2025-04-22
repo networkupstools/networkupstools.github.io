@@ -1,0 +1,708 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<title>Network UPS Tools - Support of Huawei UPS2000 1/2/3KRT (Modbus RTU)</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="generator" content="AsciiDoc 10.1.2" />
+<meta name="description" content="Power Devices support" />
+<meta name="keywords" content="NUT, Network UPS Tools, Eaton, APC, Free Software, UPS, Uninterruptible Power Supplies, PDU, Power Distributions Units, Solar Controllers, power, power devices, control, monitor, Linux, Unix, Windows, Mac OS X" />
+<meta name="format-detection" content="telephone=no" />
+<link rel="stylesheet" href="../css/xhtml11.css" type="text/css" />
+<link rel="stylesheet" href="../css/web-layout.css" type="text/css" />
+<link rel="shortcut icon" href="../faviconut.ico" />
+<link rel="icon" type="image/png" href="../faviconut.png" />
+<script type="text/javascript" src="../scripts/asciidoc.js"></script>
+<script type="text/javascript">
+/*<![CDATA[*/
+asciidoc.install(2);
+/*]]>*/
+</script>
+<!--[if lte IE 7]>
+<link rel="stylesheet" href="../css/ie-overrides.css" type="text/css" />
+<![endif]-->
+<!--[if lte IE 6]>
+<script type="text/javascript" src="../scripts/filter_png.js"></script>
+<![endif]-->
+</head>
+<body>
+<div id="layout-banner-box">
+<div id="layout-banner">
+  <div id="layout-logo"><img src="../images/nut-logo.png" alt="NUT logo" /></div>
+  <div id="layout-title">Network UPS Tools</div>
+  <div id="layout-description">Power Devices support</div>
+</div>
+</div>
+<div id="layout-menu-box">
+  <ul id="layout-menu">
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="../download.html">Download</a></li>
+    <li><a href="../projects.html">Related projects</a></li>
+    <li><a href="../stable-hcl.html">Compatibility</a></li>
+    <li><a href="../features.html">Features</a></li>
+    <li><a href="../documentation.html">Documentation</a></li>
+    <li><a href="../support.html">Support</a></li>
+    <li>* <a href="https://alioth-lists.debian.net/pipermail/nut-upsuser/">NUT UPS User archive</a></li>
+    <li>* <a href="https://alioth-lists.debian.net/pipermail/nut-upsdev/">NUT UPS Dev archive</a></li>
+    <li>* <a href="https://github.com/networkupstools/nut/">GitHub</a>:<a
+        href="https://github.com/networkupstools/nut/issues">issues</a>,<a
+        href="https://github.com/networkupstools/nut/wiki">wiki</a>
+        and more</li>
+    <li><a href="..//historic/index.html">Sub-sites for historic releases</a></li>
+    <li><a href="https://opencollective.com/networkupstools/">Sponsor NUT</a></li>
+  </ul>
+  <!-- div id="sponsor"><span>Hosted by<br/></span>
+    <a href="http://sponsor.com"><img src="../images/sponsor-logo.png" alt="Sponsor" /></a>
+  </div -->
+</div>
+<div id="layout-content-box">
+<div id="layout-content">
+<div id="header">
+<h1>Support of Huawei UPS2000 1/2/3KRT (Modbus RTU)</h1>
+</div>
+<div id="toc">
+  <div id="toctitle">Table of Contents</div>
+  <noscript><p><b>JavaScript must be enabled in your browser to display the table of contents.</b></p></noscript>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph"><p>Based on <a href="https://support.huawei.com/enterprise/en/doc/EDOC1000110696">Huawei UPS2000 (1 kVA-3 kVA) Modbus Protocol Development Guide</a>
+and <a href="https://github.com/networkupstools/nut/issues/1066#issuecomment-879262463">NUT issue #1066</a></p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_querying_registers">Querying Registers</h2>
+<div class="sectionbody">
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img src="../images/note.png" alt="Note" />
+</td>
+<td class="content">
+<div class="ulist"><ul>
+<li>
+<p>
+All values are stored as <code>U16</code>
+</p>
+</li>
+<li>
+<p>
+Gain: the value read out must divide this value
+</p>
+</li>
+<li>
+<p>
+Type: the data type AFTER applying the gain
+</p>
+</li>
+<li>
+<p>
+Example:
+</p>
+<div class="ulist"><ul>
+<li>
+<p>
+Voltage reading from the register is <code>2262</code>
+</p>
+</li>
+<li>
+<p>
+Gain is <code>10</code>
+</p>
+</li>
+<li>
+<p>
+Type is <code>Real</code>
+</p>
+</li>
+<li>
+<p>
+&#8658; actual Voltage = 226.2
+</p>
+</li>
+</ul></div>
+</li>
+<li>
+<p>
+All register address may add UPS ID multiplied by 10000.
+  However when using on-device serial port, the UPS ID is <strong>1</strong> fixed.
+  <strong>Querying only with register address without the UPS ID also works
+  when there is only one device.</strong>
+</p>
+<div class="ulist"><ul>
+<li>
+<p>
+e.g. Address of Input Voltage register is 1000
+</p>
+</li>
+<li>
+<p>
+UPS ID is 1
+</p>
+</li>
+<li>
+<p>
+&#8658; Register ID used to send request is 11000 (0x2AF8), or 1000 (0x03E8)
+</p>
+</li>
+</ul></div>
+</li>
+<li>
+<p>
+All reserved bits in bit flags shall be 0 unless noticed otherwise.
+</p>
+</li>
+</ul></div>
+</td>
+</tr></table>
+</div>
+<div class="tableblock">
+<table rules="all"
+width="100%"
+frame="border"
+cellspacing="0" cellpadding="4">
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Name</p></td>
+<td align="left" valign="top"><p class="table">Gain</p></td>
+<td align="left" valign="top"><p class="table">Type</p></td>
+<td align="left" valign="top"><p class="table">Unit / Range</p></td>
+<td align="left" valign="top"><p class="table">Address</p></td>
+<td align="left" valign="top"><p class="table">Length (in U16)</p></td>
+<td align="left" valign="top"><p class="table">R/W</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Input Voltage</p></td>
+<td align="left" valign="top"><p class="table">10</p></td>
+<td align="left" valign="top"><p class="table">Float</p></td>
+<td align="left" valign="top"><p class="table">V</p></td>
+<td align="left" valign="top"><p class="table">1000</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">R</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Input Frequency</p></td>
+<td align="left" valign="top"><p class="table">10</p></td>
+<td align="left" valign="top"><p class="table">Float</p></td>
+<td align="left" valign="top"><p class="table">Hz</p></td>
+<td align="left" valign="top"><p class="table">1003</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">R</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Bypass Voltage</p></td>
+<td align="left" valign="top"><p class="table">10</p></td>
+<td align="left" valign="top"><p class="table">Float</p></td>
+<td align="left" valign="top"><p class="table">V</p></td>
+<td align="left" valign="top"><p class="table">1004</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">R</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Bypass Frequency</p></td>
+<td align="left" valign="top"><p class="table">10</p></td>
+<td align="left" valign="top"><p class="table">Float</p></td>
+<td align="left" valign="top"><p class="table">Hz</p></td>
+<td align="left" valign="top"><p class="table">1007</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">R</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Voltage</p></td>
+<td align="left" valign="top"><p class="table">10</p></td>
+<td align="left" valign="top"><p class="table">Float</p></td>
+<td align="left" valign="top"><p class="table">V</p></td>
+<td align="left" valign="top"><p class="table">1008</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">R</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Current</p></td>
+<td align="left" valign="top"><p class="table">10</p></td>
+<td align="left" valign="top"><p class="table">Float</p></td>
+<td align="left" valign="top"><p class="table">A</p></td>
+<td align="left" valign="top"><p class="table">1011</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">R</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Frequency</p></td>
+<td align="left" valign="top"><p class="table">10</p></td>
+<td align="left" valign="top"><p class="table">Float</p></td>
+<td align="left" valign="top"><p class="table">Hz</p></td>
+<td align="left" valign="top"><p class="table">1014</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">R</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Active Power</p></td>
+<td align="left" valign="top"><p class="table">10</p></td>
+<td align="left" valign="top"><p class="table">Float</p></td>
+<td align="left" valign="top"><p class="table">kW</p></td>
+<td align="left" valign="top"><p class="table">1015</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">R</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Apparent Power</p></td>
+<td align="left" valign="top"><p class="table">10</p></td>
+<td align="left" valign="top"><p class="table">Float</p></td>
+<td align="left" valign="top"><p class="table">kVA</p></td>
+<td align="left" valign="top"><p class="table">1018</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">R</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Load Percentage</p></td>
+<td align="left" valign="top"><p class="table">10</p></td>
+<td align="left" valign="top"><p class="table">Float</p></td>
+<td align="left" valign="top"><p class="table">%</p></td>
+<td align="left" valign="top"><p class="table">1021</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">R</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Route State</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">Enum</p></td>
+<td align="left" valign="top"><p class="table">0=No Power<br />
+1=On Bypass<br />
+2=On Mains<br />
+3=On Battery<br />
+5=On Mains ECO</p></td>
+<td align="left" valign="top"><p class="table">1024</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">R</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Input Method</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">Enum</p></td>
+<td align="left" valign="top"><p class="table">0=Single Phase</p></td>
+<td align="left" valign="top"><p class="table">1025</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">R</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Output Method</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">Enum</p></td>
+<td align="left" valign="top"><p class="table">0=Single Phase</p></td>
+<td align="left" valign="top"><p class="table">1026</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">R</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Temperature</p></td>
+<td align="left" valign="top"><p class="table">10</p></td>
+<td align="left" valign="top"><p class="table">Float</p></td>
+<td align="left" valign="top"><p class="table">℃</p></td>
+<td align="left" valign="top"><p class="table">1027</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">R</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">UPS Status</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">Bit Flag</p></td>
+<td align="left" valign="top"><p class="table">Bit 7=Mains Abnormal (0=Normal/<strong>OL</strong> 1=Abnormal/<strong>OB</strong>)<br />
+<br />
+Bit 6=Low Battery (0=Normal 1=Low/<strong>LB</strong>)<br />
+<br />
+Bit 5=Reserved<br />
+<br />
+Bit 4=Internal Error (0=Normal 1=Error)<br />
+<br />
+Bit 3=UPS Type (0=Offline/Backup 1=Online/Double Conversion)<br />
+<br />
+Bit 2=Battery Self-Checking (0=Not checking 1=Self checking)<br />
+<br />
+Bit 1=Reserved<br />
+<br />
+Bit 0=Reserved<br />
+<br />
+Other Bits=Reserved</p></td>
+<td align="left" valign="top"><p class="table">1043</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">R</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Battery Voltage</p></td>
+<td align="left" valign="top"><p class="table">10</p></td>
+<td align="left" valign="top"><p class="table">Float</p></td>
+<td align="left" valign="top"><p class="table">V</p></td>
+<td align="left" valign="top"><p class="table">2000</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">R</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Battery Status</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">Enum</p></td>
+<td align="left" valign="top"><p class="table">2=Sleeping<br />
+3=Trickle Charging<br />
+4=Balanced Charging<br />
+5=Discharging</p></td>
+<td align="left" valign="top"><p class="table">2002</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">R</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Battery Remaining Capacity</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">U16</p></td>
+<td align="left" valign="top"><p class="table">%</p></td>
+<td align="left" valign="top"><p class="table">2003</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">R</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Battery Estimated Remaining Time</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">U32</p></td>
+<td align="left" valign="top"><p class="table">Seconds</p></td>
+<td align="left" valign="top"><p class="table">2004</p></td>
+<td align="left" valign="top"><p class="table">2</p></td>
+<td align="left" valign="top"><p class="table">R</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Battery Cells</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">U16</p></td>
+<td align="left" valign="top"><p class="table">Cells</p></td>
+<td align="left" valign="top"><p class="table">2007</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">R</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Battery Capacity</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">U16</p></td>
+<td align="left" valign="top"><p class="table">Ah</p></td>
+<td align="left" valign="top"><p class="table">2033</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">R</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">UPS Rated Power</p></td>
+<td align="left" valign="top"><p class="table">10</p></td>
+<td align="left" valign="top"><p class="table">Float</p></td>
+<td align="left" valign="top"><p class="table">kVA</p></td>
+<td align="left" valign="top"><p class="table">9009</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">R</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_controlling_registers">Controlling Registers</h2>
+<div class="sectionbody">
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img src="../images/note.png" alt="Note" />
+</td>
+<td class="content">
+<div class="ulist"><ul>
+<li>
+<p>
+Type <strong>Bool</strong> means write 0 to disable the function and write 1 to enable unless noticed otherwise.
+</p>
+</li>
+<li>
+<p>
+Type <strong>Exec</strong> means write 1 to execute the function unless noticed otherwise.
+</p>
+</li>
+</ul></div>
+</td>
+</tr></table>
+</div>
+<div class="tableblock">
+<table rules="all"
+width="100%"
+frame="border"
+cellspacing="0" cellpadding="4">
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<col width="14%" />
+<tbody>
+<tr>
+<td align="left" valign="top"><p class="table">Name</p></td>
+<td align="left" valign="top"><p class="table">Gain</p></td>
+<td align="left" valign="top"><p class="table">Type</p></td>
+<td align="left" valign="top"><p class="table">Unit / Range</p></td>
+<td align="left" valign="top"><p class="table">Address</p></td>
+<td align="left" valign="top"><p class="table">Length (in U16)</p></td>
+<td align="left" valign="top"><p class="table">R/W</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Startup State</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">Enum</p></td>
+<td align="left" valign="top"><p class="table">0=Powered Off (Can be turned on)<br />
+1=Powering On (processing, front control panel is blocked)<br />
+2=Power On Failed (Can be turned on)<br />
+3=Powered On (Can be turned off)</p></td>
+<td align="left" valign="top"><p class="table">1028</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">R</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Power On</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">Exec</p></td>
+<td align="left" valign="top"><p class="table"></p></td>
+<td align="left" valign="top"><p class="table">1029</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">W</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Power Off</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">Exec</p></td>
+<td align="left" valign="top"><p class="table"></p></td>
+<td align="left" valign="top"><p class="table">1030</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">W</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">ECO Mode</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">Bool</p></td>
+<td align="left" valign="top"><p class="table"></p></td>
+<td align="left" valign="top"><p class="table">1030</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">W</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Auto Power On After Mains Attached</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">Bool</p></td>
+<td align="left" valign="top"><p class="table"></p></td>
+<td align="left" valign="top"><p class="table">1044</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">R/W</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Bypass Output</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">Bool</p></td>
+<td align="left" valign="top"><p class="table"></p></td>
+<td align="left" valign="top"><p class="table">1045</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">R/W</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Mute Buzzer</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">Bool</p></td>
+<td align="left" valign="top"><p class="table"></p></td>
+<td align="left" valign="top"><p class="table">1046</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">R/W</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Delayed Restart (By 0.1 minutes)</p></td>
+<td align="left" valign="top"><p class="table">10</p></td>
+<td align="left" valign="top"><p class="table">Float</p></td>
+<td align="left" valign="top"><p class="table">0.1 minutes (0.1min ~ 99.0min)</p></td>
+<td align="left" valign="top"><p class="table">1047</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">R/W</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Delayed Restart (By 1 minutes)</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">U16</p></td>
+<td align="left" valign="top"><p class="table">1 minutes (1min ~ 9999min)</p></td>
+<td align="left" valign="top"><p class="table">1048</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">R/W</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Delayed Power Off (By 0.1 minutes)</p></td>
+<td align="left" valign="top"><p class="table">10</p></td>
+<td align="left" valign="top"><p class="table">Float</p></td>
+<td align="left" valign="top"><p class="table">0.1 minutes (0.1min ~ 99.0min)</p></td>
+<td align="left" valign="top"><p class="table">1049</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">R/W</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Cancel Delayed Powered Off</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">Exec</p></td>
+<td align="left" valign="top"><p class="table"></p></td>
+<td align="left" valign="top"><p class="table">1050</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">W</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Deep Battery Self Check (Until Low Battery)</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">Exec</p></td>
+<td align="left" valign="top"><p class="table"></p></td>
+<td align="left" valign="top"><p class="table">2021</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">W</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">End Battery Self Check</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">Exec</p></td>
+<td align="left" valign="top"><p class="table"></p></td>
+<td align="left" valign="top"><p class="table">2023</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">W</p></td>
+</tr>
+<tr>
+<td align="left" valign="top"><p class="table">Shallow Battery Self Check</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">Exec</p></td>
+<td align="left" valign="top"><p class="table"></p></td>
+<td align="left" valign="top"><p class="table">2028</p></td>
+<td align="left" valign="top"><p class="table">1</p></td>
+<td align="left" valign="top"><p class="table">W</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div id="footnotes"><hr /></div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2024-07-15 14:44:43 UTC
+</div>
+<div id="footer-badges">
+<a href="https://github.com/networkupstools/nut">
+  <img style="border:0;height:20"
+    src="https://img.shields.io/github/checks-status/networkupstools/nut/master"
+    alt="Latest GitHub checks status: master branch"/>
+</a>
+<!--
+<a href="https://travis-ci.org/github/networkupstools/nut">
+  <img style="border:0;height:20"
+    src="https://api.travis-ci.org/networkupstools/nut.svg?branch=master"
+    alt="Latest Travis CI build status: master branch"/>
+</a>
+-->
+<a href="https://ci.networkupstools.org/job/nut/job/nut/job/master/">
+  <img style="border:0;height:20"
+    src="https://ci.networkupstools.org/buildStatus/icon?job=nut%2Fnut%2Fmaster"
+    alt="Latest NUT CI build status: master branch"/>
+</a>
+<!-- MacOS, maybe later Windows builds: -->
+<a href="https://app.circleci.com/pipelines/github/networkupstools">
+  <img style="border:0;height:20"
+    src="https://circleci.com/gh/networkupstools/nut/tree/master.svg?style=svg"
+    alt="Latest Circle CI build status: master branch"/>
+</a>
+<!-- Windows, maybe later MacOS builds: -->
+<a href="https://ci.appveyor.com/project/nut-travis/nut/build/artifacts">
+  <img style="border:0;height:20"
+    src="https://ci.appveyor.com/api/projects/status/vrhkatid9hr7lq7r/branch/master?svg=true&failingText=Windows-FAIL&passingText=Windows-OK&pendingText-Windows-PENDING"
+    alt="Latest AppVeyor build status (NUT for Windows iterations)"/>
+</a>
+<!--
+<a href="https://ci.networkupstools.org/job/nut/job/nut/job/fightwarn/">
+  <img style="border:0;height:20"
+    src="https://ci.networkupstools.org/buildStatus/icon?job=nut%2Fnut%2Ffightwarn&subject=Fightwarn%20Branch"
+    alt="Latest NUT CI build status: fightwarn branch"/>
+</a>
+-->
+<!--
+<a href="https://github.com/networkupstools/nut/releases">
+  <img style="border:0;height:20"
+    src="https://img.shields.io/github/v/release/networkupstools/nut"
+    alt="Latest GitHub drafted NUT source release"/>
+</a>
+-->
+<a href="https://github.com/networkupstools/nut/releases">
+  <img style="border:0;height:20"
+    src="https://img.shields.io/github/v/tag/networkupstools/nut?sort=semver"
+    alt="Latest Git-tagged NUT source release"/>
+</a>
+<!-- Maintainer note: for the counter below to work, a git tag
+     is not sufficient -- a release must be drafted and published
+     at https://github.com/networkupstools/nut/releases
+     Counter URL may also be .../latest/BRANCHNAME -->
+<a href="https://github.com/networkupstools/nut">
+  <img style="border:0;height:20"
+    src="https://img.shields.io/github/commits-since/networkupstools/nut/latest.svg"
+    alt="Commits on master branch since latest release on GitHub"/>
+</a>
+<!-- See also:
+ // https://web.archive.org/web/20200731075618/http://www.methods.co.nz/asciidoc/
+ // https://github.com/asciidoc-py/asciidoc-py
+ -->
+<a href="https://asciidoc.org/">
+  <img style="border:0;width:88px;height:31px"
+    src="../images/asciidoc.png"
+    alt="Powered by AsciiDoc"/>
+</a>
+<a href="https://validator.w3.org/check?uri=referer">
+  <img style="border:0;width:88px;height:31px"
+    src="https://www.w3.org/Icons/valid-xhtml11-blue"
+    alt="Valid XHTML 1.1"/>
+</a>
+<a href="https://jigsaw.w3.org/css-validator/check?uri=referer">
+  <img style="border:0;width:88px;height:31px"
+    src="https://jigsaw.w3.org/css-validator/images/vcss-blue"
+    alt="Valid CSS!"/>
+</a>
+<a href="https://www.gandi.net/">
+  <img style="border:0;height:38px;"
+       src="../images/gandi-ar21.svg"
+       alt="DNS, redirection and related services Hoster"/>
+</a>
+<!--
+// FH web site defunct since ~Apr 2024
+<a href="https://fosshost.org/">
+  <img style="border:0;width:112px;height:38px;"
+       src="../images/ci/fosshost.org_Host_Light_38px.png"
+       alt="Dedicated Hosting for NUT CI"/>
+</a>
+-->
+<a href="https://www.digitalocean.com/?refcode=d2fbf2b9e082&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge">
+  <img style="border:0;height:38px;"
+       src="https://opensource.nyc3.cdn.digitaloceanspaces.com/attribution/assets/PoweredByDO/DO_Powered_by_Badge_blue.svg"
+       alt="Dedicated Hosting for NUT CI"/>
+</a>
+</div>
+</div>
+</div>
+</div>
+<!-- Google Analytics integration -->
+<script type="text/javascript">
+
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-9664272-1']);
+        _gaq.push(['_trackPageview']);
+
+        (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+
+</script>
+</body>
+</html>

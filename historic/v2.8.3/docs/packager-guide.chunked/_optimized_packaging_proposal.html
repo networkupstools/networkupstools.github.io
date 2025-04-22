@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>4. Optimized packaging proposal</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><link rel="home" href="index.html" title="NUT Packager and Integrators Guide" /><link rel="up" href="index.html" title="NUT Packager and Integrators Guide" /><link rel="prev" href="_possible_use_cases.html" title="3. Possible use cases" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="_possible_use_cases.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> </td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_optimized_packaging_proposal"></a>4. Optimized packaging proposal</h2></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>The below proposed packages split is subject to discussion.</p></div><p>The aim of this is to:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+rationalize split according to the above use cases,
+</li><li class="listitem">
+share resources (descriptions, i18n, …)
+</li><li class="listitem">
+find the best compromise between available features and dependencies,
+</li><li class="listitem">
+standardize nut packages name,
+</li><li class="listitem">
+create the foundation for the upcoming and underway improvements,
+</li><li class="listitem">
+improve nut integration,
+</li><li class="listitem">
+ease and improve user experience.
+</li></ul></div><p>This standard was created by:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+capitalizing on the experience of existing packages,
+</li><li class="listitem">
+using and improving the use of all nut features,
+</li><li class="listitem">
+considering upcoming nut changes and improvements,
+</li><li class="listitem">
+working closely with packagers.
+</li></ul></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_overview_of_the_package_tree"></a>4.1. Overview of the package tree</h3></div></div></div><p>FIXME: make a dependency graph</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<a class="link" href="_optimized_packaging_proposal.html#pkg-nut" title="nut">nut</a>
+</li><li class="listitem">
+<a class="link" href="_optimized_packaging_proposal.html#pkg-libupsclient1" title="libupsclient1">libupsclient1</a>
+</li><li class="listitem">
+<a class="link" href="_optimized_packaging_proposal.html#pkg-libupsclient1-dev" title="libupsclient1-dev">libupsclient1-dev</a>
+</li><li class="listitem">
+<a class="link" href="_optimized_packaging_proposal.html#pkg-nut-cgi" title="nut-cgi">nut-cgi</a>
+</li><li class="listitem">
+<a class="link" href="_optimized_packaging_proposal.html#pkg-nut-scanner" title="nut-scanner">nut-scanner</a>
+</li><li class="listitem">
+<a class="link" href="_optimized_packaging_proposal.html#pkg-nut-powerman-pdu" title="nut-powerman-pdu">nut-powerman-pdu</a>
+</li><li class="listitem">
+<a class="link" href="_optimized_packaging_proposal.html#pkg-nut-snmp" title="nut-snmp">nut-snmp</a>
+</li><li class="listitem">
+<a class="link" href="_optimized_packaging_proposal.html#pkg-nut-xml" title="nut-xml">nut-xml</a>
+</li><li class="listitem">
+<a class="link" href="_optimized_packaging_proposal.html#pkg-nut-ipmi" title="nut-ipmi">nut-ipmi</a>
+</li><li class="listitem">
+<a class="link" href="_optimized_packaging_proposal.html#pkg-nut-modbus" title="nut-modbus">nut-modbus</a>
+</li><li class="listitem">
+<a class="link" href="_optimized_packaging_proposal.html#pkg-nut-gpio" title="nut-gpio">nut-gpio</a> (currently platform-dependent)
+</li><li class="listitem">
+<a class="link" href="_optimized_packaging_proposal.html#pkg-nut-linux-i2c" title="nut-linux-i2c">nut-linux-i2c</a> (platform-dependent)
+</li><li class="listitem">
+<a class="link" href="_optimized_packaging_proposal.html#pkg-nut-macosx-ups" title="nut-macosx-ups">nut-macosx-ups</a> (platform-dependent)
+</li><li class="listitem">
+<a class="link" href="_optimized_packaging_proposal.html#pkg-nut-clients" title="nut-clients">nut-clients</a>
+</li><li class="listitem">
+<a class="link" href="_optimized_packaging_proposal.html#pkg-python-pynut" title="python-pynut">python-pynut</a>
+</li><li class="listitem">
+<a class="link" href="_optimized_packaging_proposal.html#pkg-python-nut-gui" title="python-nut-gui">python-nut-gui</a> (or nut-control-center or Ultimate NUT Tool…)
+</li><li class="listitem">
+<a class="link" href="_optimized_packaging_proposal.html#pkg-nut-doc" title="nut-doc">nut-doc</a>
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_detailed_view_of_the_package_tree"></a>4.2. Detailed view of the package tree</h3></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+The <span class="strong"><strong>Desc</strong></span> field represent the package’s description, as exposed by
+the packaging system. Each package’s description is composed of a
+paragraph common to all NUT packages, and a part that is specific to the
+package. The common part (further referenced by <span class="strong"><strong>COMMON DESC</strong></span>) is:
+</li></ul></div><div class="blockquote"><blockquote class="blockquote"><pre class="literallayout">Network UPS Tools (NUT) is a client/server monitoring system that allows
+computers to share uninterruptible power supply (UPS) and power distribution
+unit (PDU) hardware. Clients access the hardware through the server, and are
+notified whenever the power status changes.</pre></blockquote></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+The <span class="strong"><strong>Files</strong></span> field lists the content of the package.
+</li><li class="listitem">
+The mentioned <span class="strong"><strong>Size</strong></span> is a rough estimation of packaged and installed
+size. This may varies across the systems and architecture, and is based
+upon the Debian x86 packages.
+</li><li class="listitem">
+The <span class="strong"><strong>Deps</strong></span> field lists the dependencies of the packages. The exact
+name may vary across the various systems.
+</li><li class="listitem">
+The <span class="strong"><strong>Comment</strong></span> field is used to place comment for points subject to
+discussion.
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="pkg-nut"></a>nut</h4></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Desc:
+</li><li class="listitem">
+Files: dummy/serial/USB drivers + upsd + upslog
+</li><li class="listitem">
+Size:
+</li><li class="listitem">
+Deps:
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="pkg-libupsclient1"></a>libupsclient1</h4></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Desc:
+</li><li class="listitem">
+Files:
+</li><li class="listitem">
+Size:
+</li><li class="listitem">
+Deps:
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="pkg-libupsclient1-dev"></a>libupsclient1-dev</h4></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Desc:
+</li><li class="listitem">
+Files:
+</li><li class="listitem">
+Size:
+</li><li class="listitem">
+Deps:
+</li></ul></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>the "-dev" suffix is to be replaced by "-devel" on RPM based platforms.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="pkg-nut-cgi"></a>nut-cgi</h4></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Desc:
+</li><li class="listitem">
+Files:
+</li><li class="listitem">
+Size:
+</li><li class="listitem">
+Deps:
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="pkg-nut-scanner"></a>nut-scanner</h4></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Desc:
+</li><li class="listitem">
+Files:
+</li><li class="listitem">
+Size:
+</li><li class="listitem">
+Deps:
+</li></ul></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>hard third-party dependency on <code class="literal">libltdl</code>; recommends <code class="literal">libsnmp</code>, <code class="literal">libneon</code>,
+and the <code class="literal">libusb</code> variant (0.1 or 1.0) it was built against.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="pkg-nut-powerman-pdu"></a>nut-powerman-pdu</h4></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Desc:
+</li><li class="listitem">
+Files:
+</li><li class="listitem">
+Size:
+</li><li class="listitem">
+Deps:
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="pkg-nut-snmp"></a>nut-snmp</h4></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Desc:
+</li><li class="listitem">
+Files:
+</li><li class="listitem">
+Size:
+</li><li class="listitem">
+Deps:
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="pkg-nut-xml"></a>nut-xml</h4></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Desc:
+</li><li class="listitem">
+Files:
+</li><li class="listitem">
+Size:
+</li><li class="listitem">
+Deps:
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="pkg-nut-ipmi"></a>nut-ipmi</h4></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Desc:
+</li><li class="listitem">
+Files:
+</li><li class="listitem">
+Size:
+</li><li class="listitem">
+Deps:
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="pkg-nut-modbus"></a>nut-modbus</h4></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Desc:
+</li><li class="listitem">
+Files:
+</li><li class="listitem">
+Size:
+</li><li class="listitem">
+Deps:
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="pkg-nut-gpio"></a>nut-gpio</h4></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Desc: (currently platform-dependent)
+</li><li class="listitem">
+Files:
+</li><li class="listitem">
+Size:
+</li><li class="listitem">
+Deps:
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="pkg-nut-linux-i2c"></a>nut-linux-i2c</h4></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Desc: (platform-dependent)
+</li><li class="listitem">
+Files:
+</li><li class="listitem">
+Size:
+</li><li class="listitem">
+Deps:
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="pkg-nut-macosx-ups"></a>nut-macosx-ups</h4></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Desc: (platform-dependent)
+</li><li class="listitem">
+Files:
+</li><li class="listitem">
+Size:
+</li><li class="listitem">
+Deps:
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="pkg-nut-clients"></a>nut-clients</h4></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Desc:
+</li><li class="listitem">
+Files:
+</li><li class="listitem">
+Size:
+</li><li class="listitem">
+Deps:
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="pkg-python-pynut"></a>python-pynut</h4></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Desc:
+</li><li class="listitem">
+Files:
+</li><li class="listitem">
+Size:
+</li><li class="listitem">
+Deps:
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="pkg-python-nut-gui"></a>python-nut-gui</h4></div></div></div><p>(or nut-control-center or Ultimate NUT Tool…)</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Desc:
+</li><li class="listitem">
+Files:
+</li><li class="listitem">
+Size:
+</li><li class="listitem">
+Deps:
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="pkg-nut-doc"></a>nut-doc</h4></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Desc:
+</li><li class="listitem">
+Files:
+</li><li class="listitem">
+Size:
+</li><li class="listitem">
+Deps:
+</li></ul></div><pre class="screen">*sandbox*
+nut-server
+^^^^^^^^^^
+                        Desc:
+                        Files: dummy/serial/USB drivers + upsd + upslog
+                        Size:
+                        Deps: nut-client, libusb, libc/ld
+
+                B) nut-snmp
+
+                        Desc:
+                        Files: SNMP driver [/ manager ]
+                        Deps: nut-server, net-snmp, libc/ld
+
+                C) nut-client
+
+                        Desc: don't force to have the server part/deps if not needed
+                        Files: upsmon, upsc, upscmd, upsrw + driver.list [+nut-dev (lib, .h, .pc, man]
+                        Deps: libc/ld
+
+                E) nut-cgi
+
+                        Deps:
+                        Files: snmp-ups and powernet + man pages
+
+                F) nut-doc:
+
+                        Deps:
+                        Files: dummycons + man page
+
+                G) nut-dev:
+
+                        Deps:
+                        Files: upsmon, upsc, upscmd, upsrw
+
+                H) nut-scanner:
+
+                        Deps: hard dependency on `libltdl`; recommends `libsnmp`, `libneon`, and the `libusb` variant (0.1 or 1.0) it was built against.
+                        Files: nut-scanner tool and libnutscan + man pages
+
+
+Note: "nut" can be a meta package
+
+This kind of tree obviously needs modification on the conf/make
+files of NUT to allow build/install in a separate way.
+
+
+...
+TO BE CONTINUED
+...
+
+Configuration option
+^^^^^^^^^^^^^^^^^^^^
+
+Example:
+
+name= "ups" or "nut"
+./configure \
+            --prefix=/ \
+            --sysconfdir=/etc/$name \
+            --mandir=/usr/share/man \
+            --libdir=/usr/lib \
+            --includedir=/usr/include \
+            --datadir=/usr/share/$name \
+            --with-statepath=/var/run/nut \
+            --with-altpidpath=/var/run/nut \
+            --with-drvpath=/lib/nut \
+            --with-cgipath=/usr/lib/cgi-bin/$name \
+html-path
+            --with-pidpath=/var/run/$name \
+            --with-user=$name \
+            --with-cgi \
+            --without-ssl
+...
+
+NOTE: For packaging (OS distribution or in-house) it is recommended to
+primarily `./configure --with-all` and then excise `--without-something`
+explicitly for items not supported on your platform, so you do not miss
+out on new NUT features as they come with new releases. Some may require
+that you update your build environment with new third-party dependencies,
+so a broken build of a new NUT release would let you know how to act.</pre></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
+		Last updated 2025-04-22 10:20:44 -- Network UPS Tools 2.8.3</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_possible_use_cases.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> </td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

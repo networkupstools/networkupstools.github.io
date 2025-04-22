@@ -1,0 +1,1679 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<title>Network UPS Tools - Megatec Protocol information</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="generator" content="AsciiDoc 10.1.2" />
+<meta name="description" content="Power Devices support" />
+<meta name="keywords" content="NUT, Network UPS Tools, Eaton, APC, Free Software, UPS, Uninterruptible Power Supplies, PDU, Power Distributions Units, Solar Controllers, power, power devices, control, monitor, Linux, Unix, Windows, Mac OS X" />
+<meta name="format-detection" content="telephone=no" />
+<link rel="stylesheet" href="../css/xhtml11.css" type="text/css" />
+<link rel="stylesheet" href="../css/web-layout.css" type="text/css" />
+<link rel="shortcut icon" href="../faviconut.ico" />
+<link rel="icon" type="image/png" href="../faviconut.png" />
+<script type="text/javascript" src="../scripts/asciidoc.js"></script>
+<script type="text/javascript">
+/*<![CDATA[*/
+asciidoc.install(2);
+/*]]>*/
+</script>
+<!--[if lte IE 7]>
+<link rel="stylesheet" href="../css/ie-overrides.css" type="text/css" />
+<![endif]-->
+<!--[if lte IE 6]>
+<script type="text/javascript" src="../scripts/filter_png.js"></script>
+<![endif]-->
+</head>
+<body>
+<div id="layout-banner-box">
+<div id="layout-banner">
+  <div id="layout-logo"><img src="../images/nut-logo.png" alt="NUT logo" /></div>
+  <div id="layout-title">Network UPS Tools</div>
+  <div id="layout-description">Power Devices support</div>
+</div>
+</div>
+<div id="layout-menu-box">
+  <ul id="layout-menu">
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="../download.html">Download</a></li>
+    <li><a href="../projects.html">Related projects</a></li>
+    <li><a href="../stable-hcl.html">Compatibility</a></li>
+    <li><a href="../features.html">Features</a></li>
+    <li><a href="../documentation.html">Documentation</a></li>
+    <li><a href="../support.html">Support</a></li>
+    <li>* <a href="https://alioth-lists.debian.net/pipermail/nut-upsuser/">NUT UPS User archive</a></li>
+    <li>* <a href="https://alioth-lists.debian.net/pipermail/nut-upsdev/">NUT UPS Dev archive</a></li>
+    <li>* <a href="https://github.com/networkupstools/nut/">GitHub</a>:<a
+        href="https://github.com/networkupstools/nut/issues">issues</a>,<a
+        href="https://github.com/networkupstools/nut/wiki">wiki</a>
+        and more</li>
+    <li><a href="..//historic/index.html">Sub-sites for historic releases</a></li>
+    <li><a href="https://opencollective.com/networkupstools/">Sponsor NUT</a></li>
+  </ul>
+  <!-- div id="sponsor"><span>Hosted by<br/></span>
+    <a href="http://sponsor.com"><img src="../images/sponsor-logo.png" alt="Sponsor" /></a>
+  </div -->
+</div>
+<div id="layout-content-box">
+<div id="layout-content">
+<div id="header">
+<h1>Megatec Protocol information</h1>
+<span id="author">Kevin Chiou</span><br />
+<span id="revision">version 2.7,</span>
+July 30, 1996
+</div>
+<div id="toc">
+  <div id="toctitle">Table of Contents</div>
+  <noscript><p><b>JavaScript must be enabled in your browser to display the table of contents.</b></p></noscript>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_general">General</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>This document specifies the RS232C communication protocol of the <em>Advance-Intelligent UPS</em>.</p></div>
+<div class="paragraph"><p>The protocol provided the following features:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+Monitor charger status.
+</p>
+</li>
+<li>
+<p>
+Monitor battery status and condition.
+</p>
+</li>
+<li>
+<p>
+Monitor the utility status.
+</p>
+</li>
+<li>
+<p>
+Provide the power switch function for computer to turn on and off the utility on schedule for power saving.
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>Computer will control information exchange by a query followed by <code>&lt;cr&gt;</code>.</p></div>
+<div class="paragraph"><p>UPS will respond with information followed by a <code>&lt;cr&gt;</code> or action.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_hardware">Hardware</h2>
+<div class="sectionbody">
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+BAUD RATE
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+2400 bps
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+DATA LENGTH
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+8 bits
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+STOP BIT
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+1 bit
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+PARITY
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+NONE
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+CABLING
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+9 pins female D-type connector
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>COMPUTER           UPS
+==========================
+   RX    &lt;---  TX  (pin 9)
+   TX     ---&gt; RX  (pin 6)
+   GND   &lt;---  GND (pin 7)</code></pre>
+</div></div>
+</td>
+</tr>
+</table></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_communication_protocol">Communication protocol</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_status_inquiry">Status Inquiry</h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<em>Computer:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>Q1&lt;cr&gt;</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>UPS:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+UPS status data stream, such as <code>(MMM.M NNN.N PPP.P QQQ RR.R S.SS TT.T b7b6b5b4b3b2b1b0&lt;cr&gt;</code>
+</p>
+</td>
+</tr>
+</table></div>
+<div class="sect3">
+<h4 id="_ups_status_data_stream">UPS status data stream</h4>
+<div class="paragraph"><p>There should be a space character between every field for data separation.</p></div>
+<div class="paragraph"><p>The meaning of each field is list as followed:</p></div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>(</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Start byte
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>MMM.M</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+I/P voltage
+</p>
+<div class="paragraph"><p><code>M</code> is and integer number ranging from <code>0</code> to <code>9</code>.
+The unit is Volt.</p></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>NNN.N</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+I/P fault voltage
+</p>
+<div class="paragraph"><p><code>N</code> is and integer number ranging from <code>0</code> to <code>9</code>.
+The unit is Volt.</p></div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>For OFF LINE UPS</strong>
+</dt>
+<dd>
+<p>
+Its purpose is to identify a short duration voltage glitch which cause OFF line UPS to go to Invter mode.
+If this occurs input voltage will appear normal at query prior to glitch and will still appear normal at next query.
+</p>
+<div class="paragraph"><p>The I/P fault voltage will hold glitch voltage till next query.
+After query, the I/P fault voltage will be same as I/P voltage until next glitch occurs.</p></div>
+</dd>
+<dt class="hdlist1">
+<strong>For ON LINE UPS</strong>
+</dt>
+<dd>
+<p>
+Its purpose is to identify a short duration utility fail which cause ON line UPS to go to battery mode.
+If this occurs input voltage will appear normal at query prior to fail and will still appear normal at next query.
+</p>
+<div class="paragraph"><p>The I/P fault voltage will hold utility fail voltage till next query.
+After query, the I/P voltage will be same as I/P voltage until next utility fail occurs.</p></div>
+</dd>
+</dl></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>PPP.P</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+O/P voltage
+</p>
+<div class="paragraph"><p><code>P</code> is an integer number ranging form <code>0</code> to <code>9</code>.
+The unit is Volt.</p></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>QQQ</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+O/P current
+</p>
+<div class="paragraph"><p><code>QQQ</code> is a percent of maximum current, not an absolute value.</p></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>RR.R</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+I/P frequency
+</p>
+<div class="paragraph"><p><code>R</code> is an integer number ranging from <code>0</code> to <code>9</code>.
+The unit is HZ.</p></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>SS.S</code> or <code>S.SS</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Battery voltage
+</p>
+<div class="paragraph"><p><code>S</code> is an integer number ranging from <code>0</code> to <code>9</code>.</p></div>
+<div class="paragraph"><p>For on-line units battery voltage/cell is provided in the form <code>S.SS</code>.</p></div>
+<div class="paragraph"><p>For standby units actual battery voltage is provided in the form <code>SS.S</code>.</p></div>
+<div class="paragraph"><p>UPS type in UPS status will determine which reading was obtained.</p></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>TT.T</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Temperature
+</p>
+<div class="paragraph"><p><code>T</code> is an integer number ranging form <code>0</code> to <code>9</code>.
+The unit is degree of centigrade.</p></div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>&lt;U&gt;</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+UPS Status
+</p>
+<div class="paragraph"><p><code>&lt;U&gt;</code> is one byte of binary information such as <code>&lt;b7b6b5b4b3b2b1b0&gt;</code>.
+Where <code>bn</code> is a ASCII character <strong><code>0</code></strong> or <strong><code>1</code></strong>.</p></div>
+<div class="paragraph"><p><strong><code>1</code></strong> means:</p></div>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<thead>
+<tr>
+<th align="center" valign="middle">Bit#   </th>
+<th align="left" valign="middle">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>7</code></p></td>
+<td align="left" valign="middle"><p class="table">Utility Fail (Immediate)</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>6</code></p></td>
+<td align="left" valign="middle"><p class="table">Battery Low</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>5</code></p></td>
+<td align="left" valign="middle"><p class="table">Bypass/Boost or Buck Active</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>4</code></p></td>
+<td align="left" valign="middle"><p class="table">UPS Failed</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>3</code></p></td>
+<td align="left" valign="middle"><p class="table">UPS Type is Standby</p>
+<p class="table"><strong><code>0</code></strong> is On_line</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>2</code></p></td>
+<td align="left" valign="middle"><p class="table">Test in Progress</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>1</code></p></td>
+<td align="left" valign="middle"><p class="table">Shutdown Active</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code>0</code></p></td>
+<td align="left" valign="middle"><p class="table">Beeper On</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>&lt;cr&gt;</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Stop Byte
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect3">
+<h4 id="_example">Example</h4>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<em>Computer:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>Q1&lt;cr&gt;</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>UPS:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>(208.4 140.0 208.4 034 59.9 2.05 35.0 00110000&lt;cr&gt;</code>
+</p>
+</td>
+</tr>
+</table></div>
+<div class="paragraph"><p>Means:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+I/P voltage is 208.4V.
+</p>
+</li>
+<li>
+<p>
+I/P fault voltage is 140.0V.
+</p>
+</li>
+<li>
+<p>
+O/P voltage is 208.4V.
+</p>
+</li>
+<li>
+<p>
+O/P current is 34 %.
+</p>
+</li>
+<li>
+<p>
+I/P frequency is 59.9 HZ.
+</p>
+</li>
+<li>
+<p>
+Battery voltage is 2.05V.
+</p>
+</li>
+<li>
+<p>
+Temperature is 35.0 degrees of centigrade.
+</p>
+</li>
+<li>
+<p>
+UPS type is on-line, UPS failed.
+</p>
+</li>
+<li>
+<p>
+Bypass active, and shutdown not active.
+</p>
+</li>
+</ul></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_test_for_10_seconds">Test for 10 seconds</h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<em>Computer:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>T&lt;cr&gt;</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>UPS:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Test for 10 seconds and return to utility.
+</p>
+</td>
+</tr>
+</table></div>
+<div class="paragraph"><p>If battery low occur during testing, UPS will return to utility immediately.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_test_until_battery_low">Test until battery low</h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<em>Computer:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>TL&lt;cr&gt;</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>UPS:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Test until battery low and return to utility.
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_test_for_specified_time_period">Test for specified time period</h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<em>Computer:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>T&lt;n&gt;&lt;cr&gt;</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>UPS:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Test for <strong><code>&lt;n&gt;</code></strong> minutes.
+</p>
+</td>
+</tr>
+</table></div>
+<div class="paragraph"><p>During testing, UPS returns to utility immediately, if battery low occur.</p></div>
+<div class="paragraph"><p><strong><code>&lt;n&gt;</code></strong> is a number ranging from <code>01</code> to <code>99</code>.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_turn_on_off_beep_toggle_the_ups_beeper">Turn On/Off beep - Toggle the UPS beeper</h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<em>Computer:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>Q&lt;cr&gt;</code></strong>
+</p>
+</td>
+</tr>
+</table></div>
+<div class="paragraph"><p>When the AC power failed, UPS will generate a warning beep to inform the manager.
+Manager could toggle the warning beep by sending this command.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_shutdown_command">Shutdown Command</h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<em>Computer:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>S&lt;n&gt;&lt;cr&gt;</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>UPS:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Shut UPS output off in <strong><code>&lt;n&gt;</code></strong> minutes.
+</p>
+</td>
+</tr>
+</table></div>
+<div class="paragraph"><p>The UPS output will be off in <strong><code>&lt;n&gt;</code></strong> minutes, even if the utility power is present.
+If the battery low occurs before <strong><code>&lt;n&gt;</code></strong> minutes, the output is turned off immediately.</p></div>
+<div class="paragraph"><p>After UPS shutdown, the controller of UPS monitors the utility power.
+If the utility is recovered, the UPS will wait for 10 seconds and connect the utility to output.</p></div>
+<div class="paragraph"><p><strong><code>&lt;n&gt;</code></strong> is a number ranging form <code>.2</code>, <code>.3</code>, &#8230;, <code>01</code>, <code>02</code>, &#8230;, up to <code>10</code>.</p></div>
+<div class="sect3">
+<h4 id="_example_2">Example</h4>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<em>Computer:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>S.3&lt;cr&gt;</code>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>UPS:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Shut output off in (<code>.3</code>) minutes
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_shutdown_and_restore_command">Shutdown and Restore Command</h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<em>Computer:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>S&lt;n&gt;R&lt;m&gt;&lt;cr&gt;</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>UPS:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Shut UPS output off in <strong><code>&lt;n&gt;</code></strong> minutes, and waiting for <strong><code>&lt;m&gt;</code></strong> minutes then turn on UPS output again.
+</p>
+</td>
+</tr>
+</table></div>
+<div class="paragraph"><p>The shutdown sequence is the same as the previous command.
+When the <strong><code>&lt;m&gt;</code></strong> minutes expired, the utility do not restore, the UPS will wait until utility restore.</p></div>
+<div class="paragraph"><p>If UPS is in shutdown waiting state, the "<strong><code>C</code></strong>" command can let the shutdown procedure cancelled.</p></div>
+<div class="paragraph"><p>If UPS is in restore waiting state, the "<strong><code>C</code></strong>" command can let the UPS output turned on, but UPS must be hold off at least 10 seconds. (if utility is present)</p></div>
+<div class="paragraph"><p><strong><code>&lt;n&gt;</code></strong> is a number ranging from <code>.2</code>, <code>.3</code>, &#8230;, <code>01</code>, <code>02</code>, &#8230;, up to <code>10</code>.</p></div>
+<div class="paragraph"><p><strong><code>&lt;m&gt;</code></strong> is a number ranging from <code>0001</code> to <code>9999</code>.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_cancel_shutdown_command">Cancel Shutdown Command</h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<em>Computer:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>C&lt;cr&gt;</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>UPS:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Cancel the <strong><code>SN&lt;n&gt;&lt;cr&gt;</strong></code> and <strong><code>SN&lt;n&gt;R&lt;m&gt;&lt;cr&gt;</code></strong> command.
+</p>
+</td>
+</tr>
+</table></div>
+<div class="paragraph"><p>If UPS is in shut down waiting state, the shut down command is cancelled.</p></div>
+<div class="paragraph"><p>If UPS is in restore waiting state, the UPS output is turned on, but UPS must be hold off at least 10 seconds. (if utility is present)</p></div>
+</div>
+<div class="sect2">
+<h3 id="_cancel_test_command">Cancel Test Command</h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<em>Computer:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>CT&lt;cr&gt;</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>UPS:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Cancel all test activity and connect the utility to output immediately.
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect2">
+<h3 id="_ups_information_command">UPS Information Command</h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<em>Computer:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>I&lt;cr&gt;</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>UPS:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>#Company_Name UPS_Model Version&lt;cr&gt;</code>
+</p>
+</td>
+</tr>
+</table></div>
+<div class="paragraph"><p>This function will make the UPS respond with the basic information about the company who manufacture the UPS, the model name of the UPS and the version number of the UPS firmware.</p></div>
+<div class="paragraph"><p>The length of every field is listed as follows:</p></div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>Company_Name</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+15 characters, leave space if less than 15 characters
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>UPS_Model</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+10 characters, leave space if less than 10 characters
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>Version</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+10 characters, leave space if less than 10 characters
+</p>
+</td>
+</tr>
+</table></div>
+<div class="paragraph"><p>There should be a space character between every field for separation.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_ups_rating_information">UPS Rating Information</h3>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<em>Computer:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<strong><code>F&lt;cr&gt;</code></strong>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<em>UPS:</em>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>#MMM.M QQQ SS.SS RR.R&lt;cr&gt;</code>
+</p>
+</td>
+</tr>
+</table></div>
+<div class="paragraph"><p>This function makes the UPS answer the rating value of UPS.</p></div>
+<div class="paragraph"><p>There should be a space character between every field for separation.</p></div>
+<div class="paragraph"><p>The UPS&#8217;s response contains the following information field:</p></div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<code>MMM.M</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Rating Voltage
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>QQQ</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Rating Current
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>SS.SS</code> or <code>SSS.S</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Battery Voltage
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<code>RR.R</code>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Frequency
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_command_summary">Command summary</h2>
+<div class="sectionbody">
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<strong><code>D</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Status Inquiry *disable
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>Q1</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Status Inquiry
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>T</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+10 Seconds Test
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>TL</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Test until Battery Low
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>T&lt;n&gt;</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Test for Specified Time Period
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>Q</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Turn On/Off beep
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>S&lt;n&gt;</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Shut Down Command
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>S&lt;n&gt;R&lt;m&gt;</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Shut Down and Restore Command
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>C</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Cancel Shut Down Command
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>CT</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+Cancel Test Command
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>I</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+UPS Information Command
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong><code>F</code></strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+UPS Rating Information
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_invalid_command_information_handling">Invalid Command/Information Handling</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>If the UPS receives any command that it could not handle, the UPS should echo the received command back to the computer.
+The host should check if the command send to UPS been echo or not.</p></div>
+<div class="paragraph"><p>If there is any information field in the UPS&#8217;s response which is unavailable or not supported, the UPS should fill the field with <strong><code>@</code></strong>.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_implementation_notes">Implementation notes</h2>
+<div class="sectionbody">
+<div class="paragraph"><p><strong><code>S01R0001</code></strong> and <strong><code>S01R0002</code></strong> may not work on early firmware versions.</p></div>
+<div class="paragraph"><p>The failure mode is that the UPS turns off and never returns.</p></div>
+<div class="paragraph"><p>The fix is to push the return value up by 2, i.e. <strong><code>S01R0003</code></strong>, and it will return online properly.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_additional_information_from_21st_century">Additional information from 21st century</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Some of the information below originates from research published at
+<a href="https://f2065.ru/soft/ups_lm_ru/#spravochnaja-informacija-po-protokolam-ups">f2065&#8217;s
+UPS LM project page</a>, whose sources included NUT documentation and more, and
+kindly curated (picking entries new for NUT) and translated by Viktor Drobot.
+Another part was obtained by his RS232 sniffer as well, during development
+of sub-driver updates for Ippon Innova RT 3/1 series.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img src="../images/note.png" alt="Note" />
+</td>
+<td class="content">not all UPSes are able to answer/consume some or all of these commands!</td>
+</tr></table>
+</div>
+<div class="tableblock">
+<table rules="rows"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<thead>
+<tr>
+<th align="center" valign="middle"> Command       </th>
+<th align="left" valign="middle"> Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>AR?</code>, <code>AR0</code>, <code>AR1</code></code></p></td>
+<td align="left" valign="middle"><p class="table">Querying/disabling/enabling auto power-on feature
+                          (known as auto restart for some Ippon UPSes).</p>
+<p class="table">                          Enabled by default (<code>AR1</code>).</p>
+<p class="table">                          If option is off (<code>AR0</code>) then UPS will stay powered
+                          "off" even after mains return, and should be switched
+                          "on" manually by using the power button.</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>AT?</code>, <code>AT0</code>, <code>AT1</code></code></p></td>
+<td align="left" valign="middle"><p class="table">Querying/disabling/enabling auto test feature.</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>BL?</code>, <code>BL</code></code></p></td>
+<td align="left" valign="middle"><p class="table">Battery level (in percents), usually represented as
+                  a 3-digit number with leading zero where needed.</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>BPS</code></code></p></td>
+<td align="left" valign="middle"><div><div class="paragraph"><p>Query bypass status. Typical answer:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>(230.4 000.0 000.0 49.9</code></pre>
+</div></div>
+<div class="ulist"><ul>
+<li>
+<p>
+Fields 1..3 should be <code>L1-N</code>, <code>L2-N</code> and <code>L3-N</code> input bypass
+            voltages;
+</p>
+</li>
+<li>
+<p>
+field 4 is input bypass frequency.
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>EB?</code>, <code>EBnn</code></code></p></td>
+<td align="left" valign="middle"><p class="table">Query/set number of external battery packs.</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>EF?</code></code></p></td>
+<td align="left" valign="middle"><p class="table">Acceptable frequency deviations for HE/ECO mode (in percents).</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>EV?</code></code></p></td>
+<td align="left" valign="middle"><p class="table">Acceptable voltage deviations for HE/ECO mode (in percents).</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>FW?</code></code></p></td>
+<td align="left" valign="middle"><p class="table">Firmware version.</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>GR?</code>, <code>GR0</code>, <code>GR1</code></code></p></td>
+<td align="left" valign="middle"><p class="table">Query/disable/enable green mode
+                        (WinPower provides "Energy Saving" feature to control
+                        this mode).</p>
+<p class="table">                        Some UPS models switch themselves off after 5 minutes
+                        without load.</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>IP?</code>, <code>IPN</code>, <code>IPW</code>, <code>IPG</code></code></p></td>
+<td align="left" valign="middle"><div><div class="paragraph"><p>Query/set acceptable deviations for different
+                                  modes:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+normal (<code>IPN</code>);
+</p>
+</li>
+<li>
+<p>
+wide (<code>IPW</code>);
+</p>
+</li>
+<li>
+<p>
+generator (<code>IPG</code>).
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>Corresponding LEDs will be toggled for Smart Winner UPS models.</p></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>M</code></code></p></td>
+<td align="left" valign="middle"><p class="table">Query protocol type: the answer is usually <code>P</code>, <code>T</code>, <code>V</code>, <code>C</code>
+          and some others rarely.</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>Q2</code></code></p></td>
+<td align="left" valign="middle"><div><div class="paragraph"><p>Query UPS status (analogous to <code>Q1</code>). Typical answer:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>(226.6 224.3 228.0 226.6 229.9 000.0 000.0 000 000 000 49.9 327.6 18.0 00000000 999.24 100 02 00 00 00 00 00000000 11</code></pre>
+</div></div>
+<div class="paragraph"><p>As far as I was able to decipher this:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+first three fields correspond to the <code>L1-N</code>, <code>L2-N</code> and <code>L3-N</code>
+            input voltages;
+</p>
+</li>
+<li>
+<p>
+fifth field is output voltage (3/1 Ippon UPS was tested though,
+            maybe, fields 5..7 correspond to the <code>L1-N</code>, <code>L2-N</code> and <code>L3-N</code>
+            output voltages generally);
+</p>
+</li>
+<li>
+<p>
+eleventh field seems to be frequency (don&#8217;t know, input or output);
+</p>
+</li>
+<li>
+<p>
+twelfth field is battery voltage;
+</p>
+</li>
+<li>
+<p>
+thirteenth field is temperature;
+</p>
+</li>
+<li>
+<p>
+15th field may be estimated runtime (in minutes?) and
+</p>
+</li>
+<li>
+<p>
+16th field is battery level (in percents, with leading zero).
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>However, I&#8217;m not sure about fields 4, 6..11, 14..23.</p></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>Q4</code></code></p></td>
+<td align="left" valign="middle"><div><div class="paragraph"><p>Yet another UPS status query. Typical answer:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>(MMM.M ???.? ???.? NNN.N PPP.P ??? QQQ RR.R ??? ??? SS.S TT.T flags</code></pre>
+</div></div>
+<div class="paragraph"><p>Some flags:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>E</code>&#8201;&#8212;&#8201;test in progress;
+</p>
+</li>
+<li>
+<p>
+<code>A</code>&#8201;&#8212;&#8201;mains fault, on battery;
+</p>
+</li>
+<li>
+<p>
+<code>C</code>&#8201;&#8212;&#8201;bypass/AVR mode
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>Q6</code></code></p></td>
+<td align="left" valign="middle"><div><div class="paragraph"><p>Query UPS status, especially useful for three-phase models.
+          Typical answer:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>(227.0 225.6 230.0 50.0 229.9 000.0 000.0 49.9 007 000 000 327.8 000.0 23.0 06932 100 32 00000000 00000000 11</code></pre>
+</div></div>
+<div class="ulist"><ul>
+<li>
+<p>
+Fields 1..3 are <code>L1-N</code>, <code>L2-N</code> and <code>L3-N</code> input voltages,
+</p>
+</li>
+<li>
+<p>
+field 4 is input frequency,
+</p>
+</li>
+<li>
+<p>
+fields 5..7 should be <code>L1-N</code>, <code>L2-N</code> and <code>L3-N</code> output voltages,
+</p>
+</li>
+<li>
+<p>
+field 8 is output frequency,
+</p>
+</li>
+<li>
+<p>
+field 9 is load (in percents, with leading zero),
+</p>
+</li>
+<li>
+<p>
+field 12 is battery voltage,
+</p>
+</li>
+<li>
+<p>
+field 14 is temperature,
+</p>
+</li>
+<li>
+<p>
+field 15 is estimated runtime (in seconds),
+</p>
+</li>
+<li>
+<p>
+field 16 is battery level (in percents, with leading zero).
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>QBL</code></code></p></td>
+<td align="left" valign="middle"><div><div class="paragraph"><p>Query battery stats. Typical answer:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>(026.5 02 01 068 255</code></pre>
+</div></div>
+<div class="ulist"><ul>
+<li>
+<p>
+Field 1 is battery voltage;
+</p>
+</li>
+<li>
+<p>
+field 2 is a number of batteries connected in series;
+</p>
+</li>
+<li>
+<p>
+field 3 is a number of batteries connected in parallel;
+</p>
+</li>
+<li>
+<p>
+field 4 is battery level (in percents, with leading zero);
+</p>
+</li>
+<li>
+<p>
+field 5 is estimated runtime (in minutes?).
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>QI</code></code></p></td>
+<td align="left" valign="middle"><p class="table">Query serial number info.</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>QLDL</code></code></p></td>
+<td align="left" valign="middle"><p class="table">Query min and max load stats.</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>QMD</code></code></p></td>
+<td align="left" valign="middle"><p class="table">Query nominal UPS stats such as power capacity, number of batteries, etc.</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>QMF</code></code></p></td>
+<td align="left" valign="middle"><p class="table">Query manufacturer info.</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>QMOD</code></code></p></td>
+<td align="left" valign="middle"><p class="table">Query current status code.</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>QOF</code></code></p></td>
+<td align="left" valign="middle"><p class="table">Query output frequency info.</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>QP</code></code></p></td>
+<td align="left" valign="middle"><div><div class="paragraph"><p>Query acceptable bypass limits. Typical answer:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>(45.0 55.0 176 264 EpbraDokc</code></pre>
+</div></div>
+<div class="ulist"><ul>
+<li>
+<p>
+Fields 1 and 2 are low and high limits for input bypass frequency;
+</p>
+</li>
+<li>
+<p>
+fields 3 and 4 are the same but for the voltage;
+</p>
+</li>
+<li>
+<p>
+field 5 is flags.
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>QRI</code></code></p></td>
+<td align="left" valign="middle"><p class="table">Yet another query for nominal UPS stats.</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>QVFW</code></code></p></td>
+<td align="left" valign="middle"><p class="table">Yet another firmware version query.</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>SASV07?</code></code></p></td>
+<td align="left" valign="middle"><p class="table">Query for serial number.
+                  Typical answer starts with <code>GASV07D</code> string.</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>TC?</code></code></p></td>
+<td align="left" valign="middle"><p class="table">Query for temperature.</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>V</code></code></p></td>
+<td align="left" valign="middle"><div><div class="paragraph"><p>Query for AVR mode settings. Typical answer:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>165 200 220 240 275</code></pre>
+</div></div>
+<div class="ulist"><ul>
+<li>
+<p>
+Note: example is from the notes "as is", but
+            probably the answer should start with parenthesis
+</p>
+</li>
+<li>
+<p>
+Field 1 is low limit for battery transition;
+</p>
+</li>
+<li>
+<p>
+field 2 is low limit for engaging AVR boost;
+</p>
+</li>
+<li>
+<p>
+field 3 is nominal voltage;
+</p>
+</li>
+<li>
+<p>
+field 4 is high limit for engaging AVR buck;
+</p>
+</li>
+<li>
+<p>
+field 5 is high limit for battery transition.
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>V?</code></code></p></td>
+<td align="left" valign="middle"><p class="table">Query for output voltage mode.</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>V220</code>, <code>V230</code>, <code>V240</code></code></p></td>
+<td align="left" valign="middle"><p class="table">Set output voltage mode
+                                  (corresponding LED may be toggled).</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>WH</code></code></p></td>
+<td align="left" valign="middle"><div><div class="paragraph"><p>Query for model info and nominal specs. Typical answer:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>(00 00.00 00.00 INN3T20K                 2 3/1 6 230 50.00 024 02.00 005.00 015.00 005 00 40 110 276 45.00 55.00</code></pre>
+</div></div>
+<div class="paragraph"><p>Seems to be:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+model code (field 4);
+</p>
+</li>
+<li>
+<p>
+topology (field 6);
+</p>
+</li>
+<li>
+<p>
+nominal voltage (field 8);
+</p>
+</li>
+<li>
+<p>
+nominal frequency (field 9);
+</p>
+</li>
+<li>
+<p>
+number of batteries (field 10).
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><code>WA</code></code></p></td>
+<td align="left" valign="middle"><div><div class="paragraph"><p>Query for power/load stats. Typical answer:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>(001.4 000.0 000.0 001.4 000.0 000.0 001.4 001.4 006.5 000.0 000.0 007 00000000</code></pre>
+</div></div>
+<div class="ulist"><ul>
+<li>
+<p>
+Fields 1 and 7 seem to be real power measurements on output, while
+</p>
+</li>
+<li>
+<p>
+fields 4 and 8&#8201;&#8212;&#8201;the full one.
+</p>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img src="../images/note.png" alt="Note" />
+</td>
+<td class="content">
+<div class="paragraph"><p>This example a bit clumsy because in that case <code>cos(phi)</code> was about <code>1</code>,
+but in other measurements I was able to get differing readings.</p></div>
+<div class="paragraph"><p>Not sure why these fields are in pairs (maybe rolling average?).</p></div>
+</td>
+</tr></table>
+</div>
+</li>
+<li>
+<p>
+Field 9 is current (amps), field 12 is load (percents).
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_revision_history">Revision History</h2>
+<div class="sectionbody">
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="center" valign="middle">Rev.   </th>
+<th align="center" valign="middle">Date           </th>
+<th align="left" valign="middle">Description                                    </th>
+<th align="left" valign="middle">Modify by</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center" valign="middle"><p class="table">2.6</p></td>
+<td align="center" valign="middle"><p class="table">1995-09-30</p></td>
+<td align="left" valign="middle"><p class="table">UPDATE "<strong><code>D</code></strong>" COMMAND (<code>SS.SS</code> &#8594; <code>SSS.SS</code>)</p></td>
+<td align="left" valign="middle"><p class="table">Kevin Chiou</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">2.7</p></td>
+<td align="center" valign="middle"><p class="table">1996-08-01</p></td>
+<td align="left" valign="middle"><p class="table">Disable "<strong><code>D</code></strong>" COMMAND</p></td>
+<td align="left" valign="middle"><p class="table">Kevin Chiou</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table">2.8</p></td>
+<td align="center" valign="middle"><p class="table">2024-12-17</p></td>
+<td align="left" valign="middle"><p class="table">Additional chapter from 21st century</p></td>
+<td align="left" valign="middle"><p class="table">"f2065", Viktor Drobot</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div id="footnotes"><hr /></div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2025-02-09 09:44:09 UTC
+</div>
+<div id="footer-badges">
+<a href="https://github.com/networkupstools/nut">
+  <img style="border:0;height:20"
+    src="https://img.shields.io/github/checks-status/networkupstools/nut/master"
+    alt="Latest GitHub checks status: master branch"/>
+</a>
+<!--
+<a href="https://travis-ci.org/github/networkupstools/nut">
+  <img style="border:0;height:20"
+    src="https://api.travis-ci.org/networkupstools/nut.svg?branch=master"
+    alt="Latest Travis CI build status: master branch"/>
+</a>
+-->
+<a href="https://ci.networkupstools.org/job/nut/job/nut/job/master/">
+  <img style="border:0;height:20"
+    src="https://ci.networkupstools.org/buildStatus/icon?job=nut%2Fnut%2Fmaster"
+    alt="Latest NUT CI build status: master branch"/>
+</a>
+<!-- MacOS, maybe later Windows builds: -->
+<a href="https://app.circleci.com/pipelines/github/networkupstools">
+  <img style="border:0;height:20"
+    src="https://circleci.com/gh/networkupstools/nut/tree/master.svg?style=svg"
+    alt="Latest Circle CI build status: master branch"/>
+</a>
+<!-- Windows, maybe later MacOS builds: -->
+<a href="https://ci.appveyor.com/project/nut-travis/nut/build/artifacts">
+  <img style="border:0;height:20"
+    src="https://ci.appveyor.com/api/projects/status/vrhkatid9hr7lq7r/branch/master?svg=true&failingText=Windows-FAIL&passingText=Windows-OK&pendingText-Windows-PENDING"
+    alt="Latest AppVeyor build status (NUT for Windows iterations)"/>
+</a>
+<!--
+<a href="https://ci.networkupstools.org/job/nut/job/nut/job/fightwarn/">
+  <img style="border:0;height:20"
+    src="https://ci.networkupstools.org/buildStatus/icon?job=nut%2Fnut%2Ffightwarn&subject=Fightwarn%20Branch"
+    alt="Latest NUT CI build status: fightwarn branch"/>
+</a>
+-->
+<!--
+<a href="https://github.com/networkupstools/nut/releases">
+  <img style="border:0;height:20"
+    src="https://img.shields.io/github/v/release/networkupstools/nut"
+    alt="Latest GitHub drafted NUT source release"/>
+</a>
+-->
+<a href="https://github.com/networkupstools/nut/releases">
+  <img style="border:0;height:20"
+    src="https://img.shields.io/github/v/tag/networkupstools/nut?sort=semver"
+    alt="Latest Git-tagged NUT source release"/>
+</a>
+<!-- Maintainer note: for the counter below to work, a git tag
+     is not sufficient -- a release must be drafted and published
+     at https://github.com/networkupstools/nut/releases
+     Counter URL may also be .../latest/BRANCHNAME -->
+<a href="https://github.com/networkupstools/nut">
+  <img style="border:0;height:20"
+    src="https://img.shields.io/github/commits-since/networkupstools/nut/latest.svg"
+    alt="Commits on master branch since latest release on GitHub"/>
+</a>
+<!-- See also:
+ // https://web.archive.org/web/20200731075618/http://www.methods.co.nz/asciidoc/
+ // https://github.com/asciidoc-py/asciidoc-py
+ -->
+<a href="https://asciidoc.org/">
+  <img style="border:0;width:88px;height:31px"
+    src="../images/asciidoc.png"
+    alt="Powered by AsciiDoc"/>
+</a>
+<a href="https://validator.w3.org/check?uri=referer">
+  <img style="border:0;width:88px;height:31px"
+    src="https://www.w3.org/Icons/valid-xhtml11-blue"
+    alt="Valid XHTML 1.1"/>
+</a>
+<a href="https://jigsaw.w3.org/css-validator/check?uri=referer">
+  <img style="border:0;width:88px;height:31px"
+    src="https://jigsaw.w3.org/css-validator/images/vcss-blue"
+    alt="Valid CSS!"/>
+</a>
+<a href="https://www.gandi.net/">
+  <img style="border:0;height:38px;"
+       src="../images/gandi-ar21.svg"
+       alt="DNS, redirection and related services Hoster"/>
+</a>
+<!--
+// FH web site defunct since ~Apr 2024
+<a href="https://fosshost.org/">
+  <img style="border:0;width:112px;height:38px;"
+       src="../images/ci/fosshost.org_Host_Light_38px.png"
+       alt="Dedicated Hosting for NUT CI"/>
+</a>
+-->
+<a href="https://www.digitalocean.com/?refcode=d2fbf2b9e082&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge">
+  <img style="border:0;height:38px;"
+       src="https://opensource.nyc3.cdn.digitaloceanspaces.com/attribution/assets/PoweredByDO/DO_Powered_by_Badge_blue.svg"
+       alt="Dedicated Hosting for NUT CI"/>
+</a>
+</div>
+</div>
+</div>
+</div>
+<!-- Google Analytics integration -->
+<script type="text/javascript">
+
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-9664272-1']);
+        _gaq.push(['_trackPageview']);
+
+        (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+
+</script>
+</body>
+</html>

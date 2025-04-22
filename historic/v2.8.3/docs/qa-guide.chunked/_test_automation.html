@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>3. Test automation</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><link rel="home" href="index.html" title="NUT Quality Assurance and Build Automation Guide" /><link rel="up" href="index.html" title="NUT Quality Assurance and Build Automation Guide" /><link rel="prev" href="_code_and_recipe_analysis.html" title="2. Code and recipe analysis" /><link rel="next" href="_continuous_integration_nut_ci_farm_technologies.html" title="4. Continuous Integration (NUT CI farm) technologies" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="_code_and_recipe_analysis.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="_continuous_integration_nut_ci_farm_technologies.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_test_automation"></a>3. Test automation</h2></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="CI_BUILD_SH"></a>3.1. The ci_build.sh script</h3></div></div></div><p>This script was originally introduced (following ZeroMQ/ZProject example)
+to automate CI builds, by automating certain scenarios driven by exported
+environment variables to set particular <code class="literal">configure</code> options and <code class="literal">make</code>
+some targets (chosen by the <code class="literal">BUILD_TYPE</code> envvar). It can also be used
+locally to avoid much typing to re-run those scenarios during development.</p><p>Developers can directly use the scripts involved in CI builds to fix
+existing code on their workstations or to ensure support for new
+compilers and C standard revisions, e.g. save a local file like this
+to call the common script with pre-sets:</p><pre class="screen">$ cat _fightwarn-gcc10-gnu17.sh
+#!/bin/sh
+
+BUILD_TYPE=default-all-errors \
+CFLAGS="-Wall -Wextra -Werror -pedantic -std=gnu17" \
+CXXFLAGS="-Wall -Wextra -Werror -std=gnu++17" \
+CC=gcc-10 CXX=g++-10 \
+    ./ci_build.sh</pre><p>…and then execute it to prepare a workspace, after which you can go
+fixing bugs file-by-file running a <code class="literal">make</code> after each save to confirm
+your solutions and uncover the next issue to address :-)</p><p>Helpfully, the NUT CI farm build logs report the configuration used for
+each executed stage, so if some build combination fails — you can just
+scroll to the end of that section and copy-paste the way to reproduce
+an issue locally (on an OS similar to that build case).</p><p>Note that while spelling out sets of warnings can help in a quest to
+fix certain bugs during development (if only by removing noise from
+classes of warnings not relevant to the issue one is working on), there
+is a reasonable set of warnings which NUT codebase actively tries to
+be clean about (and checks in CI), detailed in the next section.</p><p>For the <code class="literal">ci_build.sh</code> usage like above, one can instead pass the setting
+via <code class="literal">BUILD_WARNOPT=...</code>, and require that all emitted warnings are fatal
+for their build, e.g.:</p><pre class="screen">$ cat _fightwarn-clang9-gnu11.sh
+#!/bin/sh
+
+BUILD_TYPE=default-all-errors \
+BUILD_WARNOPT=hard BUILD_WARNFATAL=yes \
+CFLAGS="-std=gnu11" \
+CXXFLAGS="-std=gnu++11" \
+CC=clang-9 CXX=clang++-9 CPP=clang-cpp \
+    ./ci_build.sh</pre><p>Finally, for refactoring effort geared particularly for fighting the
+warnings which exist in current codebase, the script contains some
+presets (which would evolve along with codebase quality improvements)
+as <code class="literal">BUILD_TYPE=fightwarn-gcc</code>, <code class="literal">BUILD_TYPE=fightwarn-clang</code> or plain
+<code class="literal">BUILD_TYPE=fightwarn</code>:</p><pre class="literallayout">:; BUILD_TYPE=fightwarn-clang ./ci_build.sh</pre><p>As a rule of thumb, new contributions must not emit any warnings when
+built in GNU99 mode with a <code class="literal">minimal</code> "difficulty" level of warnings.
+Technically they must survive the part of test matrix across the several
+platforms tested by NUT CI and marked in project settings as required
+to pass, to be accepted for a pull request merge.</p><p>Developers aiming to post successful pull requests to improve NUT can
+pass the <code class="literal">--enable-warnings</code> option to the <code class="literal">configure</code> script in local
+builds to see how that behaves and ensure that at least in some set-up
+their contribution is viable. Note that different compiler versions and
+vendors (gcc/clang/…), building against different OS and third-party
+dependencies, with different CPU architectures and different language
+specification revisions, might all complain about different issues — and catching this in as diverse range of set-ups as possible is why we
+have CI tests.</p><p>It can be beneficial for serial developers to set up a local BuildBot,
+Travis or a Jenkins instance with a matrix test job, to test their local
+git repository branches with whatever systems they have available.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<a class="ulink" href="https://github.com/networkupstools/nut/issues/823" target="_top">https://github.com/networkupstools/nut/issues/823</a>
+</li></ul></div><p>While <code class="literal">autoconf</code> tries its best to provide portable shell code, sometimes
+there are builds of system shell that just fail under stress. If you are
+seeing random failures of <code class="literal">./configure</code> script in different spots with
+the same inputs, try telling <code class="literal">./ci_build.sh</code> to loop configuring until
+success (instead of quickly failing), and/or tell <code class="literal">./configure</code> to use
+another shell at least for the system call-outs, with options like these:</p><pre class="literallayout">:; SHELL=/bin/bash CONFIG_SHELL=/bin/bash CI_SHELL_IS_FLAKY=true \
+   ./ci_build.sh</pre></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_test_programs_in_nut_codebase"></a>3.2. Test programs in NUT codebase</h3></div></div></div><p><a id="CI_NUT_SELFTESTS"></a>FIXME: Write the chapter text.</p><p>For now, investigate files in the <code class="literal">tests/</code> directory contents in NUT sources.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="NIT"></a>3.3. NUT Integration Testing suite (aka NIT)</h3></div></div></div><p>This suite aims to simplify running <code class="literal">upsd</code>, a <code class="literal">dummy-ups</code> driver and
+a few clients to query them, as part of regular <code class="literal">make check</code> routine
+or separately with existing binaries (should not impact any existing
+installation data, processes or communications).</p><div class="warning" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Warning</h3><p>Current working directory when starting the script should be
+the location where it may create temporary data (e.g. the <code class="literal">BUILDDIR</code>).</p></div><p>See also
+<a class="ulink" href="https://git.launchpad.net/ubuntu/+source/nut/tree/debian/tests/test-nut.py" target="_top">The NUT testing script</a>
+available in the
+<a class="ulink" href="https://code.edge.launchpad.net/qa-regression-testing" target="_top">Ubuntu QA Regression Testing suite</a>
+and <a class="ulink" href="https://salsa.debian.org/debian/nut/-/tree/debian/debian/tests" target="_top">Debian packaging recipe</a>
+doing a similar job with NUT installed from packages and configuring
+it via files in standard path names.</p><p>A sandbox prepared by this script can be used for <code class="literal">upsmon</code> testing:</p><pre class="screen">:; make check-NIT-sandbox-devel &amp;
+
+# Wait for sandbox, e.g. test that "${NUT_CONFPATH}/NIT.env-sandbox-ready"
+# file appeared; then source the envvars, e.g.:
+:; sleep 5 ; while ! [ -e ./tests/NIT/tmp/etc/NIT.env-sandbox-ready ] ; do sleep 1 ; done
+:; . ./tests/NIT/tmp/etc/NIT.env
+
+# Prepare upsmon.conf there, e.g.:
+:; printf 'MINSUPPLIES 1\nPOWERDOWNFLAG "%s/killpower"\nSHUTDOWNCMD "date &gt;&gt; \"%s/nut-shutdown.log\""\nMONITOR "%s@127.0.0.1:%s" 1 "%s" "%s" primary\n' \
+    "$NUT_STATEPATH" "$NUT_STATEPATH" 'dummy' "$NUT_PORT" \
+    'dummy-admin' "${TESTPASS_UPSMON_PRIMARY}" \
+    &gt; "${NUT_CONFPATH}/upsmon.conf"</pre><p>The <code class="literal">nit.sh</code> script supports a lot of environment variables to tune its
+behavior, notably <code class="literal">NIT_CASE</code>, <code class="literal">NUT_PORT</code>, <code class="literal">NUT_STATEPATH</code> and <code class="literal">NUT_CONFPATH</code>,
+but also many more. See its sources, as well as the top-level <code class="literal">Makefile.am</code>
+recipe and the <code class="literal">./tests/NIT/tmp/etc/NIT.env</code> file generated during a test run,
+for more details and examples about the currently supported tunables.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
+		Last updated 2025-04-22 10:20:44 -- Network UPS Tools 2.8.3</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_code_and_recipe_analysis.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="_continuous_integration_nut_ci_farm_technologies.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

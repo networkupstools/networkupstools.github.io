@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>I.3. Changes from 2.8.0 to 2.8.1</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><link rel="home" href="index.html" title="Network UPS Tools User Manual" /><link rel="up" href="Upgrading_notes.html" title="I. Upgrading notes" /><link rel="prev" href="_changes_from_2_8_1_to_2_8_2.html" title="I.2. Changes from 2.8.1 to 2.8.2" /><link rel="next" href="_changes_from_2_7_4_to_2_8_0.html" title="I.4. Changes from 2.7.4 to 2.8.0" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="_changes_from_2_8_1_to_2_8_2.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="_changes_from_2_7_4_to_2_8_0.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_8_0_to_2_8_1"></a>I.3. Changes from 2.8.0 to 2.8.1</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+NUT documentation recipes were revised, so many of the text source files
+  were renamed to <code class="literal">*.adoc</code> pattern. Newly, a <code class="literal">release-notes.pdf</code> and HTML
+  equivalents are generated. Packages which deliver documentation may need
+  to update the lists of files to ship. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1953" target="_top">#1953</a>] Developers may be impacted
+  by new <code class="literal">configure --enable-spellcheck</code> toggle (should add spelling checks
+  to <code class="literal">make check</code> by default, if tools are available) to facilitate quicker
+  acceptance of contributions. Packaging systems may now want to explicitly
+  disable it, if it blocks package building (pull requests to update the
+  <code class="literal">docs/nut.dict</code> are a better and welcome solution). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2067" target="_top">#2067</a>]
+</li><li class="listitem"><p class="simpara">
+Several improvements regarding simultaneous support of USB devices that
+  were previously deemed "identical" and so NUT driver instances did not
+  start for all of them:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Some more drivers should now use the common USB device matching logic
+    and the 7 <code class="literal">ups.conf</code> options for that [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1763" target="_top">#1763</a>], and man pages were
+    updated to reflect that [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1766" target="_top">#1766</a>];
+</li><li class="listitem">
+The <code class="literal">nut-scanner</code> tool should suggest these options in its generated
+    device configuration [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1790" target="_top">#1790</a>]: hopefully these would now suffice for
+    sufficiently unique combinations;
+</li><li class="listitem">
+The <code class="literal">nut-scanner</code> tool should also suggest sanity-check violations
+    as comments in its generated device configuration [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1810" target="_top">#1810</a>], e.g. bogus
+    or duplicate serial number values;
+</li><li class="listitem">
+The common USB matching logic was updated with an <code class="literal">allow_duplicates</code>
+    flag (caveat emptor!) which may help monitor several related no-name
+    devices on systems that do not discern "bus" and "device" values
+    (although without knowing reliably which one is which… sometimes it
+    is better than nothing) [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1756" target="_top">#1756</a>].
+</li></ul></div></li><li class="listitem">
+Work on NUT for Windows branch led to situation-specific definitions of
+  what in POSIX code was all "file descriptors" (an <code class="literal">int</code> type). Now such
+  entities are named <code class="literal">TYPE_FD</code>, <code class="literal">TYPE_FD_SER</code> or <code class="literal">TYPE_FD_SOCK</code> with some
+  helper macros to name and determine "invalid" values (closed file, etc.)
+  Some of these changes happened in NUT header files, and at this time it
+  was not investigated whether the set of files delivered for third-party
+  code integration (e.g. C/C++ projects binding with <code class="literal">libnutclient</code> or
+  `libupsclient) is consistent or requires additional definitions/files.
+  If something gets broken by this, it is a bug to address in future [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1556" target="_top">#1556</a>]
+</li><li class="listitem"><p class="simpara">
+Further revision of public headers delivered by NUT was done, particularly
+  to address lack of common data types (<code class="literal">size_t</code>, <code class="literal">ssize_t</code>, <code class="literal">uint16_t</code>,
+  <code class="literal">time_t</code> etc.) in third-party client code that earlier sufficed to only
+  include NUT headers. Sort of regression by NUT 2.8.0 (note those consumers
+  still have to re-declare some numeric variable types used) [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1638" target="_top">#1638</a>]
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+For practical example of NUT consumer adaptation (to cater to both old and
+    new API types) please see <a class="ulink" href="https://github.com/collectd/collectd/pull/4043" target="_top">https://github.com/collectd/collectd/pull/4043</a>
+</li></ul></div></li><li class="listitem">
+Added support for <code class="literal">make install</code> of PyNUT module and NUT-Monitor desktop
+  application — such activity was earlier done by packages directly; now
+  the packaging recipes may use NUT source-code facilities and package just
+  symlinks as relevant for each distro separately [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1462" target="_top">#1462</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1504" target="_top">#1504</a>]
+</li><li class="listitem">
+The <code class="literal">upsd.conf</code> listing of <code class="literal">LISTEN</code> addresses was previously inverted
+  (the last listed address was applied first), which was counter-intuitive
+  and fixed for this release. If user configurations somehow relied on this
+  order (e.g. to prioritize IPv6 vs. IPv4 listeners), configuration changes
+  may be needed. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2012" target="_top">#2012</a>]
+</li><li class="listitem">
+The <code class="literal">upsd</code> configured to listen on IPv6 addresses should handle only
+  IPv6 (and not IPv4-mappings like it might have done before) to avoid
+  surprises and insecurity — if user configurations somehow relied on
+  this dual support, configuration changes may be needed to specify both
+  desired IP addresses. Note that the daemon logs will now warn if a
+  host name resolves to several addresses (and will only listen on the
+  first hit, as it did before in such cases). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2012" target="_top">#2012</a>]
+</li><li class="listitem">
+A definitive behavior for <code class="literal">LISTEN *</code> directives became specified, to try
+  handling both IPv4 and IPv6 "any" address (subject to <code class="literal">upsd</code> CLI options
+  to only choose one, and to OS abilities). This use-case may be practically
+  implemented as a single IPv6 socket on systems with enabled and required
+  IPv4-mapped IPv6 address support, or as two separate listening sockets -
+  logged messages to this effect (e.g. inability to listen on IPv4 after
+  opening IPv6) are expected on some platforms. End-users may also want to
+  reconfigure their <code class="literal">upsd.conf</code> files to remove some now-redundant <code class="literal">LISTEN</code>
+  lines. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2012" target="_top">#2012</a>]
+</li><li class="listitem">
+Added support for <code class="literal">make sockdebug</code> for easier developer access to the tool;
+  also if <code class="literal">configure --with-dev</code> is in effect, it would now be installed to
+  the configured <code class="literal">libexec</code> location. A man page was also added. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1936" target="_top">#1936</a>]
+</li><li class="listitem">
+NUT software-only drivers (dummy-ups, clone, clone-outlet) separated from
+  serial drivers in respective Makefile and configure script options - this
+  may impact packaging decisions on some distributions going forward [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1446" target="_top">#1446</a>]
+</li><li class="listitem">
+GPIO category of drivers was added (<code class="literal">--with-gpio</code> configure script option) -
+  this may impact packaging decisions on some (currently Linux released 2018+)
+  distributions going forward [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1855" target="_top">#1855</a>]
+</li><li class="listitem">
+An explicit <code class="literal">configure --with-nut-scanner</code> toggle was added, specifically
+  so that build environments requesting <code class="literal">--with-all</code> but lacking <code class="literal">libltdl</code>
+  would abort and require the packager either to install the dependency
+  or explicitly forfeit building the tool (some distro packages missed it
+  quietly in the past) [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1560" target="_top">#1560</a>]
+</li><li class="listitem">
+An <code class="literal">upsdebugx_report_search_paths()</code> method in NUT common code was added,
+  and exposed in <code class="literal">libnutscan.so</code> builds in particular - API version for the
+  public library was bumped [<a class="ulink" href="https://github.com/networkupstools/nut/issues/317" target="_top">#317</a>]
+</li><li class="listitem"><p class="simpara">
+Some environment variable support was added to NUT programs, primarily
+  aimed at wrappers such as init scripts and service unit definitions,
+  allowing to tweak what (and whether) they write into debug traces, and
+  so "make noise" or "bring invaluable insights" to logs or terminal:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+A <code class="literal">NUT_DEBUG_LEVEL=NUM</code> envvar allows to temporarily boost debugging
+    of many daemons (<code class="literal">upsd</code>, <code class="literal">upsmon</code>, drivers, <code class="literal">upsdrvctl</code>, <code class="literal">upssched</code>)
+    without changes to configuration files or scripted command lines. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1915" target="_top">#1915</a>]
+</li><li class="listitem">
+A <code class="literal">NUT_DEBUG_PID</code> envvar (presence) support was added to add current
+    process ID to tags with debug-level identifiers. This may be useful
+    when many NUT daemons write to the same console or log file, such as
+    in containers/plugins for Home Assistant, storage appliances, etc. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2118" target="_top">#2118</a>]
+</li><li class="listitem">
+A <code class="literal">NUT_QUIET_INIT_SSL</code> envvar (presence or "true" value) prevents
+    <code class="literal">libupsclient</code> consumers (notoriously <code class="literal">upsc</code>) from reporting whether
+    they have initialized SSL support. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1662" target="_top">#1662</a>]
+</li><li class="listitem">
+A <code class="literal">NUT_QUIET_INIT_UPSNOTIFY</code> envvar (presence or "true" value)
+    prevents daemons which can notify service management frameworks (such
+    as systemd) about passing their lifecycle milestones, to not report
+    loudly if they could not do so (e.g. running on a system without a
+    framework, or misconfigured so they could not report and the OS would
+    restart the false-positively "unresponsive" service). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2136" target="_top">#2136</a>]
+</li></ul></div></li><li class="listitem">
+<code class="literal">configure</code> script, reference init-script and packaging templates updated
+  to eradicate <code class="literal">@PIDPATH@/nut</code> ambiguity in favor of <code class="literal">@ALTPIDPATH@</code> for the
+  unprivileged processes vs. <code class="literal">@PIDPATH@</code> for those running as root [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1719" target="_top">#1719</a>]
+</li><li class="listitem">
+The "layman report" of NUT configuration options displayed after the run
+  of <code class="literal">configure</code> script can now be retained and installed by using the
+  <code class="literal">--enable-keep_nut_report_feature</code> option; packagers are welcome to make
+  use of this, to better keep track of their deliveries [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1826" target="_top">#1826</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1708" target="_top">#1708</a>]
+</li><li class="listitem"><p class="simpara">
+Renamed generated nut-common.tmpfiles(.in) ⇒ nut-common-tmpfiles.conf(.in)
+  to install a /usr/lib/systemd-tmpfiles/*.conf pattern [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1755" target="_top">#1755</a>]
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+If earlier NUT v2.8.0 package recipes for your Linux distribution dealt
+    with this file, you may have to adjust its name for newer releases.
+</li><li class="listitem">
+Several other issues have been fixed related to this file and its content,
+    including <a class="ulink" href="https://github.com/networkupstools/nut/issues/1030" target="_top">#1030</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1037" target="_top">#1037</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1117" target="_top">#1117</a> and <a class="ulink" href="https://github.com/networkupstools/nut/issues/1712" target="_top">#1712</a>
+</li></ul></div></li><li class="listitem">
+Extended Linux systemd support with optional notifications about daemon
+  state (READY, RELOADING, STOPPING) and watchdog keep-alive messages.
+  Note that <code class="literal">WatchdogSec=</code> values are currently NOT pre-set into systemd
+  unit file templates provided by NUT, this is an exercise for end-users
+  based on sizing of their deployments and performance of monitoring station
+  [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1590" target="_top">#1590</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1777" target="_top">#1777</a>]
+</li><li class="listitem">
+snmp-ups: some subdrivers (addressed using the driver parameter <code class="literal">mibs</code>)
+  were renamed: <code class="literal">pw</code> is now <code class="literal">eaton_pw_nm2</code>, and <code class="literal">pxgx_ups</code> is <code class="literal">eaton_pxg_ups</code>
+  [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1715" target="_top">#1715</a>]
+</li><li class="listitem">
+The <code class="literal">tools/gitlog2changelog.py.in</code> script was revised, in particular to
+  generate the <code class="literal">ChangeLog</code> file more consistently with different versions
+  of Python interpreter, and without breaking the long file paths in the
+  resulting mark-up text. Due to this, a copy of this file distributed with
+  NUT release archives is expected to considerably differ on first glance
+  from its earlier released versions (not just adding lines for the new
+  release, but changing lines in the older releases too) [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1945" target="_top">#1945</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1955" target="_top">#1955</a>]
+</li></ul></div></div><div xmlns="" class="navfooter nut_footer"><hr />
+		Last updated 2025-04-22 10:20:26 -- Network UPS Tools 2.8.3</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_changes_from_2_8_1_to_2_8_2.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="Upgrading_notes.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="_changes_from_2_7_4_to_2_8_0.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

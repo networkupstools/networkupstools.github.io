@@ -1,0 +1,966 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>5. Continuous Integration (NUT CI farm) build agent preparation</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><link rel="home" href="index.html" title="NUT Quality Assurance and Build Automation Guide" /><link rel="up" href="index.html" title="NUT Quality Assurance and Build Automation Guide" /><link rel="prev" href="_continuous_integration_nut_ci_farm_technologies.html" title="4. Continuous Integration (NUT CI farm) technologies" /><link rel="next" href="_prerequisites_for_building_nut_on_different_oses.html" title="6. Prerequisites for building NUT on different OSes" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="_continuous_integration_nut_ci_farm_technologies.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="_prerequisites_for_building_nut_on_different_oses.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_continuous_integration_nut_ci_farm_build_agent_preparation"></a>5. Continuous Integration (NUT CI farm) build agent preparation</h2></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="NUTCI_farm_agents"></a>5.1. Custom NUT CI farm build agents: VMs on DigitalOcean</h3></div></div></div><p><a id="CI_VM_DigitalOcean"></a>This section details Installation of VMs on Digital Ocean.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_setting_up_the_non_standard_vm_farm_for_nut_ci_on_digitalocean"></a>5.2. Setting up the non-standard VM farm for NUT CI on DigitalOcean</h3></div></div></div><p>Since 2023 the Network UPS Tools project employs virtual machines,
+hosted and courteously sponsored as part of FOSS support program by
+<a class="ulink" href="https://www.digitalocean.com/?refcode=d2fbf2b9e082&amp;utm_campaign=Referral_Invite&amp;utm_medium=Referral_Program&amp;utm_source=badge" target="_top">DigitalOcean</a>,
+for a significant part of the NUT CI farm based on a custom
+<a class="ulink" href="https://www.jenkins.io/" target="_top">Jenkins</a> setup.</p><p>Use of complete machines, virtual or not, in the NUT CI farm allows our
+compatibility and non-regression testing to be truly multi-platform,
+spanning various operating system technologies and even (sometimes
+emulated) CPU architectures.</p><p>To that extent, while it is easy to deploy common OS images and manage the
+resulting VMs, there are only so many images and platforms that are officially
+supported by the hosting as general-purpose "DigitalOcean VPS Droplets", and
+work with other operating systems is not easy. But not impossible, either.</p><p>In particular, while there is half a dozen Linux distributions offered out
+of the box, official FreeBSD support was present earlier but abandoned shortly
+before NUT CI farm migration from the defunct Fosshost.org considered this
+hosting option.</p><p>Still, there were community reports of various platforms including *BSD and
+illumos working in practice (sometimes with caveats), which just needed some
+special tinkering to run and to manage.  This chapter details how the NUT CI
+farm VMs were set up on DigitalOcean.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_design_trade_offs"></a>Design trade-offs</h4></div></div></div><p>Note that some design choices were made because equivalent machines existed
+earlier on Fosshost.org hosting, and filesystem content copies or ZFS snapshot
+transfers were the least disruptive approach (using ZFS wherever possible also
+allows to keep the history of system changes as snapshots, easily replicated
+to offline storage).</p><p>It is further important to note that DigitalOcean VMs in recovery mode
+apparently must use the one ISO image provided by DigitalOcean.  At the
+time of this writing it was based on Ubuntu 18.04 LTS with ZFS support — so
+the ZFS pools and datasets on VMs that use them should be created <span class="strong"><strong>AND</strong></span>
+kept with options supported by that version of the filesystem implementation.</p><p>Another note regards pricing: resources that "exist" are billed, whether they
+run or not (e.g. turned-off VMs still reserve CPU/RAM to be able to run on
+demand, dormant storage for custom images is used even if they are not active
+filesystems, etc.)</p><p>As of this writing, the hourly prices are applied for resources spawned and
+destroyed within a calendar  month. After a monthly-rate total price for the
+item is reached, that is applied instead.</p><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_os_images"></a>OS images</h5></div></div></div><p>Some links will be in OS-specific chapters below; further reading for this
+effort included:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<a class="ulink" href="https://www.digitalocean.com/blog/custom-images" target="_top">https://www.digitalocean.com/blog/custom-images</a>
+</li><li class="listitem">
+<a class="ulink" href="https://ptribble.blogspot.com/2021/04/running-tribblix-on-digital-ocean.html" target="_top">https://ptribble.blogspot.com/2021/04/running-tribblix-on-digital-ocean.html</a>
+  — notes on custom image creation, may involve
+  <a class="ulink" href="https://github.com/illumos/metadata-agent" target="_top">https://github.com/illumos/metadata-agent</a>
+</li><li class="listitem">
+<a class="ulink" href="https://bsd-cloud-image.org/" target="_top">https://bsd-cloud-image.org/</a> — A collection of pre-built *BSD
+  cloud images
+</li></ul></div><p>According to the fine print in the scary official docs, DigitalOcean VMs
+can only use "custom images" in one of a number of virtual HDD formats,
+which should carry an ext3/ext4 filesystem for DigitalOcean addons to
+barge into for management.</p><p>In practice, uploading other images (OpenIndiana Hipster "cloud" image,
+OmniOS, FreeBSD) from your workstation or by providing an URL to an image
+file on the Internet (see links in this document for some collections)
+sort of works.  While the upload status remained "pending", a VM could
+often be made with it soon… but in other cases you have to wait a
+surprisingly long time, some 15-20 minutes, and additional images
+suddenly become "Uploaded".</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+The initial theory was that we exceeded some limit and after ending the
+  setups with one custom image, it can be nuked and then another used in
+  its place; in practice this seems to be not true — just the storage
+  information refresh (perhaps propagation from cache to committed) can lag.
+</li><li class="listitem">
+Note that your budget would be invoiced for storage of custom images too.
+  If you use stock ISOs once, it makes sense to remove them later.
+</li><li class="listitem">
+There is also an option to use pre-installed operating systems, so you
+  can dynamically create and destroy VMs with minimal work after creation
+  (e.g. with Jenkins cloud plugins to spawn workers according to labels);
+  in this case you may want to retain (eventually update) the golden image.
+</li><li class="listitem">
+It may be that not <span class="strong"><strong>all</strong></span> non-standard images are supported, but those with
+  <code class="literal">cloud-init</code> or similar tools (see
+  <a class="ulink" href="https://www.digitalocean.com/blog/custom-images" target="_top">https://www.digitalocean.com/blog/custom-images</a> for details).
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_networking"></a>Networking</h5></div></div></div><p>FIXME: Private net, DO-given IPs</p><p>One limitation seen with "custom images" is that IPv6 is not offered
+to those VMs.</p><p>Generally all VMs get random (hopefully persistent) public IPv4 addresses
+from various subnets. It is possible to also request an interconnect VLAN
+for one project’s VMs co-located in same data center and have it attached
+(with virtual IP addresses) to an additional network interface on each of
+your VMs: it is supposed to be faster and free (regarding traffic quotas).</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+For the Jenkins controller which talks to the world (and enjoys an
+  off-hosting backup at a maintainer’s home server) having substantial
+  monthly traffic quota is important.
+</li><li class="listitem">
+For the set of builders hosted on DigitalOcean, which would primarily
+  talk to the controller in the common VLAN — not so much (just OS
+  upgrades? maybe GitHub?)
+</li></ul></div><p>One more potential caveat: while DigitalOcean provides VPC network segments
+for free inter-communications of a group of droplets, it assigns IP addresses
+to those and does not let any others be used by the guest.  This causes some
+hassle when importing a set of VMs which used different IP addresses on their
+inter-communications VLAN originally (on another hosting).</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_common_notes_for_illumos_vms"></a>Common notes for illumos VMs</h5></div></div></div><p>The original OpenIndiana Hipster and OmniOS VMs were configured with the
+<a class="ulink" href="https://github.com/jimklimov/illumos-splitroot-scripts" target="_top">https://github.com/jimklimov/illumos-splitroot-scripts</a> methodology and
+scripting, so there are quite a few datasets dedicated to their purposes
+instead of a large one.</p><p>There are known issues about VM reboot:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Per <a class="ulink" href="https://www.illumos.org/issues/14526" target="_top">https://www.illumos.org/issues/14526</a> and personal and community
+  practice, it seems that "slow reboot" for illumos VMs on QEMU-6.x
+  (and on DigitalOcean) misbehaves and hangs, ultimately the virtual
+  hardware is not power-cycled.
+</li><li class="listitem">
+A power-off/on cycle through UI (and probably REST API) does work.
+</li><li class="listitem">
+It took about 2 hours for <code class="literal">rebooting...</code> to take place in fact.
+  At least, the machine would not be stuck for eternity in case of
+  unattended crashes.
+</li><li class="listitem">
+Other kernels (Linux, BSD, …) are not impacted by this, it seems.
+</li></ul></div><p>Wondering if there are QEMU HW watchdogs on DigitalOcean that we could use…</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_using_the_digitalocean_recovery_iso"></a>Using the DigitalOcean Recovery ISO</h4></div></div></div><p>As noted above, for installation and subsequent management DigitalOcean’s
+recovery ISO must be used when booting the VM, which is based on Ubuntu and
+includes ZFS support.  It was used a lot both initially and over the years,
+so deserves a dedicated chapter.</p><p>To boot into the recovery environment, you should power off the VM (see the
+Power left-menu item in DigitalOcean web dashboard, and "Turn off Droplet"),
+then go into the Recovery menu and select "Boot from Recovery ISO" and power
+on the Droplet.  When you are finished with recovery mode operations, repeat
+this routine but select "Boot from Hard Drive" instead.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>Sometimes you might be able to change the boot device in advance
+(it takes time to apply the setting change) and power-cycle the VM later.</p></div><p>The recovery live image allows to install APT packages, such as <code class="literal">mc</code> (file
+manager and editor) and <code class="literal">mbuffer</code> (to optimize <code class="literal">zfs-send</code>/<code class="literal">zfs-recv</code> traffic).
+When the image boots, it offers a menu which walks through adding SSH public
+keys (can import ones from e.g. GitHub by username).</p><p>Note that if your client system uses <code class="literal">screen</code>, <code class="literal">tmux</code> or <code class="literal">byobu</code>, the new SSH
+connections would get the menu again. To get a shell right away, interactive
+or for scripting like <code class="literal">rsync</code> and <code class="literal">zfs recv</code> counterparts, you should
+<code class="literal">export TERM=vt220</code> from your <code class="literal">screen</code> session (the latter proved useful
+in any case for independence of the long replication run from connectivity
+of my laptop to Fosshost/DigitalOcean VMs).</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
+SSH keys can be imported with a <code class="literal">ssh-import-id-gh</code> helper script provided
+in the image:
+</p><pre class="screen">#recovery# ssh-import-id-gh jimklimov
+2023-12-10 21:32:18,069 INFO Already authorized ['2048',
+    'SHA256:Q/ouGDQn0HUZKVEIkHnC3c+POG1r03EVeRr81yP/TEoQ',
+    'jimklimov@github/10826393', '[RSA]']
+...</pre></li><li class="listitem">
+More can be pasted into <code class="literal">~/.ssh/authorized_keys</code> later;
+</li><li class="listitem">
+The real SSH session is better than the (VNC-based web-wrapped) Rescue
+  Console, which is much less responsive and also lacks mouse and copy-paste
+  integration with your browser;
+</li><li class="listitem"><p class="simpara">
+On your SSH client side (e.g. in the <code class="literal">screen</code> session on original VM which
+  would send a lot of data), you can add non-default (e.g. one-time) keys of
+  the SSH server of the recovery environment with:
+</p><pre class="screen">#origin# eval `ssh-agent`
+#origin# ssh-add ~/.ssh/id_rsa_custom_key</pre></li></ul></div><p>Make the recovery userland convenient:</p><pre class="screen">#recovery# apt install mc mbuffer</pre><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<code class="literal">mc</code>, <code class="literal">mcview</code> and <code class="literal">mcedit</code> are just very convenient to manage systems
+  and to manipulate files;
+</li><li class="listitem"><p class="simpara">
+ZFS send/receive traffic is quite bursty, with long quiet times as it
+  investigates the source or target pools respectively, and busy streaming
+  times with data.
+</p><p class="simpara">Using an <code class="literal">mbuffer</code> on at least one side (ideally both to smooth out network
+  latency) is recommended to have something useful happen when at least one
+  of the sides has the bulk data streaming phase.</p></li></ul></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_openindiana"></a>OpenIndiana</h4></div></div></div><p>Helpful links for this part of the quest:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<a class="ulink" href="https://openindiana.org/downloads/" target="_top">https://openindiana.org/downloads/</a> ⇒ see
+  <a class="ulink" href="https://dlc.openindiana.org/isos/hipster/20231027/OI-hipster-cloudimage.img.gz" target="_top">https://dlc.openindiana.org/isos/hipster/20231027/OI-hipster-cloudimage.img.gz</a>
+  — OI distro-provided cloud images (detailed at
+  <a class="ulink" href="https://www.openindiana.org/announcements/openindiana-hipster-2023-04-announcement/" target="_top">https://www.openindiana.org/announcements/openindiana-hipster-2023-04-announcement/</a>
+  release notes, though not at later ones)
+</li></ul></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_do_nut_ci_oi_vm_creation"></a>DO-NUT-CI-OI VM creation</h5></div></div></div><p>Initial attempt, using the OpenIndiana cloud image ISO:</p><p>The OI image could be loaded… but that’s it — the logo is visible on the
+DigitalOcean Recovery Console, as well as some early boot-loader lines ending
+with a list of supported consoles.  I assume it went into the <code class="literal">ttya</code> (serial)
+console as one is present in the hardware list, but DigitalOcean UI does not
+make it accessible and I did not find quickly if there are any REST API or SSH
+tunnel into serial ports.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>The web console did not come up quickly enough after a VM (re-)boot
+for any interaction with the early seconds of ISO image loader’s uptime,
+if it even offers any.</p></div><p>It <span class="strong"><strong>probably</strong></span> booted and auto-installed, since I could see an <code class="literal">rpool/swap</code>
+twice the size of VM RAM later on, and the <code class="literal">rpool</code> occupied the whole VM disk
+(created with auto-sizing).</p><p>The VM can however be rebooted with a (DO-provided) Recovery ISO, based
+at that time on Ubuntu 18.04 LTS with ZFS support — which was sufficient
+to send over the existing VM contents from original OI VM on Fosshost.
+See above about booting and preparing that environment.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_do_nut_ci_oi_vm_os_transfer"></a>DO-NUT-CI-OI VM OS transfer</h5></div></div></div><p>As the practically useful VM already existed at Fosshost.org, and a quick shot
+failed at making a new one from scratch, in order to only transfer local zones
+(containers), a decision was made to transfer the whole ZFS pool via snapshots
+using the Recovery ISO.</p><p>First, following up from the first experiment above: I can import the ZFS pool
+created by cloud-OI image into the Linux Recovery CD session:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
+Check known pools:
+</p><pre class="screen">#recovery# zpool import
+   pool: rpool
+       id: 7186602345686254327
+  state: ONLINE
+ status: The pool was last accessed by another system.
+ action: The pool can be imported using its name or numeric identifier and the `-f' flag.
+     see: http://zfsonlinux.org/msg/ZFS-8000-EY
+ config:
+        rpool ONLINE
+           vda ONLINE</pre></li><li class="listitem"><p class="simpara">
+Import without mounting (<code class="literal">-N</code>), using an alternate root if we decide to
+  mount something later (<code class="literal">-R /a</code>), and ignoring possible markers that the
+  pool was not unmounted so might be used by another storage user (<code class="literal">-f</code>):
+</p><pre class="screen">#recovery# zpool import -R /a -N -f rpool</pre></li><li class="listitem"><p class="simpara">
+List what we see here:
+</p><pre class="screen">#recovery# zfs list
+NAME                  USED  AVAIL  REFER  MOUNTPOINT
+rpool                34.1G   276G   204K  /rpool
+rpool/ROOT           1.13G   276G   184K  legacy
+rpool/ROOT/c936500e  1.13G   276G  1.13G  legacy
+rpool/export          384K   276G   200K  /export
+rpool/export/home     184K   276G   184K  /export/home
+rpool/swap           33.0G   309G   104K  -</pre></li></ul></div><p>The import and subsequent inspection above showed that the kernel core-dump
+area was missing, compared to the original VM… so adding per best practice:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
+Check settings wanted by the installed machine for the <code class="literal">rpool/dump</code> dataset:
+</p><pre class="screen">#origin# zfs get -s local all rpool/dump
+NAME        PROPERTY                        VALUE                           SOURCE
+rpool/dump  volsize                         1.46G                           local
+rpool/dump  checksum                        off                             local
+rpool/dump  compression                     off                             local
+rpool/dump  refreservation                  none                            local
+rpool/dump  dedup                           off                             local</pre></li><li class="listitem"><p class="simpara">
+Apply to the new VM:
+</p><pre class="screen">#recovery# zfs create -V 2G -o checksum=off -o compression=off \
+    -o refreservation=none -o dedup=off rpool/dump</pre></li></ul></div><p>To receive ZFS streams from the running OI into the freshly prepared cloud-OI
+image, it wanted the ZFS features to be enabled (all were disabled by default)
+since some are used in the replication stream:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
+Check what is there initially (on the new VM):
+</p><pre class="screen">#recovery# zpool get all
+NAME   PROPERTY                       VALUE                          SOURCE
+rpool  size                           320G                           -
+rpool  capacity                       0%                             -
+rpool  altroot                        -                              default
+rpool  health                         ONLINE                         -
+rpool  guid                           7186602345686254327            -
+rpool  version                        -                              default
+rpool  bootfs                         rpool/ROOT/c936500e            local
+rpool  delegation                     on                             default
+rpool  autoreplace                    off                            default
+rpool  cachefile                      -                              default
+rpool  failmode                       wait                           default
+rpool  listsnapshots                  off                            default
+rpool  autoexpand                     off                            default
+rpool  dedupditto                     0                              default
+rpool  dedupratio                     1.00x                          -
+rpool  free                           318G                           -
+rpool  allocated                      1.13G                          -
+rpool  readonly                       off                            -
+rpool  ashift                         12                             local
+rpool  comment                        -                              default
+rpool  expandsize                     -                              -
+rpool  freeing                        0                              -
+rpool  fragmentation                  -                              -
+rpool  leaked                         0                              -
+rpool  multihost                      off                            default
+rpool  feature@async_destroy          disabled                       local
+rpool  feature@empty_bpobj            disabled                       local
+rpool  feature@lz4_compress           disabled                       local
+rpool  feature@multi_vdev_crash_dump  disabled                       local
+rpool  feature@spacemap_histogram     disabled                       local
+rpool  feature@enabled_txg            disabled                       local
+rpool  feature@hole_birth             disabled                       local
+rpool  feature@extensible_dataset     disabled                       local
+rpool  feature@embedded_data          disabled                       local
+rpool  feature@bookmarks              disabled                       local
+rpool  feature@filesystem_limits      disabled                       local
+rpool  feature@large_blocks           disabled                       local
+rpool  feature@large_dnode            disabled                       local
+rpool  feature@sha512                 disabled                       local
+rpool  feature@skein                  disabled                       local
+rpool  feature@edonr                  disabled                       local
+rpool  feature@userobj_accounting     disabled                       local</pre></li><li class="listitem"><p class="simpara">
+Enable all features this pool knows about (list depends on both ZFS module
+  versions which created the pool and which are running now):
+</p><pre class="screen">#recovery# zpool get all | grep feature@ | awk '{print $2}' | \
+    while read F ; do zpool set $F=enabled rpool ; done</pre></li></ul></div><p>On the original VM, stop any automatic snapshot services like
+<a class="ulink" href="https://www.znapzend.org" target="_top">ZnapZend</a> or <code class="literal">zfs-auto-snapshot</code>, and manually
+snapshot all datasets recursively so that whole data trees can be easily sent
+over (note that we then remove some snaps like for <code class="literal">swap</code>/<code class="literal">dump</code> areas which
+otherwise waste a lot of space over time with blocks of obsolete swap data
+held by the pool for possible dataset rollback):</p><pre class="screen">#origin# zfs snapshot -r rpool@20231210-01
+#origin# zfs destroy rpool/swap@20231210-01&amp;
+#origin# zfs destroy rpool/dump@20231210-01&amp;</pre><p>On the receiving VM, move existing cloudy <code class="literal">rpool/ROOT</code> out of the way, if we
+would not use it anyway, so the new one from the original VM can land (for
+kicks, we can <code class="literal">zfs rename</code> the cloud-image’s boot environment back into the
+fold after replication is complete).  Also prepare to maximally compress the
+received root filesystem data, so it does not occupy too much in the new home
+(this is not something we write too often, so slower <code class="literal">gzip-9</code> writes can be
+tolerated):</p><pre class="screen">#recovery# zfs rename rpool/ROOT{,x} ; \
+    while ! zfs set compression=gzip-9 rpool/ROOT ; do sleep 0.2 || break ; done</pre><p>Send over the data (from the prepared <code class="literal">screen</code> session on the origin server);
+first make sure all options are correct while using a dry-run mode, e.g.:</p><pre class="screen">### Do not let other work of the origin server preempt the replication
+#origin# renice -n -20 $$
+
+#origin# zfs send -Lce -R rpool/ROOT@20231210-01 | mbuffer | \
+    ssh root@recovery "mbuffer | zfs recv -vFnd rpool"</pre><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Then remove <code class="literal">-n</code> from <code class="literal">zfs recv</code> after initial experiments confirm it would
+  receive what you want and where you want it, and re-run.
+</li></ul></div><p>With sufficiently large machines and slow source hosting, expect some hours
+for the transfer.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+I saw 4-8Mb/s in the streaming phase for large increments, and quite a bit
+  of quiet time during enumeration of even almost-empty regular snapshots
+  made by <a class="ulink" href="https://www.znapzend.org" target="_top">ZnapZend</a> — low-level work with
+  ZFS metadata has a cost.
+</li></ul></div><p>Note that one of the benefits of ZFS (and the non-automatic snapshots used
+here) is that it is easy to catch-up later to send the data which the original
+server would generate and write <span class="strong"><strong>during</strong></span> the replication.  You can keep it
+actually working until the last minutes of the migration.</p><p>After the large initial transfers complete, follow-up with a pass to stop
+the original services (e.g. whole <code class="literal">zones</code> either from OS default grouping
+or as wrapped by <a class="ulink" href="https://github.com/jimklimov/illumos-smf-zones" target="_top">https://github.com/jimklimov/illumos-smf-zones</a> scripting)
+and replicate any new information created on origin server during this
+transfer (and/or human outage for the time it would take you to focus on
+this task again, after the computers were busy for many hours…)</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>The original VM had ZnapZend managing regular ZFS snapshots and their
+off-site backups.  As the old machine would no longer be doing anything of
+consequence, keep the service there disable and also turn off the tunnel to
+off-site backup — this serves to not confuse your remote systems as an admin.
+The new VM clone would just resume the same snapshot history, poured to the
+same off-site backup target.</p></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<code class="literal">rsync</code> the <code class="literal">rpool/boot/</code> from old machine to new, which is a directory
+  right in the <code class="literal">rpool</code> dataset and has boot-loader configs; update <code class="literal">menu.lst</code>
+  for GRUB boot-loader settings;
+</li><li class="listitem">
+run <code class="literal">zpool set bootfs=...</code> to enable the transplanted root file system;
+</li><li class="listitem">
+<code class="literal">touch reconfigure</code> in the new rootfs (to pick up changed hardware on boot);
+</li><li class="listitem">
+be ready to fiddle with <code class="literal">/etc/dladm/datalink.conf</code> (if using virtual links,
+  etherstubs, etc.), as well as <code class="literal">/etc/hostname*</code>, <code class="literal">/etc/defaultrouter</code> etc.
+</li><li class="listitem">
+revise the loader settings regarding the console to use (should be <code class="literal">text</code>
+  first here on DigitalOcean) — see in <code class="literal">/boot/solaris/bootenv.rc</code> and/or
+  <code class="literal">/boot/defaults/loader.conf</code>
+</li><li class="listitem">
+reboot into production mode to see if it all actually "works" :)
+</li></ul></div><p>If the new VM does boot correctly, log into it and:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
+Revive the <code class="literal">znapzend</code> retention schedules: they have a configuration source
+  value of <code class="literal">received</code> in ZFS properties of the replica, so are ignored by the
+  tool. See <code class="literal">znapzendzetup list</code> on the original machine to get a list of
+  datasets to check on the replica, e.g.:
+</p><pre class="screen">:; zfs get -s received all rpool/{ROOT,export,export/home/abuild/.ccache,zones{,-nosnap}} \
+    | grep znapzend | while read P K V S ; do zfs set $K="$V" $P &amp; done</pre></li><li class="listitem">
+re-enable <code class="literal">znapzend</code> and <code class="literal">zones</code> SMF services on the new VM;
+</li><li class="listitem">
+check about <code class="literal">cloud-init</code> integration services; the <code class="literal">metadata-agent</code> seems
+  buildable and installable, it logged the SSH keys on console after service
+  manifest import (details elaborated in links above).
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_do_nut_ci_oi_vm_preparation_as_build_agent"></a>DO-NUT-CI-OI VM preparation as build agent</h5></div></div></div><p>As of this writing, the NUT CI Jenkins controller runs on DigitalOcean — and
+feels a lot snappier in browsing and SSH management than the older Fosshost.org
+VMs.  Despite the official demise of the platform, they were alive and used as
+build agents for the newly re-hosted Jenkins controller for over a year until
+somebody or something put them to rest: the container with the old production
+Jenkins controller was set to not-auto-booting, and container with worker was
+attached to the new controller.</p><p>The Jenkins SSH Build Agent setups involved here were copied on the controller
+(as XML files) and then updated to tap into the different "host" and "port"
+(so that the original definitions can in time be used for replicas on DO),
+and due to trust settings — the <code class="literal">~jenkins/.ssh/known_hosts</code> file on the new
+controller had to be updated with the "new" remote system fingerprints.
+Otherwise, the migration went smooth.</p><p>Similarly, existing Jenkins swarm agents from community PCs had to be taught
+the new DNS name (some had it in <code class="literal">/etc/hosts</code>), but otherwise connected OK.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_omnios"></a>OmniOS</h4></div></div></div><p>Helpful links for this part of the quest:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<a class="ulink" href="https://omnios.org/download" target="_top">https://omnios.org/download</a> ⇒ see
+  <a class="ulink" href="https://downloads.omnios.org/media/lts/omnios-r151046.cloud.vmdk" target="_top">https://downloads.omnios.org/media/lts/omnios-r151046.cloud.vmdk</a> (LTS)
+  or <a class="ulink" href="https://downloads.omnios.org/media/stable/omnios-r151048.cloud.vmdk" target="_top">https://downloads.omnios.org/media/stable/omnios-r151048.cloud.vmdk</a> (recent stable)
+  or daily "bloody" images like
+  <a class="ulink" href="https://downloads.omnios.org/media/bloody/omnios-bloody-20231209.cloud.vmdk" target="_top">https://downloads.omnios.org/media/bloody/omnios-bloody-20231209.cloud.vmdk</a>
+</li></ul></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_do_nut_ci_oo_vm_preparation"></a>DO-NUT-CI-OO VM preparation</h5></div></div></div><p>Added replicas of more existing VMs: OmniOS (relatively straightforward with the
+OI image).</p><p>The original OmniOS VM used ZFS, so its contents were sent-received similarly
+to the OI VM explained above.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_freebsd"></a>FreeBSD</h4></div></div></div><p>Helpful links for this part of the quest:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<a class="ulink" href="https://www.adminbyaccident.com/freebsd/how-to-upload-a-freebsd-custom-image-on-digitalocean/" target="_top">https://www.adminbyaccident.com/freebsd/how-to-upload-a-freebsd-custom-image-on-digitalocean/</a>
+</li></ul></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_do_nut_ci_freebsd_vm_preparation"></a>DO-NUT-CI-FREEBSD VM preparation</h5></div></div></div><p>Added replicas of more existing VMs: FreeBSD 12 (needed to use a seed image,
+tried an OpenIndiana image first but did not cut it — the ZFS options in its
+<code class="literal">rpool</code> were too new, so the older build of the BSD loader was not too eager
+to find the pool).</p><p>The original FreeBSD VM used ZFS, so its contents were sent-received similarly
+to the OI VM explained above.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+The (older version of?) FreeBSD loader rejected a <code class="literal">gzip-9</code> compressed
+  <code class="literal">zroot/ROOT</code> location, so care had to be taken to first disable compression
+  (only on the original system’s tree of root filesystem datasets). The last
+  applied ZFS properties are used for the replication stream.
+</li></ul></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_openbsd"></a>OpenBSD</h4></div></div></div><p>Helpful links for this part of the quest:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<a class="ulink" href="https://dev.to/nabbisen/custom-openbsd-droplet-on-digitalocean-4a9o" target="_top">https://dev.to/nabbisen/custom-openbsd-droplet-on-digitalocean-4a9o</a> —   how to piggyback OpenBSD via FreeBSD images (no longer offered by default on DO)
+</li></ul></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_do_nut_ci_openbsd_vm_creation"></a>DO-NUT-CI-OPENBSD VM creation</h5></div></div></div><p>Added a replica of OpenBSD 6.5 VM as an example of relatively dated system in
+the CI farm, which went decently well as a <code class="literal">dd</code> stream of the local VM’s vHDD
+into DO recovery console session:</p><pre class="screen">#tgt-recovery# mbuffer -4 -I 12340 &gt; /dev/vda
+
+#src# dd if=/dev/rsd0c | time nc myHostingIP 12340</pre><p>…followed by a reboot and subsequent adaptation of <code class="literal">/etc/myname</code> and
+<code class="literal">/etc/hostname.vio*</code> files.</p><p>I did not check if the DigitalOcean recovery image can directly mount BSD UFS
+partitions, as it sufficed to log into the pre-configured system.</p><p>One caveat was that it was originally installed with X11, but DigitalOcean
+web-console did not pass through the mouse nor advanced keyboard shortcuts.
+So <code class="literal">rcctl disable xenodm</code> (to reduce the attack surface and resource waste).</p><p>FWIW, <code class="literal">openbsd-7.3-2023-04-22.qcow2</code> "custom image" did not seem to boot.
+At least, no activity on display and the IP address did not go up.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_linux"></a>Linux</h4></div></div></div><p>Helpful links for this part of the quest:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<a class="ulink" href="https://openzfs.github.io/openzfs-docs/Getting%20Started/Debian/Debian%20Bookworm%20Root%20on%20ZFS.html" target="_top">https://openzfs.github.io/openzfs-docs/Getting%20Started/Debian/Debian%20Bookworm%20Root%20on%20ZFS.html</a>
+  — first steps for moving our older Linux VM onto ZFS root
+</li></ul></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_do_nut_ci_linux_vm_creation"></a>DO-NUT-CI-LINUX VM creation</h5></div></div></div><p>Spinning up the Debian-based Linux builder (with many containers for various
+Linux systems) with ZFS, to be consistent across the board, was an adventure.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+DigitalOcean rescue CD is Ubuntu 18.04 based, it has an older ZFS version
+  so instructions from
+  <a class="ulink" href="https://openzfs.github.io/openzfs-docs/Getting%20Started/Debian/Debian%20Stretch%20Root%20on%20ZFS.html" target="_top">https://openzfs.github.io/openzfs-docs/Getting%20Started/Debian/Debian%20Stretch%20Root%20on%20ZFS.html</a>
+  have to be used particularly to <code class="literal">zpool create bpool</code> (with the dumbed-down
+  options for GRUB to be able to read that boot-pool);
+</li><li class="listitem">
+For the rest of the system,
+  <a class="ulink" href="https://openzfs.github.io/openzfs-docs/Getting%20Started/Debian/Debian%20Bookworm%20Root%20on%20ZFS.html" target="_top">https://openzfs.github.io/openzfs-docs/Getting%20Started/Debian/Debian%20Bookworm%20Root%20on%20ZFS.html</a>
+  is relevant for current distro (Debian 12) and is well-written;
+</li><li class="listitem">
+Note that while in many portions the "MBR or (U)EFI" boot is a choice of
+  either one command to copy-paste or another, the spot about installing GRUB
+  actually requires both (MBR for disk to be generally bootable, and EFI to
+  proceed with that implementation);
+</li><li class="listitem">
+If the (recovery) console with the final OS is too "tall" in the Web-UI,
+  so the lower rows are hidden by the DO banner with IP address, and you
+  can’t see the commands you are typing, try <code class="literal">clear ; stty size</code> to check
+  the current display size (was 128x48 for me) and <code class="literal">stty rows 45</code> to reduce
+  it a bit. Running a full-screen program like <code class="literal">mc</code> helps gauge if you got
+  it right.
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_do_nut_ci_linux_vm_os_transfer"></a>DO-NUT-CI-LINUX VM OS transfer</h5></div></div></div><p>After the root pool was prepared and the large tree of datasets defined
+to handle the numerous LXC containers, <code class="literal">abuild</code> home directory, and other
+important locations of the original system, <code class="literal">rsync -avPHK</code> worked well to
+transfer the data.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_do_nut_ci_linux_vm_preparation_as_build_agent"></a>DO-NUT-CI-LINUX VM preparation as build agent</h5></div></div></div><p>Numerous containers with an array of Linux distributions are used as either
+Jenkins SSH build agents or swarm agents, as documented in chapters about
+LXC containers.</p></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_custom_nut_ci_farm_build_agents_lxc_multi_arch_containers"></a>5.3. Custom NUT CI farm build agents: LXC multi-arch containers</h3></div></div></div><p><a id="CI_LXC"></a>This section details configuration of LXC containers as build environments
+for NUT CI farm; this approach can also be used on developer workstations.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_setting_up_the_multi_arch_linux_lxc_container_farm_for_nut_ci"></a>5.4. Setting up the multi-arch Linux LXC container farm for NUT CI</h3></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Two NUT websites</h3><p>This version of the page reflects NUT release <span class="emphasis"><em>v2.8.3</em></span>
+with codebase commited c0acf09af at 2025-04-21T23:59:59+00:00</p><p>Options, features and capabilities in current development (and future
+releases) are detailed on the main site and may differ from ones
+described here.</p></div><p>Due to some historical reasons including earlier personal experience,
+the Linux container setup implemented as described below was done with
+persistent LXC containers wrapped by LIBVIRT for management. There was
+no particular use-case for systems like Docker (and no firepower for a
+Kubernetes cluster) in that the build environment intended for testing
+non-regression against a certain release does not need to be regularly
+updated — its purpose is to be stale and represent what users still
+running that system for whatever reason (e.g. embedded, IoT, corporate)
+have in their environments.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_common_preparations"></a>Common preparations</h4></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
+Example list of packages for Debian-based systems may include (not
+  necessarily is limited to):
+</p><pre class="screen">:; apt install lxc lxcfs lxc-templates \
+    ipxe-qemu qemu-kvm qemu-system-common qemu-system-data \
+    qemu-system-sparc qemu-system-x86 qemu-user-static qemu-utils \
+    virt-manager virt-viewer virtinst ovmf \
+    libvirt-daemon-system-systemd libvirt-daemon-system \
+    libvirt-daemon-driver-lxc libvirt-daemon-driver-qemu \
+    libvirt-daemon-config-network libvirt-daemon-config-nwfilter \
+    libvirt-daemon libvirt-clients
+
+# TODO: Where to find virt-top - present in some but not all releases?
+# Can fetch sources from https://packages.debian.org/sid/virt-top and follow
+# https://www.linuxfordevices.com/tutorials/debian/build-packages-from-source
+# Be sure to use 1.0.x versions, since 1.1.x uses a "better-optimized API"
+# which is not implemented by libvirt/LXC backend.</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>This claims a footprint of over a gigabyte of new packages when
+  unpacked and installed to a minimally prepared OS. Much of that would
+  be the graphical environment dependencies required by several engines
+  and tools.</p></div></li><li class="listitem"><p class="simpara">
+Prepare LXC and LIBVIRT-LXC integration, including an "independent"
+  (aka "masqueraded) bridge for NAT, following <a class="ulink" href="https://wiki.debian.org/LXC" target="_top">https://wiki.debian.org/LXC</a>
+  and <a class="ulink" href="https://wiki.debian.org/LXC/SimpleBridge" target="_top">https://wiki.debian.org/LXC/SimpleBridge</a>
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><p class="simpara">
+For dnsmasq integration on the independent bridge (<code class="literal">lxcbr0</code> following
+   the documentation examples), be sure to mention:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: square; "><li class="listitem">
+<code class="literal">LXC_DHCP_CONFILE="/etc/lxc/dnsmasq.conf"</code> in <code class="literal">/etc/default/lxc-net</code>
+</li><li class="listitem">
+<code class="literal">dhcp-hostsfile=/etc/lxc/dnsmasq-hosts.conf</code> in/as the content of
+    <code class="literal">/etc/lxc/dnsmasq.conf</code>
+</li><li class="listitem">
+<code class="literal">touch /etc/lxc/dnsmasq-hosts.conf</code> which would list simple <code class="literal">name,IP</code>
+    pairs, one per line (so one per container)
+</li><li class="listitem">
+<code class="literal">systemctl restart lxc-net</code> to apply config (is this needed after
+    setup of containers too, to apply new items before booting them?)
+</li><li class="listitem">
+For troubleshooting, see <code class="literal">/var/lib/misc/dnsmasq.lxcbr0.leases</code>
+    (in some cases you may have to rename it away and reboot host to
+    fix IP address delegation)
+</li></ul></div></li></ul></div></li><li class="listitem">
+Install qemu with its <code class="literal">/usr/bin/qemu-*-static</code> and registration in
+  <code class="literal">/var/lib/binfmt</code>
+</li><li class="listitem">
+Prepare an LVM partition (or preferably some other tech like ZFS)
+  as <code class="literal">/srv/libvirt</code> and create a <code class="literal">/srv/libvirt/rootfs</code> to hold the containers
+</li><li class="listitem"><p class="simpara">
+Prepare <code class="literal">/home/abuild</code> on the host system (preferably in ZFS with
+  lightweight compression like lz4 — and optionally, only if the amount
+  of available system RAM permits, with deduplication; otherwise avoid it);
+  account user and group ID numbers are <code class="literal">399</code> as on the rest of the CI farm
+  (historically, inherited from OBS workers)
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><p class="simpara">
+It may help to generate an ssh key without a passphrase for <code class="literal">abuild</code>
+   that it would trust, to sub-login from CI agent sessions into the
+   container. Then again, it may be not required if CI logs into the
+   host by SSH using <code class="literal">authorized_keys</code> and an SSH Agent, and the inner
+   ssh client would forward that auth channel to the original agent.
+</p><pre class="screen">abuild$ ssh-keygen
+# accept defaults
+
+abuild$ cat ~/.ssh/id_rsa.pub &gt;&gt; ~/.ssh/authorized_keys
+abuild$ chmod 640 ~/.ssh/authorized_keys</pre></li></ul></div></li><li class="listitem"><p class="simpara">
+Edit the root (or whoever manages libvirt) <code class="literal">~/.profile</code> to default the
+  virsh provider with:
+</p><pre class="screen">LIBVIRT_DEFAULT_URI=lxc:///system
+export LIBVIRT_DEFAULT_URI</pre></li><li class="listitem"><p class="simpara">
+If host root filesystem is small, relocate the LXC download cache to the
+  (larger) <code class="literal">/srv/libvirt</code> partition:
+</p><pre class="screen">:; mkdir -p /srv/libvirt/cache-lxc
+:; rm -rf /var/cache/lxc
+:; ln -sfr /srv/libvirt/cache-lxc /var/cache/lxc</pre><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Maybe similarly relocate shared <code class="literal">/home/abuild</code> to reduce strain on rootfs?
+</li></ul></div></li></ul></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_setup_a_container"></a>Setup a container</h4></div></div></div><p>Note that completeness of qemu CPU emulation varies, so not all distros
+can be installed, e.g. "s390x" failed for both debian10 and debian11 to
+set up the <code class="literal">openssh-server</code> package, or once even to run <code class="literal">/bin/true</code> (seems
+to have installed an older release though, to match the outdated emulation?)</p><p>While the <code class="literal">lxc-create</code> tool does not really specify the error cause and
+deletes the directories after failure, it shows the pathname where it
+writes the log (also deleted). Before re-trying the container creation, this
+file can be watched with e.g. <code class="literal">tail -F /var/cache/lxc/.../debootstrap.log</code></p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>You can find the list of LXC "template" definitions on your system
+by looking at the contents of the <code class="literal">/usr/share/lxc/templates/</code> directory,
+e.g. a script named <code class="literal">lxc-debian</code> for the "debian" template. You can see
+further options for each "template" by invoking its help action, e.g.:</p><pre class="screen">:; lxc-create -t debian -h</pre></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_initial_container_installation_for_various_guest_oses"></a>Initial container installation (for various guest OSes)</h5></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
+Install containers like this:
+</p><pre class="screen">:; lxc-create -P /srv/libvirt/rootfs \
+    -n jenkins-debian11-mips64el -t debian -- \
+    -r bullseye -a mips64el</pre><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><p class="simpara">
+to specify a particular mirror (not everyone hosts everything —    so if you get something like
+   <code class="literal">"E: Invalid Release file, no entry for main/binary-mips/Packages"</code>
+   then see <a class="ulink" href="https://www.debian.org/mirror/list" target="_top">https://www.debian.org/mirror/list</a> for details, and double-check
+   the chosen site to verify if the distro version of choice is hosted with
+   your arch of choice):
+</p><pre class="screen">:; MIRROR="http://ftp.br.debian.org/debian/" \
+   lxc-create -P /srv/libvirt/rootfs \
+    -n jenkins-debian10-mips -t debian -- \
+    -r buster -a mips</pre></li><li class="listitem"><p class="simpara">
+…or for EOLed distros, use the Debian Archive server.
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: square; "><li class="listitem"><p class="simpara">
+Install the container with Debian Archive as the mirror like this:
+</p><pre class="screen">:; MIRROR="http://archive.debian.org/debian-archive/debian/" \
+   lxc-create -P /srv/libvirt/rootfs \
+    -n jenkins-debian8-s390x -t debian -- \
+    -r jessie -a s390x</pre></li><li class="listitem"><p class="simpara">
+Note you may have to add trust to their (now expired) GPG keys for
+    packaging to verify signatures made at the time the key was valid,
+    by un-symlinking (if appropriate) the debootstrap script such as
+    <code class="literal">/usr/share/debootstrap/scripts/jessie</code>, commenting away the
+    <code class="literal">keyring /usr/share/keyrings/debian-archive-keyring.gpg</code> line and
+    setting <code class="literal">keyring /usr/share/keyrings/debian-archive-removed-keys.gpg</code>
+    instead. You may further have to edit <code class="literal">/usr/share/debootstrap/functions</code>
+    and/or <code class="literal">/usr/share/lxc/templates/lxc-debian</code> to honor that setting (the
+    <code class="literal">releasekeyring</code> was hard-coded in version I had installed), e.g. in the
+    latter file ensure such logic as below, and re-run the installation:
+</p><pre class="screen">...
+    # If debian-archive-keyring isn't installed, fetch GPG keys directly
+    releasekeyring="`grep -E '^keyring ' "/usr/share/debootstrap/scripts/$release" | sed -e 's,^keyring ,,' -e 's,[ #].*$,,'`" 2&gt;/dev/null
+    if [ -z $releasekeyring ]; then
+        releasekeyring=/usr/share/keyrings/debian-archive-keyring.gpg
+    fi
+    if [ ! -f $releasekeyring ]; then
+...</pre></li></ul></div></li><li class="listitem"><p class="simpara">
+…Alternatively, other distributions can be used (as supported by your
+   LXC scripts, typically in <code class="literal">/usr/share/debootstrap/scripts</code>), e.g. Ubuntu:
+</p><pre class="screen">:; lxc-create -P /srv/libvirt/rootfs \
+    -n jenkins-ubuntu1804-s390x -t ubuntu -- \
+    -r bionic -a s390x</pre></li><li class="listitem"><p class="simpara">
+For distributions with a different packaging mechanism from that on the
+   LXC host system, you may need to install corresponding tools (e.g. <code class="literal">yum4</code>,
+   <code class="literal">rpm</code> and <code class="literal">dnf</code> on Debian hosts for installing CentOS and related guests).
+   You may also need to pepper with symlinks to taste (e.g. <code class="literal">yum =&gt; yum4</code>),
+   or find a <code class="literal">pacman</code> build to install Arch Linux or derivative, etc.
+   Otherwise, you risk seeing something like this:
+</p><pre class="screen">root@debian:~# lxc-create -P /srv/libvirt/rootfs \
+    -n jenkins-centos7-x86-64 -t centos -- \
+    -R 7 -a x86_64
+
+Host CPE ID from /etc/os-release:
+'yum' command is missing
+lxc-create: jenkins-centos7-x86-64: lxccontainer.c:
+  create_run_template: 1616 Failed to create container from template
+lxc-create: jenkins-centos7-x86-64: tools/lxc_create.c:
+  main: 319 Failed to create container jenkins-centos7-x86-64</pre><p class="simpara">Note also that with such "third-party" distributions you may face other
+   issues; for example, the CentOS helper did not generate some fields in
+   the <code class="literal">config</code> file that were needed for conversion into libvirt "domxml"
+   (as found by trial and error, and comparison to other <code class="literal">config</code> files):</p><pre class="screen">lxc.uts.name = jenkins-centos7-x86-64
+lxc.arch = x86_64</pre><p class="simpara">Also note the container/system naming without underscore in "x86_64" —    the deployed system discards the character when assigning its hostname.
+   Using "amd64" is another reasonable choice here.</p></li><li class="listitem"><p class="simpara">
+For Arch Linux you would need <code class="literal">pacman</code> tools on the host system, so see
+   <a class="ulink" href="https://wiki.archlinux.org/title/Install_Arch_Linux_from_existing_Linux#Using_pacman_from_the_host_system" target="_top">https://wiki.archlinux.org/title/Install_Arch_Linux_from_existing_Linux#Using_pacman_from_the_host_system</a>
+   for details.
+   On a Debian/Ubuntu host, assumed ready for NUT builds per
+   <a class="ulink" href="../qa-guide.chunked/index.html#NUT_Config_Prereqs" target="_top">Prerequisites for building NUT on different OSes</a> (or <code class="code">docs/config-prereqs.txt</code> in NUT sources for up-to-date information),
+   it would start like this:
+</p><pre class="screen">:; apt-get update
+:; apt-get install meson ninja-build cmake
+
+# Some dependencies for pacman itself; note there are several libcurl builds;
+# pick another if your system constraints require you to:
+:; apt-get install libarchive-dev libcurl4-nss-dev gpg libgpgme-dev
+
+:; git clone https://gitlab.archlinux.org/pacman/pacman.git
+:; cd pacman
+
+# Iterate something like this until all needed dependencies fall
+# into line (note libdir for your host architecture):
+:; rm -rf build; mkdir build &amp;&amp; meson build --libdir=/usr/lib/x86_64-linux-gnu
+
+:; ninja -C build
+# Depending on your asciidoc version, it may require that `--asciidoc-opts` are
+# passed as equation to a vale (not space-separated from it). Then apply this:
+#   diff --git a/doc/meson.build b/doc/meson.build
+#   -      '--asciidoc-opts', ' '.join(asciidoc_opts),
+#   +      '--asciidoc-opts='+' '.join(asciidoc_opts),
+# and re-run (meson and) ninja.
+
+# Finally when all succeeded:
+:; sudo ninja -C build install
+:; cd</pre><p class="simpara">You will also need <code class="literal">pacstrap</code> and Debian <code class="literal">arch-install-scripts</code> package
+does not deliver it. It is however simply achieved:</p><pre class="screen">:; git clone https://github.com/archlinux/arch-install-scripts
+:; cd arch-install-scripts
+:; make &amp;&amp; sudo make PREFIX=/usr install
+:; cd</pre><p class="simpara">It will also want an <code class="literal">/etc/pacman.d/mirrorlist</code> which you can populate for
+your geographic location from <a class="ulink" href="https://archlinux.org/mirrorlist/" target="_top">https://archlinux.org/mirrorlist/</a> service,
+or just fetch them all (don’t forget to uncomment some <code class="literal">Server =</code> lines):</p><pre class="screen">:; mkdir -p /etc/pacman.d/
+:; curl https://archlinux.org/mirrorlist/all/ &gt; /etc/pacman.d/mirrorlist</pre><p class="simpara">And to reference it from your host <code class="literal">/etc/pacman.conf</code> by un-commenting the
+<code class="literal">[core]</code> section and <code class="literal">Include</code> instruction, as well as adding <code class="literal">[community]</code>
+and <code class="literal">[extra]</code> sections with same reference, e.g.:</p><pre class="screen">[core]
+### SigLevel = Never
+SigLevel = PackageRequired
+Include = /etc/pacman.d/mirrorlist
+
+[extra]
+### SigLevel = Never
+SigLevel = PackageRequired
+Include = /etc/pacman.d/mirrorlist
+
+[community]
+### SigLevel = Never
+SigLevel = PackageRequired
+Include = /etc/pacman.d/mirrorlist</pre><p class="simpara">And just then you can proceed with LXC:</p><pre class="screen">:; lxc-create -P /srv/libvirt/rootfs \
+    -n jenkins-archlinux-amd64 -t archlinux -- \
+    -a x86_64 -P openssh,sudo</pre><p class="simpara">In my case, it had problems with GPG keyring missing (using one in host
+system, as well as the package cache outside the container, it seems)
+so I had to run <code class="literal">pacman-key --init; pacman-key --refresh-keys</code> on the
+host itself. Even so, <code class="literal">lxc-create</code> complained about updating some keyring
+entries and I had to go one by one picking key servers (serving different
+metadata) like this:</p><pre class="screen">:; pacman-key --keyserver keyserver.ubuntu.com --recv-key 6D1655C14CE1C13E</pre><p class="simpara">In the worst case, see <code class="literal">SigLevel = Never</code> for <code class="literal">pacman.conf</code> to not check
+package integrity (seems too tied into thinking that host OS is Arch)…</p><p class="simpara">It seems that pre-fetching the package databases with <code class="literal">pacman -Sy</code> on
+the host was also important.</p></li></ul></div></li></ul></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_initial_container_related_setup"></a>Initial container-related setup</h5></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
+Add the "name,IP" line for this container to <code class="literal">/etc/lxc/dnsmasq-hosts.conf</code>
+  on the host, e.g.:
+</p><pre class="screen">jenkins-debian11-mips,10.0.3.245</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>Don’t forget to eventually <code class="literal">systemctl restart lxc-net</code> to apply the
+new host reservation!</p></div></li><li class="listitem"><p class="simpara">
+Convert a pure LXC container to be managed by LIBVIRT-LXC (and edit config
+  markup on the fly — e.g. fix the LXC <code class="literal">dir:/</code> URL schema):
+</p><pre class="screen">:; virsh -c lxc:///system domxml-from-native lxc-tools \
+    /srv/libvirt/rootfs/jenkins-debian11-armhf/config \
+    | sed -e 's,dir:/srv,/srv,' \
+    &gt; /tmp/x &amp;&amp; virsh define /tmp/x</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>You may want to tune the default generic 64MB RAM allocation,
+   so your launched QEMU containers are not OOM-killed as they exceeded
+   their memory <code class="literal">cgroup</code> limit. In practice they do not eat <span class="strong"><strong>that much</strong></span>
+   resident memory, just want to have it addressable by VMM, I guess
+   (swap is not very used either), at least not until active builds
+   start (and then it depends on compiler appetite and <code class="literal">make</code> program
+   parallelism level you allow, e.g. by pre-exporting <code class="literal">MAXPARMAKES</code>
+   environment variable for <code class="literal">ci_build.sh</code>, and on the number of Jenkins
+   "executors" assigned to the build agent).</p></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><p class="simpara">
+It may be needed to revert the generated "os/arch" to <code class="literal">x86_64</code> (and let
+   QEMU handle the rest) in the <code class="literal">/tmp/x</code> file, and re-try the definition:
+</p><pre class="screen">:; virsh define /tmp/x</pre></li></ul></div></li><li class="listitem"><p class="simpara">
+Then execute <code class="literal">virsh edit jenkins-debian11-armhf</code> (and same for other
+  containers) to bind-mount the common <code class="literal">/home/abuild</code> location, adding
+  this tag to their "devices":
+</p><pre class="screen">    &lt;filesystem type='mount' accessmode='passthrough'&gt;
+      &lt;source dir='/home/abuild'/&gt;
+      &lt;target dir='/home/abuild'/&gt;
+    &lt;/filesystem&gt;</pre><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Note that generated XML might not conform to current LXC schema, so it
+   fails validation during save; this can be bypassed with <code class="literal">i</code> when it asks.
+   One such case was however with indeed invalid contents, the "dir:" schema
+   removed by example above.
+</li></ul></div></li></ul></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_shepherd_the_herd"></a>Shepherd the herd</h4></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
+Monitor deployed container rootfs’es with:
+</p><pre class="screen">:; du -ks /srv/libvirt/rootfs/*</pre><p class="simpara">(should have non-trivial size for deployments without fatal infant errors)</p></li><li class="listitem"><p class="simpara">
+Mass-edit/review libvirt configurations with:
+</p><pre class="screen">:; virsh list --all | awk '{print $2}' \
+   | grep jenkins | while read X ; do \
+     virsh edit --skip-validate $X ; done</pre><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+…or avoid <code class="literal">--skip-validate</code> when markup is initially good :)
+</li></ul></div></li><li class="listitem"><p class="simpara">
+Mass-define network interfaces:
+</p><pre class="screen">:; virsh list --all | awk '{print $2}' \
+   | grep jenkins | while read X ; do \
+     virsh dumpxml "$X" | grep "bridge='lxcbr0'" \
+     || virsh attach-interface --domain "$X" --config \
+        --type bridge --source lxcbr0 ; \
+   done</pre></li><li class="listitem"><p class="simpara">
+Verify that unique MAC addresses were defined (e.g. <code class="literal">00:16:3e:00:00:01</code>
+  tends to pop up often, while <code class="literal">52:54:00:xx:xx:xx</code> are assigned to other
+  containers); edit the domain definitions to randomize, if needed:
+</p><pre class="screen">:; grep 'mac add' /etc/libvirt/lxc/*.xml | awk '{print $NF" "$1}' | sort</pre></li><li class="listitem"><p class="simpara">
+Make sure at least one console device exists (end of file, under the
+  network interface definition tags), e.g.:
+</p><pre class="screen">    &lt;console type='pty'&gt;
+      &lt;target type='lxc' port='0'/&gt;
+    &lt;/console&gt;</pre></li><li class="listitem"><p class="simpara">
+Populate with <code class="literal">abuild</code> account, as well as with the <code class="literal">bash</code> shell and
+  <code class="literal">sudo</code> ability, reporting of assigned IP addresses on the console,
+  and SSH server access complete with envvar passing from CI clients
+  by virtue of <code class="literal">ssh -o SendEnv='*' container-name</code>:
+</p><pre class="screen">:; for ALTROOT in /srv/libvirt/rootfs/*/rootfs/ ; do \
+    echo "=== $ALTROOT :" &gt;&amp;2; \
+    grep eth0 "$ALTROOT/etc/issue" || ( printf '%s %s\n' \
+        '\S{NAME} \S{VERSION_ID} \n \l@\b ;' \
+        'Current IP(s): \4{eth0} \4{eth1} \4{eth2} \4{eth3}' \
+        &gt;&gt; "$ALTROOT/etc/issue" ) ; \
+    grep eth0 "$ALTROOT/etc/issue.net" || ( printf '%s %s\n' \
+        '\S{NAME} \S{VERSION_ID} \n \l@\b ;' \
+        'Current IP(s): \4{eth0} \4{eth1} \4{eth2} \4{eth3}' \
+        &gt;&gt; "$ALTROOT/etc/issue.net" ) ; \
+    groupadd -R "$ALTROOT" -g 399 abuild ; \
+    useradd -R "$ALTROOT" -u 399 -g abuild -M -N -s /bin/bash abuild \
+    || useradd -R "$ALTROOT" -u 399 -g 399 -M -N -s /bin/bash abuild \
+    || { if ! grep -w abuild "$ALTROOT/etc/passwd" ; then \
+            echo 'abuild:x:399:399::/home/abuild:/bin/bash' \
+            &gt;&gt; "$ALTROOT/etc/passwd" ; \
+            echo "USERADDed manually: passwd" &gt;&amp;2 ; \
+         fi ; \
+         if ! grep -w abuild "$ALTROOT/etc/shadow" ; then \
+            echo 'abuild:!:18889:0:99999:7:::' &gt;&gt; "$ALTROOT/etc/shadow" ; \
+            echo "USERADDed manually: shadow" &gt;&amp;2 ; \
+         fi ; \
+       } ; \
+    if [ -s "$ALTROOT/etc/ssh/sshd_config" ]; then \
+        grep 'AcceptEnv \*' "$ALTROOT/etc/ssh/sshd_config" || ( \
+            ( echo "" ; \
+              echo "# For CI: Allow passing any envvars:"; \
+              echo 'AcceptEnv *' ) \
+            &gt;&gt; "$ALTROOT/etc/ssh/sshd_config" \
+        ) ; \
+    fi ; \
+   done</pre><p class="simpara">Note that for some reason, in some of those other-arch distros <code class="literal">useradd</code>
+fails to find the group anyway; then we have to "manually" add them.</p></li><li class="listitem"><p class="simpara">
+Let the host know and resolve the names/IPs of containers you assigned:
+</p><pre class="screen">:; grep -v '#' /etc/lxc/dnsmasq-hosts.conf \
+   | while IFS=, read N I ; do \
+    getent hosts "$N" &gt;&amp;2 || echo "$I $N" ; \
+   done &gt;&gt; /etc/hosts</pre></li></ul></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_further_setup_of_the_containers"></a>Further setup of the containers</h4></div></div></div><p>See <a class="ulink" href="../qa-guide.chunked/index.html#NUT_Config_Prereqs" target="_top">Prerequisites for building NUT on different OSes</a> (or <code class="code">docs/config-prereqs.txt</code> in NUT sources for up-to-date information) about dependency
+package installation for Debian-based Linux systems.</p><p>It may be wise to not install e.g. documentation generation tools (or at
+least not the full set for HTML/PDF generation) in each environment, in
+order to conserve space and run-time stress.</p><p>Still, if there are significant version outliers (such as using an older
+distribution due to vCPU requirements), it can be installed fully just
+to ensure non-regression — e.g. that when adapting <code class="literal">Makefile</code> rule
+definitions or compiler arguments to modern toolkits, we do not lose
+the ability to build with older ones.</p><p>For this, <code class="literal">chroot</code> from the host system can be used, e.g. to improve the
+interactive usability for a population of Debian(-compatible) containers
+(and to use its networking, while the operating environment in containers
+may be not yet configured or still struggling to access the Internet):</p><pre class="screen">:; for ALTROOT in /srv/libvirt/rootfs/*/rootfs/ ; do \
+    echo "=== $ALTROOT :" ; \
+    chroot "$ALTROOT" apt-get install \
+        sudo bash vim mc p7zip p7zip-full pigz pbzip2 git \
+   ; done</pre><p>Similarly for <code class="literal">yum</code>-managed systems (CentOS and relatives), though specific
+package names can differ, and additional package repositories may need to
+be enabled first (see <a class="ulink" href="../qa-guide.chunked/index.html#NUT_Config_Prereqs" target="_top">Prerequisites for building NUT on different OSes</a> (or <code class="code">docs/config-prereqs.txt</code> in NUT sources for up-to-date information) for more
+details such as recommended package names).</p><p>Note that technically <code class="literal">(sudo) chroot ...</code> can also be used from the CI worker
+account on the host system to build in the prepared filesystems without the
+overhead of running containers as complete operating environments with any
+standard services and several copies of Jenkins <code class="literal">agent.jar</code> in them.</p><p>Also note that externally-driven set-up of some packages, including the
+<code class="literal">ca-certificates</code> and the JDK/JRE, require that the <code class="literal">/proc</code> filesystem
+is usable in the chroot environment. This can be achieved with e.g.:</p><pre class="screen">:; for ALTROOT in /srv/libvirt/rootfs/*/rootfs/ ; do \
+    for D in proc ; do \
+      echo "=== $ALTROOT/$D :" ; \
+      mkdir -p "$ALTROOT/$D" ; \
+      mount -o bind,rw "/$D" "$ALTROOT/$D" ; \
+    done ; \
+   done</pre><p>TODO: Test and document a working NAT and firewall setup for this, to allow
+SSH access to the containers via dedicated TCP ports exposed on the host.</p><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_arch_linux_containers"></a>Arch Linux containers</h5></div></div></div><p>Arch Linux containers prepared by procedure above include only a minimal
+footprint, and if you missed the <code class="literal">-P pkg,list</code> argument, they can lack
+even an SSH server. Suggestions below assume this path to container:</p><pre class="screen">:; ALTROOT=/srv/libvirt/rootfs/jenkins-archlinux-amd64/rootfs/</pre><p>Let <code class="literal">pacman</code> know current package database:</p><pre class="screen">:; grep 8.8.8.8 $ALTROOT/etc/resolv.conf || (echo 'nameserver 8.8.8.8' &gt; $ALTROOT/etc/resolv.conf)
+:; chroot $ALTROOT pacman -Syu
+:; chroot $ALTROOT pacman -S openssh sudo
+:; chroot $ALTROOT systemctl enable sshd
+:; chroot $ALTROOT systemctl start sshd</pre><p>This may require that you perform bind-mounts above, as well as "passthrough"
+the <code class="literal">/var/cache/pacman/pkg</code> from host to guest environment (in <code class="literal">virsh edit</code>,
+and bind-mount for <code class="literal">chroot</code> like for <code class="literal">/proc</code> et al above).</p><p>It is possible that <code class="literal">virsh console</code> would serve you better than <code class="literal">chroot</code>.
+Note you may have to first <code class="literal">chroot</code> to set the <code class="literal">root</code> password anyhow.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_troubleshooting"></a>Troubleshooting</h4></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
+Q: Container won’t start, its <code class="literal">virsh console</code> says something like:
+</p><pre class="screen">Failed to create symlink /sys/fs/cgroup/net_cls: Operation not permitted</pre><p class="simpara">A: According to <a class="ulink" href="https://bugzilla.redhat.com/show_bug.cgi?id=1770763" target="_top">https://bugzilla.redhat.com/show_bug.cgi?id=1770763</a>
+   (skip to the end for summary) this can happen when a newer Linux
+   host system with <code class="literal">cgroupsv2</code> capabilities runs an older guest distro
+   which only knows about <code class="literal">cgroupsv1</code>, such as when hosting a CentOS 7
+   container on a Debian 11 server.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><p class="simpara">
+One workaround is to ensure that the guest <code class="literal">systemd</code> does not try to
+   "join" host facilities, by setting an explicit empty list for that:
+</p><pre class="screen">:; echo 'JoinControllers=' &gt;&gt; "$ALTROOT/etc/systemd/system.conf"</pre></li><li class="listitem">
+Another approach is to upgrade <code class="literal">systemd</code> related packages in the guest
+   container. This may require additional "backport" repositories or
+   similar means, possibly maintained not by distribution itself but by
+   other community members, and arguably would logically compromise the
+   idea of non-regression builds in the old environment "as is".
+</li></ul></div></li><li class="listitem"><p class="simpara">
+Q: Server was set up with ZFS as recommended, and lots of I/O hit the
+  disk even when application writes are negligible
+</p><p class="simpara">A: This was seen on some servers and generally derives from data layout
+   and how ZFS maintains the tree structure of blocks. A small application
+   write (such as a new log line) means a new empty data block allocation,
+   an old block release, and bubble up through the whole metadata tree to
+   complete the transaction (grouped as TXG to flush to disk).</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+One solution is to use discardable build workspaces in RAM-backed
+   storage like <code class="literal">/dev/shm</code> (<code class="literal">tmpfs</code>) on Linux, or <code class="literal">/tmp</code> (<code class="literal">swap</code>) on
+   illumos hosting systems, and only use persistent storage for the home
+   directory with <code class="literal">.ccache</code> and <code class="literal">.gitcache-dynamatrix</code> directories.
+</li><li class="listitem">
+Another solution is to reduce the frequency of TXG sync from modern
+   default of 5 sec to conservative 30-60 sec. Check how to set the
+   <code class="literal">zfs_txg_timeout</code> on your platform.
+</li></ul></div></li></ul></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_connecting_jenkins_to_the_containers"></a>5.5. Connecting Jenkins to the containers</h3></div></div></div><p>To properly cooperate with the
+<a class="ulink" href="https://github.com/networkupstools/jenkins-dynamatrix" target="_top">jenkins-dynamatrix</a>
+project driving regular NUT CI builds, each build environment should be
+exposed as an individual agent with labels describing its capabilities.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_agent_labels"></a>Agent Labels</h4></div></div></div><p>With the <code class="literal">jenkins-dynamatrix</code>, agent labels are used to calculate a large
+"slow build" matrix to cover numerous scenarios for what can be tested
+with the current population of the CI farm, across operating systems,
+<code class="literal">make</code>, shell and compiler implementations and versions, and C/C++ language
+revisions, to name a few common "axes" involved.</p><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_labels_for_qemu"></a>Labels for QEMU</h5></div></div></div><p>Emulated-CPU container builds are CPU-intensive, so for them we define as
+few capabilities as possible: here CI is more interested in checking how
+binaries behave on those CPUs, <span class="strong"><strong>not</strong></span> in checking the quality of recipes
+(distcheck, Make implementations, etc.), shell scripts or documentation,
+which is more efficient to test on native platforms.</p><p>Still, we are interested in results from different compiler suites, so
+specify at least one version of each.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>Currently the NUT <code class="literal">Jenkinsfile-dynamatrix</code> only looks at various
+<code class="literal">COMPILER</code> variants for <code class="literal">qemu-nut-builder</code> use-cases, disregarding the
+versions and just using one that the environment defaults to.</p></div><p>The reduced set of labels for QEMU workers looks like:</p><pre class="screen">qemu-nut-builder qemu-nut-builder:alldrv
+NUT_BUILD_CAPS=drivers:all NUT_BUILD_CAPS=cppunit
+OS_FAMILY=linux OS_DISTRO=debian11 GCCVER=10 CLANGVER=11
+COMPILER=GCC COMPILER=CLANG
+ARCH64=ppc64le ARCH_BITS=64</pre></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_labels_for_native_builds"></a>Labels for native builds</h5></div></div></div><p>For contrast, a "real" build agent’s set of labels, depending on
+presence or known lack of some capabilities, looks something like this:</p><pre class="screen">doc-builder nut-builder nut-builder:alldrv
+NUT_BUILD_CAPS=docs:man NUT_BUILD_CAPS=docs:all
+NUT_BUILD_CAPS=drivers:all NUT_BUILD_CAPS=cppunit=no
+OS_FAMILY=bsd OS_DISTRO=freebsd12 GCCVER=10 CLANGVER=10
+COMPILER=GCC COMPILER=CLANG
+ARCH64=amd64 ARCH_BITS=64
+SHELL_PROGS=sh SHELL_PROGS=dash SHELL_PROGS=zsh SHELL_PROGS=bash
+SHELL_PROGS=csh SHELL_PROGS=tcsh SHELL_PROGS=busybox
+MAKE=make MAKE=gmake
+PYTHON=python2.7 PYTHON=python3.8</pre></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_generic_agent_attributes"></a>Generic agent attributes</h4></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Name: e.g. <code class="literal">ci-debian-altroot--jenkins-debian10-arm64</code> (note the
+  pattern for "Conflicts With" detailed below)
+</li><li class="listitem"><p class="simpara">
+Remote root directory: preferably unique per agent, to avoid surprises;
+  e.g.: <code class="literal">/home/abuild/jenkins-nut-altroots/jenkins-debian10-armel</code>
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Note it may help that the system home directory itself is shared between
+   co-located containers, so that the <code class="literal">.ccache</code> or <code class="literal">.gitcache-dynamatrix</code>
+   are available to all builders with identical contents
+</li><li class="listitem">
+If RAM permits, the Jenkins Agent working directory may be placed in
+   a temporary filesystem not backed by disk (e.g. <code class="literal">/dev/shm</code> on modern
+   Linux distributions); roughly estimate 300Mb per executor for NUT builds.
+</li></ul></div></li><li class="listitem">
+Usage: "Only build jobs with label expressions matching this node"
+</li><li class="listitem"><p class="simpara">
+Node properties / Environment variables:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+<code class="literal">PATH+LOCAL</code> ⇒ <code class="literal">/usr/lib/ccache</code>
+</li></ul></div></li></ul></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_where_to_run_agent_jar"></a>Where to run agent.jar</h4></div></div></div><p>Depending on circumstances of the container, there are several options
+available to the NUT CI farm:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Java can run in the container, efficiently (native CPU, different distro)
+  ⇒ the container may be exposed as a standalone host for direct SSH access
+  (usually by NAT, exposing SSH on a dedicated port of the host; or by first
+  connecting the Jenkins controller with the host as an SSH Build Agent, and
+  then calling SSH to the container as a prefix for running the agent; or
+  by using Jenkins Swarm agents), so ultimately the build <code class="literal">agent.jar</code> JVM
+  would run in the container.
+  Filesystem for the <code class="literal">abuild</code> account may be or not be shared with the host.
+</li><li class="listitem">
+Java can not run in the container (crashes on emulated CPU, or is too old
+  in the agent container’s distro — currently Jenkins requires JRE 17+, but
+  eventually will require 21+) ⇒ the agent would run on the host, and then
+  the host would <code class="literal">ssh</code> or <code class="literal">chroot</code> (networking not required, but bind-mount
+  of <code class="literal">/home/abuild</code> and maybe other paths from host would be needed) called
+  for executing <code class="literal">sh</code> steps in the container environment. Either way, home
+  directory of the <code class="literal">abuild</code> account is maintained on the host and shared with
+  the guest environment, user and group IDs should match.
+</li><li class="listitem">
+Java is inefficient in the container (operations like un-stashing the source
+  succeed but take minutes instead of seconds) ⇒ either of the above
+</li></ul></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>As time moves on and Jenkins core and its plugins get updated, support
+for some older run-time features of the build agents can get removed (e.g.
+older Java releases, older Git tooling). While there are projects like Temurin
+that provide Java builds for older systems, at some point a switch to "Jenkins
+agent on new host going into older build container" approach can become
+unavoidable. One clue to look at in build logs is failure messages like:</p></div><pre class="screen">Caused by: java.lang.UnsupportedClassVersionError:
+  hudson/slaves/SlaveComputer$SlaveVersion has been compiled by a more
+  recent version of the Java Runtime (class file version 61.0), this version
+  of the Java Runtime only recognizes class file versions up to 55.0</pre><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_using_jenkins_ssh_build_agents"></a>Using Jenkins SSH Build Agents</h5></div></div></div><p>This is a typical use-case for tightly integrated build farms under common
+management, where the Jenkins controller can log by SSH into systems which
+act as its build agents. It injects and launches the <code class="literal">agent.jar</code> to execute
+child processes for the builds, and maintains a tunnel to communicate.</p><p>Methods below involving SSH assume that you have configured a password-less
+key authentication from the host machine to the <code class="literal">abuild</code> account in each
+guest build environment container.
+This can be an <code class="literal">ssh-keygen</code> result posted into <code class="literal">authorized_keys</code>, or a
+trusted key passed by a chain of ssh agents from a Jenkins Credential
+for connection to the container-hoster into the container.
+The private SSH key involved may be secured by a pass-phrase, as long as
+your Jenkins Credential storage knows it too.
+Note that for the approaches explored below, the containers are not
+directly exposed for log-in from any external network.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
+For passing the agent through an SSH connection from host to container,
+  so that the <code class="literal">agent.jar</code> runs inside the container environment, configure:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Launch method: "Agents via SSH"
+</li><li class="listitem"><p class="simpara">
+Host, Credentials, Port: as suitable for accessing the container-hoster
+</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>The container-hoster should have accessed the guest container from
+      the account used for intermediate access, e.g. <code class="literal">abuild</code>, so that its
+      <code class="literal">.ssh/known_hosts</code> file would trust the SSH server on the container.</p></div></li><li class="listitem"><p class="simpara">
+Prefix Start Agent Command: content depends on the container name,
+   but generally looks like the example below to report some info about
+   the final target platform (and make sure <code class="literal">java</code> is usable) in the
+   agent’s log. Note that it ends with un-closed quote and a space char:
+</p><pre class="screen">ssh jenkins-debian10-amd64 '( java -version &amp; uname -a ; getconf LONG_BIT; getconf WORD_BIT; wait ) &amp;&amp;</pre></li><li class="listitem">
+Suffix Start Agent Command: a single quote to close the text opened above:
+</li></ul></div></li></ul></div><pre class="screen">'</pre><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
+The other option is to run the <code class="literal">agent.jar</code> on the host, for all the
+  network and filesystem magic the agent does, and only execute shell
+  steps in the container. The solution relies on overridden <code class="literal">sh</code> step
+  implementation in the <code class="literal">jenkins-dynamatrix</code> shared library that uses a
+  magic <code class="literal">CI_WRAP_SH</code> environment variable to execute a pipe into the
+  container. Such pipes can be <code class="literal">ssh</code> or <code class="literal">chroot</code> with appropriate host
+  setup described above.
+</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>In case of ssh piping, remember that the container’s
+      <code class="literal">/etc/ssh/sshd_config</code> should <code class="literal">AcceptEnv *</code> and the SSH
+      server should be restarted after such configuration change.</p></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Launch method: "Agents via SSH"
+</li><li class="listitem">
+Host, Credentials, Port: as suitable for accessing the container-hoster
+</li><li class="listitem"><p class="simpara">
+Prefix Start Agent Command: content depends on the container name,
+   but generally looks like the example below to report some info about
+   the final target platform (and make sure it is accessible) in the
+   agent’s log. Note that it ends with a space char, and that the command
+   here should not normally print anything into stderr/stdout (this tends
+   to confuse the Jenkins Remoting protocol):
+</p><pre class="screen">echo PING &gt; /dev/tcp/jenkins-debian11-ppc64el/22 &amp;&amp;</pre></li><li class="listitem">
+Suffix Start Agent Command: empty
+</li></ul></div></li><li class="listitem"><p class="simpara">
+Node properties / Environment variables:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem"><p class="simpara">
+<code class="literal">CI_WRAP_SH</code> ⇒
+</p><pre class="screen">ssh -o SendEnv='*' "jenkins-debian11-ppc64el" /bin/sh -xe</pre></li></ul></div></li></ul></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_using_jenkins_swarm_agents"></a>Using Jenkins Swarm Agents</h5></div></div></div><p>This approach allows remote systems to participate in the NUT CI farm by
+dialing in and so defining an agent. A single contributing system may be
+running a number of containers or virtual machines set up following the
+instructions above, and each of those would be a separate build agent.</p><p>Such systems should be "dedicated" to contribution in the sense that
+they should be up and connected for days, and sometimes tasks would land.</p><p>Configuration files maintained on the Swarm Agent system dictate which
+labels or how many executors it would expose, etc. Credentials to access
+the NUT CI farm Jenkins controller to register as an agent should be
+arranged with the farm maintainers, and currently involve a GitHub account
+with Jenkins role assignment for such access, and a token for authentication.</p><p>The <a class="ulink" href="https://github.com/networkupstools/jenkins-swarm-nutci" target="_top">jenkins-swarm-nutci</a>
+repository contains example code from such setup with a back-up server
+experiment for the NUT CI farm, including auto-start method scripts for
+Linux systemd and upstart, illumos SMF, and OpenBSD rcctl.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_sequentializing_the_stress"></a>Sequentializing the stress</h4></div></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_running_one_agent_at_a_time"></a>Running one agent at a time</h5></div></div></div><p>Another aspect of farm management is that emulation is a slow and intensive
+operation, so we can not run all agents and execute builds at the same time.</p><p>The current solution relies on
+<a class="ulink" href="https://github.com/jimklimov/conflict-aware-ondemand-retention-strategy-plugin" target="_top">https://github.com/jimklimov/conflict-aware-ondemand-retention-strategy-plugin</a>
+to allow co-located build agents to "conflict" with each other — when one
+picks up a job from the queue, it blocks neighbors from starting; when it
+is done, another may start.</p><p>Containers can be configured with "Availability ⇒ On demand", with shorter
+cycle to switch over faster (the core code sleeps a minute between attempts):</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+In demand delay: <code class="literal">0</code>;
+</li><li class="listitem">
+Idle delay: <code class="literal">0</code> (Jenkins may change it to <code class="literal">1</code>);
+</li><li class="listitem">
+Conflicts with: <code class="literal">^ci-debian-altroot--.*$</code> assuming that is the pattern
+  for agent definitions in Jenkins — not necessarily linked to hostnames.
+</li></ul></div><p>Also, the "executors" count should be reduced to the amount of compilers
+in that system (usually 2) and so avoid extra stress of scheduling too many
+emulated-CPU builds at once.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_sequentializing_the_git_cache_access"></a>Sequentializing the git cache access</h5></div></div></div><p>As part of the <code class="literal">jenkins-dynamatrix</code> optional optimizations, the NUT CI
+recipe invoked via <code class="literal">Jenkinsfile-dynamatrix</code> maintains persistent git
+reference repositories that can be used to cache NUT codebase (including
+the tested commits) and so considerably speed up workspace preparation
+when running numerous build scenarios on the same agent.</p><p>Such <code class="literal">.gitcache-dynamatrix</code> cache directories are located in the build
+workspace location (unique for each agent), but on a system with numerous
+containers these names can be symlinks pointing to a shared location.</p><p>To avoid collisions with several executors updating the same cache with
+new commits, critical access windows are sequentialized with the use of
+<a class="ulink" href="https://github.com/jenkinsci/lockable-resources-plugin" target="_top">Lockable Resources
+plugin</a>. On the <code class="literal">jenkins-dynamatrix</code> side this is facilitated by labels:</p><pre class="screen">DYNAMATRIX_UNSTASH_PREFERENCE=scm-ws:nut-ci-src
+DYNAMATRIX_REFREPO_WORKSPACE_LOCKNAME=gitcache-dynamatrix:SHARED_HYPERVISOR_NAME</pre><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+The <code class="literal">DYNAMATRIX_UNSTASH_PREFERENCE</code> tells the <code class="literal">jenkins-dynamatrix</code> library
+  code which checkout/unstash strategy to use on a particular build agent
+  (following values defined in the library; <code class="literal">scm-ws</code> means SCM caching
+  under the agent workspace location, <code class="literal">nut-ci-src</code> names the cache for
+  this project);
+</li><li class="listitem">
+The <code class="literal">DYNAMATRIX_REFREPO_WORKSPACE_LOCKNAME</code> specifies a semi-unique
+  string: it should be same for all co-located agents which use the same
+  shared cache location, e.g. guests on the same hypervisor; and it should
+  be different for unrelated cache locations, e.g. different hypervisors
+  and stand-alone machines.
+</li></ul></div></div></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
+		Last updated 2025-04-22 10:20:44 -- Network UPS Tools 2.8.3</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_continuous_integration_nut_ci_farm_technologies.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="_prerequisites_for_building_nut_on_different_oses.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
