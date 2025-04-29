@@ -5,7 +5,7 @@
 <head>
 <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
 <meta name="generator" content="AsciiDoc 10.2.0" />
-<title>UPSSTATS.HTML(5)</title>
+<title>VE-DIRECT(8)</title>
 <style type="text/css">
 /* Shared CSS for AsciiDoc xhtml11 and html5 backends */
 
@@ -735,544 +735,81 @@ asciidoc.install();
 </head>
 <body class="article">
 <div id="header">
-<h1>UPSSTATS.HTML(5)</h1>
+<h1>VE-DIRECT(8)</h1>
 </div>
 <div id="content">
 <div class="sect1">
 <h2 id="_name">NAME</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>upsstats.html - HTML template for web-based Network UPS Tools upsstats</p></div>
+<div class="paragraph"><p>ve-direct - Driver for Victron UPS unit running on VE.Direct serial protocol</p></div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_description">DESCRIPTION</h2>
+<h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>This file is used by <a href="upsstats.cgi.html">upsstats.cgi(8)</a> to generate status pages.
-Certain commands are recognized, and will be replaced with various
-status elements on the fly.</p></div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_formatting">FORMATTING</h2>
-<div class="sectionbody">
-<div class="paragraph"><p>Commands can be placed anywhere on a line, but must start and end with <code>@</code>.</p></div>
-<div class="paragraph"><p>Any extra characters before or after the commands will be passed through
-unchanged.</p></div>
-<div class="paragraph"><p>It is allowed to use more than one command on a single line, as long as
-each command has its own start and end character.</p></div>
-<div class="paragraph"><p>If you need to use the <code>@</code> sign, use HTML entity <code>&amp;#64;</code> to prevent it
-from being treated as a start character.</p></div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_block_control">BLOCK CONTROL</h2>
-<div class="sectionbody">
-<div class="paragraph"><p>Some commands begin blocks&#8201;&#8212;&#8201;sections of the template that will be
-included, excluded, or repeated depending on certain parameters.</p></div>
-<div class="sect2">
-<h3 id="_block_control_iteration">BLOCK CONTROL - ITERATION</h3>
-<div class="dlist"><dl>
-<dt class="hdlist1">
-<strong>@FOREACHUPS@</strong>
-</dt>
-<dd>
-<p>
-Starts a block that will be repeated for each MONITOR directive in the
-<a href="hosts.conf.html">hosts.conf(5)</a>.  This is how you can generate pages that monitor
-all of your systems simultaneously.
-</p>
-</dd>
-<dt class="hdlist1">
-<strong>@ENDFOR@</strong>
-</dt>
-<dd>
-<p>
-Ends a FOREACHUPS block.
-</p>
-</dd>
-</dl></div>
-</div>
-<div class="sect2">
-<h3 id="_block_control_matching_specific_cases">BLOCK CONTROL - MATCHING SPECIFIC CASES</h3>
-<div class="dlist"><dl>
-<dt class="hdlist1">
-<strong>@IFSUPP <em>var</em></strong>@*
-</dt>
-<dd>
-<p>
-Starts a block that will only be printed if the variable var is
-supported by the current UPS.  This is generally used to suppress "not
-supported" messages by avoiding the label and variable call entirely.
-</p>
-</dd>
-<dt class="hdlist1">
-<strong>@IFEQ</strong> <em>var</em> <em>value</em><strong>@</strong>
-</dt>
-<dd>
-<p>
-Starts a block if the value returned from the variable <em>var</em> matches
-<em>value</em>.
-</p>
-</dd>
-<dt class="hdlist1">
-<strong>@IFBETWEEN</strong> <em>varlow</em> <em>varhigh</em> <em>varvalue</em><strong>@</strong>
-</dt>
-<dd>
-<p>
-Starts a block if the value returned by the variable <em>varvalue</em> is between
-the values returned by the variables <em>varlow</em> and <em>varhigh</em>.
-</p>
-</dd>
-<dt class="hdlist1">
-<strong>@ELSE@</strong>
-</dt>
-<dd>
-<p>
-If the previous IF-command did not match, perform this instead.
-</p>
-</dd>
-<dt class="hdlist1">
-<strong>@ENDIF@</strong>
-</dt>
-<dd>
-<p>
-Ends an IF/ELSE-block.
-</p>
-</dd>
-</dl></div>
-</div>
-<div class="sect2">
-<h3 id="_block_control_advanced_expressions">BLOCK CONTROL - ADVANCED EXPRESSIONS</h3>
-<div class="paragraph"><p>Even though the parser is pretty limited, it&#8217;s still possible to create
-rather advanced expressions. The key to this is the fact that
-multiple block control commands are AND:ed. This is illustrated with an
-example (more examples are available in upsstats.html).</p></div>
-<div class="literalblock">
-<div class="content">
-<pre><code>@IFSUPP ambient.humidity@
-@IFSUPP ambient.temperature@
-This UPS knows both ambient temperature and humidity.
-@ELSE@
-@IFSUPP ambient.humidity@
-This UPS only knows ambient humidity.
-@ELSE@
-@IFSUPP ambient.temperature@
-This UPS only knows ambient temperature.
-@ELSE@
-This UPS knows nothing, how annoying.
-@ENDIF@</code></pre>
-</div></div>
+<div class="paragraph"><p><strong>ve-direct</strong> -h</p></div>
+<div class="paragraph"><p><strong>ve-direct</strong> -a <em>UPS_NAME</em> [<em>OPTIONS</em>]</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">This man page only documents the hardware-specific features of the
+<strong>ve-direct</strong> driver.  For information about the core driver, see
+<a href="nutupsdrv.html">nutupsdrv(8)</a>.</td>
+</tr></table>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_other_commands">OTHER COMMANDS</h2>
+<h2 id="_supported_hardware">SUPPORTED HARDWARE</h2>
 <div class="sectionbody">
+<div class="paragraph"><p>The ve-direct driver should recognize all Victron models that use a serial
+VE.Direct protocol at 19200 bps.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_cabling">CABLING</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Use Victron provided USB or serial cable to connect your Victron UPS.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_extra_arguments">EXTRA ARGUMENTS</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>This driver supports the following optional setting in the
+<a href="ups.conf.html">ups.conf(5)</a>:</p></div>
 <div class="dlist"><dl>
 <dt class="hdlist1">
-<strong>@AMBTEMP@</strong>
+<strong>modelname</strong>=<em>name</em>
 </dt>
 <dd>
 <p>
-Insert the ambient temperature in the current temperature scale.
-</p>
-</dd>
-<dt class="hdlist1">
-<strong>@DATE</strong> <em>format</em><strong>@</strong>
-</dt>
-<dd>
-<p>
-Insert the current date and time.  The format string is passed to <code>strftime</code>,
-so almost anything is possible.  See <ulink url="https://linux.die.net/man/3/strftime">strftime(3)</ulink> for possible values.
-</p>
-</dd>
-<dt class="hdlist1">
-<strong>@DEGREES@</strong>
-</dt>
-<dd>
-<p>
-Insert the entity for degrees (&deg;) and either C or F depending on
-the current temperature scale.
-</p>
-</dd>
-<dt class="hdlist1">
-<strong>@HOST@</strong>
-</dt>
-<dd>
-<p>
-Insert the designation of the host being monitored, like <code>myups@localhost</code>.
-</p>
-</dd>
-<dt class="hdlist1">
-<strong>@HOSTDESC@</strong>
-</dt>
-<dd>
-<p>
-Insert the host&#8217;s description from <a href="hosts.conf.html">hosts.conf(5)</a>.
-</p>
-</dd>
-<dt class="hdlist1">
-<strong>@HOSTLINK@</strong>
-</dt>
-<dd>
-<p>
-Insert a link to upsstats.cgi with the "host" variable set to the
-current UPS.  This is only useful within a FOREACHUPS block.
-</p>
-</dd>
-<dt class="hdlist1">
-<strong>@IMG</strong> <em>varname</em> <strong><span class="extra">@</span></strong>
-</dt>
-<dd>
-<p>
-Insert an IMG SRC to <a href="upsimage.cgi.html">upsimage.cgi(8)</a> for one of these
-status variables:
-</p>
-<div class="dlist"><dl>
-<dt class="hdlist1">
-battery.charge
-</dt>
-<dd>
-<p>
-Battery charge&#8201;&#8212;&#8201;a percentage
-</p>
-</dd>
-<dt class="hdlist1">
-battery.voltage
-</dt>
-<dd>
-<p>
-The charge on the battery in volts
-</p>
-</dd>
-<dt class="hdlist1">
-input.frequency
-</dt>
-<dd>
-<p>
-Incoming utility frequency (Hz)
-</p>
-</dd>
-<dt class="hdlist1">
-input.voltage
-</dt>
-<dd>
-<p>
-Incoming utility voltage
-</p>
-</dd>
-<dt class="hdlist1">
-input.L1-L2.voltage
-</dt>
-<dd>
-<p>
-Incoming voltage, L1-L2 (3phase)
-</p>
-</dd>
-<dt class="hdlist1">
-input.L2-L3.voltage
-</dt>
-<dd>
-<p>
-Incoming voltage, L2-L3 (3phase)
-</p>
-</dd>
-<dt class="hdlist1">
-input.L3-L1.voltage
-</dt>
-<dd>
-<p>
-Incoming voltage, L3-L1 (3phase)
-</p>
-</dd>
-<dt class="hdlist1">
-output.frequency
-</dt>
-<dd>
-<p>
-Outgoing utility frequency (Hz)
-</p>
-</dd>
-<dt class="hdlist1">
-output.voltage
-</dt>
-<dd>
-<p>
-Outgoing voltage (from the UPS)
-</p>
-</dd>
-<dt class="hdlist1">
-output.L1-L2.voltage
-</dt>
-<dd>
-<p>
-Outgoing voltage, L1-L2 (3phase)
-</p>
-</dd>
-<dt class="hdlist1">
-output.L2-L3.voltage
-</dt>
-<dd>
-<p>
-Outgoing voltage, L2-L3 (3phase)
-</p>
-</dd>
-<dt class="hdlist1">
-output.L3-L1.voltage
-</dt>
-<dd>
-<p>
-Outgoing voltage, L3-L1 (3phase)
-</p>
-</dd>
-<dt class="hdlist1">
-output.L1.power.percent
-</dt>
-<dd>
-<p>
-UPS load, L1 (3phase)
-</p>
-</dd>
-<dt class="hdlist1">
-output.L2.power.percent
-</dt>
-<dd>
-<p>
-UPS load, L2 (3phase)
-</p>
-</dd>
-<dt class="hdlist1">
-output.L3.power.percent
-</dt>
-<dd>
-<p>
-UPS load, L3 (3phase)
-</p>
-</dd>
-<dt class="hdlist1">
-ups.load
-</dt>
-<dd>
-<p>
-UPS load&#8201;&#8212;&#8201;percentage
-</p>
-</dd>
-<dt class="hdlist1">
-ups.temperature
-</dt>
-<dd>
-<p>
-UPS temperature
-</p>
-</dd>
-</dl></div>
-</dd>
-</dl></div>
-<div class="paragraph"><p><em>extra</em> is where you can put additional definitions.  Right now
-the valid definitions are colors for various parts of the bars drawn
-by <a href="upsimage.cgi.html">upsimage.cgi(8)</a>.  Possible color names are:</p></div>
-<div class="dlist"><dl>
-<dt class="hdlist1">
-back_col
-</dt>
-<dd>
-<p>
-background color
-</p>
-</dd>
-<dt class="hdlist1">
-scale_num_col
-</dt>
-<dd>
-<p>
-scale number color
-</p>
-</dd>
-<dt class="hdlist1">
-summary_col
-</dt>
-<dd>
-<p>
-summary color (number at the bottom)
-</p>
-</dd>
-<dt class="hdlist1">
-ok_zone_maj_col
-</dt>
-<dd>
-<p>
-major scale color for the normal ("ok") zone
-</p>
-</dd>
-<dt class="hdlist1">
-ok_zone_min_col
-</dt>
-<dd>
-<p>
-minor scale color for the normal ("ok") zone
-</p>
-</dd>
-<dt class="hdlist1">
-neutral_zone_maj_col
-</dt>
-<dd>
-<p>
-major scale color for the neutral zone
-</p>
-</dd>
-<dt class="hdlist1">
-neutral_zone_min_col
-</dt>
-<dd>
-<p>
-minor scale color for the neutral zone
-</p>
-</dd>
-<dt class="hdlist1">
-warn_zone_maj_col
-</dt>
-<dd>
-<p>
-major scale color for the warning zone
-</p>
-</dd>
-<dt class="hdlist1">
-warn_zone_min_col
-</dt>
-<dd>
-<p>
-minor scale color for the warning zone
-</p>
-</dd>
-<dt class="hdlist1">
-bar_col
-</dt>
-<dd>
-<p>
-the color of the bar in the middle
-</p>
-</dd>
-</dl></div>
-<div class="paragraph"><p>All colors are hex triplets&#8201;&#8212;&#8201;e.g. <code>0xff0000</code> is red, <code>0x00ff00</code> is green,
-and <code>0x0000ff</code> is blue.</p></div>
-<div class="paragraph"><p>Examples:</p></div>
-<div class="literalblock">
-<div class="content">
-<pre><code>@IMG battery.charge@
-@IMG battery.charge back_col=0xff00ff bar_col=0xaabbcc@
-@IMG input.voltage ok_zone_maj_col=0x123456@</code></pre>
-</div></div>
-<div class="dlist"><dl>
-<dt class="hdlist1">
-<strong>@REFRESH@</strong>
-</dt>
-<dd>
-<p>
-Insert the META header magic for refreshing the page if that variable
-has been set by the browser.  This needs to be in the HEAD section of
-the page.
-</p>
-</dd>
-<dt class="hdlist1">
-<strong>@STATUS@</strong>
-</dt>
-<dd>
-<p>
-Expand the abbreviations in the ups.status variable&#8201;&#8212;&#8201;OL becomes
-"On line", OB becomes "On battery", and so on.
-</p>
-</dd>
-<dt class="hdlist1">
-<strong>@STATUSCOLOR@</strong>
-</dt>
-<dd>
-<p>
-Insert red, green, or yellow color triplets depending on the severity of
-the current UPS status.  Normal operations are green, warnings like
-voltage trim/boost or "off" are yellow, and other events like being on
-battery or having a low battery are red.
-</p>
-</dd>
-<dt class="hdlist1">
-<strong>@VAR</strong> <em>varname</em><strong>@</strong>
-</dt>
-<dd>
-<p>
-Insert the current value of the status variable varname on the host being
-monitored, or "Not supported".
-</p>
-</dd>
-<dt class="hdlist1">
-<strong>@RUNTIME@</strong>
-</dt>
-<dd>
-<p>
-Inserts the current runtime, in <code>hh:mm:ss</code> format.
-</p>
-</dd>
-<dt class="hdlist1">
-<strong>@TEMPC@</strong>
-</dt>
-<dd>
-<p>
-Use the Celsius scale for temperature data (default).
-</p>
-</dd>
-<dt class="hdlist1">
-<strong>@TEMPF@</strong>
-</dt>
-<dd>
-<p>
-Use the Fahrenheit scale for temperature data.
-</p>
-</dd>
-<dt class="hdlist1">
-<strong>@UPSTEMP@</strong>
-</dt>
-<dd>
-<p>
-Insert the UPS temperature in the current scale.
-</p>
-</dd>
-<dt class="hdlist1">
-<strong>@BATTTEMP@</strong>
-</dt>
-<dd>
-<p>
-Insert the battery temperature in the current scale.
-</p>
-</dd>
-<dt class="hdlist1">
-<strong>@UTILITYCOLOR@</strong>
-</dt>
-<dd>
-<p>
-Obsoleted. Use IFBETWEEN instead (see example in upsstats.html).
-</p>
-</dd>
-<dt class="hdlist1">
-<strong>@VERSION@</strong>
-</dt>
-<dd>
-<p>
-Insert the version number of the software.
+Set model name
 </p>
 </dd>
 </dl></div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_other_templates">OTHER TEMPLATES</h2>
+<h2 id="_bugs">BUGS</h2>
 <div class="sectionbody">
-<div class="paragraph"><p><a href="upsstats.cgi.html">upsstats.cgi(8)</a> will also open a file called <code>upsstats-single.html</code>
-if you call it with <code>host=</code> set in the query URL.  That file uses the same
-rules and techniques as documented here.</p></div>
+<div class="paragraph"><p>The HEX protocol is not supported at the moment.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_author">AUTHOR</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Petr Kubanek &lt;<a href="mailto:kubanek@fzu.cz">kubanek@fzu.cz</a>&gt;</p></div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
-<div class="paragraph"><p><a href="upsstats.cgi.html">upsstats.cgi(8)</a>, <a href="upsimage.cgi.html">upsimage.cgi(8)</a></p></div>
+<div class="sect2">
+<h3 id="_the_core_driver">The core driver:</h3>
+<div class="paragraph"><p><a href="nutupsdrv.html">nutupsdrv(8)</a></p></div>
+</div>
 <div class="sect2">
 <h3 id="_internet_resources">Internet resources:</h3>
 <div class="paragraph"><p>The NUT (Network UPS Tools) home page: <a href="https://www.networkupstools.org/">https://www.networkupstools.org/</a></p></div>
@@ -1283,7 +820,7 @@ rules and techniques as documented here.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-04-29 14:50:07 UTC -- Network UPS Tools 2.8.3.279
+Last updated 2025-04-29 14:50:08 UTC -- Network UPS Tools 2.8.3.279
 </div>
 </div>
 </body>
