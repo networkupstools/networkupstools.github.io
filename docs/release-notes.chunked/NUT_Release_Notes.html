@@ -65,12 +65,20 @@ Fixed two bugs about printing the "further (ignored) addresses resolved
      and misfired on some platforms, and the way to print had a theoretical
      potential for buffer overflow. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2915" target="_top">#2915</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
+<code class="literal">nutdrv_qx</code> driver updates:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Introduced <code class="literal">innovart33</code> protocol support for Ippon Innova RT 3/3 topology
+     UPSes. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2938" target="_top">#2938</a>]
+</li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">usbhid-ups</code> driver updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 The <code class="literal">cps-hid</code> subdriver’s existing mechanism for fixing broken report
      descriptors was extended to cover a newly reported case of nominal UPS
      power being incorrectly reported due to an unrealistically low maximum
      threshold, as seen with a EC850LCD device. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2917" target="_top">issue #2917</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/2919" target="_top">PR #2919</a>]
+</li><li class="listitem">
+Added APC BVKxxxM2 to list of devices where <code class="literal">lbrb_log_delay_sec=N</code> may be
+     necessary to address spurious LOWBATT and REPLACEBATT events. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2942" target="_top">#2942</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 New NUT drivers:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -78,7 +86,24 @@ Introduced a <code class="literal">ve-direct</code> driver for Victron Energy UP
      monitoring. Most specific reported values are in an <code class="literal">experimental.*</code>
      namespace, as a community we need to come up with standard naming for
      those via <code class="literal">docs/nut-names.txt</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/440" target="_top">#440</a>]
-</li></ul></div></li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_release_notes_for_nut_2_8_3_what_8217_s_new_since_2_8_2"></a>2.2. Release notes for NUT 2.8.3 - what’s new since 2.8.2</h3></div></div></div><p><a class="ulink" href="https://github.com/networkupstools/nut/milestone/11" target="_top">https://github.com/networkupstools/nut/milestone/11</a></p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
+</li><li class="listitem">
+Introduced a <code class="literal">nutdrv_hashx</code> driver for numerous devices from Ablerex,
+     Atlantis Land, Epyc, Infosec, ION, PowerWalker, Right Power Technology,
+     Salicru, UPS Solutions and other vendors (originally shipped with a
+     "PowerMaster+", "PowerMaster" or "PowerGuide" software companion suite).
+     This seems to be a protocol developed by Cyber Energy for serial-port
+     devices, subsequently used by different vendors in their own products
+     or re-branded Cyber Energy creations. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2940" target="_top">#2940</a>]
+</li></ul></div></li><li class="listitem"><p class="simpara">
+NUT Monitor GUI:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Ported Python 3 version to Qt6, now shipped alongside Qt5 for systems
+     with either or both, maximizing compatibility with old and new setups.
+</li></ul></div></li><li class="listitem">
+Introduced handling (possibly rewriting) for man page section "Overviews,
+   conventions, and miscellaneous" (commonly number 7), to deliver support
+   for <code class="literal">man nut</code> queries (NUT overview manual page also created). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2945" target="_top">#2945</a>]
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_release_notes_for_nut_2_8_3_what_8217_s_new_since_2_8_2"></a>2.2. Release notes for NUT 2.8.3 - what’s new since 2.8.2</h3></div></div></div><p><a class="ulink" href="https://github.com/networkupstools/nut/milestone/11" target="_top">https://github.com/networkupstools/nut/milestone/11</a></p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
 Fix fallout of development in NUT v2.8.0 and/or v2.8.1 and/or v2.8.2:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 Move of <code class="literal">NUT_DEBUG_LEVEL</code> and "-D" CLI option handling to start of
@@ -313,7 +338,8 @@ Added Visench C1K (using serial port converter with USB ID <code class="literal"
      as known supported by <code class="literal">nutdrv_qx</code> (Megatec protocol) since at least
      NUT v2.7.4 release. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2395" target="_top">#2395</a>]
 </li><li class="listitem">
-Introduced <code class="literal">innovart31</code> protocol support for Innova RT 3/1 UPSes. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2712" target="_top">#2712</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2798" target="_top">#2798</a>]
+Introduced <code class="literal">innovart31</code> protocol support for Ippon Innova RT 3/1 topology
+     UPSes. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2712" target="_top">#2712</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2798" target="_top">#2798</a>]
 </li><li class="listitem">
 Introduced <code class="literal">q2</code> and <code class="literal">q6</code> protocol support; currently also based/tested
      on Innova devices, but other models than RT 3/1. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2798" target="_top">#2798</a>]
@@ -4187,4 +4213,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.32. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-05-08 08:30:46 -- Network UPS Tools 2.8.3.302</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2025-05-09 17:45:47 -- Network UPS Tools 2.8.3.346</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

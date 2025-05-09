@@ -5,7 +5,7 @@
 <head>
 <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
 <meta name="generator" content="AsciiDoc 10.2.0" />
-<title>NUTSCAN_IP_RANGES_ITER_INC(3)</title>
+<title>NUTDRV_HASHX(8)</title>
 <style type="text/css">
 /* Shared CSS for AsciiDoc xhtml11 and html5 backends */
 
@@ -735,71 +735,163 @@ asciidoc.install();
 </head>
 <body class="article">
 <div id="header">
-<h1>NUTSCAN_IP_RANGES_ITER_INC(3)</h1>
+<h1>NUTDRV_HASHX(8)</h1>
 </div>
 <div id="content">
 <div class="sect1">
 <h2 id="_name">NAME</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>nutscan_ip_ranges_iter_inc - Proceed with iteration of an IP address range
-using a <code>nutscan_ip_range_list_iter_t</code> structure.</p></div>
+<div class="paragraph"><p>nutdrv_hashx - Driver for #* protocol serial based UPS equipment</p></div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
-<div class="listingblock">
-<div class="content">
-<pre><code>        #include &lt;nut-scan.h&gt;
-
-        char * nutscan_ip_ranges_iter_inc(nutscan_ip_range_list_iter_t *irliter);</code></pre>
-</div></div>
+<div class="paragraph"><p><strong>nutdrv_hashx</strong> -h</p></div>
+<div class="paragraph"><p><strong>nutdrv_hashx</strong> -a <em>UPS_NAME</em> [<em>OPTIONS</em>]</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">This man page only documents the hardware-specific features of the
+<strong>nutdrv_hashx</strong> driver.  For information about the core driver, see
+<a href="nutupsdrv.html">nutupsdrv(8)</a>.</td>
+</tr></table>
+</div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_description">DESCRIPTION</h2>
+<h2 id="_supported_hardware">SUPPORTED HARDWARE</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>The <strong>nutscan_ip_ranges_iter_inc()</strong> function can walk an iterator from
-the specified <code>nutscan_ip_range_list_iter_t</code> helper object, prepared by
-<a href="nutscan_ip_ranges_iter_init.html">nutscan_ip_ranges_iter_init(3)</a> from a <code>nutscan_ip_range_list_t</code>
-structure.</p></div>
-<div class="paragraph"><p>This function skips work if:</p></div>
+<div class="paragraph"><p>The protocol originates from Cyber Energy that apparently developed the
+protocol for their UPS and it was used then by various other vendors
+(that in some cases they just re-brand the Cyber Energy products).</p></div>
+<div class="paragraph"><p>The <strong>nutdrv_hashx</strong> driver is expected to work with various UPSes from
+<em>Ablerex</em>, <em>Atlantis Land</em>, <em>Epyc</em>, <em>Infosec</em>, <em>ION</em>, <em>PowerWalker</em>,
+<em>Right Power Technology</em>, <em>Salicru</em>, <em>UPS Solutions</em> and various others.</p></div>
+<div class="paragraph"><p>Long story short: if your UPS came with a software called <em>PowerMaster+</em>
+(or the older <em>PowerMaster</em> and <em>PowerGuide</em>), chances are high that it
+works with this driver.</p></div>
+<div class="paragraph"><p>Only devices with a serial interface are supported.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_known_issues_and_bugs">KNOWN ISSUES AND BUGS</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>The driver has only been tested with a single line-interactive device
+(Atlantis Land A03-S1200) so far, thus the protocol reverse engineering
+has been currently limited to what such device supports.</p></div>
+<div class="paragraph"><p>Thus the lack of these features:</p></div>
 <div class="ulist"><ul>
 <li>
 <p>
-the structure pointer is <code>NULL</code> (<code>NULL</code> is returned);
+Specific support for PDU or ATS devices.
 </p>
 </li>
 <li>
 <p>
-the structure pointer&#8217;s <code>ip_range</code> list is <code>NULL</code> (<code>NULL</code> is returned),
+Detection of the UPS type (line-interactive / online).
 </p>
 </li>
 <li>
 <p>
-the structure pointer&#8217;s <code>ip_range_iter</code> pointer is <code>NULL</code> (<code>NULL</code> is
-  returned).
+Detection of max/min voltage ratings.
+</p>
+</li>
+<li>
+<p>
+Detection of load banks.
+</p>
+</li>
+<li>
+<p>
+Detection of Extended battery modules.
+</p>
+</li>
+<li>
+<p>
+Detection of Over voltage state.
+</p>
+</li>
+<li>
+<p>
+Detection of Under voltage state.
+</p>
+</li>
+<li>
+<p>
+Detection of Frequency failure state.
+</p>
+</li>
+<li>
+<p>
+Detection of Wiring Fault state.
+</p>
+</li>
+<li>
+<p>
+Detection of lack of Neutral line connection.
+</p>
+</li>
+<li>
+<p>
+Detection of UPS generators.
+</p>
+</li>
+<li>
+<p>
+Detection of other Battery / UPS error states.
+</p>
+</li>
+<li>
+<p>
+Reading of actual Voltage, Frequency, Current, Power factor, Temperature values.
+</p>
+</li>
+<li>
+<p>
+Reading the status of the battery packs.
+</p>
+</li>
+<li>
+<p>
+Bypass modes usage and detection.
+</p>
+</li>
+<li>
+<p>
+USB Support (PM+ mentions being it supported, unsure if with the same protocol).
 </p>
 </li>
 </ul></div>
-<div class="paragraph"><p>Returns the next IP address from the currently iterated registered IP
-address range, or switches iteration to the next range if no addresses
-remained in the current one. The caller SHOULD NOT free this string
-while iterating.</p></div>
+<div class="paragraph"><p>The driver shutdown function is not implemented (while it&#8217;s supported), so other
+arrangements must be made to turn off the UPS.</p></div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_notes">NOTES</h2>
+<h2 id="_authors">AUTHORS</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>Technically, the function is currently defined in <em>nutscan-ip.h</em> file.</p></div>
+<div class="paragraph"><p>Marco Trevisan &lt;<a href="mailto:mail@3v1n0.net">mail@3v1n0.net</a>&gt;</p></div>
+<div class="sect2">
+<h3 id="_the_core_driver">The core driver:</h3>
+<div class="paragraph"><p><a href="nutupsdrv.html">nutupsdrv(8)</a></p></div>
 </div>
+<div class="sect2">
+<h3 id="_internet_resources">Internet resources:</h3>
+<div class="ulist"><ul>
+<li>
+<p>
+The NUT (Network UPS Tools) home page: <a href="https://www.networkupstools.org/">https://www.networkupstools.org/</a>
+</p>
+</li>
+<li>
+<p>
+PowerMaster+: <a href="https://www.powermonitor.software/">https://www.powermonitor.software/</a>
+</p>
+</li>
+</ul></div>
 </div>
-<div class="sect1">
-<h2 id="_see_also">SEE ALSO</h2>
-<div class="sectionbody">
-<div class="paragraph"><p><a href="nutscan_init_ip_ranges.html">nutscan_init_ip_ranges(3)</a>, <a href="nutscan_free_ip_ranges.html">nutscan_free_ip_ranges(3)</a>,
-<a href="nutscan_cidr_to_ip.html">nutscan_cidr_to_ip(3)</a>,
-<a href="nutscan_ip_ranges_iter_init.html">nutscan_ip_ranges_iter_init(3)</a></p></div>
 </div>
 </div>
 </div>
