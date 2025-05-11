@@ -65,6 +65,32 @@ Fixed two bugs about printing the "further (ignored) addresses resolved
      and misfired on some platforms, and the way to print had a theoretical
      potential for buffer overflow. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2915" target="_top">#2915</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
+common driver code:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Removed workarounds trying to migrate legacy driver raised <code class="literal">ALARM</code>
+     status tokens into modern <code class="literal">alarm_*</code> function logic. Rather, we keep
+     supporting them as separate from the modern logic, seeing as <code class="literal">upsmon</code>
+     does not care where the token itself was raised for its notifications.
+     Driver-code related test-cases were updated to reflect these changes.
+     [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2928" target="_top">issue #2928</a>, PRs <a class="ulink" href="https://github.com/networkupstools/nut/issues/2931" target="_top">#2931</a> and <a class="ulink" href="https://github.com/networkupstools/nut/issues/2934" target="_top">#2934</a>]
+</li></ul></div></li><li class="listitem"><p class="simpara">
+<code class="literal">dummy-ups</code> driver updates:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+A new instruction <code class="literal">ALARM</code> was added for the <code class="literal">Dummy Mode</code> operation
+     of the driver, enabling simulation of UPS alarm states more closely
+     in line with modern, real-world UPS driver implementations. This
+     follows the updated principle of keeping alarm states decoupled from
+     the <code class="literal">ups.status</code> variable, with alarms now raised via common alarm
+     functions rather than direct manipulation. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2928" target="_top">issue #2928</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/2936" target="_top">PR #2936</a>]
+</li></ul></div></li><li class="listitem"><p class="simpara">
+<code class="literal">clone</code>, <code class="literal">clone-outlet</code>, <code class="literal">nhs_ser</code> driver and <code class="literal">nutdrv_qx_ablerex</code>
+   subdriver updates:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Refactored to follow modern handling of status and alarm conditions,
+     aligning with current driver design practices. This includes fixing
+     copy-paste related issues in alarm reporting and removing some alarm
+     messages that should instead be reflected as status flags. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2936" target="_top">#2936</a>]
+</li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">nutdrv_qx</code> driver updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 Introduced <code class="literal">innovart33</code> protocol support for Ippon Innova RT 3/3 topology
@@ -4213,4 +4239,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.32. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-05-09 17:55:11 -- Network UPS Tools 2.8.3.346</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2025-05-11 14:44:26 -- Network UPS Tools 2.8.3.346</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

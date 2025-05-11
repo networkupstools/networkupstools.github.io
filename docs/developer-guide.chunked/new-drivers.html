@@ -117,7 +117,9 @@ both compile-time checks of expected formatting string vs. types of data
 in the method arguments, and run-time equivalence of the actual dynamic
 formatting string to those expectations.  In this case, you would use
 <code class="literal">dstate_setinfo_dynamic()</code> with a coding pattern similar to the following:</p><pre class="literallayout">char *fmt = "Mega-Zapper %d";
-dstate_setinfo_dynamic("ups.model", fmt, "%d", rating);</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_setting_flags"></a>Setting flags</h4></div></div></div><p>Some variables have special properties.  They can be writable, and some
+dstate_setinfo_dynamic("ups.model", fmt, "%d", rating);</pre><p>Please note that <code class="literal">ups.alarm</code> should no longer be manually set, but rather
+the appropriate alarm functions should be used instead. For more details,
+see below in the <code class="literal">UPS alarms</code> section.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_setting_flags"></a>Setting flags</h4></div></div></div><p>Some variables have special properties.  They can be writable, and some
 are strings.  The <code class="literal">ST_FLAG_*</code> values can be used to tell upsd more about
 what it can do.</p><pre class="literallayout">dstate_setflags("input.transfer.high", ST_FLAG_RW);</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_status_data"></a>Status data</h4></div></div></div><p>UPS status flags like on line (OL) and on battery (OB) live in
 ups.status.  Don’t manipulate this by hand.  There are functions which
@@ -136,9 +138,10 @@ OFF     -- UPS is offline and is not supplying power to the load
 OVER    -- UPS is overloaded
 TRIM    -- UPS is trimming incoming voltage (called "buck" in some hardware)
 BOOST   -- UPS is boosting incoming voltage
-FSD     -- Forced Shutdown (restricted use, see the note below)</pre><p>Internally, an <code class="literal">ALARM</code> value would be added (typically as first in the list)
-if the <code class="literal">ups.alarm</code> is currently not empty. For more details, see below in
-<code class="literal">alarm_set()</code> description.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>The NUT data server <code class="literal">upsd</code> initially sets <code class="literal">ups.status</code> to a value of <code class="literal">WAIT</code>
+FSD     -- Forced Shutdown (restricted use, see the note below)</pre><p><code class="literal">ALARM</code> should no longer be raised through the UPS status.
+An <code class="literal">ALARM</code> value will be added internally (typically as first in the list)
+if an alarm was set and committed through the appropriate alarm functions.
+For more details, see below in the <code class="literal">UPS alarms</code> section.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>The NUT data server <code class="literal">upsd</code> initially sets <code class="literal">ups.status</code> to a value of <code class="literal">WAIT</code>
 when first connecting to a NUT driver using the socket protocol, and issues
 a <code class="literal">DUMPALL</code> command.  This temporary <code class="literal">WAIT</code> status gets overwritten whenever
 any relevant information update from a driver arrives, typically either as
@@ -729,7 +732,7 @@ Read the NUT code, tracing through how each value gets processed looking
   for where the result deviates from expectations…
 </li><li class="listitem">
 Think, code, test, rinse, repeat, post a PR :)
-</li></ul></div><div class="example"><a id="idm2657"></a><p class="title"><strong>Example 1. Example direct use of REXX</strong></p><div class="example-contents"><p>Example adapted from <a class="ulink" href="https://github.com/networkupstools/nut/issues/2039" target="_top">https://github.com/networkupstools/nut/issues/2039</a></p><p>Run a NUT <code class="literal">usb-hid</code> driver with at least debug verbosity level 3 (<code class="literal">-DDD</code>)
+</li></ul></div><div class="example"><a id="idm2660"></a><p class="title"><strong>Example 1. Example direct use of REXX</strong></p><div class="example-contents"><p>Example adapted from <a class="ulink" href="https://github.com/networkupstools/nut/issues/2039" target="_top">https://github.com/networkupstools/nut/issues/2039</a></p><p>Run a NUT <code class="literal">usb-hid</code> driver with at least debug verbosity level 3 (<code class="literal">-DDD</code>)
 to get a report descriptor dump starting with a line like this:</p><pre class="screen">   3.670755     [D3] Report Descriptor: (909 bytes) =&gt; 05 84 09 04 a1 01 ...</pre><p>…and copy-paste those reported lines as input into <code class="literal">rexx</code> tool, which
 would generate a C source file including human-worded description and
 a relevant data structure:</p><pre class="screen">:; rexx rd.rex -d --hex 05 84 09 04 a1 01 85 01 09 18 ... 55 b1 02 c0 c0 c0
@@ -2496,4 +2499,4 @@ no 0 nibble is sent.</p></div></div><div class="section"><div class="titlepage">
 </li><li class="listitem">
 <code class="literal">nutdrv_qx_ablerex.</code>{<code class="literal">c</code>,<code class="literal">h</code>}
 </li></ul></div></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-05-09 17:55:11 -- Network UPS Tools 2.8.3.346</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="developers.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="sock-protocol.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2025-05-11 14:44:26 -- Network UPS Tools 2.8.3.346</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="developers.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="sock-protocol.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

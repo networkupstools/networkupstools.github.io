@@ -933,6 +933,30 @@ and, in particular, forget any values you could have just set with <code>upsrw</
 a bit between file-reading cycles (currently this delay is hardcoded to one
 second), independently of (and/or in addition to) any <code>TIMER</code> keywords and
 possibly the common <code>pollinterval</code> setting.</p></div>
+<div class="paragraph"><p>Another, more recently introduced instruction is <code>ALARM</code>, which allows
+the simulation of UPS alarms in much the same way they would be raised
+by real driver implementations. Modern drivers decouple alarm states
+from the <code>ups.status</code> variable, and raising <code>ALARM</code> by setting it as a
+status token is discouraged in favor of using modern, common functions
+for raising alarms within the driver code.</p></div>
+<div class="paragraph"><p>The <code>ALARM</code> instruction is intended to simulate this behavior as closely
+as possible. The value following an <code>ALARM</code> instruction is treated as
+the alarm message and is eventually published as the <code>ups.alarm</code>
+variable, with the <code>ALARM</code> token also set in <code>ups.status</code> by internal
+driver mechanisms, rather than by directly manipulating the variable.
+Multiple <code>ALARM</code> instructions will have their messages combined into
+the <code>ups.alarm</code> variable, just as would happen with real driver logic.</p></div>
+<div class="paragraph"><p>Conversely, any <code>ALARM</code> instruction on its own will clear active alarm
+states. See below for an example of setting and resetting alarms:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>ALARM [UPS too warm to charge]
+ALARM [UPS circuit is overheating]
+TIMER 5
+ALARM
+TIMER 5
+ALARM [UPS too cold to charge]</code></pre>
+</div></div>
 </div>
 <div class="sect2">
 <h3 id="_repeater_mode_2">Repeater Mode</h3>
@@ -1057,7 +1081,7 @@ to represent the "real" device for this to work.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-05-09 17:54:51 UTC -- Network UPS Tools 2.8.3.346
+Last updated 2025-05-11 14:44:11 UTC -- Network UPS Tools 2.8.3.346
 </div>
 </div>
 </body>
