@@ -1087,6 +1087,20 @@ command. The driver attempts to send <code>shutdown.return</code>, <code>shutdow
 and <code>load.off.delay</code> commands to the UPS in sequence, stopping after the first
 supported command.</p></div>
 </div>
+<div class="sect2">
+<h3 id="_using_host_names_for_ups_nmc">Using host names for UPS NMC</h3>
+<div class="paragraph"><p>An UPS network management card may be assigned a fixed/static IP address or
+a dynamic one (e.g. by DHCP) in your network.  Due to this, you may want or
+have to use a dynamic naming service to access the UPS.  Note that this may
+become a problem specifically during large outages and shutdowns, when your
+DHCP/DNS server might already go down while the driver needs to resolve the
+name involved (especially during late-shutdown hooks, when a new instance
+of the driver program might start just to tell the UPS to power off or to
+power-cycle).</p></div>
+<div class="paragraph"><p>It may be wise to ensure your OS name service client can cache the UPS name
+sufficiently long, or to use fixed IP addressing (and an entry in <code>/etc/hosts</code>
+for good measure, so you only have one spot to eventually re-configure this).</p></div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -1167,7 +1181,7 @@ Jim Klimov
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-05-11 14:51:24 UTC -- Network UPS Tools 2.8.3.346
+Last updated 2025-05-13 14:48:15 UTC -- Network UPS Tools 2.8.3.411
 </div>
 </div>
 </body>

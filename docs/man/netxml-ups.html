@@ -911,11 +911,28 @@ recommended to increase the "pollinterval" (see <a href="nutupsdrv.html">nutupsd
 <div class="sect1">
 <h2 id="_known_issues">KNOWN ISSUES</h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="_http_s_proxies">HTTP(S) proxies</h3>
 <div class="paragraph"><p>Don&#8217;t connect to the UPS through a proxy. Although it would be trivial to add
 support for proxies, this is not recommended and don&#8217;t ask for it. Not only
 because it will prevent the driver to make a persistent connection to the UPS,
 but also it adds an additional failure mode. If the proxy goes down (for
 whatever reason), the driver will no longer be able to reach the UPS.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_using_host_names_for_ups_nmc">Using host names for UPS NMC</h3>
+<div class="paragraph"><p>An UPS network management card may be assigned a fixed/static IP address or
+a dynamic one (e.g. by DHCP) in your network.  Due to this, you may want or
+have to use a dynamic naming service to access the UPS.  Note that this may
+become a problem specifically during large outages and shutdowns, when your
+DHCP/DNS server might already go down while the driver needs to resolve the
+name involved (especially during late-shutdown hooks, when a new instance
+of the driver program might start just to tell the UPS to power off or to
+power-cycle).</p></div>
+<div class="paragraph"><p>It may be wise to ensure your OS name service client can cache the UPS name
+sufficiently long, or to use fixed IP addressing (and an entry in <code>/etc/hosts</code>
+for good measure, so you only have one spot to eventually re-configure this).</p></div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -941,7 +958,7 @@ whatever reason), the driver will no longer be able to reach the UPS.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-05-11 14:51:24 UTC -- Network UPS Tools 2.8.3.346
+Last updated 2025-05-13 14:48:15 UTC -- Network UPS Tools 2.8.3.411
 </div>
 </div>
 </body>

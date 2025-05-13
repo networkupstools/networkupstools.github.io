@@ -1055,7 +1055,7 @@ connections, tcp for TCP/IP connections and usb for USB connections.
 <p>
 Depending on the port type you can select a port here. For usb only auto is
 supported, for serial you can pass a device path like /dev/ttyS0 and for tcp you
-can pass a hostname with optional port like example.com:502.
+can pass an IP address or a hostname with optional port like example.com:502.
 </p>
 </dd>
 <dt class="hdlist1">
@@ -1114,6 +1114,8 @@ be good to set a higher timeout on TCP connections with high latency.
 <div class="sect1">
 <h2 id="_bugs">BUGS</h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="_rtu_usb_support">RTU USB support</h3>
 <div class="paragraph"><p>This driver relies on advanced features of <code>libmodbus</code> to talk Modbus protocol
 over USB specifically (Serial and TCP are part of common library codebase).
 At the time of this writing, the common library project is just expecting a
@@ -1195,6 +1197,21 @@ your packaged or otherwise preceding NUT installation.
 build configuration from an existing NUT deployment, as further detailed at
 <a href="https://github.com/networkupstools/nut/wiki/Building-NUT-for-in%E2%80%90place-upgrades-or-non%E2%80%90disruptive-tests">https://github.com/networkupstools/nut/wiki/Building-NUT-for-in%E2%80%90place-upgrades-or-non%E2%80%90disruptive-tests</a></p></div>
 </div>
+<div class="sect2">
+<h3 id="_using_host_names_for_ups_nmc">Using host names for UPS NMC</h3>
+<div class="paragraph"><p>An UPS network management card may be assigned a fixed/static IP address or
+a dynamic one (e.g. by DHCP) in your network.  Due to this, you may want or
+have to use a dynamic naming service to access the UPS.  Note that this may
+become a problem specifically during large outages and shutdowns, when your
+DHCP/DNS server might already go down while the driver needs to resolve the
+name involved (especially during late-shutdown hooks, when a new instance
+of the driver program might start just to tell the UPS to power off or to
+power-cycle).</p></div>
+<div class="paragraph"><p>It may be wise to ensure your OS name service client can cache the UPS name
+sufficiently long, or to use fixed IP addressing (and an entry in <code>/etc/hosts</code>
+for good measure, so you only have one spot to eventually re-configure this).</p></div>
+</div>
+</div>
 </div>
 <div class="sect1">
 <h2 id="_authors">AUTHORS</h2>
@@ -1225,7 +1242,7 @@ Axel Gembe &lt;<a href="mailto:axel@gembe.net">axel@gembe.net</a>&gt;
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-05-11 14:51:24 UTC -- Network UPS Tools 2.8.3.346
+Last updated 2025-05-13 14:48:15 UTC -- Network UPS Tools 2.8.3.411
 </div>
 </div>
 </body>
