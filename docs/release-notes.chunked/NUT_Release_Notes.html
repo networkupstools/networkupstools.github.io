@@ -23,9 +23,18 @@ control history for "live" codebase.</p><div class="section"><div class="titlepa
 </li><li class="listitem">
 (expected) CI automation for use of data points in drivers that conform
    to patterns defined in <a class="ulink" href="docs/nut-names.txt" target="_top">docs/nut-names.txt</a>
-</li><li class="listitem">
-(expected) Bug fixes for fallout possible due to "fightwarn" effort in 2.8.0+
 </li><li class="listitem"><p class="simpara">
+Bug fixes for fallout possible due to "fightwarn" effort in 2.8.0+:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+In <code class="literal">usbhid-ups</code> sources, introduced optional <code class="literal">HU_FLAG_PARAM_REQUIRED</code> for
+     <code class="literal">setvar()</code> or <code class="literal">instcmd()</code> handling (and a <code class="literal">HU_TYPE_CMD_PARAM_REQUIRED</code>
+     shortcut) for setting in the mapping table flags, to specify variables
+     or instant commands that require an argument (either from caller or a
+     non-<code class="literal">NULL</code> default in the run-time table after device data discovery);
+     if the flag is not set, a zero value is assumed. Incomplete code was a
+     regression of NUT v2.8.3 causing some instant commands to fail. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2860" target="_top">#2860</a>,
+     <a class="ulink" href="https://github.com/networkupstools/nut/issues/2955" target="_top">#2955</a>]
+</li></ul></div></li><li class="listitem"><p class="simpara">
 Fix fallout of development in NUT v2.8.0 and/or v2.8.1 and/or v2.8.2 and/or
    v2.8.3:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -67,12 +76,22 @@ Fixed two bugs about printing the "further (ignored) addresses resolved
 </li></ul></div></li><li class="listitem"><p class="simpara">
 common driver code:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Update reports of failed socket file creation, to help troubleshooting
+     some error cases in the field.
+</li><li class="listitem">
 Removed workarounds trying to migrate legacy driver raised <code class="literal">ALARM</code>
      status tokens into modern <code class="literal">alarm_*</code> function logic. Rather, we keep
      supporting them as separate from the modern logic, seeing as <code class="literal">upsmon</code>
      does not care where the token itself was raised for its notifications.
      Driver-code related test-cases were updated to reflect these changes.
      [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2928" target="_top">issue #2928</a>, PRs <a class="ulink" href="https://github.com/networkupstools/nut/issues/2931" target="_top">#2931</a> and <a class="ulink" href="https://github.com/networkupstools/nut/issues/2934" target="_top">#2934</a>]
+</li><li class="listitem">
+Introduced some macros in <code class="literal">drivers/upshandler.h</code> for common syslog level
+     definitions and message wording for beginning and failing <code class="literal">instcmd()</code> or
+     <code class="literal">setvar()</code> operations consistently in different drivers. As a related
+     change, operations that intend to turn off or restart the load, or can
+     do that by side effect (e.g. calibration if batteries are old or dead),
+     would explicitly <code class="literal">upslogx(LOG_CRIT,...)</code> by default before commencing.
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">dummy-ups</code> driver updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -4245,4 +4264,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.32. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-05-13 14:59:01 -- Network UPS Tools 2.8.3.411</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2025-05-19 09:29:45 -- Network UPS Tools 2.8.3.439</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
