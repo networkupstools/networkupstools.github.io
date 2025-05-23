@@ -861,7 +861,8 @@ Solaris 10 and illumos-based distributions.
 </dt>
 <dd>
 <p>
-Some <em>value</em> must be set, typically <strong>auto</strong>.
+Required option for all NUT drivers. Some <em>value</em> must be set, typically
+<strong>auto</strong> for drivers that handle USB connections.
 </p>
 <div class="admonitionblock">
 <table><tr>
@@ -936,28 +937,40 @@ argument for finding out the strings to match.</p></div>
 </dt>
 <dd>
 <p>
-Select a UPS on a specific USB bus or group of buses. The argument is
+OPTIONAL, NOT RECOMMENDED.
+</p>
+<div class="paragraph"><p>Select a UPS on a specific USB bus or group of buses. The argument is
 a regular expression that must match the bus name where the UPS is
 connected (e.g. <code>bus="002"</code> or <code>bus="00[2-3]"</code>) as seen on Linux in
-<code>/sys/bus/usb/devices</code> or <ulink url="https://linux.die.net/man/8/lsusb">lsusb(8)</ulink>; including leading zeroes.
-</p>
+<code>/sys/bus/usb/devices</code> or <ulink url="https://linux.die.net/man/8/lsusb">lsusb(8)</ulink>; including leading zeroes.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">Bus numbers are not guaranteed by the OS to be stable across
+re-boots, kernel driver reloads or device re-plugging (e.g. changing
+visible population of USB hubs).</td>
+</tr></table>
+</div>
 </dd>
 <dt class="hdlist1">
 <strong>device =</strong> <em>regex</em>
 </dt>
 <dd>
 <p>
-Select a UPS on a specific USB device or group of devices. The argument is
+OPTIONAL, NOT RECOMMENDED.
+</p>
+<div class="paragraph"><p>Select a UPS on a specific USB device or group of devices. The argument is
 a regular expression that must match the device name where the UPS is
 connected (e.g. <code>device="001"</code> or <code>device="00[1-2]"</code>) as seen on Linux
-in <code>/sys/bus/usb/devices</code> or <ulink url="https://linux.die.net/man/8/lsusb">lsusb(8)</ulink>; including leading zeroes.
-</p>
+in <code>/sys/bus/usb/devices</code> or <ulink url="https://linux.die.net/man/8/lsusb">lsusb(8)</ulink>; including leading zeroes.</p></div>
 <div class="admonitionblock">
 <table><tr>
 <td class="icon">
 <div class="title">Note</div>
 </td>
-<td class="content">device numbers are not guaranteed by the OS to be stable across
+<td class="content">Device numbers are not guaranteed by the OS to be stable across
 re-boots or device re-plugging.</td>
 </tr></table>
 </div>
@@ -967,18 +980,19 @@ re-boots or device re-plugging.</td>
 </dt>
 <dd>
 <p>
-If supported by the hardware, OS and libusb on the particular deployment,
+OPTIONAL, NOT RECOMMENDED.
+</p>
+<div class="paragraph"><p>If supported by the hardware, OS and libusb on the particular deployment,
 this option should allow to specify physical port numbers on an USB hub,
 rather than logical <code>device</code> enumeration values, and in turn&#8201;&#8212;&#8201;this should
 be less volatile across reboots or re-plugging. The value may be seen in
-the USB topology output of <code>lsusb -tv</code> on systems with that tool, for example.
-</p>
+the USB topology output of <code>lsusb -tv</code> on systems with that tool, for example.</p></div>
 <div class="admonitionblock">
 <table><tr>
 <td class="icon">
 <div class="title">Note</div>
 </td>
-<td class="content">this option is not practically supported by some NUT builds
+<td class="content">This option is not practically supported by some NUT builds
 (it should be ignored with a warning then), and not by all systems
 that NUT can run on.</td>
 </tr></table>
@@ -989,11 +1003,12 @@ that NUT can run on.</td>
 </dt>
 <dd>
 <p>
-If you have several UPS devices which may not be uniquely identified by
+OPTIONAL, NOT RECOMMENDED.
+</p>
+<div class="paragraph"><p>If you have several UPS devices which may not be uniquely identified by
 the options above (e.g. only <em>VID:PID</em> can be discovered there), this flag
 allows each driver instance where it is set to take the first match if
-available, or proceed to try another.
-</p>
+available, or proceed to try another.</p></div>
 <div class="paragraph"><p>Normally the driver initialization would abort at this point claiming
 "Resource busy" or similar error, assuming that the otherwise properly
 matched device is unique&#8201;&#8212;&#8201;and some other process already handles it.</p></div>
@@ -1613,7 +1628,7 @@ Arjen de Korte
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-05-19 09:59:13 UTC -- Network UPS Tools 2.8.3.439
+Last updated 2025-05-23 12:32:16 UTC -- Network UPS Tools 2.8.3.439
 </div>
 </div>
 </body>
