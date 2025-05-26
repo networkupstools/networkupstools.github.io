@@ -1,0 +1,1958 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<meta name="generator" content="AsciiDoc 10.1.2" />
+<title>NUT(7)</title>
+<style type="text/css">
+/* Shared CSS for AsciiDoc xhtml11 and html5 backends */
+
+/* Default font. */
+body {
+  font-family: Georgia,serif;
+}
+
+/* Title font. */
+h1, h2, h3, h4, h5, h6,
+div.title, caption.title,
+thead, p.table.header,
+#toctitle,
+#author, #revnumber, #revdate, #revremark,
+#footer {
+  font-family: Arial,Helvetica,sans-serif;
+}
+
+body {
+  margin: 1em 5% 1em 5%;
+}
+
+a {
+  color: blue;
+  text-decoration: underline;
+}
+a:visited {
+  color: fuchsia;
+}
+
+em {
+  font-style: italic;
+  color: navy;
+}
+
+strong {
+  font-weight: bold;
+  color: #083194;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #527bbd;
+  margin-top: 1.2em;
+  margin-bottom: 0.5em;
+  line-height: 1.3;
+}
+
+h1, h2, h3 {
+  border-bottom: 2px solid silver;
+}
+h2 {
+  padding-top: 0.5em;
+}
+h3 {
+  float: left;
+}
+h3 + * {
+  clear: left;
+}
+h5 {
+  font-size: 1.0em;
+}
+
+div.sectionbody {
+  margin-left: 0;
+}
+
+hr {
+  border: 1px solid silver;
+}
+
+p {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+ul, ol, li > p {
+  margin-top: 0;
+}
+ul > li     { color: #aaa; }
+ul > li > * { color: black; }
+
+.monospaced, code, pre {
+  font-family: "Courier New", Courier, monospace;
+  font-size: inherit;
+  color: navy;
+  padding: 0;
+  margin: 0;
+}
+pre {
+  white-space: pre-wrap;
+}
+
+#author {
+  color: #527bbd;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+#email {
+}
+#revnumber, #revdate, #revremark {
+}
+
+#footer {
+  font-size: small;
+  border-top: 2px solid silver;
+  padding-top: 0.5em;
+  margin-top: 4.0em;
+}
+#footer-text {
+  float: left;
+  padding-bottom: 0.5em;
+}
+#footer-badges {
+  float: right;
+  padding-bottom: 0.5em;
+}
+
+#preamble {
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+}
+div.imageblock, div.exampleblock, div.verseblock,
+div.quoteblock, div.literalblock, div.listingblock, div.sidebarblock,
+div.admonitionblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+div.admonitionblock {
+  margin-top: 2.0em;
+  margin-bottom: 2.0em;
+  margin-right: 10%;
+  color: #606060;
+}
+
+div.content { /* Block element content. */
+  padding: 0;
+}
+
+/* Block element titles. */
+div.title, caption.title {
+  color: #527bbd;
+  font-weight: bold;
+  text-align: left;
+  margin-top: 1.0em;
+  margin-bottom: 0.5em;
+}
+div.title + * {
+  margin-top: 0;
+}
+
+td div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content + div.title {
+  margin-top: 0.0em;
+}
+
+div.sidebarblock > div.content {
+  background: #ffffee;
+  border: 1px solid #dddddd;
+  border-left: 4px solid #f0f0f0;
+  padding: 0.5em;
+}
+
+div.listingblock > div.content {
+  border: 1px solid #dddddd;
+  border-left: 5px solid #f0f0f0;
+  background: #f8f8f8;
+  padding: 0.5em;
+}
+
+div.quoteblock, div.verseblock {
+  padding-left: 1.0em;
+  margin-left: 1.0em;
+  margin-right: 10%;
+  border-left: 5px solid #f0f0f0;
+  color: #888;
+}
+
+div.quoteblock > div.attribution {
+  padding-top: 0.5em;
+  text-align: right;
+}
+
+div.verseblock > pre.content {
+  font-family: inherit;
+  font-size: inherit;
+}
+div.verseblock > div.attribution {
+  padding-top: 0.75em;
+  text-align: left;
+}
+/* DEPRECATED: Pre version 8.2.7 verse style literal block. */
+div.verseblock + div.attribution {
+  text-align: left;
+}
+
+div.admonitionblock .icon {
+  vertical-align: top;
+  font-size: 1.1em;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #527bbd;
+  padding-right: 0.5em;
+}
+div.admonitionblock td.content {
+  padding-left: 0.5em;
+  border-left: 3px solid #dddddd;
+}
+
+div.exampleblock > div.content {
+  border-left: 3px solid #dddddd;
+  padding-left: 0.5em;
+}
+
+div.imageblock div.content { padding-left: 0; }
+span.image img { border-style: none; vertical-align: text-bottom; }
+a.image:visited { color: white; }
+
+dl {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+dt {
+  margin-top: 0.5em;
+  margin-bottom: 0;
+  font-style: normal;
+  color: navy;
+}
+dd > *:first-child {
+  margin-top: 0.1em;
+}
+
+ul, ol {
+    list-style-position: outside;
+}
+ol.arabic {
+  list-style-type: decimal;
+}
+ol.loweralpha {
+  list-style-type: lower-alpha;
+}
+ol.upperalpha {
+  list-style-type: upper-alpha;
+}
+ol.lowerroman {
+  list-style-type: lower-roman;
+}
+ol.upperroman {
+  list-style-type: upper-roman;
+}
+
+div.compact ul, div.compact ol,
+div.compact p, div.compact p,
+div.compact div, div.compact div {
+  margin-top: 0.1em;
+  margin-bottom: 0.1em;
+}
+
+tfoot {
+  font-weight: bold;
+}
+td > div.verse {
+  white-space: pre;
+}
+
+div.hdlist {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+div.hdlist tr {
+  padding-bottom: 15px;
+}
+dt.hdlist1.strong, td.hdlist1.strong {
+  font-weight: bold;
+}
+td.hdlist1 {
+  vertical-align: top;
+  font-style: normal;
+  padding-right: 0.8em;
+  color: navy;
+}
+td.hdlist2 {
+  vertical-align: top;
+}
+div.hdlist.compact tr {
+  margin: 0;
+  padding-bottom: 0;
+}
+
+.comment {
+  background: yellow;
+}
+
+.footnote, .footnoteref {
+  font-size: 0.8em;
+}
+
+span.footnote, span.footnoteref {
+  vertical-align: super;
+}
+
+#footnotes {
+  margin: 20px 0 20px 0;
+  padding: 7px 0 0 0;
+}
+
+#footnotes div.footnote {
+  margin: 0 0 5px 0;
+}
+
+#footnotes hr {
+  border: none;
+  border-top: 1px solid silver;
+  height: 1px;
+  text-align: left;
+  margin-left: 0;
+  width: 20%;
+  min-width: 100px;
+}
+
+div.colist td {
+  padding-right: 0.5em;
+  padding-bottom: 0.3em;
+  vertical-align: top;
+}
+div.colist td img {
+  margin-top: 0.3em;
+}
+
+@media print {
+  #footer-badges { display: none; }
+}
+
+#toc {
+  margin-bottom: 2.5em;
+}
+
+#toctitle {
+  color: #527bbd;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-top: 1.0em;
+  margin-bottom: 0.1em;
+}
+
+div.toclevel0, div.toclevel1, div.toclevel2, div.toclevel3, div.toclevel4 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+div.toclevel2 {
+  margin-left: 2em;
+  font-size: 0.9em;
+}
+div.toclevel3 {
+  margin-left: 4em;
+  font-size: 0.9em;
+}
+div.toclevel4 {
+  margin-left: 6em;
+  font-size: 0.9em;
+}
+
+span.aqua { color: aqua; }
+span.black { color: black; }
+span.blue { color: blue; }
+span.fuchsia { color: fuchsia; }
+span.gray { color: gray; }
+span.green { color: green; }
+span.lime { color: lime; }
+span.maroon { color: maroon; }
+span.navy { color: navy; }
+span.olive { color: olive; }
+span.purple { color: purple; }
+span.red { color: red; }
+span.silver { color: silver; }
+span.teal { color: teal; }
+span.white { color: white; }
+span.yellow { color: yellow; }
+
+span.aqua-background { background: aqua; }
+span.black-background { background: black; }
+span.blue-background { background: blue; }
+span.fuchsia-background { background: fuchsia; }
+span.gray-background { background: gray; }
+span.green-background { background: green; }
+span.lime-background { background: lime; }
+span.maroon-background { background: maroon; }
+span.navy-background { background: navy; }
+span.olive-background { background: olive; }
+span.purple-background { background: purple; }
+span.red-background { background: red; }
+span.silver-background { background: silver; }
+span.teal-background { background: teal; }
+span.white-background { background: white; }
+span.yellow-background { background: yellow; }
+
+span.big { font-size: 2em; }
+span.small { font-size: 0.6em; }
+
+span.underline { text-decoration: underline; }
+span.overline { text-decoration: overline; }
+span.line-through { text-decoration: line-through; }
+
+div.unbreakable { page-break-inside: avoid; }
+
+
+/*
+ * xhtml11 specific
+ *
+ * */
+
+div.tableblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+div.tableblock > table {
+  border: 3px solid #527bbd;
+}
+thead, p.table.header {
+  font-weight: bold;
+  color: #527bbd;
+}
+p.table {
+  margin-top: 0;
+}
+/* Because the table frame attribute is overridden by CSS in most browsers. */
+div.tableblock > table[frame="void"] {
+  border-style: none;
+}
+div.tableblock > table[frame="hsides"] {
+  border-left-style: none;
+  border-right-style: none;
+}
+div.tableblock > table[frame="vsides"] {
+  border-top-style: none;
+  border-bottom-style: none;
+}
+
+
+/*
+ * html5 specific
+ *
+ * */
+
+table.tableblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+thead, p.tableblock.header {
+  font-weight: bold;
+  color: #527bbd;
+}
+p.tableblock {
+  margin-top: 0;
+}
+table.tableblock {
+  border-width: 3px;
+  border-spacing: 0px;
+  border-style: solid;
+  border-color: #527bbd;
+  border-collapse: collapse;
+}
+th.tableblock, td.tableblock {
+  border-width: 1px;
+  padding: 4px;
+  border-style: solid;
+  border-color: #527bbd;
+}
+
+table.tableblock.frame-topbot {
+  border-left-style: hidden;
+  border-right-style: hidden;
+}
+table.tableblock.frame-sides {
+  border-top-style: hidden;
+  border-bottom-style: hidden;
+}
+table.tableblock.frame-none {
+  border-style: hidden;
+}
+
+th.tableblock.halign-left, td.tableblock.halign-left {
+  text-align: left;
+}
+th.tableblock.halign-center, td.tableblock.halign-center {
+  text-align: center;
+}
+th.tableblock.halign-right, td.tableblock.halign-right {
+  text-align: right;
+}
+
+th.tableblock.valign-top, td.tableblock.valign-top {
+  vertical-align: top;
+}
+th.tableblock.valign-middle, td.tableblock.valign-middle {
+  vertical-align: middle;
+}
+th.tableblock.valign-bottom, td.tableblock.valign-bottom {
+  vertical-align: bottom;
+}
+
+
+/*
+ * manpage specific
+ *
+ * */
+
+body.manpage h1 {
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  border-top: 2px solid silver;
+  border-bottom: 2px solid silver;
+}
+body.manpage h2 {
+  border-style: none;
+}
+body.manpage div.sectionbody {
+  margin-left: 3em;
+}
+
+@media print {
+  body.manpage div#toc { display: none; }
+}
+
+
+</style>
+<script type="text/javascript">
+/*<![CDATA[*/
+var asciidoc = {  // Namespace.
+
+/////////////////////////////////////////////////////////////////////
+// Table Of Contents generator
+/////////////////////////////////////////////////////////////////////
+
+/* Author: Mihai Bazon, September 2002
+ * http://students.infoiasi.ro/~mishoo
+ *
+ * Table Of Content generator
+ * Version: 0.4
+ *
+ * Feel free to use this script under the terms of the GNU General Public
+ * License, as long as you do not remove or alter this notice.
+ */
+
+ /* modified by Troy D. Hanson, September 2006. License: GPL */
+ /* modified by Stuart Rackham, 2006, 2009. License: GPL */
+
+// toclevels = 1..4.
+toc: function (toclevels) {
+
+  function getText(el) {
+    var text = "";
+    for (var i = el.firstChild; i != null; i = i.nextSibling) {
+      if (i.nodeType == 3 /* Node.TEXT_NODE */) // IE doesn't speak constants.
+        text += i.data;
+      else if (i.firstChild != null)
+        text += getText(i);
+    }
+    return text;
+  }
+
+  function TocEntry(el, text, toclevel) {
+    this.element = el;
+    this.text = text;
+    this.toclevel = toclevel;
+  }
+
+  function tocEntries(el, toclevels) {
+    var result = new Array;
+    var re = new RegExp('[hH]([1-'+(toclevels+1)+'])');
+    // Function that scans the DOM tree for header elements (the DOM2
+    // nodeIterator API would be a better technique but not supported by all
+    // browsers).
+    var iterate = function (el) {
+      for (var i = el.firstChild; i != null; i = i.nextSibling) {
+        if (i.nodeType == 1 /* Node.ELEMENT_NODE */) {
+          var mo = re.exec(i.tagName);
+          if (mo && (i.getAttribute("class") || i.getAttribute("className")) != "float") {
+            result[result.length] = new TocEntry(i, getText(i), mo[1]-1);
+          }
+          iterate(i);
+        }
+      }
+    }
+    iterate(el);
+    return result;
+  }
+
+  var toc = document.getElementById("toc");
+  if (!toc) {
+    return;
+  }
+
+  // Delete existing TOC entries in case we're reloading the TOC.
+  var tocEntriesToRemove = [];
+  var i;
+  for (i = 0; i < toc.childNodes.length; i++) {
+    var entry = toc.childNodes[i];
+    if (entry.nodeName.toLowerCase() == 'div'
+     && entry.getAttribute("class")
+     && entry.getAttribute("class").match(/^toclevel/))
+      tocEntriesToRemove.push(entry);
+  }
+  for (i = 0; i < tocEntriesToRemove.length; i++) {
+    toc.removeChild(tocEntriesToRemove[i]);
+  }
+
+  // Rebuild TOC entries.
+  var entries = tocEntries(document.getElementById("content"), toclevels);
+  for (var i = 0; i < entries.length; ++i) {
+    var entry = entries[i];
+    if (entry.element.id == "")
+      entry.element.id = "_toc_" + i;
+    var a = document.createElement("a");
+    a.href = "#" + entry.element.id;
+    a.appendChild(document.createTextNode(entry.text));
+    var div = document.createElement("div");
+    div.appendChild(a);
+    div.className = "toclevel" + entry.toclevel;
+    toc.appendChild(div);
+  }
+  if (entries.length == 0)
+    toc.parentNode.removeChild(toc);
+},
+
+
+/////////////////////////////////////////////////////////////////////
+// Footnotes generator
+/////////////////////////////////////////////////////////////////////
+
+/* Based on footnote generation code from:
+ * http://www.brandspankingnew.net/archive/2005/07/format_footnote.html
+ */
+
+footnotes: function () {
+  // Delete existing footnote entries in case we're reloading the footnodes.
+  var i;
+  var noteholder = document.getElementById("footnotes");
+  if (!noteholder) {
+    return;
+  }
+  var entriesToRemove = [];
+  for (i = 0; i < noteholder.childNodes.length; i++) {
+    var entry = noteholder.childNodes[i];
+    if (entry.nodeName.toLowerCase() == 'div' && entry.getAttribute("class") == "footnote")
+      entriesToRemove.push(entry);
+  }
+  for (i = 0; i < entriesToRemove.length; i++) {
+    noteholder.removeChild(entriesToRemove[i]);
+  }
+
+  // Rebuild footnote entries.
+  var cont = document.getElementById("content");
+  var spans = cont.getElementsByTagName("span");
+  var refs = {};
+  var n = 0;
+  for (i=0; i<spans.length; i++) {
+    if (spans[i].className == "footnote") {
+      n++;
+      var note = spans[i].getAttribute("data-note");
+      if (!note) {
+        // Use [\s\S] in place of . so multi-line matches work.
+        // Because JavaScript has no s (dotall) regex flag.
+        note = spans[i].innerHTML.match(/\s*\[([\s\S]*)]\s*/)[1];
+        spans[i].innerHTML =
+          "[<a id='_footnoteref_" + n + "' href='#_footnote_" + n +
+          "' title='View footnote' class='footnote'>" + n + "</a>]";
+        spans[i].setAttribute("data-note", note);
+      }
+      noteholder.innerHTML +=
+        "<div class='footnote' id='_footnote_" + n + "'>" +
+        "<a href='#_footnoteref_" + n + "' title='Return to text'>" +
+        n + "</a>. " + note + "</div>";
+      var id =spans[i].getAttribute("id");
+      if (id != null) refs["#"+id] = n;
+    }
+  }
+  if (n == 0)
+    noteholder.parentNode.removeChild(noteholder);
+  else {
+    // Process footnoterefs.
+    for (i=0; i<spans.length; i++) {
+      if (spans[i].className == "footnoteref") {
+        var href = spans[i].getElementsByTagName("a")[0].getAttribute("href");
+        href = href.match(/#.*/)[0];  // Because IE return full URL.
+        n = refs[href];
+        spans[i].innerHTML =
+          "[<a href='#_footnote_" + n +
+          "' title='View footnote' class='footnote'>" + n + "</a>]";
+      }
+    }
+  }
+},
+
+install: function(toclevels) {
+  var timerId;
+
+  function reinstall() {
+    asciidoc.footnotes();
+    if (toclevels) {
+      asciidoc.toc(toclevels);
+    }
+  }
+
+  function reinstallAndRemoveTimer() {
+    clearInterval(timerId);
+    reinstall();
+  }
+
+  timerId = setInterval(reinstall, 500);
+  if (document.addEventListener)
+    document.addEventListener("DOMContentLoaded", reinstallAndRemoveTimer, false);
+  else
+    window.onload = reinstallAndRemoveTimer;
+}
+
+}
+asciidoc.install();
+/*]]>*/
+</script>
+<meta name="format-detection" content="telephone=no" />
+</head>
+<body class="article">
+<div id="header">
+<h1>NUT(7)</h1>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_name">NAME</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>nut - Overview of the Network UPS Tools (NUT)</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_description">DESCRIPTION</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>The Network UPS Tools (NUT) project provides a free and open source tool kit
+for monitoring and managing different types of power distribution devices,
+first released under such name in 1999 and following up from a few earlier
+projects.  Since then, NUT has expanded to cover thousands of devices from
+hundreds of vendors, and to handle various device types (UPS, ePDU, ATS/STS,
+solar, blade server IPMI as a sort of PDU for the blades, etc.) all with
+a consistent API and data model, which has since been published as
+<a href="https://datatracker.ietf.org/doc/html/rfc9271">The "UPS management
+protocol", Informational RFC 9271</a>.</p></div>
+<div class="paragraph"><p>While the project is in active development to support ever newer devices and
+their firmwares, as well as operating system releases, one of the internally
+recognized goals is to remain compatible with the systems NUT could have been
+once deployed on: even if vendors of those boxes and operating systems no
+longer exist, the venerable hardware deserves to be still protected with
+new UPS devices.</p></div>
+<div class="paragraph"><p>Although the original development involved POSIX-compliant operating systems,
+over time NUT for Windows support was also implemented (however as of NUT
+release v2.8.3, it remains not 100% complete) so it is possible to run the
+whole server and client stack as native Windows programs.</p></div>
+<div class="paragraph"><p>Most operating systems deliver NUT as packages built from a certain release,
+which for the project is just a better-tested snapshot of on-going development.
+Some OS distribution maintainers pick fixes from later releases to update
+their software packages while nominally remaining on the same base line
+version that the distribution&#8217;s major release originally went with. This
+allows to balance delivering stable programs with well-known qualities
+and minimal downsides for a long stretch of time, but misses out on new
+capabilities, features (and yes, new bugs) which the on-going development
+regularly adds to the current code base du-jour.</p></div>
+<div class="paragraph"><p>As such, NUT community support for releases (or any other non-current code)
+is generally limited to suggestions based on experience, but any fixes happen
+on the main development branch (there are no release-tracking branches to port
+such solutions into), and custom builds of NUT would be required to apply
+them in an end-user environment.  This workflow is highly automated in the
+project code base (its recipes and scripts), and the packaged dependencies
+or toolkits needed for a build are documented for numerous platforms (see
+links at the end of this page).</p></div>
+<div class="paragraph"><p>Thanks to this, the NUT project is also a wider open-source community leader
+and reference in the area of build recipes and testing automation for
+low-level multi-platform Autotools/C/C++ projects in general.</p></div>
+<div class="sect2">
+<h3 id="_nut_architecture">NUT Architecture</h3>
+<div class="paragraph"><p>The project follows a multi-tiered architecture which may seem a bit complex,
+but allows for flexibility with very different real-life setups to handle.
+In practice, this involves numerous programs (and their configuration files)
+running on the same or different systems (the "network" part in the name).</p></div>
+<div class="paragraph"><p>Many deployment scenarios are explored in the famous
+<a href="https://github.com/networkupstools/ConfigExamples/releases/latest/download/ConfigExamples.pdf">NUT
+Configuration Examples</a> book maintained by Roger Price.</p></div>
+<div class="sect3">
+<h4 id="_nut_drivers">NUT Drivers</h4>
+<div class="paragraph"><p>The lowest tier comprises <em>NUT drivers</em>, which are programs that can talk a
+particular protocol over certain media.  Some protocols follow an industry
+standard (like USB HID or SNMP), or are dialects of a de-facto standard (like
+the originally Megatec "Q*" family of protocols used by many other vendors),
+but many others are vendor-specific.  Some devices support several media
+connection types (e.g. Serial and/or USB ports, and/or SNMP for networked
+management), so there may be several suitable NUT drivers to choose from.</p></div>
+<div class="paragraph"><p>The NUT drivers are responsible for translation between NUT standard data
+point or instant command names and whatever strings need to be pulled for
+that particular device.  The data is exposed to other programs on the same
+machine following the <em>NUT Driver/Server Socket Protocol</em>, which relies on
+operating system access controls for the UNIX local socket file or a Windows
+named pipe.</p></div>
+<div class="paragraph"><p>For each monitored power distribution device, a NUT driver instance should
+be running on a machine that has a communication link to that device.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">There is currently no support for "multiplexing" information or commands
+for devices with multiple-media/multiple-driver access, e.g. to gain redundant
+connection or a better data collection than any one driver provides. For some
+devices it may be possible to run several drivers independently (probably for
+your monitoring system to cherry-pick data points from one driver or another),
+while others might only enable any one link exclusively.</td>
+</tr></table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_nut_data_server">NUT Data Server</h4>
+<div class="paragraph"><p>A <em>NUT Data Server</em> (<a href="upsd.html">upsd(8)</a>) represents one or more NUT drivers that
+run on the same machine as itself, to provide networked access to their data
+or pass around the instant command requests and replies.</p></div>
+<div class="paragraph"><p>On one side the data server connects to one or more UNIX local socket files
+or Windows named pipes (one for each running driver), and on another side it
+listens on the TCP/IP network (port <em>3493</em> by default) to communicate with
+local or remote client programs.  It is also responsible for communication
+security for driver access, whether by defining the NUT user account names
+and assigned protocol access permissions (for value-setting or commands;
+read access is anonymous), or by handling the TLS/SSL part where enabled.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_nut_clients">NUT Clients</h4>
+<div class="paragraph"><p>Practical work visible to end-users is done by a multitude of <em>NUT clients</em>,
+many of which are delivered by the project itself and more are created and
+maintained by the community at large.  Some standard clients of note include:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<a href="upsmon.html">upsmon(1)</a> is a daemon to monitor primarily the states of UPSes
+  (as opposed to other device types that NUT can handle) which power some
+  power source units of this particular system, and based on how many PSUs
+  are required for the system to run&#8201;&#8212;&#8201;initiates a local shutdown when too
+  many UPSes are not in a healthy condition.  Instances of this client allow
+  a single UPS powering a whole rack or desk of computers to be seen by each
+  of them (through a data server running on one of them, on a machine actually
+  connected to the UPS&#8201;&#8212;&#8201;the "primary" system).
+</p>
+<div class="paragraph"><p>NUT deployments which desire higher-fidelity control (e.g. different systems
+  shutting down after different time spent on battery) often couple <code>upsmon</code>
+  with <a href="upssched.html">upssched(1)</a>.</p></div>
+<div class="paragraph"><p>The "primary" system is usually also responsible for commanding the managed
+  UPS to shut itself down and power up when the "wall power" returns (or to
+  reset the load if it is already back), subject to UPS hardware capabilities.
+  Most client integrations also stall the ultimate reboot/power-off of their
+  machine, if its shut down was triggered by <code>upsmon</code>, and reboot after a
+  long delay (if the machine is still alive).
+  This combined approach allows to avoid the "power race condition", when
+  systems would otherwise remain shut down indefinitely (until someone comes
+  and reboots them) just because external power returned when the shut down
+  spree had already started.
+* <a href="upsc.html">upsc(1)</a> is a command-line client for anonymous read-only access,
+  used to list devices served by a NUT data server, or to query data points
+  reported by a particular device.
+* <a href="NUT-Monitor.html">NUT-Monitor(1)</a> is a GUI client for read-only or read-write access.
+* A suite of CGI clients can run on a web server like Apache or nginx to
+  provide a simple HTML interface to your devices.</p></div>
+</li>
+</ul></div>
+<div class="paragraph"><p>Many monitoring systems integrate with NUT (and through it&#8201;&#8212;&#8201;with a varied
+assortment of power devices), using either simple clients like <code>upsc</code> or
+<code>upslog</code>, or libraries and bindings provided by the project itself (e.g.
+C, C++, Python, Java in a nearby repository) or by third-party efforts
+(e.g. Perl, Go, C#, REST API).</p></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_nut_run_time_nuances">NUT Run-time Nuances</h3>
+<div class="paragraph"><p>For many more notes, please see the Frequently Asked Questions document in
+NUT sources or on the web site.  A copy may be delivered by your packaging.</p></div>
+<div class="sect3">
+<h4 id="_file_or_directory_not_found_messages">"File or directory not found" messages</h4>
+<div class="paragraph"><p>When NUT daemon programs start, they check for existence of certain files
+they would create themselves (PID files, local sockets, etc.) and report
+when such file does not exist.  Similarly, some programs try to signal an
+earlier instance (if the PID is known) and would report if that failed.</p></div>
+<div class="paragraph"><p>While this does look scary and confusing to people who use NUT for the first
+time and it greets them with what looks like error messages (we did work on
+improving the wording during the NUT v2.8.x release lineage due to frequent
+questions), these messages are in fact just a troubleshooting aspect that
+is useful at that point in program life cycle: if you expect "other" program
+instances to be running when they are not seen, this message helps catch the
+error.  If this is a first run, so no "other" program instance&#8217;s artifacts
+should be there, the message says just that.  If your program starts and
+sees an older instance already running, further behavior depends on the
+situation (e.g. did you start a copy to signal the already running daemon
+with some command? did you start a new copy and so any old one is assumed
+stuck and should be terminated automatically?)</p></div>
+<div class="paragraph"><p>The "directory" part of the wording, which may be present in these messages,
+comes from the standard system library.  It does not mean you should blindly
+create a directory (or any other object) for the file names listed in such
+reports.</p></div>
+<div class="paragraph"><p>That said, NUT does use directories (known in code and the <code>configure</code> script
+options as <code>--with-pidpath</code>, <code>--with-altpidpath</code> and <code>--with-statepath</code>)
+which should be created and assigned certain permissions each (the latter
+two may overlap).  Generally this is done either by packaging, or by manual
+steps according to documentation when building NUT from sources.  On some
+platforms (e.g. Linux with systemd and its <code>systemd-tmpfiles</code> subsystem) they
+may be maintained at run-time by configuration files delivered to the system.</p></div>
+<div class="paragraph"><p>The message can also be seen from <a href="upsmon.html">upsmon(8)</a> being unable to populate
+the <code>POWERDOWNFLAG</code> if the location it points to (<code>/etc/killpower</code> by default)
+does not exist or is read-only, or from a late shutdown integration script like
+the <code>nutshutdown</code> hook if that location was un-mounted by the time it runs.
+It is recommended to store that file on a volatile file system (under <code>/run</code>
+on most modern distributions; typically the <code>pidpath</code> is located there too),
+which remains until reboot and disappears during reboot.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_user_group_accounts">User/Group Accounts</h4>
+<div class="paragraph"><p>Generally NUT daemon programs avoid running as a highly-privileged <code>root</code>
+account (on POSIX platforms), and drop privileges to run as the configured
+user and group accounts such as <code>nut:nut</code>.</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+One notable exception is the <a href="upsmon.html">upsmon(8)</a> daemon which splits into
+  a <code>root</code>-owned process which may trigger the OS shutdown routine, and an
+  unprivileged process which does everything else.
+</p>
+</li>
+</ul></div>
+</div>
+<div class="sect3">
+<h4 id="_file_system_permissions">File system permissions</h4>
+<div class="paragraph"><p>When using NUT drivers with local communications media (USB or Serial ports),
+you must ensure that the unprivileged run-time account like <code>nut:nut</code> is
+allowed access to those device file system nodes.  On many platforms this
+can be automated with subsystems like <em>udev</em>, <em>devd</em>, <em>hotplug</em>, <em>upower</em>;
+on others (older ones) you may have to <code>chmod</code>/<code>chown</code>/<code>chgrp</code> particular
+devfs nodes (whether on the persistent filesystem, or using an init-script
+for volatile implementations).</p></div>
+<div class="paragraph"><p>Note that there are several run-time locations for data and socket files of
+NUT&#8217;s privileged and unprivileged programs, and for configuration files.
+Access to these directories and individual files should be secured according
+to NUT documentation; NUT daemons will warn about lax permissions in their
+syslog or console messages. Generally, <code>root:nut</code> and <code>0640</code> permissions
+are correct for most of the files (so the run-time NUT programs may only
+read them but can not rewrite them, not even if there happens to be an
+exploitable code problem discovered in them over time).</p></div>
+<div class="paragraph"><p>It is also important to note that (except for <a href="upslog.html">upslog(8)</a>) no NUT
+daemons leave log files on their own: they send syslog messages, or write
+to stdout/stderr, and either or both of these streams can be saved to disk
+by the OS service integration (or a redirection from an init-script).</p></div>
+</div>
+<div class="sect3">
+<h4 id="_nut_drivers_as_service_instances">NUT Drivers as Service instances</h4>
+<div class="paragraph"><p>Starting with NUT v2.8.0, on systems with service management frameworks
+(like Linux systemd or Solaris/illumos SMF) you may be even inadvertently
+using the <a href="nut-driver-enumerator.html">nut-driver-enumerator(8)</a>.  This is a script, which may
+also called automatically (via packaging on impacted platforms) at start-up
+or as a service, to process the <a href="ups.conf.html">ups.conf(5)</a> file and maintain the
+service units (with their dependencies) for each driver section separately.</p></div>
+<div class="paragraph"><p>This sometimes raises eyebrows when end-users try to manually start a NUT
+driver program (either directly or using <a href="upsdrvctl.html">upsdrvctl(8)</a> tool), and
+this either fails (because the device is already busy) or gets to conflict
+with the copy of the driver running as a service instance and they begin
+to terminate each other.</p></div>
+</div>
+<div class="sect3">
+<h4 id="_configuring_nut_drivers">Configuring NUT Drivers</h4>
+<div class="paragraph"><p>To get started with the NUT server system, you should populate the
+<a href="ups.conf.html">ups.conf(5)</a> file with a section per device, which informs both the
+respective drivers, and tools like service-aware <a href="upsdrvsvcctl.html">upsdrvsvcctl(8)</a>
+and <a href="nut-driver-enumerator.html">nut-driver-enumerator(8)</a> or the legacy <a href="upsdrvctl.html">upsdrvctl(8)</a>,
+and the <a href="upsd.html">upsd(8)</a> data server, to name a few.</p></div>
+<div class="paragraph"><p>In many typical cases, the <a href="nut-scanner.html">nut-scanner(8)</a> tool can get you started
+by discovering supported USB, Serial, SNMP, NetXML, IPMI devices, or remote
+NUT deployments using Avahi mDNS or the good old port-knocking scan.
+This tool would propose a complete section content that you can copy-paste
+into your <code>ups.conf</code> file (possibly review and adapt the contents first,
+to e.g. add a description meaningful to you like "UPS in garage", etc.)</p></div>
+</div>
+<div class="sect3">
+<h4 id="_other_configuration_files">Other configuration files</h4>
+<div class="paragraph"><p>NUT sample configuration files (packaged or seen in sources under
+<a href="https://github.com/networkupstools/nut/tree/master/conf">https://github.com/networkupstools/nut/tree/master/conf</a> directory)
+start with a heading comment about the minimal set of their required
+options.  Note that many of these files can contain credentials
+(either for NUT roles, or for networked power devices as part of
+their NUT driver section configuration) and so these files and any
+of their backup copies should be secured accordingly.</p></div>
+<div class="paragraph"><p>The <a href="nut.conf.html">nut.conf(5)</a> may be used by init-scripts or other system
+integration code (it notably contains the <code>MODE</code> setting to choose
+which profile of NUT services to start or not on this particular
+system).</p></div>
+<div class="paragraph"><p>On the NUT server you would need at least minimally configured:
+<a href="ups.conf.html">ups.conf(5)</a>, <a href="upsd.conf.html">upsd.conf(5)</a>, <a href="upsd.users.html">upsd.users(5)</a>.</p></div>
+<div class="paragraph"><p>On the majority of NUT clients (meaning each system monitoring the
+UPS state so it knows when to trigger its local shutdown), you would
+need <a href="upsmon.conf.html">upsmon.conf(5)</a> and depending on your setup, may need a
+custom <code>NOTIFYCMD</code> or <code>SHUTDOWNCMD</code> (if you script something complex),
+and/or <a href="upssched.conf.html">upssched.conf(5)</a> and a custom <code>CMDSCRIPT</code> for it.</p></div>
+<div class="paragraph"><p>For NUT CGI clients several files may need to be adapted and placed
+into certain directories according to their documentation:
+<a href="hosts.conf.html">hosts.conf(5)</a> and <a href="upsset.conf.html">upsset.conf(5)</a> for configuration,
+and <code>upsstats-single.html</code> and <code>upsstats.html</code> for HTML UI templates.</p></div>
+<div class="paragraph"><p>Other clients, whether delivered by NUT project (<a href="NUT-Monitor.html">NUT-Monitor(1)</a>
+GUI) or co-located (<a href="https://github.com/networkupstools/wmnut">WMNut</a>)
+or third-party (see <a href="https://networkupstools.org/projects.html">https://networkupstools.org/projects.html</a>) would
+probably support saving their settings or "favorites".  Do not forget
+to secure access to those files and their copies as well.</p></div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="User_man">User manual pages</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_configuration_files">Configuration files</h3>
+<div class="ulist"><ul>
+<li>
+<p>
+<a href="nut.conf.html">nut.conf(5)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="ups.conf.html">ups.conf(5)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="upsd.conf.html">upsd.conf(5)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="upsd.users.html">upsd.users(5)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="upsmon.conf.html">upsmon.conf(5)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="upssched.conf.html">upssched.conf(5)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="hosts.conf.html">hosts.conf(5)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="upsset.conf.html">upsset.conf(5)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="upsstats.html.html">upsstats.html(5)</a>
+</p>
+</li>
+</ul></div>
+</div>
+<div class="sect2">
+<h3 id="_daemons">Daemons</h3>
+<div class="ulist"><ul>
+<li>
+<p>
+<a href="upsd.html">upsd(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="upsmon.html">upsmon(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="upssched.html">upssched(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="upslog.html">upslog(8)</a>
+</p>
+</li>
+</ul></div>
+</div>
+<div class="sect2">
+<h3 id="_clients_commands">Clients commands</h3>
+<div class="ulist"><ul>
+<li>
+<p>
+<a href="upsc.html">upsc(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="upscmd.html">upscmd(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="upsrw.html">upsrw(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="NUT-Monitor.html">NUT-Monitor(8)</a>
+</p>
+</li>
+</ul></div>
+</div>
+<div class="sect2">
+<h3 id="_configuration_commands">Configuration commands</h3>
+<div class="ulist"><ul>
+<li>
+<p>
+<a href="nutconf.html">nutconf(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="nut-scanner.html">nut-scanner(8)</a>
+</p>
+</li>
+</ul></div>
+</div>
+<div class="sect2">
+<h3 id="_cgi_programs">CGI programs</h3>
+<div class="ulist"><ul>
+<li>
+<p>
+<a href="upsimage.cgi.html">upsimage.cgi(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="upsset.cgi.html">upsset.cgi(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="upsstats.cgi.html">upsstats.cgi(8)</a>
+</p>
+</li>
+</ul></div>
+</div>
+<div class="sect2">
+<h3 id="_platform_management">Platform management</h3>
+<div class="sect3">
+<h4 id="_windows">Windows</h4>
+<div class="ulist"><ul>
+<li>
+<p>
+<a href="nut.exe.html">nut.exe(8)</a>
+</p>
+</li>
+</ul></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Drivers">Driver control</h3>
+<div class="ulist"><ul>
+<li>
+<p>
+<a href="nut-driver-enumerator.html">nut-driver-enumerator(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="upsdrvctl.html">upsdrvctl(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="upsdrvsvcctl.html">upsdrvsvcctl(8)</a>
+</p>
+</li>
+</ul></div>
+</div>
+<div class="sect2">
+<h3 id="_drivers">Drivers</h3>
+<div class="ulist"><ul>
+<li>
+<p>
+<a href="nutupsdrv.html">nutupsdrv(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="adelsystem_cbi.html">adelsystem_cbi(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="al175.html">al175(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="apc_modbus.html">apc_modbus(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="apcsmart-old.html">apcsmart-old(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="apcsmart.html">apcsmart(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="apcupsd-ups.html">apcupsd-ups(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="asem.html">asem(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="bcmxcp.html">bcmxcp(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="bcmxcp_usb.html">bcmxcp_usb(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="belkin.html">belkin(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="belkinunv.html">belkinunv(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="bestfcom.html">bestfcom(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="bestfortress.html">bestfortress(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="bestuferrups.html">bestuferrups(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="bestups.html">bestups(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="blazer-common.html">blazer-common(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="blazer_ser.html">blazer_ser(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="blazer_usb.html">blazer_usb(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="clone.html">clone(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="dummy-ups.html">dummy-ups(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="etapro.html">etapro(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="everups.html">everups(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="gamatronic.html">gamatronic(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="generic_gpio.html">generic_gpio(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="generic_modbus.html">generic_modbus(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="genericups.html">genericups(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="huawei-ups2000.html">huawei-ups2000(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="isbmex.html">isbmex(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="ivtscd.html">ivtscd(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="liebert-esp2.html">liebert-esp2(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="liebert.html">liebert(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="macosx-ups.html">macosx-ups(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="masterguard.html">masterguard(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="metasys.html">metasys(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="mge-shut.html">mge-shut(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="mge-utalk.html">mge-utalk(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="microdowell.html">microdowell(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="microsol-apc.html">microsol-apc(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="netxml-ups.html">netxml-ups(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="nut-ipmipsu.html">nut-ipmipsu(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="nut_usb_addvars.html">nut_usb_addvars(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="nutdrv_atcl_usb.html">nutdrv_atcl_usb(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="nutdrv_qx.html">nutdrv_qx(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="nutdrv_siemens_sitop.html">nutdrv_siemens_sitop(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="oneac.html">oneac(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="optiups.html">optiups(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="phoenixcontact_modbus.html">phoenixcontact_modbus(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="pijuice.html">pijuice(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="powercom.html">powercom(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="powerman-pdu.html">powerman-pdu(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="powerpanel.html">powerpanel(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="rhino.html">rhino(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="richcomm_usb.html">richcomm_usb(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="riello_ser.html">riello_ser(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="riello_usb.html">riello_usb(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="safenet.html">safenet(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="sms_ser.html">sms_ser(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="snmp-ups.html">snmp-ups(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="socomec_jbus.html">socomec_jbus(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="solis.html">solis(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="tripplite.html">tripplite(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="tripplite_usb.html">tripplite_usb(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="tripplitesu.html">tripplitesu(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="upscode2.html">upscode2(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="usbhid-ups.html">usbhid-ups(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="victronups.html">victronups(8)</a>
+</p>
+</li>
+</ul></div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="Developer_man">Developer manual pages</h2>
+<div class="sectionbody">
+<div class="ulist"><ul>
+<li>
+<p>
+<a href="libupsclient-config.html">libupsclient-config(1)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="nut-recorder.html">nut-recorder(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="skel.html">skel(8)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="sockdebug.html">sockdebug(8)</a>
+</p>
+</li>
+</ul></div>
+<div class="sect2">
+<h3 id="devclient">Client library</h3>
+<div class="ulist"><ul>
+<li>
+<p>
+<a href="libnutclient.html">libnutclient(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="libnutclient_commands.html">libnutclient_commands(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="libnutclient_devices.html">libnutclient_devices(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="libnutclient_general.html">libnutclient_general(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="libnutclient_misc.html">libnutclient_misc(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="libnutclient_tcp.html">libnutclient_tcp(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="libnutclient_variables.html">libnutclient_variables(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="upsclient.html">upsclient(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="upscli_add_host_cert.html">upscli_add_host_cert(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="upscli_cleanup.html">upscli_cleanup(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="upscli_connect.html">upscli_connect(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="upscli_tryconnect.html">upscli_tryconnect(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="upscli_disconnect.html">upscli_disconnect(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="upscli_fd.html">upscli_fd(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="upscli_get.html">upscli_get(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="upscli_init.html">upscli_init(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="upscli_set_default_connect_timeout.html">upscli_set_default_connect_timeout(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="upscli_get_default_connect_timeout.html">upscli_get_default_connect_timeout(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="upscli_init_default_connect_timeout.html">upscli_init_default_connect_timeout(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="upscli_list_next.html">upscli_list_next(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="upscli_list_start.html">upscli_list_start(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="upscli_readline.html">upscli_readline(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="upscli_sendline.html">upscli_sendline(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="upscli_splitaddr.html">upscli_splitaddr(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="upscli_splitname.html">upscli_splitname(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="upscli_ssl.html">upscli_ssl(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="upscli_strerror.html">upscli_strerror(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="upscli_upserror.html">upscli_upserror(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="upscli_str_add_unique_token.html">upscli_str_add_unique_token(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="upscli_str_contains_token.html">upscli_str_contains_token(3)</a>
+</p>
+</li>
+</ul></div>
+</div>
+<div class="sect2">
+<h3 id="devscan">Device discovery library</h3>
+<div class="ulist"><ul>
+<li>
+<p>
+<a href="nutscan.html">nutscan(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="nutscan_add_device_to_device.html">nutscan_add_device_to_device(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="nutscan_add_ip_range.html">nutscan_add_ip_range(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="nutscan_add_option_to_device.html">nutscan_add_option_to_device(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="nutscan_cidr_to_ip.html">nutscan_cidr_to_ip(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="nutscan_display_parsable.html">nutscan_display_parsable(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="nutscan_display_sanity_check.html">nutscan_display_sanity_check(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="nutscan_display_sanity_check_serial.html">nutscan_display_sanity_check_serial(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="nutscan_display_ups_conf.html">nutscan_display_ups_conf(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="nutscan_display_ups_conf_with_sanity_check.html">nutscan_display_ups_conf_with_sanity_check(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="nutscan_free_device.html">nutscan_free_device(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="nutscan_free_ip_ranges.html">nutscan_free_ip_ranges(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="nutscan_get_serial_ports_list.html">nutscan_get_serial_ports_list(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="nutscan_init.html">nutscan_init(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="nutscan_init_ip_ranges.html">nutscan_init_ip_ranges(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="nutscan_ip_ranges_iter_inc.html">nutscan_ip_ranges_iter_inc(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="nutscan_ip_ranges_iter_init.html">nutscan_ip_ranges_iter_init(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="nutscan_new_device.html">nutscan_new_device(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="nutscan_scan_avahi.html">nutscan_scan_avahi(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="nutscan_scan_eaton_serial.html">nutscan_scan_eaton_serial(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="nutscan_scan_ipmi.html">nutscan_scan_ipmi(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="nutscan_scan_nut.html">nutscan_scan_nut(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="nutscan_scan_nut_simulation.html">nutscan_scan_nut_simulation(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="nutscan_scan_snmp.html">nutscan_scan_snmp(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="nutscan_scan_usb.html">nutscan_scan_usb(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="nutscan_scan_xml_http_range.html">nutscan_scan_xml_http_range(3)</a>
+</p>
+</li>
+<li>
+<p>
+<a href="nutscan_stringify_ip_ranges.html">nutscan_stringify_ip_ranges(3)</a>
+</p>
+</li>
+</ul></div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_internet_resources">Internet resources</h2>
+<div class="sectionbody">
+<div class="ulist"><ul>
+<li>
+<p>
+The NUT (Network UPS Tools) home page: <a href="https://www.networkupstools.org/">https://www.networkupstools.org/</a>
+  and specifically the <a href="https://networkupstools.org/documentation.html">NUT
+  Documentation collection</a> with the FAQ page and several books on different
+  aspects of NUT usage and development, maintained as part of the project code
+  base
+</p>
+</li>
+<li>
+<p>
+The <a href="https://github.com/networkupstools/ConfigExamples/releases/latest/download/ConfigExamples.pdf">NUT
+  Configuration Examples</a> book, maintained by Roger Price
+</p>
+</li>
+<li>
+<p>
+Project GitHub repository, wiki and issue tracker:
+  <a href="https://github.com/networkupstools/nut">https://github.com/networkupstools/nut</a>
+</p>
+</li>
+<li>
+<p>
+Commonly referenced articles include:
+</p>
+<div class="ulist"><ul>
+<li>
+<p>
+<a href="https://networkupstools.org/docs/FAQ.html">The NUT FAQ page</a>
+</p>
+</li>
+<li>
+<p>
+<a href="https://github.com/networkupstools/nut/wiki/Changing-NUT-daemon-debug-verbosity">Changing
+    NUT daemon debug verbosity</a> should be your first step in any troubleshooting
+</p>
+</li>
+<li>
+<p>
+<a href="https://networkupstools.org/docs/qa-guide.chunked/_prerequisites_for_building_nut_on_different_oses.html#_build_prerequisites_to_make_nut_from_scratch_on_various_operating_systems">Build
+    prerequisites to make NUT from scratch on various Operating Systems</a>
+    documents the packages you might need to build NUT on about a dozen
+    operating system distributions (most of those the NUT CI farm tests
+    each development iteration on)
+</p>
+</li>
+<li>
+<p>
+<a href="https://github.com/networkupstools/nut/wiki/Building-NUT-for-in%E2%80%90place-upgrades-or-non%E2%80%90disruptive-tests">Building
+    NUT for in‐place upgrades or non‐disruptive tests</a> details how to build
+    a newer version of NUT than your system packaging provides (as a potential
+    replacement of the older installation), e.g. to test if some issue got
+    resolved or if an updated driver sees more information from your device;
+    most such tests can be done without installing the new build into your
+    system (not until you like it better than the current deployment)
+</p>
+</li>
+<li>
+<p>
+Specific bits of know-how and caveats regarding
+    <a href="https://github.com/networkupstools/nut/wiki/NUT-for-Windows">NUT
+    for Windows</a>
+</p>
+</li>
+</ul></div>
+</li>
+<li>
+<p>
+<a href="https://networkupstools.org/projects.html">Related projects</a>
+</p>
+</li>
+<li>
+<p>
+We are on Wikipedia: <a href="https://en.wikipedia.org/wiki/Network_UPS_Tools">https://en.wikipedia.org/wiki/Network_UPS_Tools</a>
+</p>
+</li>
+<li>
+<p>
+The "UPS management protocol", Informational RFC 9271:
+  <a href="https://datatracker.ietf.org/doc/html/rfc9271">https://datatracker.ietf.org/doc/html/rfc9271</a>
+</p>
+</li>
+</ul></div>
+</div>
+</div>
+</div>
+<div id="footnotes"><hr /></div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2025-05-26 10:59:45 CEST -- Network UPS Tools 2.8.3.313
+</div>
+</div>
+</body>
+</html>
