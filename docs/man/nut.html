@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
-<meta name="generator" content="AsciiDoc 10.1.2" />
+<meta name="generator" content="AsciiDoc 10.2.0" />
 <title>NUT(7)</title>
 <style type="text/css">
 /* Shared CSS for AsciiDoc xhtml11 and html5 backends */
@@ -856,6 +856,20 @@ maintained by the community at large.  Some standard clients of note include:</p
   of them (through a data server running on one of them, on a machine actually
   connected to the UPS&#8201;&#8212;&#8201;the "primary" system).
 </p>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">The <code>upsmon</code> client typically splits into two processes: an unprivileged
+  one running with credentials of its <code>RUN_AS_USER</code> configured in the
+  <a href="upsmon.conf.html">upsmon.conf(5)</a> file (or a built-in/packaged default like <code>nut</code>,
+  <code>monuser</code> or <code>nobody</code>) which does most of the work (including notification
+  scripts called via <code>NOTIFYCMD</code> setting), and the part which remains owned
+  by <code>root</code> to initiate the system shutdown by calling <code>SHUTDOWNCMD</code> when/if
+  the time comes.</td>
+</tr></table>
+</div>
 <div class="paragraph"><p>NUT deployments which desire higher-fidelity control (e.g. different systems
   shutting down after different time spent on battery) often couple <code>upsmon</code>
   with <a href="upssched.html">upssched(1)</a>.</p></div>
@@ -1026,6 +1040,16 @@ to secure access to those files and their copies as well.</p></div>
 <div class="sect1">
 <h2 id="User_man">User manual pages</h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="_nut_overview">NUT overview</h3>
+<div class="ulist"><ul>
+<li>
+<p>
+<a href="nut.html">nut(7)</a>
+</p>
+</li>
+</ul></div>
+</div>
 <div class="sect2">
 <h3 id="_configuration_files">Configuration files</h3>
 <div class="ulist"><ul>
@@ -1951,7 +1975,7 @@ The "UPS management protocol", Informational RFC 9271:
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-05-26 10:59:45 CEST -- Network UPS Tools 2.8.3.313
+Last updated 2025-05-28 00:15:29 UTC -- Network UPS Tools 2.8.3.494
 </div>
 </div>
 </body>

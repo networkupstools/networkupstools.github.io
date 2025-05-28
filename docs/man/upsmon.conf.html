@@ -1549,22 +1549,40 @@ state as not volatile and make it treat the <code>ALARM</code> status as any oth
 </dt>
 <dd>
 <p>
-upsmon normally runs the bulk of the monitoring duties under another user
-ID after dropping root privileges.  On most systems this means it runs
-as "nobody", since that&#8217;s the default from compile-time.
+upsmon normally splits into two processes, keeping a small part which remains
+owned by <code>root</code> to initiate the system shutdown by calling <code>SHUTDOWNCMD</code>
+when/if the time comes, and runs the bulk of the monitoring duties under
+another user ID after dropping root privileges.  On most custom-built systems
+this means it runs as "nobody", since that&#8217;s the default from compile-time;
+packages often deliver a "nut" or "ups" user to run NUT service daemons.
 </p>
-<div class="paragraph"><p>The catch is that "nobody" can&#8217;t read your upsmon.conf, since by default
-it is installed so that only root can open it.  This means you won&#8217;t be
-able to reload the configuration file, since it will be unavailable.</p></div>
+<div class="paragraph"><p>The catch is that the system-default "nobody" can&#8217;t read your upsmon.conf
+file, since by default it is installed so that only <code>root</code> can open it
+(because this file can contain sensitive data like remote NUT data server
+credentials). This means you won&#8217;t be able to reload the configuration file,
+since it will be unavailable to the unprivileged part of the <code>upsmon</code> daemon.</p></div>
 <div class="paragraph"><p>The solution is to create a new user just for upsmon, then make it run
-as that user.  I suggest "nutmon", but you can use anything that isn&#8217;t
-already taken on your system.  Just create a regular user with no special
-privileges and an impossible password.</p></div>
+as that user.  It may be the same account as that used for the NUT drivers
+or data server, but does not have to be.  On systems with higher concerns
+about security and privilege separation we suggest "nutmon", but you can
+use anything that isn&#8217;t already taken on your system.  Just create a regular
+user with no special privileges and an impossible password.</p></div>
 <div class="paragraph"><p>Then, tell upsmon to run as that user, and make <code>upsmon.conf</code> readable by it.
 Your reloads will work, and your config file will stay secure.</p></div>
 <div class="paragraph"><p>This file should not be writable by the upsmon user, as it would be
-possible to exploit a hole, change the SHUTDOWNCMD to something
-malicious, then wait for upsmon to be restarted.</p></div>
+possible to exploit a hole, change the <code>SHUTDOWNCMD</code> to something
+malicious, then wait for upsmon to be restarted.  So typically you
+would also create a group for NUT daemons (which the user would be
+a member of) and allow that group read-only access to <code>root</code>-owned
+configuration files.</p></div>
+<div class="paragraph"><p>That said, other variants may be possible&#8201;&#8212;&#8201;e.g. run all of <code>upsmon</code> as
+a single process initially started and owned by <code>nut</code> and call a shutdown
+script prefixed by <code>sudo</code>, <code>pfexec</code> or other RBAC tools. This however adds
+more "moving parts" and fragility (e.g. the <code>sudoers</code> settings may live in
+LDAP, and that server could be unavailable at shutdown when the rack is half
+powered off, at just the time you need it here), and is not available on
+all platforms&#8201;&#8212;&#8201;so such setups are something users explore on their own
+so far (we would welcome posts on NUT Wiki or links to blogs though).</p></div>
 </dd>
 <dt class="hdlist1">
 <strong>SHUTDOWNCMD</strong> <em>command</em>
@@ -1762,7 +1780,7 @@ does not change the previously active logging verbosity.</td>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-05-23 12:48:12 UTC -- Network UPS Tools 2.8.3.439
+Last updated 2025-05-28 00:15:29 UTC -- Network UPS Tools 2.8.3.494
 </div>
 </div>
 </body>

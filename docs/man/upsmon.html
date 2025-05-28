@@ -860,8 +860,9 @@ scripts to know when to call <a href="upsdrvctl.html">upsdrvctl(8)</a> to shut d
 <p>
 Run privileged all the time.  Normally upsmon will split into two
 processes.  The majority of the code runs as an unprivileged user, and
-only a tiny stub runs as root.  This switch will disable that mode, and
-run the old "all root all the time" system.
+only a tiny stub runs as <code>root</code> to eventually call <code>SHUTDOWNCMD</code> if needed.
+This switch will disable that mode, and run the old "all root all the time"
+system.
 </p>
 <div class="paragraph"><p>This is not the recommended mode, and you should not use this unless you
 have a very good reason.</p></div>
@@ -872,7 +873,7 @@ have a very good reason.</p></div>
 <dd>
 <p>
 Set the user for the unprivileged monitoring process.  This has no effect
-when using -p.
+when using <em>-p</em>.
 </p>
 <div class="paragraph"><p>The default <em>user</em> is set at build configuration time with
 <code>configure --with-user=...</code>.  Typically this is <em>nobody</em> (if not
@@ -1654,14 +1655,15 @@ This can be changed by utilizing the <code>ALARMCRITICAL</code> setting within <
 <div class="sectionbody">
 <div class="paragraph"><p>upsmon usually gives up root powers for the process that does most of
 the work, including handling signals like SIGHUP to reload the configuration
-file.  This means your <a href="upsmon.conf.html">upsmon.conf(8)</a> file must be readable by
+file.  This means your <a href="upsmon.conf.html">upsmon.conf(5)</a> file must be readable by
 the non-root account that upsmon switches to.</p></div>
 <div class="paragraph"><p>If you want reloads to work, upsmon must run as some user that has
-permissions to read the configuration file.  I recommend making a new
+permissions to read the configuration file.  We recommend making a new
 user just for this purpose, as making the file readable by "nobody"
-(the default user) would be a bad idea.</p></div>
-<div class="paragraph"><p>See the RUN_AS_USER section in <a href="upsmon.conf.html">upsmon.conf(8)</a> for more on this topic.</p></div>
-<div class="paragraph"><p>Additionally, you can&#8217;t change the SHUTDOWNCMD or POWERDOWNFLAG
+(the default user) would be a bad idea; packages typically ship with
+a <code>nut</code> or <code>ups</code> user to run NUT daemon services.</p></div>
+<div class="paragraph"><p>See the <code>RUN_AS_USER</code> section in <a href="upsmon.conf.html">upsmon.conf(5)</a> for more on this topic.</p></div>
+<div class="paragraph"><p>Additionally, you can&#8217;t change the <code>SHUTDOWNCMD</code> or <code>POWERDOWNFLAG</code>
 definitions with a reload due to the split-process model.  If you change
 those values, you <strong>must</strong> stop upsmon and start it back up.  upsmon
 will warn you in the syslog if you make changes to either of those
@@ -1719,7 +1721,7 @@ tool outputs.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-05-23 12:48:12 UTC -- Network UPS Tools 2.8.3.439
+Last updated 2025-05-28 00:15:29 UTC -- Network UPS Tools 2.8.3.494
 </div>
 </div>
 </body>
