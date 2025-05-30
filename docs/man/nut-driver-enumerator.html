@@ -755,16 +755,23 @@ asciidoc.install();
 <div class="sect1">
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
-<div class="paragraph"><p><strong>nut-driver-enumerator.sh</strong> implements the set-up and querying of the
-mapping between NUT driver configuration sections for each individual
-monitored device, and the operating system service management framework
-service instances into which such drivers are wrapped for independent
-execution and management (on platforms where NUT currently supports
-this integration&#8201;&#8212;&#8201;currently this covers Linux distributions with
-systemd and systems derived from Solaris 10 codebase, including
-proprietary Sun/Oracle Solaris and numerous open-source illumos
-distributions with SMF). It may be not installed in packaging for
-other operating systems.</p></div>
+<div class="paragraph"><p>The <strong>nut-driver-enumerator.sh</strong> (also known as "NDE") script implements the
+set-up and querying of the mapping between NUT driver configuration sections
+for each individual monitored device, and the service instances of an
+operating system service management framework (on platforms where NUT already
+supports this integration&#8201;&#8212;&#8201;currently this covers Linux distributions with
+systemd and systems derived from Solaris 10 codebase, including proprietary
+Sun/Oracle Solaris and numerous open-source illumos distributions with SMF),
+into which such drivers are wrapped for independent execution and management.
+It may be not installed in packaging for other operating systems.</p></div>
+<div class="paragraph"><p>With each NUT driver represented as a separate service instance, dependencies
+can be defined (e.g. networked drivers must start after the network ability
+appears in the OS, but USB/Serial drivers should not wait for that), and they
+can fail or be brought into maintenance independently (unlike a monolithic
+service based on <a href="upsdrvctl.html">upsdrvctl(8)</a> requiring everything configured to be
+started). For a few special drivers like <a href="dummy-ups.html">dummy-ups(8)</a>, <a href="clone.html">clone(8)</a>,
+<a href="clone-outlet.html">clone-outlet(8)</a>, and <a href="failover.html">failover(8)</a> this may also involve a
+dependency between service instances of different NUT drivers themselves.</p></div>
 <div class="paragraph"><p>This script provides a uniform interface for further NUT tools
 such as <a href="upsdrvsvcctl.html">upsdrvsvcctl(8)</a> to implement their logic as
 platform-independently as was possible and practical. It is not
@@ -775,6 +782,14 @@ useful data and actions with its <em>list</em> and <em>resync</em> arguments.</p
 hides is the difference of rules for valid service instance names
 in various frameworks, as well as system tools and naming patterns
 involved.</p></div>
+<div class="paragraph"><p>Depending on the platform, the script may also be wrapped by different service
+unit types to run automatically (e.g. upon system start-up, or regularly to
+pick up changes of <a href="ups.conf.html">ups.conf(5)</a> soon after it is edited, or integrated
+with a file system monitor to be triggered when the configuration is changed).
+Some of these modes make sense for use-cases with a rarely (if ever) changing
+population of power devices, e.g. a home or small-office UPS monitored same
+way for years at a time; others can help automate a data-center monitoring
+system where device deployments (or discovery) can be much more dynamic.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -991,7 +1006,7 @@ Absent or unreadable <code>ups.conf</code> file
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-05-30 08:48:55 UTC -- Network UPS Tools 2.8.3.494
+Last updated 2025-05-30 20:46:07 UTC -- Network UPS Tools 2.8.3.554
 </div>
 </div>
 </body>
