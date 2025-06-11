@@ -1,0 +1,163 @@
+# DEVICE:URL:REPORT: https://github.com/PiSupply/PiJuice/issues/124#issuecomment-1018603688
+# DEVICE:URL:VENDOR: https://uk.pi-supply.com/products/pijuice-standard
+
+# DEVICE:COMMENT-BLOCK:UPSCONF:
+# [hat]
+#     driver = pijuice
+#     port = /dev/i2c-1
+#     desc = "PiJuice HAT"
+# DEVICE:EOC
+
+# DEVICE:COMMENT-BLOCK: (In-)stability
+# Strangely, after a couple of days on miniUSB power (although plugged from a
+# laptop -- maybe power did not suffice, at least Pi rebooted rather often),
+# the hardwired big battery never went over "battery.charge: 47.6" reading.
+# Popped back the 1820mAh into the PiJuice, and it is quickly growing from ~3
+# to ~60 by now, with flashing blue-green light near SW1 button, with the same
+# USB connection. It first seemed the batteries are not charging if the USB-C
+# Raspberry Pi4 power input is used, but with another cable and another source
+# they do.
+# DEVICE:EOC
+
+# DEVICE:COMMENT-BLOCK: DRIVER START LOG
+#    0.000000     [D5] send_to_all: SETINFO driver.parameter.port "/dev/i2c-1"
+#    0.000222     [D1] debug level is '6'
+#    0.001321     [D5] send_to_all: SETINFO device.type "ups"
+#    0.001473     [D3] get_firmware_version
+#    0.002926     Unknown Firmware release: 1.4
+#    0.002987     [D1] UPS Firmware Version: 1.4
+#    0.003045     [D5] send_to_all: SETINFO ups.firmware "1.4"
+#    0.003107     [D5] send_to_all: SETINFO driver.version "2.7.4-4385-g2bd17f540"
+#    0.003165     [D5] send_to_all: SETINFO driver.version.internal "0.9"
+#    0.003223     [D5] send_to_all: SETINFO driver.name "pijuice"
+#    0.003281     [D5] send_to_all: SETINFO ups.mfr "PiJuice"
+#    0.003340     [D5] send_to_all: SETINFO ups.type "HAT"
+#    0.003397     [D5] send_to_all: SETINFO device.mfr "PiJuice"
+#    0.003454     [D5] send_to_all: SETINFO device.type "HAT"
+#    0.003511     [D1] Low Battery Threshold: 25%
+#    0.003569     [D5] send_to_all: SETINFO battery.charge.low "25"
+#    0.003624     [D1] Nominal Battery Voltage: 4.180V
+#    0.003681     [D5] send_to_all: SETINFO battery.voltage.nominal "4.180"
+#    0.003732     [D3] get_i2c_address
+#    0.004962     [D1] I2C Address: 0x14
+#    0.005060     [D1] Found device '0x14' on port '/dev/i2c-1'
+#    0.005111     [D3] get_battery_profile
+#    0.009269     [D1] Battery Capacity: 1.000Ah
+#    0.009348     [D5] send_to_all: SETINFO battery.capacity "1.000"
+#    0.009400     [D3] get_battery_profile_ext
+#    0.014219     [D1] Battery Chemistry: LiPO
+#    0.014293     [D5] send_to_all: SETINFO battery.type "LiPO"
+#    0.014349     [D3] get_status
+#    0.015548     [D1] Battery Status: Normal
+#    0.015613     [D5] send_to_all: SETINFO battery.packs "1"
+#    0.015673     [D5] send_to_all: SETINFO battery.packs.bad "0"
+#    0.015724     [D1] Power Input: Not Present
+#    0.015774     [D1] Power Input 5v: Not Present
+#    0.015823     [D3] get_charge_level_hi_res
+#    0.017242     [D1] Battery Charge Level: 51.4%
+#    0.017318     [D5] send_to_all: SETINFO battery.charge "51.4"
+#    0.017372     [D1] On Battery power [0:0:1]
+#    0.017424     [D3] get_battery_temperature
+#    0.018836     [D1] Battery Temperature: 248°C
+#    0.018900     [D5] send_to_all: SETINFO battery.temperature "248"
+#    0.018952     [D3] get_battery_voltage
+#    0.020365     [D1] Battery Voltage: 3.709V
+#    0.020429     [D5] send_to_all: SETINFO battery.voltage "3.709"
+#    0.020479     [D3] get_battery_current
+#    0.021896     [D1] Battery Current: 0.000A
+#    0.021968     [D5] send_to_all: SETINFO battery.current "0.000"
+#    0.022018     [D3] get_io_voltage
+#    0.023444     [D1] Input Voltage: 5.094V
+#    0.023508     [D5] send_to_all: SETINFO input.voltage "5.094"
+#    0.023558     [D3] get_io_current
+#    0.024990     [D1] Input Current: 0.012A
+#    0.025063     [D5] send_to_all: SETINFO input.current "0.012"
+#    0.025113     [D3] get_time
+#    0.028144     [D1] UPS Time: 00:03:11.46
+#    0.028210     [D5] send_to_all: SETINFO ups.time "00:03:11.46"
+#    0.028263     [D1] UPS Date: 2000-01-01
+#    0.028318     [D5] send_to_all: SETINFO ups.date "2000-01-01"
+#    0.028369     [D3] get_power_off
+#    0.029556     [D1] Power Off: 127 Seconds
+#    0.029628     [D5] send_to_all: SETINFO ups.status "OB DISCHRG"
+#    0.029682     [D5] send_to_all: DATAOK
+#    0.029739     [D5] send_to_all: SETINFO driver.parameter.pollinterval "2"
+#    0.029797     [D5] send_to_all: SETINFO driver.parameter.synchronous "no"
+#    0.029854     [D3] get_status
+#    0.031051     [D1] Battery Status: Normal
+#    0.031111     [D1] Power Input: Not Present
+#    0.031161     [D1] Power Input 5v: Not Present
+#    0.031210     [D3] get_charge_level_hi_res
+#    0.032625     [D1] Battery Charge Level: 51.4%
+#    0.032686     [D1] On Battery power [0:0:1]
+#    0.032775     [D3] get_battery_temperature
+#    0.034202     [D1] Battery Temperature: 248°C
+#    0.034261     [D3] get_battery_voltage
+#    0.035675     [D1] Battery Voltage: 3.709V
+#    0.035733     [D3] get_battery_current
+#    0.037147     [D1] Battery Current: 0.000A
+#    0.037214     [D3] get_io_voltage
+#    0.038638     [D1] Input Voltage: 5.094V
+#    0.038697     [D3] get_io_current
+#    0.040122     [D1] Input Current: 0.012A
+#    0.040181     [D3] get_time
+#    0.043213     [D1] UPS Time: 00:03:11.45
+#    0.043287     [D5] send_to_all: SETINFO ups.time "00:03:11.45"
+#    0.043338     [D1] UPS Date: 2000-01-01
+#    0.043391     [D3] get_power_off
+#    0.044572     [D1] Power Off: 127 Seconds
+#    0.044633     [D3] get_status
+#    0.045834     [D1] Battery Status: Normal
+#    0.045903     [D1] Power Input: Not Present
+#    0.046002     [D1] Power Input 5v: Not Present
+#    0.046053     [D3] get_charge_level_hi_res
+#    0.047469     [D1] Battery Charge Level: 51.4%
+#    0.047530     [D1] On Battery power [0:0:1]
+#    0.047581     [D3] get_battery_temperature
+#    0.048994     [D1] Battery Temperature: 248°C
+#    0.049062     [D3] get_battery_voltage
+#    0.050476     [D1] Battery Voltage: 3.709V
+#    0.050534     [D3] get_battery_current
+#    0.051948     [D1] Battery Current: 0.000A
+#    0.052007     [D3] get_io_voltage
+#    0.053434     [D1] Input Voltage: 5.094V
+#    0.053501     [D3] get_io_current
+#    0.054924     [D1] Input Current: 0.012A
+#    0.054983     [D3] get_time
+#    0.058016     [D1] UPS Time: 00:03:11.43
+#    0.058090     [D5] send_to_all: SETINFO ups.time "00:03:11.43"
+#    0.058142     [D1] UPS Date: 2000-01-01
+#    0.058194     [D3] get_power_off
+#    0.059374     [D1] Power Off: 127 Seconds
+#    0.059434     [D3] Entering dstate_dump
+# Network UPS Tools - PiJuice UPS driver 0.9 (2.7.4-4385-g2bd17f540)
+# Warning: This is an experimental driver.
+# Some features may not function correctly.
+# DEVICE:EOC
+
+battery.capacity: 1.000	#BAD: Actual battery was 1820 mAh; possibly wrong DIP switch combo was in place to configure the HAT
+battery.charge: 51.4
+battery.charge.low: 25
+battery.current: 0.000
+battery.packs: 1
+battery.packs.bad: 0
+battery.temperature: 248
+battery.type: LiPO
+battery.voltage: 3.709
+battery.voltage.nominal: 4.180
+device.mfr: PiJuice
+device.type: HAT
+driver.name: pijuice
+driver.parameter.pollinterval: 2
+driver.parameter.port: /dev/i2c-1
+driver.parameter.synchronous: no
+driver.version: 2.7.4-4385-g2bd17f540
+driver.version.internal: 0.9
+input.current: 0.012
+input.voltage: 5.094
+ups.date: 2000-01-01
+ups.firmware: 1.4
+ups.mfr: PiJuice
+ups.status: OB DISCHRG
+ups.time: 00:03:11.43
+ups.type: HAT
