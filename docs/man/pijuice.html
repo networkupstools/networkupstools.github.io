@@ -790,6 +790,17 @@ embedded PCs.</p></div>
 <p>
 On the PiJuice HAT, this should be <code>/dev/i2c-1</code>.
 </p>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">You may want to add the driver run-time unprivileged user (e.g. <code>nut</code>)
+to the <code>i2c</code> group as a secondary group&#8201;&#8212;&#8201;typically in <code>/etc/group</code> (along
+with <code>pijuice</code>, if vendor CLI/GUI/automation packages are also installed), e.g.
+<code>sudo usermod -a -G i2c nut</code>. Otherwise you may have to run the driver as <code>root</code>.</td>
+</tr></table>
+</div>
 </dd>
 </dl></div>
 </div>
@@ -828,6 +839,19 @@ apply to PiJuice HAT, patches are welcome.</td>
 </div>
 <div class="paragraph"><p>The driver shutdown function is not implemented, so other arrangements must be
 made to turn off the UPS.</p></div>
+<div class="paragraph"><p>The <code>battery.current</code> and <code>input.current</code> may be reported as negative, if it
+is being charged and wall power is plugged into the Pi itself (not the HAT).
+This reflects the direction of electric current over the GPIO pins; vendor
+tools like <code>pijuice_cli</code> or <code>pijuice_gui</code> also show this.  The reported
+<code>input.current</code> value was seen to fluctuate and even change the sign back
+and forth as the <code>battery.charge</code> value rose from zero into tens of percents
+with this connectivity setup.</p></div>
+<div class="paragraph"><p>If the <code>ups.date</code> and <code>ups.time</code> look bogus, use vendor tools to set the RTC
+clock of the HAT (check in Alarms section).</p></div>
+<div class="paragraph"><p>The <code>battery.temperature</code> report may depend on capabilities of the actual
+battery and methods used to poll it for information. Vendor tools provide
+several settings for tuning this, but they don&#8217;t seem to impact what the
+driver reports (pull requests welcome); bogus negative values were seen.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -881,7 +905,7 @@ The NUT (Network UPS Tools) home page: <a href="https://www.networkupstools.org/
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-06-11 09:34:44 UTC -- Network UPS Tools 2.8.3.572
+Last updated 2025-06-12 08:44:16 UTC -- Network UPS Tools 2.8.3.589
 </div>
 </div>
 </body>
