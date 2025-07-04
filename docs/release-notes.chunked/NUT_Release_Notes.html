@@ -138,14 +138,17 @@ Introduced some macros in <code class="literal">drivers/upshandler.h</code> for 
 Fixed a couple of ancient memory leaks: one "shared" during driver
      program initialization, and one specific to <code class="literal">dummy-ups</code> wind-down. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2972" target="_top">#2972</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
-<code class="literal">dummy-ups</code> driver updates:
+<code class="literal">apc_modbus</code> driver updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
-A new instruction <code class="literal">ALARM</code> was added for the <code class="literal">Dummy Mode</code> operation
-     of the driver, enabling simulation of UPS alarm states more closely
-     in line with modern, real-world UPS driver implementations. This
-     follows the updated principle of keeping alarm states decoupled from
-     the <code class="literal">ups.status</code> variable, with alarms now raised via common alarm
-     functions rather than direct manipulation. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2928" target="_top">issue #2928</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/2936" target="_top">PR #2936</a>]
+The time stamp and inter-frame delay accounting was fixed, alleviating
+     one of the problems reported in <a class="ulink" href="https://github.com/networkupstools/nut/issues/2609" target="_top">issue #2609</a>. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/2982" target="_top">PR #2982</a>]
+</li></ul></div></li><li class="listitem"><p class="simpara">
+<code class="literal">bcmxcp</code> driver updates:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+The latching on to a previous replace battery status was fixed, with its
+     alarm state variable now correctly being reset; previously a factually
+     replaced battery did not clear the alarm and the whole driver needed to
+     be restarted. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2999" target="_top">issue #2999</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3002" target="_top">PR #3002</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">clone</code>, <code class="literal">clone-outlet</code>, <code class="literal">nhs_ser</code> driver and <code class="literal">nutdrv_qx_ablerex</code>
    subdriver updates:
@@ -154,6 +157,15 @@ Refactored to follow modern handling of status and alarm conditions,
      aligning with current driver design practices. This includes fixing
      copy-paste related issues in alarm reporting and removing some alarm
      messages that should instead be reflected as status flags. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2936" target="_top">#2936</a>]
+</li></ul></div></li><li class="listitem"><p class="simpara">
+<code class="literal">dummy-ups</code> driver updates:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+A new instruction <code class="literal">ALARM</code> was added for the <code class="literal">Dummy Mode</code> operation
+     of the driver, enabling simulation of UPS alarm states more closely
+     in line with modern, real-world UPS driver implementations. This
+     follows the updated principle of keeping alarm states decoupled from
+     the <code class="literal">ups.status</code> variable, with alarms now raised via common alarm
+     functions rather than direct manipulation. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2928" target="_top">issue #2928</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/2936" target="_top">PR #2936</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">nutdrv_qx</code> driver updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -168,6 +180,11 @@ Updated <code class="literal">megatec</code> protocol for more detailed response
      above correctly (e.g. the <code class="literal">ups.firmware</code> version becomes shorter or
      none of these are reported), please let NUT developers know. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2980" target="_top">#2980</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
+<code class="literal">pijuice</code> driver updates:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Converted to NUT standard use of <code class="literal">status_set()</code> with single-token values.
+     [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2708" target="_top">issue #2708</a>]
+</li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">usbhid-ups</code> driver updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 The <code class="literal">cps-hid</code> subdriver’s existing mechanism for fixing broken report
@@ -177,11 +194,6 @@ The <code class="literal">cps-hid</code> subdriver’s existing mechanism for fi
 </li><li class="listitem">
 Added APC BVKxxxM2 to list of devices where <code class="literal">lbrb_log_delay_sec=N</code> may be
      necessary to address spurious LOWBATT and REPLACEBATT events. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2942" target="_top">#2942</a>]
-</li></ul></div></li><li class="listitem"><p class="simpara">
-<code class="literal">apc_modbus</code> driver updates:
-</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
-The time stamp and inter-frame delay accounting was fixed, alleviating
-     one of the problems reported in <a class="ulink" href="https://github.com/networkupstools/nut/issues/2609" target="_top">issue #2609</a>. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/2982" target="_top">PR #2982</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 New NUT drivers:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -4352,4 +4364,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.32. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-06-25 14:58:35 -- Network UPS Tools 2.8.3.589</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2025-07-04 09:13:54 -- Network UPS Tools 2.8.3.589</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
