@@ -1,9 +1,79 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>2. Very detailed Change Log</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><link rel="home" href="index.html" title="Network UPS Tools Change Log" /><link rel="up" href="index.html" title="Network UPS Tools Change Log" /><link rel="prev" href="_introduction.html" title="1. Introduction" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> </td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="Change_Log"></a>2. Very detailed Change Log</h2></div></div></div><p>This document intends to detail the change log for relatively recent work
-(roughly since the source code was tracked in Git).</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>This change log section represents git commits in range <span class="emphasis"><em>v2.8.3..HEAD</em></span> (commits <span class="emphasis"><em>e578d506e..ea7da8e2b</em></span>).</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_07_24_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.1. 2025-07-24  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+(roughly since the source code was tracked in Git).</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>This change log section represents git commits in range <span class="emphasis"><em>v2.8.3..HEAD</em></span> (commits <span class="emphasis"><em>e578d506e..83496e95c</em></span>).</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_07_28_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.1. 2025-07-28  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+docs/man/phoenixcontact_modbus.txt: clarify that new options can be
+          set only once (via init) at this time [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2986" target="_top">#2986</a>]
+</li><li class="listitem">
+NEWS.adoc: clarify how new options for phoenixcontact_modbus can be
+          set [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2986" target="_top">#2986</a>]
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_07_27_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.2. 2025-07-27  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+tools/gitlog2version.sh: do not pollute stdout [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3030" target="_top">#3030</a>]
+</li><li class="listitem">
+tools/gitlog2version.sh, docs/nut-versioning.adoc: tack on current
+          commit if known, even if we fall back to built-in version otherwise
+          [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3030" target="_top">#3030</a>]
+</li><li class="listitem">
+.github/workflows/codeql.yml: drop attempts to describe git-derived
+          version better [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3030" target="_top">#3030</a>]
+</li><li class="listitem">
+tools/gitlog2version.sh: if we fail to "discover a
+          NUT_VERSION_GIT_TRUNK" or "git describe", check and report if the
+          current checkout is shallow [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3030" target="_top">#3030</a>]  CI builds often do check out
+          the built commit with minimal "depth" (often having just it), which
+          is much faster, cheaper computationally and by traffic. This
+          however precludes finding history intersections of current
+          (single-commit) tree with other trees even if we fetch them.
+</li><li class="listitem">
+.github/workflows/codeql.yml: separate "make check-parallel-builds"
+          from main build; troubleshoot gitlog2version [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3030" target="_top">#3030</a>]
+</li><li class="listitem">
+.circleci/config.yml, .github/workflows/codeql.yml, NEWS.adoc:
+          .circleci/config.yml, .github/workflows/codeql.yml: invoke "make
+          check-parallel-builds" [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3030" target="_top">#3030</a>]
+</li><li class="listitem">
+clients/Makefile.am, drivers/Makefile.am, server/Makefile.am,
+          tests/Makefile.am, tools/nut-scanner/Makefile.am,
+          tools/nutconf/Makefile.am: */Makefile.am: spell out known build
+          order between out-of-dir dependencies [follows up from <a class="ulink" href="https://github.com/networkupstools/nut/pull/2825" target="_top">PR #2825</a>,
+          highlights why <a class="ulink" href="https://github.com/networkupstools/nut/issues/2584" target="_top">issue #2584</a> better be solved]
+</li><li class="listitem">
+Makefile.am, NEWS.adoc: introduced a <code class="literal">make check-parallel-builds</code>
+          recipe [follows up from <a class="ulink" href="https://github.com/networkupstools/nut/pull/2825" target="_top">PR #2825</a>]
+</li><li class="listitem">
+drivers/snmp-ups.c: re-order includes (keep eatons together)
+</li><li class="listitem">
+data/driver.list.in: update entry for Kebo UPS-1000D (add
+          langid_fix and subdriver); add Tescom LEO Plus LCD 1500A which
+          works with same config [<a class="ulink" href="https://github.com/networkupstools/nut/issues/981" target="_top">#981</a>]
+</li><li class="listitem">
+tools/nut-scanner/Makefile.am: ensure we only call NUT_SCANNER_DEPS
+          and it has work to do only once [follows up from <a class="ulink" href="https://github.com/networkupstools/nut/pull/2825" target="_top">PR #2825</a>]  In
+          practice we do call it as many times as there are listed dependency
+          files, but it only generates them on the first run and quicky bails
+          out later on. This should help avoid writing into same files in
+          parallel, ending up with garbled or incomplete files when we want
+          to use them.
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_07_24_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.3. 2025-07-24  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 docs/images/ci/jenkins-nut.css: new style in town with Jenkins LTS
           2.516.1
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_07_21_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.2. 2025-07-21  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_07_22_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.4. 2025-07-22  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+drivers/phoenixcontact_modbus.c: fix typo in what is now a
+          formatting string [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2986" target="_top">#2986</a>]
+</li><li class="listitem">
+drivers/phoenixcontact_modbus.c,
+          docs/man/phoenixcontact_modbus.txt: fix tweaks according to
+          nut-names, use dstate (so standard variable default.* or override.*
+          settings) [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2986" target="_top">#2986</a>]
+</li><li class="listitem">
+drivers/phoenixcontact_modbus.c: log FIXMEs for more use of NUT
+          dstate overrides/defaults instead of addvar() tweaks
+</li><li class="listitem">
+drivers/phoenixcontact_modbus.c,
+          docs/man/phoenixcontact_modbus.txt: fix according to nut-names:
+          "(ups.)delay.shutdown" ⇒ "(battery.)energysave.delay" [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2986" target="_top">#2986</a>]
+</li><li class="listitem">
+drivers/phoenixcontact_modbus.c: fix whitespace in comments [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2986" target="_top">#2986</a>]
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_07_21_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.5. 2025-07-21  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 configure.ac, docs/configure.txt: fix ASCIIDOC_TEMPLATE_LINKMANEXT*
           with HTML URL query part [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3027" target="_top">#3027</a>]  …and a typo about quoting.
 </li><li class="listitem">
@@ -24,13 +94,25 @@ NEWS.adoc, configure.ac, docs/.gitignore, docs/{asciidoc.conf ⇒
 NEWS.adoc, docs/man/asciidoc.conf, docs/nut.dict:
           docs/man/asciidoc.conf, NEWS.adoc: fix generation of links to
           external manual pages [follow-up to <a class="ulink" href="https://github.com/networkupstools/nut/issues/2797" target="_top">#2797</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_07_18_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.3. 2025-07-18  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_07_18_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.6. 2025-07-18  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 common/common.c: minimize_formatting_string(): debug-log about
           "cosmetic" chars at level 7 [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2956" target="_top">#2956</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_07_18_dark_angel_lt_28630321_ulink_url_mailto_masterwishx_users_noreply_github_com_masterwishx_users_noreply_github_com_ulink_gt"></a>2.4. 2025-07-18  DaRK AnGeL &lt;28630321+<a class="ulink" href="mailto:masterwishx@users.noreply.github.com" target="_top">masterwishx@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li><li class="listitem">
+drivers/nutdrv_qx_voltronic.c: voltronic_mode(): word remaining
+          alarms to be complete sentences [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2494" target="_top">#2494</a>]
+</li><li class="listitem">
+drivers/nutdrv_qx_voltronic.c: voltronic_mode(): add some debug
+          logging [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2494" target="_top">#2494</a>]
+</li><li class="listitem">
+docs/man/nutdrv_qx.txt: fix quoting style from m4 to text
+</li><li class="listitem">
+drivers/nutdrv_qx_voltronic.c, NEWS.adoc: revise
+          "vendor:voltronic:*" buzzword setting; these modes are not alarm
+          material [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2494" target="_top">#2494</a>]
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_07_18_dark_angel_lt_28630321_ulink_url_mailto_masterwishx_users_noreply_github_com_masterwishx_users_noreply_github_com_ulink_gt"></a>2.7. 2025-07-18  DaRK AnGeL &lt;28630321+<a class="ulink" href="mailto:masterwishx@users.noreply.github.com" target="_top">masterwishx@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/mge-hid.c: input.bypass.switch.on/off set flag quick update
           instead semi static
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_07_17_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.5. 2025-07-17  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_07_17_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.8. 2025-07-17  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/mge-hid.c: eaton_input_bypass_check_range(): fix typo
           checking for "value==1" [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2956" target="_top">#2956</a>]
 </li><li class="listitem">
@@ -65,7 +147,7 @@ Makefile.am: install-as-root: do not overly trust in systemctl
           preset-all  It fails on systemd 252 (known issue): Failed to preset
           all units: Unit /run/systemd/transient/session-156053.scope is
           transient or generated.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_07_16_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.6. 2025-07-16  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_07_16_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.9. 2025-07-16  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 server/upsd.c: check_command(): try to print all command arguments
           (if debugging) [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3023" target="_top">#3023</a>]
 </li><li class="listitem">
@@ -80,7 +162,7 @@ drivers/snmp-ups.c: su_setOID(): cast returned enum constants to
 </li><li class="listitem">
 docs/Makefile.am: ChangeLog ⇒ ChangeLog.adoc: avoid "$&lt;" as this
           is not a suffix rule
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_07_15_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.7. 2025-07-15  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_07_15_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.10. 2025-07-15  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 docs/Makefile.am: ChangeLog ⇒ ChangeLog.adoc: typo fix in fallback
           INPUT
 </li><li class="listitem">
@@ -125,7 +207,7 @@ configure.ac, docs/Makefile.am, docs/configure.txt, NEWS.adoc,
 </li><li class="listitem">
 docs/ci-farm-lxc-setup.txt: update link to
           conflict-aware-ondemand-strategy-plugin
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_07_14_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.8. 2025-07-14  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_07_14_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.11. 2025-07-14  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/mge-hid.c: fix back eaton_input_bypass_mode_on_info[];
           update comments; make use of errno=0/EINVAL
 </li><li class="listitem">
@@ -178,7 +260,7 @@ NEWS.adoc, common/common.c: common/common.c:
 </li><li class="listitem">
 common/common.c: minimize_formatting_string(): update comments
           [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2450" target="_top">#2450</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_07_13_axel_gembe_lt_ulink_url_mailto_axel_gembe_net_axel_gembe_net_ulink_gt"></a>2.9. 2025-07-13  Axel Gembe &lt;<a class="ulink" href="mailto:axel@gembe.net" target="_top">axel@gembe.net</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_07_13_axel_gembe_lt_ulink_url_mailto_axel_gembe_net_axel_gembe_net_ulink_gt"></a>2.12. 2025-07-13  Axel Gembe &lt;<a class="ulink" href="mailto:axel@gembe.net" target="_top">axel@gembe.net</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 docs/man/apc_modbus.txt: apc_modbus: Add another tested device
           model to the man page
 </li><li class="listitem">
@@ -202,16 +284,16 @@ NEWS.adoc, drivers/apc_modbus.c: apc_modbus: Fix missing variables
           to not exist and later calls to <code class="literal">dstate_setflags</code> to output:  ```
           apc_modbus: dstate_setflags: base variable (battery.runtime) does
           not exist ```  We fix this by using the correct format string.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_07_10_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.10. 2025-07-10  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_07_10_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.13. 2025-07-10  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/snmp-ups.c, NEWS.adoc: fix debug-logging of skipping
           SU_FLAG_STATIC entries [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3011" target="_top">#3011</a>]
 </li><li class="listitem">
 drivers/apc-mib.c, NEWS.adoc: fix "ups.test.date" from
           SU_FLAG_STATIC to SU_FLAG_SEMI_STATIC [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3011" target="_top">#3011</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_07_09_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.11. 2025-07-09  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_07_09_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.14. 2025-07-09  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 NEWS.adoc: mention both APC BVKxxxM2 and BKxxxM2-CH in same fix for
           usbhid-ups
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_07_07_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.12. 2025-07-07  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_07_07_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.15. 2025-07-07  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 scripts/systemd/nutshutdown.in, NEWS.adoc: bail out if MODE=none
           explicitly [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2935" target="_top">#2935</a>]
 </li><li class="listitem">
@@ -220,6 +302,18 @@ drivers/mge-hid.c: refactor old (pegasus) and new (ECO/ESS) mapping
 </li><li class="listitem">
 drivers/mge-hid.c: comment which info_lkp_t[] tables are in fact
           wrong examples of mapping function usage [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2956" target="_top">#2956</a>]
+</li><li class="listitem">
+docs/man/phoenixcontact_modbus.txt: reconcile config setting names
+          with strings used in the driver [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2986" target="_top">#2986</a>]
+</li><li class="listitem">
+docs/man/phoenixcontact_modbus.txt: align shutdown variables
+          descriptions with comments in code [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2986" target="_top">#2986</a>]
+</li><li class="listitem">
+docs/man/nutupsdrv.txt: document <code class="literal">override.*</code> or <code class="literal">default.*</code> names
+          for <code class="literal">var=val</code> settings
+</li><li class="listitem">
+docs/man/phoenixcontact_modbus.txt: wrap long lines; anticipate
+          renaming/obsoletion of some driver-specific settings [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2986" target="_top">#2986</a>]
 </li><li class="listitem">
 NEWS.adoc: document recent changes to start-up messages and loop
           flushing in upsmon [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3003" target="_top">#3003</a>]
@@ -242,17 +336,17 @@ NEWS.adoc, data/driver.list.in, docs/man/usbhid-ups.txt,
           [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3006" target="_top">#3006</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2347" target="_top">#2347</a>]  Update docs, data/driver.list.in suggestions;
           refactor the if-clause to detect if the tweak applies to the device
           being handled.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_07_04_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.13. 2025-07-04  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_07_04_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.16. 2025-07-04  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 NEWS.adoc: note further ECO mode updates in mge-hid [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2956" target="_top">#2956</a>]
 </li><li class="listitem">
 NEWS.adoc: clarify message for bcmxcp fix [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3002" target="_top">#3002</a>]
 </li><li class="listitem">
 NEWS.adoc: re-order ddriver updates alphabetically
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_07_03_desertwitch_lt_24509509_ulink_url_mailto_desertwitch_users_noreply_github_com_desertwitch_users_noreply_github_com_ulink_gt"></a>2.14. 2025-07-03  desertwitch &lt;24509509+<a class="ulink" href="mailto:desertwitch@users.noreply.github.com" target="_top">desertwitch@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_07_03_desertwitch_lt_24509509_ulink_url_mailto_desertwitch_users_noreply_github_com_desertwitch_users_noreply_github_com_ulink_gt"></a>2.17. 2025-07-03  desertwitch &lt;24509509+<a class="ulink" href="mailto:desertwitch@users.noreply.github.com" target="_top">desertwitch@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 NEWS.adoc: add bcmxcp fixes [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3002" target="_top">#3002</a>]
 </li><li class="listitem">
 drivers/bcmxcp.c: fix latched on to RB alarm
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_07_03_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.15. 2025-07-03  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_07_03_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.18. 2025-07-03  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 docs/packager-guide.txt: suggest a nut-common package for shared
           stuff
 </li><li class="listitem">
@@ -260,16 +354,33 @@ drivers/powervar_cx.c: remove space before parenthesis after
           status_set() to simplify review for issue [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2708" target="_top">#2708</a>]
 </li><li class="listitem">
 drivers/pijuice.c, NEWS.adoc: revise use of status_set() [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2708" target="_top">#2708</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_06_25_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.16. 2025-06-25  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_06_25_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.19. 2025-06-25  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+NEWS.adoc: announce updates to phoenixcontact_modbus [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2986" target="_top">#2986</a>]
+</li><li class="listitem">
+docs/man/phoenixcontact_modbus.txt: fix asciidoc markup for man
+          page [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2986" target="_top">#2986</a>]  This is not directly a troff file
+</li><li class="listitem">
+drivers/phoenixcontact_modbus.c: fix CI complaints [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2986" target="_top">#2986</a>]  *
+          static methods * declarations before code * mismatches of int type
+          vs printf formatting string (hex)
+</li><li class="listitem">
+docs/man/phoenixcontact_modbus.txt, docs/nut.dict: update
+          authors/contributors list [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2986" target="_top">#2986</a>]
+</li><li class="listitem">
+drivers/phoenixcontact_modbus.c: fix author/contributor list
+          [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2986" target="_top">#2986</a>]
+</li><li class="listitem">
+drivers/phoenixcontact_modbus.c: fix back broken whitespace [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2986" target="_top">#2986</a>]
+</li><li class="listitem">
 drivers/powervar_cx.c, drivers/powervar_cx_ser.c,
           drivers/powervar_cx_usb.c: drivers/powervar_cx*: fix more
           formatting string vs. int type mismatches [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2988" target="_top">#2988</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_06_25_dark_angel_lt_28630321_ulink_url_mailto_masterwishx_users_noreply_github_com_masterwishx_users_noreply_github_com_ulink_gt"></a>2.17. 2025-06-25  DaRK AnGeL &lt;28630321+<a class="ulink" href="mailto:masterwishx@users.noreply.github.com" target="_top">masterwishx@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_06_25_dark_angel_lt_28630321_ulink_url_mailto_masterwishx_users_noreply_github_com_masterwishx_users_noreply_github_com_ulink_gt"></a>2.20. 2025-06-25  DaRK AnGeL &lt;28630321+<a class="ulink" href="mailto:masterwishx@users.noreply.github.com" target="_top">masterwishx@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/mge-hid.c: try return int instead double to check compiler
           issue
 </li><li class="listitem">
 drivers/mge-hid.c: add some more debug
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_06_24_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.18. 2025-06-24  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_06_24_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.21. 2025-06-24  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/powervar_cx.c: instcmd(): fix int type of ShowTime [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2988" target="_top">#2988</a>]
 </li><li class="listitem">
 drivers/powervar_cx.c, drivers/powervar_cx.h: drivers/powervar_cx*:
@@ -314,19 +425,19 @@ drivers/powervar-cu.c: fix upsdebugx(verbosity) vs
 </li><li class="listitem">
 drivers/powervar-cu.c: SendRequest(), PowervarGetResponse(): align
           int vars with print format and return types [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2988" target="_top">#2988</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_06_24_dark_angel_lt_28630321_ulink_url_mailto_masterwishx_users_noreply_github_com_masterwishx_users_noreply_github_com_ulink_gt"></a>2.19. 2025-06-24  DaRK AnGeL &lt;28630321+<a class="ulink" href="mailto:masterwishx@users.noreply.github.com" target="_top">masterwishx@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_06_24_dark_angel_lt_28630321_ulink_url_mailto_masterwishx_users_noreply_github_com_masterwishx_users_noreply_github_com_ulink_gt"></a>2.22. 2025-06-24  DaRK AnGeL &lt;28630321+<a class="ulink" href="mailto:masterwishx@users.noreply.github.com" target="_top">masterwishx@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 data/cmdvartab, docs/nut-names.txt, drivers/mge-hid.c: rename
           enable/diasble to start/stop
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_06_24_bill_elliot_lt_ulink_url_mailto_bill_wreassoc_com_bill_wreassoc_com_ulink_gt"></a>2.20. 2025-06-24  Bill Elliot &lt;<a class="ulink" href="mailto:bill@wreassoc.com" target="_top">bill@wreassoc.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_06_24_bill_elliot_lt_ulink_url_mailto_bill_wreassoc_com_bill_wreassoc_com_ulink_gt"></a>2.23. 2025-06-24  Bill Elliot &lt;<a class="ulink" href="mailto:bill@wreassoc.com" target="_top">bill@wreassoc.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/powervar_cx.c, drivers/powervar_cx.h,
           drivers/powervar_cx_usb.c: Add comment(s) in source about compiling
           common driver file.  Add FIXME note.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_06_23_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.21. 2025-06-23  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_06_23_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.24. 2025-06-23  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 docs/man/powervar-cx.txt: fix NAME section to generate the alias
           man pages [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2988" target="_top">#2988</a>]  NOTE: man aliases are special reference files,
           so the target powervar-cx.8 file must be delivered wherever *-cs
           and/or *-cu are the one(s) really needed.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_06_20_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.22. 2025-06-20  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_06_20_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.25. 2025-06-20  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/powervar-cu.c: use NUT standard population of regex_array
           for USB config parameters [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2988" target="_top">#2988</a>]
 </li><li class="listitem">
@@ -360,7 +471,7 @@ data/driver.list.in: update top comment with formatting
 </li><li class="listitem">
 data/driver.list.in: parsing scripts expect single-TAB separation
           of fields [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2988" target="_top">#2988</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_06_19_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.23. 2025-06-19  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_06_19_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.26. 2025-06-19  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 docs/Makefile.am: specify VPATH for sub-makes doing spellcheck
 </li><li class="listitem">
 docs/Makefile.am, docs/man/Makefile.am, NEWS.adoc: only SED text
@@ -376,21 +487,40 @@ scripts/systemd/nutshutdown.in: update notes on purpose, location
 conf/upsmon.conf.sample.in: update notes on Windows SHUTDOWNCMD
 </li><li class="listitem">
 conf/upsmon.conf.sample.in: update notes on semi-required settings
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_06_16_dark_angel_lt_28630321_ulink_url_mailto_masterwishx_users_noreply_github_com_masterwishx_users_noreply_github_com_ulink_gt"></a>2.24. 2025-06-16  DaRK AnGeL &lt;28630321+<a class="ulink" href="mailto:masterwishx@users.noreply.github.com" target="_top">masterwishx@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_06_16_haul_lt_ulink_url_mailto_ulfathasangarayev_gmail_com_ulfathasangarayev_gmail_com_ulink_gt"></a>2.27. 2025-06-16  haul &lt;<a class="ulink" href="mailto:ulfathasangarayev@gmail.com" target="_top">ulfathasangarayev@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
+docs/man/phoenixcontact_modbus.txt,
+          drivers/phoenixcontact_modbus.c: Fix issues from previous PR review
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Bumped internal version to 0.09 (two-digit format) - Replaced
+          single-line // comments with /* … */ block comments - Added
+          missing variable descriptions to the man page - Preserved original
+          authors in metadata - Standardized config variable names to align
+          with nut-names.txt where possible - Declared all variables at top
+          of scope as per C89 style  Feedback originally provided by
+          @jimklimov on <a class="ulink" href="https://github.com/networkupstools/nut/pull/2986" target="_top">PR #2986</a> (superseded by this commit)
+</li></ul></div></li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_06_16_dark_angel_lt_28630321_ulink_url_mailto_masterwishx_users_noreply_github_com_masterwishx_users_noreply_github_com_ulink_gt"></a>2.28. 2025-06-16  DaRK AnGeL &lt;28630321+<a class="ulink" href="mailto:masterwishx@users.noreply.github.com" target="_top">masterwishx@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/mge-hid.c: try again in one func
           eaton_input_eco_mode_auto_on_off_info()
 </li><li class="listitem">
 drivers/mge-hid.c: Fix value ("1") in nuf
 </li><li class="listitem">
 drivers/mge-hid.c: for test value after compile
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_06_15_dark_angel_lt_28630321_ulink_url_mailto_masterwishx_users_noreply_github_com_masterwishx_users_noreply_github_com_ulink_gt"></a>2.25. 2025-06-15  DaRK AnGeL &lt;28630321+<a class="ulink" href="mailto:masterwishx@users.noreply.github.com" target="_top">masterwishx@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_06_15_dark_angel_lt_28630321_ulink_url_mailto_masterwishx_users_noreply_github_com_masterwishx_users_noreply_github_com_ulink_gt"></a>2.29. 2025-06-15  DaRK AnGeL &lt;28630321+<a class="ulink" href="mailto:masterwishx@users.noreply.github.com" target="_top">masterwishx@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/mge-hid.c: separate on / off as only fisrt command is used
           in this case
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_06_12_jim_klimov_lt_ulink_url_mailto_jimklimov_gmail_com_jimklimov_gmail_com_ulink_gt"></a>2.26. 2025-06-12  Jim Klimov &lt;<a class="ulink" href="mailto:jimklimov@gmail.com" target="_top">jimklimov@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_06_13_haul_lt_ulink_url_mailto_haul_tgw_group_com_haul_tgw_group_com_ulink_gt"></a>2.30. 2025-06-13  haul &lt;<a class="ulink" href="mailto:haul@tgw-group.com" target="_top">haul@tgw-group.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+drivers/phoenixcontact_modbus.c: Add support for shutdown
+          variables, mode selector, PC reset timing, and battery switch
+          threshold  - Introduced new variables to the phoenixcontact_modbus
+          driver especially for QUINTS 4 USB: - shutdown variables - mode
+          selector 9 = PC_MODE - PC reset delay after main power recovers -
+          automatic switch to battery mode if main power is below or above a
+          defined threshold.
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_06_12_jim_klimov_lt_ulink_url_mailto_jimklimov_gmail_com_jimklimov_gmail_com_ulink_gt"></a>2.31. 2025-06-12  Jim Klimov &lt;<a class="ulink" href="mailto:jimklimov@gmail.com" target="_top">jimklimov@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 docs/man/nut.txt, docs/man/index.txt: introduce
           "ifndef::included-skip-title[]" toggle
           [<a class="ulink" href="https://github.com/networkupstools/nut-website/issues/61" target="_top">nut-website#61</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_06_12_dark_angel_lt_28630321_ulink_url_mailto_masterwishx_users_noreply_github_com_masterwishx_users_noreply_github_com_ulink_gt"></a>2.27. 2025-06-12  DaRK AnGeL &lt;28630321+<a class="ulink" href="mailto:masterwishx@users.noreply.github.com" target="_top">masterwishx@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_06_12_dark_angel_lt_28630321_ulink_url_mailto_masterwishx_users_noreply_github_com_masterwishx_users_noreply_github_com_ulink_gt"></a>2.32. 2025-06-12  DaRK AnGeL &lt;28630321+<a class="ulink" href="mailto:masterwishx@users.noreply.github.com" target="_top">masterwishx@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/mge-hid.c: return on/off
 </li><li class="listitem">
 drivers/mge-hid.c: another typo
@@ -402,7 +532,7 @@ drivers/mge-hid.c: convert from two functions to one
 </li><li class="listitem">
 drivers/mge-hid.c: return double (0.0 and 0.1) instead of named
           double
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_06_11_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.28. 2025-06-11  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_06_11_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.33. 2025-06-11  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/apc_modbus.c, NEWS.adoc: bump version, add summary [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2982" target="_top">#2982</a>]
 </li><li class="listitem">
 docs/man/pijuice.txt, docs/nut.dict: some more nuances [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2985" target="_top">#2985</a>]
@@ -420,19 +550,19 @@ docs/man/pijuice.txt, docs/nut.dict: update with nuances of PiJuice
           HAT UPS setup from practice
 </li><li class="listitem">
 Makefile.am: install-as-root: fix for new installs with systemd
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_06_11_dark_angel_lt_28630321_ulink_url_mailto_masterwishx_users_noreply_github_com_masterwishx_users_noreply_github_com_ulink_gt"></a>2.29. 2025-06-11  DaRK AnGeL &lt;28630321+<a class="ulink" href="mailto:masterwishx@users.noreply.github.com" target="_top">masterwishx@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_06_11_dark_angel_lt_28630321_ulink_url_mailto_masterwishx_users_noreply_github_com_masterwishx_users_noreply_github_com_ulink_gt"></a>2.34. 2025-06-11  DaRK AnGeL &lt;28630321+<a class="ulink" href="mailto:masterwishx@users.noreply.github.com" target="_top">masterwishx@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/mge-hid.c: double fix
 </li><li class="listitem">
 drivers/mge-hid.c: small fixes
 </li><li class="listitem">
 drivers/mge-hid.c: added dummy and Conversion back of
           <code class="literal">eaton_input_eco_mode_auto_off[on]_fun()</code>
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_06_10_hector_martin_lt_ulink_url_mailto_marcan_marcan_st_marcan_marcan_st_ulink_gt"></a>2.30. 2025-06-10  Hector Martin &lt;<a class="ulink" href="mailto:marcan@marcan.st" target="_top">marcan@marcan.st</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_06_10_hector_martin_lt_ulink_url_mailto_marcan_marcan_st_marcan_marcan_st_ulink_gt"></a>2.35. 2025-06-10  Hector Martin &lt;<a class="ulink" href="mailto:marcan@marcan.st" target="_top">marcan@marcan.st</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/apc_modbus.c: Fix interframe delay  The delay is supposed
           to be from <span class="strong"><strong>end</strong></span> of a frame to <span class="strong"><strong>start</strong></span> of the next. Also fix the
           type used for timestamp calculations (useconds_t is not big enough
           and overflows).  Fixes: <a class="ulink" href="https://github.com/networkupstools/nut/issues/2609" target="_top">#2609</a>
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_06_08_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.31. 2025-06-08  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_06_08_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.36. 2025-06-08  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/nutdrv_qx_megatec.c: specify that we accept 38\+ bytes as
           answer for "I" query, and any length after byte 28 till end of
           reply is ups.firmware [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2980" target="_top">#2980</a>]  Also finally bump the subdriver
@@ -440,10 +570,10 @@ drivers/nutdrv_qx_megatec.c: specify that we accept 38\+ bytes as
 </li><li class="listitem">
 NEWS.adoc, UPGRADING.adoc: note the 38 vs 39 byte expected response
           to "I" in nutdrv_qx::megatec subdriver [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2980" target="_top">#2980</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_06_06_bill_elliot_lt_ulink_url_mailto_bill_wreassoc_com_bill_wreassoc_com_ulink_gt"></a>2.32. 2025-06-06  Bill Elliot &lt;<a class="ulink" href="mailto:bill@wreassoc.com" target="_top">bill@wreassoc.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_06_06_bill_elliot_lt_ulink_url_mailto_bill_wreassoc_com_bill_wreassoc_com_ulink_gt"></a>2.37. 2025-06-06  Bill Elliot &lt;<a class="ulink" href="mailto:bill@wreassoc.com" target="_top">bill@wreassoc.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 docs/acknowledgements.txt, docs/man/powervar-cx.txt, docs/nut.dict:
           Text and NUT.dict tweaks to pass distcheck-light
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_06_05_bill_elliot_lt_ulink_url_mailto_bill_wreassoc_com_bill_wreassoc_com_ulink_gt"></a>2.33. 2025-06-05  Bill Elliot &lt;<a class="ulink" href="mailto:bill@wreassoc.com" target="_top">bill@wreassoc.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_06_05_bill_elliot_lt_ulink_url_mailto_bill_wreassoc_com_bill_wreassoc_com_ulink_gt"></a>2.38. 2025-06-05  Bill Elliot &lt;<a class="ulink" href="mailto:bill@wreassoc.com" target="_top">bill@wreassoc.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 docs/man/Makefile.am, docs/man/powervar-cx.txt: Man page fixes.
           Crossing T’s and dotting I’s.
 </li><li class="listitem">
@@ -452,10 +582,10 @@ docs/acknowledgements.txt: Fix web link in, and add support note
 </li><li class="listitem">
 drivers/powervar-cs.c, drivers/powervar-cu.c: Change versions from
           0.80 to 1.00 to prepare for release.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_06_04_gksmsk_lt_90905316_ulink_url_mailto_gksmsk_users_noreply_github_com_gksmsk_users_noreply_github_com_ulink_gt"></a>2.34. 2025-06-04  gksmsk &lt;90905316+<a class="ulink" href="mailto:gksmsk@users.noreply.github.com" target="_top">gksmsk@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_06_04_gksmsk_lt_90905316_ulink_url_mailto_gksmsk_users_noreply_github_com_gksmsk_users_noreply_github_com_ulink_gt"></a>2.39. 2025-06-04  gksmsk &lt;90905316+<a class="ulink" href="mailto:gksmsk@users.noreply.github.com" target="_top">gksmsk@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/nutdrv_qx_megatec.c: Update nutdrv_qx_megatec.c  Added a
           parameter battery.runtime
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_06_04_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.35. 2025-06-04  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_06_04_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.40. 2025-06-04  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 configure.ac, docs/configure.txt: suggest a --with-drvpath that is
           not bindir but rather libexecdir
 </li><li class="listitem">
@@ -473,7 +603,7 @@ docs/man/clone-outlet.txt, docs/man/clone.txt,
           docs/man/tripplite_usb.txt: docs/man/*: fix man page section
           references for upsc/upscmd/upsrw/NUT-Monitor/upsmon/upssched (1 ⇒
           8)
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_06_03_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.36. 2025-06-03  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_06_03_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.41. 2025-06-03  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 NEWS.adoc, UPGRADING.adoc: report recent documentation/recipe
           improvements [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2976" target="_top">#2976</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2946" target="_top">#2946</a>]
 </li><li class="listitem">
@@ -486,7 +616,7 @@ docs/man/.gitignore, docs/man/Makefile.am, docs/man/index.txt,
           docs/man/.gitignore: report the effect of
           DOC_INSTALL_SELECTED_MANS_PROGS_BUILT on delivered docs and indexed
           man pages
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_06_02_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.37. 2025-06-02  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_06_02_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.42. 2025-06-02  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 docs/man/Makefile.am: linkman-*.txt: depend on Makefile after all
           (adapt to varying configure choices)
 </li><li class="listitem">
@@ -524,7 +654,7 @@ docs/man/Makefile.am, docs/man/.gitignore: refactor generation of
 </li><li class="listitem">
 docs/man/Makefile.am: linkman-*-names.txt: re-generate if the
           Makefile.am changes [<a class="ulink" href="https://github.com/networkupstools/nut-website/issues/60" target="_top">nut-website#60</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_30_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.38. 2025-05-30  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_30_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.43. 2025-05-30  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 ci_build.sh: default-all-errors: report count of SUCCEEDED and
           FAILED builds
 </li><li class="listitem">
@@ -537,7 +667,7 @@ configure.ac: NUT_REPORT_FEATURE(WITH_SPELLCHECK), not just
 conf/upsmon.conf.sample.in, docs/man/upsmon.conf.txt,
           docs/man/usbhid-ups.txt: mention that there are different
           "POLLFREQ" settings between upsmon and some drivers [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2974" target="_top">#2974</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_28_sebastian_kuttnig_lt_ulink_url_mailto_sebastian_kuttnig_gmail_com_sebastian_kuttnig_gmail_com_ulink_gt"></a>2.39. 2025-05-28  Sebastian Kuttnig &lt;<a class="ulink" href="mailto:sebastian.kuttnig@gmail.com" target="_top">sebastian.kuttnig@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_28_sebastian_kuttnig_lt_ulink_url_mailto_sebastian_kuttnig_gmail_com_sebastian_kuttnig_gmail_com_ulink_gt"></a>2.44. 2025-05-28  Sebastian Kuttnig &lt;<a class="ulink" href="mailto:sebastian.kuttnig@gmail.com" target="_top">sebastian.kuttnig@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/failover.c, drivers/failover.h: drivers/failover.{c,h}:
           make UPS priorities more readable in code
 </li><li class="listitem">
@@ -567,7 +697,7 @@ docs/man/failover.txt, drivers/failover.c, drivers/failover.h:
           the user to provide valid sockets: if it connects, it connects.
           This enables the use of full paths in the port argument also,
           improving flexibility and enhancing scriptability.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_28_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.40. 2025-05-28  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_28_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.45. 2025-05-28  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 ci_build.sh, NEWS.adoc: default-all-errors: refactor to use of a
           common BUILDSTODO_LIST with one processing loop
 </li><li class="listitem">
@@ -601,7 +731,7 @@ NEWS.adoc: mention NDE change to track inter-driver dependency
           [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2962" target="_top">#2962</a>]
 </li><li class="listitem">
 NEWS.adoc: revise a few recent fixes
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_27_sebastian_kuttnig_lt_ulink_url_mailto_sebastian_kuttnig_gmail_com_sebastian_kuttnig_gmail_com_ulink_gt"></a>2.41. 2025-05-27  Sebastian Kuttnig &lt;<a class="ulink" href="mailto:sebastian.kuttnig@gmail.com" target="_top">sebastian.kuttnig@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_27_sebastian_kuttnig_lt_ulink_url_mailto_sebastian_kuttnig_gmail_com_sebastian_kuttnig_gmail_com_ulink_gt"></a>2.46. 2025-05-27  Sebastian Kuttnig &lt;<a class="ulink" href="mailto:sebastian.kuttnig@gmail.com" target="_top">sebastian.kuttnig@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/dummy-ups.c: make upsdrv_cleanup() conditional on actual
           allocs, not mode
 </li><li class="listitem">
@@ -609,7 +739,7 @@ drivers/dummy-ups.c: free ctx in upsdrv_cleanup() whenever
           allocated
 </li><li class="listitem">
 drivers/main.c: free temporary buffer in splitxarg()
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_26_sebastian_kuttnig_lt_ulink_url_mailto_sebastian_kuttnig_gmail_com_sebastian_kuttnig_gmail_com_ulink_gt"></a>2.42. 2025-05-26  Sebastian Kuttnig &lt;<a class="ulink" href="mailto:sebastian.kuttnig@gmail.com" target="_top">sebastian.kuttnig@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_26_sebastian_kuttnig_lt_ulink_url_mailto_sebastian_kuttnig_gmail_com_sebastian_kuttnig_gmail_com_ulink_gt"></a>2.47. 2025-05-26  Sebastian Kuttnig &lt;<a class="ulink" href="mailto:sebastian.kuttnig@gmail.com" target="_top">sebastian.kuttnig@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/failover.c: use str_to_int() also in instcmd()
 </li><li class="listitem">
 drivers/failover.c: make csv_arg_to_array() more reusable
@@ -619,7 +749,7 @@ drivers/failover.c: remove magic -1 from str_arg_to_int(), use
 </li><li class="listitem">
 drivers/failover.c: safer string to numeric conversions, improved
           argument handling
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_26_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.43. 2025-05-26  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_26_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.48. 2025-05-26  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 NEWS.adoc: revise announcement of upsdrvquery API updates [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2969" target="_top">#2969</a>]
 </li><li class="listitem">
 Link to PR, since we already have one shared by the different
@@ -657,7 +787,7 @@ docs/man/Makefile.am: fix publication of nut.html on nut-website
           [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2950" target="_top">#2950</a>]
 </li><li class="listitem">
 docs/man/index.txt: publish <a class="ulink" href="../man/nut.html" target="_top">nut(7)</a> [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2950" target="_top">#2950</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_24_sebastian_kuttnig_lt_ulink_url_mailto_sebastian_kuttnig_gmail_com_sebastian_kuttnig_gmail_com_ulink_gt"></a>2.44. 2025-05-24  Sebastian Kuttnig &lt;<a class="ulink" href="mailto:sebastian.kuttnig@gmail.com" target="_top">sebastian.kuttnig@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_24_sebastian_kuttnig_lt_ulink_url_mailto_sebastian_kuttnig_gmail_com_sebastian_kuttnig_gmail_com_ulink_gt"></a>2.49. 2025-05-24  Sebastian Kuttnig &lt;<a class="ulink" href="mailto:sebastian.kuttnig@gmail.com" target="_top">sebastian.kuttnig@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/upsdrvquery.c: drop redundant parentheses [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2963" target="_top">#2963</a>]
 </li><li class="listitem">
 drivers/upsdrvquery.c: consistent guarding of _read_timeout() ret
@@ -694,7 +824,7 @@ drivers/upsdrvquery.c: revise ownership of connections in _prepare
 docs/man/failover.txt: fix incompatible characters
 </li><li class="listitem">
 drivers/Makefile.am: add failover.h for dists
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_23_sebastian_kuttnig_lt_ulink_url_mailto_sebastian_kuttnig_gmail_com_sebastian_kuttnig_gmail_com_ulink_gt"></a>2.45. 2025-05-23  Sebastian Kuttnig &lt;<a class="ulink" href="mailto:sebastian.kuttnig@gmail.com" target="_top">sebastian.kuttnig@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_23_sebastian_kuttnig_lt_ulink_url_mailto_sebastian_kuttnig_gmail_com_sebastian_kuttnig_gmail_com_ulink_gt"></a>2.50. 2025-05-23  Sebastian Kuttnig &lt;<a class="ulink" href="mailto:sebastian.kuttnig@gmail.com" target="_top">sebastian.kuttnig@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/upsdrvquery.c, drivers/upsdrvquery.h:
           drivers/upsdrvquery.{c,h}: revise ownership and freeing of one-shot
           connections
@@ -735,15 +865,15 @@ drivers/failover.c: use enum for priorities
 </li><li class="listitem">
 drivers/failover.c: use NUT_STRARG helper for null checks in
           various places
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_23_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.46. 2025-05-23  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_23_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.51. 2025-05-23  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 docs/config-notes.txt: fix reference to Augeas chapter in
           developer-guide [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2968" target="_top">#2968</a>]
 </li><li class="listitem">
 docs/man/nut_usb_addvars.txt: clarify the optionality and dangers
           of bus/busport/device settings [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2447" target="_top">#2447</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_22_sebastian_kuttnig_lt_ulink_url_mailto_sebastian_kuttnig_gmail_com_sebastian_kuttnig_gmail_com_ulink_gt"></a>2.47. 2025-05-22  Sebastian Kuttnig &lt;<a class="ulink" href="mailto:sebastian.kuttnig@gmail.com" target="_top">sebastian.kuttnig@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_22_sebastian_kuttnig_lt_ulink_url_mailto_sebastian_kuttnig_gmail_com_sebastian_kuttnig_gmail_com_ulink_gt"></a>2.52. 2025-05-22  Sebastian Kuttnig &lt;<a class="ulink" href="mailto:sebastian.kuttnig@gmail.com" target="_top">sebastian.kuttnig@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/failover.c: reword shutdown to be more clear
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_22_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.48. 2025-05-22  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_22_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.53. 2025-05-22  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in: add support for
           "drivers=…" media type for dependencies, and failover driver
           using that [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2962" target="_top">#2962</a>]
@@ -773,10 +903,10 @@ tools/nut-scanner/nut-scanner.c, drivers/mge-hid.c,
 NEWS.adoc: document fixes for adaptive varargs sizing [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2963" target="_top">#2963</a>]
 </li><li class="listitem">
 common/common.c: fix typo in comment
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_22_dark_angel_lt_28630321_ulink_url_mailto_masterwishx_users_noreply_github_com_masterwishx_users_noreply_github_com_ulink_gt"></a>2.49. 2025-05-22  DaRK AnGeL &lt;28630321+<a class="ulink" href="mailto:masterwishx@users.noreply.github.com" target="_top">masterwishx@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_22_dark_angel_lt_28630321_ulink_url_mailto_masterwishx_users_noreply_github_com_masterwishx_users_noreply_github_com_ulink_gt"></a>2.54. 2025-05-22  DaRK AnGeL &lt;28630321+<a class="ulink" href="mailto:masterwishx@users.noreply.github.com" target="_top">masterwishx@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/mge-hid.c: upsdebugx in  bypass and ecomode functions
           updated with %s: and <span class="emphasis"><em>func</em></span> for easy debug later
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_20_sebastian_kuttnig_lt_ulink_url_mailto_sebastian_kuttnig_gmail_com_sebastian_kuttnig_gmail_com_ulink_gt"></a>2.50. 2025-05-20  Sebastian Kuttnig &lt;<a class="ulink" href="mailto:sebastian.kuttnig@gmail.com" target="_top">sebastian.kuttnig@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_20_sebastian_kuttnig_lt_ulink_url_mailto_sebastian_kuttnig_gmail_com_sebastian_kuttnig_gmail_com_ulink_gt"></a>2.55. 2025-05-20  Sebastian Kuttnig &lt;<a class="ulink" href="mailto:sebastian.kuttnig@gmail.com" target="_top">sebastian.kuttnig@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/upsdrvquery.c: safer comparison for printable_len [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2963" target="_top">#2963</a>]
 </li><li class="listitem">
 include/common.h: do not assume va_copy() to be a macro on all
@@ -807,7 +937,7 @@ common/common.c: only upsize buffer in vupslog() if va copying is
           supported [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2948" target="_top">#2948</a>]
 </li><li class="listitem">
 configure.ac: test for va_copy and __va_copy
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_19_sebastian_kuttnig_lt_ulink_url_mailto_sebastian_kuttnig_gmail_com_sebastian_kuttnig_gmail_com_ulink_gt"></a>2.51. 2025-05-19  Sebastian Kuttnig &lt;<a class="ulink" href="mailto:sebastian.kuttnig@gmail.com" target="_top">sebastian.kuttnig@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_19_sebastian_kuttnig_lt_ulink_url_mailto_sebastian_kuttnig_gmail_com_sebastian_kuttnig_gmail_com_ulink_gt"></a>2.56. 2025-05-19  Sebastian Kuttnig &lt;<a class="ulink" href="mailto:sebastian.kuttnig@gmail.com" target="_top">sebastian.kuttnig@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/failover.c: make defensive freeing consistent throughout
           the file
 </li><li class="listitem">
@@ -832,14 +962,14 @@ server/netget.c: rewrite upstream prefix for proxying drivers
 docs/man/Makefile.am, docs/man/failover.txt, docs/nut.dict,
           drivers/Makefile.am, drivers/failover.c: drivers/, docs/: introduce
           failover driver
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_18_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.52. 2025-05-18  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_18_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.57. 2025-05-18  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 Makefile.am: EXTRA_DIST ci_build.sh along with ci_build.adoc
 </li><li class="listitem">
 Makefile.am: Revert "Makefile.am: as long as we do not tarball
           ci_build.sh, do not deliver its doc either"  This reverts commit
           7a2e5d771c57f5768ced35e5d2994ed9f214a491: the doc is part of
           qa-guide. Makes more sense to also dist the script instead.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_16_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.53. 2025-05-16  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_16_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.58. 2025-05-16  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 m4/ax_c_pragmas.m4: AX_C_PRINTF_STRING_NULL: detect also if
           gcc/clang would refuse printf("%s",NULL) if warnings are enabled
           (so NUT_STRARG must be enabled if auto)
@@ -852,11 +982,11 @@ ci_build.sh: default-all-errors: if CI_FAILFAST is triggered in
 </li><li class="listitem">
 drivers/dstate.c: sock_fail(): suggest more ways to "ps\|grep"
           [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2959" target="_top">#2959</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_16_dark_angel_lt_28630321_ulink_url_mailto_masterwishx_users_noreply_github_com_masterwishx_users_noreply_github_com_ulink_gt"></a>2.54. 2025-05-16  DaRK AnGeL &lt;28630321+<a class="ulink" href="mailto:masterwishx@users.noreply.github.com" target="_top">masterwishx@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_16_dark_angel_lt_28630321_ulink_url_mailto_masterwishx_users_noreply_github_com_masterwishx_users_noreply_github_com_ulink_gt"></a>2.59. 2025-05-16  DaRK AnGeL &lt;28630321+<a class="ulink" href="mailto:masterwishx@users.noreply.github.com" target="_top">masterwishx@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 data/cmdvartab, docs/nut-names.txt, drivers/mge-hid.c: rename to
           <code class="literal">experimental.bypass.ecomode.start[stop]</code> from
           <code class="literal">experimental.ecomode.start[stop].auto</code>
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_15_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.55. 2025-05-15  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_15_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.60. 2025-05-15  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/solis.c: cast NULL as "char*" when sending it to print
 </li><li class="listitem">
 drivers/dstate.c, NEWS.adoc: sock_fail(): suggest things to try if
@@ -902,7 +1032,7 @@ drivers/powerman-pdu.c, drivers/snmp-ups.c,
           instead of a syslog macro
 </li><li class="listitem">
 drivers/dummy-ups.c: setvar(): update a FIXME comment
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_14_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.56. 2025-05-14  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_14_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.61. 2025-05-14  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/adelsystem_cbi.c, drivers/al175.c, drivers/apc_modbus.c,
           drivers/apcsmart-old.c, drivers/apcsmart.c, drivers/bcmxcp.c,
           drivers/belkin.c, drivers/belkinunv.c, drivers/bestfcom.c,
@@ -979,10 +1109,10 @@ NEWS.adoc, drivers/usbhid-ups.c, drivers/usbhid-ups.h:
           drivers/usbhid-ups.{c,h}, NEWS.adoc: rename
           HU_FLAG_CMD_PARAM_REQUIRED ⇒ HU_FLAG_PARAM_REQUIRED and extend to
           setvar() too [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2955" target="_top">#2955</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2860" target="_top">#2860</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_14_dark_angel_lt_28630321_ulink_url_mailto_masterwishx_users_noreply_github_com_masterwishx_users_noreply_github_com_ulink_gt"></a>2.57. 2025-05-14  DaRK AnGeL &lt;28630321+<a class="ulink" href="mailto:masterwishx@users.noreply.github.com" target="_top">masterwishx@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_14_dark_angel_lt_28630321_ulink_url_mailto_masterwishx_users_noreply_github_com_masterwishx_users_noreply_github_com_ulink_gt"></a>2.62. 2025-05-14  DaRK AnGeL &lt;28630321+<a class="ulink" href="mailto:masterwishx@users.noreply.github.com" target="_top">masterwishx@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 data/cmdvartab, docs/nut-names.txt, drivers/mge-hid.c: added cmd
           "experimental.ecomode.start.auto" "experimental.ecomode.stop.auto"
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_13_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.58. 2025-05-13  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_13_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.63. 2025-05-13  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/usbhid-ups.h, drivers/usbhid-ups.c, NEWS.adoc,
           docs/nut.dict: introduce HU_FLAG_CMD_PARAM_REQUIRED and a
           HU_TYPE_CMD_PARAM_REQUIRED shortcut for setting in the mapping
@@ -995,9 +1125,9 @@ drivers/usbhid-ups.c: drop EOL from single-line upsdebugx() reports
 drivers/usbhid-ups.h: bump ©
 </li><li class="listitem">
 drivers/usbhid-ups.h: revise comment markup
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_12_penghong_lt_ulink_url_mailto_penghong20000102_163_com_penghong20000102_163_com_ulink_gt"></a>2.59. 2025-05-12  penghong &lt;<a class="ulink" href="mailto:penghong20000102@163.com" target="_top">penghong20000102@163.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_12_penghong_lt_ulink_url_mailto_penghong20000102_163_com_penghong20000102_163_com_ulink_gt"></a>2.64. 2025-05-12  penghong &lt;<a class="ulink" href="mailto:penghong20000102@163.com" target="_top">penghong20000102@163.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 data/driver.list.in: Added some descriptions of UPS equipment.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_12_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.60. 2025-05-12  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_12_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.65. 2025-05-12  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 tools/driver-list-format.sh: refactor VALID_LINE definition [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2953" target="_top">#2953</a>]
 </li><li class="listitem">
 tools/driver-list-format.sh, data/Makefile.am: recognize
@@ -1043,7 +1173,7 @@ docs/man/Makefile.am, docs/man/apc_modbus.txt,
           docs/man/powerman-pdu.txt, docs/man/snmp-ups.txt: Introduce
           docs/man/networked_hostnames.txt caveat, include it into networked
           driver man pages
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_12_jim_klimov_lt_ulink_url_mailto_jim_jimklimov_com_jim_jimklimov_com_ulink_gt"></a>2.61. 2025-05-12  Jim Klimov &lt;<a class="ulink" href="mailto:jim@jimklimov.com" target="_top">jim@jimklimov.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_12_jim_klimov_lt_ulink_url_mailto_jim_jimklimov_com_jim_jimklimov_com_ulink_gt"></a>2.66. 2025-05-12  Jim Klimov &lt;<a class="ulink" href="mailto:jim@jimklimov.com" target="_top">jim@jimklimov.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 docs/man/blazer_ser.txt, docs/man/blazer_usb.txt: inject a dummy
           "linkman" for .txt-prepped rewriter to patch up the man section
           [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2950" target="_top">#2950</a>]
@@ -1052,11 +1182,11 @@ docs/man/nut.txt: elaborate more on "File or directory not found"
           messages, permissions, config files and nut-scanner
 </li><li class="listitem">
 docs/man/nut.txt: point to NUT Configuration Examples book
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_11_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.62. 2025-05-11  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_11_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.67. 2025-05-11  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/dstate.c, tests/driver_methods_utest.c: check that LB can
           be set and status set\+commit+set+commit (without init in the
           middle) adds reported tokens [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2934" target="_top">#2934</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_11_jim_klimov_lt_ulink_url_mailto_jim_jimklimov_com_jim_jimklimov_com_ulink_gt"></a>2.63. 2025-05-11  Jim Klimov &lt;<a class="ulink" href="mailto:jim@jimklimov.com" target="_top">jim@jimklimov.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_11_jim_klimov_lt_ulink_url_mailto_jim_jimklimov_com_jim_jimklimov_com_ulink_gt"></a>2.68. 2025-05-11  Jim Klimov &lt;<a class="ulink" href="mailto:jim@jimklimov.com" target="_top">jim@jimklimov.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 docs/configure.txt: note that "datadir" for NUT must include the
           "/nut" part
 </li><li class="listitem">
@@ -1079,14 +1209,14 @@ configure.ac, docs/configure.txt, docs/man/Makefile.am:
           (Solaris/illumos, and everyone else)
 </li><li class="listitem">
 configure.ac: line-break test for strdup()
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_11_dark_angel_lt_28630321_ulink_url_mailto_masterwishx_users_noreply_github_com_masterwishx_users_noreply_github_com_ulink_gt"></a>2.64. 2025-05-11  DaRK AnGeL &lt;28630321+<a class="ulink" href="mailto:masterwishx@users.noreply.github.com" target="_top">masterwishx@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_11_dark_angel_lt_28630321_ulink_url_mailto_masterwishx_users_noreply_github_com_masterwishx_users_noreply_github_com_ulink_gt"></a>2.69. 2025-05-11  DaRK AnGeL &lt;28630321+<a class="ulink" href="mailto:masterwishx@users.noreply.github.com" target="_top">masterwishx@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 data/cmdvartab, docs/nut-names.txt, drivers/mge-hid.c: remove
           experimental.ecomode.[start/stop].auto var/cmd funtions for working
           in another pr and clean this pr
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_10_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.65. 2025-05-10  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_10_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.70. 2025-05-10  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 NEWS.adoc, drivers/dstate.c, tests/driver_methods_utest.c: Update
           asciidoc and C markup, and © headings [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2934" target="_top">#2934</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_10_dark_angel_lt_28630321_ulink_url_mailto_masterwishx_users_noreply_github_com_masterwishx_users_noreply_github_com_ulink_gt"></a>2.66. 2025-05-10  DaRK AnGeL &lt;28630321+<a class="ulink" href="mailto:masterwishx@users.noreply.github.com" target="_top">masterwishx@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_10_dark_angel_lt_28630321_ulink_url_mailto_masterwishx_users_noreply_github_com_masterwishx_users_noreply_github_com_ulink_gt"></a>2.71. 2025-05-10  DaRK AnGeL &lt;28630321+<a class="ulink" href="mailto:masterwishx@users.noreply.github.com" target="_top">masterwishx@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/mge-hid.c: removed unused vars
 </li><li class="listitem">
 drivers/mge-hid.c: experimental.ecomode.stop/start.auto added as
@@ -1096,16 +1226,16 @@ drivers/mge-hid.c: input.bypass.switch.on", "disabled (useless,
           onlly on,off can be runned) to "input.bypass.switch.off", "off"
           ,aded function of eaton_input_bypass_check_range(value); ,
           eaton_input_eco_mode_check_range(value);
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_09_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.67. 2025-05-09  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_09_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.72. 2025-05-09  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 docs/man/usbhid-ups.txt, NEWS.adoc, UPGRADING.adoc: revise
           whitespace/markup [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2944" target="_top">#2944</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_09_dark_angel_lt_28630321_ulink_url_mailto_masterwishx_users_noreply_github_com_masterwishx_users_noreply_github_com_ulink_gt"></a>2.68. 2025-05-09  DaRK AnGeL &lt;28630321+<a class="ulink" href="mailto:masterwishx@users.noreply.github.com" target="_top">masterwishx@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_09_dark_angel_lt_28630321_ulink_url_mailto_masterwishx_users_noreply_github_com_masterwishx_users_noreply_github_com_ulink_gt"></a>2.73. 2025-05-09  DaRK AnGeL &lt;28630321+<a class="ulink" href="mailto:masterwishx@users.noreply.github.com" target="_top">masterwishx@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/mge-hid.c: change place of 0-1  in
           eaton_input_eco_mode_auto_on_off_info()
 </li><li class="listitem">
 data/cmdvartab, docs/nut-names.txt, drivers/mge-hid.c:
           experimental.ecomode.[start/stop] to experimental.ecomode.auto
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_08_sebastian_kuttnig_lt_ulink_url_mailto_sebastian_kuttnig_gmail_com_sebastian_kuttnig_gmail_com_ulink_gt"></a>2.69. 2025-05-08  Sebastian Kuttnig &lt;<a class="ulink" href="mailto:sebastian.kuttnig@gmail.com" target="_top">sebastian.kuttnig@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_08_sebastian_kuttnig_lt_ulink_url_mailto_sebastian_kuttnig_gmail_com_sebastian_kuttnig_gmail_com_ulink_gt"></a>2.74. 2025-05-08  Sebastian Kuttnig &lt;<a class="ulink" href="mailto:sebastian.kuttnig@gmail.com" target="_top">sebastian.kuttnig@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 NEWS.adoc: introduce NUT-Monitor-py3qt6
 </li><li class="listitem">
 docs/man/Makefile.am: introduce NUT-Monitor-py3qt6
@@ -1133,7 +1263,7 @@ scripts/python/app/.gitignore,
           scripts/python/app/ui/gui-1.3.glade,
           scripts/python/app/ui/gui-1.3.glade.h: scripts/python/app/*: bump
           structure, version for Qt6
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_08_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.70. 2025-05-08  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_08_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.75. 2025-05-08  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 docs/config-prereqs.txt: update for Python3 \+ Qt6 since 2025
           distros [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2946" target="_top">#2946</a>]
 </li><li class="listitem">
@@ -1161,17 +1291,17 @@ docs/download.txt: add a link for NUT for Windows artifact
 </li><li class="listitem">
 docs/maintainer-guide.txt: update with AppVeyor CI artifact
           publication (NUT for Windows)
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_08_dark_angel_lt_28630321_ulink_url_mailto_masterwishx_users_noreply_github_com_masterwishx_users_noreply_github_com_ulink_gt"></a>2.71. 2025-05-08  DaRK AnGeL &lt;28630321+<a class="ulink" href="mailto:masterwishx@users.noreply.github.com" target="_top">masterwishx@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_08_dark_angel_lt_28630321_ulink_url_mailto_masterwishx_users_noreply_github_com_masterwishx_users_noreply_github_com_ulink_gt"></a>2.76. 2025-05-08  DaRK AnGeL &lt;28630321+<a class="ulink" href="mailto:masterwishx@users.noreply.github.com" target="_top">masterwishx@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/mge-hid.c: experimental.ecomode.[start/stop].auto move to
           uprw \+ set NULL to last argument for bypass and ecomode cmds
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_07_invario_lt_67800603_ulink_url_mailto_invario_users_noreply_github_com_invario_users_noreply_github_com_ulink_gt"></a>2.72. 2025-05-07  invario &lt;67800603+<a class="ulink" href="mailto:invario@users.noreply.github.com" target="_top">invario@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_07_invario_lt_67800603_ulink_url_mailto_invario_users_noreply_github_com_invario_users_noreply_github_com_ulink_gt"></a>2.77. 2025-05-07  invario &lt;67800603+<a class="ulink" href="mailto:invario@users.noreply.github.com" target="_top">invario@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 docs/nut.dict: Updated nut.dict after spellcheck
 </li><li class="listitem">
 NEWS.adoc, UPGRADING.adoc, data/driver.list.in,
           docs/man/usbhid-ups.txt, drivers/usbhid-ups.c: Update adds APC
           BVKnnnnM2 to list of devices being affected by spurious LB/RB
           issues and allows users to apply corresponding tweaks
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_07_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.73. 2025-05-07  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_07_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.78. 2025-05-07  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 docs/man/Makefile.am, docs/man/nut.txt, docs/nut.dict: introduce a
           way to "man nut"
 </li><li class="listitem">
@@ -1186,7 +1316,7 @@ docs/Makefile.am: ChangeLog.html-contentchecked: entry_filter():
 </li><li class="listitem">
 NEWS.adoc: rephrase innovart31 protocol support in nutdrv_qx
           [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2938" target="_top">#2938</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_06_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.74. 2025-05-06  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_06_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.79. 2025-05-06  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 NEWS.adoc: announce nutdrv_hashx driver [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2940" target="_top">#2940</a>]
 </li><li class="listitem">
 docs/Makefile.am: ChangeLog.html-contentchecked: entry_filter():
@@ -1202,7 +1332,7 @@ data/driver.list.in: fix markup: TAB before optional comment
 </li><li class="listitem">
 NEWS.adoc: announce new innovart33 protocol support in nutdrv_qx
           [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2938" target="_top">#2938</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_05_marco_trevisan_treviño_lt_ulink_url_mailto_mail_3v1n0_net_mail_3v1n0_net_ulink_gt"></a>2.75. 2025-05-05  Marco Trevisan (Treviño) &lt;<a class="ulink" href="mailto:mail@3v1n0.net" target="_top">mail@3v1n0.net</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_05_marco_trevisan_treviño_lt_ulink_url_mailto_mail_3v1n0_net_mail_3v1n0_net_ulink_gt"></a>2.80. 2025-05-05  Marco Trevisan (Treviño) &lt;<a class="ulink" href="mailto:mail@3v1n0.net" target="_top">mail@3v1n0.net</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 docs/nut-names.txt, drivers/nutdrv_hashx.c: drivers/nutdrv_hashx:
           Add Implement start / stop beeper test
 </li><li class="listitem">
@@ -1225,17 +1355,17 @@ drivers/nutdrv_hashx.c: drivers/nutdrv_hashx: Add support for
           too
 </li><li class="listitem">
 drivers/skel.c: drivers/skel: Fix reference to nut-names doc file
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_04_desertwitch_lt_24509509_ulink_url_mailto_desertwitch_users_noreply_github_com_desertwitch_users_noreply_github_com_ulink_gt"></a>2.76. 2025-05-04  desertwitch &lt;24509509+<a class="ulink" href="mailto:desertwitch@users.noreply.github.com" target="_top">desertwitch@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_04_desertwitch_lt_24509509_ulink_url_mailto_desertwitch_users_noreply_github_com_desertwitch_users_noreply_github_com_ulink_gt"></a>2.81. 2025-05-04  desertwitch &lt;24509509+<a class="ulink" href="mailto:desertwitch@users.noreply.github.com" target="_top">desertwitch@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/clone.c: refactor core driver logic, minor fixes around
           previous work [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2936" target="_top">#2936</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_04_viktor_drobot_lt_ulink_url_mailto_linux776_gmail_com_linux776_gmail_com_ulink_gt"></a>2.77. 2025-05-04  Viktor Drobot &lt;<a class="ulink" href="mailto:linux776@gmail.com" target="_top">linux776@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_04_viktor_drobot_lt_ulink_url_mailto_linux776_gmail_com_linux776_gmail_com_ulink_gt"></a>2.82. 2025-05-04  Viktor Drobot &lt;<a class="ulink" href="mailto:linux776@gmail.com" target="_top">linux776@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 docs/man/nutdrv_qx.txt, docs/nutdrv_qx-subdrivers.txt,
           drivers/Makefile.am, drivers/nutdrv_qx.c,
           drivers/nutdrv_qx_blazer-common.c,
           drivers/nutdrv_qx_blazer-common.h, drivers/nutdrv_qx_innovart33.c,
           drivers/nutdrv_qx_innovart33.h: Add support (experimental) for
           Ippon Innova RT 3/3
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_04_marco_trevisan_treviño_lt_ulink_url_mailto_mail_3v1n0_net_mail_3v1n0_net_ulink_gt"></a>2.78. 2025-05-04  Marco Trevisan (Treviño) &lt;<a class="ulink" href="mailto:mail@3v1n0.net" target="_top">mail@3v1n0.net</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_04_marco_trevisan_treviño_lt_ulink_url_mailto_mail_3v1n0_net_mail_3v1n0_net_ulink_gt"></a>2.83. 2025-05-04  Marco Trevisan (Treviño) &lt;<a class="ulink" href="mailto:mail@3v1n0.net" target="_top">mail@3v1n0.net</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 AUTHORS, data/driver.list.in, docs/man/Makefile.am,
           docs/man/nutdrv_hashx.txt, docs/nut.dict, drivers/Makefile.am,
           drivers/nutdrv_hashx.c: drivers/nutdrv_hashx: Add new driver for
@@ -1254,7 +1384,7 @@ AUTHORS, data/driver.list.in, docs/man/Makefile.am,
           decoding has been done and the driver is enough to update the UPS
           status for monitoring and shutdown purposes.  As for now, only the
           status updates features have been implemented.   Closes: <a class="ulink" href="https://github.com/networkupstools/nut/issues/2769" target="_top">#2769</a>
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_03_desertwitch_lt_24509509_ulink_url_mailto_desertwitch_users_noreply_github_com_desertwitch_users_noreply_github_com_ulink_gt"></a>2.79. 2025-05-03  desertwitch &lt;24509509+<a class="ulink" href="mailto:desertwitch@users.noreply.github.com" target="_top">desertwitch@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_03_desertwitch_lt_24509509_ulink_url_mailto_desertwitch_users_noreply_github_com_desertwitch_users_noreply_github_com_ulink_gt"></a>2.84. 2025-05-03  desertwitch &lt;24509509+<a class="ulink" href="mailto:desertwitch@users.noreply.github.com" target="_top">desertwitch@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/clone.c: reduce redundant argument parsing, debug messages
           [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2936" target="_top">#2936</a>]
 </li><li class="listitem">
@@ -1281,7 +1411,7 @@ drivers/nutdrv_qx_ablerex.c: modernize alarm handling
 </li><li class="listitem">
 drivers/dummy-ups.c, docs/man/dummy-ups.txt, NEWS.adoc: introduce
           ALARM instruction for dummy modes
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_01_desertwitch_lt_24509509_ulink_url_mailto_desertwitch_users_noreply_github_com_desertwitch_users_noreply_github_com_ulink_gt"></a>2.80. 2025-05-01  desertwitch &lt;24509509+<a class="ulink" href="mailto:desertwitch@users.noreply.github.com" target="_top">desertwitch@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_05_01_desertwitch_lt_24509509_ulink_url_mailto_desertwitch_users_noreply_github_com_desertwitch_users_noreply_github_com_ulink_gt"></a>2.85. 2025-05-01  desertwitch &lt;24509509+<a class="ulink" href="mailto:desertwitch@users.noreply.github.com" target="_top">desertwitch@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/nhs_ser.c: modernize status and alarm handling
 </li><li class="listitem">
 AUTHORS, docs/nut.dict: add desertwitch
@@ -1290,7 +1420,7 @@ tests/driver_methods_utest.c, NEWS.adoc: bump subdriver version,
           announce dstate changes
 </li><li class="listitem">
 docs/developers.txt: fix typo [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2932" target="_top">#2932</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_30_desertwitch_lt_24509509_ulink_url_mailto_desertwitch_users_noreply_github_com_desertwitch_users_noreply_github_com_ulink_gt"></a>2.81. 2025-04-30  desertwitch &lt;24509509+<a class="ulink" href="mailto:desertwitch@users.noreply.github.com" target="_top">desertwitch@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_30_desertwitch_lt_24509509_ulink_url_mailto_desertwitch_users_noreply_github_com_desertwitch_users_noreply_github_com_ulink_gt"></a>2.86. 2025-04-30  desertwitch &lt;24509509+<a class="ulink" href="mailto:desertwitch@users.noreply.github.com" target="_top">desertwitch@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/dstate.c: do not add whitespace on lone alarm [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2931" target="_top">#2931</a>]
 </li><li class="listitem">
 tests/driver_methods_utest.c: adapt for legacy and modern alarms
@@ -1303,7 +1433,7 @@ drivers/dstate.c: keep legacy alarms unchanged, do not decouple
           from status [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2931" target="_top">#2931</a>]
 </li><li class="listitem">
 docs/new-drivers.txt: clarify alarm state handling
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_30_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.82. 2025-04-30  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_30_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.87. 2025-04-30  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 docs/config-prereqs.txt, docs/nut.dict: generalize the title/intro
           for chapter on APT-based Debian-derived Linux systems [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2923" target="_top">#2923</a>]
 </li><li class="listitem">
@@ -1316,7 +1446,7 @@ ci_build.sh: add NUT_UNMAPPED_VARIANTS to
 </li><li class="listitem">
 ci_build.sh: revise default stance towards WITH_UNMAPPED_DATAPOINTS
           values
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_29_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.83. 2025-04-29  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_29_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.88. 2025-04-29  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 docs/Makefile.am: .adoc-parsed generator: rewrite "\+" in URLs to
           "%2B" [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1407" target="_top">#1407</a>]  Help with ChangeLog entry for an old URL buried in
           commit message years ago, from a branch getting merged just now.
@@ -1345,7 +1475,7 @@ configure.ac: get_drvlist(): trim multiple repetitive SPACES per
 </li><li class="listitem">
 configure.ac: get_drvlist(): quick-return from the loop after we
           finish reading the assignment (may be multi-line) [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2927" target="_top">#2927</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_28_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.84. 2025-04-28  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_28_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.89. 2025-04-28  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 docs/nut.dict: teach all systems that "photovoltaic" is a word
           [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1407" target="_top">#1407</a>]
 </li><li class="listitem">
@@ -1359,7 +1489,7 @@ docs/nutdrv_qx-subdrivers.txt: clarify how the "protocol" names are
 configure.ac, scripts/Windows/dllldd.sh: use question mark in grep
           regex, that seems to work everywhere and suits the purpose better
           [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2920" target="_top">#2920</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_27_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.85. 2025-04-27  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_27_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.90. 2025-04-27  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 docs/man/victronups.txt: fix a few typos
 </li><li class="listitem">
 docs/man/ve-direct.txt: fix man page markup to NUT v2.8.3 patterns,
@@ -1394,7 +1524,7 @@ configure.ac: use better portable regex syntax
 scripts/Windows/dllldd.sh: use better portable regex syntax
 </li><li class="listitem">
 tools/gitlog2version.sh: use better portable regex syntax
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_26_desertwitch_lt_24509509_ulink_url_mailto_desertwitch_users_noreply_github_com_desertwitch_users_noreply_github_com_ulink_gt"></a>2.86. 2025-04-26  desertwitch &lt;24509509+<a class="ulink" href="mailto:desertwitch@users.noreply.github.com" target="_top">desertwitch@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_26_desertwitch_lt_24509509_ulink_url_mailto_desertwitch_users_noreply_github_com_desertwitch_users_noreply_github_com_ulink_gt"></a>2.91. 2025-04-26  desertwitch &lt;24509509+<a class="ulink" href="mailto:desertwitch@users.noreply.github.com" target="_top">desertwitch@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/cps-hid.c: bump subdriver version, rename nominal power
           constant [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2919" target="_top">#2919</a>]
 </li><li class="listitem">
@@ -1404,15 +1534,15 @@ drivers/cps-hid.c: consider also non-broken ConfigActivePower
           descriptors [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2919" target="_top">#2919</a>]
 </li><li class="listitem">
 drivers/cps-hid.c: add report descriptor fix for ConfigActivePower
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_26_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.87. 2025-04-26  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_26_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.92. 2025-04-26  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 NEWS.adoc: added a ve-direct driver for Victron Energy UPS/solar
           panels monitoring [<a class="ulink" href="https://github.com/networkupstools/nut/issues/440" target="_top">#440</a>]
 </li><li class="listitem">
 drivers/ve-direct.c: cast the int type for hex scanf() [<a class="ulink" href="https://github.com/networkupstools/nut/issues/440" target="_top">#440</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_25_jim_klimov_lt_ulink_url_mailto_jimklimov_gmail_com_jimklimov_gmail_com_ulink_gt"></a>2.88. 2025-04-25  Jim Klimov &lt;<a class="ulink" href="mailto:jimklimov@gmail.com" target="_top">jimklimov@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_25_jim_klimov_lt_ulink_url_mailto_jimklimov_gmail_com_jimklimov_gmail_com_ulink_gt"></a>2.93. 2025-04-25  Jim Klimov &lt;<a class="ulink" href="mailto:jimklimov@gmail.com" target="_top">jimklimov@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/ve-direct.c: fix code style (markup, declarations before
           code) [<a class="ulink" href="https://github.com/networkupstools/nut/issues/440" target="_top">#440</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_25_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.89. 2025-04-25  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_25_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.94. 2025-04-25  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 ci_build.sh: introduce (or guess) WITH_UNMAPPED_DATAPOINTS optional
           toggle
 </li><li class="listitem">
@@ -1425,7 +1555,7 @@ drivers/ve-direct.c: fix declaration after code [<a class="ulink" href="https://
 </li><li class="listitem">
 drivers/ve-direct.c: trivialize upsdrv_help() [<a class="ulink" href="https://github.com/networkupstools/nut/issues/440" target="_top">#440</a>]  Suggestion to
           RTFM is now centralized in NUT code base
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_24_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.90. 2025-04-24  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_24_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.95. 2025-04-24  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 Jenkinsfile-dynamatrix: constrain shellcheck to "nut-builder"
           agents normally  Avoid firing up QEMU builders on the NUT CI farm,
           unless we want QEMU tests
@@ -1451,7 +1581,7 @@ server/upsd.c: introduce inet_ntopAI() specifically for struct
 </li><li class="listitem">
 NEWS.adoc: fixed upsd printing of "further addresses ignored"
           [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2915" target="_top">#2915</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_23_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.91. 2025-04-23  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_23_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.96. 2025-04-23  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 Makefile.am: group check-files-quick (spellcheck-quick check-man)
           before check-recursive which is the Autotools implementation behind
           "make check"
@@ -1496,9 +1626,9 @@ common/common.c, drivers/dstate.c, drivers/mge-utalk.c: Update
 </li><li class="listitem">
 common/common.c: minimize_formatting_string(): address error:
           <span class="emphasis"><em>switch</em></span> missing <span class="emphasis"><em>default</em></span> label [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2450" target="_top">#2450</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2460" target="_top">#2460</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_23_jeremy_cooper_lt_ulink_url_mailto_jeremy_gthb_baymoo_org_jeremy_gthb_baymoo_org_ulink_gt"></a>2.92. 2025-04-23  Jeremy Cooper &lt;<a class="ulink" href="mailto:jeremy.gthb@baymoo.org" target="_top">jeremy.gthb@baymoo.org</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_23_jeremy_cooper_lt_ulink_url_mailto_jeremy_gthb_baymoo_org_jeremy_gthb_baymoo_org_ulink_gt"></a>2.97. 2025-04-23  Jeremy Cooper &lt;<a class="ulink" href="mailto:jeremy.gthb@baymoo.org" target="_top">jeremy.gthb@baymoo.org</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 server/upsd.c: Fix <a class="ulink" href="https://github.com/networkupstools/nut/issues/2914" target="_top">issue #2914</a>: upsd misprint/buffer overflow.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_22_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.93. 2025-04-22  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_22_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.98. 2025-04-22  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 NEWS.adoc: fix entry for RPATH to NUT libs (was first planned for
           2.8.4 but got into 2.8.3 ultimately) [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2782" target="_top">#2782</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2865" target="_top">#2865</a>]
 </li><li class="listitem">
@@ -1517,7 +1647,7 @@ docs/maintainer-guide.txt: a few more suggestions
 </li><li class="listitem">
 drivers/generic_gpio_libgpiod.c: align another print format with
           int type [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2911" target="_top">#2911</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_21_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.94. 2025-04-21  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_21_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.99. 2025-04-21  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 configure.ac, common/common.c, include/Makefile.am,
           docs/nut-versioning.adoc: integrate NUT_VERSION_QUERY=IS_PRERELEASE
           support
@@ -1535,12 +1665,12 @@ docs/nut.dict: fix order and count
 </li><li class="listitem">
 docs/maintainer-guide.txt: suggest RC naming in VERSION_FORCED, and
           a way to protect these files from accidental deletion
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_20_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.95. 2025-04-20  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_20_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.100. 2025-04-20  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 configure.ac: always detect if we have_disted_doc_man
 </li><li class="listitem">
 configure.ac: report something reasonable if we skipped checking
           for have_disted_doc_man
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_18_desertwitch_lt_24509509_ulink_url_mailto_desertwitch_users_noreply_github_com_desertwitch_users_noreply_github_com_ulink_gt"></a>2.96. 2025-04-18  desertwitch &lt;24509509+<a class="ulink" href="mailto:desertwitch@users.noreply.github.com" target="_top">desertwitch@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_18_desertwitch_lt_24509509_ulink_url_mailto_desertwitch_users_noreply_github_com_desertwitch_users_noreply_github_com_ulink_gt"></a>2.101. 2025-04-18  desertwitch &lt;24509509+<a class="ulink" href="mailto:desertwitch@users.noreply.github.com" target="_top">desertwitch@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 common/nutwriter.cpp, tests/nutconf_ut.cpp: streamline
           ALARMCRITICAL writer/expectations with documentation [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2909" target="_top">#2909</a>]
 </li><li class="listitem">
@@ -1565,7 +1695,7 @@ conf/upsmon.conf.sample.in, docs/man/upsmon.conf.txt: introduce
           OVERDURATION setting
 </li><li class="listitem">
 clients/upsmon.c, clients/upsmon.h: introduce OVERDURATION setting
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_18_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.97. 2025-04-18  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_18_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.102. 2025-04-18  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 tests/nutconf_ut.cpp: fix expectations for ALARMCRITICAL [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2909" target="_top">#2909</a>]
 </li><li class="listitem">
 tools/nut-usbinfo.pl: comment a TODO
@@ -1581,7 +1711,7 @@ drivers/nutdrv_qx.c: warn user if setting both port!="auto" and
 </li><li class="listitem">
 drivers/nutdrv_qx.c: avoid extra lookup for
           dstate_getinfo("driver.parameter.port")
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_17_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.98. 2025-04-17  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_17_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.103. 2025-04-17  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 Makefile.am, docs/Makefile.am, scripts/Solaris/Makefile.am,
           tests/Makefile.am: */Makefile.am: report work skipped by design as
           "  SKIP  description" (separated by TAB chars)
@@ -1590,7 +1720,7 @@ Makefile.am, common/Makefile.am, docs/Makefile.am,
           docs/man/Makefile.am, scripts/Solaris/Makefile.am,
           scripts/python/module/Makefile.am: */Makefile.am: where we echo "
           TOKEN  description", separate them by TAB chars
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_16_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.99. 2025-04-16  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_16_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.104. 2025-04-16  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 Jenkinsfile-dynamatrix: skip macos for Default Autotools builds
           (fightwarn/qemu scenarios)  At least now that the worker available
           to NUT CI farm requires hacks for HomeBrew with
@@ -1621,13 +1751,13 @@ configure.ac: detect LDD early, so everyone can use it if available
 common/common.c, NEWS.adoc: upsnotify(): default to not spam if our
           first message to be suppressed is already about stopping the
           program [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1590" target="_top">#1590</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_15_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.100. 2025-04-15  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_15_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.105. 2025-04-15  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 docs/maintainer-guide.txt: more notes to check code/recipe quality
           before release
 </li><li class="listitem">
 docs/config-prereqs.txt, docs/nut.dict: wrap most long lines,
           reword a few
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_14_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.101. 2025-04-14  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_14_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.106. 2025-04-14  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 docs/man/upscmd.txt, docs/man/upsrw.txt: clarify "OK" vs. waiting
           for result [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2900" target="_top">#2900</a>]
 </li><li class="listitem">
@@ -1675,14 +1805,14 @@ INSTALL.nut.adoc: in-place upgrades: document how to compare new
 INSTALL.nut.adoc: fix dashes in "Building NUT for in-place upgrades
           or non-disruptive tests" chapter title and references
           (Unicode⇒ASCII)
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_12_scott_shambarger_lt_ulink_url_mailto_devel_shambarger_net_devel_shambarger_net_ulink_gt"></a>2.102. 2025-04-12  Scott Shambarger &lt;<a class="ulink" href="mailto:devel@shambarger.net" target="_top">devel@shambarger.net</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_12_scott_shambarger_lt_ulink_url_mailto_devel_shambarger_net_devel_shambarger_net_ulink_gt"></a>2.107. 2025-04-12  Scott Shambarger &lt;<a class="ulink" href="mailto:devel@shambarger.net" target="_top">devel@shambarger.net</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 scripts/external_apis/enphase/enphase-monitor.in:
           scripts/external_apis/enphase: correct neg number conversion, retry
           api  Negative floats, and floats 0.08/0.09 were resulting in
           invalid octal numbers.  The envoy API occasionally stalls; extended
           timeout to 10s and added a single retry to avoid spurious "nocomms"
           state.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_11_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.103. 2025-04-11  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_11_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.108. 2025-04-11  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 common/unsetenv.c, configure.ac, include/proto.h: Introduce
           fallback unsetenv() e.g. for WIN32 [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2890" target="_top">#2890</a>]
 </li><li class="listitem">
@@ -1729,7 +1859,7 @@ clients/upssched-cmd: make the sample script a bit more useful
 tools/nutconf/nutconf-cli.cpp: do not declare var inside for()
 </li><li class="listitem">
 drivers/generic_gpio_libgpiod.c: do not declare var inside for()
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_10_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.104. 2025-04-10  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_10_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.109. 2025-04-10  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 tests/generic_gpio_liblocal.c: declare variables at top of scope
 </li><li class="listitem">
 tests/generic_gpio_utest.c: fix casting for %u printing of literal
@@ -1752,14 +1882,14 @@ Makefile.am: install-as-root: consider nut-udev-settle.service
 scripts/systemd/nut-udev-settle.service: it suffices to NOT
           RemainAfterExit and still be Type=oneshot to get triggered for
           driver restart(s) [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2638" target="_top">#2638</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_09_scott_shambarger_lt_ulink_url_mailto_devel_shambarger_net_devel_shambarger_net_ulink_gt"></a>2.105. 2025-04-09  Scott Shambarger &lt;<a class="ulink" href="mailto:devel@shambarger.net" target="_top">devel@shambarger.net</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_09_scott_shambarger_lt_ulink_url_mailto_devel_shambarger_net_devel_shambarger_net_ulink_gt"></a>2.110. 2025-04-09  Scott Shambarger &lt;<a class="ulink" href="mailto:devel@shambarger.net" target="_top">devel@shambarger.net</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 scripts/external_apis/enphase/enphase-monitor.in,
           scripts/external_apis/enphase/enphase-monitor@.service.in:
           scripts/external_apis/enphase - correct number conversion, service
           file  Floats &lt;1.0 were being handled as octal, corrected to use
           decimal. Corrected path substitution in enphase-monitor service
           file.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_09_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.106. 2025-04-09  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_09_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.111. 2025-04-09  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 scripts/systemd/Makefile.am: actually deliver
           nut-udev-settle.service [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2638" target="_top">#2638</a>]
 </li><li class="listitem">
@@ -1818,10 +1948,10 @@ drivers/upsdrvctl.c: report applicable (global/device)
 </li><li class="listitem">
 docs/man/upsdrvctl.txt, drivers/upsdrvctl.c: document defaults for
           maxstartdelay, maxretry and retrydelay [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2885" target="_top">#2885</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_09_bill_elliot_lt_ulink_url_mailto_bill_wreassoc_com_bill_wreassoc_com_ulink_gt"></a>2.107. 2025-04-09  Bill Elliot &lt;<a class="ulink" href="mailto:bill@wreassoc.com" target="_top">bill@wreassoc.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_09_bill_elliot_lt_ulink_url_mailto_bill_wreassoc_com_bill_wreassoc_com_ulink_gt"></a>2.112. 2025-04-09  Bill Elliot &lt;<a class="ulink" href="mailto:bill@wreassoc.com" target="_top">bill@wreassoc.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/powervar-cu.c: Add setting of ups.vendorid and
           ups.productid.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_08_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.108. 2025-04-08  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_08_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.113. 2025-04-08  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 UPGRADING.adoc: mention NUT_DEFAULT_CONNECT_TIMEOUT among new
           envvars
 </li><li class="listitem">
@@ -1849,9 +1979,9 @@ include/Makefile.am: nut_version.h: propagate failure (if there
 clients/.gitignore, clients/Makefile.am: clients/Makefile.am:
           libupsclient-version.h: take a transactional approach to changing
           (or not) the file others depend on
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_08_dark_angel_lt_28630321_ulink_url_mailto_masterwishx_users_noreply_github_com_masterwishx_users_noreply_github_com_ulink_gt"></a>2.109. 2025-04-08  DaRK AnGeL &lt;28630321+<a class="ulink" href="mailto:masterwishx@users.noreply.github.com" target="_top">masterwishx@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_08_dark_angel_lt_28630321_ulink_url_mailto_masterwishx_users_noreply_github_com_masterwishx_users_noreply_github_com_ulink_gt"></a>2.114. 2025-04-08  DaRK AnGeL &lt;28630321+<a class="ulink" href="mailto:masterwishx@users.noreply.github.com" target="_top">masterwishx@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/mge-hid.c: ecomode cmd functions addon
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_07_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.110. 2025-04-07  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_04_07_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.115. 2025-04-07  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 tools/gitlog2version.sh: bump NUT_VERSION_DEFAULT=2.8.3.1 for next
           development cycle
 </li><li class="listitem">
@@ -1860,9 +1990,9 @@ NEWS.adoc, UPGRADING.adoc, docs/docinfo.xml.in: Revert "NEWS.adoc,
           v2.8.3 release"  This reverts commit
           d3427d7fd3c83b8f5b61c8e369139e2bd6168203 after the NUT release
           v2.8.3.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_02_14_bill_elliot_lt_ulink_url_mailto_bill_wreassoc_com_bill_wreassoc_com_ulink_gt"></a>2.111. 2025-02-14  Bill Elliot &lt;<a class="ulink" href="mailto:bill@wreassoc.com" target="_top">bill@wreassoc.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_02_14_bill_elliot_lt_ulink_url_mailto_bill_wreassoc_com_bill_wreassoc_com_ulink_gt"></a>2.116. 2025-02-14  Bill Elliot &lt;<a class="ulink" href="mailto:bill@wreassoc.com" target="_top">bill@wreassoc.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 docs/man/Makefile.am: Additions to docs/man/Makefile.am.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_02_11_bill_elliot_lt_ulink_url_mailto_bill_wreassoc_com_bill_wreassoc_com_ulink_gt"></a>2.112. 2025-02-11  Bill Elliot &lt;<a class="ulink" href="mailto:bill@wreassoc.com" target="_top">bill@wreassoc.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_02_11_bill_elliot_lt_ulink_url_mailto_bill_wreassoc_com_bill_wreassoc_com_ulink_gt"></a>2.117. 2025-02-11  Bill Elliot &lt;<a class="ulink" href="mailto:bill@wreassoc.com" target="_top">bill@wreassoc.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 data/driver.list.in, docs/man/powervar-cx.txt,
           drivers/powervar-cx.h: Documentation updates.
 </li><li class="listitem">
@@ -1872,37 +2002,37 @@ drivers/powervar-cs.c, drivers/powervar-cu.c,
 drivers/powervar-cs.c, drivers/powervar-cu.c,
           drivers/powervar-cx.h: USB disconnect/reconnect seems to be
           working.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_02_07_bill_elliot_lt_ulink_url_mailto_bill_wreassoc_com_bill_wreassoc_com_ulink_gt"></a>2.113. 2025-02-07  Bill Elliot &lt;<a class="ulink" href="mailto:bill@wreassoc.com" target="_top">bill@wreassoc.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_02_07_bill_elliot_lt_ulink_url_mailto_bill_wreassoc_com_bill_wreassoc_com_ulink_gt"></a>2.118. 2025-02-07  Bill Elliot &lt;<a class="ulink" href="mailto:bill@wreassoc.com" target="_top">bill@wreassoc.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/powervar-cs.c, drivers/powervar-cu.c,
           drivers/powervar-cx.h: After testing on GTS and UPM. Still need USB
           dis/re-connect logic.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_02_04_bill_elliot_lt_ulink_url_mailto_bill_wreassoc_com_bill_wreassoc_com_ulink_gt"></a>2.114. 2025-02-04  Bill Elliot &lt;<a class="ulink" href="mailto:bill@wreassoc.com" target="_top">bill@wreassoc.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_02_04_bill_elliot_lt_ulink_url_mailto_bill_wreassoc_com_bill_wreassoc_com_ulink_gt"></a>2.119. 2025-02-04  Bill Elliot &lt;<a class="ulink" href="mailto:bill@wreassoc.com" target="_top">bill@wreassoc.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/powervar-cs.c, drivers/powervar-cu.c,
           drivers/powervar-cx.h: Text tweaks and help text sequence
           change(s).
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_02_03_bill_elliot_lt_ulink_url_mailto_bill_wreassoc_com_bill_wreassoc_com_ulink_gt"></a>2.115. 2025-02-03  Bill Elliot &lt;<a class="ulink" href="mailto:bill@wreassoc.com" target="_top">bill@wreassoc.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_02_03_bill_elliot_lt_ulink_url_mailto_bill_wreassoc_com_bill_wreassoc_com_ulink_gt"></a>2.120. 2025-02-03  Bill Elliot &lt;<a class="ulink" href="mailto:bill@wreassoc.com" target="_top">bill@wreassoc.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/powervar-cs.c, drivers/powervar-cu.c,
           drivers/powervar-cx.h: Generally working drivers prior to command
           testing.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_01_23_bill_elliot_lt_ulink_url_mailto_bill_wreassoc_com_bill_wreassoc_com_ulink_gt"></a>2.116. 2025-01-23  Bill Elliot &lt;<a class="ulink" href="mailto:bill@wreassoc.com" target="_top">bill@wreassoc.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_01_23_bill_elliot_lt_ulink_url_mailto_bill_wreassoc_com_bill_wreassoc_com_ulink_gt"></a>2.121. 2025-01-23  Bill Elliot &lt;<a class="ulink" href="mailto:bill@wreassoc.com" target="_top">bill@wreassoc.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/powervar-cs.c, drivers/powervar-cu.c,
           drivers/powervar-cx.h: Adding commands and variables. General
           cleanups.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_01_22_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.117. 2025-01-22  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_01_22_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.122. 2025-01-22  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 docs/config-prereqs.txt: update for OmniOS r151052
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_01_22_bill_elliot_lt_ulink_url_mailto_bill_wreassoc_com_bill_wreassoc_com_ulink_gt"></a>2.118. 2025-01-22  Bill Elliot &lt;<a class="ulink" href="mailto:bill@wreassoc.com" target="_top">bill@wreassoc.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_01_22_bill_elliot_lt_ulink_url_mailto_bill_wreassoc_com_bill_wreassoc_com_ulink_gt"></a>2.123. 2025-01-22  Bill Elliot &lt;<a class="ulink" href="mailto:bill@wreassoc.com" target="_top">bill@wreassoc.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/powervar-cs.c, drivers/powervar-cu.c,
           drivers/powervar-cx.h: GTS USB working well for Init and Update.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_01_02_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.119. 2025-01-02  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_01_02_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.124. 2025-01-02  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 common/common.c, common/nutipc.cpp, NEWS.adoc, docs/nut.dict:
           support writepid() calls by non-root programs [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1717" target="_top">#1717</a>]
 </li><li class="listitem">
 common/common.c, common/nutipc.cpp, NEWS.adoc, docs/nut.dict:
           support writepid() calls by non-root programs [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1717" target="_top">#1717</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2024_12_19_bill_elliot_lt_ulink_url_mailto_bill_wreassoc_com_bill_wreassoc_com_ulink_gt"></a>2.120. 2024-12-19  Bill Elliot &lt;<a class="ulink" href="mailto:bill@wreassoc.com" target="_top">bill@wreassoc.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2024_12_19_bill_elliot_lt_ulink_url_mailto_bill_wreassoc_com_bill_wreassoc_com_ulink_gt"></a>2.125. 2024-12-19  Bill Elliot &lt;<a class="ulink" href="mailto:bill@wreassoc.com" target="_top">bill@wreassoc.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/powervar-cu.c, drivers/powervar-cx.h: Move toward working
           USB driver — BROKENgit diff
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2024_12_03_bill_elliot_lt_ulink_url_mailto_bill_wreassoc_com_bill_wreassoc_com_ulink_gt"></a>2.121. 2024-12-03  Bill Elliot &lt;<a class="ulink" href="mailto:bill@wreassoc.com" target="_top">bill@wreassoc.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2024_12_03_bill_elliot_lt_ulink_url_mailto_bill_wreassoc_com_bill_wreassoc_com_ulink_gt"></a>2.126. 2024-12-03  Bill Elliot &lt;<a class="ulink" href="mailto:bill@wreassoc.com" target="_top">bill@wreassoc.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/powervar-cu.c: Change comment above VENDORID so USB is
           identified correctly as <span class="emphasis"><em>Powervar</em></span>.
 </li><li class="listitem">
@@ -1910,19 +2040,19 @@ drivers/Makefile.am, drivers/powervar-c.h, drivers/powervar-cs.c,
           drivers/powervar-cu.c, drivers/{powervar-c.c ⇒ powervar-cx.h}: USB
           building and communicating. Trying common variable and function
           file for serial and usb drivers.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2024_11_11_bill_elliot_lt_ulink_url_mailto_bill_wreassoc_com_bill_wreassoc_com_ulink_gt"></a>2.122. 2024-11-11  Bill Elliot &lt;<a class="ulink" href="mailto:bill@wreassoc.com" target="_top">bill@wreassoc.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2024_11_11_bill_elliot_lt_ulink_url_mailto_bill_wreassoc_com_bill_wreassoc_com_ulink_gt"></a>2.127. 2024-11-11  Bill Elliot &lt;<a class="ulink" href="mailto:bill@wreassoc.com" target="_top">bill@wreassoc.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/Makefile.am, drivers/powervar-c.c, drivers/powervar-c.h,
           drivers/powervar-cu.c: Still trying to get USB driver to build.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2024_10_26_bill_elliot_lt_ulink_url_mailto_bill_wreassoc_com_bill_wreassoc_com_ulink_gt"></a>2.123. 2024-10-26  Bill Elliot &lt;<a class="ulink" href="mailto:bill@wreassoc.com" target="_top">bill@wreassoc.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2024_10_26_bill_elliot_lt_ulink_url_mailto_bill_wreassoc_com_bill_wreassoc_com_ulink_gt"></a>2.128. 2024-10-26  Bill Elliot &lt;<a class="ulink" href="mailto:bill@wreassoc.com" target="_top">bill@wreassoc.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/powervar-c.c, drivers/powervar-c.h: Now most update stuff
           is in place.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2024_10_24_bill_elliot_lt_ulink_url_mailto_bill_wreassoc_com_bill_wreassoc_com_ulink_gt"></a>2.124. 2024-10-24  Bill Elliot &lt;<a class="ulink" href="mailto:bill@wreassoc.com" target="_top">bill@wreassoc.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2024_10_24_bill_elliot_lt_ulink_url_mailto_bill_wreassoc_com_bill_wreassoc_com_ulink_gt"></a>2.129. 2024-10-24  Bill Elliot &lt;<a class="ulink" href="mailto:bill@wreassoc.com" target="_top">bill@wreassoc.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/Makefile.am, drivers/powervar-c.c, drivers/powervar-c.h:
           Most init stuff in place. This is before working on update
           function.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2024_09_19_bill_elliot_lt_ulink_url_mailto_bill_wreassoc_com_bill_wreassoc_com_ulink_gt"></a>2.125. 2024-09-19  Bill Elliot &lt;<a class="ulink" href="mailto:bill@wreassoc.com" target="_top">bill@wreassoc.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2024_09_19_bill_elliot_lt_ulink_url_mailto_bill_wreassoc_com_bill_wreassoc_com_ulink_gt"></a>2.130. 2024-09-19  Bill Elliot &lt;<a class="ulink" href="mailto:bill@wreassoc.com" target="_top">bill@wreassoc.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/oneac.c: Coding standard fixes.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2024_06_04_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.126. 2024-06-04  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2024_06_04_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.131. 2024-06-04  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 include/common.h, common/common.c, drivers/dstate.c,
           drivers/nutdrv_qx_blazer-common.c: define macros for
           minimize_formatting_string() and validate_formatting_string()
@@ -1930,7 +2060,7 @@ include/common.h, common/common.c, drivers/dstate.c,
           to require setting driver/tool debug levels can re-define their
           NUT_DYNAMICFORMATTING_DEBUG_LEVEL to e.g. 0 and see any formatting
           discrepancies instantly.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2024_06_02_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.127. 2024-06-02  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2024_06_02_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.132. 2024-06-02  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 tests/nutlogtest.c: use support for plain "-Wformat" and for
           "-Wformat-extra-args" in pragmas to quiesce "bogus-looking" test
           cases [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2450" target="_top">#2450</a>]
@@ -1961,7 +2091,7 @@ common/common.c, include/common.h, drivers/dstate.c,
           tests/nutlogtest.c: introduce verbosity option to
           validate_formatting_string() and minimize_formatting_string()
           [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2450" target="_top">#2450</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2024_06_01_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.128. 2024-06-01  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2024_06_01_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.133. 2024-06-01  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/nutdrv_qx_blazer-common.c: blazer_process_command() for
           "test.battery.start" might vary by applicable formatting strings
           [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2450" target="_top">#2450</a>]
@@ -1997,7 +2127,7 @@ clients/upsimage.c, clients/upssched.c, clients/upsset.c,
 </li><li class="listitem">
 drivers/nutdrv_qx_bestups.c: bestups_model(): fix bogus sprintf()
           for an unknown model [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2450" target="_top">#2450</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2024_05_31_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.129. 2024-05-31  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2024_05_31_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.134. 2024-05-31  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 common/common.c, tests/nutlogtest.c: minimize_formatting_string():
           collapse known different formats for same data type into same char
           to ease sanity-check comparisons [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2450" target="_top">#2450</a>]
@@ -2008,7 +2138,7 @@ docs/developers.txt, docs/new-drivers.txt, docs/nut.dict: document
 drivers/dstate.c, drivers/dstate.h: drivers/dstate.{c,h}: add
           vdstate_setinfo(), vdstate_addenum() and versions for hardened
           dynamic format string support [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2450" target="_top">#2450</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2024_05_30_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.130. 2024-05-30  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2024_05_30_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.135. 2024-05-30  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 common/common.c, include/common.h, tests/nutlogtest.c, NEWS.adoc:
           introduce snprintf_dynamic() and related methods [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2450" target="_top">#2450</a>]  Mitigate
           the inherent insecurity of dynamically constructed formatting
@@ -2023,11 +2153,11 @@ common/common.c, include/common.h, tests/nutlogtest.c, NEWS.adoc:
           mkstr_dynamic() for practical applications (with … variadic
           arguments); * added vsnprintfcat() with fixed va_list argument, for
           good measure.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2022_08_27_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.131. 2022-08-27  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2022_08_27_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.136. 2022-08-27  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/usbhid-ups.c: hid_ups_walk(): for HU_WALKMODE_FULL_UPDATE
           with "pollonly" mode, re-read HU_FLAG_SEMI_STATIC and
           HU_FLAG_STATIC entries to detect "Driver stale" situations [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1624" target="_top">#1624</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2022_02_09_jim_klimov_lt_ulink_url_mailto_jim_jimklimov_com_jim_jimklimov_com_ulink_gt"></a>2.132. 2022-02-09  Jim Klimov &lt;<a class="ulink" href="mailto:jim@jimklimov.com" target="_top">jim@jimklimov.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2022_02_09_jim_klimov_lt_ulink_url_mailto_jim_jimklimov_com_jim_jimklimov_com_ulink_gt"></a>2.137. 2022-02-09  Jim Klimov &lt;<a class="ulink" href="mailto:jim@jimklimov.com" target="_top">jim@jimklimov.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/ve-direct.c: mark ve_*() methods as static
 </li><li class="listitem">
 drivers/ve-direct.c: fix trailing white-space and C+\+-style
@@ -2037,7 +2167,7 @@ docs/packager-guide.txt: update for nut-linux-i2c and
           nut-macosx-ups platform-dependent package groups
 </li><li class="listitem">
 docs/packager-guide.txt: fix title for pkg-nut-modbus
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2022_02_08_jim_klimov_lt_ulink_url_mailto_jim_jimklimov_com_jim_jimklimov_com_ulink_gt"></a>2.133. 2022-02-08  Jim Klimov &lt;<a class="ulink" href="mailto:jim@jimklimov.com" target="_top">jim@jimklimov.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2022_02_08_jim_klimov_lt_ulink_url_mailto_jim_jimklimov_com_jim_jimklimov_com_ulink_gt"></a>2.138. 2022-02-08  Jim Klimov &lt;<a class="ulink" href="mailto:jim@jimklimov.com" target="_top">jim@jimklimov.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 configure.ac: error out for unhandled --with-drivers=xxx names
 </li><li class="listitem">
 configure.ac: improve handling of platform-dependent (linux-i2c,
@@ -2052,13 +2182,13 @@ drivers/Makefile.am: parameterize POWERMAN_DRIVERLIST and
 </li><li class="listitem">
 configure.ac: move "--with-drivers=name[,name…]" handling to
           before we check for third-party dependencies
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2022_02_07_jim_klimov_lt_ulink_url_mailto_jim_jimklimov_com_jim_jimklimov_com_ulink_gt"></a>2.134. 2022-02-07  Jim Klimov &lt;<a class="ulink" href="mailto:jim@jimklimov.com" target="_top">jim@jimklimov.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2022_02_07_jim_klimov_lt_ulink_url_mailto_jim_jimklimov_com_jim_jimklimov_com_ulink_gt"></a>2.139. 2022-02-07  Jim Klimov &lt;<a class="ulink" href="mailto:jim@jimklimov.com" target="_top">jim@jimklimov.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 scripts/subdriver/gen-usbhid-subdriver.sh: gen-usbhid-subdriver.sh:
           suggest "fix_report_desc" in subdriver_t (follow-up to <a class="ulink" href="https://github.com/networkupstools/nut/pull/1245" target="_top">PR #1245</a>)
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2022_02_06_jim_klimov_lt_ulink_url_mailto_jim_jimklimov_com_jim_jimklimov_com_ulink_gt"></a>2.135. 2022-02-06  Jim Klimov &lt;<a class="ulink" href="mailto:jim@jimklimov.com" target="_top">jim@jimklimov.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2022_02_06_jim_klimov_lt_ulink_url_mailto_jim_jimklimov_com_jim_jimklimov_com_ulink_gt"></a>2.140. 2022-02-06  Jim Klimov &lt;<a class="ulink" href="mailto:jim@jimklimov.com" target="_top">jim@jimklimov.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 docs/packager-guide.txt: mention ipmi and modbus drivers as
           separate packaging goals
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2022_02_05_jim_klimov_lt_ulink_url_mailto_jim_jimklimov_com_jim_jimklimov_com_ulink_gt"></a>2.136. 2022-02-05  Jim Klimov &lt;<a class="ulink" href="mailto:jim@jimklimov.com" target="_top">jim@jimklimov.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2022_02_05_jim_klimov_lt_ulink_url_mailto_jim_jimklimov_com_jim_jimklimov_com_ulink_gt"></a>2.141. 2022-02-05  Jim Klimov &lt;<a class="ulink" href="mailto:jim@jimklimov.com" target="_top">jim@jimklimov.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 docs/nut.dict, docs/support.txt: docs/support.txt: detail abot
           GitHub issues and PRs, and IRC channel
 </li><li class="listitem">
@@ -2124,27 +2254,27 @@ docs/developers.txt: developers.txt: "alioth" is AWOL, update the
 </li><li class="listitem">
 docs/download.txt: download.txt: "trac" and "alioth" are AWOL,
           update the links
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2020_11_07_jim_klimov_lt_ulink_url_mailto_jimklimov_gmail_com_jimklimov_gmail_com_ulink_gt"></a>2.137. 2020-11-07  Jim Klimov &lt;<a class="ulink" href="mailto:jimklimov@gmail.com" target="_top">jimklimov@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2020_11_07_jim_klimov_lt_ulink_url_mailto_jimklimov_gmail_com_jimklimov_gmail_com_ulink_gt"></a>2.142. 2020-11-07  Jim Klimov &lt;<a class="ulink" href="mailto:jimklimov@gmail.com" target="_top">jimklimov@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/ve-direct.c: Update ve-direct.c  Small spelling fix
           (ret_lenght ⇒ ret_length)
 </li><li class="listitem">
 docs/man/ve-direct.txt: Update ve-direct.txt  Minor whitespace
           fixes
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2017_06_06_petr_kubanek_lt_ulink_url_mailto_petr_kubanek_net_petr_kubanek_net_ulink_gt"></a>2.138. 2017-06-06  Petr Kubanek &lt;<a class="ulink" href="mailto:petr@kubanek.net" target="_top">petr@kubanek.net</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2017_06_06_petr_kubanek_lt_ulink_url_mailto_petr_kubanek_net_petr_kubanek_net_ulink_gt"></a>2.143. 2017-06-06  Petr Kubanek &lt;<a class="ulink" href="mailto:petr@kubanek.net" target="_top">petr@kubanek.net</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 docs/nut.dict: added Petr and ve to spellcheck dictionary
 </li><li class="listitem">
 drivers/ve-direct.c: fixed for C99 fpr loop
 </li><li class="listitem">
 docs/nut.dict: added Kubanek to dict
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2017_03_16_petr_kubanek_lt_ulink_url_mailto_petr_kubanek_net_petr_kubanek_net_ulink_gt"></a>2.139. 2017-03-16  Petr Kubanek &lt;<a class="ulink" href="mailto:petr@kubanek.net" target="_top">petr@kubanek.net</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2017_03_16_petr_kubanek_lt_ulink_url_mailto_petr_kubanek_net_petr_kubanek_net_ulink_gt"></a>2.144. 2017-03-16  Petr Kubanek &lt;<a class="ulink" href="mailto:petr@kubanek.net" target="_top">petr@kubanek.net</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/ve-direct.c: commands to set/get things
 </li><li class="listitem">
 drivers/ve-direct.c: commands to set/get things
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2017_03_15_petr_kubanek_lt_ulink_url_mailto_petr_pc115b_fzu_cz_petr_pc115b_fzu_cz_ulink_gt"></a>2.140. 2017-03-15  Petr Kubanek &lt;<a class="ulink" href="mailto:petr@pc115b.fzu.cz" target="_top">petr@pc115b.fzu.cz</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2017_03_15_petr_kubanek_lt_ulink_url_mailto_petr_pc115b_fzu_cz_petr_pc115b_fzu_cz_ulink_gt"></a>2.145. 2017-03-15  Petr Kubanek &lt;<a class="ulink" href="mailto:petr@pc115b.fzu.cz" target="_top">petr@pc115b.fzu.cz</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/ve-direct.c: HEX checksums
 </li><li class="listitem">
 drivers/ve-direct.c: HEX checksums
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2017_03_14_petr_kubanek_lt_ulink_url_mailto_petr_pc115b_fzu_cz_petr_pc115b_fzu_cz_ulink_gt"></a>2.141. 2017-03-14  Petr Kubanek &lt;<a class="ulink" href="mailto:petr@pc115b.fzu.cz" target="_top">petr@pc115b.fzu.cz</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2017_03_14_petr_kubanek_lt_ulink_url_mailto_petr_pc115b_fzu_cz_petr_pc115b_fzu_cz_ulink_gt"></a>2.146. 2017-03-14  Petr Kubanek &lt;<a class="ulink" href="mailto:petr@pc115b.fzu.cz" target="_top">petr@pc115b.fzu.cz</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/ve-direct.c: reply to commands
 </li><li class="listitem">
 drivers/ve-direct.c: poll_interval, better input buffer handling
@@ -2158,7 +2288,7 @@ drivers/ve-direct.c: poll_interval, better input buffer handling
 </li><li class="listitem">
 drivers/ve-direct.c: fixed problem with reading from driver by
           lines
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2017_03_14_petr_kubanek_lt_ulink_url_mailto_petr_kubanek_net_petr_kubanek_net_ulink_gt"></a>2.142. 2017-03-14  Petr Kubanek &lt;<a class="ulink" href="mailto:petr@kubanek.net" target="_top">petr@kubanek.net</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2017_03_14_petr_kubanek_lt_ulink_url_mailto_petr_kubanek_net_petr_kubanek_net_ulink_gt"></a>2.147. 2017-03-14  Petr Kubanek &lt;<a class="ulink" href="mailto:petr@kubanek.net" target="_top">petr@kubanek.net</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/ve-direct.c: fix process text buffer
 </li><li class="listitem">
 docs/man/Makefile.am, docs/man/ve-direct.txt, drivers/ve-direct.c:
@@ -2168,9 +2298,9 @@ drivers/ve-direct.c: fix process text buffer
 </li><li class="listitem">
 docs/man/Makefile.am, docs/man/ve-direct.txt, drivers/ve-direct.c:
           added ping command
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2017_03_13_petr_kubanek_lt_ulink_url_mailto_petr_kubanek_net_petr_kubanek_net_ulink_gt"></a>2.143. 2017-03-13  Petr Kubanek &lt;<a class="ulink" href="mailto:petr@kubanek.net" target="_top">petr@kubanek.net</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2017_03_13_petr_kubanek_lt_ulink_url_mailto_petr_kubanek_net_petr_kubanek_net_ulink_gt"></a>2.148. 2017-03-13  Petr Kubanek &lt;<a class="ulink" href="mailto:petr@kubanek.net" target="_top">petr@kubanek.net</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/Makefile.am, drivers/ve-direct.c: basic thinks works
 </li><li class="listitem">
 drivers/Makefile.am, drivers/ve-direct.c: basic thinks works
 </li></ul></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-07-24 13:02:25 -- Network UPS Tools 2.8.3.762</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> </td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2025-07-29 08:47:27 -- Network UPS Tools 2.8.3.762</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> </td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
