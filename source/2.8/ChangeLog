@@ -1,5 +1,1682 @@
+NOTE: This change log section represents git commits in range 'v2.6.0..HEAD' (commits '8103b4e5c..434cb36a3').
+
+2025-08-08  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* tools/gitlog2version.sh: for release, set fallback
+	  NUT_VERSION_DEFAULT=2.8.4
+	* appveyor.yml: SKIP for now NUT-Monitor prereqs
+
+2025-08-07  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* appveyor.yml: parallelize "make install"
+	* appveyor.yml: also install gettext for NUT-Monitor resources
+	* appveyor.yml: disable back the docs-config attempt, we do not have
+	  tools nor time for that
+	* appveyor.yml: try to enable build of HTML docs, notably man pages
+	* appveyor.yml, NEWS.adoc: include mingw-w64-x86_64-python-pyqt6
+	  [#3046]
+	* docs/config-prereqs.txt: suggest PyQt5/6 for Windows builds
+	* appveyor.yml: re-enable build with docs and installation, and
+	  zipping it  Even if not really tested by that CI in recent
+	  iterations, or rather in the iteration which would result from this
+	  commit, this can help us get the artifacts made for a release
+	  build.
+	* appveyor.yml: re-enable some of the activity (except costlier NUT
+	  docs and checks so far)
+
+2025-08-06  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* .github/workflows/PyNUTClient.yml, appveyor.yml,
+	  scripts/Windows/build-mingw-nut.sh, tools/gitlog2version.sh: Update
+	  versions for release of NUT v2.8.4
+	* docs/docinfo.xml.in: add docs increment summary for NUT v2.8.4
+	  release
+	* NEWS.adoc: remove "PLANNED" from section title before NUT v2.8.4
+	  release
+	* NEWS.adoc, UPGRADING.adoc, docs/docinfo.xml.in: finalize text
+	  before NUT v2.8.4 release
+	* docs/maintainer-guide.txt: revise instructions
+	* appveyor.yml: Revert "appveyor.yml: TEMPORARILY disable actual
+	  build/test of NUT, to re-cache prereqs and their ccache objects"
+	  This reverts commit 43376f874b8c0bc66d08136a522e60a80b9021af after
+	  https://ci.appveyor.com/project/nut-travis/nut cache was refreshed.
+	* appveyor.yml: cache built nut-win-deps before .ccache objects and
+	  pacman pkgs - v2
+	* appveyor.yml: cache built nut-win-deps before .ccache objects and
+	  pacman pkgs
+	* appveyor.yml: re-enable part of the recipe to do build NUT, just
+	  not test and install it  ...still saving time allowance to re-seed
+	  the caches; while fixing caches, skip docs build
+	* NEWS.adoc: mention rebalancing of Appveyor CI recipe to speed up
+	  the builds
+	* docs/docinfo.xml.in: fix typo in summary for NUT v2.8.3 release
+	* appveyor.yml: TEMPORARILY disable actual build/test of NUT, to
+	  re-cache prereqs and their ccache objects
+	* appveyor.yml: comment about reduced scope of build-mingw-prereqs.sh
+	* scripts/Windows/build-mingw-prereqs.sh: comment about netsnmp
+	  configure --disable-daemon
+	* scripts/Windows/build-mingw-prereqs.sh: log timing of configure,
+	  make, house-keeping operations
+	* scripts/Windows/build-mingw-prereqs.sh: reduce the scope of netsnmp
+	  build
+	* appveyor.yml: comment more about profiling/timing different build
+	  steps; comment away some more troubleshooting time-hogs
+	* appveyor.yml: do not update the MSYS2 ecosystem to bleeding edge,
+	  save some time to fit in the 1hr we are given
+
+2025-08-04  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* ci_build.sh: try to increase ulimit
+	* docs/config-prereqs.txt, docs/nut.dict: suggest `ulimit` settings
+	  via /etc/login.conf for OpenBSD
+
+2025-08-03  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* common/common.c, NEWS.adoc: warn that printf(%n) is deprecated on
+	  some newer platforms
+	* drivers/nutdrv_qx.c: avoid %n in printf  nutdrv_qx.c:4499:27:
+	  error: '%n' specifier not supported on this platform
+	  [-Werror,-Wformat]
+
+2025-08-02  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* docs/Makefile.am: fix SED syntax  Kudos to Greg Troxel for the
+	  catch
+
+2025-08-01  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* tools/nut-usbinfo.pl: find_usbdevs(): skip files that are not *.c
+	  or *.h [#3030]
+	* drivers/libusb0.c, drivers/libusb1.c: drivers/libusb{0,1}.c:
+	  nut_libusb_open(): for libusb specifically, we have a Wiki page
+	  about Insufficient Permissions [#3041]
+	* NEWS.adoc, common/common-nut_version.c, drivers/libusb0.c,
+	  drivers/libusb1.c, include/common.h: common/common-nut_version.c,
+	  include/common.h, drivers/libusb{0,1}.c, NEWS.adoc: introduce
+	  suggest_NDE_conflict() [#477, #3040]
+	* Makefile.am: check-parallel-builds: ensure that we are in the
+	  top_builddir when starting operations relative to it [#3030]  Be
+	  pedantic to work around some quirk in NetBSD 9.2 bmake essentially.
+	* ci_build.sh: check-parallel-builds: pass
+	  CHECK_PARALLEL_BUILDS_REGEN=false as a make argument also, not just
+	  envvar [#3030]
+	* ci_build.sh: build_to_only_catch_errors_target(): fix
+	  "CI_PARMAKE_VERBOSITY=verbose" logging handling
+
+2025-07-31  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* Makefile.am: check-parallel-builds: pre-clean before checking the
+	  source locations [#3033]
+	* Makefile.am: check-parallel-builds: for out-of-tree builds, check
+	  the source locations starting from the correct root [#3033]
+	* Makefile.am: check-parallel-builds: call automake portably - in a
+	  way detected by configure script [#3033]
+	* Makefile.am: check-parallel-builds: if called, automake must be in
+	  top_srcdir where configure.ac lives [#3033]
+	* .circleci/config.yml: drop explicit "make check-parallel-builds"
+	  [#3030]  It is now invoked where applicable for scenarios with
+	  `BUILD_TYPE=default-all-errors*` and note it was not buildable as
+	  added anyway (earlier ci_build.sh wiped the work area).
+
+2025-07-30  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* ci_build.sh: restore NEWS and README (if needed) between loops of
+	  default-all-errors [#3030]
+	* ci_build.sh: add a failsafe for CI via
+	  NUT_BUILD_CAPS=check-parallel-builds=no label [#3030]
+	* Makefile.am: spellcheck-quick/check-parallel-builds: refactor
+	  SET_PARMAKES_OPT() code to be reusable [#3030]
+	* Makefile.am: check-parallel-builds: fix suggested shell scriptlet
+	  to investigate failures [#3030]  Notably, MAKEFLAGS may include the
+	  "make" options without the leading dash, or other values that did
+	  not have one originally. Better leave it as an environment variable
+	  and let the particular "make" program deal with it.
+	* ci_build.sh: optionally call "make check-parallel-builds" in
+	  BUILD_TYPE="default-all-errors*" [#3030]
+	* Makefile.am: check-parallel-builds: allow
+	  CHECK_PARALLEL_BUILDS_REGEN=false (to speed up runs where
+	  developer/CI did not change recipes anyway) [#3030]
+	* tools/nutconf/Makefile.am: libnutscan.la indirectly requires
+	  libcommonclient.la (for libupsclient-version.h) so bolt it into
+	  deps list [#3030]
+
+2025-07-29  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* docs/man/.gitignore, docs/man/Makefile.am: docs/man/Makefile.am:
+	  linkman-driver{,tool}-names.txt: use unique "*.tmp.$$" filenames to
+	  fix parallel builds [#3030]
+	* scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in, NEWS.adoc: fixed
+	  NDE to not consider "masked" systemd units as non-existent [#3033]
+	* NEWS.adoc: move voltronic-axpert to existing nutdrv_qx section
+	  [#1407]
+
+2025-07-28  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* docs/man/phoenixcontact_modbus.txt: clarify that new options can be
+	  set only once (via init) at this time [#2986]
+	* NEWS.adoc: clarify how new options for phoenixcontact_modbus can be
+	  set [#2986]
+
+2025-07-27  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* tools/gitlog2version.sh: do not pollute stdout [#3030]
+	* tools/gitlog2version.sh, docs/nut-versioning.adoc: tack on current
+	  commit if known, even if we fall back to built-in version otherwise
+	  [#3030]
+	* .github/workflows/codeql.yml: drop attempts to describe git-derived
+	  version better [#3030]
+	* tools/gitlog2version.sh: if we fail to "discover a
+	  NUT_VERSION_GIT_TRUNK" or "git describe", check and report if the
+	  current checkout is shallow [#3030]  CI builds often do check out
+	  the built commit with minimal "depth" (often having just it), which
+	  is much faster, cheaper computationally and by traffic. This
+	  however precludes finding history intersections of current
+	  (single-commit) tree with other trees even if we fetch them.
+	* .github/workflows/codeql.yml: separate "make check-parallel-builds"
+	  from main build; troubleshoot gitlog2version [#3030]
+	* .circleci/config.yml, .github/workflows/codeql.yml, NEWS.adoc:
+	  .circleci/config.yml, .github/workflows/codeql.yml: invoke "make
+	  check-parallel-builds" [#3030]
+	* clients/Makefile.am, drivers/Makefile.am, server/Makefile.am,
+	  tests/Makefile.am, tools/nut-scanner/Makefile.am,
+	  tools/nutconf/Makefile.am: */Makefile.am: spell out known build
+	  order between out-of-dir dependencies [follows up from PR #2825,
+	  highlights why issue #2584 better be solved]
+	* Makefile.am, NEWS.adoc: introduced a `make check-parallel-builds`
+	  recipe [follows up from PR #2825]
+	* drivers/snmp-ups.c: re-order includes (keep eatons together)
+	* data/driver.list.in: update entry for Kebo UPS-1000D (add
+	  langid_fix and subdriver); add Tescom LEO Plus LCD 1500A which
+	  works with same config [#981]
+	* tools/nut-scanner/Makefile.am: ensure we only call NUT_SCANNER_DEPS
+	  and it has work to do only once [follows up from PR #2825]  In
+	  practice we do call it as many times as there are listed dependency
+	  files, but it only generates them on the first run and quicky bails
+	  out later on. This should help avoid writing into same files in
+	  parallel, ending up with garbled or incomplete files when we want
+	  to use them.
+
+2025-07-24  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* docs/images/ci/jenkins-nut.css: new style in town with Jenkins LTS
+	  2.516.1
+
+2025-07-22  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* drivers/phoenixcontact_modbus.c: fix typo in what is now a
+	  formatting string [#2986]
+	* drivers/phoenixcontact_modbus.c,
+	  docs/man/phoenixcontact_modbus.txt: fix tweaks according to
+	  nut-names, use dstate (so standard variable default.* or override.*
+	  settings) [#2986]
+	* drivers/phoenixcontact_modbus.c: log FIXMEs for more use of NUT
+	  dstate overrides/defaults instead of addvar() tweaks
+	* drivers/phoenixcontact_modbus.c,
+	  docs/man/phoenixcontact_modbus.txt: fix according to nut-names:
+	  "(ups.)delay.shutdown" => "(battery.)energysave.delay" [#2986]
+	* drivers/phoenixcontact_modbus.c: fix whitespace in comments [#2986]
+
+2025-07-21  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* configure.ac, docs/configure.txt: fix ASCIIDOC_TEMPLATE_LINKMANEXT*
+	  with HTML URL query part [#3027]  ...and a typo about quoting.
+	* configure.ac: define default ASCIIDOC_TEMPLATE_LINKMANEXT*
+	  according to target_os family (solarish, freebsd, openbsd;
+	  default=linux) [follow-up to #2797]
+	* configure.ac, docs/Makefile.am, docs/configure.txt,
+	  docs/man/Makefile.am: Support optional man page section rewrite
+	  also for linkmanext* references [follow-up to #2797]
+	* NEWS.adoc, configure.ac, docs/.gitignore, docs/{asciidoc.conf =>
+	  asciidoc.conf.in}, docs/configure.txt, docs/man/.gitignore,
+	  docs/man/{asciidoc.conf => asciidoc.conf.in}: Do not hard-code
+	  linux.die.net (and its man sections) into generated linkmanext*
+	  that may vary by distro [follow-up to #2797]
+	* NEWS.adoc, docs/man/asciidoc.conf, docs/nut.dict:
+	  docs/man/asciidoc.conf, NEWS.adoc: fix generation of links to
+	  external manual pages [follow-up to #2797]
+
+2025-07-18  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* common/common.c: minimize_formatting_string(): debug-log about
+	  "cosmetic" chars at level 7 [#2956]
+	* drivers/nutdrv_qx_voltronic.c: voltronic_mode(): word remaining
+	  alarms to be complete sentences [#2494]
+	* drivers/nutdrv_qx_voltronic.c: voltronic_mode(): add some debug
+	  logging [#2494]
+	* docs/man/nutdrv_qx.txt: fix quoting style from m4 to text
+	* drivers/nutdrv_qx_voltronic.c, NEWS.adoc: revise
+	  "vendor:voltronic:*" buzzword setting; these modes are not alarm
+	  material [#2494]
+
+2025-07-18  DaRK AnGeL <28630321+masterwishx@users.noreply.github.com>
+
+	* drivers/mge-hid.c: input.bypass.switch.on/off set flag quick update
+	  instead semi static
+
+2025-07-17  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* drivers/mge-hid.c: eaton_input_bypass_check_range(): fix typo
+	  checking for "value==1" [#2956]
+	* drivers/usbhid-ups.c: ups_alarm_set(): ignore ECOMODE, we handle it
+	  in ups_status_set() [#2956]  Avoid extra work and occasional log
+	  messages that:  str_add_unique_token: skip token
+	  'vendor:default:ECO': was already set
+	* drivers/mge-hid.c: eaton_input_eco_mode_check_range(): refine log
+	  output if we remain in ECO/non-ECO mode [#2956]
+	* drivers/mge-hid.c: eaton_input_eco_mode_check_range(): sanity-check
+	  that value==1 [#2956]
+	* drivers/mge-hid.c: make "input.eco.switchable" a HU_FLAG_QUICK_POLL
+	  value [#2956]  We want it evaluated on every quick-update loop, so
+	  that the correct buzzwords are always set (if device serves the
+	  feature). Also quick-update the bypass voltage and frequency, so we
+	  know relevant clues (keep semi-static settings as they were
+	  though).
+	* NEWS.adoc: NEWS.adoc, docs/nut.dict: summary mention for recent
+	  small PRs [#3019, #3021, #3022, #3023]
+	* drivers/mge-hid.c: convert "input.eco.switchable" definition from
+	  HU_FLAG_SEMI_STATIC to regular [#2956]
+	* drivers/mge-hid.c: move "input.eco.switchable" definition to end of
+	  mge_hid2nut[] table [#2956]
+	* Makefile.am: install-as-root: do not overly trust in systemctl
+	  preset-all  It fails on systemd 252 (known issue): Failed to preset
+	  all units: Unit /run/systemd/transient/session-156053.scope is
+	  transient or generated.
+
+2025-07-16  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* server/upsd.c: check_command(): try to print all command arguments
+	  (if debugging) [#3023]
+	* common/common.c: compareprocname(): Linux /proc/X/exe can end with
+	  " (deleted)" if the program was removed or replaced
+	* drivers/snmp-ups.c: su_setOID(): cast returned enum constants to
+	  int [#3017]  Avoid error claimed by clang-20 et al:  conditional
+	  expression between different enumeration types ('enum (unnamed at
+	  ./upshandler.h:25:1)' and 'enum (unnamed at ./upshandler.h:34:1)')
+	  [-Werror,-Wanon-enum-enum-conversion]
+	* docs/Makefile.am: ChangeLog => ChangeLog.adoc: avoid "$<" as this
+	  is not a suffix rule
+
+2025-07-15  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* docs/Makefile.am: ChangeLog => ChangeLog.adoc: typo fix in fallback
+	  INPUT
+	* configure.ac, Makefile.am, docs/configure.txt, NEWS.adoc: introduce
+	  confgure option to customize git log ending point [#3019]
+	* tools/gitlog2changelog.py.in: allow specifying end of commit range,
+	  report it in text  Technically a step to multi-section changelogs,
+	  covering each release separately as a range between git tags,
+	  regardless of timestamp overlap (with much older prepared commits
+	  going into much newer release later on).
+	* tools/gitlog2changelog.py.in: typo in comment
+	* docs/Makefile.am: ChangeLog => ChangeLog.adoc: revise definition of
+	  INPUT  Actually saw it with two tokens recently, for the text and
+	  .prep-src-docs touch-file
+	* docs/Makefile.am: when writing temporary outputs, make sure they
+	  are not empty before moving to final name (else delete and bail
+	  out)
+	* docs/Makefile.am: .adoc => .adoc-parsed: double-check that input
+	  file exists  If a recipe iteration is written incorrectly, make can
+	  skip work on some rules (evaluating them as true without writing
+	  outputs we need)
+	* configure.ac, docs/.gitignore, docs/Makefile.am,
+	  docs/configure.txt, docs/{docinfo.xml.sh => docinfo.xml.sh.in}:
+	  docs/docinfo.xml.sh.in: make it a template for configure script to
+	  generate and embed a @GITLOG_START_POINT@ value to consider
+	* configure.ac, Makefile.am, docs/configure.txt, NEWS.adoc: introduce
+	  confgure option to customize git log starting point
+	* ci_build.sh: configure --disable-docs-changelog in developer
+	  iterations
+	* configure.ac, docs/Makefile.am, docs/configure.txt, NEWS.adoc,
+	  docs/nut.dict: introduce option to "configure
+	  --enable-docs-changelog" (or not)
+	* docs/ci-farm-lxc-setup.txt: update link to
+	  conflict-aware-ondemand-strategy-plugin
+
+2025-07-14  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* drivers/mge-hid.c: fix back eaton_input_bypass_mode_on_info[];
+	  update comments; make use of errno=0/EINVAL
+	* docs/nut.dict: add "nuf" to dict [#3017, #2956]
+	* drivers/usbhid-ups.c, NEWS.adoc: hid_ups_walk(HU_WALKMODE_INIT):
+	  report if exactly one of fun/nuf is defined in a one-line table,
+	  and it would preclude reads/writes [#2956]
+	* docs/nut.dict: add "nuf" to dict [#3017, #2956]
+	* drivers/mge-hid.c: introduce eaton_input_buzzwordmode_setvar_nuf()
+	  [#2956]
+	* drivers/usbhid-ups.c, NEWS.adoc: add a way for fun/nuf methods to
+	  report EINVAL for unsupported arguments, and bail out [#3017]  Made
+	  for progresing on PR #2956
+	* drivers/nutdrv_qx.c, NEWS.adoc: add a way for item->preprocess()
+	  and qx_process() methods to report EINVAL for unsupported
+	  arguments, and bail out [#3017]
+	* drivers/snmp-ups.c: su_setOID(): refactor many elvises into one
+	  val_practical [#3017]
+	* drivers/usbhid-ups.c, NEWS.adoc: add a way for fun/nuf methods to
+	  report EINVAL for unsupported arguments, and bail out [#3017]  Made
+	  for progresing on PR #2956
+	* drivers/snmp-ups.c, NEWS.adoc: add a way for fun/nuf methods to
+	  report EINVAL for unsupported arguments, and bail out [#3017]
+	* drivers/snmp-ups.c: su_setOID(): return *_CONVERSION_FAILED where
+	  applicable; use upslog_*_RESULT() in callers
+	  su_setvar()/su_instcmd() for maintainability
+	* drivers/snmp-ups.c: su_setOID(): rectify returns of STAT_SET_* vs.
+	  STAT_INSTCMD_*  Be pedantically correct about these, even if they
+	  map to same numbers for logical names at the moment.
+	* drivers/upshandler.h: define loggers for CONVERSION_FAILED, and
+	  generally for common RESULT [#2957]
+	* drivers/mge-hid.c: fix indentations (TAB vs space) to be consistent
+	  [#2956]
+	* NEWS.adoc, common/common.c: common/common.c:
+	  minimize_formatting_string(): do not loudly log complaints about
+	  known cosmetic formatting chars [#2450]
+	* common/common.c: minimize_formatting_string(): update comments
+	  [#2450]
+
+2025-07-13  Axel Gembe <axel@gembe.net>
+
+	* docs/man/apc_modbus.txt: apc_modbus: Add another tested device
+	  model to the man page
+	* NEWS.adoc, drivers/apc_modbus.c: apc_modbus: Fix missing variables
+	  due to mismatching format string  Calls to `dstate_setinfo_dynamic`
+	  were using a different format string in `fmt_dynamic` than spcified
+	  in `fmt_reference`.  This causes the following variables to be
+	  missing:  ``` battery.runtime experimental.output.energy
+	  ups.timer.shutdown ups.timer.start ups.timer.reboot
+	  input.transfer.high input.transfer.low ups.delay.shutdown
+	  ups.delay.start ups.delay.reboot outlet.group.0.delay.shutdown
+	  outlet.group.0.delay.start outlet.group.0.delay.reboot
+	  outlet.group.1.delay.shutdown outlet.group.1.delay.start
+	  outlet.group.1.delay.reboot outlet.group.2.delay.shutdown
+	  outlet.group.2.delay.start outlet.group.2.delay.reboot
+	  outlet.group.3.delay.shutdown outlet.group.3.delay.start
+	  outlet.group.3.delay.reboot ```  Since #2450 this caused this or
+	  similar error messages on our integer values:  ``` [D1]
+	  validate_formatting_string: dynamic formatting string '%u' is not
+	  equivalent to expected '%lu' ```  This in turn caused the variable
+	  to not exist and later calls to `dstate_setflags` to output:  ```
+	  apc_modbus: dstate_setflags: base variable (battery.runtime) does
+	  not exist ```  We fix this by using the correct format string.
+
+2025-07-10  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* drivers/snmp-ups.c, NEWS.adoc: fix debug-logging of skipping
+	  SU_FLAG_STATIC entries [#3011]
+	* drivers/apc-mib.c, NEWS.adoc: fix "ups.test.date" from
+	  SU_FLAG_STATIC to SU_FLAG_SEMI_STATIC [#3011]
+
+2025-07-09  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* NEWS.adoc: mention both APC BVKxxxM2 and BKxxxM2-CH in same fix for
+	  usbhid-ups
+
+2025-07-07  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* scripts/systemd/nutshutdown.in, NEWS.adoc: bail out if MODE=none
+	  explicitly [#2935]
+	* drivers/mge-hid.c: refactor old (pegasus) and new (ECO/ESS) mapping
+	  tables with fun/nuf methods [#2956]
+	* drivers/mge-hid.c: comment which info_lkp_t[] tables are in fact
+	  wrong examples of mapping function usage [#2956]
+	* docs/man/phoenixcontact_modbus.txt: reconcile config setting names
+	  with strings used in the driver [#2986]
+	* docs/man/phoenixcontact_modbus.txt: align shutdown variables
+	  descriptions with comments in code [#2986]
+	* docs/man/nutupsdrv.txt: document `override.*` or `default.*` names
+	  for `var=val` settings
+	* docs/man/phoenixcontact_modbus.txt: wrap long lines; anticipate
+	  renaming/obsoletion of some driver-specific settings [#2986]
+	* NEWS.adoc: document recent changes to start-up messages and loop
+	  flushing in upsmon [#3003]
+	* clients/upsmon.c: report in debug-log which SHUTDOWNCMD/NOTIFYCMD
+	  would be used (and if no NOTIFYCMD was set) [#3003]
+	* clients/upsmon.c: fflush() at end of each main loop cycle, just in
+	  case
+	* clients/upsmon.c: make "Warning: no shutdown command defined"
+	  visible when the daemon starts  Being a printf() to stdout, it got
+	  buffered and often only appeared on buffer flush when the daemon
+	  exited.
+	* NEWS.adoc, data/driver.list.in, docs/man/usbhid-ups.txt,
+	  docs/nut.dict, drivers/usbhid-ups.c: drivers/usbhid-ups.c: handle
+	  also APC BKnnnM2[_-]CH tweaks for
+	  lbrb_log_delay_without_calibrating/onlinedischarge_calibration
+	  [#3006, #2347]  Update docs, data/driver.list.in suggestions;
+	  refactor the if-clause to detect if the tweak applies to the device
+	  being handled.
+
+2025-07-04  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* NEWS.adoc: note further ECO mode updates in mge-hid [#2956]
+	* NEWS.adoc: clarify message for bcmxcp fix [#3002]
+	* NEWS.adoc: re-order ddriver updates alphabetically
+
+2025-07-03  desertwitch <24509509+desertwitch@users.noreply.github.com>
+
+	* NEWS.adoc: add bcmxcp fixes [#3002]
+	* drivers/bcmxcp.c: fix latched on to RB alarm
+
+2025-07-03  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* docs/packager-guide.txt: suggest a nut-common package for shared
+	  stuff
+	* drivers/powervar_cx.c: remove space before parenthesis after
+	  status_set() to simplify review for issue [#2708]
+	* drivers/pijuice.c, NEWS.adoc: revise use of status_set() [#2708]
+
+2025-06-25  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* NEWS.adoc: announce updates to phoenixcontact_modbus [#2986]
+	* docs/man/phoenixcontact_modbus.txt: fix asciidoc markup for man
+	  page [#2986]  This is not directly a troff file
+	* drivers/phoenixcontact_modbus.c: fix CI complaints [#2986]  *
+	  static methods * declarations before code * mismatches of int type
+	  vs printf formatting string (hex)
+	* docs/man/phoenixcontact_modbus.txt, docs/nut.dict: update
+	  authors/contributors list [#2986]
+	* drivers/phoenixcontact_modbus.c: fix author/contributor list
+	  [#2986]
+	* drivers/phoenixcontact_modbus.c: fix back broken whitespace [#2986]
+	* drivers/powervar_cx.c, drivers/powervar_cx_ser.c,
+	  drivers/powervar_cx_usb.c: drivers/powervar_cx*: fix more
+	  formatting string vs. int type mismatches [#2988]
+
+2025-06-25  DaRK AnGeL <28630321+masterwishx@users.noreply.github.com>
+
+	* drivers/mge-hid.c: try return int instead double to check compiler
+	  issue
+	* drivers/mge-hid.c: add some more debug
+
+2025-06-24  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* drivers/powervar_cx.c: instcmd(): fix int type of ShowTime [#2988]
+	* drivers/powervar_cx.c, drivers/powervar_cx.h: drivers/powervar_cx*:
+	  fix int type of GetSubstringPosition() [#2988]
+	* drivers/powervar_cx.c, drivers/powervar_cx.h,
+	  drivers/powervar_cx_usb.c: drivers/powervar_cx*: fix visibility of
+	  some declarations [#2988]
+	* drivers/powervar_cx.c: prefer snprintf() over strncpy() [#2988]
+	* drivers/powervar_cx.c, drivers/powervar_cx_ser.c,
+	  drivers/powervar_cx_usb.c: drivers/powervar_cx*.c: use same style
+	  for space after comma [#2988]
+	* drivers/powervar_cx.c, drivers/powervar_cx_usb.c:
+	  drivers/powervar_cx*.c: use same style for space after "if" [#2988]
+	* drivers/powervar_cx.c: avoid unbound strcpy() and strcat() [#2988]
+	* drivers/Makefile.am, drivers/powervar_cx.c, drivers/powervar_cx.h,
+	  drivers/powervar_cx_ser.c, drivers/powervar_cx_usb.c:
+	  powervar_cx_{ser,usb}: split helper code powervar_cx.{c,h} into a
+	  true C header and compiled C source (do not "include" the latter)
+	  [#2988]
+	* NEWS.adoc, docs/man/Makefile.am, docs/man/powervar_cx_ser.txt,
+	  docs/man/{powervar-cx.txt => powervar_cx_usb.txt},
+	  drivers/Makefile.am, drivers/{powervar-cx.h => powervar_cx.h},
+	  drivers/{powervar-cs.c => powervar_cx_ser.c},
+	  drivers/{powervar-cu.c => powervar_cx_usb.c}:
+	  powervar_cx_{ser,usb}: rename sources, separate man pages [#2988]
+	* drivers/powervar-cu.c, drivers/powervar-cx.h: drivers/powervar-c*:
+	  avoid sub-standard "uint" type [#2988]
+	* drivers/powervar-cu.c: SendRequest(): revise nulling of outbuff[],
+	  add sanity-checks and comment about them [#2988]
+	* drivers/powervar-cu.c: fix upsdebugx(verbosity) vs
+	  upslogx(facility) [#2988]
+	* drivers/powervar-cu.c: SendRequest(), PowervarGetResponse(): align
+	  int vars with print format and return types [#2988]
+
+2025-06-24  DaRK AnGeL <28630321+masterwishx@users.noreply.github.com>
+
+	* data/cmdvartab, docs/nut-names.txt, drivers/mge-hid.c: rename
+	  enable/diasble to start/stop
+
+2025-06-24  Bill Elliot <bill@wreassoc.com>
+
+	* drivers/powervar_cx.c, drivers/powervar_cx.h,
+	  drivers/powervar_cx_usb.c: Add comment(s) in source about compiling
+	  common driver file.  Add FIXME note.
+
+2025-06-23  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* docs/man/powervar-cx.txt: fix NAME section to generate the alias
+	  man pages [#2988]  NOTE: man aliases are special reference files,
+	  so the target powervar-cx.8 file must be delivered wherever *-cs
+	  and/or *-cu are the one(s) really needed.
+
+2025-06-20  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* drivers/powervar-cu.c: use NUT standard population of regex_array
+	  for USB config parameters [#2988]
+	* drivers/powervar-cu.c: fix int size mismatch [#2988]  Code scanning
+	  / CodeQL: Comparison of narrow type with wide type in loop
+	  condition: Comparison between [i](1) of type uint8_t and
+	  [ReqLen](2) of wider type size_t.
+	* drivers/powervar-cu.c, drivers/powervar-cx.h: drivers/powervar-c*:
+	  fix clang complaints about method visibility/declaration [#2988]
+	* docs/man/Makefile.am: neuter powervar-c{s,u}.html (similar to other
+	  fictional HTML aliases) for now [#2988]
+	* drivers/powervar-cu.c, drivers/powervar-cx.h: drivers/powervar-c*:
+	  slightly revise C markup (indentations, declarations on top)
+	  [#2988]
+	* UPGRADING.adoc: note packaging of powervar-cX man pages [#2988]
+	* docs/man/Makefile.am: fix recipes to nominally deliver the
+	  powervar-c[us] pages, aliased from one powervar-cx [#2988]
+	* docs/man/powervar-cx.txt: fix asciidoc markup; clarify that there
+	  are two powervar* drivers (USB/Serial) at this time [#2988]
+	* NEWS.adoc: introduced powervar-cs and powervar-cu drivers [#2988]
+	* data/driver.list.in: update top comment with formatting
+	  requirements for markup of this file [#2988]
+	* data/driver.list.in: parsing scripts expect single-TAB separation
+	  of fields [#2988]
+
+2025-06-19  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* docs/Makefile.am: specify VPATH for sub-makes doing spellcheck
+	* docs/Makefile.am, docs/man/Makefile.am, NEWS.adoc: only SED text
+	  source files for *-prepped (man page section, nut-website, etc.)
+	  rewrites [#2989]
+	* clients/upsmon.c: when warning about no SHUTDOWNCMD, check about no
+	  MINSUPPLIES too (maybe not a problem)
+	* scripts/systemd/nutshutdown.in: update notes on purpose, location
+	  and likely variations
+	* conf/upsmon.conf.sample.in: update notes on Windows SHUTDOWNCMD
+	* conf/upsmon.conf.sample.in: update notes on semi-required settings
+
+2025-06-16  haul <ulfathasangarayev@gmail.com>
+
+	* docs/man/phoenixcontact_modbus.txt,
+	  drivers/phoenixcontact_modbus.c: Fix issues from previous PR review
+	  - Bumped internal version to 0.09 (two-digit format) - Replaced
+	  single-line // comments with /* ... */ block comments - Added
+	  missing variable descriptions to the man page - Preserved original
+	  authors in metadata - Standardized config variable names to align
+	  with nut-names.txt where possible - Declared all variables at top
+	  of scope as per C89 style  Feedback originally provided by
+	  @jimklimov on PR #2986 (superseded by this commit)
+
+2025-06-16  DaRK AnGeL <28630321+masterwishx@users.noreply.github.com>
+
+	* drivers/mge-hid.c: try again in one func
+	  eaton_input_eco_mode_auto_on_off_info()
+	* drivers/mge-hid.c: Fix value ("1") in nuf
+	* drivers/mge-hid.c: for test value after compile
+
+2025-06-15  DaRK AnGeL <28630321+masterwishx@users.noreply.github.com>
+
+	* drivers/mge-hid.c: separate on / off as only fisrt command is used
+	  in this case
+
+2025-06-13  haul <haul@tgw-group.com>
+
+	* drivers/phoenixcontact_modbus.c: Add support for shutdown
+	  variables, mode selector, PC reset timing, and battery switch
+	  threshold  - Introduced new variables to the phoenixcontact_modbus
+	  driver especially for QUINTS 4 USB: - shutdown variables - mode
+	  selector 9 = PC_MODE - PC reset delay after main power recovers -
+	  automatic switch to battery mode if main power is below or above a
+	  defined threshold.
+
+2025-06-12  Jim Klimov <jimklimov@gmail.com>
+
+	* docs/man/nut.txt, docs/man/index.txt: introduce
+	  "ifndef::included-skip-title[]" toggle
+	  [networkupstools/nut-website#61]
+
+2025-06-12  DaRK AnGeL <28630321+masterwishx@users.noreply.github.com>
+
+	* drivers/mge-hid.c: return on/off
+	* drivers/mge-hid.c: another typo
+	* drivers/mge-hid.c: double, small fixes
+	* drivers/mge-hid.c: convert from two functions to one
+	  `eaton_input_eco_mode_auto_on_off_fun/[nuf]()`
+	* drivers/mge-hid.c: return double (0.0 and 0.1) instead of named
+	  double
+
+2025-06-11  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* drivers/apc_modbus.c, NEWS.adoc: bump version, add summary [#2982]
+	* docs/man/pijuice.txt, docs/nut.dict: some more nuances [#2985]
+	* lib/libupsclient-config.in: single-quote ConfigFlags value
+	* lib/libupsclient-config.in: define commonly customized dirs so
+	  ConfigFlags do not emit warnings when configure script parses the
+	  template
+	* configure.ac: nut-common-tmpfiles.conf: own PIDPATH as root if not
+	  overlapping with unprivileged patgs
+	* docs/man/pijuice.txt, docs/nut.dict: update with nuances of PiJuice
+	  HAT UPS setup from practice
+	* Makefile.am: install-as-root: fix for new installs with systemd
+
+2025-06-11  DaRK AnGeL <28630321+masterwishx@users.noreply.github.com>
+
+	* drivers/mge-hid.c: double fix
+	* drivers/mge-hid.c: small fixes
+	* drivers/mge-hid.c: added dummy and Conversion back of
+	  `eaton_input_eco_mode_auto_off[on]_fun()`
+
+2025-06-10  Hector Martin <marcan@marcan.st>
+
+	* drivers/apc_modbus.c: Fix interframe delay  The delay is supposed
+	  to be from *end* of a frame to *start* of the next. Also fix the
+	  type used for timestamp calculations (useconds_t is not big enough
+	  and overflows).  Fixes: #2609
+
+2025-06-08  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* drivers/nutdrv_qx_megatec.c: specify that we accept 38+ bytes as
+	  answer for "I" query, and any length after byte 28 till end of
+	  reply is ups.firmware [#2980]  Also finally bump the subdriver
+	  version for this PR
+	* NEWS.adoc, UPGRADING.adoc: note the 38 vs 39 byte expected response
+	  to "I" in nutdrv_qx::megatec subdriver [#2980]
+
+2025-06-06  Bill Elliot <bill@wreassoc.com>
+
+	* docs/acknowledgements.txt, docs/man/powervar-cx.txt, docs/nut.dict:
+	  Text and NUT.dict tweaks to pass distcheck-light
+
+2025-06-05  Bill Elliot <bill@wreassoc.com>
+
+	* docs/man/Makefile.am, docs/man/powervar-cx.txt: Man page fixes.
+	  Crossing T's and dotting I's.
+	* docs/acknowledgements.txt: Fix web link in, and add support note
+	  to, acknowledgements.txt
+	* drivers/powervar-cs.c, drivers/powervar-cu.c: Change versions from
+	  0.80 to 1.00 to prepare for release.
+
+2025-06-04  gksmsk <90905316+gksmsk@users.noreply.github.com>
+
+	* drivers/nutdrv_qx_megatec.c: Update nutdrv_qx_megatec.c  Added a
+	  parameter battery.runtime
+
+2025-06-04  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* configure.ac, docs/configure.txt: suggest a --with-drvpath that is
+	  not bindir but rather libexecdir
+	* NEWS.adoc: Updated `megatec` protocol for more detailed responses
+	  to `I` query [#2980]
+	* drivers/nutdrv_qx_megatec.c: revise comments for "I" query updates
+	* docs/man/nut.txt: reword coupling of upsmon with upssched
+	* docs/man/huawei-ups2000.txt: fix title
+	* docs/man/clone-outlet.txt, docs/man/clone.txt,
+	  docs/man/dummy-ups.txt, docs/man/failover.txt, docs/man/nut.txt,
+	  docs/man/tripplite_usb.txt: docs/man/*: fix man page section
+	  references for upsc/upscmd/upsrw/NUT-Monitor/upsmon/upssched (1 =>
+	  8)
+
+2025-06-03  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* NEWS.adoc, UPGRADING.adoc: report recent documentation/recipe
+	  improvements [#2976, #2946]
+	* docs/nut-versioning.adoc: version-related code moved from common.c
+	  to common-nut_version.c [#2913, #2097]  ...to reduce the
+	  rebuild/relink scope.
+	* docs/man/.gitignore, docs/man/Makefile.am, docs/man/index.txt,
+	  docs/nut.dict: docs/man/index.txt, docs/man/Makefile.am,
+	  docs/man/.gitignore: report the effect of
+	  DOC_INSTALL_SELECTED_MANS_PROGS_BUILT on delivered docs and indexed
+	  man pages
+
+2025-06-02  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* docs/man/Makefile.am: linkman-*.txt: depend on Makefile after all
+	  (adapt to varying configure choices)
+	* docs/man/Makefile.am: trace GENERATE-LINKMAN events during build
+	* docs/man/Makefile.am: actually honour
+	  DOC_INSTALL_SELECTED_MANS_BUILTPROGS toggle for linkman*.txt
+	  generation [networkupstools/nut-website#60]  Probably a lot more
+	  can be enhanced later, to also consider this in delivery of HTML
+	  MAN page renders, or finer-grained selections for even more
+	  optional drivers (nhs_ser on linux), clients (Python UI),
+	  development-only tools (like sockdebug), or platform-specific progs
+	  (nut.exe), etc.
+	* Makefile.am, docs/configure.txt, docs/maintainer-guide.txt: suggest
+	  or ensure `configure --enable-docs-man-for-progs-built-only=no` for
+	  dist/distcheck builds [networkupstools/nut-website#60]
+	* ci_build.sh: if we end up building and/or installing documentation,
+	  do parse all files (even if we do not build some programs here)
+	  [networkupstools/nut-website#60]
+	* configure.ac, docs/configure.txt, docs/nut.dict: configure.ac,
+	  docs/configure.txt: convert to use of separate option
+	  --enable-docs-man-for-progs-built-only=<yes|no>
+	  [networkupstools/nut-website#60]
+	* configure.ac, docs/configure.txt: introduce
+	  --with-docs=(all=)mans-builtprogs vs. mans-all
+	  [networkupstools/nut-website#60]
+	* docs/man/Makefile.am, docs/man/.gitignore: refactor generation of
+	  linkman-*.txt to pick up new driver lists in persistent NUT
+	  building workspaces [networkupstools/nut-website#60]
+	* docs/man/Makefile.am: linkman-*-names.txt: re-generate if the
+	  Makefile.am changes [networkupstools/nut-website#60]
+
+2025-05-30  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* ci_build.sh: default-all-errors: report count of SUCCEEDED and
+	  FAILED builds
+	* Makefile.am, NEWS.adoc: check-files-quick: only spellcheck-quick by
+	  default if we `configure --enable-spellcheck`
+	* configure.ac: NUT_REPORT_FEATURE(WITH_SPELLCHECK), not just
+	  AM_CONDITIONAL() it quietly
+	* conf/upsmon.conf.sample.in, docs/man/upsmon.conf.txt,
+	  docs/man/usbhid-ups.txt: mention that there are different
+	  "POLLFREQ" settings between upsmon and some drivers [#2974]
+
+2025-05-28  Sebastian Kuttnig <sebastian.kuttnig@gmail.com>
+
+	* drivers/failover.c, drivers/failover.h: drivers/failover.{c,h}:
+	  make UPS priorities more readable in code
+	* drivers/failover.c: improve guarding of ups->status against NULL
+	  dereference  Adds checks to ensure ups->status is not NULL before
+	  use, preventing a possible NULL pointer dereference.
+	* drivers/failover.c, drivers/failover.h: drivers/failover.{c,h}:
+	  store runtimes in UPS struct  These changes avoid constant lookups
+	  in the variable table for better performance.
+	* drivers/failover.c: minor improvements to order and debug levels
+	* docs/man/failover.txt, docs/nut.dict: introduce checkruntime
+	  argument
+	* drivers/failover.c, drivers/failover.h: drivers/failover.{c,h}:
+	  introduce checkruntime argument
+	* tests/nut-driver-enumerator-test.sh: reflect recent enumerator
+	  changes in test expectations [#2962]
+	* docs/man/failover.txt, drivers/failover.c, drivers/failover.h:
+	  drivers/failover.{c,h}, docs/man/failover.txt: use _sockfn() for
+	  one-shot connections  This change removes the dependency on
+	  splitting socket names into UPS and driver names. We now rely on
+	  the user to provide valid sockets: if it connects, it connects.
+	  This enables the use of full paths in the port argument also,
+	  improving flexibility and enhancing scriptability.
+
+2025-05-28  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* ci_build.sh, NEWS.adoc: default-all-errors: refactor to use of a
+	  common BUILDSTODO_LIST with one processing loop
+	* ci_build.sh: default-all-errors: report why we list e.g. 8
+	  scenarios and plan 7 runs (due to unmapped)
+	* ci_build.sh: default-all-errors: refactor
+	  BUILDSTODO_(SSL|USB|UNMAPPED) determination as size of bash array,
+	  not via expr maths
+	* ci_build.sh: default-all-errors: first pass conversion of
+	  NUT_(USB|SSL|UNMAPPED)_VARIANTS from strings to bash arrays
+	* ci_build.sh: default-all-errors: refactor FAILED/SUCCEEDED tracking
+	  as bash arrays
+	* ci_build.sh: default-all-errors: first steps to separate this
+	  BUILD_TYPE into "quick" and "exhaustive" variants
+	* docs/man/nut.txt, docs/man/index.txt: do not reference nut(7) when
+	  including the man page index for rendering the page itself [#2945]
+	* docs/man/nut.txt: rephrase NDE text
+	* docs/man/nut.txt: fix "notable clients" bullet-list rendering
+	* docs/man/nut-driver-enumerator.txt: update intro, mention
+	  driver-on-drver dependencies [#2962]
+	* NEWS.adoc: mention NDE change to track inter-driver dependency
+	  [#2962]
+	* NEWS.adoc: revise a few recent fixes
+
+2025-05-27  Sebastian Kuttnig <sebastian.kuttnig@gmail.com>
+
+	* drivers/dummy-ups.c: make upsdrv_cleanup() conditional on actual
+	  allocs, not mode
+	* drivers/dummy-ups.c: free ctx in upsdrv_cleanup() whenever
+	  allocated
+	* drivers/main.c: free temporary buffer in splitxarg()
+
+2025-05-26  Sebastian Kuttnig <sebastian.kuttnig@gmail.com>
+
+	* drivers/failover.c: use str_to_int() also in instcmd()
+	* drivers/failover.c: make csv_arg_to_array() more reusable
+	* drivers/failover.c: remove magic -1 from str_arg_to_int(), use
+	  INT_MIN/MAX instead
+	* drivers/failover.c: safer string to numeric conversions, improved
+	  argument handling
+
+2025-05-26  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* NEWS.adoc: revise announcement of upsdrvquery API updates [#2969]
+	  * Link to PR, since we already have one shared by the different
+	  highlighted achievements * Revise style to be same as in other
+	  lists
+	* scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in: report if other
+	  device uses unexpected driver [#2962]
+	* m4/nut_check_libnss.m4: add Mozilla MPS headers to "-isystem" bunch
+	  (CLANG/GCC builds)
+	* Jenkinsfile-dynamatrix: use same naming style (no parenthesis
+	  around C/C++ std version)
+	* docs/man/netxml-ups.txt, docs/man/snmp-ups.txt: fix title casing
+	* docs/man/skel.txt, docs/man/tripplite_usb.txt,
+	  docs/man/ups.conf.txt, docs/security.txt: docs/*: fix remaining
+	  links to man pages of external tools
+	* docs/man/bestups.txt, docs/man/upsd.txt, docs/man/upsmon.txt,
+	  docs/man/upssched.conf.txt, docs/man/upsset.cgi.txt:
+	  docs/man/*.txt: fix linkman references to conf-file man pages
+	  (default section 5 not 8)
+	* docs/man/nut.txt, docs/man/upsmon.conf.txt, docs/man/upsmon.txt,
+	  docs/nut.dict: Update upsmon(.conf) pages regarding SHUTDOWNCMD and
+	  root [#2970]  Closes: #2970
+	* docs/documentation.txt: refer to docs/man/nut.html from rendered
+	  docs [#2950]
+	* docs/man/Makefile.am: fix publication of nut.html on nut-website
+	  [#2950]
+	* docs/man/index.txt: publish linkman:nut[7] [#2950]
+
+2025-05-24  Sebastian Kuttnig <sebastian.kuttnig@gmail.com>
+
+	* drivers/upsdrvquery.c: drop redundant parentheses [#2963]
+	* drivers/upsdrvquery.c: consistent guarding of _read_timeout() ret
+	  cast [#2963]  The value of ret never exceeds the size of conn->buf,
+	  which is defined as LARGEBUF. However, defensive guarding against
+	  exceeding the buffer size was already in place for upsdebug_hex(),
+	  so make upsdebugx() call consistent with it.
+	* drivers/upsdrvquery.c: cast _read_timeout() ret directly to int
+	  [#2963]  The value of ret never exceeds the size of conn->buf,
+	  which is defined as LARGEBUF. A direct cast to int is safe in this
+	  context and avoids tautological comparison warnings on some
+	  platforms.
+	* drivers/upsdrvquery.c: make _restore_broadcast() return values
+	  consistent with _prepare()  A caller does not know about the
+	  underlying _write() call and should not care about the number of
+	  bytes written. Return -1 or 1 consistently, as already done the
+	  same in _prepare().
+	* NEWS.adoc: announce upsdrvquery API updates
+	* drivers/upsdrvquery.c, drivers/upsdrvquery.h:
+	  drivers/upsdrvquery.{c,h}: add _restore_broadcast(), call after
+	  _oneshot_conn() (best-effort)  The _oneshot_conn() function does
+	  not own the connection, so it should make a best-effort attempt to
+	  restore the connection chatter (re-enabling broadcast) before
+	  returning.  This ensures the caller receives the connection back in
+	  a reasonably consistent state.
+	* drivers/upsdrvquery.c: revise ownership of connections in _prepare
+	  and _request
+	* docs/man/failover.txt: fix incompatible characters
+	* drivers/Makefile.am: add failover.h for dists
+
+2025-05-23  Sebastian Kuttnig <sebastian.kuttnig@gmail.com>
+
+	* drivers/upsdrvquery.c, drivers/upsdrvquery.h:
+	  drivers/upsdrvquery.{c,h}: revise ownership and freeing of one-shot
+	  connections
+	* drivers/upsdrvquery.c, drivers/upsdrvquery.h:
+	  drivers/upsdrvquery.{c,h}: new oneshot functions, refactor existing
+	  without breaking API
+	* NEWS.adoc, docs/nut.dict: introduce upsdrvquery changes
+	* docs/man/failover.txt: add 3rd party tool use case for rationale
+	* docs/man/failover.txt: add limitations
+	* docs/man/failover.txt: add note to factor in network or
+	  lock-picking delays for inittime
+	* docs/man/failover.txt: make hyphens consistent
+	* drivers/failover.c: remove progname from non fatal log message
+	* docs/man/failover.txt: polish documentation and add rationale
+	* drivers/failover.c: safeguard ups_promote_primary against NULL or
+	  double promotion
+	* drivers/failover.c: show truncation content at end of log message
+	* drivers/failover.c: remove redundant _init() calls for status/alarm
+	* drivers/failover.c: do not fatalx on no connectable drivers, keep
+	  trying instead
+	* drivers/failover.c, drivers/failover.h: drivers/failover.{c,h}:
+	  introduce failover.h for defines, typedefs
+	* drivers/failover.c: use enum for priorities
+	* drivers/failover.c: use NUT_STRARG helper for null checks in
+	  various places
+
+2025-05-23  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* docs/config-notes.txt: fix reference to Augeas chapter in
+	  developer-guide [#2968]
+	* docs/man/nut_usb_addvars.txt: clarify the optionality and dangers
+	  of bus/busport/device settings [#2447]
+
+2025-05-22  Sebastian Kuttnig <sebastian.kuttnig@gmail.com>
+
+	* drivers/failover.c: reword shutdown to be more clear
+
+2025-05-22  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in: add support for
+	  "drivers=..." media type for dependencies, and failover driver
+	  using that [#2962]
+	* docs/nut.dict: add "resizing"
+	* Jenkinsfile-dynamatrix: extend "GNU C89/C++98 ... with GCC"
+	  (BUILD_WARNFATAL=yes BUILD_WARNOPT=auto) to also cover Strict C in
+	  all CI runs  Note: this differs from "Strict ANSI C" builds done in
+	  fightwarn branches, those try "minimal" and "hard" BUILD_WARNOPT
+	  types.
+	* Jenkinsfile-dynamatrix: "GNU C99+/C++11+" and "GNU C89/C++98 ...
+	  with GCC" should nowadays be BUILD_WARNFATAL=yes when
+	  BUILD_WARNOPT=auto
+	* Jenkinsfile-dynamatrix: "A build with all driver types...for other
+	  C/C++ revisions" - disable C99/C++98 checked as main revision
+	* Jenkinsfile-dynamatrix: update build scenario names to reflect
+	  warnings levels and standard versions
+	* tools/nut-scanner/nut-scanner.c, drivers/mge-hid.c,
+	  drivers/hwmon_ina219.c: fix source markup to remain compatible with
+	  C89 syntax
+	* NEWS.adoc: document fixes for adaptive varargs sizing [#2963]
+	* common/common.c: fix typo in comment
+
+2025-05-22  DaRK AnGeL <28630321+masterwishx@users.noreply.github.com>
+
+	* drivers/mge-hid.c: upsdebugx in  bypass and ecomode functions
+	  updated with %s: and __func__ for easy debug later
+
+2025-05-20  Sebastian Kuttnig <sebastian.kuttnig@gmail.com>
+
+	* drivers/upsdrvquery.c: safer comparison for printable_len [#2963]
+	* include/common.h: do not assume va_copy() to be a macro on all
+	  systems [#2963]
+	* configure.ac: more portable va_copy() checks [#2963]
+	* common/common.c: fix comment [#2963]
+	* drivers/upsdrvquery.c: fix comment [#2963]
+	* drivers/upsdrvquery.c: revise signed/unsigned comparison, account
+	  for ret < 0 [#2963]
+	* common/common.c: condense declarations and comments for va_copy()
+	  [#2963]
+	* common/common.c, configure.ac, include/common.h: configure.ac,
+	  common/common.{c,h}: define va_copy with __va_copy where
+	  needed/available [#2963]
+	* drivers/upsdrvquery.c: fix assumption about ret [#2963]
+	* drivers/upsdrvquery.c: account for non-null-terminated buffers
+	  [#2948]
+	* common/common.c: only upsize buffer in vupslog() if va copying is
+	  supported [#2948]
+	* configure.ac: test for va_copy and __va_copy
+
+2025-05-19  Sebastian Kuttnig <sebastian.kuttnig@gmail.com>
+
+	* drivers/failover.c: make defensive freeing consistent throughout
+	  the file
+	* drivers/failover.c: preserve which port value failed the argument
+	  parsing process
+	* drivers/failover.c: clean dstate after fsdmode 0, remove now freed
+	  var from exit debug
+	* drivers/failover.c: free parse_port_argument() tmp on premature
+	  exit [#2962]
+	* drivers/failover.c: add shutdown non-handling
+	* drivers/failover.c, NEWS.adoc: fixes for compiler warnings, add PR
+	  number to news entry [#2962]
+	* NEWS.adoc: introduce failover driver
+	* server/netget.c: rewrite upstream prefix for proxying drivers
+	* docs/man/Makefile.am, docs/man/failover.txt, docs/nut.dict,
+	  drivers/Makefile.am, drivers/failover.c: drivers/, docs/: introduce
+	  failover driver
+
+2025-05-18  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* Makefile.am: EXTRA_DIST ci_build.sh along with ci_build.adoc
+	* Makefile.am: Revert "Makefile.am: as long as we do not tarball
+	  ci_build.sh, do not deliver its doc either"  This reverts commit
+	  7a2e5d771c57f5768ced35e5d2994ed9f214a491: the doc is part of
+	  qa-guide. Makes more sense to also dist the script instead.
+
+2025-05-16  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* m4/ax_c_pragmas.m4: AX_C_PRINTF_STRING_NULL: detect also if
+	  gcc/clang would refuse printf("%s",NULL) if warnings are enabled
+	  (so NUT_STRARG must be enabled if auto)
+	* Makefile.am: as long as we do not tarball ci_build.sh, do not
+	  deliver its doc either
+	* ci_build.sh: default-all-errors: if CI_FAILFAST is triggered in
+	  SSL/USB loops, do not go for NUT_UNMAPPED_VARIANT either
+	* drivers/dstate.c: sock_fail(): suggest more ways to "ps|grep"
+	  [#2959]
+
+2025-05-16  DaRK AnGeL <28630321+masterwishx@users.noreply.github.com>
+
+	* data/cmdvartab, docs/nut-names.txt, drivers/mge-hid.c: rename to
+	  `experimental.bypass.ecomode.start[stop]` from
+	  `experimental.ecomode.start[stop].auto`
+
+2025-05-15  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* drivers/solis.c: cast NULL as "char*" when sending it to print
+	* drivers/dstate.c, NEWS.adoc: sock_fail(): suggest things to try if
+	  a (maybe non-socket) filesystem object already exists
+	* drivers/dstate.c: sock_fail(): limit the impact of failed
+	  getpwuid() when reporting the problem
+	* NEWS.adoc, drivers/adelsystem_cbi.c, drivers/al175.c,
+	  drivers/apc_modbus.c, drivers/apcsmart-old.c, drivers/apcsmart.c,
+	  drivers/bcmxcp.c, drivers/belkin.c, drivers/belkinunv.c,
+	  drivers/bestfcom.c, drivers/bestfortress.c, drivers/bestuferrups.c,
+	  drivers/bestups.c, drivers/bicker_ser.c, drivers/blazer.c,
+	  drivers/clone.c, drivers/dummy-ups.c, drivers/etapro.c,
+	  drivers/everups.c, drivers/gamatronic.c, drivers/generic_modbus.c,
+	  drivers/huawei-ups2000.c, drivers/isbmex.c, drivers/liebert-esp2.c,
+	  drivers/liebert-gxe.c, drivers/macosx-ups.c, drivers/main.c,
+	  drivers/masterguard.c, drivers/metasys.c, drivers/mge-utalk.c,
+	  drivers/microdowell.c, drivers/microsol-common.c,
+	  drivers/netxml-ups.c, drivers/nut-ipmipsu.c,
+	  drivers/nutdrv_atcl_usb.c, drivers/nutdrv_hashx.c,
+	  drivers/nutdrv_qx.c, drivers/nutdrv_qx_voltronic.c,
+	  drivers/nutdrv_siemens_sitop.c, drivers/oneac.c, drivers/optiups.c,
+	  drivers/pijuice.c, drivers/powercom.c, drivers/powerman-pdu.c,
+	  drivers/powerp-bin.c, drivers/powerp-txt.c, drivers/rhino.c,
+	  drivers/richcomm_usb.c, drivers/riello_ser.c, drivers/riello_usb.c,
+	  drivers/safenet.c, drivers/skel.c, drivers/sms_ser.c,
+	  drivers/snmp-ups.c, drivers/solis.c, drivers/tripplite.c,
+	  drivers/tripplite_usb.c, drivers/tripplitesu.c, drivers/upscode2.c,
+	  drivers/usbhid-ups.c, drivers/victronups.c: drivers/*.c, NEWS.adoc:
+	  revise logging of instcmd() where upslog_INSTCMD_POWERSTATE*()
+	  macros shine
+	* drivers/upshandler.h: introduce upslog_INSTCMD_POWERSTATE*() macros
+	  and LOG_INSTCMD_POWERSTATE level
+	* clients/upsclient.c: avoid using upslog*() methods with numeric log
+	  level instead of a syslog macro
+	* drivers/powerman-pdu.c, drivers/snmp-ups.c,
+	  drivers/tripplite_usb.c, drivers/usbhid-ups.c, drivers/ve-direct.c:
+	  drivers/*: avoid using upslog*() methods with numeric log level
+	  instead of a syslog macro
+	* drivers/dummy-ups.c: setvar(): update a FIXME comment
+
+2025-05-14  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* drivers/adelsystem_cbi.c, drivers/al175.c, drivers/apc_modbus.c,
+	  drivers/apcsmart-old.c, drivers/apcsmart.c, drivers/bcmxcp.c,
+	  drivers/belkin.c, drivers/belkinunv.c, drivers/bestfcom.c,
+	  drivers/bestfortress.c, drivers/bestuferrups.c, drivers/bestups.c,
+	  drivers/bicker_ser.c, drivers/blazer.c, drivers/blazer_ser.c,
+	  drivers/blazer_usb.c, drivers/clone.c, drivers/dstate.c,
+	  drivers/dummy-ups.c, drivers/etapro.c, drivers/everups.c,
+	  drivers/gamatronic.c, drivers/generic_modbus.c,
+	  drivers/huawei-ups2000.c, drivers/isbmex.c, drivers/ivtscd.c,
+	  drivers/liebert-esp2.c, drivers/liebert-gxe.c,
+	  drivers/macosx-ups.c, drivers/main.c, drivers/masterguard.c,
+	  drivers/metasys.c, drivers/mge-utalk.c, drivers/microdowell.c,
+	  drivers/microsol-common.c, drivers/netxml-ups.c,
+	  drivers/nut-ipmipsu.c, drivers/nutdrv_atcl_usb.c,
+	  drivers/nutdrv_hashx.c, drivers/nutdrv_qx.c,
+	  drivers/nutdrv_qx_blazer-common.c, drivers/nutdrv_siemens_sitop.c,
+	  drivers/oneac.c, drivers/optiups.c, drivers/pijuice.c,
+	  drivers/powercom.c, drivers/powerman-pdu.c, drivers/powerp-bin.c,
+	  drivers/powerp-txt.c, drivers/rhino.c, drivers/richcomm_usb.c,
+	  drivers/riello_ser.c, drivers/riello_usb.c, drivers/safenet.c,
+	  drivers/skel.c, drivers/sms_ser.c, drivers/snmp-ups.c,
+	  drivers/solis.c, drivers/tripplite.c, drivers/tripplite_usb.c,
+	  drivers/tripplitesu.c, drivers/upscode2.c, drivers/usbhid-ups.c,
+	  drivers/ve-direct.c, drivers/victronups.c: drivers/*.c: revise
+	  logging of instcmd() and setvar() or their equivalents to be
+	  consistent across all drivers [WIP]
+	* drivers/dummy-ups.c: instcmd(), setvar(): test conversion to new
+	  logging macros  Testing:  :; NUT_STATEPATH=/tmp ./drivers/dummy-ups
+	  -DDDDDD -s test -x port= & :; (echo NOBROADCAST ; echo "INSTCMD
+	  qqq" ; sleep 3 ; echo "INSTCMD qqq arg" ; sleep 3 ; echo "SET qqq"
+	  ; sleep 3 ; echo "SET qqq 123" ; sleep 10; ) | ./server/sockdebug
+	  /tmp/dummy-ups-test  Outputs:  8.003940     [D6] sock_arg: Driver
+	  on /tmp/dummy-ups-test is now handling INSTCMD with 2 args 8.003974
+	  [D2] entering main_instcmd(qqq, (null)) for [test] on socket 5
+	  8.003982     [D2] shared main_instcmd() does not handle command
+	  qqq, proceeding to driver-specific handler 8.004017     [D1]
+	  Starting dummy-ups.c::instcmd('qqq', '(null)') 8.004049
+	  instcmd: unknown command [qqq] [(null)]  8.004059     [D6]
+	  sock_arg: Driver on /tmp/dummy-ups-test is now handling INSTCMD
+	  with 3 args 8.004068     [D2] entering main_instcmd(qqq, arg) for
+	  [test] on socket 5 8.004075     [D2] shared main_instcmd() does not
+	  handle command qqq, proceeding to driver-specific handler 8.004080
+	  [D1] Starting dummy-ups.c::instcmd('qqq', 'arg') 8.004086
+	  instcmd: unknown command [qqq] [arg]  (apparently the two got
+	  coalesced by delay between main.c loops)  11.504627    [D6]
+	  sock_arg: Driver on /tmp/dummy-ups-test is now handling SET with 2
+	  args 11.504669    Unknown command on socket: 11.504675    arg 0:
+	  SET 11.504678    arg 1: qqq  (SET must have an argument)  14.004807
+	  [D6] sock_arg: Driver on /tmp/dummy-ups-test is now handling SET
+	  with 3 args 14.004856    [D2] entering main_setvar(qqq, 123) for
+	  [test] on socket 5 14.004867    [D2] shared main_setvar() does not
+	  handle variable qqq, proceeding to driver-specific handler
+	  14.004874    [D1] Starting dummy-ups.c::setvar('qqq', '123')
+	  14.004930    [D2] find_info: unknown variable: qqq 14.004979
+	  [D1] Unknown data. Committing anyway... 14.004992    [D2]
+	  find_info: unknown variable: qqq 14.004997    [D1] Unknown data.
+	  Committing value anyway... 14.005062    [D5] send_to_all: SETINFO
+	  qqq "123" 14.005113    [D2] find_info: unknown variable: qqq
+	  14.005125    [D2] setvar: unknown variable (qqq), using default
+	  flags 14.005133    [D5] send_to_all: SETFLAGS qqq RW STRING
+	  14.005144    [D5] send_to_all: SETAUX qqq 32
+	* drivers/upshandler.h, NEWS.adoc: introduce macros for common syslog
+	  level definitions and message wording for beginning and failing
+	  instcmd() or setvar() consistently in different drivers
+	* drivers/mge-utalk.c: setvar(): return STAT_SET_HANDLED when due
+	* drivers/oneac.c: instcmd(): use consistent method argument markup
+	  (spaces)
+	* NEWS.adoc, drivers/usbhid-ups.c, drivers/usbhid-ups.h:
+	  drivers/usbhid-ups.{c,h}, NEWS.adoc: rename
+	  HU_FLAG_CMD_PARAM_REQUIRED => HU_FLAG_PARAM_REQUIRED and extend to
+	  setvar() too [#2955, #2860]
+
+2025-05-14  DaRK AnGeL <28630321+masterwishx@users.noreply.github.com>
+
+	* data/cmdvartab, docs/nut-names.txt, drivers/mge-hid.c: added cmd
+	  "experimental.ecomode.start.auto" "experimental.ecomode.stop.auto"
+
+2025-05-13  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* drivers/usbhid-ups.h, drivers/usbhid-ups.c, NEWS.adoc,
+	  docs/nut.dict: introduce HU_FLAG_CMD_PARAM_REQUIRED and a
+	  HU_TYPE_CMD_PARAM_REQUIRED shortcut for setting in the mapping
+	  tables  Complete the feature started in commit
+	  7991e4592e042f16f5e0757083f0fd58503e8a5e which became a regression
+	  of NUT v2.8.3 [#2860].
+	* drivers/usbhid-ups.c: drop EOL from single-line upsdebugx() reports
+	* drivers/usbhid-ups.h: bump (C)
+	* drivers/usbhid-ups.h: revise comment markup
+
+2025-05-12  penghong <penghong20000102@163.com>
+
+	* data/driver.list.in: Added some descriptions of UPS equipment.
+
+2025-05-12  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* tools/driver-list-format.sh: refactor VALID_LINE definition [#2953]
+	* tools/driver-list-format.sh, data/Makefile.am: recognize
+	  caller-provided srcdir or builddir; use the latter for output
+	  files; include "/data" part inside DRVLIST_PATH
+	* data/driver.list.in: fix markup of older entries
+	* tools/driver-list-format.sh: document the updated purpose, add
+	  copyrights
+	* tools/driver-list-format.sh: do not replace original file if it is
+	  same (do not confuse "make" and mess up archive timestamps)
+	* tools/driver-list-format.sh: fix also separators made of more than
+	  one TAB or a mix of TABs and spaces
+	* tools/driver-list-format.sh: verify that lines are either empty,
+	  all-comments, or have six fields (and optional comment)
+	* tools/driver-list-format.sh: prefix lines with script name to help
+	  see it in "make" log; revise message in case something "needs to be
+	  fixed"
+	* tools/driver-list-format.sh: TAB-separate the optional trailing
+	  comment from the last required field
+	* tools/driver-list-format.sh: rearrange the logic as a chain for
+	  better maintenance; use single-quotes around regex with a dollar
+	* tools/driver-list-format.sh: document the SED logic
+	* data/Makefile.am, data/.gitignore: take care of
+	  driver.list{,.in}.tabbed files if they are left over
+	* Makefile.am, data/Makefile.am, tools/driver-list-format.sh,
+	  tools/Makefile.am: add a check (not change) mode for driver.list
+	  markup [#2952]
+	* docs/man/Makefile.am, docs/man/apc_modbus.txt,
+	  docs/man/generic_modbus.txt, docs/man/networked_hostnames.txt,
+	  docs/man/netxml-ups.txt, docs/man/nut-ipmipsu.txt,
+	  docs/man/powerman-pdu.txt, docs/man/snmp-ups.txt: Introduce
+	  docs/man/networked_hostnames.txt caveat, include it into networked
+	  driver man pages
+
+2025-05-12  Jim Klimov <jim@jimklimov.com>
+
+	* docs/man/blazer_ser.txt, docs/man/blazer_usb.txt: inject a dummy
+	  "linkman" for .txt-prepped rewriter to patch up the man section
+	  [#2950]
+	* docs/man/nut.txt: elaborate more on "File or directory not found"
+	  messages, permissions, config files and nut-scanner
+	* docs/man/nut.txt: point to NUT Configuration Examples book
+
+2025-05-11  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* drivers/dstate.c, tests/driver_methods_utest.c: check that LB can
+	  be set and status set+commit+set+commit (without init in the
+	  middle) adds reported tokens [#2934]
+
+2025-05-11  Jim Klimov <jim@jimklimov.com>
+
+	* docs/configure.txt: note that "datadir" for NUT must include the
+	  "/nut" part
+	* NEWS.adoc, UPGRADING.adoc, configure.ac, docs/configure.txt,
+	  docs/man/Makefile.am: configure.ac, docs/configure.txt,
+	  docs/man/Makefile.am: introduce "configure
+	  --with-docs-man-dir-as-base"
+	* .../python/app/locale/fr/LC_MESSAGES/NUT-Monitor.mo,
+	  .../python/app/locale/it/LC_MESSAGES/NUT-Monitor.mo,
+	  .../python/app/locale/ru/LC_MESSAGES/NUT-Monitor.mo:
+	  scripts/python/app/locale/*/LC_MESSAGES/NUT-Monitor.mo: update
+	  after Qt6 bump [#2946]
+	* docs/man/nut.txt, docs/nut.dict: docs/man/nut.txt: add a chapter on
+	  NUT Run-time Nuances
+	* configure.ac, docs/configure.txt, docs/man/Makefile.am:
+	  configure.ac: auto-tune man page sections by platform
+	  (Solaris/illumos, and everyone else)
+	* configure.ac: line-break test for strdup()
+
+2025-05-11  DaRK AnGeL <28630321+masterwishx@users.noreply.github.com>
+
+	* data/cmdvartab, docs/nut-names.txt, drivers/mge-hid.c: remove
+	  experimental.ecomode.[start/stop].auto var/cmd funtions for working
+	  in another pr and clean this pr
+
+2025-05-10  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* NEWS.adoc, drivers/dstate.c, tests/driver_methods_utest.c: Update
+	  asciidoc and C markup, and (C) headings [#2934]
+
+2025-05-10  DaRK AnGeL <28630321+masterwishx@users.noreply.github.com>
+
+	* drivers/mge-hid.c: removed unused vars
+	* drivers/mge-hid.c: experimental.ecomode.stop/start.auto added as
+	  commands for test after compiled
+	* drivers/mge-hid.c: input.bypass.switch.on", "disabled (useless,
+	  onlly on,off can be runned) to "input.bypass.switch.off", "off"
+	  ,aded function of eaton_input_bypass_check_range(value); ,
+	  eaton_input_eco_mode_check_range(value);
+
+2025-05-09  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* docs/man/usbhid-ups.txt, NEWS.adoc, UPGRADING.adoc: revise
+	  whitespace/markup [#2944]
+
+2025-05-09  DaRK AnGeL <28630321+masterwishx@users.noreply.github.com>
+
+	* drivers/mge-hid.c: change place of 0-1  in
+	  eaton_input_eco_mode_auto_on_off_info()
+	* data/cmdvartab, docs/nut-names.txt, drivers/mge-hid.c:
+	  experimental.ecomode.[start/stop] to experimental.ecomode.auto
+
+2025-05-08  Sebastian Kuttnig <sebastian.kuttnig@gmail.com>
+
+	* NEWS.adoc: introduce NUT-Monitor-py3qt6
+	* docs/man/Makefile.am: introduce NUT-Monitor-py3qt6
+	* configure.ac: handle both py3qt5 and py3qt6 or either
+	* docs/configure.txt, docs/man/NUT-Monitor.txt, docs/new-clients.txt,
+	  docs/nut.dict: docs/*: introduce NUT-Monitor-py3qt6
+	* scripts/python/Makefile.am, scripts/python/app/NUT-Monitor: handle
+	  PyQt5 and PyQt6
+	* scripts/python/README.adoc,
+	  scripts/python/app/NUT-Monitor-py3qt6.in,
+	  scripts/python/app/README.adoc,
+	  scripts/python/app/nut-monitor-py3qt6.desktop:
+	  scripts/python/app/*: introduce Py3Qt6 port for NUT Monitor
+	* scripts/python/app/.gitignore,
+	  scripts/python/app/locale/NUT-Monitor.pot,
+	  scripts/python/app/locale/fr/fr.po,
+	  scripts/python/app/locale/it/it.po,
+	  scripts/python/app/locale/ru/ru.po,
+	  scripts/python/app/ui/aboutdialog1.ui,
+	  scripts/python/app/ui/gui-1.3.glade,
+	  scripts/python/app/ui/gui-1.3.glade.h: scripts/python/app/*: bump
+	  structure, version for Qt6
+
+2025-05-08  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* docs/config-prereqs.txt: update for Python3 + Qt6 since 2025
+	  distros [#2946]
+	* scripts/python/app/NUT-Monitor-py3qt6.in: fix exec bit and
+	  whitespace alignment [#2946]
+	* NEWS.adoc, UPGRADING.adoc: document introducing the text for a way
+	  to "man nut" [#2945]
+	* docs/man/index.txt, docs/man/nut.txt, docs/nut.dict:
+	  docs/man/nut.txt, docs/man/index.txt: revise inclusion of index
+	  into "man nut" and restore the "Platform Management" sub-sectioning
+	* docs/man/index.txt: drop colons from section names
+	* docs/man/index.txt: add placeholder sections for more Platform
+	  Management types (to be documented)
+	* docs/man/index.txt: avoid deep section title layers
+	* docs/maintainer-guide.txt: no need to edit any files to publish a
+	  NUT for Windows build artifact
+	* docs/download.txt: add a link for NUT for Windows artifact
+	* docs/maintainer-guide.txt: update with AppVeyor CI artifact
+	  publication (NUT for Windows)
+
+2025-05-08  DaRK AnGeL <28630321+masterwishx@users.noreply.github.com>
+
+	* drivers/mge-hid.c: experimental.ecomode.[start/stop].auto move to
+	  uprw + set NULL to last argument for bypass and ecomode cmds
+
+2025-05-07  invario <67800603+invario@users.noreply.github.com>
+
+	* docs/nut.dict: Updated nut.dict after spellcheck
+	* NEWS.adoc, UPGRADING.adoc, data/driver.list.in,
+	  docs/man/usbhid-ups.txt, drivers/usbhid-ups.c: Update adds APC
+	  BVKnnnnM2 to list of devices being affected by spurious LB/RB
+	  issues and allows users to apply corresponding tweaks
+
+2025-05-07  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* docs/man/Makefile.am, docs/man/nut.txt, docs/nut.dict: introduce a
+	  way to "man nut"
+	* NEWS.adoc, UPGRADING.adoc, configure.ac, docs/Makefile.am,
+	  docs/configure.txt, docs/man/Makefile.am: configure.ac,
+	  docs/Makefile.am, docs/man/Makefile.am etc.: introduce support for
+	  MAN_SECTION_MISC
+	* docs/Makefile.am: ChangeLog.html-contentchecked: entry_filter():
+	  refactor the regex for special-char escaping for pure(r)-POSIX
+	  portability [#2940]
+	* NEWS.adoc: rephrase innovart31 protocol support in nutdrv_qx
+	  [#2938]
+
+2025-05-06  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* NEWS.adoc: announce nutdrv_hashx driver [#2940]
+	* docs/Makefile.am: ChangeLog.html-contentchecked: entry_filter():
+	  escape some content characters that are special for regex later
+	  [#2940]
+	* docs/Makefile.am: ChangeLog.html-contentchecked: refactor with a
+	  common entry_filter()
+	* drivers/nutdrv_hashx.c: fix status_bytes_size printing [#2940]
+	* data/driver.list.in: fix markup: TAB before optional comment
+	* NEWS.adoc: announce new innovart33 protocol support in nutdrv_qx
+	  [#2938]
+
+2025-05-05  Marco Trevisan (Treviño) <mail@3v1n0.net>
+
+	* docs/nut-names.txt, drivers/nutdrv_hashx.c: drivers/nutdrv_hashx:
+	  Add Implement start / stop beeper test
+	* data/cmdvartab, docs/nut-names.txt: data/nut-names: Add
+	  experimental commands to test the UPS beeper/buzzer  Various UPS
+	  have this command to test the hardware beep, but NUT is not
+	  providing the command.  I feel this could be not experimental, but
+	  let's make it as such for now since we only need for one driver
+	  AFAIK
+	* data/driver.list.in: data/drivers.list: Mention other UPS that
+	  nutdrv_hashx should support  Update the drivers list based on what
+	  the official websites of the producers say, as these all are
+	  expected to work with PowerManager+, and so they should also work
+	  with nitdrv_hashx
+	* drivers/nutdrv_hashx.c: drivers/nutdrv_hashx: Add support for
+	  running instant actions  Support running commands for instant
+	  actions so that it's possible to interactively run them from NUT
+	  too
+	* drivers/skel.c: drivers/skel: Fix reference to nut-names doc file
+
+2025-05-04  desertwitch <24509509+desertwitch@users.noreply.github.com>
+
+	* drivers/clone.c: refactor core driver logic, minor fixes around
+	  previous work [#2936]
+
+2025-05-04  Viktor Drobot <linux776@gmail.com>
+
+	* docs/man/nutdrv_qx.txt, docs/nutdrv_qx-subdrivers.txt,
+	  drivers/Makefile.am, drivers/nutdrv_qx.c,
+	  drivers/nutdrv_qx_blazer-common.c,
+	  drivers/nutdrv_qx_blazer-common.h, drivers/nutdrv_qx_innovart33.c,
+	  drivers/nutdrv_qx_innovart33.h: Add support (experimental) for
+	  Ippon Innova RT 3/3
+
+2025-05-04  Marco Trevisan (Treviño) <mail@3v1n0.net>
+
+	* AUTHORS, data/driver.list.in, docs/man/Makefile.am,
+	  docs/man/nutdrv_hashx.txt, docs/nut.dict, drivers/Makefile.am,
+	  drivers/nutdrv_hashx.c: drivers/nutdrv_hashx: Add new driver for
+	  PowerManager+ supported devices  Add an initial driver for the "#*"
+	  protocol support that is used by many UPS out there that rely on
+	  the proprietary software suites PowerMaster+, PowerMaster,
+	  PowerGuide and so on...  The naming of the driver has been chosen
+	  since all the UPS replies start with an "#", while there's not a
+	  definitive common pattern for the queries or commands.  Apparently
+	  the same protocol is used by various UPS devices, both online and
+	  line-interactive (given that many producers advertise to use the
+	  said programs), and only in serial mode (AFAIK). Although this
+	  driver has solely been tested with the Atlantis Land S1200
+	  line-interactive UPS.  So there may be missing features (such as
+	  the bypass mode) or lack of information. However most of the
+	  decoding has been done and the driver is enough to update the UPS
+	  status for monitoring and shutdown purposes.  As for now, only the
+	  status updates features have been implemented.   Closes: #2769
+
+2025-05-03  desertwitch <24509509+desertwitch@users.noreply.github.com>
+
+	* drivers/clone.c: reduce redundant argument parsing, debug messages
+	  [#2936]
+	* drivers/clone.c: further improve outlet status detection, debug
+	  messages [#2936]
+	* drivers/clone.c: revise outlet status logic, raise OFF for
+	  turned-off outlets  No longer evaluate outlet status in instant
+	  command handling, but rather in the main update cycle. Raising OFF
+	  for a turned-off outlet aligns with the behavior of the
+	  clone-outlet driver.
+	* drivers/clone-outlet.c: fix whitespace [#2936]
+	* NEWS.adoc, drivers/clone-outlet.c, drivers/clone.c:
+	  drivers/clone{,-outlet}.c, NEWS.adoc: modernize status handling
+	* NEWS.adoc: fill in pull request numbers for recent changes
+	* NEWS.adoc: add nhs_ser, nutdrv_qx_ablerex modern alarm and status
+	  handling changes
+	* drivers/nutdrv_qx_ablerex.c: modernize alarm handling
+	* drivers/dummy-ups.c, docs/man/dummy-ups.txt, NEWS.adoc: introduce
+	  ALARM instruction for dummy modes
+
+2025-05-01  desertwitch <24509509+desertwitch@users.noreply.github.com>
+
+	* drivers/nhs_ser.c: modernize status and alarm handling
+	* AUTHORS, docs/nut.dict: add desertwitch
+	* tests/driver_methods_utest.c, NEWS.adoc: bump subdriver version,
+	  announce dstate changes
+	* docs/developers.txt: fix typo [#2932]
+
+2025-04-30  desertwitch <24509509+desertwitch@users.noreply.github.com>
+
+	* drivers/dstate.c: do not add whitespace on lone alarm [#2931]
+	* tests/driver_methods_utest.c: adapt for legacy and modern alarms
+	  [#2931]
+	* clients/upsmon.c: clarifications and beautifications for legacy
+	  alarms [#2931]
+	* drivers/dstate.c: keep legacy alarms unchanged, do not decouple
+	  from status [#2931]
+	* docs/new-drivers.txt: clarify alarm state handling
+
+2025-04-30  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* docs/config-prereqs.txt, docs/nut.dict: generalize the title/intro
+	  for chapter on APT-based Debian-derived Linux systems [#2923]
+	* NEWS.adoc: clarify "driver updates" in section title
+	* docs/man/nutdrv_qx.txt: typo fix (extra spaces)
+	* ci_build.sh: add NUT_UNMAPPED_VARIANTS to
+	  BUILD_TYPE="default-all-errors" matrix
+	* ci_build.sh: revise default stance towards WITH_UNMAPPED_DATAPOINTS
+	  values
+
+2025-04-29  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* docs/Makefile.am: .adoc-parsed generator: rewrite "+" in URLs to
+	  "%2B" [#1407]  Help with ChangeLog entry for an old URL buried in
+	  commit message years ago, from a branch getting merged just now.
+	* docs/nut.dict: teach all systems that "inverters" is also a word
+	  [#1407]
+	* tests/Makefile.am: restructure and comment cppunittest_LDADD and
+	  cppnit_LDADD [#2744]  One positive result of experiments in PR
+	  #2744 which otherwise did not lead far, yet...
+	* docs/Makefile.am: .adoc-parsed generator: rewrite "+" in URLs to
+	  "%2B" [#1407]  Help with ChangeLog entry for an old URL buried in
+	  commit message years ago, from a branch getting merged just now.
+	* NEWS.adoc: URL-encode the plus character in GitHub URL (branch name
+	  part) [#1407]
+	* NEWS.adoc: document the fix of failed `configure
+	  --with-drivers=dummy-ups` scenario [#2927]
+	* configure.ac: get_drivers_makefile_value(): recurse to expand make
+	  variables in discovered values [#2927]
+	* configure.ac: rename get_drvlist() => get_drivers_makefile_value()
+	  [#2927]
+	* configure.ac: get_drvlist(): do not forget dollar chars; do drop
+	  $(EXEEXT) though [#2927]
+	* configure.ac: get_drvlist(): trim multiple repetitive SPACES per
+	  combined line into one space each [#2927]
+	* configure.ac: get_drvlist(): quick-return from the loop after we
+	  finish reading the assignment (may be multi-line) [#2927]
+	* docs/nut.dict: teach all systems that "inverters" is also a word
+	  [#1407]
+
+2025-04-28  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* docs/nut.dict: teach all systems that "photovoltaic" is a word
+	  [#1407]
+	* drivers/nutdrv_qx_ablerex.c, drivers/nutdrv_qx_ablerex.h,
+	  drivers/powervar-hid.h: drivers/nutdrv_qx_ablerex.{c,h},
+	  drivers/powervar-hid.h: fix POSIX attrs in git
+	* docs/nutdrv_qx-subdrivers.txt: clarify how the "protocol" names are
+	  determined
+	* docs/nut.dict: teach all systems that "photovoltaic" is a word
+	  [#1407]
+	* drivers/nutdrv_qx_voltronic-axpert.c: voltronic_sunny_fault(): use
+	  alarm[LARGEBUF] so that item->value[SMALLBUF] can fit with added
+	  markup [#1407]  ...not that we expect problems with this, but
+	  compiler warns they are feasible: error: '%s' directive output may
+	  be truncated writing up to 511 bytes into a region of size 497
+	  [-Werror=format-truncation=]
+	* drivers/nutdrv_qx_voltronic-axpert.c: use double-TABs with
+	  TESTING_AXPERT* macro definitions for better visibility [#1407]
+	* drivers/nutdrv_qx_voltronic-axpert.c: suggest how to timker with
+	  TESTING_AXPERT* macros [#1407]
+	* docs/man/nutdrv_qx.txt, docs/nut.dict: add voltronic-axpert info
+	  [#1407]
+	* drivers/nutdrv_qx_ablerex.c, drivers/nutdrv_qx_ablerex.h,
+	  drivers/powervar-hid.h: drivers/nutdrv_qx_ablerex.{c,h},
+	  drivers/powervar-hid.h: fix POSIX attrs in git
+	* docs/nutdrv_qx-subdrivers.txt: clarify how the "protocol" names are
+	  determined
+	* configure.ac, scripts/Windows/dllldd.sh: use question mark in grep
+	  regex, that seems to work everywhere and suits the purpose better
+	  [#2920]
+
+2025-04-27  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* docs/man/victronups.txt: fix a few typos
+	* docs/man/ve-direct.txt: fix man page markup to NUT v2.8.3 patterns,
+	  fix a few typos [#440]
+	* docs/daisychain.txt: docs/daisychain.txt" fix typo (duplicate "the
+	  the")
+	* configure.ac: quieter grep for unbuildable doc formats
+	* configure.ac: clarify why unbuildable doc formats are just warnings
+	  initially
+	* configure.ac, NEWS.adoc: fix regression of `configure
+	  --with-docs=all` released with NUT v2.8.3  Fallout of #2842, used
+	  wrong variable name for checking the requested list of doc types
+	* configure.ac: fix indentation
+	* configure.ac: make use of NUT_REPORT_FEATURE() arg #6 to produce
+	  saner message wording
+	* m4/nut_report_feature.m4: NUT_REPORT_FEATURE: allow other prefixes
+	  than "whether to"
+	* configure.ac: NUT_REPORT_FEATURE("requested to build and install
+	  documentation") to also report the decided nut_doc_build_list of
+	  specific required formats
+	* configure.ac: use better portable regex syntax
+	* scripts/Windows/dllldd.sh: use better portable regex syntax
+	* tools/gitlog2version.sh: use better portable regex syntax
+
+2025-04-26  desertwitch <24509509+desertwitch@users.noreply.github.com>
+
+	* drivers/cps-hid.c: bump subdriver version, rename nominal power
+	  constant [#2919]
+	* NEWS.adoc: cps-hid nominal power reporting fixes
+	* drivers/cps-hid.c: consider also non-broken ConfigActivePower
+	  descriptors [#2919]
+	* drivers/cps-hid.c: add report descriptor fix for ConfigActivePower
+
+2025-04-26  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* NEWS.adoc: added a ve-direct driver for Victron Energy UPS/solar
+	  panels monitoring [#440]
+	* drivers/ve-direct.c: cast the int type for hex scanf() [#440]
+	* NEWS.adoc, docs/nut.dict: NEWS.adoc: introduced Voltronic Axpert
+	  inverter subdriver [#1407]
+
+2025-04-25  Jim Klimov <jimklimov@gmail.com>
+
+	* drivers/ve-direct.c: fix code style (markup, declarations before
+	  code) [#440]
+
+2025-04-25  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* ci_build.sh: introduce (or guess) WITH_UNMAPPED_DATAPOINTS optional
+	  toggle
+	* ci_build.sh: add --with-unmapped-data-points for non-production
+	  builds
+	* docs/developers.txt, docs/nut.dict: document avoiding VLA
+	* drivers/ve-direct.c: fix declaration after code [#440]
+	* drivers/nutdrv_qx_voltronic-axpert.c: name "experimental.*" values
+	  in the mapping table as such; comment a few of them [#1407]
+	* drivers/nutdrv_qx_voltronic-axpert.c: fence yet-unmapped data
+	  points and commands (and their processing methods) better than "#if
+	  0" [#1407]
+	* ci_build.sh: introduce (or guess) WITH_UNMAPPED_DATAPOINTS optional
+	  toggle
+	* ci_build.sh: add --with-unmapped-data-points for non-production
+	  builds
+	* drivers/nutdrv_qx_voltronic-axpert.c: fix whitespace [#1407]
+	* drivers/nutdrv_qx_voltronic-axpert.c: fix to use snprintf_dynamic()
+	  to check dynamic formating string sanity at run-time [#1407]
+	* drivers/nutdrv_qx_voltronic-axpert.c: avoid direct comparison of
+	  int and float [#1407]
+	* drivers/nutdrv_qx_voltronic-axpert.c: avoid variable-length buffer
+	  init [#1407]
+	* drivers/nutdrv_qx_voltronic-axpert.c: avoid missing field
+	  initializers [#1407]
+	* drivers/nutdrv_qx_voltronic-axpert.c: avoid daclarations after code
+	  [#1407]
+	* drivers/nutdrv_qx_voltronic-axpert.c: voltronic_axpert_crc():
+	  annotate NUT_UNUSED_VARIABLE(item) [#1407]
+	* drivers/nutdrv_qx_voltronic-axpert.c: annotate
+	  NUT_UNUSED_VARIABLE(len) in some methods [#1407]
+	* docs/developers.txt, docs/nut.dict: document avoiding VLA
+	* drivers/common_voltronic-crc.c: avoid variable-length buffer init
+	  [#1407]
+	* drivers/nutdrv_qx.c: armac_command() reconcile use of now known
+	  cmdlen arg vs. strlen(cmd) content [#1407]
+	* drivers/nutdrv_qx.c: gtec_command(): add cmdlen arg and use it for
+	  sanity-check along the way [#1407]
+	* drivers/nutdrv_qx.c: ablerex_command(): use cmdlen arg for
+	  sanity-check along the way [#1407]
+	* drivers/ve-direct.c: trivialize upsdrv_help() [#440]  Suggestion to
+	  RTFM is now centralized in NUT code base
+
+2025-04-24  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* Jenkinsfile-dynamatrix: constrain shellcheck to "nut-builder"
+	  agents normally  Avoid firing up QEMU builders on the NUT CI farm,
+	  unless we want QEMU tests
+	* clients/upsclient.c, common/common.c, include/common.h,
+	  server/upsd.c: Constrain pre-processor visibility and impact of
+	  inet_ntopXX() methods with NUT_WANT_INET_NTOP_XX macro [#2916]
+	* include/common.h: fix includes for inet_ntopXX [#2916]
+	* Jenkinsfile-dynamatrix: constrain shellcheck to "nut-builder"
+	  agents normally  Avoid firing up QEMU builders on the NUT CI farm,
+	  unless we want QEMU tests
+	* NEWS.adoc, clients/upsclient.c, common/common.c, docs/nut.dict,
+	  include/common.h, server/upsd.c: Refactor inet_ntopSS() and
+	  inet_ntopAI() into common code, simplify upsclient and upsd
+	* server/upsd.c: add a sanity check into inet_ntopW() [#2915]
+	* server/upsd.c: introduce inet_ntopAI() specifically for struct
+	  addrinfo conversion [#2915]
+	* NEWS.adoc: fixed upsd printing of "further addresses ignored"
+	  [#2915]
+
+2025-04-23  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* Makefile.am: group check-files-quick (spellcheck-quick check-man)
+	  before check-recursive which is the Autotools implementation behind
+	  "make check"
+	* common/common-nut_version.c: nut_report_config_flags(): report not
+	  only bitness but also target CPU if available [#2097]
+	* clients/Makefile.am: libupsclient.la and libnutclient.la do not
+	  actually include libcommonversion.la [#2097]
+	* Makefile.am: add a goal for libupsclient-version.h shortcut, just
+	  to be on par with an existing nut_version.h goal [#2097]
+	* Makefile.am, tools/nut-scanner/Makefile.am: current nut-scanner
+	  does not actually depend on nut_version.h (or not directly, just
+	  via libcommonversion.la) [#2097]
+	* Makefile.am, clients/Makefile.am, common/Makefile.am,
+	  drivers/Makefile.am, scripts/Windows/Makefile.am,
+	  server/Makefile.am, tools/nut-scanner/Makefile.am,
+	  tools/nutconf/Makefile.am: */Makefile.am: refactor with a separate
+	  libcommonversion.la [#2097]  Avoid multiple rebuilds and relinks of
+	  libcommon*.la and their dependants when nut_version.h changes. Now
+	  there is just one library impacted by this, included to LDFLAGS
+	  across the board for Makefiles of directories with consumers of
+	  methods exported from common-nut_version.c (declared by common.h
+	  still).
+	* common/common-nut_version.c: nut_report_config_flags(): try to also
+	  report build bitness, if known [#2097]
+	* NEWS.adoc, common/Makefile.am, common/common-nut_version.c,
+	  common/common.c: common/common-nut_version.c, common/common.c:
+	  evict UPS_VERSION and its consumers into a separate compilation
+	  unit [#2097]
+	* drivers/dstate.c: Implement dstate_addenum_dynamic() [#2450]
+	* common/common.c, drivers/dstate.c, drivers/mge-utalk.c: Update
+	  comments about remaining FORMAT_NONLITERAL and/or FORMAT_SECURITY
+	  pragmas to quiesce compiler warnings [#2450]
+	* common/common.c: minimize_formatting_string(): address error:
+	  'switch' missing 'default' label [#2450, #2460]
+
+2025-04-23  Jeremy Cooper <jeremy.gthb@baymoo.org>
+
+	* server/upsd.c: Fix issue #2914: upsd misprint/buffer overflow.
+
 2025-04-22  Jim Klimov <jimklimov+nut@gmail.com>
 
+	* NEWS.adoc: fix entry for RPATH to NUT libs (was first planned for
+	  2.8.4 but got into 2.8.3 ultimately) [#2782, #2865]
+	* tools/gitlog2version.sh: Reapply "tools/gitlog2version.sh: bump
+	  NUT_VERSION_DEFAULT=2.8.3.1 for next development cycle"  This
+	  reverts commit 70faea2af378aec996e5f7284413df23d1e73410: finally
+	  released NUT v2.8.3, preparing for v2.8.4 cycle now.
+	* NEWS.adoc, UPGRADING.adoc, docs/docinfo.xml.in: Revert "Revert
+	  "Revert "NEWS.adoc, UPGRADING.adoc, docs/docinfo.xml.in: finalize
+	  text before NUT v2.8.3 release"""  This reverts commit
+	  051b49d9f0e693613d958837baf3e9bd1c0fa624: finally released NUT
+	  v2.8.3, preparing for v2.8.4 cycle now.
+	* docs/maintainer-guide.txt: a few more suggestions
 	* drivers/generic_gpio_libgpiod.c: align another print format with
 	  int type [#2911]
 
@@ -243,6 +1920,11 @@
 	  maxstartdelay values when they are exceeded [#2885]
 	* docs/man/upsdrvctl.txt, drivers/upsdrvctl.c: document defaults for
 	  maxstartdelay, maxretry and retrydelay [#2885]
+
+2025-04-09  Bill Elliot <bill@wreassoc.com>
+
+	* drivers/powervar-cu.c: Add setting of ups.vendorid and
+	  ups.productid.
 
 2025-04-08  Jim Klimov <jimklimov+nut@gmail.com>
 
@@ -1819,6 +3501,10 @@
 	* drivers/netvision-mib.c: bump version, fix whitespace in comments
 	  [#2803]
 
+2025-02-14  Bill Elliot <bill@wreassoc.com>
+
+	* docs/man/Makefile.am: Additions to docs/man/Makefile.am.
+
 2025-02-12  Manuel Bouyer <bouyer@antioche.eu.org>
 
 	* drivers/netvision-mib.c: netvision-mib: sync netvision_output_info
@@ -1858,6 +3544,16 @@
 	  might not have needed DLLs bundled near them [00:36:08] ln:
 	  ./.inst/NUT-for-Windows-x86_64-SNAPSHOT: cannot overwrite directory
 	  [00:36:08] Command exited with code 1
+
+2025-02-11  Bill Elliot <bill@wreassoc.com>
+
+	* data/driver.list.in, docs/man/powervar-cx.txt,
+	  drivers/powervar-cx.h: Documentation updates.
+	* drivers/powervar-cs.c, drivers/powervar-cu.c,
+	  drivers/powervar-cx.h: Cleaned up for testing.
+	* drivers/powervar-cs.c, drivers/powervar-cu.c,
+	  drivers/powervar-cx.h: USB disconnect/reconnect seems to be
+	  working.
 
 2025-02-10  Jim Klimov <jimklimov+nut@gmail.com>
 
@@ -1972,6 +3668,12 @@
 	  branch
 	* INSTALL.nut.adoc, docs/download.txt, docs/developers.txt: suggest
 	  fetching git tags to have a saner NUT_SEMVER in custom builds
+
+2025-02-07  Bill Elliot <bill@wreassoc.com>
+
+	* drivers/powervar-cs.c, drivers/powervar-cu.c,
+	  drivers/powervar-cx.h: After testing on GTS and UPM. Still need USB
+	  dis/re-connect logic.
 
 2025-02-06  Jim Klimov <jimklimov+nut@gmail.com>
 
@@ -2210,6 +3912,18 @@
 	* docs/man/sms_ser.txt: fix reference to docs/sms-brazil-protocol.txt
 	  [#2090]
 
+2025-02-04  Bill Elliot <bill@wreassoc.com>
+
+	* drivers/powervar-cs.c, drivers/powervar-cu.c,
+	  drivers/powervar-cx.h: Text tweaks and help text sequence
+	  change(s).
+
+2025-02-03  Bill Elliot <bill@wreassoc.com>
+
+	* drivers/powervar-cs.c, drivers/powervar-cu.c,
+	  drivers/powervar-cx.h: Generally working drivers prior to command
+	  testing.
+
 2025-01-31  cgarz <20268068+cgarz@users.noreply.github.com>
 
 	* scripts/python/module/PyNUT.py.in: Switch to socket timeout, fix
@@ -2393,6 +4107,12 @@
 	* appveyor.yml: pass CANBUILD_WITH_LIBMODBUS_USB tweak to ci_build.sh
 	* ci_build.sh: introduce CANBUILD_WITH_LIBMODBUS_USB tweak
 
+2025-01-23  Bill Elliot <bill@wreassoc.com>
+
+	* drivers/powervar-cs.c, drivers/powervar-cu.c,
+	  drivers/powervar-cx.h: Adding commands and variables. General
+	  cleanups.
+
 2025-01-22  Jim Klimov <jimklimov+nut@gmail.com>
 
 	* docs/config-prereqs.txt: update for OmniOS r151052
@@ -2462,6 +4182,11 @@
 	  ver_clang() * optional_ensure_ccache() *
 	  detect_platform_CANBUILD_LIBGD_CGI() *
 	  detect_platform_PKG_CONFIG_PATH_and_FLAGS()
+
+2025-01-22  Bill Elliot <bill@wreassoc.com>
+
+	* drivers/powervar-cs.c, drivers/powervar-cu.c,
+	  drivers/powervar-cx.h: GTS USB working well for Init and Update.
 
 2025-01-21  Jim Klimov <jimklimov+nut@gmail.com>
 
@@ -2796,6 +4521,8 @@
 
 2025-01-02  Jim Klimov <jimklimov+nut@gmail.com>
 
+	* common/common.c, common/nutipc.cpp, NEWS.adoc, docs/nut.dict:
+	  support writepid() calls by non-root programs [#1717]
 	* scripts/systemd/Makefile.am: wrap long lines in EXTRA_DIST
 	* configure.ac, scripts/systemd/.gitignore,
 	  scripts/systemd/Makefile.am, scripts/systemd/{nut-driver.target =>
@@ -2833,6 +4560,8 @@
 	  scripts/systemd/Makefile.am, scripts/systemd/nut-logger.service.in,
 	  scripts/systemd/nut.target.in: Introduce service wrapping for
 	  upslog client daemon [#1803]
+	* common/common.c, common/nutipc.cpp, NEWS.adoc, docs/nut.dict:
+	  support writepid() calls by non-root programs [#1717]
 
 2025-01-01  Jim Klimov <jimklimov+nut@gmail.com>
 
@@ -3039,6 +4768,11 @@
 	  m4/nut_check_libregex.m4, m4/nut_check_libsystemd.m4,
 	  m4/nut_check_libusb.m4: m4/nut_check_lib*.m4: use
 	  AC_REQUIRE([NUT_CHECK_PKGCONFIG]) etc, not plain macro calls
+
+2024-12-19  Bill Elliot <bill@wreassoc.com>
+
+	* drivers/powervar-cu.c, drivers/powervar-cx.h: Move toward working
+	  USB driver -- BROKENgit diff
 
 2024-12-18  Jim Klimov <jimklimov+nut@gmail.com>
 
@@ -3357,6 +5091,15 @@
 	  http://lists.alioth.debian.org/pipermail/nut-upsuser/2017-April/010591.html
 	  Closes: #415
 
+2024-12-03  Bill Elliot <bill@wreassoc.com>
+
+	* drivers/powervar-cu.c: Change comment above VENDORID so USB is
+	  identified correctly as 'Powervar'.
+	* drivers/Makefile.am, drivers/powervar-c.h, drivers/powervar-cs.c,
+	  drivers/powervar-cu.c, drivers/{powervar-c.c => powervar-cx.h}: USB
+	  building and communicating. Trying common variable and function
+	  file for serial and usb drivers.
+
 2024-12-02  Jim Klimov <jimklimov+nut@gmail.com>
 
 	* drivers/mge-hid.c: simplify debug printouts with NUT_STRARG()
@@ -3470,9 +5213,8 @@
 	  legacy now that this driver is an integrated part of NUT codebase.
 	* drivers/nhs_ser.c: drivers/nhs-nut.c: fix compiler complaints -
 	  sprintf() from and to same variable [#2692]  nhs_ser.c: In function
-	  ‘upsdrv_updateinfo’: nhs_ser.c:1858:37: error: ‘sprintf’
-	  argument 3 overlaps destination object ‘alarm’
-	  [-Werror=restrict] 1858 |
+	  ‘upsdrv_updateinfo’: nhs_ser.c:1858:37: error: ‘sprintf’ argument 3
+	  overlaps destination object ‘alarm’ [-Werror=restrict] 1858 |
 	  sprintf(alarm,"%s %s",alarm,"|UPS IN BATTERY MODE|"); |
 	  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	* drivers/nhs_ser.c: upsdrv_updateinfo(): refactor debug of bad mains
@@ -3644,34 +5386,31 @@
 	  nhs-nut.c:177:18: note: ‘end_marker’ declared here 177 |
 	  unsigned int end_marker; |                  ^~~~~~~~~~
 	* drivers/nhs-nut.c: fix compiler complaints [#2692]  Copy-paste
-	  typo?  nhs-nut.c: In function ‘mount_datapacket’:
-	  nhs-nut.c:693:29: error: operation on ‘pktdata.icarregrms_real’
-	  may be undefined [-Werror=sequence-point] 693 |
-	  pktdata.icarregrms_real = pktdata.icarregrms_real =
-	  pktdata.icarregrms * 30; |
+	  typo?  nhs-nut.c: In function ‘mount_datapacket’: nhs-nut.c:693:29:
+	  error: operation on ‘pktdata.icarregrms_real’ may be undefined
+	  [-Werror=sequence-point] 693 |     pktdata.icarregrms_real =
+	  pktdata.icarregrms_real = pktdata.icarregrms * 30; |
 	  ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	* drivers/nhs-nut.c: fix compiler complaints [#2692]  nhs-nut.c: In
-	  function ‘get_bit_in_position’: nhs-nut.c:357:22: error:
-	  comparison of integer expressions of different signedness:
-	  ‘int’ and ‘size_t’ {aka ‘long unsigned int’}
-	  [-Werror=sign-compare] 357 |     if (bit_position >= size * 8) { |
-	  ^~
+	  function ‘get_bit_in_position’: nhs-nut.c:357:22: error: comparison
+	  of integer expressions of different signedness: ‘int’ and ‘size_t’
+	  {aka ‘long unsigned int’} [-Werror=sign-compare] 357 |     if
+	  (bit_position >= size * 8) { |                      ^~
 	* drivers/nhs-nut.c: fix compiler complaints [#2692]  nhs-nut.c: In
-	  function ‘upsdrv_makevartable’: nhs-nut.c:2090:88: error:
-	  format ‘%f’ expects argument of type ‘double’, but argument
-	  3 has type ‘int’ [-Werror=format=] 2090 |
-	  sprintf(help,"Voltage In Percentage to calculate warning low level.
-	  Default is %0.2f",DEFAULLTPERC); |
+	  function ‘upsdrv_makevartable’: nhs-nut.c:2090:88: error: format
+	  ‘%f’ expects argument of type ‘double’, but argument 3 has type
+	  ‘int’ [-Werror=format=] 2090 |     sprintf(help,"Voltage In
+	  Percentage to calculate warning low level. Default is
+	  %0.2f",DEFAULLTPERC); |
 	  ~~~~^ |
 	  | |
 	  double |
 	  %0.2d  etc. for other default macros
 	* drivers/nhs-nut.c: fix compiler complaints [#2692]  nhs-nut.c: In
-	  function ‘upsdrv_updateinfo’: nhs-nut.c:1733:53: error: format
-	  not a string literal and no format arguments
-	  [-Werror=format-security] 1733 |
-	  upsdebugx(1,alarm); |
-	  ^~~~~
+	  function ‘upsdrv_updateinfo’: nhs-nut.c:1733:53: error: format not
+	  a string literal and no format arguments [-Werror=format-security]
+	  1733 |                                         upsdebugx(1,alarm);
+	  |                                                     ^~~~~
 	* drivers/nhs-nut.c: fix compiler complaints [#2692]
 	  nhs-nut.c:797:29: error: iteration 6 invokes undefined behavior
 	  [-Werror=aggressive-loop-optimizations] 797 |
@@ -3693,10 +5432,10 @@
 	  [-Werror=unused-parameter] 604 | pkt_data mount_datapacket(unsigned
 	  char * datapacket, int size, double tempodecorrido,pkt_hwinfo
 	  pkt_upsinfo)  { |
-	  ~~~~^~~~ nhs-nut.c:604:72: error: unused parameter
-	  ‘tempodecorrido’ [-Werror=unused-parameter] 604 | pkt_data
-	  mount_datapacket(unsigned char * datapacket, int size, double
-	  tempodecorrido,pkt_hwinfo pkt_upsinfo)  { |
+	  ~~~~^~~~ nhs-nut.c:604:72: error: unused parameter ‘tempodecorrido’
+	  [-Werror=unused-parameter] 604 | pkt_data mount_datapacket(unsigned
+	  char * datapacket, int size, double tempodecorrido,pkt_hwinfo
+	  pkt_upsinfo)  { |
 	  ~~~~~~~^~~~~~~~~~~~~~
 	* drivers/nhs-nut.c: fix compiler complaints [#2692]  nhs-nut.c: In
 	  function ‘print_pkt_data’: nhs-nut.c:464:17: error: zero-length
@@ -4188,6 +5927,11 @@
 	  tools/nut-scanner/Makefile.am: server/Makefile.am,
 	  drivers/Makefile.am: consider LIBSSL_LDFLAGS_RPATH also [#2674]
 
+2024-11-11  Bill Elliot <bill@wreassoc.com>
+
+	* drivers/Makefile.am, drivers/powervar-c.c, drivers/powervar-c.h,
+	  drivers/powervar-cu.c: Still trying to get USB driver to build.
+
 2024-11-10  Jim Klimov <jimklimov@gmail.com>
 
 	* ci_build.sh: OpenIndiana and 32-bit libgd, do not only check about
@@ -4312,6 +6056,17 @@
 	* drivers/mge-hid.c: more clear comments for charger modes
 	* drivers/mge-hid.c: typo in comment
 	* drivers/mge-hid.c: make abm charger tables better look
+
+2024-10-26  Bill Elliot <bill@wreassoc.com>
+
+	* drivers/powervar-c.c, drivers/powervar-c.h: Now most update stuff
+	  is in place.
+
+2024-10-24  Bill Elliot <bill@wreassoc.com>
+
+	* drivers/Makefile.am, drivers/powervar-c.c, drivers/powervar-c.h:
+	  Most init stuff in place. This is before working on update
+	  function.
 
 2024-10-23  DaRK AnGeL <28630321+masterwishx@users.noreply.github.com>
 
@@ -4738,6 +6493,10 @@
 	  and dislikes a `default` label in enum handling when all known
 	  values are handled (and wants them all to be handled). The clash is
 	  only resolvable by pragmas, like elsewhere in out codebase.
+
+2024-09-19  Bill Elliot <bill@wreassoc.com>
+
+	* drivers/oneac.c: Coding standard fixes.
 
 2024-09-15  desertwitch <24509509+desertwitch@users.noreply.github.com>
 
@@ -6698,6 +8457,13 @@
 	* NEWS.adoc, common/common.c, conf/nut.conf.sample,
 	  docs/man/nut.conf.txt, include/common.h: Introduce a
 	  `NUT_DEBUG_SYSLOG` environment variable [#2394]
+	* include/common.h, common/common.c, drivers/dstate.c,
+	  drivers/nutdrv_qx_blazer-common.c: define macros for
+	  minimize_formatting_string() and validate_formatting_string()
+	  verbosity argument values [#2450]  Custom builds that do not want
+	  to require setting driver/tool debug levels can re-define their
+	  NUT_DYNAMICFORMATTING_DEBUG_LEVEL to e.g. 0 and see any formatting
+	  discrepancies instantly.
 
 2024-06-03  Jim Klimov <jimklimov+nut@gmail.com>
 
@@ -6708,6 +8474,76 @@
 	  and replicas in NUT GitHub org
 	* docs/documentation.txt: update URL for Configuration Examples to
 	  directly fetch the latest PDF book, not go to the GH release page
+
+2024-06-02  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* tests/nutlogtest.c: use support for plain "-Wformat" and for
+	  "-Wformat-extra-args" in pragmas to quiesce "bogus-looking" test
+	  cases [#2450]
+	* m4/ax_c_pragmas.m4: detect support for plain "-Wformat" and for
+	  "-Wformat-extra-args" [#2450]
+	* tests/nutlogtest.c, common/common.c: validate_formatting_string():
+	  tolerate dynamic formats that are sub-strings and beginnings of
+	  reference (wasteful but survivable) [#2450]
+	* common/common.c: minimize_formatting_string(): warn in doc that
+	  this may produce invalid printf-style strings and not complain
+	  (garbage in = garbage out) [#2450]
+	* tools/nut-scanner/nutscan-serial.c: add /dev/cua* patterns for
+	  different platforms
+	* tools/nut-scanner/Makefile.am, tools/nut-scanner/nutscan-serial.c:
+	  tools/nut-scanner/nutscan-serial.c: Harden NUT work with strings by
+	  switching to snprintf_dynamic() instead of hushing potential flaws
+	  with macros [#2450]
+	* common/common.c: vsnprintf_dynamic(): NULL "dst" or its "size" are
+	  a valid use-case for vsnprintf() [#2450]
+	* common/common.c, include/common.h, drivers/dstate.c,
+	  tests/nutlogtest.c: introduce verbosity option to
+	  validate_formatting_string() and minimize_formatting_string()
+	  [#2450]
+
+2024-06-01  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* drivers/nutdrv_qx_blazer-common.c: blazer_process_command() for
+	  "test.battery.start" might vary by applicable formatting strings
+	  [#2450]
+	* drivers/nutdrv_qx_bestups.c: bestups_get_pins_shutdown_mode():
+	  comment the odd conversion, and harden with snprintf_dynamic()
+	  [#2450]
+	* drivers/nutdrv_qx_bestups.c: bestups_batt_packs(): range-check and
+	  properly cast the value, and harden with snprintf_dynamic() [#2450]
+	* clients/upsclient.c, clients/upsimage.c, clients/upsmon.c,
+	  drivers/apc_modbus.c, drivers/apcupsd-ups.c, drivers/bcmxcp.c,
+	  drivers/bestfortress.c, drivers/blazer.c, drivers/blazer_ser.c,
+	  drivers/blazer_usb.c, drivers/huawei-ups2000.c,
+	  drivers/liebert-esp2.c, drivers/nutdrv_qx.c,
+	  drivers/nutdrv_qx_bestups.c, drivers/nutdrv_qx_blazer-common.c,
+	  drivers/nutdrv_qx_masterguard.c, drivers/nutdrv_qx_mecer.c,
+	  drivers/nutdrv_qx_voltronic-qs-hex.c,
+	  drivers/nutdrv_qx_voltronic-qs.c, drivers/nutdrv_qx_voltronic.c,
+	  drivers/powerp-bin.c, drivers/powerp-txt.c, drivers/snmp-ups.c,
+	  drivers/usbhid-ups.c: Harden NUT work with strings by switching to
+	  snprintf_dynamic() instead of hushing potential flaws with macros
+	  [#2450]  Found by pragmas to clean up, with  :; git grep -En
+	  'Wformat-(sec|nonlit)'
+	* clients/upsimage.c, clients/upssched.c, clients/upsset.c,
+	  drivers/belkinunv.c, drivers/bestfortress.c, drivers/mge-utalk.c,
+	  drivers/nutdrv_atcl_usb.c, drivers/richcomm_usb.c,
+	  drivers/serial.c: Harden NUT work with strings: comment which
+	  use-cases we DID NOT switch to snprintf_dynamic() instead of
+	  hushing potential flaws with macros [#2450]
+	* drivers/nutdrv_qx_bestups.c: bestups_model(): fix bogus sprintf()
+	  for an unknown model [#2450]
+
+2024-05-31  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* common/common.c, tests/nutlogtest.c: minimize_formatting_string():
+	  collapse known different formats for same data type into same char
+	  to ease sanity-check comparisons [#2450]
+	* docs/developers.txt, docs/new-drivers.txt, docs/nut.dict: document
+	  hardened *_dynamic() string methods [#2450]
+	* drivers/dstate.c, drivers/dstate.h: drivers/dstate.{c,h}: add
+	  vdstate_setinfo(), vdstate_addenum() and versions for hardened
+	  dynamic format string support [#2450]
 
 2024-05-30  Nicola Fontana <ntd@entidi.it>
 
@@ -6721,6 +8557,23 @@
 	  receiving a packet of known data size, ensure that data size is
 	  exactly what expected. That should avoid later surprises, e.g.
 	  fiddling with bytes never received.
+
+2024-05-30  Jim Klimov <jimklimov+nut@gmail.com>
+
+	* common/common.c, include/common.h, tests/nutlogtest.c, NEWS.adoc:
+	  introduce snprintf_dynamic() and related methods [#2450]  Mitigate
+	  the inherent insecurity of dynamically constructed formatting
+	  strings vs. a fixed vararg list with its amounts and types of
+	  variables printed by this or that method and pre-compiled in the
+	  program.  * minimize_formatting_string() with caller-specified
+	  buffer; * minimize_formatting_string_staticbuf() for one-shot
+	  use-cases; * validate_formatting_string() to compare a dynamic and
+	  expected formatting strings; * vsnprintf_dynamic(),
+	  vsnprintfcat_dynamic() for practical applications (with fixed
+	  va_list argument); * snprintf_dynamic(), snprintfcat_dynamic(),
+	  mkstr_dynamic() for practical applications (with ... variadic
+	  arguments); * added vsnprintfcat() with fixed va_list argument, for
+	  good measure.
 
 2024-05-28  Nicola Fontana <ntd@entidi.it>
 
@@ -13800,6 +15653,9 @@
 
 2022-08-27  Jim Klimov <jimklimov+nut@gmail.com>
 
+	* drivers/usbhid-ups.c: hid_ups_walk(): for HU_WALKMODE_FULL_UPDATE
+	  with "pollonly" mode, re-read HU_FLAG_SEMI_STATIC and
+	  HU_FLAG_STATIC entries to detect "Driver stale" situations [#1624]
 	* common/common.c: get_libname_in_dir(): check for exact filename
 	  match (not just common start of string)
 	* drivers/usbhid-ups.c: cosmetic fixes
@@ -15805,6 +17661,24 @@
 	  protocol (3+)
 	* data/driver.list.in: revise CPS "BR1000ELCD" support level
 
+2022-04-27  minfrin <minfrin@users.noreply.github.com>
+
+	* drivers/common_voltronic-crc.c: Remove warning:  Comparison between
+	  byte of type unsigned short and len of wider type size_t
+	* drivers/Makefile.am, drivers/common_voltronic-crc.c,
+	  drivers/common_voltronic-crc.h, drivers/nutdrv_qx.c,
+	  drivers/nutdrv_qx.h, drivers/nutdrv_qx_voltronic-axpert.c,
+	  drivers/nutdrv_qx_voltronic-axpert.h: WIP: Support for Voltronic
+	  Axpert P30 protocol inverters (main)  Adds support for the
+	  Voltronic Axpert inverters based on the P30 protocol.  Updated the
+	  nutdrv_qx driver to support the optional sending of commands
+	  protected by CRC.  Initial support for query commands. Based on
+	  work done in the Voltronic Sunny driver in
+	  https://github.com/nickma82/nut/tree/nutdrv_qx_voltronic-sunny_rebased+command
+	  Still TODO:  Implement commands to write to the inverter. Remove
+	  commented code originating from sunny driver. Further testing.
+	  Update docs (manpages, acknowledgements...)
+
 2022-04-26  Jim Klimov <jimklimov+nut@gmail.com>
 
 	* docs/nut.dict: update dict
@@ -17341,6 +19215,12 @@
 
 2022-02-09  Jim Klimov <jim@jimklimov.com>
 
+	* drivers/ve-direct.c: mark ve_*() methods as static
+	* drivers/ve-direct.c: fix trailing white-space and C++-style
+	  comments
+	* docs/packager-guide.txt: update for nut-linux-i2c and
+	  nut-macosx-ups platform-dependent package groups
+	* docs/packager-guide.txt: fix title for pkg-nut-modbus
 	* drivers/nutdrv_qx_masterguard.c: rename non-standard dstate
 	  variables to "experimental.*" namespace  Closes: NUT issue #1045
 	* drivers/nutdrv_qx_masterguard.c: fix "ups.delay.return" =>
@@ -17381,6 +19261,16 @@
 	  IPMI_DRIVERLIST like others
 	* configure.ac: move "--with-drivers=name[,name...]" handling to
 	  before we check for third-party dependencies
+	* configure.ac: error out for unhandled --with-drivers=xxx names
+	* configure.ac: improve handling of platform-dependent (linux-i2c,
+	  macosx) drivers - do not default to require them everywhere
+	* configure.ac: move --with-drivers=... handling to before
+	  --with-all, and consult drivers/Makefile.am for list names to
+	  require certain dependencies
+	* drivers/Makefile.am: parameterize POWERMAN_DRIVERLIST and
+	  IPMI_DRIVERLIST like others
+	* configure.ac: move "--with-drivers=name[,name...]" handling to
+	  before we check for third-party dependencies
 	* clients/upssched.c: sendcmd(): rectify enclen/buflen sanity checks
 	  and usage
 	* clients/upssched.c: whitespace and comment fixes
@@ -17396,6 +19286,8 @@
 
 	* scripts/subdriver/gen-usbhid-subdriver.sh: gen-usbhid-subdriver.sh:
 	  suggest "fix_report_desc" in subdriver_t (follow-up to PR #1245)
+	* scripts/subdriver/gen-usbhid-subdriver.sh: gen-usbhid-subdriver.sh:
+	  suggest "fix_report_desc" in subdriver_t (follow-up to PR #1245)
 
 2022-02-07  Dimitris Economou <dimitris.s.economou@gmail.com>
 
@@ -17403,6 +19295,8 @@
 
 2022-02-06  Jim Klimov <jim@jimklimov.com>
 
+	* docs/packager-guide.txt: mention ipmi and modbus drivers as
+	  separate packaging goals
 	* docs/packager-guide.txt: mention ipmi and modbus drivers as
 	  separate packaging goals
 
@@ -17418,6 +19312,64 @@
 
 2022-02-05  Jim Klimov <jim@jimklimov.com>
 
+	* docs/nut.dict, docs/support.txt: docs/support.txt: detail abot
+	  GitHub issues and PRs, and IRC channel
+	* drivers/al175.c, drivers/apc-ats-mib.c, drivers/apc-hid.c,
+	  drivers/apc-mib.c, drivers/apc-pdu-mib.c, drivers/apcsmart-old.c,
+	  drivers/apcsmart.h, drivers/apcupsd-ups.c, drivers/arduino-hid.c,
+	  drivers/asem.c, drivers/baytech-mib.c, drivers/bcmxcp.c,
+	  drivers/bcmxcp_ser.c, drivers/bcmxcp_usb.c, drivers/belkin-hid.c,
+	  drivers/belkin.c, drivers/belkinunv.c, drivers/bestfcom.c,
+	  drivers/bestfortress.c, drivers/bestpower-mib.c,
+	  drivers/bestuferrups.c, drivers/bestups.c, drivers/blazer_ser.c,
+	  drivers/blazer_usb.c, drivers/clone-outlet.c, drivers/clone.c,
+	  drivers/compaq-mib.c, drivers/cps-hid.c, drivers/cyberpower-mib.c,
+	  drivers/delta_ups-hid.c, drivers/delta_ups-mib.c,
+	  drivers/dummy-ups.c, drivers/eaton-ats16-nm2-mib.c,
+	  drivers/eaton-ats16-nmc-mib.c, drivers/eaton-ats30-mib.c,
+	  drivers/eaton-pdu-genesis2-mib.c, drivers/eaton-pdu-marlin-mib.c,
+	  drivers/eaton-pdu-pulizzi-mib.c,
+	  drivers/eaton-pdu-revelation-mib.c,
+	  drivers/emerson-avocent-pdu-mib.c, drivers/etapro.c,
+	  drivers/everups.c, drivers/explore-hid.c, drivers/gamatronic.c,
+	  drivers/generic_modbus.c, drivers/genericups.c,
+	  drivers/hpe-pdu-mib.c, drivers/huawei-mib.c,
+	  drivers/huawei-ups2000.c, drivers/idowell-hid.c,
+	  drivers/ietf-mib.c, drivers/isbmex.c, drivers/ivtscd.c,
+	  drivers/legrand-hid.c, drivers/libshut.c, drivers/libusb0.c,
+	  drivers/libusb1.c, drivers/liebert-esp2.c, drivers/liebert-hid.c,
+	  drivers/liebert.c, drivers/macosx-ups.c, drivers/masterguard.c,
+	  drivers/metasys.c, drivers/mge-hid.c, drivers/mge-mib.c,
+	  drivers/mge-utalk.c, drivers/microdowell.c, drivers/microsol-apc.c,
+	  drivers/netvision-mib.c, drivers/netxml-ups.c,
+	  drivers/nut-ipmipsu.c, drivers/nutdrv_atcl_usb.c,
+	  drivers/nutdrv_qx.c, drivers/nutdrv_siemens_sitop.c,
+	  drivers/oneac.c, drivers/openups-hid.c, drivers/optiups.c,
+	  drivers/phoenixcontact_modbus.c, drivers/pijuice.c,
+	  drivers/powercom-hid.c, drivers/powercom.c, drivers/powerman-pdu.c,
+	  drivers/powerpanel.c, drivers/powervar-hid.c,
+	  drivers/powerware-mib.c, drivers/raritan-pdu-mib.c,
+	  drivers/raritan-px2-mib.c, drivers/rhino.c, drivers/richcomm_usb.c,
+	  drivers/riello_ser.c, drivers/riello_usb.c, drivers/safenet.c,
+	  drivers/salicru-hid.c, drivers/skel.c, drivers/snmp-ups.c,
+	  drivers/solis.c, drivers/tripplite-hid.c, drivers/tripplite.c,
+	  drivers/tripplite_usb.c, drivers/tripplitesu.c, drivers/upscode2.c,
+	  drivers/usbhid-ups.c, drivers/victronups.c, drivers/xppc-mib.c:
+	  drivers: bump versions for all drivers, they could have been
+	  refactored during fightwarn (so might add regressions) without
+	  regard to versioning
+	* UPGRADING: NEWS: plea to package maintainers to share their
+	  customizations into common uptream
+	* docs/documentation.txt, docs/nut.dict: documentation.txt: add a
+	  blog by James Ridgway
+	* docs/documentation.txt: documentation.txt: update with a link to
+	  video by Techno Tim
+	* docs/documentation.txt: developers.txt: "trac" is AWOL, update the
+	  link to github wiki copy
+	* docs/developers.txt: developers.txt: "alioth" is AWOL, update the
+	  text
+	* docs/download.txt: download.txt: "trac" and "alioth" are AWOL,
+	  update the links
 	* docs/nut.dict, docs/support.txt: docs/support.txt: detail abot
 	  GitHub issues and PRs, and IRC channel
 	* drivers/al175.c, drivers/apc-ats-mib.c, drivers/apc-hid.c,
@@ -24228,6 +26180,10 @@
 	  rectify indentations
 	* drivers/tripplite_usb.c: Update tripplite_usb.c
 	  drivers/tripplite_usb.c: drop trailing whitespace
+	* drivers/ve-direct.c: Update ve-direct.c  Small spelling fix
+	  (ret_lenght => ret_length)
+	* docs/man/ve-direct.txt: Update ve-direct.txt  Minor whitespace
+	  fixes
 	* docs/acknowledgements.txt: Update acknowledgements.txt  Acknowledge
 	  a vendor contribution from EVER Power Systems
 	* drivers/ever-hid.c: Update ever-hid.c  Small whitespace fixes
@@ -27689,6 +29645,12 @@
 	  option to the driver-core, which causes the driver to dump the data
 	  tree in upsc-like format to stdout, and exit
 
+2017-06-06  Petr Kubanek <petr@kubanek.net>
+
+	* docs/nut.dict: added Petr and ve to spellcheck dictionary
+	* drivers/ve-direct.c: fixed for C99 fpr loop
+	* docs/nut.dict: added Kubanek to dict
+
 2017-06-03  Charles Lepple <clepple+nut@gmail.com>
 
 	* drivers/belkin-hid.c: usbhid-ups: add Liebert GXT4 USB VID:PID
@@ -27882,6 +29844,16 @@
 	* docs/nut.dict: Re-sort nut.dict (#406)  * Re-sort nut.dict  *
 	  nut.dict header line
 
+2017-03-16  Petr Kubanek <petr@kubanek.net>
+
+	* drivers/ve-direct.c: commands to set/get things
+	* drivers/ve-direct.c: commands to set/get things
+
+2017-03-15  Petr Kubanek <petr@pc115b.fzu.cz>
+
+	* drivers/ve-direct.c: HEX checksums
+	* drivers/ve-direct.c: HEX checksums
+
 2017-03-15  Jim Klimov <jim@jimklimov.com>
 
 	* docs/config-notes.txt: config-notes.txt : small clarifications in
@@ -27925,6 +29897,26 @@
 
 	* .travis.yml: added libmodbus-dev to travis configuration
 
+2017-03-14  Petr Kubanek <petr@pc115b.fzu.cz>
+
+	* drivers/ve-direct.c: reply to commands
+	* drivers/ve-direct.c: poll_interval, better input buffer handling
+	* drivers/ve-direct.c: fixed problem with reading from driver by
+	  lines
+	* drivers/ve-direct.c: reply to commands
+	* drivers/ve-direct.c: poll_interval, better input buffer handling
+	* drivers/ve-direct.c: fixed problem with reading from driver by
+	  lines
+
+2017-03-14  Petr Kubanek <petr@kubanek.net>
+
+	* drivers/ve-direct.c: fix process text buffer
+	* docs/man/Makefile.am, docs/man/ve-direct.txt, drivers/ve-direct.c:
+	  added ping command
+	* drivers/ve-direct.c: fix process text buffer
+	* docs/man/Makefile.am, docs/man/ve-direct.txt, drivers/ve-direct.c:
+	  added ping command
+
 2017-03-13  Spiros Ioannou <sivann@inaccess.com>
 
 	* configure.ac, data/driver.list.in, docs/man/Makefile.am,
@@ -27933,6 +29925,11 @@
 	  drivers/phoenixcontact_modbus.c, m4/nut_check_libmodbus.m4:
 	  phoenixcontact_modbus driver  Closes:
 	  https://github.com/networkupstools/nut/pull/404
+
+2017-03-13  Petr Kubanek <petr@kubanek.net>
+
+	* drivers/Makefile.am, drivers/ve-direct.c: basic thinks works
+	* drivers/Makefile.am, drivers/ve-direct.c: basic thinks works
 
 2017-03-13  Jim Klimov <jim@jimklimov.com>
 
@@ -32024,12 +34021,11 @@
 	  now, please do not consider anymore that buying Eaton products will
 	  provide you with official support from Eaton, or a better level of
 	  device support in NUT.
-	* docs/acknowledgements.txt: Update NUT team membership for
-	  Frédéric Bohe  Frederic Bohe, NUT senior developer and Eaton
-	  contractor from 2009 to 2013, is now a retired member. Thanks for
-	  all the hard work on the Windows port, nut-scanner, Unix packaging,
-	  support, ... Also update the developers membership page, from
-	  Alioth to GitHub
+	* docs/acknowledgements.txt: Update NUT team membership for Frédéric
+	  Bohe  Frederic Bohe, NUT senior developer and Eaton contractor from
+	  2009 to 2013, is now a retired member. Thanks for all the hard work
+	  on the Windows port, nut-scanner, Unix packaging, support, ... Also
+	  update the developers membership page, from Alioth to GitHub
 
 2014-02-13  Charles Lepple <clepple+nut@gmail.com>
 
@@ -32361,8 +34357,8 @@
 	  environment on ships (and we don't need shutdown there -- in
 	  critical situations the system has to operate as long as possible,
 	  untill the battery is empty)  Also, all of the previous issues
-	  listed below are now fixed in this al175 version:  - ‘return’
-	  with a value, in function returning void (2x) - anonymous variadic
+	  listed below are now fixed in this al175 version:  - ‘return’ with
+	  a value, in function returning void (2x) - anonymous variadic
 	  macros were introduced in C99 - C++ style comments are not allowed
 	  in ISO C90 - ISO C forbids braced-groups within expressions (5x) -
 	  ISO C90 forbids specifying subobject to initialize (16x) - ISO C99
