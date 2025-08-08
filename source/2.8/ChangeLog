@@ -1,7 +1,27 @@
-NOTE: This change log section represents git commits in range 'v2.6.0..HEAD' (commits '8103b4e5c..434cb36a3').
+NOTE: This change log section represents git commits in range 'v2.6.0..HEAD' (commits '8103b4e5c..541c2ecf0').
 
 2025-08-08  Jim Klimov <jimklimov+nut@gmail.com>
 
+	* configure.ac: for now do not require (pre-)release tagged commits
+	  to build changelog by default - keep doing it on systems where we
+	  can though
+	* configure.ac: rephrase the message about --enable-docs-changelog
+	  [#3019, #3053]
+	* ci_build.sh: limit default "configure --enable-docs-changelog=no"
+	  for CI builds on systems where CANBUILD_DOCS_ALL!=yes
+	* ci_build.sh: add support for WITH_CHANGELOG envvar to pass down as
+	  configure --enable-docs-changelog=...
+	* .github/workflows/codeql.yml: configure --disable-docs-changelog in
+	  CI builds
+	* configure.ac: for (pre-)release builds we default
+	  nut_enable_docs_changelog auto=>yes - do so loudly, and default
+	  --with-doc man=>auto as well for all builds to have a chance to try
+	  this
+	* docs/maintainer-guide.txt: update the guide
+	* docs/maintainer-guide.txt: commit that in tools/gitlog2version.sh:
+	  for development, set fallback NUT_VERSION_DEFAULT=X.Y.Z.1
+	* docs/maintainer-guide.txt: remind to double-check that release
+	  NUT_VERSION_DEFAULT in tools/gitlog2version.sh must be a triplet
 	* tools/gitlog2version.sh: for release, set fallback
 	  NUT_VERSION_DEFAULT=2.8.4
 	* appveyor.yml: SKIP for now NUT-Monitor prereqs
