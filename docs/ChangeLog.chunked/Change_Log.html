@@ -1,6 +1,35 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>2. Very detailed Change Log</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><link rel="home" href="index.html" title="Network UPS Tools Change Log" /><link rel="up" href="index.html" title="Network UPS Tools Change Log" /><link rel="prev" href="_introduction.html" title="1. Introduction" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> </td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="Change_Log"></a>2. Very detailed Change Log</h2></div></div></div><p>This document intends to detail the change log for relatively recent work
-(roughly since the source code was tracked in Git).</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>This change log section represents git commits in range <span class="emphasis"><em>v2.6.0..HEAD</em></span> (commits <span class="emphasis"><em>8103b4e5c..434cb36a3</em></span>).</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_08_08_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.1. 2025-08-08  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+(roughly since the source code was tracked in Git).</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>This change log section represents git commits in range <span class="emphasis"><em>v2.6.0..HEAD</em></span> (commits <span class="emphasis"><em>8103b4e5c..541c2ecf0</em></span>).</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_08_08_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.1. 2025-08-08  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+configure.ac: for now do not require (pre-)release tagged commits
+          to build changelog by default - keep doing it on systems where we
+          can though
+</li><li class="listitem">
+configure.ac: rephrase the message about --enable-docs-changelog
+          [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3019" target="_top">#3019</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/3053" target="_top">#3053</a>]
+</li><li class="listitem">
+ci_build.sh: limit default "configure --enable-docs-changelog=no"
+          for CI builds on systems where CANBUILD_DOCS_ALL!=yes
+</li><li class="listitem">
+ci_build.sh: add support for WITH_CHANGELOG envvar to pass down as
+          configure --enable-docs-changelog=…
+</li><li class="listitem">
+.github/workflows/codeql.yml: configure --disable-docs-changelog in
+          CI builds
+</li><li class="listitem">
+configure.ac: for (pre-)release builds we default
+          nut_enable_docs_changelog auto⇒yes - do so loudly, and default
+          --with-doc man⇒auto as well for all builds to have a chance to try
+          this
+</li><li class="listitem">
+docs/maintainer-guide.txt: update the guide
+</li><li class="listitem">
+docs/maintainer-guide.txt: commit that in tools/gitlog2version.sh:
+          for development, set fallback NUT_VERSION_DEFAULT=X.Y.Z.1
+</li><li class="listitem">
+docs/maintainer-guide.txt: remind to double-check that release
+          NUT_VERSION_DEFAULT in tools/gitlog2version.sh must be a triplet
+</li><li class="listitem">
 tools/gitlog2version.sh: for release, set fallback
           NUT_VERSION_DEFAULT=2.8.4
 </li><li class="listitem">
@@ -7936,7 +7965,7 @@ clients/upsmon.c: barebone structure for OS-sleep inhibition
 common/common.c, include/common.h, m4/nut_check_libsystemd.m4:
           introduce Uninhibit() and isPreparingForSleep() methods [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1070" target="_top">#1070</a>]
 </li><li class="listitem">
-common/common.c: comment about <span class="emphasis"><em>attribute</em></span><a id="idm7657" class="indexterm"></a>cleanup(f) usage
+common/common.c: comment about <span class="emphasis"><em>attribute</em></span><a id="idm7677" class="indexterm"></a>cleanup(f) usage
           [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1070" target="_top">#1070</a>]
 </li><li class="listitem">
 m4/nut_check_libsystemd.m4: check for sd-bus.h auto-cleanup methods
@@ -13861,7 +13890,7 @@ conf/ups.conf.sample, docs/man/ups.conf.txt: clarify behavior of
           maxstartdelay [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2134" target="_top">#2134</a>]
 </li><li class="listitem">
 clients/upsmon.c: Revert "clients/upsmon.c: remove doshutdown()
-          <span class="emphasis"><em>attribute</em></span><a id="idm12809" class="indexterm"></a>noreturn annotation, now it can [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2133" target="_top">#2133</a>]"  This
+          <span class="emphasis"><em>attribute</em></span><a id="idm12829" class="indexterm"></a>noreturn annotation, now it can [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2133" target="_top">#2133</a>]"  This
           reverts commit 2e7263812b4f97cb0d667550e0e660ab50c2ed9e.
 </li><li class="listitem">
 NEWS.adoc, clients/upsmon.c, conf/upsmon.conf.sample.in,
@@ -13869,7 +13898,7 @@ NEWS.adoc, clients/upsmon.c, conf/upsmon.conf.sample.in,
           of SHUTDOWNEXIT to allow a finite delay between SHUTDOWNCMD and
           exit() [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2133" target="_top">#2133</a>]
 </li><li class="listitem">
-clients/upsmon.c: remove doshutdown() <span class="emphasis"><em>attribute</em></span><a id="idm12818" class="indexterm"></a>noreturn
+clients/upsmon.c: remove doshutdown() <span class="emphasis"><em>attribute</em></span><a id="idm12838" class="indexterm"></a>noreturn
           annotation, now it can [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2133" target="_top">#2133</a>]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2023_10_27_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.638. 2023-10-27  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 NEWS.adoc, clients/upsmon.c, conf/upsmon.conf.sample.in,
@@ -30380,7 +30409,7 @@ server/upsd.c: wrap unreachable exit() added due to earlier
 include/attribute.h: align with AX_C<span class="emphasis"><em>_ATTRIBUTE</em></span> autoconf macro
 </li><li class="listitem">
 m4/ax_c<span class="emphasis"><em>_attribute</em></span>.m4: extend to declare support for certain
-          <span class="emphasis"><em>attribute</em></span><a id="idm27652" class="indexterm"></a>… use-cases of interest to NUT
+          <span class="emphasis"><em>attribute</em></span><a id="idm27672" class="indexterm"></a>… use-cases of interest to NUT
 </li><li class="listitem">
 configure.ac, m4/ax_c<span class="emphasis"><em>_attribute</em></span>.m4: configure.ac: introduce
           AX_C<span class="emphasis"><em>_ATTRIBUTE</em></span> from gnu.org
@@ -44945,4 +44974,4 @@ clients/Makefile.am, clients/upsc.c, clients/upsclient.c,
           server/upstype.h, server/user.c: Initial commit (preliminary
           investigation)
 </li></ul></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-08-08 09:16:22 -- Network UPS Tools 2.8.3.762</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> </td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2025-08-08 11:48:25 -- Network UPS Tools 2.8.4.9</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> </td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
