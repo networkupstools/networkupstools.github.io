@@ -1,0 +1,1241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<meta name="generator" content="AsciiDoc 10.2.0" />
+<title>FAILOVER(8)</title>
+<style type="text/css">
+/* Shared CSS for AsciiDoc xhtml11 and html5 backends */
+
+/* Default font. */
+body {
+  font-family: Georgia,serif;
+}
+
+/* Title font. */
+h1, h2, h3, h4, h5, h6,
+div.title, caption.title,
+thead, p.table.header,
+#toctitle,
+#author, #revnumber, #revdate, #revremark,
+#footer {
+  font-family: Arial,Helvetica,sans-serif;
+}
+
+body {
+  margin: 1em 5% 1em 5%;
+}
+
+a {
+  color: blue;
+  text-decoration: underline;
+}
+a:visited {
+  color: fuchsia;
+}
+
+em {
+  font-style: italic;
+  color: navy;
+}
+
+strong {
+  font-weight: bold;
+  color: #083194;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #527bbd;
+  margin-top: 1.2em;
+  margin-bottom: 0.5em;
+  line-height: 1.3;
+}
+
+h1, h2, h3 {
+  border-bottom: 2px solid silver;
+}
+h2 {
+  padding-top: 0.5em;
+}
+h3 {
+  float: left;
+}
+h3 + * {
+  clear: left;
+}
+h5 {
+  font-size: 1.0em;
+}
+
+div.sectionbody {
+  margin-left: 0;
+}
+
+hr {
+  border: 1px solid silver;
+}
+
+p {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+ul, ol, li > p {
+  margin-top: 0;
+}
+ul > li     { color: #aaa; }
+ul > li > * { color: black; }
+
+.monospaced, code, pre {
+  font-family: "Courier New", Courier, monospace;
+  font-size: inherit;
+  color: navy;
+  padding: 0;
+  margin: 0;
+}
+pre {
+  white-space: pre-wrap;
+}
+
+#author {
+  color: #527bbd;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+#email {
+}
+#revnumber, #revdate, #revremark {
+}
+
+#footer {
+  font-size: small;
+  border-top: 2px solid silver;
+  padding-top: 0.5em;
+  margin-top: 4.0em;
+}
+#footer-text {
+  float: left;
+  padding-bottom: 0.5em;
+}
+#footer-badges {
+  float: right;
+  padding-bottom: 0.5em;
+}
+
+#preamble {
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+}
+div.imageblock, div.exampleblock, div.verseblock,
+div.quoteblock, div.literalblock, div.listingblock, div.sidebarblock,
+div.admonitionblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+div.admonitionblock {
+  margin-top: 2.0em;
+  margin-bottom: 2.0em;
+  margin-right: 10%;
+  color: #606060;
+}
+
+div.content { /* Block element content. */
+  padding: 0;
+}
+
+/* Block element titles. */
+div.title, caption.title {
+  color: #527bbd;
+  font-weight: bold;
+  text-align: left;
+  margin-top: 1.0em;
+  margin-bottom: 0.5em;
+}
+div.title + * {
+  margin-top: 0;
+}
+
+td div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content + div.title {
+  margin-top: 0.0em;
+}
+
+div.sidebarblock > div.content {
+  background: #ffffee;
+  border: 1px solid #dddddd;
+  border-left: 4px solid #f0f0f0;
+  padding: 0.5em;
+}
+
+div.listingblock > div.content {
+  border: 1px solid #dddddd;
+  border-left: 5px solid #f0f0f0;
+  background: #f8f8f8;
+  padding: 0.5em;
+}
+
+div.quoteblock, div.verseblock {
+  padding-left: 1.0em;
+  margin-left: 1.0em;
+  margin-right: 10%;
+  border-left: 5px solid #f0f0f0;
+  color: #888;
+}
+
+div.quoteblock > div.attribution {
+  padding-top: 0.5em;
+  text-align: right;
+}
+
+div.verseblock > pre.content {
+  font-family: inherit;
+  font-size: inherit;
+}
+div.verseblock > div.attribution {
+  padding-top: 0.75em;
+  text-align: left;
+}
+/* DEPRECATED: Pre version 8.2.7 verse style literal block. */
+div.verseblock + div.attribution {
+  text-align: left;
+}
+
+div.admonitionblock .icon {
+  vertical-align: top;
+  font-size: 1.1em;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #527bbd;
+  padding-right: 0.5em;
+}
+div.admonitionblock td.content {
+  padding-left: 0.5em;
+  border-left: 3px solid #dddddd;
+}
+
+div.exampleblock > div.content {
+  border-left: 3px solid #dddddd;
+  padding-left: 0.5em;
+}
+
+div.imageblock div.content { padding-left: 0; }
+span.image img { border-style: none; vertical-align: text-bottom; }
+a.image:visited { color: white; }
+
+dl {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+dt {
+  margin-top: 0.5em;
+  margin-bottom: 0;
+  font-style: normal;
+  color: navy;
+}
+dd > *:first-child {
+  margin-top: 0.1em;
+}
+
+ul, ol {
+    list-style-position: outside;
+}
+ol.arabic {
+  list-style-type: decimal;
+}
+ol.loweralpha {
+  list-style-type: lower-alpha;
+}
+ol.upperalpha {
+  list-style-type: upper-alpha;
+}
+ol.lowerroman {
+  list-style-type: lower-roman;
+}
+ol.upperroman {
+  list-style-type: upper-roman;
+}
+
+div.compact ul, div.compact ol,
+div.compact p, div.compact p,
+div.compact div, div.compact div {
+  margin-top: 0.1em;
+  margin-bottom: 0.1em;
+}
+
+tfoot {
+  font-weight: bold;
+}
+td > div.verse {
+  white-space: pre;
+}
+
+div.hdlist {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+div.hdlist tr {
+  padding-bottom: 15px;
+}
+dt.hdlist1.strong, td.hdlist1.strong {
+  font-weight: bold;
+}
+td.hdlist1 {
+  vertical-align: top;
+  font-style: normal;
+  padding-right: 0.8em;
+  color: navy;
+}
+td.hdlist2 {
+  vertical-align: top;
+}
+div.hdlist.compact tr {
+  margin: 0;
+  padding-bottom: 0;
+}
+
+.comment {
+  background: yellow;
+}
+
+.footnote, .footnoteref {
+  font-size: 0.8em;
+}
+
+span.footnote, span.footnoteref {
+  vertical-align: super;
+}
+
+#footnotes {
+  margin: 20px 0 20px 0;
+  padding: 7px 0 0 0;
+}
+
+#footnotes div.footnote {
+  margin: 0 0 5px 0;
+}
+
+#footnotes hr {
+  border: none;
+  border-top: 1px solid silver;
+  height: 1px;
+  text-align: left;
+  margin-left: 0;
+  width: 20%;
+  min-width: 100px;
+}
+
+div.colist td {
+  padding-right: 0.5em;
+  padding-bottom: 0.3em;
+  vertical-align: top;
+}
+div.colist td img {
+  margin-top: 0.3em;
+}
+
+@media print {
+  #footer-badges { display: none; }
+}
+
+#toc {
+  margin-bottom: 2.5em;
+}
+
+#toctitle {
+  color: #527bbd;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-top: 1.0em;
+  margin-bottom: 0.1em;
+}
+
+div.toclevel0, div.toclevel1, div.toclevel2, div.toclevel3, div.toclevel4 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+div.toclevel2 {
+  margin-left: 2em;
+  font-size: 0.9em;
+}
+div.toclevel3 {
+  margin-left: 4em;
+  font-size: 0.9em;
+}
+div.toclevel4 {
+  margin-left: 6em;
+  font-size: 0.9em;
+}
+
+span.aqua { color: aqua; }
+span.black { color: black; }
+span.blue { color: blue; }
+span.fuchsia { color: fuchsia; }
+span.gray { color: gray; }
+span.green { color: green; }
+span.lime { color: lime; }
+span.maroon { color: maroon; }
+span.navy { color: navy; }
+span.olive { color: olive; }
+span.purple { color: purple; }
+span.red { color: red; }
+span.silver { color: silver; }
+span.teal { color: teal; }
+span.white { color: white; }
+span.yellow { color: yellow; }
+
+span.aqua-background { background: aqua; }
+span.black-background { background: black; }
+span.blue-background { background: blue; }
+span.fuchsia-background { background: fuchsia; }
+span.gray-background { background: gray; }
+span.green-background { background: green; }
+span.lime-background { background: lime; }
+span.maroon-background { background: maroon; }
+span.navy-background { background: navy; }
+span.olive-background { background: olive; }
+span.purple-background { background: purple; }
+span.red-background { background: red; }
+span.silver-background { background: silver; }
+span.teal-background { background: teal; }
+span.white-background { background: white; }
+span.yellow-background { background: yellow; }
+
+span.big { font-size: 2em; }
+span.small { font-size: 0.6em; }
+
+span.underline { text-decoration: underline; }
+span.overline { text-decoration: overline; }
+span.line-through { text-decoration: line-through; }
+
+div.unbreakable { page-break-inside: avoid; }
+
+
+/*
+ * xhtml11 specific
+ *
+ * */
+
+div.tableblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+div.tableblock > table {
+  border: 3px solid #527bbd;
+}
+thead, p.table.header {
+  font-weight: bold;
+  color: #527bbd;
+}
+p.table {
+  margin-top: 0;
+}
+/* Because the table frame attribute is overridden by CSS in most browsers. */
+div.tableblock > table[frame="void"] {
+  border-style: none;
+}
+div.tableblock > table[frame="hsides"] {
+  border-left-style: none;
+  border-right-style: none;
+}
+div.tableblock > table[frame="vsides"] {
+  border-top-style: none;
+  border-bottom-style: none;
+}
+
+
+/*
+ * html5 specific
+ *
+ * */
+
+table.tableblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+thead, p.tableblock.header {
+  font-weight: bold;
+  color: #527bbd;
+}
+p.tableblock {
+  margin-top: 0;
+}
+table.tableblock {
+  border-width: 3px;
+  border-spacing: 0px;
+  border-style: solid;
+  border-color: #527bbd;
+  border-collapse: collapse;
+}
+th.tableblock, td.tableblock {
+  border-width: 1px;
+  padding: 4px;
+  border-style: solid;
+  border-color: #527bbd;
+}
+
+table.tableblock.frame-topbot {
+  border-left-style: hidden;
+  border-right-style: hidden;
+}
+table.tableblock.frame-sides {
+  border-top-style: hidden;
+  border-bottom-style: hidden;
+}
+table.tableblock.frame-none {
+  border-style: hidden;
+}
+
+th.tableblock.halign-left, td.tableblock.halign-left {
+  text-align: left;
+}
+th.tableblock.halign-center, td.tableblock.halign-center {
+  text-align: center;
+}
+th.tableblock.halign-right, td.tableblock.halign-right {
+  text-align: right;
+}
+
+th.tableblock.valign-top, td.tableblock.valign-top {
+  vertical-align: top;
+}
+th.tableblock.valign-middle, td.tableblock.valign-middle {
+  vertical-align: middle;
+}
+th.tableblock.valign-bottom, td.tableblock.valign-bottom {
+  vertical-align: bottom;
+}
+
+
+/*
+ * manpage specific
+ *
+ * */
+
+body.manpage h1 {
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  border-top: 2px solid silver;
+  border-bottom: 2px solid silver;
+}
+body.manpage h2 {
+  border-style: none;
+}
+body.manpage div.sectionbody {
+  margin-left: 3em;
+}
+
+@media print {
+  body.manpage div#toc { display: none; }
+}
+
+
+</style>
+<script type="text/javascript">
+/*<![CDATA[*/
+var asciidoc = {  // Namespace.
+
+/////////////////////////////////////////////////////////////////////
+// Table Of Contents generator
+/////////////////////////////////////////////////////////////////////
+
+/* Author: Mihai Bazon, September 2002
+ * http://students.infoiasi.ro/~mishoo
+ *
+ * Table Of Content generator
+ * Version: 0.4
+ *
+ * Feel free to use this script under the terms of the GNU General Public
+ * License, as long as you do not remove or alter this notice.
+ */
+
+ /* modified by Troy D. Hanson, September 2006. License: GPL */
+ /* modified by Stuart Rackham, 2006, 2009. License: GPL */
+
+// toclevels = 1..4.
+toc: function (toclevels) {
+
+  function getText(el) {
+    var text = "";
+    for (var i = el.firstChild; i != null; i = i.nextSibling) {
+      if (i.nodeType == 3 /* Node.TEXT_NODE */) // IE doesn't speak constants.
+        text += i.data;
+      else if (i.firstChild != null)
+        text += getText(i);
+    }
+    return text;
+  }
+
+  function TocEntry(el, text, toclevel) {
+    this.element = el;
+    this.text = text;
+    this.toclevel = toclevel;
+  }
+
+  function tocEntries(el, toclevels) {
+    var result = new Array;
+    var re = new RegExp('[hH]([1-'+(toclevels+1)+'])');
+    // Function that scans the DOM tree for header elements (the DOM2
+    // nodeIterator API would be a better technique but not supported by all
+    // browsers).
+    var iterate = function (el) {
+      for (var i = el.firstChild; i != null; i = i.nextSibling) {
+        if (i.nodeType == 1 /* Node.ELEMENT_NODE */) {
+          var mo = re.exec(i.tagName);
+          if (mo && (i.getAttribute("class") || i.getAttribute("className")) != "float") {
+            result[result.length] = new TocEntry(i, getText(i), mo[1]-1);
+          }
+          iterate(i);
+        }
+      }
+    }
+    iterate(el);
+    return result;
+  }
+
+  var toc = document.getElementById("toc");
+  if (!toc) {
+    return;
+  }
+
+  // Delete existing TOC entries in case we're reloading the TOC.
+  var tocEntriesToRemove = [];
+  var i;
+  for (i = 0; i < toc.childNodes.length; i++) {
+    var entry = toc.childNodes[i];
+    if (entry.nodeName.toLowerCase() == 'div'
+     && entry.getAttribute("class")
+     && entry.getAttribute("class").match(/^toclevel/))
+      tocEntriesToRemove.push(entry);
+  }
+  for (i = 0; i < tocEntriesToRemove.length; i++) {
+    toc.removeChild(tocEntriesToRemove[i]);
+  }
+
+  // Rebuild TOC entries.
+  var entries = tocEntries(document.getElementById("content"), toclevels);
+  for (var i = 0; i < entries.length; ++i) {
+    var entry = entries[i];
+    if (entry.element.id == "")
+      entry.element.id = "_toc_" + i;
+    var a = document.createElement("a");
+    a.href = "#" + entry.element.id;
+    a.appendChild(document.createTextNode(entry.text));
+    var div = document.createElement("div");
+    div.appendChild(a);
+    div.className = "toclevel" + entry.toclevel;
+    toc.appendChild(div);
+  }
+  if (entries.length == 0)
+    toc.parentNode.removeChild(toc);
+},
+
+
+/////////////////////////////////////////////////////////////////////
+// Footnotes generator
+/////////////////////////////////////////////////////////////////////
+
+/* Based on footnote generation code from:
+ * http://www.brandspankingnew.net/archive/2005/07/format_footnote.html
+ */
+
+footnotes: function () {
+  // Delete existing footnote entries in case we're reloading the footnodes.
+  var i;
+  var noteholder = document.getElementById("footnotes");
+  if (!noteholder) {
+    return;
+  }
+  var entriesToRemove = [];
+  for (i = 0; i < noteholder.childNodes.length; i++) {
+    var entry = noteholder.childNodes[i];
+    if (entry.nodeName.toLowerCase() == 'div' && entry.getAttribute("class") == "footnote")
+      entriesToRemove.push(entry);
+  }
+  for (i = 0; i < entriesToRemove.length; i++) {
+    noteholder.removeChild(entriesToRemove[i]);
+  }
+
+  // Rebuild footnote entries.
+  var cont = document.getElementById("content");
+  var spans = cont.getElementsByTagName("span");
+  var refs = {};
+  var n = 0;
+  for (i=0; i<spans.length; i++) {
+    if (spans[i].className == "footnote") {
+      n++;
+      var note = spans[i].getAttribute("data-note");
+      if (!note) {
+        // Use [\s\S] in place of . so multi-line matches work.
+        // Because JavaScript has no s (dotall) regex flag.
+        note = spans[i].innerHTML.match(/\s*\[([\s\S]*)]\s*/)[1];
+        spans[i].innerHTML =
+          "[<a id='_footnoteref_" + n + "' href='#_footnote_" + n +
+          "' title='View footnote' class='footnote'>" + n + "</a>]";
+        spans[i].setAttribute("data-note", note);
+      }
+      noteholder.innerHTML +=
+        "<div class='footnote' id='_footnote_" + n + "'>" +
+        "<a href='#_footnoteref_" + n + "' title='Return to text'>" +
+        n + "</a>. " + note + "</div>";
+      var id =spans[i].getAttribute("id");
+      if (id != null) refs["#"+id] = n;
+    }
+  }
+  if (n == 0)
+    noteholder.parentNode.removeChild(noteholder);
+  else {
+    // Process footnoterefs.
+    for (i=0; i<spans.length; i++) {
+      if (spans[i].className == "footnoteref") {
+        var href = spans[i].getElementsByTagName("a")[0].getAttribute("href");
+        href = href.match(/#.*/)[0];  // Because IE return full URL.
+        n = refs[href];
+        spans[i].innerHTML =
+          "[<a href='#_footnote_" + n +
+          "' title='View footnote' class='footnote'>" + n + "</a>]";
+      }
+    }
+  }
+},
+
+install: function(toclevels) {
+  var timerId;
+
+  function reinstall() {
+    asciidoc.footnotes();
+    if (toclevels) {
+      asciidoc.toc(toclevels);
+    }
+  }
+
+  function reinstallAndRemoveTimer() {
+    clearInterval(timerId);
+    reinstall();
+  }
+
+  timerId = setInterval(reinstall, 500);
+  if (document.addEventListener)
+    document.addEventListener("DOMContentLoaded", reinstallAndRemoveTimer, false);
+  else
+    window.onload = reinstallAndRemoveTimer;
+}
+
+}
+asciidoc.install();
+/*]]>*/
+</script>
+<meta name="format-detection" content="telephone=no" />
+</head>
+<body class="article">
+<div id="header">
+<h1>FAILOVER(8)</h1>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_name">NAME</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>failover - UPS Failover Driver</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_synopsis">SYNOPSIS</h2>
+<div class="sectionbody">
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<div class="title">Two NUT websites</div>
+<div class="paragraph"><p>This version of the page reflects NUT release <em>v2.8.4</em>
+with codebase commited 541c2ecf0b at 2025-08-08T12:48:39+02:00</p></div>
+<div class="paragraph"><p>Options, features and capabilities in current development (and future
+releases) are detailed on the main site and may differ from ones
+described here.</p></div>
+</td>
+</tr></table>
+</div>
+<div class="paragraph"><p><strong>failover</strong> -h</p></div>
+<div class="paragraph"><p><strong>failover</strong> -a <em>UPS_NAME</em> [<em>OPTIONS</em>]</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">This man page only documents the specific features of the failover driver.
+For information about the core driver, see <a href="nutupsdrv.html">nutupsdrv(8)</a>.</td>
+</tr></table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_description">DESCRIPTION</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>The <code>failover</code> driver acts as a smart proxy for multiple "real" UPS drivers. It
+connects to and monitors these underlying UPS drivers through their local UNIX
+sockets (or Windows named pipes), continuously evaluating health and suitability
+for "primary" duty according to a set of user configurable rules and priorities.</p></div>
+<div class="paragraph"><p>At any given time, <code>failover</code> designates one UPS driver as the <strong>primary</strong>, and
+presents its commands, variables and status to the outside world as if it were
+directly talking to that UPS. From the perspective of the clients (such as
+<a href="upsmon.html">upsmon(8)</a> or <a href="upsc.html">upsc(8)</a>), the <code>failover</code> driver behaves like any
+single UPS, abstracting away the underlying redundancy, and allowing for
+seamless transitioning between all monitored UPS drivers and their datasets.</p></div>
+<div class="paragraph"><p>The driver dynamically promotes or demotes the primary UPS driver based on:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+Socket availability and communication status
+</p>
+</li>
+<li>
+<p>
+Data freshness and UPS online/offline indicators
+</p>
+</li>
+<li>
+<p>
+User-defined status filters (e.g., presence or absence of <code>OL</code>, <code>LB</code>, &#8230;)
+</p>
+</li>
+<li>
+<p>
+Administrative override via control commands (<code>force.primary</code>, <code>force.ignore</code>)
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>If the current primary becomes unavailable or no longer meets the criteria, the
+driver automatically fails over to a more suitable driver. During transitions,
+it ensures that any data is switched out instantly, without the <a href="upsd.html">upsd(8)</a>
+considering it as stale or the clients acting on any previously degraded status.</p></div>
+<div class="paragraph"><p>When no suitable primary is available, a configurable fallback state is entered:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+Keep last primary and declare the data as stale
+</p>
+</li>
+<li>
+<p>
+Raise <code>ALARM</code> and declare the data as stale
+</p>
+</li>
+<li>
+<p>
+Raise <code>ALARM</code> and set forced shutdown (<code>FSD</code>)
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>Different communication media can be used to connect to individual UPS drivers
+(e.g., USB, Serial, Ethernet). <code>failover</code> communicates directly at the socket
+level and therefore does not rely on <a href="upsd.html">upsd(8)</a> being active.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_extra_arguments">EXTRA ARGUMENTS</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>This driver supports the following settings:</p></div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>port</strong>=<em>drivername-devicename,drivername2-devicename2,&#8230;</em>
+</dt>
+<dd>
+<p>
+Required. Specifies the local sockets (or Windows named pipes) of the underlying
+UPS drivers to be tracked. Entries must either be a path or follow the format
+<code>drivername-devicename</code>, as used by NUT&#8217;s internal socket naming convention
+(e.g. <code>usbhid-ups-myups</code>). Multiple entries are comma-separated with no spaces.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>inittime</strong>=<em>seconds</em>
+</dt>
+<dd>
+<p>
+Optional. Sets a grace period after driver startup during which the absence of a
+primary is tolerated. This allows time for underlying drivers to initialize. For
+networked connections or drivers that require "lock-picking" their communication
+protocol, consider increasing this value to accommodate potential longer delays.
+Defaults to 30 seconds.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>deadtime</strong>=<em>seconds</em>
+</dt>
+<dd>
+<p>
+Optional. Sets a grace period in seconds after which a non-responsive UPS driver
+is considered dead. Defaults to 30 seconds.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>relogtime</strong>=<em>seconds</em>
+</dt>
+<dd>
+<p>
+Optional. Time interval in which repeated connection failure logs are emitted
+for a UPS, reducing log spam during unstable conditions. Defaults to 5 seconds.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>noprimarytime</strong>=<em>seconds</em>
+</dt>
+<dd>
+<p>
+Optional. Duration to wait without a suitable primary UPS driver before entering
+the configured fallback mode (<code>fsdmode</code>). Defaults to 15 seconds.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>maxconnfails</strong>=<em>count</em>
+</dt>
+<dd>
+<p>
+Optional. Number of consecutive connection failures allowed per UPS driver
+before entering into the cooldown period (<code>coolofftime</code>). Defaults to 5.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>coolofftime</strong>=<em>seconds</em>
+</dt>
+<dd>
+<p>
+Optional. Cooldown period during which the driver pauses reconnect attempts
+after exceeding <code>maxconnfails</code>. Defaults to 15 seconds.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>fsdmode</strong>=<em>0|1|2</em>
+</dt>
+<dd>
+<p>
+Optional. Defines the behavior when no suitable primary UPS driver is found
+after <code>noprimarytime</code> has elapsed. Defaults to 0.
+</p>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>0</code>: <strong>Do not demote the last primary, but mark its data as stale.</strong> This is
+similar to how a regular UPS driver would behave when it loses its connection to
+the target UPS device. <a href="upsmon.html">upsmon(8)</a> will act on the last known (online or
+not) status, and decide itself whether that UPS should be considered critical.
+</p>
+</li>
+<li>
+<p>
+<code>1</code>: <strong>Demote the primary, raise <code>ALARM</code>, and mark the data as stale after an
+additional few seconds have elapsed (ensuring full propagation).</strong> This will
+cause <a href="upsmon.html">upsmon(8)</a> to detect that a device previously in an alarm state has
+lost its connection, consider the UPS driver critical, and possibly trigger a
+forced shutdown (<code>FSD</code>) due to depletion of <code>MINSUPPLIES</code>.
+</p>
+</li>
+<li>
+<p>
+<code>2</code>: <strong>Demote the primary, raise <code>ALARM</code>, and immediately set <code>FSD</code>.</strong> This will
+set <code>FSD</code> from the driver side and preempt <a href="upsmon.html">upsmon(8)</a> from raising it
+itself. This mode is for setups where immediate shutdown is warranted,
+regardless of anything else, and getting <code>FSD</code> out to the clients as fast as
+just possible.
+</p>
+</li>
+</ul></div>
+</dd>
+<dt class="hdlist1">
+<strong>checkruntime</strong>=<em>0|1|2|3</em>
+</dt>
+<dd>
+<p>
+Optional. Controls how <code>battery.runtime</code> values are used to break ties between
+non-fully-online UPS devices <strong>at priority 3 or lower</strong>. Has no effect on
+initial priority selection or when <code>strictfiltering</code> is enabled. Defaults to 1.
+</p>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>0</code>: <strong>Disabled.</strong> No runtime comparison is done. The first candidate with the
+best priority is selected according to the order of the port argument.
+</p>
+</li>
+<li>
+<p>
+<code>1</code>: <strong>Compare <code>battery.runtime</code>.</strong> The UPS with the higher value is preferred.
+If the value is missing or invalid, the UPS cannot win the tie-break.
+</p>
+</li>
+<li>
+<p>
+<code>2</code>: <strong>Compare <code>battery.runtime.low</code>.</strong> The UPS with the higher value is
+preferred. If the value is missing or invalid, the UPS cannot win the tie-break.
+</p>
+</li>
+<li>
+<p>
+<code>3</code>: <strong>Compare both variables strictly.</strong> The UPS is preferred only if it has
+both a higher <code>battery.runtime</code> and <code>battery.runtime.low</code> value. If either is
+missing or invalid, the UPS cannot win the tie-break.
+</p>
+</li>
+</ul></div>
+</dd>
+<dt class="hdlist1">
+<strong>strictfiltering</strong>=<em>0|1</em>
+</dt>
+<dd>
+<p>
+Optional. If set to 1, only UPS drivers matching the
+configured status filters are considered for promotion to primary. If set to 0,
+the hard-coded default logic is also considered when no status filters match
+(read more about this in the section <code>PRIORITIES</code>). Defaults to 0.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>status_have_any</strong>=<em>OL,CHRG,&#8230;</em>
+</dt>
+<dd>
+<p>
+Optional. If any of these comma-separated tokens are present in a UPS driver&#8217;s
+<code>ups.status</code>, it passes this status filtering criteria. Defaults to unset.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>status_have_all</strong>=<em>OL,CHRG,&#8230;</em>
+</dt>
+<dd>
+<p>
+Optional. All listed comma-separated tokens must be present in <code>ups.status</code> for
+the UPS driver to pass this status filtering criteria. Defaults to unset.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>status_nothave_any</strong>=<em>OB,OFF,&#8230;</em>
+</dt>
+<dd>
+<p>
+Optional. If any of these comma-separated tokens are present in <code>ups.status</code>,
+the UPS driver does not pass this status filtering criteria. Defaults to unset.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>status_nothave_all</strong>=<em>OB,LB,&#8230;</em>
+</dt>
+<dd>
+<p>
+Optional. If all of these comma-separated tokens are present in <code>ups.status</code>,
+the UPS driver does not pass this status filtering criteria. Defaults to unset.
+</p>
+</dd>
+</dl></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">The <code>status_*</code> arguments are primarily intended to adjust the weighting of
+UPS drivers, allowing some to be prioritized over others based on their status.
+For example, a driver reporting <code>OL</code> might be preferred over one reporting
+<code>ALARM OL</code>. While <code>strictfiltering</code> can be enabled, status filters are most
+effective when used in combination with the default set of connectivity-based
+<code>PRIORITIES</code>. For more details, see the respective section further below.</td>
+</tr></table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_implementation">IMPLEMENTATION</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>The port argument in the <a href="ups.conf.html">ups.conf(5)</a> should reference the local driver
+sockets (or Windows named pipes) that the "real" UPS drivers are using. A basic
+default setup with multiple drivers could look like this:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>  [realups]
+     driver = usbhid-ups
+     port = auto
+
+  [realups2]
+     driver = usbhid-ups
+     port = auto
+
+  [failover]
+     driver = failover
+     port = usbhid-ups-realups,usbhid-ups-realups2</code></pre>
+</div></div>
+<div class="paragraph"><p>Any <a href="upsmon.html">upsmon(8)</a> clients would be set to monitor the <code>failover</code> UPS.</p></div>
+<div class="paragraph"><p>The driver fully supports setting variables and performing instant commands on
+the currently elected primary UPS driver, which are proxied and with end-to-end
+tracking also being possible (<a href="upscmd.html">upscmd(8)</a> and <a href="upsrw.html">upsrw(8)</a> <code>-w</code>). You
+may notice some variables and commands will be prefixed with <code>upstream.</code>, this
+is to clearly separate the upstream commands from those of <code>failover</code> itself.</p></div>
+<div class="paragraph"><p>For your convenience, additional administrative commands are exposed to directly
+influence and override the primary election process, e.g. for maintenance:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>&lt;socketname&gt;.force.ignore [seconds]</code> prevents the specified UPS driver from
+being selected as primary for the given duration, or permanently if a negative
+value is used. A value of <code>0</code> resets this override and re-enables selection.
+</p>
+</li>
+<li>
+<p>
+<code>&lt;socketname&gt;.force.primary [seconds]</code> forces the specified UPS driver to be
+treated with the highest priority for the given duration, or permanently if a
+negative value is used. A value of <code>0</code> resets this override.
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>Calling either command without an argument has the same effect as passing <code>0</code>,
+but only for that specific override - it does not affect the other.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_priorities">PRIORITIES</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>As outlined above, primaries are dynamically elected based on their current
+state and according to a strict set of user influenceable priorities, which are:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>0</code> (highest): UPS driver was forced to the top by administrative command.
+</p>
+</li>
+<li>
+<p>
+<code>1</code>: UPS driver has passed the user-defined status filters.
+</p>
+</li>
+<li>
+<p>
+<code>2</code>: UPS driver has fresh data and is online (in status <code>OL</code>).
+</p>
+</li>
+<li>
+<p>
+<code>3</code>: UPS driver has fresh data, but may not be fully online.
+</p>
+</li>
+<li>
+<p>
+<code>4</code> (lowest): UPS driver is alive, but may not have fresh data.
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>The UPS driver with the highest calculated priority is chosen as primary, ties
+are resolved through order of the socket names given within the <code>port</code> argument.</p></div>
+<div class="paragraph"><p>For the user-defined status filters, the following internal order is respected:</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+<code>status_nothave_any</code> (first)
+</p>
+</li>
+<li>
+<p>
+<code>status_have_all</code>
+</p>
+</li>
+<li>
+<p>
+<code>status_nothave_all</code>
+</p>
+</li>
+<li>
+<p>
+<code>status_have_any</code> (last)
+</p>
+</li>
+</ol></div>
+<div class="paragraph"><p>If <code>strictfiltering</code> is enabled, priorities 2 to 4 are not applicable.</p></div>
+<div class="paragraph"><p>If no user-defined status filters are set, the priority 1 is not applicable.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">The base requirement for any election is the UPS socket being connectable
+and the UPS driver having published at least one full batch of data during its
+lifetime. UPS driver not fulfilling that requirement are always disqualified.</td>
+</tr></table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_rationale">RATIONALE</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>In complex power environments, presenting a single, consistent source of UPS
+information to <a href="upsmon.html">upsmon(8)</a> is sometimes preferable to monitoring multiple
+independent drivers directly. The <code>failover</code> driver serves as a bridge, allowing
+<a href="upsmon.html">upsmon(8)</a> to make decisions based on the most suitable available data,
+without having to interpret conflicting inputs or degraded sources.</p></div>
+<div class="paragraph"><p>Originally designed for use cases such as dual-PSU systems or redundant
+communication paths to a single UPS, <code>failover</code> also supports more advanced
+setups - for example, when multiple UPSes feed a shared downstream load (via
+STS/ATS switches), or when drivers vary in reliability. In these cases, the
+driver can be combined with external logic or scripting to dynamically adjust
+primary selection and facilitate graceful degradation. Such setups may also
+benefit from further integration with the <code>clone</code> family of drivers, such as
+<a href="clone.html">clone(8)</a> or <a href="clone-outlet.html">clone-outlet(8)</a>, for greater granularity and
+monitoring control down to the outlet level.</p></div>
+<div class="paragraph"><p>Additionally, in more niche scenarios, some third-party NUT integrations or
+graphical interfaces may be limited to monitoring a single UPS device. In such
+cases, <code>failover</code> can help by exposing only the most relevant or
+highest-priority data source, allowing those tools to operate within their
+constraints without missing critical information.</p></div>
+<div class="paragraph"><p>Ultimately, this driver enables more nuanced power monitoring and control than
+binary online/offline logic alone, allowing administrators to respond to
+degraded conditions early - before they escalate into critical events or require
+<a href="upsmon.html">upsmon(8)</a> to take action.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_limitations">LIMITATIONS</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>When using <code>failover</code> for redundancy between multiple UPS drivers connected to
+the same underlying UPS device, data is not multiplexed between the drivers. As
+a result, some data points may be available in some drivers but not in others.</p></div>
+<div class="paragraph"><p>For <code>checkruntime</code> considerations, the unit of both <code>battery.runtime</code> and
+<code>battery.runtime.low</code> is assumed to be <strong>seconds</strong>. UPS drivers that report
+these values using different units are considered non-compliant with the NUT
+variable standards and should be reported to the NUT developers as faulty.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_author">AUTHOR</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Sebastian Kuttnig &lt;<a href="mailto:sebastian.kuttnig@gmail.com">sebastian.kuttnig@gmail.com</a>&gt;</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_see_also">SEE ALSO</h2>
+<div class="sectionbody">
+<div class="paragraph"><p><a href="upscmd.html">upscmd(8)</a>,
+<a href="upsrw.html">upsrw(8)</a>,
+<a href="ups.conf.html">ups.conf(5)</a>,
+<a href="upsc.html">upsc(8)</a>,
+<a href="upsmon.html">upsmon(8)</a>,
+<a href="nutupsdrv.html">nutupsdrv(8)</a>,
+<a href="clone.html">clone(8)</a>,
+<a href="clone-outlet.html">clone-outlet(8)</a></p></div>
+<div class="sect2">
+<h3 id="_internet_resources">Internet Resources:</h3>
+<div class="paragraph"><p>The NUT (Network UPS Tools) home page: <a href="https://www.networkupstools.org/historic/v2.8.4/">https://www.networkupstools.org/historic/v2.8.4/</a></p></div>
+</div>
+</div>
+</div>
+</div>
+<div id="footnotes"><hr /></div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2025-08-09 00:45:18 UTC -- Network UPS Tools 2.8.4
+</div>
+</div>
+</body>
+</html>

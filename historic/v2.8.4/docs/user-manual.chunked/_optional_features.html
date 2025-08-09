@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>H.4. Optional features</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><link rel="home" href="index.html" title="Network UPS Tools User Manual" /><link rel="up" href="Configure_options.html" title="H. Configure options" /><link rel="prev" href="_driver_selection.html" title="H.3. Driver selection" /><link rel="next" href="_other_configuration_options.html" title="H.5. Other configuration options" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="_driver_selection.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="_other_configuration_options.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_optional_features"></a>H.4. Optional features</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_cgi_client_interface"></a>CGI client interface</h4></div></div></div><pre class="literallayout">--with-cgi (default: no)</pre><p>Build and install the optional CGI programs, HTML files, and sample
+CGI configuration files. This is not enabled by default, as they
+are only useful on web servers. See <a class="ulink" href="data/html/README" target="_top">data/html/README</a> for additional
+information on how to set up CGI programs.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_nut_scanner_tool"></a>NUT Scanner tool</h4></div></div></div><pre class="literallayout">--with-nut-scanner (default: auto)</pre><p>Build and install the optional <a class="ulink" href="../man/nut-scanner.html" target="_top">nut-scanner(8)</a> tool to discover some
+types of UPS or ePDU devices on locally or remotely connected media (such as
+Serial, USB, SNMP, IPMI, NetXML), as well as NUT data servers (by Avahi/mDNS
+broadcasts or "old" NUT port polling) and simulation device configurations
+that can be relayed by a local <a class="ulink" href="../man/dummy-ups.html" target="_top">dummy-ups(8)</a> driver instance.</p><p>Many of the features depend on third-party libraries that are loosely linked
+at run-time using libltdl, and due to that, the build, delivery and use of the
+tool does not depend on <span class="strong"><strong>all</strong></span> of them being available in the final deployment.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_nut_configuration_tool"></a>NUT Configuration tool</h4></div></div></div><pre class="literallayout">--with-nutconf (default: auto)</pre><p>Build and install the optional <a class="ulink" href="../man/nutconf.html" target="_top">nutconf(8)</a> tool to create and manipulate
+NUT configuration files.  It also optionally supports device scanning, using
+the <a class="ulink" href="../man/nutscan.html" target="_top">nutscan(3)</a> library (if built), to suggest configuration of devices.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_pretty_documentation_and_man_pages"></a>Pretty documentation and man pages</h4></div></div></div><pre class="literallayout">--with-docs=&lt;output-format(s)&gt;  (default: no)
+--with-doc=&lt;output-format(s)&gt;  (default: no)</pre><p>Build and install NUT documentation file(s). Note: <code class="literal">--with-doc</code> is a legacy
+NUT option, and <code class="literal">--with-docs</code> is an alias that matches the more wide-spread
+equivalent in different packaging frameworks and projects.</p><p>This feature requires AsciiDoc 8.6.3 or newer (see <a class="ulink" href="https://asciidoc.org" target="_top">https://asciidoc.org</a>).</p><p>The possible documentation type values are:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<code class="literal">html-single</code> for single page HTML,
+</li><li class="listitem">
+<code class="literal">html-chunked</code> for multi-paged HTML,
+</li><li class="listitem">
+<code class="literal">pdf</code> for a PDF file, and
+</li><li class="listitem">
+<code class="literal">man</code> for the usual man pages.
+</li></ul></div><p>Other values understood for this option are listed below:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+If the <code class="literal">--with-doc</code> argument is passed without a list, or specifies
+  just <code class="literal">=yes</code> or <code class="literal">=all</code>, it enables all supported formats with a <code class="literal">=yes</code>
+  to require them.
+</li><li class="listitem">
+An (explicit!) <code class="literal">--with-doc=auto</code> argument tries to enable all supported
+  formats with an <code class="literal">=auto</code> but should not fail the build if something
+  can not be generated.
+</li><li class="listitem">
+A <code class="literal">--with-doc=no</code> quietly skips generation of all types of documentation,
+  including man pages.
+</li><li class="listitem">
+A <code class="literal">--with-doc=skip</code> is used to configure some of the <code class="literal">make distcheck*</code>
+  scenarios to re-use man page files built and distributed by the main
+  build and not waste time on re-generation of those.
+</li><li class="listitem">
+A <code class="literal">--with-doc=dist-auto</code> allows to use pre-distributed MAN pages if present
+  (should be in "tarball" release archives; should not be among Git-tracked
+  sources; may be left over from earlier builds in same workspace), or build
+  those if we can (the <code class="literal">auto</code> part). Practically this is implemented in detail
+  only for <code class="literal">--with-doc=man=dist-auto</code>, as we do not dist HTML and PDF products;
+  it is a placeholder for those to simplify the generic configuration calls.
+</li></ul></div><p>Multiple documentation format values can be specified, separated with comma.
+Each such value can be suffixed with <code class="literal">=yes</code> to require building of this one
+documentation format (abort configuration if tools are missing), <code class="literal">=auto</code> to
+detect and enable if we can build it on this system (and not abort if we
+can not), and <code class="literal">=no</code> (or <code class="literal">=skip</code>) to explicitly skip generation of this
+document format even if we do have the tools to build it.</p><p>If a document format is mentioned in the list without a suffix, then it is
+treated as a <code class="literal">=yes</code> requirement.</p><p>Verbose output can be enabled using: <code class="literal">ASCIIDOC_VERBOSE=-v make</code></p><p>Example valid formats of this flag:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<code class="literal">--with-doc</code> without an argument, effectively same as <code class="literal">--with-doc=yes</code>
+</li><li class="listitem">
+<code class="literal">--with-doc=</code> is a valid empty list, effectively same as <code class="literal">--with-doc=no</code>
+</li><li class="listitem">
+<code class="literal">--with-doc=auto</code>
+</li><li class="listitem">
+<code class="literal">--with-doc=pdf,html-chunked</code>
+</li><li class="listitem">
+<code class="literal">--with-doc=man=no,pdf=auto,html-single</code>
+</li></ul></div><p>Additional flags with regard to documentation generation include:</p><pre class="literallayout">--enable-docs-man-for-progs-built-only=&lt;yes|no&gt;</pre><p>Choose to build and install MAN pages only for the NUT programs being built
+in this run (this is the legacy default selection), or all known MAN pages
+(including for NUT programs and drivers not being built now). Should not
+affect the API manual pages (but note they may be impacted by <code class="literal">--with-dev</code>).</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>You want this set to <code class="literal">no</code> when preparing NUT distribution tarballs.</p></div><pre class="literallayout">--with-docs-man-section-api=&lt;SN&gt;        (default: 3)
+--with-docs-man-section-cfg=&lt;SN&gt;        (default: 5)
+--with-docs-man-section-cmd-sys=&lt;SN&gt;    (default: 8, or 1m on Solaris/illumos)
+--with-docs-man-section-cmd-usr=&lt;SN&gt;    (default: 1)
+--with-docs-man-section-misc=&lt;SN&gt;       (default: 7)</pre><p>Customize man page section identifiers for operating systems whose standards
+do not match defaults listed above for Library and API, Configuration Files,
+System Management Commands and User Commands sections (e.g. Solaris-derived
+systems might use <code class="literal">--with-docs-man-section-cmd-sys=1m</code>). This impacts not only
+file names of the manual pages, but also cross-links in generated documents.
+Note that use of these flags does not implicitly enable any <code class="literal">--with-docs=...</code>
+mode, which should still be specified explicitly.</p><pre class="literallayout">--with-docs-man-dir-as-base=(yes/no)    (default: yes, or no Solaris/illumos)</pre><p>Are platform man directories named by base number (yes) or by full section
+name (no), e.g. given a <code class="literal">1m</code> man page section, install the pages into <code class="literal">man1</code>
+or <code class="literal">man1m</code> directory?</p><pre class="literallayout">--enable-docs-changelog=&lt;yes|no|skip|auto|{format,list}&gt;</pre><p>This option was added specifically to allow developer iterations to not waste
+CPU time rebuilding the huge <code class="literal">ChangeLog*</code> files whenever their Git index
+changes. For troubleshooting purposes, this option supports specifying the
+list of formats (<span class="emphasis"><em>text</em></span>, <span class="emphasis"><em>adoc</em></span>, <span class="emphasis"><em>html-single</em></span>, <span class="emphasis"><em>html-chunked</em></span>, <span class="emphasis"><em>pdf</em></span>) with
+optional suffixes to build (empty/<span class="emphasis"><em>=yes</em></span>), consider (<span class="emphasis"><em>=auto</em></span>) or not-build
+(<span class="emphasis"><em>=no</em></span> or <span class="emphasis"><em>=skip</em></span>) specific formats; note that some are prerequisites for
+others (plain <span class="emphasis"><em>text</em></span> and prepared <span class="emphasis"><em>adoc</em></span> are needed to generate HTML and PDF).</p><pre class="literallayout">--with-docs-changelog-start=&lt;auto|git-tree-ish&gt;
+--with-docs-changelog-end=&lt;auto|git-tree-ish&gt;</pre><p>This option was added to allow developers (and CI build agents) to customize
+the size of <code class="literal">ChangeLog*</code> files when they are generated. Balancing against the
+option above to not build <code class="literal">ChangeLog*</code> files at all, this couple allows quicker
+builds that exercise all relevant recipe code paths.</p><p>Default value for the starting point is <code class="literal">auto</code>, which applies the legacy
+default <code class="literal">v2.6.0</code> either to release/pre-release builds, or when local Git
+version metadata could not be retrieved, and the most-recent release tag
+(or <code class="literal">master</code> as fallback) for usual build iterations.</p><p>Default value for the ending point is <code class="literal">HEAD</code> to represent the current commit
+at the moment the <code class="literal">ChangeLog</code> file and its derivatives are (re-)generated.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>The resulting <code class="literal">GITLOG_START_POINT</code> value may also impact the oldest
+version considered by maintainer helper script <code class="literal">docs/docinfo.xml.sh</code> (if it
+specifies a <code class="literal">v*</code> tag, otherwise <code class="literal">v2.6.0</code> is used).</p></div><pre class="literallayout">--with-docs-man-linkmanext-template='https://linux.die.net/man/{0}/{target}'
+--with-docs-man-linkmanext2-template='https://linux.die.net/man/{2}/{target}'
+--enable-docs-man-linkmanext-section-rewrite</pre><p>NUT manual pages can refer to system-provided programs, files or syscalls
+using custom-defined <code class="literal">linkmanext</code> or <code class="literal">linkmanext2</code> asciidoc macros.
+They in turn use man page sections, which may be subject to rewrites similar
+to those applied to NUT pages themselves. The options above should help
+packagers manage this; defaults are set for Linux standard filesystem layout.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>Avoid characters special for XML or HTML mark-up needed in the template
+(notably the <code class="literal">&amp;</code> "ampersand" in HTML URLs with queries), entities like <code class="literal">&amp;amp;</code>
+must be used to pass docbook part (not man page generation though) and then
+it stays in the final document, making the URL invalid. PRs welcome :)</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_python_support"></a>Python support</h4></div></div></div><p>NUT includes a client binding <code class="literal">PyNUT</code> module, as well as an optional GUI
+application <code class="literal">NUT-Monitor</code> (not to be confused with <code class="literal">nut-monitor</code> service
+name for <code class="literal">upsmon</code> as delivered by some OS distribution packages). Both
+python 2.7 and several versions of python 3.x are supported and regularly
+tested by NUT CI farm builds; other versions may work or not.</p><p>Also some of the source configuration (including activity in <code class="literal">autogen.sh</code>
+script and later in certain <code class="literal">Makefile`s during build) relies on presence
+of `python</code> (and <code class="literal">perl</code>) interpreters. If they are not available, e.g. on
+older operating systems, certain features are skipped — but you may have
+to <code class="literal">export</code> special environment variables to signal to <code class="literal">autogen.sh</code> that
+this is an expected situation (it would suggest which, for your current
+NUT version).</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>For CI builds (or similar reproducible developer activity) performed
+with <code class="literal">ci_build.sh</code> — since this is an area which impacts both <code class="literal">configure</code>
+script generation by the helper <code class="literal">autogen.sh</code> script and subsequently the
+choices made by the <code class="literal">configure</code> script itself, settings can be made by
+exporting the <code class="literal">PYTHON</code> environment variable which should evaluate to some
+way to call the correct interpreter (e.g. <code class="literal">python2.7</code>, <code class="literal">/usr/bin/env python</code>
+or <code class="literal">/usr/bin/python3</code>).</p></div><p>The <code class="literal">configure</code> script does support equivalent options, whose defaults
+come from detection of certain program names by current <code class="literal">PATH</code> setting.
+Further use of these interpreter names and other paths during NUT build
+and installation is managed by Makefile variable expansion, as prepared
+by the <code class="literal">configure</code> script.</p><p>Also note that it is not required to use the same <code class="literal">PYTHON</code> implementation
+for <code class="literal">autogen.sh</code> to do its job, and for the <code class="literal">configure</code> script option.</p><p>As noted above, both python-2.x and python-3.x variants are supported.
+You can consult the <code class="literal">m4/nut_check_python.m4</code> file for detection methods used.
+If both interpreter generations are present, and a particular un-versioned
+<code class="literal">PYTHON</code> is not specified or detected, then selected/detected <code class="literal">PYTHON3</code> is
+chosen as the ultimate <code class="literal">PYTHON</code> value.</p><p>For majority of uses in the build procedure and products, the generation
+of Python does not matter and the un-versioned <code class="literal">PYTHON</code> value is substituted
+into files as the script shebang, used to find the <code class="literal">site-packages</code> location,
+etc.</p><p>One exception is generation of NUT-Monitor GUI application, being separated
+for <code class="literal">NUT-Monitor-py2gtk2</code>, <code class="literal">NUT-Monitor-py3qt5</code>, <code class="literal">NUT-Monitor-py3qt6</code> due
+to further backend platform technical differences — these build products
+specifically use <code class="literal">PYTHON2</code> and <code class="literal">PYTHON3</code> substitutions. They may also be
+co-installed on the same system. A dispatcher shell script <code class="literal">NUT-Monitor</code>
+is used to launch the preferred (newest) or only existing implementation.</p><p>Please note that by default NUT tries to make use of everything in your
+build environment, so if both Python generation are detected — the binding
+module will be delivered into both, and two versions of NUT-Monitor GUI
+application will be installed.  If you want to avoid that behaviour on a
+build system with both interpreters present, you can explicitly specify
+to build e.g. <code class="literal">--without-python2 --with-python=/usr/bin/python-3.9</code>.</p><p>The settings below may be of particular interest to non-distribution
+packaging efforts with their own dedicated directory trees:</p><pre class="literallayout">--with-python=SHEBANG_PATH</pre><p>Specify a definitive version you want used for majority of the Python
+code (except version-dependent scripts, see above).</p><p>The <code class="literal">SHEBANG_PATH</code> should be a full program pathname, optionally with
+one argument, e.g. <code class="literal">/usr/bin/python-3.9</code> or <code class="literal">/usr/bin/env python2</code>.</p><p>Defaults (in order):
+* <code class="literal">python</code>, <code class="literal">python3</code> or <code class="literal">python2</code> program if present in <code class="literal">PATH</code> by such name,
+* or the newest of <code class="literal">PYTHON3</code> or <code class="literal">PYTHON2</code> values (specified or detected below).</p><pre class="literallayout">--with-python2=SHEBANG_PATH
+--with-python3=SHEBANG_PATH</pre><p>For version-dependent scripts (see above) or to default the newest Python
+version if not specified by <code class="literal">--with-python</code> option or detected otherwise,
+you can provide the preferred version and implementation of Python 2 or 3
+respectively.</p><p>Conversely, if neither of these configure options were specified, but some
+<code class="literal">--with-python</code> program was specified or detected, and its report says it
+has Python major version 2 or 3, then the versioned interpreter string would
+point to that.</p><pre class="literallayout">--with-nut_monitor</pre><p>Install the NUT-Monitor GUI application (depending on Python 2 or 3 version
+availability), and optional <code class="literal">desktop-file-install</code> integration).</p><pre class="literallayout">--with-pynut</pre><p>Install the PyNUT module files for general consumption into "site-packages"
+location of the currently chosen Python interpreter(s): yes, no, auto.
+or dedicated as the required dependency of NUT-Monitor application (app).</p><div class="warning" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Warning</h3><p>The module files are installed into a particular Python version’s location
+such as <code class="literal">/usr/lib/python2.7/dist-packages</code> even if you specify a relaxed
+or un-versioned interpreter like <code class="literal">python2</code> (which would be used in scripts
+for the NUT-Monitor application and possible other consumers of the module).
+If the preferred Python version in the deployed system changes later (so the
+<code class="literal">python2</code> symlink for this example would point elsewhere) the module import
+would become not resolvable for such consumers, until it is installed into
+that other Python’s "site-packages" location.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_development_files"></a>Development files</h4></div></div></div><pre class="literallayout">--with-dev (default: no)</pre><p>Build and install the upsclient and nutclient library and header files, to
+build further projects against NUT (such as wmNUT client and many others).</p><p>Also delivers <code class="literal">libnutscan</code> library and header files, if <code class="literal">--with-nut-scanner</code>
+is enabled.</p><p>Disabled development file delivery, in particular, disables installation of
+static libraries.</p><pre class="literallayout">--with-dev-libnutconf (yes/no/auto, default: no)</pre><p>Build and install the nutconf library and header files, to build further
+projects against NUT (especially those that need to set it up).  This is
+currently not automatically tied into either <code class="literal">--with-dev</code> nor <code class="literal">--with-nutconf</code>
+(note below on <code class="literal">--with-all</code>), because the tool and library are experimental
+and the API may yet undergo significant changes in the coming years.</p><p>It is more recommended to use the CLI tool as a presumably more stable API
+for third-party integrations, than the library directly.</p><p>This feature may however be enabled or disabled implicitly, using
+<code class="literal">--with-all(=yes/no/auto)</code> request, based on a combination of
+<code class="literal">--with-nutconf</code> and <code class="literal">--with-dev</code> options:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+if <code class="literal">--without-all</code>, default to set <code class="literal">--with-dev-libnutconf=no</code>; otherwise…
+</li><li class="listitem">
+if either <code class="literal">--without-dev</code> or <code class="literal">--without-nutconf</code>,
+  default to set <code class="literal">--with-dev-libnutconf=no</code>; otherwise…
+</li><li class="listitem">
+if either <code class="literal">--without-dev=auto</code> and/or <code class="literal">--without-nutconf=auto</code>,
+  default to set <code class="literal">--with-dev-libnutconf=auto</code>; otherwise…
+</li><li class="listitem">
+if both <code class="literal">--with-dev</code> and <code class="literal">--with-nutconf</code>,
+  default to set <code class="literal">--with-dev-libnutconf=yes</code>.
+</li></ul></div><p>Requires C++11 support to be enabled (available in compiler, not neutered
+by explicit selection of an older standard).</p><pre class="literallayout">--enable-ldflags-nut-rpath (yes/no/auto/flags, default: auto)
+--enable-ldflags-nut-rpath-cxx (yes/no/auto/flags, default: auto)</pre><p>NUT development files include the <code class="literal">*.pc</code> metadata for <code class="literal">pkg-config</code> ecosystem
+and a legacy <code class="literal">libupsclient-config</code> script, both used to deliver compiler and
+linker options for third-party programs to build against NUT libraries.</p><p>There can be a problem during run-time, when NUT is installed into a location
+that the system linker does not know to look into, e.g. the default <code class="literal">--prefix</code>
+value of <code class="literal">/usr/local/ups</code>, that the built programs fail to dynamically link
+with the shared objects of NUT libraries, unless deprecated tricks like the
+<code class="literal">LD_LIBRARY_PATH</code> setting are applied.</p><p>These options allow NUT to add linker options, which set "RPATH" in consumer
+binaries, to the announced metadata.  As a result, third-party programs or
+libraries are hard-coded to look for NUT libraries in a certain location, in
+addition to system locations and similar paths added by other dependencies.</p><p>By default (in <code class="literal">auto</code> mode), the <code class="literal">configure</code> script queries the compiler for
+known system library paths (currently supported with GCC and CLANG builds),
+and checks the NUT <code class="literal">libdir</code> against that list.  If there is a hit, no extra
+flags are announced; otherwise, the format detected for currently used linker
+by autoconf libtool macros is added to the announced metadata for builds
+against NUT.  If this causes problems, you can either <code class="literal">--disable-...</code> these
+flags or provide the desired string explicitly.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_options_for_developers"></a>Options for developers</h4></div></div></div><pre class="literallayout">--enable-spellcheck (default: auto)</pre><p>Activate recipes for documentation source file spelling checks with <code class="literal">aspell</code>
+tool. Default behavior depends on availability of the tool, so if present — it would run for <code class="literal">make check</code> by default, to facilitate quicker acceptance
+of contributions.</p><pre class="literallayout">--enable-check-NIT (default: no)</pre><p>Add <code class="literal">make check-NIT</code> to default activity of <code class="literal">make check</code> to run the
+NUT Integration Testing suite. This is potentially dangerous (e.g. due
+to port conflicts when running many such tests in same environment),
+so not active by default.</p><pre class="literallayout">--enable-maintainer-mode (default: no)</pre><p>Use maintainer mode to keep <code class="literal">Makefile.in</code> and <code class="literal">Makefile</code> in sync with
+ever-changing <code class="literal">Makefile.am</code> content after Git updates or editing.</p><pre class="literallayout">--enable-cppcheck (default: no)</pre><p>Activate recipes for static analysis with <code class="literal">cppcheck</code> tools (if available).</p><pre class="literallayout">--with-unmapped-data-points (default: no)</pre><p>Build SNMP and USB-HID subdrivers with entries discovered by the scripts
+which generated them from data walks, but developers did not rename yet
+to NUT mappings conforming to <code class="literal">docs/nut-names.txt</code> standards. Production
+driver builds must not include any non-standard names.</p><pre class="literallayout">--enable-NUT_STRARG-always (default: auto)</pre><p>Enable the <code class="literal">NUT_STRARG</code> macro (to handle <code class="literal">NULL</code> string printing) even
+if the system libraries seem to safely support this behavior natively?
+This flag should primarily help against overly zealous static analysis
+tools in recent compiler generations.  The <code class="literal">auto</code> value enables the flag
+for certain compiler versions known to complain about some of our use
+cases — even though those seem to be false positives.</p><pre class="literallayout">--enable-configure-debug</pre><p>Cause the <code class="literal">configure</code> script run to report some internal values of variables as
+it goes through making of choices, to help recipe developers troubleshoot it.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_i_want_it_all"></a>I want it all!</h4></div></div></div><pre class="literallayout">--with-all (no default)</pre><p>Build and install all of the above (the serial, USB, SNMP, XML/HTTP and
+PowerMan drivers, the CGI programs and HTML files, and the upsclient
+library).</p><p>You can also use <code class="literal">--with-all=auto</code> to detect available prerequisites and
+only build everything that we can build on this system (but not fail due
+to inability to request a build of something from the full scope).</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_networking_transport_security"></a>Networking transport security</h4></div></div></div><pre class="literallayout">--with-ssl (default: auto-detect)
+--with-nss (default: auto-detect)
+--with-openssl (default: auto-detect)</pre><p>Enable SSL support, using either Mozilla NSS or OpenSSL.</p><p>If both are present, and nothing was specified, OpenSSL support will
+be preferred.</p><p>Read <a class="ulink" href="docs/security.txt" target="_top">docs/security.txt</a> for instructions on SSL support.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>Currently the two implementations differ in supported features.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_networking_access_security"></a>Networking access security</h4></div></div></div><pre class="literallayout">--with-wrap (default: auto-detect)</pre><p>Enable libwrap (tcp-wrappers) support.</p><p>Refer to <a class="ulink" href="../man/upsd.html" target="_top">upsd(8)</a> man page for more information.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_networking_ipv6"></a>Networking IPv6</h4></div></div></div><pre class="literallayout">--with-ipv6 (default: auto-detect)</pre><p>Enable IPv6 support.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_avahi_mdns"></a>AVAHI/mDNS</h4></div></div></div><pre class="literallayout">--with-avahi (default: auto-detect)</pre><p>Build and install Avahi support, to publish NUT server availability
+using mDNS protocol.  This requires Avahi development files for the
+Core and Client parts.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_libltdl"></a>LibLTDL</h4></div></div></div><pre class="literallayout">--with-libltdl (default: auto-detect)</pre><p>Enable libltdl (Libtool dlopen abstraction) support.</p><p>This is required to build <code class="literal">nut-scanner</code> which loads third-party libraries
+dynamically, based on requested scanning options. This allows to build and
+package the tool without requiring all possible dependencies to be installed
+in each run-time environment.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
+		Last updated 2025-08-09 00:45:42 -- Network UPS Tools 2.8.4</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_driver_selection.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="Configure_options.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="_other_configuration_options.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

@@ -1,0 +1,1103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<meta name="generator" content="AsciiDoc 10.2.0" />
+<title>DUMMY-UPS(8)</title>
+<style type="text/css">
+/* Shared CSS for AsciiDoc xhtml11 and html5 backends */
+
+/* Default font. */
+body {
+  font-family: Georgia,serif;
+}
+
+/* Title font. */
+h1, h2, h3, h4, h5, h6,
+div.title, caption.title,
+thead, p.table.header,
+#toctitle,
+#author, #revnumber, #revdate, #revremark,
+#footer {
+  font-family: Arial,Helvetica,sans-serif;
+}
+
+body {
+  margin: 1em 5% 1em 5%;
+}
+
+a {
+  color: blue;
+  text-decoration: underline;
+}
+a:visited {
+  color: fuchsia;
+}
+
+em {
+  font-style: italic;
+  color: navy;
+}
+
+strong {
+  font-weight: bold;
+  color: #083194;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #527bbd;
+  margin-top: 1.2em;
+  margin-bottom: 0.5em;
+  line-height: 1.3;
+}
+
+h1, h2, h3 {
+  border-bottom: 2px solid silver;
+}
+h2 {
+  padding-top: 0.5em;
+}
+h3 {
+  float: left;
+}
+h3 + * {
+  clear: left;
+}
+h5 {
+  font-size: 1.0em;
+}
+
+div.sectionbody {
+  margin-left: 0;
+}
+
+hr {
+  border: 1px solid silver;
+}
+
+p {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+ul, ol, li > p {
+  margin-top: 0;
+}
+ul > li     { color: #aaa; }
+ul > li > * { color: black; }
+
+.monospaced, code, pre {
+  font-family: "Courier New", Courier, monospace;
+  font-size: inherit;
+  color: navy;
+  padding: 0;
+  margin: 0;
+}
+pre {
+  white-space: pre-wrap;
+}
+
+#author {
+  color: #527bbd;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+#email {
+}
+#revnumber, #revdate, #revremark {
+}
+
+#footer {
+  font-size: small;
+  border-top: 2px solid silver;
+  padding-top: 0.5em;
+  margin-top: 4.0em;
+}
+#footer-text {
+  float: left;
+  padding-bottom: 0.5em;
+}
+#footer-badges {
+  float: right;
+  padding-bottom: 0.5em;
+}
+
+#preamble {
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+}
+div.imageblock, div.exampleblock, div.verseblock,
+div.quoteblock, div.literalblock, div.listingblock, div.sidebarblock,
+div.admonitionblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+div.admonitionblock {
+  margin-top: 2.0em;
+  margin-bottom: 2.0em;
+  margin-right: 10%;
+  color: #606060;
+}
+
+div.content { /* Block element content. */
+  padding: 0;
+}
+
+/* Block element titles. */
+div.title, caption.title {
+  color: #527bbd;
+  font-weight: bold;
+  text-align: left;
+  margin-top: 1.0em;
+  margin-bottom: 0.5em;
+}
+div.title + * {
+  margin-top: 0;
+}
+
+td div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content + div.title {
+  margin-top: 0.0em;
+}
+
+div.sidebarblock > div.content {
+  background: #ffffee;
+  border: 1px solid #dddddd;
+  border-left: 4px solid #f0f0f0;
+  padding: 0.5em;
+}
+
+div.listingblock > div.content {
+  border: 1px solid #dddddd;
+  border-left: 5px solid #f0f0f0;
+  background: #f8f8f8;
+  padding: 0.5em;
+}
+
+div.quoteblock, div.verseblock {
+  padding-left: 1.0em;
+  margin-left: 1.0em;
+  margin-right: 10%;
+  border-left: 5px solid #f0f0f0;
+  color: #888;
+}
+
+div.quoteblock > div.attribution {
+  padding-top: 0.5em;
+  text-align: right;
+}
+
+div.verseblock > pre.content {
+  font-family: inherit;
+  font-size: inherit;
+}
+div.verseblock > div.attribution {
+  padding-top: 0.75em;
+  text-align: left;
+}
+/* DEPRECATED: Pre version 8.2.7 verse style literal block. */
+div.verseblock + div.attribution {
+  text-align: left;
+}
+
+div.admonitionblock .icon {
+  vertical-align: top;
+  font-size: 1.1em;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #527bbd;
+  padding-right: 0.5em;
+}
+div.admonitionblock td.content {
+  padding-left: 0.5em;
+  border-left: 3px solid #dddddd;
+}
+
+div.exampleblock > div.content {
+  border-left: 3px solid #dddddd;
+  padding-left: 0.5em;
+}
+
+div.imageblock div.content { padding-left: 0; }
+span.image img { border-style: none; vertical-align: text-bottom; }
+a.image:visited { color: white; }
+
+dl {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+dt {
+  margin-top: 0.5em;
+  margin-bottom: 0;
+  font-style: normal;
+  color: navy;
+}
+dd > *:first-child {
+  margin-top: 0.1em;
+}
+
+ul, ol {
+    list-style-position: outside;
+}
+ol.arabic {
+  list-style-type: decimal;
+}
+ol.loweralpha {
+  list-style-type: lower-alpha;
+}
+ol.upperalpha {
+  list-style-type: upper-alpha;
+}
+ol.lowerroman {
+  list-style-type: lower-roman;
+}
+ol.upperroman {
+  list-style-type: upper-roman;
+}
+
+div.compact ul, div.compact ol,
+div.compact p, div.compact p,
+div.compact div, div.compact div {
+  margin-top: 0.1em;
+  margin-bottom: 0.1em;
+}
+
+tfoot {
+  font-weight: bold;
+}
+td > div.verse {
+  white-space: pre;
+}
+
+div.hdlist {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+div.hdlist tr {
+  padding-bottom: 15px;
+}
+dt.hdlist1.strong, td.hdlist1.strong {
+  font-weight: bold;
+}
+td.hdlist1 {
+  vertical-align: top;
+  font-style: normal;
+  padding-right: 0.8em;
+  color: navy;
+}
+td.hdlist2 {
+  vertical-align: top;
+}
+div.hdlist.compact tr {
+  margin: 0;
+  padding-bottom: 0;
+}
+
+.comment {
+  background: yellow;
+}
+
+.footnote, .footnoteref {
+  font-size: 0.8em;
+}
+
+span.footnote, span.footnoteref {
+  vertical-align: super;
+}
+
+#footnotes {
+  margin: 20px 0 20px 0;
+  padding: 7px 0 0 0;
+}
+
+#footnotes div.footnote {
+  margin: 0 0 5px 0;
+}
+
+#footnotes hr {
+  border: none;
+  border-top: 1px solid silver;
+  height: 1px;
+  text-align: left;
+  margin-left: 0;
+  width: 20%;
+  min-width: 100px;
+}
+
+div.colist td {
+  padding-right: 0.5em;
+  padding-bottom: 0.3em;
+  vertical-align: top;
+}
+div.colist td img {
+  margin-top: 0.3em;
+}
+
+@media print {
+  #footer-badges { display: none; }
+}
+
+#toc {
+  margin-bottom: 2.5em;
+}
+
+#toctitle {
+  color: #527bbd;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-top: 1.0em;
+  margin-bottom: 0.1em;
+}
+
+div.toclevel0, div.toclevel1, div.toclevel2, div.toclevel3, div.toclevel4 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+div.toclevel2 {
+  margin-left: 2em;
+  font-size: 0.9em;
+}
+div.toclevel3 {
+  margin-left: 4em;
+  font-size: 0.9em;
+}
+div.toclevel4 {
+  margin-left: 6em;
+  font-size: 0.9em;
+}
+
+span.aqua { color: aqua; }
+span.black { color: black; }
+span.blue { color: blue; }
+span.fuchsia { color: fuchsia; }
+span.gray { color: gray; }
+span.green { color: green; }
+span.lime { color: lime; }
+span.maroon { color: maroon; }
+span.navy { color: navy; }
+span.olive { color: olive; }
+span.purple { color: purple; }
+span.red { color: red; }
+span.silver { color: silver; }
+span.teal { color: teal; }
+span.white { color: white; }
+span.yellow { color: yellow; }
+
+span.aqua-background { background: aqua; }
+span.black-background { background: black; }
+span.blue-background { background: blue; }
+span.fuchsia-background { background: fuchsia; }
+span.gray-background { background: gray; }
+span.green-background { background: green; }
+span.lime-background { background: lime; }
+span.maroon-background { background: maroon; }
+span.navy-background { background: navy; }
+span.olive-background { background: olive; }
+span.purple-background { background: purple; }
+span.red-background { background: red; }
+span.silver-background { background: silver; }
+span.teal-background { background: teal; }
+span.white-background { background: white; }
+span.yellow-background { background: yellow; }
+
+span.big { font-size: 2em; }
+span.small { font-size: 0.6em; }
+
+span.underline { text-decoration: underline; }
+span.overline { text-decoration: overline; }
+span.line-through { text-decoration: line-through; }
+
+div.unbreakable { page-break-inside: avoid; }
+
+
+/*
+ * xhtml11 specific
+ *
+ * */
+
+div.tableblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+div.tableblock > table {
+  border: 3px solid #527bbd;
+}
+thead, p.table.header {
+  font-weight: bold;
+  color: #527bbd;
+}
+p.table {
+  margin-top: 0;
+}
+/* Because the table frame attribute is overridden by CSS in most browsers. */
+div.tableblock > table[frame="void"] {
+  border-style: none;
+}
+div.tableblock > table[frame="hsides"] {
+  border-left-style: none;
+  border-right-style: none;
+}
+div.tableblock > table[frame="vsides"] {
+  border-top-style: none;
+  border-bottom-style: none;
+}
+
+
+/*
+ * html5 specific
+ *
+ * */
+
+table.tableblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+thead, p.tableblock.header {
+  font-weight: bold;
+  color: #527bbd;
+}
+p.tableblock {
+  margin-top: 0;
+}
+table.tableblock {
+  border-width: 3px;
+  border-spacing: 0px;
+  border-style: solid;
+  border-color: #527bbd;
+  border-collapse: collapse;
+}
+th.tableblock, td.tableblock {
+  border-width: 1px;
+  padding: 4px;
+  border-style: solid;
+  border-color: #527bbd;
+}
+
+table.tableblock.frame-topbot {
+  border-left-style: hidden;
+  border-right-style: hidden;
+}
+table.tableblock.frame-sides {
+  border-top-style: hidden;
+  border-bottom-style: hidden;
+}
+table.tableblock.frame-none {
+  border-style: hidden;
+}
+
+th.tableblock.halign-left, td.tableblock.halign-left {
+  text-align: left;
+}
+th.tableblock.halign-center, td.tableblock.halign-center {
+  text-align: center;
+}
+th.tableblock.halign-right, td.tableblock.halign-right {
+  text-align: right;
+}
+
+th.tableblock.valign-top, td.tableblock.valign-top {
+  vertical-align: top;
+}
+th.tableblock.valign-middle, td.tableblock.valign-middle {
+  vertical-align: middle;
+}
+th.tableblock.valign-bottom, td.tableblock.valign-bottom {
+  vertical-align: bottom;
+}
+
+
+/*
+ * manpage specific
+ *
+ * */
+
+body.manpage h1 {
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  border-top: 2px solid silver;
+  border-bottom: 2px solid silver;
+}
+body.manpage h2 {
+  border-style: none;
+}
+body.manpage div.sectionbody {
+  margin-left: 3em;
+}
+
+@media print {
+  body.manpage div#toc { display: none; }
+}
+
+
+</style>
+<script type="text/javascript">
+/*<![CDATA[*/
+var asciidoc = {  // Namespace.
+
+/////////////////////////////////////////////////////////////////////
+// Table Of Contents generator
+/////////////////////////////////////////////////////////////////////
+
+/* Author: Mihai Bazon, September 2002
+ * http://students.infoiasi.ro/~mishoo
+ *
+ * Table Of Content generator
+ * Version: 0.4
+ *
+ * Feel free to use this script under the terms of the GNU General Public
+ * License, as long as you do not remove or alter this notice.
+ */
+
+ /* modified by Troy D. Hanson, September 2006. License: GPL */
+ /* modified by Stuart Rackham, 2006, 2009. License: GPL */
+
+// toclevels = 1..4.
+toc: function (toclevels) {
+
+  function getText(el) {
+    var text = "";
+    for (var i = el.firstChild; i != null; i = i.nextSibling) {
+      if (i.nodeType == 3 /* Node.TEXT_NODE */) // IE doesn't speak constants.
+        text += i.data;
+      else if (i.firstChild != null)
+        text += getText(i);
+    }
+    return text;
+  }
+
+  function TocEntry(el, text, toclevel) {
+    this.element = el;
+    this.text = text;
+    this.toclevel = toclevel;
+  }
+
+  function tocEntries(el, toclevels) {
+    var result = new Array;
+    var re = new RegExp('[hH]([1-'+(toclevels+1)+'])');
+    // Function that scans the DOM tree for header elements (the DOM2
+    // nodeIterator API would be a better technique but not supported by all
+    // browsers).
+    var iterate = function (el) {
+      for (var i = el.firstChild; i != null; i = i.nextSibling) {
+        if (i.nodeType == 1 /* Node.ELEMENT_NODE */) {
+          var mo = re.exec(i.tagName);
+          if (mo && (i.getAttribute("class") || i.getAttribute("className")) != "float") {
+            result[result.length] = new TocEntry(i, getText(i), mo[1]-1);
+          }
+          iterate(i);
+        }
+      }
+    }
+    iterate(el);
+    return result;
+  }
+
+  var toc = document.getElementById("toc");
+  if (!toc) {
+    return;
+  }
+
+  // Delete existing TOC entries in case we're reloading the TOC.
+  var tocEntriesToRemove = [];
+  var i;
+  for (i = 0; i < toc.childNodes.length; i++) {
+    var entry = toc.childNodes[i];
+    if (entry.nodeName.toLowerCase() == 'div'
+     && entry.getAttribute("class")
+     && entry.getAttribute("class").match(/^toclevel/))
+      tocEntriesToRemove.push(entry);
+  }
+  for (i = 0; i < tocEntriesToRemove.length; i++) {
+    toc.removeChild(tocEntriesToRemove[i]);
+  }
+
+  // Rebuild TOC entries.
+  var entries = tocEntries(document.getElementById("content"), toclevels);
+  for (var i = 0; i < entries.length; ++i) {
+    var entry = entries[i];
+    if (entry.element.id == "")
+      entry.element.id = "_toc_" + i;
+    var a = document.createElement("a");
+    a.href = "#" + entry.element.id;
+    a.appendChild(document.createTextNode(entry.text));
+    var div = document.createElement("div");
+    div.appendChild(a);
+    div.className = "toclevel" + entry.toclevel;
+    toc.appendChild(div);
+  }
+  if (entries.length == 0)
+    toc.parentNode.removeChild(toc);
+},
+
+
+/////////////////////////////////////////////////////////////////////
+// Footnotes generator
+/////////////////////////////////////////////////////////////////////
+
+/* Based on footnote generation code from:
+ * http://www.brandspankingnew.net/archive/2005/07/format_footnote.html
+ */
+
+footnotes: function () {
+  // Delete existing footnote entries in case we're reloading the footnodes.
+  var i;
+  var noteholder = document.getElementById("footnotes");
+  if (!noteholder) {
+    return;
+  }
+  var entriesToRemove = [];
+  for (i = 0; i < noteholder.childNodes.length; i++) {
+    var entry = noteholder.childNodes[i];
+    if (entry.nodeName.toLowerCase() == 'div' && entry.getAttribute("class") == "footnote")
+      entriesToRemove.push(entry);
+  }
+  for (i = 0; i < entriesToRemove.length; i++) {
+    noteholder.removeChild(entriesToRemove[i]);
+  }
+
+  // Rebuild footnote entries.
+  var cont = document.getElementById("content");
+  var spans = cont.getElementsByTagName("span");
+  var refs = {};
+  var n = 0;
+  for (i=0; i<spans.length; i++) {
+    if (spans[i].className == "footnote") {
+      n++;
+      var note = spans[i].getAttribute("data-note");
+      if (!note) {
+        // Use [\s\S] in place of . so multi-line matches work.
+        // Because JavaScript has no s (dotall) regex flag.
+        note = spans[i].innerHTML.match(/\s*\[([\s\S]*)]\s*/)[1];
+        spans[i].innerHTML =
+          "[<a id='_footnoteref_" + n + "' href='#_footnote_" + n +
+          "' title='View footnote' class='footnote'>" + n + "</a>]";
+        spans[i].setAttribute("data-note", note);
+      }
+      noteholder.innerHTML +=
+        "<div class='footnote' id='_footnote_" + n + "'>" +
+        "<a href='#_footnoteref_" + n + "' title='Return to text'>" +
+        n + "</a>. " + note + "</div>";
+      var id =spans[i].getAttribute("id");
+      if (id != null) refs["#"+id] = n;
+    }
+  }
+  if (n == 0)
+    noteholder.parentNode.removeChild(noteholder);
+  else {
+    // Process footnoterefs.
+    for (i=0; i<spans.length; i++) {
+      if (spans[i].className == "footnoteref") {
+        var href = spans[i].getElementsByTagName("a")[0].getAttribute("href");
+        href = href.match(/#.*/)[0];  // Because IE return full URL.
+        n = refs[href];
+        spans[i].innerHTML =
+          "[<a href='#_footnote_" + n +
+          "' title='View footnote' class='footnote'>" + n + "</a>]";
+      }
+    }
+  }
+},
+
+install: function(toclevels) {
+  var timerId;
+
+  function reinstall() {
+    asciidoc.footnotes();
+    if (toclevels) {
+      asciidoc.toc(toclevels);
+    }
+  }
+
+  function reinstallAndRemoveTimer() {
+    clearInterval(timerId);
+    reinstall();
+  }
+
+  timerId = setInterval(reinstall, 500);
+  if (document.addEventListener)
+    document.addEventListener("DOMContentLoaded", reinstallAndRemoveTimer, false);
+  else
+    window.onload = reinstallAndRemoveTimer;
+}
+
+}
+asciidoc.install();
+/*]]>*/
+</script>
+<meta name="format-detection" content="telephone=no" />
+</head>
+<body class="article">
+<div id="header">
+<h1>DUMMY-UPS(8)</h1>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_name">NAME</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>dummy-ups - Driver for multi-purpose UPS emulation or relay</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_synopsis">SYNOPSIS</h2>
+<div class="sectionbody">
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<div class="title">Two NUT websites</div>
+<div class="paragraph"><p>This version of the page reflects NUT release <em>v2.8.4</em>
+with codebase commited 541c2ecf0b at 2025-08-08T12:48:39+02:00</p></div>
+<div class="paragraph"><p>Options, features and capabilities in current development (and future
+releases) are detailed on the main site and may differ from ones
+described here.</p></div>
+</td>
+</tr></table>
+</div>
+<div class="paragraph"><p><strong>dummy-ups</strong> -h</p></div>
+<div class="paragraph"><p><strong>dummy-ups</strong> -a <em>UPS_NAME</em> [<em>OPTIONS</em>]</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">This man page only documents the specific features of the
+<strong>dummy-ups</strong> driver.  For information about the core driver, see
+<a href="nutupsdrv.html">nutupsdrv(8)</a>.</td>
+</tr></table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_description">DESCRIPTION</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>This program is a multi-purpose UPS emulation tool.
+Its general behavior depends on the running mode: "dummy" ("dummy-once"
+or "dummy-loop"), or "repeater".</p></div>
+<div class="sect2">
+<h3 id="_dummy_mode">Dummy Mode</h3>
+<div class="paragraph"><p>In this mode, <strong>dummy-ups</strong> looks like a standard NUT device driver to
+<a href="upsd.html">upsd(8)</a> and allows one to change any value for testing purposes.</p></div>
+<div class="paragraph"><p>It is both interactive, controllable through the <a href="upsrw.html">upsrw(8)</a> and
+<a href="upscmd.html">upscmd(8)</a> commands (or equivalent graphical tool), and batchable
+through script files.</p></div>
+<div class="paragraph"><p>It can be configured, launched and used as any other "real" NUT driver.
+This mode is mostly useful for development and testing purposes.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">See below about the differences of <code>dummy-once</code> vs. <code>dummy-loop</code>
+modes&#8201;&#8212;&#8201;the former may be more suitable for "interactive" uses and tests.</td>
+</tr></table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_repeater_mode">Repeater Mode</h3>
+<div class="paragraph"><p>In this mode, <strong>dummy-ups</strong> acts as a NUT client, simply forwarding data.</p></div>
+<div class="paragraph"><p>This can be useful for supervision purposes. This mode can also allow some
+load sharing between several <code>upsd</code> instances communicating with ultimate
+NUT clients, with a "central" one using a point-to-point communication with
+the actual UPS or ePDU device.</p></div>
+<div class="paragraph"><p>This arrangement can also help with networked UPSes, whose network management
+cards can be overwhelmed with a whole farm of servers directly polling SNMP or
+other networked protocols every few seconds.</p></div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_implementation">IMPLEMENTATION</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>The <code>port</code> specification in <code>ups.conf</code> depends on the running mode, and allows
+the driver to select the right mode of operation.</p></div>
+<div class="paragraph"><p>Since NUT v2.8.0, the <code>mode</code> specification in <code>ups.conf</code> allows users to
+override the mode of operation which would be otherwise guessed by the driver.</p></div>
+<div class="sect2">
+<h3 id="_dummy_mode_2">Dummy Mode</h3>
+<div class="paragraph"><p>In this context, <code>port</code> in the <code>ups.conf</code> block specifies a "definition file"
+name for the <strong>dummy-ups</strong> to read data from. This can either be an absolute or
+a relative path name. In the latter case the NUT sysconfig directory (i.e.
+<code>/etc/nut</code>, <code>/usr/local/ups/etc</code>, &#8230;) is prepended.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">The "sysconfig" location is built-in according to <code>configure</code> script
+arguments, but can be tuned at run time by <code>NUT_CONFPATH</code> environment variable.
+See the <code>tests/NIT/nit.sh</code> script in NUT sources, which heavily relies on this
+driver, for more examples.</td>
+</tr></table>
+</div>
+<div class="paragraph"><p>Since NUT v2.8.0 two aspects of this mode are differentiated:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>dummy-once</code> reads the specified file once to the end (interrupting for
+  <code>TIMER</code> lines, etc.) and does not re-process it until the filesystem
+  timestamp of the data file is changed; this reduces run-time stress if
+  you test with a lot of dummy devices, and allows use/test cases to
+  <code>upsrw</code> variables into the driver instance&#8201;&#8212;&#8201;and they remain in memory
+  until the driver is restarted (or the file is touched or modified);
+</p>
+<div class="paragraph"><p>Since NUT v2.8.0 <code>dummy-once</code> is assigned by default to files with a <code>*.dev</code>
+  naming pattern.</p></div>
+</li>
+<li>
+<p>
+<code>dummy-loop</code> reads the specified file again and again, with a short sleep
+  between the processing cycles; for sequence files using a <code>TIMER</code> keyword
+  (see below), or for use/test cases which modify file contents with external
+  means, this allows an impression of a device whose state changes over time.
+</p>
+<div class="paragraph"><p>Before NUT v2.8.0 this was the only aspect, so a simple <code>dummy</code> mode value
+  maps to this behavior for backwards compatibility.</p></div>
+<div class="paragraph"><p>Since NUT v2.8.0 <code>dummy-loop</code> is assigned by default to files with a <code>*.seq</code>
+  naming pattern, and <code>dummy</code> is assigned by default to files with other
+  naming patterns that the driver could not classify.</p></div>
+</li>
+</ul></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+<div class="paragraph"><p>Said defaulting based on filename pattern can break third-party
+test scripts which earlier expected <code>*.dev</code> files to work as a
+looping sequence with a <code>TIMER</code> keywords to change values slowly.
+Now such files should get processed to the end once.</p></div>
+<div class="paragraph"><p>Specify <code>mode=dummy-loop</code> driver option or rename the data file
+used in the <code>port</code> option for legacy behavior.</p></div>
+<div class="paragraph"><p>Use/Test-cases which modified such files content externally should
+not be impacted.</p></div>
+</td>
+</tr></table>
+</div>
+<div class="paragraph"><p>For instance:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>        [dummy1]
+                driver = dummy-ups
+                port = evolution500.seq
+                desc = "dummy-ups in dummy-loop mode"
+
+        [dummy2]
+                driver = dummy-ups
+                port = epdu-managed.dev
+                desc = "dummy-ups in dummy-once mode"</code></pre>
+</div></div>
+<div class="paragraph"><p>This definition file, specified by the <code>port</code> argument in the example above,
+is generally named <code>something.dev</code> or <code>something.seq</code>. It contains a list of
+all valid variables and associated values (you can later use <code>upsrw</code>
+only to modify values of these variables), and has the same format as an
+<a href="upsc.html">upsc(8)</a> data dump (<code>&lt;varname&gt;: &lt;value&gt;</code>). This means you can easily
+create definition files from an existing UPS using <code>upsc &gt; file.dev</code>.</p></div>
+<div class="paragraph"><p>Note that the Network UPS project provides an extensive
+<a href="https://www.networkupstools.org/ddl/index.html">DDL (Devices Dumps Library)</a>
+with files which can be used for modelling real devices.
+Entries for the DDL library are best prepared with the
+<a href="https://raw.githubusercontent.com/networkupstools/nut/master/tools/nut-ddl-dump.sh"><code>tools/nut-ddl-dump.sh</code></a>
+script from NUT sources instead of plain <code>upsc</code>, to provide some additional
+data points from other NUT clients as well.</p></div>
+<div class="paragraph"><p>The file can also be empty, in which case only a basic set of data is
+available: <code>device.*</code>, <code>driver.*</code>, <code>ups.mfr</code>, <code>ups.model</code>, <code>ups.status</code>
+as filled by the driver itself.</p></div>
+<div class="paragraph"><p>Some sample definition files are available in the <code>data</code> directory of the
+NUT source tree, and generally in the "sysconfig" or "share" directory of
+your system distribution.</p></div>
+<div class="paragraph"><p>Since <strong>dummy-ups</strong> will usually loop on reading this file, you can dynamically
+modify it with some external process to "interact" with the driver.
+This will avoid message spam into your system log files, if you are
+using NUT default configuration.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">By default since NUT v2.8.0, it will not loop on files in <code>dummy-once</code>
+mode, e.g. those with a <code>.dev</code> extension, unless their timestamp changes.</td>
+</tr></table>
+</div>
+<div class="paragraph"><p>You can also use the <code>TIMER &lt;seconds&gt;</code> instruction to create scheduled event
+sequences (such files are traditionally named with the <code>.seq</code> extension).
+For example, the following sequence will loop on switching <code>ups.status</code>
+between "OL", "OB" and "OB LB" every minute:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>ups.status: OL
+TIMER 60
+ups.status: OB
+TIMER 60
+ups.status: OB LB
+TIMER 60</code></pre>
+</div></div>
+<div class="paragraph"><p>It is wise to end the script for <code>dummy-loop</code> mode with a <code>TIMER</code> keyword.
+Otherwise <code>dummy-ups</code> will directly go back to the beginning of the file
+and, in particular, forget any values you could have just set with <code>upsrw</code>.</p></div>
+<div class="paragraph"><p>Note that to avoid CPU overload with an infinite loop, the driver "sleeps"
+a bit between file-reading cycles (currently this delay is hardcoded to one
+second), independently of (and/or in addition to) any <code>TIMER</code> keywords and
+possibly the common <code>pollinterval</code> setting.</p></div>
+<div class="paragraph"><p>Another, more recently introduced instruction is <code>ALARM</code>, which allows
+the simulation of UPS alarms in much the same way they would be raised
+by real driver implementations. Modern drivers decouple alarm states
+from the <code>ups.status</code> variable, and raising <code>ALARM</code> by setting it as a
+status token is discouraged in favor of using modern, common functions
+for raising alarms within the driver code.</p></div>
+<div class="paragraph"><p>The <code>ALARM</code> instruction is intended to simulate this behavior as closely
+as possible. The value following an <code>ALARM</code> instruction is treated as
+the alarm message and is eventually published as the <code>ups.alarm</code>
+variable, with the <code>ALARM</code> token also set in <code>ups.status</code> by internal
+driver mechanisms, rather than by directly manipulating the variable.
+Multiple <code>ALARM</code> instructions will have their messages combined into
+the <code>ups.alarm</code> variable, just as would happen with real driver logic.</p></div>
+<div class="paragraph"><p>Conversely, any <code>ALARM</code> instruction on its own will clear active alarm
+states. See below for an example of setting and resetting alarms:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>ALARM [UPS too warm to charge]
+ALARM [UPS circuit is overheating]
+TIMER 5
+ALARM
+TIMER 5
+ALARM [UPS too cold to charge]</code></pre>
+</div></div>
+</div>
+<div class="sect2">
+<h3 id="_repeater_mode_2">Repeater Mode</h3>
+<div class="paragraph"><p>In this context, <code>port</code> in the <code>ups.conf</code> block is the name of the target UPS,
+using the NUT format, i.e.:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>&lt;upsname&gt;@&lt;hostname&gt;[:&lt;port&gt;]</code></pre>
+</div></div>
+<div class="paragraph"><p>For instance:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>[repeater]
+        driver = dummy-ups
+        port = ups1@remotehost
+        desc = "dummy-ups in repeater mode"</code></pre>
+</div></div>
+<div class="paragraph"><p>Unlike UPS specifications in the rest of NUT, the <code>@hostname</code> portion is not
+optional&#8201;&#8212;&#8201;it is the <code>@</code> character which enables Repeater Mode. To refer to an
+UPS on the same host as <strong>dummy-ups</strong>, use <code>port = upsname@localhost</code>.</p></div>
+<div class="paragraph"><p>Note that to avoid CPU overload with an infinite loop, the driver "sleeps" a
+bit between data-requesting cycles (currently this delay is hardcoded to one
+second), so propagation of data updates available to a remote <code>upsd</code> may lag
+by this much.</p></div>
+<div class="paragraph"><p>Beware that any error encountered at repeater mode startup (e.g. when not
+all target UPS to be repeated or their <code>upsd</code> instances are connectable
+yet) will by default cause the <strong>dummy-ups</strong> driver to terminate prematurely.
+This behaviour can be changed by setting the <code>repeater_disable_strict_start</code>
+flag, making such errors non-fatal.</p></div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_interaction">INTERACTION</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Once the driver is loaded in dummy mode, you can change any variables, except
+those of the <code>driver.*</code> and <code>server.*</code> collections.
+You can do this by either editing the definition file, or use the
+<a href="upsrw.html">upsrw(8)</a> and <a href="upscmd.html">upscmd(8)</a> commands.</p></div>
+<div class="paragraph"><p>Note that in simulation mode, new variables can be added on the fly, but only
+by adding these to the definition file (and waiting for it to be re-read).
+That is, the driver should not allow to define a new variable via <code>upsrw</code>.</p></div>
+<div class="paragraph"><p>Conversely, if you need to remove a variable (such as transient ones, like
+<code>ups.alarm</code>), simply update these by setting an empty value. As a result,
+they will get removed from the data.</p></div>
+<div class="paragraph"><p>In repeater mode, the driver acts according to the capabilities of the UPS,
+and so supports the same instant commands and settable values.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_background">BACKGROUND</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Dummy Mode was originally written in one evening to replace the previous
+<em>dummycons</em> testing driver, which was too limited, and required a terminal
+for interaction.</p></div>
+<div class="paragraph"><p><strong>dummy-ups</strong> is useful for NUT client development, and other testing purposes.</p></div>
+<div class="paragraph"><p>It also helps the NUT Quality Assurance effort, by automating some tests on
+the NUT framework and the NIT (NUT Integration Test suite). See the
+<code>tests/NIT/nit.sh</code> script in NUT sources, which heavily relies on this
+driver, for more examples.</p></div>
+<div class="paragraph"><p>It now offers a repeater mode. This will help in building the Meta UPS approach,
+which allows one to build a virtual device, composed of several other devices
+(either UPS, PDUs), or perhaps represent the same device which supports
+several communication protocols and different media (Serial, USB, SNMP&#8230;)</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_bugs">BUGS</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Instant commands are not yet supported in Dummy Mode, and data need name/value
+checking enforcement, as well as boundaries or enumeration definition.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_caveats">CAVEATS</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>If you use service management frameworks like systemd or SMF to manage
+the dependencies between driver instances and the data server, and some
+of these drivers are <code>dummy-ups</code> in repeater mode representing data
+from another driver running on the same system, then you may have to
+set up special dependencies (e.g. with systemd "drop-in" snippet files)
+to allow your <code>nut-server</code> to start after the "real" device drivers and
+before such repeater drivers (without a responding server, they would fail
+to start anyway). This may also need special care in <code>upsd.conf</code> and/or
+<code>ups.conf</code> files to not block the system start-up for too long while the
+repeater driver has not started.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_author">AUTHOR</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Arnaud Quette</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_see_also">SEE ALSO</h2>
+<div class="sectionbody">
+<div class="paragraph"><p><a href="upscmd.html">upscmd(8)</a>,
+<a href="upsrw.html">upsrw(8)</a>,
+<a href="ups.conf.html">ups.conf(5)</a>,
+<a href="nutupsdrv.html">nutupsdrv(8)</a></p></div>
+<div class="sect2">
+<h3 id="_clone_drivers">Clone drivers:</h3>
+<div class="paragraph"><p>The "repeater" mode of <em>dummy-ups</em> driver is in some ways similar to the
+<em>clone</em> and <em>clone-outlet</em> drivers, which sit on top of another driver
+socket (or named Windows pipe) locally, and allow users to group clients
+to a particular outlet of a device and deal with this output as if it
+were a normal UPS.  Notably, in this mode the <em>dummy-ups</em> driver is a
+client to the networked NUT protocol and can relay information of local
+or remotely served devices, and requires a running NUT data server <em>upsd</em>
+to represent the "real" device for this to work.</p></div>
+<div class="paragraph"><p><a href="clone.html">clone(8)</a>,
+<a href="clone-outlet.html">clone-outlet(8)</a></p></div>
+</div>
+<div class="sect2">
+<h3 id="_internet_resources">Internet Resources:</h3>
+<div class="paragraph"><p>The NUT (Network UPS Tools) home page: <a href="https://www.networkupstools.org/historic/v2.8.4/">https://www.networkupstools.org/historic/v2.8.4/</a></p></div>
+</div>
+</div>
+</div>
+</div>
+<div id="footnotes"><hr /></div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2025-08-09 00:45:18 UTC -- Network UPS Tools 2.8.4
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>H. Configure options</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><link rel="home" href="index.html" title="Network UPS Tools User Manual" /><link rel="up" href="index.html" title="Network UPS Tools User Manual" /><link rel="prev" href="_tripp_lite.html" title="G.6. Tripp-Lite" /><link rel="next" href="_keeping_a_report_of_nut_configuration.html" title="H.1. Keeping a report of NUT configuration" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="_tripp_lite.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="_keeping_a_report_of_nut_configuration.html">Next</a></td></tr></table><hr /></div><div class="appendix"><div class="titlepage"><div><div><h2 class="title"><a id="Configure_options"></a>H. Configure options</h2></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>For more information about build environment setup, see chapters about
+<a class="ulink" href="../qa-guide.chunked/index.html#NUT_Config_Prereqs" target="_top">Prerequisites for building NUT on different OSes</a> (or <code class="code">docs/config-prereqs.txt</code> in NUT sources for up-to-date information) and
+<a class="ulink" href="../qa-guide.chunked/index.html#CI_LXC" target="_top">Custom NUT CI farm build agents: LXC multi-arch containers</a> (or <code class="code">docs/ci-farm-lxc-setup.txt</code> in NUT sources for up-to-date information).</p></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Two NUT websites</h3><p>This version of the page reflects NUT release <span class="emphasis"><em>v2.8.4</em></span>
+with codebase commited 541c2ecf0b at 2025-08-08T12:48:39+02:00</p><p>Options, features and capabilities in current development (and future
+releases) are detailed on the main site and may differ from ones
+described here.</p></div><p>As many other projects relying on GNU autotools for build recipe automation,
+NUT sources deliver a <code class="literal">configure</code> script which is used to set up numerous
+nuances relevant for your build of the project.  Most of the configuration
+requirements are passed by <code class="literal">--with-something</code> or <code class="literal">--enable-something</code> options
+(allegedly, not always used consistently with autotools naming recommendations),
+and with environment variables like <code class="literal">CFLAGS</code> typically also passed as command
+line options.</p><p>Default syntax of <code class="literal">--with-something</code> or <code class="literal">--enable-something</code> assumes a boolean
+approach, so the option as such conveys a <code class="literal">yes</code> string value, and aliases
+<code class="literal">--without-something</code> or <code class="literal">--disable-something</code> are handled automatically as
+a <code class="literal">no</code> string value, for the option named <code class="literal">something</code>.</p><p>In many cases, these options are used to pass non-boolean configuration of the
+option in question, commonly a path, program name, compiler flags to use along
+with a particular dependency, user name or type of documentation to build, etc.</p><p>A special case here concerns options that accept an <code class="literal">auto</code> value, where the
+<code class="literal">configure</code> script would opine to request a final <code class="literal">yes</code> or <code class="literal">no</code>, depending on
+other circumstances of the build environment and requested configuration.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>When building NUT from Git sources rather than the distribution tarballs,
+you would have to generate the <code class="literal">configure</code> script and some further needed
+files by running <code class="literal">./autogen.sh</code>. This in turn may require additional tools
+and other dependencies on your build environment (referenced just a bit
+below). For common developer iterations, porting to new platforms,
+or in-place testing, running the <code class="literal">./ci_build.sh</code> script can be a helpful
+one-stop solution.</p><p>The NUT <a class="ulink" href="../packager-guide.chunked/index.html" target="_top">Packager Guide</a>, which presents the best
+practices for installing and integrating NUT, is also a good reading.</p><p>The <a class="ulink" href="../qa-guide.chunked/index.html#NUT_Config_Prereqs" target="_top">Prerequisites for building NUT on different OSes</a> (or <code class="code">docs/config-prereqs.txt</code> in NUT sources for up-to-date information)
+document suggests prerequisite packages with tools and dependencies
+available and needed to build and test as much as possible of NUT on
+numerous platforms, written from perspective of CI testing (if you
+are interested in getting updated drivers for a particular device,
+you might select a sub-set of those suggestions).</p></div><p>There are a few options reviewed below that can be given to <code class="literal">configure</code>
+script to tweak your compilations. See also <code class="literal">./configure --help</code> for a
+current and complete listing for the current version of the codebase.</p><p>NUT tracks <code class="literal">configure</code> options used during build, so you can view them
+to produce a replacement by asking NUT programs for <code class="literal">--help</code> or for
+<code class="literal">--version</code> with debugging enabled (first), e.g.:</p><pre class="screen">:; upsd -DV
+Network UPS Tools upsd 2.8.1
+Network UPS Tools version 2.8.1 configured with flags: --with-all=auto --with-doc=skip ...</pre><p>A more industrial approach is to use <code class="literal">lib/libupsclient-config --config-flags</code>,
+where supported.  Note that the <code class="literal">pkg-config</code> manifest <code class="literal">libupsclient.pc</code> does
+not easily convey this information.</p></div><div xmlns="" class="navfooter nut_footer"><hr />
+		Last updated 2025-08-09 00:45:42 -- Network UPS Tools 2.8.4</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_tripp_lite.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="_keeping_a_report_of_nut_configuration.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

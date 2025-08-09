@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>1. NUT Quality Assurance</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><link rel="home" href="index.html" title="NUT Quality Assurance and Build Automation Guide" /><link rel="up" href="index.html" title="NUT Quality Assurance and Build Automation Guide" /><link rel="prev" href="index.html" title="NUT Quality Assurance and Build Automation Guide" /><link rel="next" href="_code_and_recipe_analysis.html" title="2. Code and recipe analysis" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="index.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="_code_and_recipe_analysis.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="nut-qa"></a>1. NUT Quality Assurance</h2></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Two NUT websites</h3><p>This version of the page reflects NUT release <span class="emphasis"><em>v2.8.4</em></span>
+with codebase commited 541c2ecf0b at 2025-08-08T12:48:39+02:00</p><p>Options, features and capabilities in current development (and future
+releases) are detailed on the main site and may differ from ones
+described here.</p></div><p>Recognizing the critical nature of NUT, the NUT Quality Assurance (NQA) effort
+has been established to improve NUT where necessary, and to maintain software
+quality as high as it should be.</p><p>NQA is present in many aspects and areas of NUT.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_documentation"></a>1.1. Documentation</h3></div></div></div><p>The documentation toolchain uses
+<a class="ulink" href="https://asciidoc.org/" target="_top">AsciiDoc</a> to output both HTML pages and
+manual pages (troff). This single point of control fills many gaps,
+suppresses many redundancies, and optimizes documentation management in
+general.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+The NUT website and HTML documentation are tested for W3C XHTML 1.1 and CSS
+  compliance. This can be counter verified by clicking the W3C XHTML 1.1 and
+  CSS icons, at the bottom of each page.
+</li></ul></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Documentation source files are spell checked, using
+  <a class="ulink" href="http://aspell.net" target="_top">Aspell</a>, both interactively (using
+  <span class="emphasis"><em>make spellcheck-interactive</em></span>) and automatically in NUT CI
+  farm runs (using <span class="emphasis"><em>make spellcheck</em></span>).
+</li></ul></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>A NUT dictionary is also available (as <code class="literal">docs/nut.dict</code> in NUT sources),
+providing a glossary of terms related to power devices and management, as well
+as partial terms, technical jargon and author names.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_source_code"></a>1.2. Source code</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_use_of_standards"></a>Use of standards</h4></div></div></div><p>NUT promotes and uses many standards, such as:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+the variable names standard used in NUT,
+</li><li class="listitem">
+the coding rules and best practices for developers,
+</li><li class="listitem">
+the use of a software architecture limiting developments to the very minimum,
+</li><li class="listitem"><p class="simpara">
+the use of standard Free and OpenSource Software components, like:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+the USB library,
+</li><li class="listitem">
+the Net SNMP project,
+</li><li class="listitem">
+the Neon library,
+</li><li class="listitem">
+the OpenSSL library (to be replaced by NSS, which is more license compliant
+    with NUT and can be FIPS 140 certified),
+</li><li class="listitem">
+the TCP Wrappers library.
+</li></ul></div></li></ul></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_qa_tools_and_metrics"></a>QA tools and metrics</h4></div></div></div><p>NUT’s quality is constantly monitored using many tools, like:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+a Revision Control System (<a class="ulink" href="https://github.com/networkupstools/nut" target="_top">Git</a>)
+  to track development and ease regression fixes.
+</li></ul></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+OBSOLETE: <a class="ulink" href="http://buildbot.networkupstools.org/public/nut/" target="_top">Buildbot</a>
+  for older take on multi-platform builds, and the
+</li><li class="listitem">
+new dedicated Jenkins incarnation of the NUT CI Farm with "legacy UI"
+  for <a class="ulink" href="https://ci.networkupstools.org/job/nut/job/nut/job/master/" target="_top">main branch</a>
+  and <a class="ulink" href="https://ci.networkupstools.org/job/nut/job/nut/view/change-requests/" target="_top">PRs</a>,
+  also accessible at the slower but slicker-looking Blue Ocean user interface for
+  <a class="ulink" href="https://ci.networkupstools.org/blue/organizations/jenkins/nut%2Fnut/activity/" target="_top">activity</a>,
+  <a class="ulink" href="https://ci.networkupstools.org/blue/organizations/jenkins/nut%2Fnut/branches/" target="_top">branches</a>
+  and <a class="ulink" href="https://ci.networkupstools.org/blue/organizations/jenkins/nut%2Fnut/pr/" target="_top">PRs</a>,
+  are all used to automate the compile/test cycle, using numerous platforms,
+  target distributions, C/C++ revisions, compiler toolkits and make program
+  implementations. Any build failure is caught early, and fixed quickly.
+  Also we get to see if incoming pull requests (as well as Git branch HEADs)
+  do not have code (or recipe) that is instantly faulty and can not build on
+  one of the platforms we track even with relaxed warnings.
+</li></ul></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+a project portal with trackers for bugs, feature request, patches and tasks,
+  currently at GitHub
+</li><li class="listitem">
+CodeQL (previously LGTM.COM) automatically checking C/C++ and Python code
+</li><li class="listitem"><p class="simpara">
+Static code analysis:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+<a class="ulink" href="https://scan.coverity.com/projects/networkupstools-nut" target="_top">Coverity Scan overview of NUT</a>
+</li><li class="listitem">
+status: <span class="inlinemediaobject"><img src="https://scan.coverity.com/projects/8829/badge.svg" alt="Coverity Scan Build Status" /></span>
+</li><li class="listitem">
+cppcheck as part of NUT CI farm builds and reports
+</li></ul></div></li></ul></div><p>NUT QA also relies on external tools and trackers, like:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Clang
+</li><li class="listitem"><p class="simpara">
+the Debian QA tools, available through the <a class="ulink" href="https://tracker.debian.org/pkg/nut" target="_top">NUT Package Tracking System</a>:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Lintian general QA checks,
+</li><li class="listitem">
+<a class="ulink" href="http://piuparts.debian.org/sid/source/n/nut.html" target="_top">piuparts</a> automates
+     the installation, upgrade and removal testing processes.
+</li></ul></div></li><li class="listitem"><p class="simpara">
+a runtime testing suite, which automates the inter-layer communication testing
+  (driver — upsd — upsmon / clients), that is part of Ubuntu.
+  <a class="ulink" href="https://git.launchpad.net/ubuntu/+source/nut/tree/debian/tests/test-nut.py" target="_top">The NUT testing script</a>
+  is available in the <a class="ulink" href="https://code.edge.launchpad.net/qa-regression-testing" target="_top">Ubuntu QA Regression Testing suite</a>.
+</p><p class="simpara">It installs NUT packages, configures it with the dummy-ups driver, changes
+  a few data points and checks that these are well propagated with upsc.</p></li><li class="listitem"><p class="simpara">
+similar approach is explored in NIT (NUT Integration Testing) suite,
+  which is part of the codebase and automated with <code class="literal">make check-NIT</code>;
+  it can also be added to default <code class="literal">make check</code> activities by running
+  <code class="literal">configure --enable-check-NIT</code>
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Note that developers updating components which directly impact NIT runs
+    may benefit from <code class="literal">make check-NIT-devel</code> target, to rebuild the <code class="literal">upsd</code>,
+    <code class="literal">dummy-ups</code>, <code class="literal">cppnit</code> and other programs used in the test as they iterate.
+</li></ul></div></li><li class="listitem">
+<a class="ulink" href="https://bugzilla.redhat.com/buglist.cgi?component=nut" target="_top">Redhat / Fedora Bug tracker</a>
+</li><li class="listitem">
+<a class="ulink" href="https://www.openhub.net/p/nut" target="_top">Black Duck Open Hub</a> (formerly Ohloh.net)
+  provides metrics on NUT source code base and activity.
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_runtime_quality"></a>Runtime quality</h4></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+NUT provides many <a class="ulink" href="../user-manual.chunked/index.html#NUT_Security" target="_top">security features</a> (or <code class="code">docs/security.txt</code> in NUT sources for up-to-date information)
+  to ensure a maximum runtime security level.
+</li><li class="listitem">
+Packages use several <a class="ulink" href="http://wiki.debian.org/Hardening" target="_top">Hardening methods</a>
+  to protect NUT binaries.
+</li></ul></div></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
+		Last updated 2025-08-09 00:45:42 -- Network UPS Tools 2.8.4</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="index.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="_code_and_recipe_analysis.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

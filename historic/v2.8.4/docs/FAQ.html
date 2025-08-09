@@ -1,0 +1,606 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title></title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div xml:lang="en" class="article" lang="en"><div class="titlepage"><hr /></div><div class="toc"><p><strong>Table of Contents</strong></p><dl class="toc"><dt><span class="section"><a href="#_i_just_upgraded_and_8230">1. I just upgraded, and …</a></span></dt><dt><span class="section"><a href="#_my_ups_driver_now_says_it_8217_s_emphasis_broken_emphasis_and_won_8217_t_start_what_now">2. My UPS driver now says it’s <span class="emphasis"><em>broken</em></span>, and won’t start.  What now?</a></span></dt><dt><span class="section"><a href="#_my_favorite_ups_driver_disappeared_after_an_upgrade_what_now">3. My favorite UPS driver disappeared after an upgrade.  What now?</a></span></dt><dt><span class="section"><a href="#_my_ups_driver_program_won_8217_t_work_i_8217_m_starting_it_as_root_and_root_owns_the_device_so_what_8217_s_the_problem">4. My UPS driver program won’t work.  I’m starting it as root, and root owns the device, so what’s the problem?</a></span></dt><dt><span class="section"><a href="#_upsc_upsstats_and_the_other_clients_say_emphasis_access_denied_emphasis_the_device_communication_port_serial_usb_or_network_permissions_are_fine_so_what_gives">5. upsc, upsstats, and the other clients say <span class="emphasis"><em>access denied</em></span>.  The device communication port (serial, USB or network) permissions are fine, so what gives?</a></span></dt><dt><span class="section"><a href="#_i_get_a_emphasis_not_listening_on_8230_emphasis_error_from_upsd">6. I get a <span class="emphasis"><em>not listening on…</em></span> error from upsd.</a></span></dt><dt><span class="section"><a href="#_which_ups_should_i_buy">7. Which UPS should I buy?</a></span></dt><dt><span class="section"><a href="#_i_have_an_apc_smart_ups_connected_with_a_grey_apc_serial_cable_and_it_won_8217_t_work">8. I have an APC Smart-UPS connected with a grey APC serial cable and it won’t work.</a></span></dt><dt><span class="section"><a href="#_why_doesn_8217_t_upsd_implement_the_functionality_of_upsmon_i_have_to_run_three_programs_to_monitor_my_ups">9. Why doesn’t upsd implement the functionality of upsmon?  I have to run THREE programs to monitor my UPS!</a></span></dt><dt><span class="section"><a href="#_why_isn_8217_t_upssched_part_of_upsmon">10. Why isn’t upssched part of upsmon?</a></span></dt><dt><span class="section"><a href="#_why_doesn_8217_t_upsmon_send_a_sigpwr_signal_to_init_so_it_can_deal_with_power_events">11. Why doesn’t upsmon send a SIGPWR signal to init so it can deal with power events?</a></span></dt><dt><span class="section"><a href="#_why_won_8217_t_bestups_talk_to_my_best_fortress_ups">12. Why won’t bestups talk to my Best Fortress UPS?</a></span></dt><dt><span class="section"><a href="#_what_8217_s_this_about_emphasis_data_stale_emphasis">13. What’s this about <span class="emphasis"><em>data stale</em></span>?</a></span></dt><dt><span class="section"><a href="#_why_do_the_client_programs_say_emphasis_driver_not_connected_emphasis_when_i_try_to_run_them">14. Why do the client programs say <span class="emphasis"><em>Driver not connected</em></span> when I try to run them?</a></span></dt><dt><span class="section"><a href="#_why_don_8217_t_the_pathnames_in_your_documentation_match_the_package_i_installed">15. Why don’t the pathnames in your documentation match the package I installed?</a></span></dt><dt><span class="section"><a href="#_everything_works_perfectly_during_the_shutdown_and_the_ups_comes_back_on_but_my_system_stays_off_what_8217_s_happening">16. Everything works perfectly during the shutdown, and the UPS comes back on, but my system stays off.  What’s happening?</a></span></dt><dt><span class="section"><a href="#_my_system_has_an_atx_power_supply_it_will_power_off_just_fine_but_it_doesn_8217_t_turn_back_on_what_can_i_do_to_fix_this">17. My system has an ATX power supply.  It will power off just fine, but it doesn’t turn back on.  What can I do to fix this?</a></span></dt><dt><span class="section"><a href="#_my_mac_won_8217_t_power_back_up_by_itself_into_linux_after_the_ups_shuts_down_what_can_i_do_about_this">18. My Mac won’t power back up by itself into Linux after the UPS shuts down.  What can I do about this?</a></span></dt><dt><span class="section"><a href="#_my_mac_won_8217_t_power_back_up_by_itself_into_mac_os_x_after_the_ups_shuts_down_what_can_i_do_about_this">19. My Mac won’t power back up by itself into Mac OS X after the UPS shuts down.  What can I do about this?</a></span></dt><dt><span class="section"><a href="#_i_want_to_keep_the_drivers_and_upsd_in_their_own_security_domains_how_can_this_be_accomplished">20. I want to keep the drivers and upsd in their own security domains. How can this be accomplished?</a></span></dt><dt><span class="section"><a href="#_what_8217_s_the_point_of_that_emphasis_security_domains_emphasis_concept_above">21. What’s the point of that <span class="emphasis"><em>security domains</em></span> concept above?</a></span></dt><dt><span class="section"><a href="#_how_can_i_make_upsmon_shut_down_my_system_after_some_fixed_interval">22. How can I make upsmon shut down my system after some fixed interval?</a></span></dt><dt><span class="section"><a href="#_why_doesn_8217_t_upsmon_shut_down_my_system_i_pulled_the_plug_and_nothing_happened">23. Why doesn’t upsmon shut down my system?  I pulled the plug and nothing happened.</a></span></dt><dt><span class="section"><a href="#_the_cgi_programs_report_emphasis_access_to_that_host_is_not_authorized_emphasis_8201_8212_8201_what_8217_s_going_on">24. The CGI programs report <span class="emphasis"><em>access to that host is not authorized</em></span> —  what’s going on?</a></span></dt><dt><span class="section"><a href="#_upsd_is_running_so_why_can_8217_t_i_connect_to_it">25. upsd is running, so why can’t I connect to it?</a></span></dt><dt><span class="section"><a href="#_how_do_you_make_upsmon_reload_the_config_file">26. How do you make upsmon reload the config file?</a></span></dt><dt><span class="section"><a href="#_how_do_you_make_upsd_reload_the_config_file">27. How do you make upsd reload the config file?</a></span></dt><dt><span class="section"><a href="#_i_just_bought_a_new_whizbang_ups_that_has_a_usb_connector_how_do_i_monitor_it">28. I just bought a new WhizBang UPS that has a USB connector.  How do I monitor it?</a></span></dt><dt><span class="section"><a href="#_my_usb_ups_has_a_bogus_vendor_id_0x0001_and_product_id_0x0000_what_driver_supports_it">29. My USB UPS has a bogus Vendor ID 0x0001 and Product ID 0x0000, what driver supports it?</a></span></dt><dt><span class="section"><a href="#_my_usb_ups_is_supported_but_doesn_8217_t_work">30. My USB UPS is supported but doesn’t work!</a></span></dt><dt><span class="section"><a href="#_why_do_you_not_use_the_linux_kernel_hid_driver_when_communicating_with_usb_upses">31. Why do you not use the Linux kernel HID driver when communicating with USB UPSes?</a></span></dt><dt><span class="section"><a href="#_i_get_a_message_from_the_kernel_that_the_driver_did_not_claim_interface_0_before_use">32. I get a message from the kernel that the driver "did not claim interface 0 before use"</a></span></dt><dt><span class="section"><a href="#_why_does_my_eaton_5e_usb_ups_on_linux_connect_but_quickly_disconnects_soon">33. Why does my (Eaton 5E) USB UPS on Linux connect but quickly disconnects soon?</a></span></dt><dt><span class="section"><a href="#_why_doesn_8217_t_my_package_work">34. Why doesn’t my package work?</a></span></dt><dt><span class="section"><a href="#_i_can_8217_t_run_this_because_there_8217_s_no_package_for_it_why_isn_8217_t_this_in_a_package_yet">35. I can’t run this because there’s no package for it.  Why isn’t this in a package yet?</a></span></dt><dt><span class="section"><a href="#_my_ups_is_directly_connected_to_an_appliance_with_a_limited_version_of_nut_how_can_i_monitor_the_ups_from_arbitrary_clients">36. My UPS is directly connected to an appliance with a limited version of NUT, how can I monitor the UPS from arbitrary clients?</a></span></dt><dt><span class="section"><a href="#_my_networked_ups_can_8217_t_handle_being_monitored_by_dozens_of_nut_clients">37. My networked UPS can’t handle being monitored by dozens of NUT clients</a></span></dt><dt><span class="section"><a href="#_how_can_i_setup_nut_as_a_proxy_setup_a_server_to_forward_relay_client_data">38. How can I setup NUT as a proxy (setup a server to forward/relay client data)?</a></span></dt><dt><span class="section"><a href="#_why_are_there_two_copies_of_upsmon_running">39. Why are there two copies of upsmon running?</a></span></dt><dt><span class="section"><a href="#_i_get_the_following_error_while_building_literal_make_4_don_t_know_how_to_make_hp_ux_nut_drvctl_sh_stop_literal">40. I get the following error while building: <code class="literal">make[4]: don't know how to make HP-UX/nut-drvctl.sh. Stop</code></a></span></dt><dt><span class="section"><a href="#_i_have_emphasis_some_problem_emphasis_with_emphasis_some_old_version_emphasis_8230">41. I have <span class="emphasis"><em>some problem</em></span> with <span class="emphasis"><em>some old version</em></span> …</a></span></dt><dt><span class="section"><a href="#_i_can_8217_t_connect_with_ssl_using_old_nut_on_an_appliance">42. I can’t connect with SSL using old NUT on an appliance</a></span></dt><dt><span class="section"><a href="#_i_built_nut_from_git_and_it_complains_about_lots_of_missing_files_what_happened">43. I built NUT from Git, and it complains about lots of missing files. What happened?</a></span></dt><dt><span class="section"><a href="#_do_i_have_to_use_a_serial_connection_to_monitor_the_ups_what_about_direct_network_connections_snmp_or_otherwise">44. Do I have to use a serial connection to monitor the UPS? What about direct network connections (SNMP or otherwise)?</a></span></dt><dt><span class="section"><a href="#_what_happened_to_the_patch_i_sent">45. What happened to the patch I sent?</a></span></dt><dt><span class="section"><a href="#_i_8217_m_not_much_of_a_programmer_how_can_i_help">46. I’m not much of a programmer.  How can I help?</a></span></dt><dt><span class="section"><a href="#_i_replaced_the_battery_in_my_apc_smart_ups_and_now_it_thinks_the_battery_is_low_all_the_time_how_do_you_fix_this">47. I replaced the battery in my APC Smart-UPS and now it thinks the battery is low all the time.  How do you fix this?</a></span></dt><dt><span class="section"><a href="#_my_apc_ups_keeps_reporting_emphasis_ol_lb_emphasis_even_after_it_8217_s_been_charging_for_many_hours_what_can_i_do_about_this">48. My APC UPS keeps reporting <span class="emphasis"><em>OL LB</em></span>, even after it’s been charging for many hours.  What can I do about this?</a></span></dt><dt><span class="section"><a href="#_upsstats_returns_temperatures_in_celsius_i_like_fahrenheit_where_8217_s_the_config_file_to_switch_it_back">49. upsstats returns temperatures in Celsius. I like Fahrenheit. Where’s the config file to switch it back?</a></span></dt><dt><span class="section"><a href="#_why_is_the_mailing_list_ignoring_me">50. Why is the mailing list ignoring me?</a></span></dt><dt><span class="section"><a href="#_why_are_you_so_insistent_about_sending_emails_to_public_mailing_lists_instead_of_to_individuals">51. Why are you so insistent about sending emails to public mailing lists instead of to individuals?</a></span></dt><dt><span class="section"><a href="#_if_you_want_mailing_list_replies_to_go_to_the_list_why_don_8217_t_you_add_a_reply_to_header">52. If you want mailing list replies to go to the list, why don’t you add a Reply-To: header?</a></span></dt><dt><span class="section"><a href="#_i_found_some_information_about_another_kind_of_ups_protocol_you_don_8217_t_support_yet_but_i_don_8217_t_know_what_to_do_with_it_can_you_help">53. I found some information about another kind of UPS protocol you don’t support yet, but I don’t know what to do with it. Can you help?</a></span></dt><dt><span class="section"><a href="#_how_can_you_answer_questions_to_situations_that_nobody_8217_s_encountered_yet_isn_8217_t_this_a_frequently_asked_questions_file">54. How can you answer questions to situations that nobody’s encountered yet?  Isn’t this a frequently asked questions file?</a></span></dt><dt><span class="section"><a href="#_my_ups_powers_up_immediately_after_a_power_failure_instead_of_waiting_for_the_batteries_to_recharge">55. My UPS powers up immediately after a power failure instead of waiting for the batteries to recharge!</a></span></dt><dt><span class="section"><a href="#_my_ups_an_apc_as_it_happens_lacks_the_field_battery_charge_restart_8201_8212_8201_so_how_will_it_know_when_to_restart">56. My UPS (an APC as it happens) lacks the field "battery.charge.restart" — so how will it know when to restart?</a></span></dt><dt><span class="section"><a href="#_i_8217_m_facing_a_power_race">57. I’m facing a power race</a></span></dt><dt><span class="section"><a href="#_the_power_came_back_during_the_shutdown_but_before_the_ups_power_off_now_the_ups_does_not_reboot_and_my_computer_stays_off_how_can_i_fix_that">58. The power came back during the shutdown, but before the UPS power off. Now the UPS does not reboot, and my computer stays off. How can I fix that?</a></span></dt></dl></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Two NUT websites</h3><p>This version of the page reflects NUT release <span class="emphasis"><em>v2.8.4</em></span>
+with codebase commited 541c2ecf0b at 2025-08-08T12:48:39+02:00</p><p>Options, features and capabilities in current development (and future
+releases) are detailed on the main site and may differ from ones
+described here.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_i_just_upgraded_and_8230"></a>1. I just upgraded, and …</h2></div></div></div><p>You have read <a class="ulink" href="UPGRADING.adoc" target="_top">UPGRADING</a> in the base directory of the
+distribution, right?</p><p>If not, go read it now, then come back to this file if your
+question wasn’t answered in there.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_my_ups_driver_now_says_it_8217_s_emphasis_broken_emphasis_and_won_8217_t_start_what_now"></a>2. My UPS driver now says it’s <span class="emphasis"><em>broken</em></span>, and won’t start.  What now?</h2></div></div></div><p>Or a variation like…</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_my_favorite_ups_driver_disappeared_after_an_upgrade_what_now"></a>3. My favorite UPS driver disappeared after an upgrade.  What now?</h2></div></div></div><p>Drivers are occasionally removed from the tree if they are no longer
+receiving maintenance, or sometimes renamed to better reflect their
+hardware support scope or replaced by a more generic driver.
+There have been several architectural changes to the driver code
+in recent times, and drivers which were not converted by someone
+are eventually dropped.</p><p>This is called progress.  We do this in order to avoid a situation
+where someone believes that a driver is being maintained when it is
+actually rotting slowly in the tree.  It also keeps the tree free of
+old compatibility hacks for code that nobody actually uses anyway.</p><p>To get a driver back into current releases, you need to convert it
+yourself or get someone to do it for you.  This is not difficult.
+The hardest part of any driver is decoding the protocol, and that’s
+already been done in the old version.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_my_ups_driver_program_won_8217_t_work_i_8217_m_starting_it_as_root_and_root_owns_the_device_so_what_8217_s_the_problem"></a>4. My UPS driver program won’t work.  I’m starting it as root, and root owns the device, so what’s the problem?</h2></div></div></div><p><span class="strong"><strong>Answer 1</strong></span></p><p>The drivers drop root privileges long before the serial or USB port is
+opened.  You’ll need to change the permissions on that port so that
+their new user id can access it.  Normally this is <span class="emphasis"><em>nobody</em></span>, but it
+may be changed at compile-time by using <code class="literal">configure --with-user</code> or
+in the <code class="literal">ups.conf</code> file for driver settings with <code class="literal">user=...</code>.</p><p>Read the error message.  If you have a permissions mismatch, then
+you’ll see something like this:</p><pre class="literallayout">Network UPS Tools - APC Smart protocol driver 0.60 (1.1.7)
+This program is currently running as youruid (UID 1234)
+/dev/ttyS2 is owned by user root (UID 0), mode 0600
+Change the port name, or fix the permissions or ownership
+of /dev/ttyS2 and try again.
+Unable to open /dev/ttyS2: Permission denied</pre><p>Now is a good time to point out that using <span class="emphasis"><em>nobody</em></span> is a bad idea,
+since it’s a hack for NFS access.  You should create a new role
+account (perhaps called <span class="emphasis"><em>ups</em></span> or <span class="emphasis"><em>nut</em></span>), and use that instead.</p><p>Also, scroll down to the "security domains" question to see an
+even better way of restricting privileged operations.  Neither the
+drivers nor <code class="literal">upsd</code> ever need <span class="emphasis"><em>root</em></span> powers, and that answer tells you
+how to make it work.</p><p><span class="strong"><strong>Answer 2</strong></span></p><p>You can also specify a user with <code class="literal">user=</code> in the global part of
+<a class="ulink" href="man/ups.conf.html" target="_top">ups.conf(5)</a>.  Just define it before any of your <code class="literal">[sections]</code>:</p><pre class="screen">        user = nut
+
+        [myups]
+                driver = mge-shut
+                port = /dev/ttyS0</pre></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_upsc_upsstats_and_the_other_clients_say_emphasis_access_denied_emphasis_the_device_communication_port_serial_usb_or_network_permissions_are_fine_so_what_gives"></a>5. upsc, upsstats, and the other clients say <span class="emphasis"><em>access denied</em></span>.  The device communication port (serial, USB or network) permissions are fine, so what gives?</h2></div></div></div><p>In this case, "access denied" means the access to <a class="ulink" href="man/upsd.html" target="_top">upsd(8)</a>, not the
+device communication port.  You’re being denied since the system has no
+permission to speak to <code class="literal">upsd</code> according to its access controls.</p><p>There can be due to various reasons. To fix it, check:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+the LISTEN directive in <a class="ulink" href="man/upsd.conf.html" target="_top">upsd.conf(5)</a>. It should allow your
+  local or remote access method,
+</li><li class="listitem">
+your firewall rules. Port <span class="emphasis"><em>3493/tcp</em></span> must be opened to incoming connections,
+</li><li class="listitem">
+your <span class="strong"><strong>tcp-wrappers</strong></span> configuration (<code class="literal">hosts.allow</code> and <code class="literal">hosts.deny</code>) if used.
+</li></ul></div><p>Refer to the <a class="ulink" href="man/upsd.html" target="_top">upsd(8)</a> and <a class="ulink" href="man/upsd.conf.html" target="_top">upsd.conf(5)</a> man pages for more
+information.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_i_get_a_emphasis_not_listening_on_8230_emphasis_error_from_upsd"></a>6. I get a <span class="emphasis"><em>not listening on…</em></span> error from upsd.</h2></div></div></div><p>Verify your LISTEN directive. It should be one of the valid IP addresses
+for the computer running <code class="literal">upsd</code> (or <code class="literal">0.0.0.0</code>, which is <code class="literal">INADDR_ANY</code>), not
+an address for a client.</p><p>The LISTEN directive lets you pick which interface <code class="literal">upsd</code> listens on.
+If you are trying to limit the clients which can connect to <code class="literal">upsd</code>,
+you either need to use tcp-wrappers or kernel firewall rules.</p><p>This isn’t a NUT-specific limitation — it applies equally to your web server
+or mailer daemon.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_which_ups_should_i_buy"></a>7. Which UPS should I buy?</h2></div></div></div><p>One with a no-questions-asked money-back guarantee. Seriously. The NUT
+developers cannot take responsibility for recommending an UPS (see the LICENSE
+file for more details on the explicit lack of warranty), only to find out that
+the manufacturer has changed the internals of the UPS without changing the
+model name.</p><p>That said, from time to time, certain vendors have helped out by providing
+hardware for testing, results of their testing efforts, or protocol
+specifications. We try to publish this information on the NUT website, so you
+can take this into consideration when selecting an UPS brand.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_i_have_an_apc_smart_ups_connected_with_a_grey_apc_serial_cable_and_it_won_8217_t_work"></a>8. I have an APC Smart-UPS connected with a grey APC serial cable and it won’t work.</h2></div></div></div><p>The Back-UPS type in the genericups driver works but then I don’t get to use
+all the nifty features in there.  Why doesn’t the right driver work?</p><p>The problem lies in your choice of cable.  APC’s grey cables
+generally only do "dumb" signalling — very basic yes/no info about
+the battery and line status.  While that is sufficient to detect a
+low battery condition while on battery, you miss out on all the
+goodies that you paid for.</p><p>Note that the 940-0095B happens to be a grey cable, but it is actually
+a dual mode cable and can be used in smart mode.  If you have
+this cable, you need to edit your ups.conf to look like this:</p><pre class="literallayout">[myups]
+        driver = apcsmart
+        port = /dev/whatever
+        cable = 940-0095B</pre><p>All other grey cables from APC are assumed to be "dumb".</p><p>If your grey cable isn’t the 940-0095B, the solution is to dump that
+cable and find one that supports APC’s "smart" signalling.  Typically
+these come with the UPS and are black.  If your smart cable has
+wandered off, one can be built rather easily with some connectors and
+cable — there’s no fancy wiring or resistors.</p><p>See this URL for a handy diagram:
+<a class="ulink" href="https://www.networkupstools.org/cables/940-0024C.jpg" target="_top">https://www.networkupstools.org/cables/940-0024C.jpg</a></p><p>There is also a text version of that diagram in the docs/cables
+directory of the NUT source distribution.  Either one should allow
+you to build a good clone of APC’s 940-0024C cable.</p><p>There are simpler solutions involving 3 wires that work just fine
+too, but Powerchute won’t find the loopback DTR-DCD and RTS-CTS and
+will be annoyed.  If you don’t ever plan to use Powerchute, 3 wires
+(RxD, TxD, GND) are sufficient.</p><p>It should also be noted that the genericups driver has no way to
+detect the UPS, so it will fire up quite happily if it can open the
+serial port.  Merely having it start up is not necessarily an
+indication of success.  You should start it and then check the
+status with upsc or similar to be sure that it’s reading the
+hardware properly.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_why_doesn_8217_t_upsd_implement_the_functionality_of_upsmon_i_have_to_run_three_programs_to_monitor_my_ups"></a>9. Why doesn’t upsd implement the functionality of upsmon?  I have to run THREE programs to monitor my UPS!</h2></div></div></div><p><span class="strong"><strong>Answer 1</strong></span></p><p>We try to follow the "tool for the job" philosophy of Unix.  It may mean
+more programs running, but the flexibility you get is usually
+worth it.</p><p>Yes, the machine with the UPS attached will generally have 3
+processes (driver, <code class="literal">upsd</code>, <code class="literal">upsmon</code>) running, but this design allows
+a much bigger setup.  Imagine a data room with a bunch of machines
+all drawing power from the same UPS.  Only one can be connected by a
+serial or USB cable, and the rest of them just run an <code class="literal">upsmon</code> client.</p><p>Besides, if <code class="literal">upsmon</code> were rolled into <code class="literal">upsd</code>, <code class="literal">upsd</code> would get even
+bigger than it is now.  You’d have one less process, but the
+RAM consumption would be pretty close to what you have now — but
+consumed on each system involved.</p><p>See the "Data Room" section in <a class="ulink" href="docs/config-notes.txt" target="_top">docs/config-notes.txt</a> for
+more configuration ideas and explanations.</p><p><span class="strong"><strong>Answer 2</strong></span></p><p>If this really bothers you, roll up your sleeves and use the
+<a class="ulink" href="man/sockdebug.html" target="_top">sockdebug(8)</a>] code to write a "upsmon" type program that sits on
+top of the state sockets.  It won’t work over the network, but it means
+you don’t need <code class="literal">upsd</code>.  It also means only one host can monitor the
+UPS.</p><p>This is also a good option to consider if you can’t use networked
+monitoring code for security or safety reasons.</p><p><span class="strong"><strong>Answer 3</strong></span></p><p>There are plans in the queue… for a long time… to extend <code class="literal">upsd</code> data
+server and the NUT clients with ability to use a local Unix socket for the
+NUT Networked protocol. This would also allow to forgo the dependency on
+TCP/IP stack for communications within one machine.</p><p>See the TODO file for more on this and other related topics.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_why_isn_8217_t_upssched_part_of_upsmon"></a>10. Why isn’t upssched part of upsmon?</h2></div></div></div><p>Most users will never have any reason to use <code class="literal">upssched</code>.  It’s
+complicated, and getting it right for your situation can be tricky.
+Having it live in a separate program saves resources and lets most
+people avoid it completely.</p><p>It is also coherent with the answer to the previous question.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_why_doesn_8217_t_upsmon_send_a_sigpwr_signal_to_init_so_it_can_deal_with_power_events"></a>11. Why doesn’t upsmon send a SIGPWR signal to init so it can deal with power events?</h2></div></div></div><p><span class="strong"><strong>Answer 1</strong></span></p><p>New versions of the <code class="literal">init</code> man page taken from the <span class="strong"><strong>sysvinit</strong></span> package
+are saying that usage of <code class="literal">SIGPWR</code> is discouraged, since <code class="literal">/dev/initctl</code>
+control channel is the preferred way of communication.</p><p><span class="strong"><strong>Answer 2</strong></span></p><p>The name of the game is portability.  Not everyone’s <code class="literal">init</code> handles
+that kind of signalling gracefully.  What’s more, some admins
+might want to do things differently even if they have that kind of
+<code class="literal">init</code> running.</p><p>So, to be compatible, upsmon just invokes a shell command.  If you
+want to use init’s <code class="literal">SIGPWR</code> stuff, just put the right "kill" line in
+a shell script and make your <code class="literal">upsmon</code> call it.  Everyone wins.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_why_won_8217_t_bestups_talk_to_my_best_fortress_ups"></a>12. Why won’t bestups talk to my Best Fortress UPS?</h2></div></div></div><p>There are at least two different protocols being used for hardware
+with very similar names.  The bestups driver tends to support the
+units built around the newer "PhoenixTec" protocol, and the bestfortress
+driver supports the older Best hardware.</p><p>There is a similar problem with the tripplite_usb driver: it only supports the
+older, proprietary protocol. Newer standards-compliant Tripp Lite UPS models
+are supported by usbhid-ups. We name drivers based on the information
+available at the time the driver was first written, which often is incomplete.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_what_8217_s_this_about_emphasis_data_stale_emphasis"></a>13. What’s this about <span class="emphasis"><em>data stale</em></span>?</h2></div></div></div><p>It means your UPS driver hasn’t updated things in a little while.
+upsd refuses to serve up data that isn’t fresh, so you get the
+errors about staleness.</p><p>If this happens to you, make sure your driver is still running.
+Also look at the syslog.  Sometimes the driver loses the connection
+to the UPS, and that will also make the data go stale.</p><p>This might also happen on certain virtualization platforms. If you cannot
+reproduce the problem on a physical machine, please report the bug to the
+virtualization software vendor.</p><p>If this happens a lot, you might consider cranking up DEADTIME
+in the upsmon.conf to suppress some of the warnings for shorter
+intervals.  Use caution when adjusting this number, since it
+directly affects how long you run on battery without knowing
+what’s going on with the UPS.</p><p>Note: some drivers occasionally need more time to update than the
+default value of MAXAGE (in <code class="literal">upsd.conf</code>) allows.  As a result, they
+are temporarily marked stale even though everything is fine.  This
+can happen with MGE Ellipse equipment — see the <a class="ulink" href="man/mge-shut.html" target="_top">mge-shut(8)</a>
+or <a class="ulink" href="man/usbhid-ups.html" target="_top">usbhid-ups(8)</a> man pages.  In such cases, you can raise
+the value of MAXAGE to avoid these warnings; try a value like 25 or 30.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_why_do_the_client_programs_say_emphasis_driver_not_connected_emphasis_when_i_try_to_run_them"></a>14. Why do the client programs say <span class="emphasis"><em>Driver not connected</em></span> when I try to run them?</h2></div></div></div><p><span class="strong"><strong>Answer 1</strong></span></p><p>This means that <code class="literal">upsd</code> can’t connect to the driver for some reason.
+Your <code class="literal">ups.conf</code> entry might be wrong, or the driver might not be
+running.  Maybe your state path is not configured properly.</p><p>Check your syslog.  upsd will complain regularly if it can’t
+connect to a driver, and it should say why it can’t connect.</p><p>Note: if you jumped in with both feet and didn’t follow the <a class="ulink" href="INSTALL.nut" target="_top">INSTALL.nut</a>
+document, you probably started <code class="literal">upsd</code> by itself.  You have to run
+<code class="literal">upsdrvctl start</code> (explicitly — on legacy systems only) to start
+the drivers after configuring <code class="literal">ups.conf</code>.</p><p>On operating systems with a supported service management framework,
+you might wrap your NUT drivers into individual services instances
+with <code class="literal">upsdrvsvcctl resync</code> and then manage those with commands like
+<code class="literal">upsdrvsvcctl stop</code> and <code class="literal">upsdrvsvcctl start</code> (note that on other
+systems this tool may be not pre-installed via packaging).</p><p>In fact, service instances prepared by the <code class="literal">nut-driver-enumerator</code> script
+and service based on contents of your <code class="literal">ups.conf</code> file and automatically
+maintained by the respective framework can conflict with manual execution
+of drivers, so <code class="literal">upsdrvctl</code> would emit a warning in NUT builds with that
+capability (can be silenced by exporting a <code class="literal">NUT_QUIET_INIT_NDE_WARNING</code>
+environment variable with any value).</p><p><span class="strong"><strong>Answer 2</strong></span></p><p>Some USB UPS devices have unreliable USB to serial interfaces.
+In that case, it’s advised to unplug / plug the device and try again.</p><p>If that resolves the issue, you should consider resetting the USB hub the
+device is attached to before starting the nut driver, using <code class="literal">usb_resetter</code>
+script (for Linux) from <a class="ulink" href="https://github.com/netinvent/usb_resetter" target="_top">https://github.com/netinvent/usb_resetter</a></p><p>See files under <code class="literal">scripts/usb_resetter/</code> in NUT sources for more information.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_why_don_8217_t_the_pathnames_in_your_documentation_match_the_package_i_installed"></a>15. Why don’t the pathnames in your documentation match the package I installed?</h2></div></div></div><p>Each distribution has conventions for where specific file types should be
+stored. The NUT project cannot possibly track all of these conventions, so the
+documentation assumes the default installation directory prefix of
+<code class="literal">/usr/local/ups</code> when describing file locations. It also allows custom
+builds of NUT to minimally conflict with files of a packaged installation.</p><p>The distributions tend not to change the base name of the files, so you
+can search for drivers and configuration files in the package database
+of installed files. For instance, on Debian or Ubuntu derivatives, you
+can use <code class="literal">dpkg --search usbhid-ups</code> to see where the drivers are stored.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_everything_works_perfectly_during_the_shutdown_and_the_ups_comes_back_on_but_my_system_stays_off_what_8217_s_happening"></a>16. Everything works perfectly during the shutdown, and the UPS comes back on, but my system stays off.  What’s happening?</h2></div></div></div><p>Assuming you don’t have the problem in the next question, then you
+probably have an ATX motherboard, have APM or ACPI enabled in your
+kernel (assuming Linux here), and are reaching the <span class="emphasis"><em>halt</em></span> at the
+bottom of your shutdown scripts.</p><p>Your machine obeys and shuts down, and stays down, since it
+remembers the <span class="emphasis"><em>last state</em></span> when the UPS restarts.</p><p>One solution is to change your shutdown scripts so you never reach
+that point.  You <span class="strong"><strong>want</strong></span> the system to die without reaching the
+part where the kernel tells it to shut down.  A possible script
+might look like this (see <code class="literal">scripts/systemd/nutshutdown</code> in NUT
+sources for a more streamlined and modern variant):</p><pre class="screen">        # other shutdown stuff here (mount -o remount,ro ...)
+        # `upsmon -K` if available on still mounted filesystems
+        # at this point is more portable than the `test` below
+
+        if (test -f /etc/killpower || /sbin/upsmon -K)
+        then
+                /sbin/upsdrvctl shutdown
+
+                sleep 600       # this should never return
+
+                # uh oh, we never got shut down! (power race?)
+                reboot
+        fi
+
+        halt -p</pre><p>The other solution is to change your BIOS setting to "always power
+on" instead of "last state", assuming that’s possible.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_my_system_has_an_atx_power_supply_it_will_power_off_just_fine_but_it_doesn_8217_t_turn_back_on_what_can_i_do_to_fix_this"></a>17. My system has an ATX power supply.  It will power off just fine, but it doesn’t turn back on.  What can I do to fix this?</h2></div></div></div><p>This depends on how clueful your motherboard manufacturer is, and
+isn’t a matter of the OS.  You have to do one of the following
+things depending on what’s supported:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Set a jumper on the motherboard that means "return after outage"
+</li><li class="listitem">
+Set something in the BIOS that says "power up after power failure"
+</li><li class="listitem">
+Try using something (like a capacitor) across the power button
+  to "push" it for you — this might not work if it needs a delay
+</li><li class="listitem">
+Hack the cable between the power supply and the motherboard to fool
+  it into powering up whenever line power is present
+</li><li class="listitem">
+Teach a monkey to watch the machine and press the power button
+  when the outage is over.
+  This might work, but it creates high produce bills.
+</li></ul></div><p>If you can’t use one of the first two options, give the board to
+an enemy.  Let them worry about it.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_my_mac_won_8217_t_power_back_up_by_itself_into_linux_after_the_ups_shuts_down_what_can_i_do_about_this"></a>18. My Mac won’t power back up by itself into Linux after the UPS shuts down.  What can I do about this?</h2></div></div></div><p>This is about the same situation as the ATX question above, only
+worse.  Earlier Macs apparently supported a hack where you could
+cat some magic characters at <code class="literal">/dev/adb</code> to enable "server mode".
+This would instruct the system to reboot while unattended.</p><p>From Usenet post &lt;<a class="ulink" href="mailto:6boftzxz51.fsf@ecc-office.sp.cs.cmu.edu" target="_top">6boftzxz51.fsf@ecc-office.sp.cs.cmu.edu</a>&gt;:</p><pre class="screen">        # Send packet over the ADB bus to the PowerMac CUDA chip
+        # telling it to reboot automatically when power is restored
+        # after a power failure.
+
+        cat /etc/local/autoboot.adb &gt; /dev/adb
+
+    # autoboot.adb contains these three bytes (in hex):  01 13 01</pre><p>Later PowerPC Macs with a PMU and the appropriate kernel driver can achieve the
+same effect with the following command:</p><pre class="literallayout">echo server_mode=1 &gt; /proc/pmu/options</pre><p>The following pages have some slightly more kludgy answers which involve the
+use of <code class="literal">setpci</code>, and are highly model-specific:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<a class="ulink" href="https://www.mythic-beasts.com/support/servers/colo/macminicolo_howto" target="_top">https://www.mythic-beasts.com/support/servers/colo/macminicolo_howto</a>
+</li><li class="listitem">
+<a class="ulink" href="http://superuser.com/questions/212434/reboot-after-power-failure-for-mac-running-ubuntu" target="_top">http://superuser.com/questions/212434/reboot-after-power-failure-for-mac-running-ubuntu</a>
+</li><li class="listitem">
+<a class="ulink" href="http://ubuntuforums.org/showthread.php?t=1209576" target="_top">http://ubuntuforums.org/showthread.php?t=1209576</a>
+</li></ul></div><p>Note: this question has been in the FAQ for several years now, and
+there’s still no clean answer.  Let me guess: everyone who runs a server
+on Mac hardware has a team of trained monkeys, and feeds them
+by growing bananas in the tropical environment formed by waste heat
+from the equipment.</p><p>The rest of us are still waiting for the answer.  Booting into the
+Mac OS to frob the "file server" panel is not an acceptable
+solution.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_my_mac_won_8217_t_power_back_up_by_itself_into_mac_os_x_after_the_ups_shuts_down_what_can_i_do_about_this"></a>19. My Mac won’t power back up by itself into Mac OS X after the UPS shuts down.  What can I do about this?</h2></div></div></div><p>This is relatively simple to fix.  If you have console or VNC access, log in as
+an administrator, go to System Preferences, click on Energy Saver, click on the
+options tab, check "Restart automatically after a power failure".</p><p>Alternatively, you can connect via SSH and run <code class="literal">sudo pmset autorestart 1</code> to
+achieve the same effect.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_i_want_to_keep_the_drivers_and_upsd_in_their_own_security_domains_how_can_this_be_accomplished"></a>20. I want to keep the drivers and upsd in their own security domains. How can this be accomplished?</h2></div></div></div><p>Using a few role accounts and a common group, you can limit access
+to resources such as the serial port(s) leading to the UPS
+hardware.</p><p>This is just an example.  Change the values to suit your systems.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Create a user called <span class="emphasis"><em>nutdev</em></span> and another called <span class="emphasis"><em>nutsrv</em></span>.  Put
+them both in a group called <span class="emphasis"><em>nut</em></span>.
+</li><li class="listitem">
+Change the owner of any serial ports that will be used to nutdev,
+and set the mode to 0600.  Then change the ownership of your state
+directory (usually /var/state/ups) to nutdev.nut.
+</li></ul></div><p>For my development system this yields the following /dev entries:</p><pre class="literallayout">0 crw-------   1 nutdev   tty        4,  64 Sep  3 17:11 /dev/ttyS0
+0 crw-------   1 nutdev   tty        4,  65 Sep  3 17:11 /dev/ttyS1</pre><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
+Switch to root, then start the drivers:
+</p><pre class="literallayout"># upsdrvctl -u nutdev start</pre></li><li class="listitem"><p class="simpara">
+The listing for /var/state/ups then looks like this:
+</p><pre class="literallayout">4 drwxrwx---   2 nutdev   nut          4096 Aug 20 18:37 .
+4 drwxr-xr-x   4 root     root         4096 May 14 21:20 ..
+4 srw-rw----   1 nutdev   nut             0 Sep  3 17:10 apcsmart-ups1
+4 srw-rw----   1 nutdev   nut             0 Sep  3 17:10 blazer_ser-ups2</pre></li></ul></div><p>You may have to remove old socket or state files first if you are
+changing to this security scheme from an older version.  The drivers
+will create new files with the right owners and modes.</p><p>Note that <code class="literal">/var/state/ups</code> is group writable since <code class="literal">upsd</code> will
+place the <code class="literal">upsd.pid</code> file here by default.</p><p>You may have to change the groups of <code class="literal">upsd.conf</code> and <code class="literal">upsd.users</code> to
+make them readable to the NUT <code class="literal">upsd</code> program.  These files should not
+be owned nor writable by <code class="literal">nutsrv</code>, since someone could compromise the
+daemon and change the config files.  Instead, put <code class="literal">nutsrv</code> in a group
+(<code class="literal">nut</code> in this example), then make the files owned by <code class="literal">root.nut</code>, with
+POSIX bits mode <code class="literal">0640</code>.</p><p>Once the config files are ready, start upsd:</p><pre class="literallayout">:; upsd -u nutsrv</pre><p>Check your syslog to be sure everything’s happy, then be sure to
+update your startup scripts so it uses this procedure on your next
+boot.</p><p>If you like this, you’ll probably also find the <a class="ulink" href="https://linux.die.net/man/2/chroot" target="_top">chroot(2)</a> process
+to be useful and interesting.  See <a class="ulink" href="security.txt" target="_top">security.txt</a> for more details.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_what_8217_s_the_point_of_that_emphasis_security_domains_emphasis_concept_above"></a>21. What’s the point of that <span class="emphasis"><em>security domains</em></span> concept above?</h2></div></div></div><p>The point is limiting your losses.  If someone should happen to
+break into <code class="literal">upsd</code> in that environment, they should only gain access
+to that one user account.  Direct access to the serial device is
+not possible, since that is owned by another user.</p><p>There is also the possibility of running the drivers and <code class="literal">upsd</code> in a
+chroot jail.  See the <code class="literal">chroot</code> option in <a class="ulink" href="security.txt" target="_top">security.txt</a>, <code class="literal">upsd</code>
+and driver documentation.</p><p>Why give would-be vandals any sort of help?</p><p>Put it this way — I <span class="strong"><strong>wrote</strong></span> good chunks of this stuff, and I still
+run the programs this way locally.  You should definitely consider
+using this technique.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_how_can_i_make_upsmon_shut_down_my_system_after_some_fixed_interval"></a>22. How can I make upsmon shut down my system after some fixed interval?</h2></div></div></div><p>You probably don’t want to do this, since it doesn’t maximize your
+runtime on battery.  Assuming you have a good reason for it (see
+the next entry), then look at <a class="ulink" href="scheduling.txt" target="_top">scheduling.txt</a> or the
+<a class="ulink" href="man/upssched.html" target="_top">upssched(8)</a> man page for some ideas.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_why_doesn_8217_t_upsmon_shut_down_my_system_i_pulled_the_plug_and_nothing_happened"></a>23. Why doesn’t upsmon shut down my system?  I pulled the plug and nothing happened.</h2></div></div></div><p>Wait.  The <code class="literal">upsmon</code> client doesn’t consider a UPS to be critical until it’s
+<span class="strong"><strong>both</strong></span> <span class="emphasis"><em>on battery</em></span> and <span class="emphasis"><em>low battery</em></span> at the same time.  This is by design.
+Nearly every UPS supports the notion of detecting the low battery
+all by itself.  When the voltage drops below a certain point, it
+<span class="emphasis"><em>will</em></span> let you know about it.</p><p>If your system has a really complicated or time-consuming shutdown procedure,
+you might need to shut down before the UPS raises the low battery flag.
+For most users, however, the default behavior is adequate.</p><p>Ask yourself this: why buy a nice big UPS with the matching battery
+and corresponding runtime and then shutdown early?  If anything, I’d
+rather have a few more minutes running on battery during which the
+power might return.  Once the power’s back, it’s business as usual
+with no visible interruption in service.</p><p>If you purposely shut down early, you guarantee an interruption in
+service by bringing down the box.</p><p>See <a class="ulink" href="upssched.txt" target="_top">upssched.txt</a> for information on how you can shutdown early if
+this is what you really want to do.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_the_cgi_programs_report_emphasis_access_to_that_host_is_not_authorized_emphasis_8201_8212_8201_what_8217_s_going_on"></a>24. The CGI programs report <span class="emphasis"><em>access to that host is not authorized</em></span> —  what’s going on?</h2></div></div></div><p>Those programs need to see a host in your hosts.conf before they
+will attempt communications.  This keeps people from feeding it
+random <code class="literal">host=</code> settings, which would annoy others with outgoing
+connection attempts from your system.</p><p>If your <a class="ulink" href="man/hosts.conf.html" target="_top">hosts.conf(5)</a> turns out to be configured correctly with
+proper <code class="literal">MONITOR</code> entries and all that, check the permissions.  Your web
+server may be running the CGI programs as a user that can’t read
+the file.</p><p>If you run your web server in a chroot jail, make sure the programs
+can still read <code class="literal">hosts.conf</code>.  You may have to copy it into the jail
+for this to work.  If you do that, make sure it’s not writable by
+any of the user accounts which run inside the jail.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_upsd_is_running_so_why_can_8217_t_i_connect_to_it"></a>25. upsd is running, so why can’t I connect to it?</h2></div></div></div><p>Assuming you haven’t changed the TCP port number on the command line or at
+compile-time, then you may have some sort of firewall blocking the connection.</p><p><code class="literal">upsd</code> listens on TCP port <span class="emphasis"><em>3493</em></span> by default. If you do not specify a <code class="literal">LISTEN</code>
+directive in <code class="literal">upsd.conf</code>, <code class="literal">upsd</code> only listens on the loopback interface.
+See the <a class="ulink" href="man/upsd.conf.html" target="_top">upsd.conf(5)</a> man page for details.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_how_do_you_make_upsmon_reload_the_config_file"></a>26. How do you make upsmon reload the config file?</h2></div></div></div><p>Or a variation like…</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_how_do_you_make_upsd_reload_the_config_file"></a>27. How do you make upsd reload the config file?</h2></div></div></div><p>Either find the pid of the background process and send it a SIGHUP,
+or just start it again with <span class="emphasis"><em>-c reload</em></span> (requires that the previously
+started daemon saves a PID file).</p><p>If you send the signals yourself instead of using -c, be sure you
+hit the right process.  There are usually two <code class="literal">upsmon</code> processes, and you
+should only send signals to one of them.  To be safe, read the PID
+file.</p><p>If your daemons are managed as systemd units, it is more idiomatic to
+use the framework commands, e.g. <code class="literal">systemctl reload nut-server</code> (upsd)
+or <code class="literal">systemctl reload nut-monitor</code> (upsmon). Note that the implementation
+of <code class="literal">nut-server.service</code> by default starts <code class="literal">upsd -F</code> and does not save a
+PID file; if your workflow requires to use plain <code class="literal">upsd -c reload</code>, you
+should customize the unit (with a drop-in file) to start <code class="literal">upsd -FF</code>.</p><p>NUT releases after 2.8.0 define aliases for these units, so if your Linux
+distribution uses NUT-provided unit definitions, <code class="literal">systemctl reload upsd</code>
+may also work.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_i_just_bought_a_new_whizbang_ups_that_has_a_usb_connector_how_do_i_monitor_it"></a>28. I just bought a new WhizBang UPS that has a USB connector.  How do I monitor it?</h2></div></div></div><p>There are several driver to support USB models.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<a class="ulink" href="man/usbhid-ups.html" target="_top">usbhid-ups(8)</a> supports various manufacturers complying to
+  the HID Power Device Class (PDC) standard,
+</li><li class="listitem">
+<a class="ulink" href="man/tripplite_usb.html" target="_top">tripplite_usb(8)</a> supports various older Tripp-Lite units
+  (with USB ProductID 0001)
+</li><li class="listitem">
+<a class="ulink" href="man/bcmxcp_usb.html" target="_top">bcmxcp_usb(8)</a> supports various Powerware units,
+</li><li class="listitem">
+<a class="ulink" href="man/blazer_usb.html" target="_top">blazer_usb(8)</a> supports various manufacturers that use the
+  Megatec / Q1 protocol.
+</li><li class="listitem">
+<a class="ulink" href="man/nutdrv_qx.html" target="_top">nutdrv_qx(8)</a> supports various manufacturers that use the wider
+  Megatec / Q* protocol family. This is the driver slated to receive all
+  further development in this area, it was specially designed to support
+  many more sub-drivers and has added a lot over time, so please do try
+  it first nowadays.
+</li><li class="listitem">
+<a class="ulink" href="man/apc_modbus.html" target="_top">apc_modbus(8)</a> supports some APC branded devices built after 2010
+  (requires to be built against a libmodbus version with RTU USB support)
+</li></ul></div><p>Refer to the respective <span class="emphasis"><em>driver-name</em></span> (8) man page for more information.</p><p>You can also consult the Hardware Compatibility List (HCL) and filter on USB:
+<a class="ulink" href="https://www.networkupstools.org/stable-hcl.html?connection=USB" target="_top">https://www.networkupstools.org/stable-hcl.html?connection=USB</a></p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_my_usb_ups_has_a_bogus_vendor_id_0x0001_and_product_id_0x0000_what_driver_supports_it"></a>29. My USB UPS has a bogus Vendor ID 0x0001 and Product ID 0x0000, what driver supports it?</h2></div></div></div><p>Unfortunately, many devices are made without registering as a Vendor with
+the corresponding standards body, and use generic USB chips for interfacing
+with a computer (roughly similar to using a network interface card with a
+random MAC address and PCI ID, and thus poorly identifiable device specifics
+needed to automatically load some certain driver). Often they also lack a
+unique serial number field, so monitoring several devices is problematic.</p><p>One frequent case is with devices identifying as "Fry’s Electronics" and/or
+"MEC0003", if those metadata are served at all, or plain "0001/0000" in ID
+field. In some cases they are accompanied by "UPSmart" software with a
+"MEGA(USB)" connection option that works for Windows users.</p><p>Your best bet is to search for community discussions of issues on NUT GitHub
+at <a class="ulink" href="https://github.com/networkupstools/nut/issues?q=is%3Aissue" target="_top">https://github.com/networkupstools/nut/issues?q=is%3Aissue</a> and try options
+there. Devices with these chips were known to connect with drivers for such
+unrelated protocols as Megatec Q* (different sub-drivers, often <code class="literal">fabula</code> or
+<code class="literal">hunnox</code>), ATCL, or USB-HID.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_my_usb_ups_is_supported_but_doesn_8217_t_work"></a>30. My USB UPS is supported but doesn’t work!</h2></div></div></div><p>On Linux, udev rules are provided to set the correct permissions on device
+file. This allows the NUT driver to communicate with the UPS, through this
+device file.</p><p>However, the driver may still fail to start and support the device, with a
+message like:</p><pre class="literallayout">failed to claim USB device: could not claim interface 0: Operation not permitted</pre><p><span class="strong"><strong>Operation not permitted</strong></span> is a message pointing to a privilege issue.
+The most frequent issue is that udev has not actually applied the rule:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+if NUT has been freshly installed,
+</li><li class="listitem">
+and if the device USB cord was already plugged when installing NUT.
+</li></ul></div><p>In this case, just unplug and plug back the USB cord, then restart NUT.
+Instead of unplugging, you might also be able to run <code class="literal">udevadm trigger
+--subsystem-match=usb --action=change</code> to fix permissions.</p><p>There was a mistake in the naming of the NUT udev rules file which resulted in
+the rules being overridden by another udev configuration file. While this has
+been fixed in the Git master branch, your distribution may still be affected.
+Details are available in the following GitHub issue:
+<a class="ulink" href="https://github.com/networkupstools/nut/issues/140" target="_top">https://github.com/networkupstools/nut/issues/140</a></p><p>There may also be a conflict with an already running instance of the driver,
+e.g. when a systemd unit instance <code class="literal">nut-driver@yourdevicename.service</code> was
+automatically created and started by the <code class="literal">nut-driver-enumerator</code>, and then
+you try to follow older revisions of the NUT documentation or blogs, and
+start another copy with <code class="literal">upsdrvctl</code> (which should only be used on legacy
+systems nowadays).</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_why_do_you_not_use_the_linux_kernel_hid_driver_when_communicating_with_usb_upses"></a>31. Why do you not use the Linux kernel HID driver when communicating with USB UPSes?</h2></div></div></div><p>When the <code class="literal">usbhid-ups</code> was first written, it replaced an older driver <code class="literal">hidups</code>
+which used the Linux kernel USB HID API. At the time, the kernel HID API could
+not distinguish between identical Usage IDs that were nested in different
+parent IDs, so many common measurements were not available from <code class="literal">hidups</code>. For
+this reason, the libusb approach was chosen, which has the added side effect
+of being more portable than the Linux HID API. The Linux hiddev device nodes
+have very similar permissions problems as the <code class="literal">/dev/bus/usb</code> nodes that the
+libusb approach uses.</p><p>Due to difficulties in running libusb on OS X and Windows, those platforms
+might actually benefit more from a native HID approach.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_i_get_a_message_from_the_kernel_that_the_driver_did_not_claim_interface_0_before_use"></a>32. I get a message from the kernel that the driver "did not claim interface 0 before use"</h2></div></div></div><p>On Linux, if two copies of a driver are competing for the UPS, these messages
+will appear in dmesg:</p><pre class="literallayout">usbfs: process 29641 (usbhid-ups) did not claim interface 0 before use</pre><p>This can be a symptom of a source install conflicting with a package install.
+There is a rudimentary locking mechanism in NUT, but there is a chance that the
+packages might not use the same directory as the NUT default, and the conflict
+will be reported by the kernel.</p><p>Also see above about conflicts between driver instances started by a service
+management framework like systemd and started manually (e.g. with <code class="literal">upsdrvctl</code>).</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_why_does_my_eaton_5e_usb_ups_on_linux_connect_but_quickly_disconnects_soon"></a>33. Why does my (Eaton 5E) USB UPS on Linux connect but quickly disconnects soon?</h2></div></div></div><p>This issue was extensively investigated by NUT community members in
+<a class="ulink" href="https://github.com/networkupstools/nut/issues/630" target="_top">https://github.com/networkupstools/nut/issues/630</a> and resulted in a
+chain of distribution bugs logged such as
+<a class="ulink" href="https://bugzilla.redhat.com/show_bug.cgi?id=1715504" target="_top">https://bugzilla.redhat.com/show_bug.cgi?id=1715504</a></p><p>The gist of it is that some versions of Linux kernel used an "USB HID quirk"
+for certain devices, see Linux kernel source <code class="literal">drivers/hid/hid-quirks.c</code> file,
+including MGE/Eaton vendor ID (0x0463) based on an older device a contributor
+had issues with. Firmware in newer devices no longer had the bug which needed
+the "quirk" and misbehaved when it was enabled. While newer (and much older)
+Linux kernels should not have the problem, with the quirk removed according
+to <a class="ulink" href="https://lkml.org/lkml/2018/11/26/580" target="_top">https://lkml.org/lkml/2018/11/26/580</a> having the issue in the field really
+depends on the combination of Linux kernel and device firmware that meet.</p><p>Either way, it seems that problematic combinations preclude Linux from seeing
+the device as a <code class="literal">hid-generic</code> first, to hand it over to a NUT driver.</p><p>This quirk can be tuned with a kernel boot parameter (via GRUB etc.):</p><pre class="literallayout">usbhid.quirks=0x0463:0xffff:0x08</pre><p>to re-enable the NOGET quirk.</p><p>For context, according to <a class="ulink" href="https://bugzilla.redhat.com/show_bug.cgi?id=1875532" target="_top">https://bugzilla.redhat.com/show_bug.cgi?id=1875532</a>
+the symptoms for the problem look like this:</p><pre class="literallayout"># Plug in the UPS and observe the dmesg logs,
+# the following continuously appears:
+[   93.568082] usb 1-6: new full-speed USB device number 9 using xhci_hcd
+[   94.311469] usb 1-6: New USB device found, idVendor=0463, idProduct=ffff, bcdDevice= 0.01
+[   94.311475] usb 1-6: New USB device strings: Mfr=1, Product=2, SerialNumber=0
+[   94.311483] usb 1-6: Product: 5E
+[   94.311486] usb 1-6: Manufacturer: EATON
+[   96.269989] hid-generic 0003:0463:FFFF.000A: hiddev96,hidraw2: USB HID v1.10 Device [EATON 5E] on usb-0000:00:14.0-6/input0
+[  107.369425] hid-generic 0003:0463:FFFF.000A: usb_submit_urb(ctrl) failed: -1
+[  107.369469] hid-generic 0003:0463:FFFF.000A: timeout initializing reports
+[  112.828826] usb 1-6: USB disconnect, device number 9
+[  113.284452] usb 1-6: new full-speed USB device number 10 using xhci_hcd
+[  114.027693] usb 1-6: New USB device found, idVendor=0463, idProduct=ffff, bcdDevice= 0.01
+[  114.027698] usb 1-6: New USB device strings: Mfr=1, Product=2, SerialNumber=0
+[  114.027701] usb 1-6: Product: 5E
+[  114.027704] usb 1-6: Manufacturer: EATON
+[  115.984222] hid-generic 0003:0463:FFFF.000B: hiddev96,hidraw2: USB HID v1.10 Device [EATON 5E] on usb-0000:00:14.0-6/input0
+[  126.825756] hid-generic 0003:0463:FFFF.000B: usb_submit_urb(ctrl) failed: -1
+[  126.825775] hid-generic 0003:0463:FFFF.000B: timeout initializing reports
+[  132.527809] usb 1-6: USB disconnect, device number 10</pre><p>A similar report on the driver side may look like:</p><pre class="literallayout">usbhid-ups[4554]: libusb_get_report: Input/output error
+upsd[4591]: Data for UPS [eaton] is stale - check driver
+usbhid-ups[4554]: Can't claim USB device [0463:ffff]: No such file or directory
+upsd[4591]: Can't connect to UPS [eaton] (usbhid-ups-eaton): No such file or directory
+upsmon[5148]: Poll UPS [eaton@localhost] failed - Driver not connected
+upsmon[5148]: Communications with UPS eaton@localhost lost</pre><p>Other similar looking issues may include improper setup of udev, upower
+and similar frameworks to hand over the device from the OS to a driver
+daemon; competition with other software probing USB devices (ModemManager
+was mentioned in this context), including running several copies of the
+NUT drivers trying to use same port (e.g. one started by services and
+another manually as you tried to debug the problems).</p><p>Software quirks aside, please do test with a different USB cable and/or port
+on the computer. These were known to cause grief beyond what can be fixed
+with a few key words ;)</p><p>Finally, sometimes the issue is on the OS side (and/or USB chipset), to
+the point that the USB driver can not be unloaded and re-attached until
+you power cycle the system.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_why_doesn_8217_t_my_package_work"></a>34. Why doesn’t my package work?</h2></div></div></div><p>Or a variation like…</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_i_can_8217_t_run_this_because_there_8217_s_no_package_for_it_why_isn_8217_t_this_in_a_package_yet"></a>35. I can’t run this because there’s no package for it.  Why isn’t this in a package yet?</h2></div></div></div><p>Sorry, can’t help you there.  All official releases are source code
+and are posted on <a class="ulink" href="https://www.networkupstools.org/" target="_top">https://www.networkupstools.org/</a> along with PGP
+signatures for verification.</p><p>This means all packages have been built by a third party.  If you
+have an issue that’s related to packaging, you will need to seek
+help with whoever built it for you.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_my_ups_is_directly_connected_to_an_appliance_with_a_limited_version_of_nut_how_can_i_monitor_the_ups_from_arbitrary_clients"></a>36. My UPS is directly connected to an appliance with a limited version of NUT, how can I monitor the UPS from arbitrary clients?</h2></div></div></div><p>You can set up a separate general-purpose system as the NUT server for
+your "arbitrary clients", using <code class="literal">dummy-ups</code> in "relay mode" as the driver.
+This instance of <code class="literal">dummy-ups</code> would in turn be the NUT client allowed to
+interact with the appliance and that way with the UPS connected there.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>The original question related to a NAS with NUT provided in its
+firmware OS, that only allowed one or few clients and not a whole
+rack’s worth of client IP addresses.</p></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_my_networked_ups_can_8217_t_handle_being_monitored_by_dozens_of_nut_clients"></a>37. My networked UPS can’t handle being monitored by dozens of NUT clients</h2></div></div></div><p>Network management cards on many UPSes are rather puny appliances, often
+known to either limit the amount of clients who may connect, for security
+or performance reasons, or otherwise to crash or respond very slowly when
+overwhelmed.</p><p>You may be better off reducing the amount of servers connected to the UPS
+with the <code class="literal">snmp-ups</code>, <code class="literal">netxml-ups</code> or similar type of driver, and set up
+other systems as clients of these NUT servers.</p><p>Developers who are working on NUT, its drivers, or further projects and
+appliances based on NUT, and who need to monitor their UPS from multiple
+systems using the complete NUT stack on each system (e.g. during testing),
+can benefit from dedicating a separate general-purpose system as the NUT
+server using the real (networked) driver for the UPS, while using the
+<code class="literal">dummy-ups</code> in "relay mode" as the driver connected to this dedicated
+server on each tested system.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_how_can_i_setup_nut_as_a_proxy_setup_a_server_to_forward_relay_client_data"></a>38. How can I setup NUT as a proxy (setup a server to forward/relay client data)?</h2></div></div></div><p>This can easily be achieved by using the <code class="literal">dummy-ups</code> driver.
+The <code class="literal">port</code> field acts as the reference to the "other" UPS served
+by another NUT server.</p><p>Example with <code class="literal">dummy-ups</code> driver:</p><pre class="screen">[proxy]
+        driver = dummy-ups
+        port = upsname@ip-or-hostname[:port]
+        desc = "UPS proxy for UPS upsname on server ip-or-hostname"</pre><p>Also note that there is a <code class="literal">clone</code> driver with similar purpose,
+which allows users to group clients to a particular outlet of
+a device with a "real" driver running locally, and deal with
+this output as if it was a normal UPS.</p><p>Here the <code class="literal">port</code> field references the driver socket name that
+the "real" UPS driver is using. See its manual page for more
+details and caveats.</p><p>Example with <code class="literal">clone</code> driver:</p><pre class="screen">[realups]
+        driver = usbhid-ups
+        port = auto
+
+[clone-outlet-1]
+        driver = clone
+        port = usbhid-ups-realups
+        load.on = outlet.1.load.on
+        load.off = outlet.1.load.off
+        load.status = outlet.1.status
+        [...]</pre><p>This allows to group load attached to a separately manageable
+outlet (or group of outlets) on larger UPS and ePDUs, in order
+to power those devices on/off together. This may be also useful
+to delegate management of feeds to devices for purposes like
+hosting or supporting hardware for smaller teams sharing a rack
+in a larger company.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_why_are_there_two_copies_of_upsmon_running"></a>39. Why are there two copies of upsmon running?</h2></div></div></div><p>It’s not really two complete copies if your OS forks efficiently.</p><p>By default, <code class="literal">upsmon</code> runs most of the grunt work as an unprivileged
+user and keeps a stub process around with <span class="emphasis"><em>root</em></span> powers that can
+only shut down the system when necessary.  This should make it much
+harder to gain <span class="emphasis"><em>root</em></span> in the event a hole is ever discovered in
+<code class="literal">upsmon</code>.</p><p>If this really bothers you and you like running lots of code as
+<code class="literal">root</code>, start <code class="literal">upsmon</code> with <code class="literal">-p</code> option, and it will go back to
+being one big process.  This is not recommended, so don’t blame
+us if something bad happens in this mode.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_i_get_the_following_error_while_building_literal_make_4_don_t_know_how_to_make_hp_ux_nut_drvctl_sh_stop_literal"></a>40. I get the following error while building: <code class="literal">make[4]: don't know how to make HP-UX/nut-drvctl.sh. Stop</code></h2></div></div></div><p><span class="strong"><strong>Answer 1</strong></span></p><p>Current NUT codebase (since v2.8.0) is regularly tested with GNU, BSD and
+Sun implementations of <code class="literal">make</code>, so seeing failures in release snapshots
+(or iterations that made it to the master branch) is very surprising.
+Please raise an issue on GitHub.</p><p><span class="strong"><strong>Answer 2</strong></span></p><p>Older NUT codebase (release tarballs) has some hidden dependencies on
+GNU Make which show up while running <code class="literal">make distcheck</code>. If you are running
+<code class="literal">make distcheck</code> or its variants, you will need to install GNU Make
+(<code class="literal">devel/gmake</code> in the ports tree), which is incidentally what the
+official FreeBSD port of NUT does for all builds.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_i_have_emphasis_some_problem_emphasis_with_emphasis_some_old_version_emphasis_8230"></a>41. I have <span class="emphasis"><em>some problem</em></span> with <span class="emphasis"><em>some old version</em></span> …</h2></div></div></div><p>Get the latest stable release, and see if it still happens.  If it
+goes away, it means someone else reported it and got it fixed a
+long time ago.</p><p>You may want to search the mailing lists to see if someone else has
+experienced the same problem. If so, there is a good chance that someone else
+has worked through the process necessary to shoehorn the latest NUT version
+into your distribution (potentially with unofficial packages).</p><p>Some OS distributions contain old versions of NUT. If your hardware is newer
+than the NUT release, there is a good chance that support has not been added
+yet. Please do not tell us you have the "latest version for Distro XYZ" — even
+if the developers are familiar with that distribution, it helps others if you
+quote the exact package version.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>Check the release date on the version you have.  If it’s more
+than about 6-12 months old, there’s probably a newer stable tree
+version out there. As development happens actively, be sure to also
+check if a custom build from Git (usually using the <code class="literal">master</code> branch
+of NUT <a class="ulink" href="https://github.com/networkupstools/nut/" target="_top">https://github.com/networkupstools/nut/</a> repository) has your
+issue fixed by some kind soul already.</p></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_i_can_8217_t_connect_with_ssl_using_old_nut_on_an_appliance"></a>42. I can’t connect with SSL using old NUT on an appliance</h2></div></div></div><p>Unfortunately, some vendors do not issue new firmwares often, and even more
+rarely do they significantly update any programs inside. It is not uncommon
+to see NUT versions over a decade old delivered with small NAS boxes, for
+example.</p><p>This may impact not only NUT protocol compatibility, but also transport
+protocols such as SSL — as cipher algorithms get outdated over time, and
+ones deemed insecure are no longer handled at all (by default).  This is
+not a problem limited to NUT: old SSH Key Exchange (kex) protocols or old
+HTTPS mechanisms also become hard or impossible to use eventually.</p><p>On one hand, you can look into NUT configuration of <code class="literal">DISABLE_WEAK_SSL</code>.</p><p>On another, you can modify configuration of the newer system to allow older
+algorithms as required by the older other system.</p><p>For NUT built against OpenSSL, the change would be in <code class="literal">/etc/ssl/openssl.cnf</code>
+and similar to the diff block below:</p><pre class="screen">--- a/etc/ssl/openssl.cnf
++++ b/etc/ssl/openssl.cnf
+@@ -52,13 +52,6 @@ tsa_policy3 = 1.2.3.4.5.7
+
+ [openssl_init]
+ providers = provider_sect
++ssl_conf = ssl_sect
++
++[ssl_sect]
++system_default = system_default_sect
++
++[system_default_sect]
++CipherString = DEFAULT@SECLEVEL=0
+
+ # List of providers to load
+ [provider_sect]</pre><p>Of course, keep in mind that by doing this you degrade your security level.
+If better solutions are possible in your situation, prefer to follow them!</p><p>Thanks to Kajetan Rzepecki for doing the research and posting the findings
+in <a class="ulink" href="https://github.com/networkupstools/nut/issues/1899" target="_top">https://github.com/networkupstools/nut/issues/1899</a></p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_i_built_nut_from_git_and_it_complains_about_lots_of_missing_files_what_happened"></a>43. I built NUT from Git, and it complains about lots of missing files. What happened?</h2></div></div></div><p>If you are not actively developing a driver, can you use a snapshot instead?
+The NUT instance of Buildbot generates tar files of the latest NUT source
+after each successful build, and these snapshots include a pre-built version
+of the <code class="literal">./configure</code> script.</p><div class="warning" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Warning</h3><p>There is an outstanding bug that after the shutdown of BuildBot,
+no regular distribution tarballs are in fact published.</p></div><p>To build from Git, you will need recent versions of autoconf, automake, libtool,
+asciidoc, a2x and its dependencies for DocBook/dblatex. Rather than publish a
+list of the exact versions needed (which will quickly become out of date), we
+recommend you consult your distribution’s dependency list for building a NUT
+package, and use that as a starting point.</p><p>That said, for the numerous systems running build agents of the NUT CI farm,
+their lists of dependency packages are available in <code class="literal">docs/config-prereqs.txt</code>
+in NUT sources.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_do_i_have_to_use_a_serial_connection_to_monitor_the_ups_what_about_direct_network_connections_snmp_or_otherwise"></a>44. Do I have to use a serial connection to monitor the UPS? What about direct network connections (SNMP or otherwise)?</h2></div></div></div><p>NUT currently supports USB communication through several drivers,
+and also SNMP and XML/HTTP (Eaton and MGE) communications.</p><p>Since NUT is very extensible, support for a new communication bus can be added
+easily.</p><p>Any time there is a gap in features, it’s usually because the
+group of people who own that hardware and the group of people who
+write code don’t overlap.  The fix is to make them overlap — turn
+an owner into a developer or vice-versa.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_what_happened_to_the_patch_i_sent"></a>45. What happened to the patch I sent?</h2></div></div></div><p>We try to prioritize emails with patches, but you should understand that a
+simple fix for your bug might be complicated to integrate with the rest of
+NUT. Changing the way a fundamental component works, such as USB support,
+means a lot of testing to ensure that your fix does not break other drivers.</p><p>Sometimes patches are put on hold due to a feature freeze.  If it
+doesn’t show up once the new version opens up, please send it again.</p><p>It may also be much more productive to submit changes as pull requests via
+<a class="ulink" href="https://github.com/networkupstools/nut/pulls" target="_top">https://github.com/networkupstools/nut/pulls</a> so they are automatically
+processed by the NUT CI farm across numerous target platforms, and
+various inconsistencies can be diagnosed and fixed early.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_i_8217_m_not_much_of_a_programmer_how_can_i_help"></a>46. I’m not much of a programmer.  How can I help?</h2></div></div></div><p>There’s always work to be done outside of the realm of code bashing.
+Documentation can always be improved.  A new user’s perspective is
+sometimes needed to appreciate this, since developers and long-time
+users consider everything obvious.  Bug reports and pull requests
+on any project’s documentation are just as valuable as those for
+the actual programs' sources.</p><p>Fielding questions on the mailing lists is also helpful.  This
+lets other people to focus on coding issues while allowing the
+original poster to get some information at the same time.  It’s
+quite a relief to open that mailbox and find that someone else
+has already handled it successfully.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_i_replaced_the_battery_in_my_apc_smart_ups_and_now_it_thinks_the_battery_is_low_all_the_time_how_do_you_fix_this"></a>47. I replaced the battery in my APC Smart-UPS and now it thinks the battery is low all the time.  How do you fix this?</h2></div></div></div><p>Or a variation like…</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_my_apc_ups_keeps_reporting_emphasis_ol_lb_emphasis_even_after_it_8217_s_been_charging_for_many_hours_what_can_i_do_about_this"></a>48. My APC UPS keeps reporting <span class="emphasis"><em>OL LB</em></span>, even after it’s been charging for many hours.  What can I do about this?</h2></div></div></div><p>This happened to me, and some other people too.  The combination of
+our experiences should prove useful to you.</p><p>First, you need to realize that the UPS apparently stores data about
+the battery, load, and runtime.  After replacing the battery, it
+needs to be clued in to the new situation.  If the traditional
+runtime calibration doesn’t work, you have to try something a
+little more drastic.</p><p>You need to <span class="strong"><strong>completely</strong></span> drain the UPS while it has a good ground.
+This means you can’t just pull the plug.  You also have to
+disconnect it from the computer so this software won’t shut it
+down.</p><p>The easiest way to do this is to first unplug your computer(s) from
+it, and plug in a token load like a lamp.  Also, move the UPS to a
+power strip that doesn’t switch the ground line or an outlet that
+you can switch off at your panel.</p><p>Once the UPS is up at 100% charge (this is important), disconnect
+the power.  It <span class="emphasis"><em>must</em></span> remain connected to the ground, or the
+results may not be accurate.  Ignore the sounds it makes, and go
+away until it’s done.  Don’t do anything to the front panel while
+this is happening.</p><p>After all of this, put things back the way they should be and let
+it charge up.  You should find that it again gives reasonable
+values and behavior, as it was when it was new.</p><p>Thanks to Matthew Dharm for helping us nail down this procedure.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_upsstats_returns_temperatures_in_celsius_i_like_fahrenheit_where_8217_s_the_config_file_to_switch_it_back"></a>49. upsstats returns temperatures in Celsius. I like Fahrenheit. Where’s the config file to switch it back?</h2></div></div></div><p>Temperature scales are handled by the template files, so edit your
+upsstats.html and change it from TEMPC to TEMPF.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_why_is_the_mailing_list_ignoring_me"></a>50. Why is the mailing list ignoring me?</h2></div></div></div><p>You probably asked a question that’s answered in this FAQ, or
+somewhere else in the documentation, and nobody wants to quote it
+for you.</p><p>There is a small chance that the mailing list spam filter ate your message.
+Check the list archives to see if your message appears there.
+Also double-check that you have subscribed to the lists and completed
+all the confirmation rituals of its engine.</p><p>Convincing the other subscribers that you’ve actually read down this
+far might be useful.  You might mention "queequeg" for better results.</p><p>This URL may also be helpful:</p><p><a class="ulink" href="http://www.catb.org/~esr/faqs/smart-questions.html" target="_top">http://www.catb.org/~esr/faqs/smart-questions.html</a></p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_why_are_you_so_insistent_about_sending_emails_to_public_mailing_lists_instead_of_to_individuals"></a>51. Why are you so insistent about sending emails to public mailing lists instead of to individuals?</h2></div></div></div><p>By and large, NUT is a volunteer effort. By emailing one person, you are
+asking them to take care of your question. If you email the list instead, you
+give others the opportunity to answer.</p><p>In addition, the mailing lists are publicly archived, and therefore easily
+searchable. Chances are, you aren’t the only person who will ever have that
+question.</p><p>There are similar benefits to using the discussions on issue tracker at
+<a class="ulink" href="https://github.com/networkupstools/nut/issues" target="_top">https://github.com/networkupstools/nut/issues</a> and if suitable, in the
+currently open pull requests.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_if_you_want_mailing_list_replies_to_go_to_the_list_why_don_8217_t_you_add_a_reply_to_header"></a>52. If you want mailing list replies to go to the list, why don’t you add a Reply-To: header?</h2></div></div></div><p>We are not going to rehash all of the arguments for and against this in a
+simple FAQ entry. If you intend for your reply to go to more than just the
+last person who posted, it is not too much trouble to hit "Reply All".</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_i_found_some_information_about_another_kind_of_ups_protocol_you_don_8217_t_support_yet_but_i_don_8217_t_know_what_to_do_with_it_can_you_help"></a>53. I found some information about another kind of UPS protocol you don’t support yet, but I don’t know what to do with it. Can you help?</h2></div></div></div><p>If you’re not a programmer, you can still help others by making
+that protocol available.  You might host the document somewhere and
+send the URL to one of the mailing lists.</p><p>Posting an issue with attachments on
+<a class="ulink" href="https://github.com/networkupstools/nut/issues" target="_top">https://github.com/networkupstools/nut/issues</a>
+can also be helpful.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_how_can_you_answer_questions_to_situations_that_nobody_8217_s_encountered_yet_isn_8217_t_this_a_frequently_asked_questions_file"></a>54. How can you answer questions to situations that nobody’s encountered yet?  Isn’t this a frequently asked questions file?</h2></div></div></div><p><span class="strong"><strong>Answer 1</strong></span></p><p>It’s a kind of Magic.</p><p><span class="strong"><strong>Answer 2</strong></span></p><p>It’s both that and a frequently <span class="strong"><strong>anticipated</strong></span> questions file, too.</p><p>The idea is to write it up in here so that nobody asks the mailing
+list when it finally does get released.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_my_ups_powers_up_immediately_after_a_power_failure_instead_of_waiting_for_the_batteries_to_recharge"></a>55. My UPS powers up immediately after a power failure instead of waiting for the batteries to recharge!</h2></div></div></div><p>Or a variation like…</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_my_ups_an_apc_as_it_happens_lacks_the_field_battery_charge_restart_8201_8212_8201_so_how_will_it_know_when_to_restart"></a>56. My UPS (an APC as it happens) lacks the field "battery.charge.restart" — so how will it know when to restart?</h2></div></div></div><p>You can rig up a little hack to handle this issue in software.</p><p>Essentially, you need to test for the POWERDOWNFLAG in your <span class="strong"><strong>startup</strong></span> scripts
+while the filesystems are still read-only (before <code class="literal">upsmon</code> daemon has started
+and removed it).  You can also query <code class="literal">upsmon -K</code> for presence of the file, to
+avoid hard-coding the path or parsing it from your <code class="literal">upsmon.conf</code> file.  If the
+flag is there, you know your last shutdown was caused by a power failure and
+the UPS battery is probably still quite weak.</p><p>In this situation, your best bet is to sleep it off.  Pausing in your startup
+script to let the batteries recharge with the filesystems in a safe state is
+recommended.  This way, if the power goes out again, you won’t face a situation
+where there’s not enough battery capacity left for upsmon to do its thing.</p><p>Exactly how long to wait is a function of your UPS hardware, and will require
+careful testing.</p><p>If this is too evil for you, buy another kind of UPS that will either wait for
+a minimum amount of charge, a minimum amount of time, or both.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_i_8217_m_facing_a_power_race"></a>57. I’m facing a power race</h2></div></div></div><p>Or a variation like…</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_the_power_came_back_during_the_shutdown_but_before_the_ups_power_off_now_the_ups_does_not_reboot_and_my_computer_stays_off_how_can_i_fix_that"></a>58. The power came back during the shutdown, but before the UPS power off. Now the UPS does not reboot, and my computer stays off. How can I fix that?</h2></div></div></div><p>There is a situation where the power may return during the shutdown process.
+This is known as a race.  Here’s how we handle it.</p><p>"Smart" UPSes typically handle this by using a command that forces the UPS to
+power the load off and back on.  This way, you are assured that the systems will
+restart even if the power returns at the worst possible moment.</p><p>Contact closure units (ala genericups), on the other hand, have the potential
+for a race when feeding multiple systems.  This is due to the design of most
+contact closure UPSes.  Typically, the "kill power" line only functions when
+running on battery.  As a result, if the line power returns during the shutdown
+process, there is no way to power down the load.</p><p>The workaround is to force your systems to reboot after some interval. This way,
+they won’t be stuck in the halted state with the UPS running on line power.</p><p>Implement this by modifying your shutdown script like this:</p><pre class="screen">        # `upsmon -K` if available on still mounted filesystems
+        # at this point is more portable than the `test` below
+
+        if (test -f /etc/killpower || /sbin/upsmon -K)
+        then
+                /sbin/upsdrvctl shutdown
+
+                sleep 120
+
+                # uh oh, we never got shut down! (power race?)
+                reboot
+        fi</pre></div></div><div xmlns="" class="navfooter nut_footer"><hr />
+		Last updated 2025-08-09 00:46:36 -- Network UPS Tools 2.8.4</div></body></html>
