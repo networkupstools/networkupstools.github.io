@@ -74,7 +74,32 @@ file names of the manual pages, but also cross-links in generated documents.
 Note that use of these flags does not implicitly enable any <code class="literal">--with-docs=...</code>
 mode, which should still be specified explicitly.</p><pre class="literallayout">--with-docs-man-dir-as-base=(yes/no)    (default: yes, or no Solaris/illumos)</pre><p>Are platform man directories named by base number (yes) or by full section
 name (no), e.g. given a <code class="literal">1m</code> man page section, install the pages into <code class="literal">man1</code>
-or <code class="literal">man1m</code> directory?</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_python_support"></a>Python support</h4></div></div></div><p>NUT includes a client binding <code class="literal">PyNUT</code> module, as well as an optional GUI
+or <code class="literal">man1m</code> directory?</p><pre class="literallayout">--enable-docs-changelog=&lt;yes|no|skip|auto|{format,list}&gt;</pre><p>This option was added specifically to allow developer iterations to not waste
+CPU time rebuilding the huge <code class="literal">ChangeLog*</code> files whenever their Git index
+changes. For troubleshooting purposes, this option supports specifying the
+list of formats (<span class="emphasis"><em>text</em></span>, <span class="emphasis"><em>adoc</em></span>, <span class="emphasis"><em>html-single</em></span>, <span class="emphasis"><em>html-chunked</em></span>, <span class="emphasis"><em>pdf</em></span>) with
+optional suffixes to build (empty/<span class="emphasis"><em>=yes</em></span>), consider (<span class="emphasis"><em>=auto</em></span>) or not-build
+(<span class="emphasis"><em>=no</em></span> or <span class="emphasis"><em>=skip</em></span>) specific formats; note that some are prerequisites for
+others (plain <span class="emphasis"><em>text</em></span> and prepared <span class="emphasis"><em>adoc</em></span> are needed to generate HTML and PDF).</p><pre class="literallayout">--with-docs-changelog-start=&lt;auto|git-tree-ish&gt;
+--with-docs-changelog-end=&lt;auto|git-tree-ish&gt;</pre><p>This option was added to allow developers (and CI build agents) to customize
+the size of <code class="literal">ChangeLog*</code> files when they are generated. Balancing against the
+option above to not build <code class="literal">ChangeLog*</code> files at all, this couple allows quicker
+builds that exercise all relevant recipe code paths.</p><p>Default value for the starting point is <code class="literal">auto</code>, which applies the legacy
+default <code class="literal">v2.6.0</code> either to release/pre-release builds, or when local Git
+version metadata could not be retrieved, and the most-recent release tag
+(or <code class="literal">master</code> as fallback) for usual build iterations.</p><p>Default value for the ending point is <code class="literal">HEAD</code> to represent the current commit
+at the moment the <code class="literal">ChangeLog</code> file and its derivatives are (re-)generated.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>The resulting <code class="literal">GITLOG_START_POINT</code> value may also impact the oldest
+version considered by maintainer helper script <code class="literal">docs/docinfo.xml.sh</code> (if it
+specifies a <code class="literal">v*</code> tag, otherwise <code class="literal">v2.6.0</code> is used).</p></div><pre class="literallayout">--with-docs-man-linkmanext-template='https://linux.die.net/man/{0}/{target}'
+--with-docs-man-linkmanext2-template='https://linux.die.net/man/{2}/{target}'
+--enable-docs-man-linkmanext-section-rewrite</pre><p>NUT manual pages can refer to system-provided programs, files or syscalls
+using custom-defined <code class="literal">linkmanext</code> or <code class="literal">linkmanext2</code> asciidoc macros.
+They in turn use man page sections, which may be subject to rewrites similar
+to those applied to NUT pages themselves. The options above should help
+packagers manage this; defaults are set for Linux standard filesystem layout.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>Avoid characters special for XML or HTML mark-up needed in the template
+(notably the <code class="literal">&amp;</code> "ampersand" in HTML URLs with queries), entities like <code class="literal">&amp;amp;</code>
+must be used to pass docbook part (not man page generation though) and then
+it stays in the final document, making the URL invalid. PRs welcome :)</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_python_support"></a>Python support</h4></div></div></div><p>NUT includes a client binding <code class="literal">PyNUT</code> module, as well as an optional GUI
 application <code class="literal">NUT-Monitor</code> (not to be confused with <code class="literal">nut-monitor</code> service
 name for <code class="literal">upsmon</code> as delivered by some OS distribution packages). Both
 python 2.7 and several versions of python 3.x are supported and regularly
@@ -200,4 +225,4 @@ Core and Client parts.</p></div><div class="section"><div class="titlepage"><div
 dynamically, based on requested scanning options. This allows to build and
 package the tool without requiring all possible dependencies to be installed
 in each run-time environment.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-06-12 10:52:14 -- Network UPS Tools 2.8.3.463.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_driver_selection.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="Configure_options.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="_other_configuration_options.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2025-08-09 00:57:10 -- Network UPS Tools 2.8.4.9</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_driver_selection.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="Configure_options.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="_other_configuration_options.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

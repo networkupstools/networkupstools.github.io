@@ -853,7 +853,7 @@ If you set stayoff in <a href="ups.conf.html">ups.conf(5)</a> when FSD arises th
 <dd>
 <p>
 Skip autodetection of the protocol to use and only use the one specified.
-Supported values: <em>bestups</em>, <em>gtec</em>, <em>hunnox</em>, <em>innovart31</em>, <em>innovart33</em>, <em>masterguard</em>, <em>mecer</em>, <em>megatec</em>, <em>megatec/old</em>, <em>mustek</em>, <em>q1</em>, <em>q2</em>, <em>q6</em>, <em>voltronic</em>, <em>voltronic-qs</em>, <em>voltronic-qs-hex</em> and <em>zinto</em>.
+Supported values: <em>bestups</em>, <em>gtec</em>, <em>hunnox</em>, <em>innovart31</em>, <em>innovart33</em>, <em>masterguard</em>, <em>mecer</em>, <em>megatec</em>, <em>megatec/old</em>, <em>mustek</em>, <em>q1</em>, <em>q2</em>, <em>q6</em>, <em>voltronic</em>, <em>voltronic-axpert</em>, <em>voltronic-qs</em>, <em>voltronic-qs-hex</em> and <em>zinto</em>.
 </p>
 <div class="paragraph"><p>Run the driver program with the <code>--help</code> option to see the exact list of
 <code>protocol</code> values it would currently recognize.</p></div>
@@ -1129,6 +1129,44 @@ The acceptable range is <code>12..540</code> seconds.
 </dl></div>
 </div>
 <div class="sect2">
+<h3 id="_voltronic_axpert_protocol">VOLTRONIC-AXPERT PROTOCOL</h3>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">This protocol is currently largely experimental, many features may
+be only exposed in specially configured builds of the NUT driver program.</td>
+</tr></table>
+</div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>reset_to_default</strong>
+</dt>
+<dd>
+<p>
+Reset capability options and their limits to safe default values
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>bypass_alarm</strong>
+</dt>
+<dd>
+<p>
+Alarm (BEEP!) at Bypass Mode [enabled/disabled]
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>battery_alarm</strong>
+</dt>
+<dd>
+<p>
+Alarm (BEEP!) at Battery Mode [enabled/disabled]
+</p>
+</dd>
+</dl></div>
+</div>
+<div class="sect2">
 <h3 id="_voltronic_protocol">VOLTRONIC PROTOCOL</h3>
 <div class="paragraph"><p>The following options are supported only by the <em>voltronic</em> protocol.
 Not all of them are available on all the UPSes supported by this protocol.</p></div>
@@ -1244,7 +1282,7 @@ The UPS will still charge battery under this mode.
 Enable or disable ECO Mode [<code>enabled</code>/<code>disabled</code>].
 When input voltage/frequency are within acceptable range, the UPS will bypass voltage to output for energy saving.
 PFC and INVERTER are still active at this mode.
-Settable also &#8216;on the fly&#8217; with <strong>bypass.start</strong> and <strong>bypass.stop</strong> instant commands.
+Settable also "on the fly" with <strong>bypass.start</strong> and <strong>bypass.stop</strong> instant commands.
 </p>
 </dd>
 <dt class="hdlist1">
@@ -1433,12 +1471,12 @@ risky!)</p></div>
 <p>
 Select a specific UPS, in case there is more than one connected via
 USB. Each option specifies an extended regular expression (see
-<ulink url="https://linux.die.net/man/7/regex">regex(7)</ulink> for more information on regular expressions), which
+<a href="https://linux.die.net/man/7/regex">regex(7)</a> for more information on regular expressions), which
 must match the UPS&#8217;s entire respective <code>vendor</code>/<code>product</code>/<code>serial</code>
 string values (minus any surrounding whitespace), or the whole 4-digit
 hexadecimal code for <code>vendorid</code> and <code>productid</code>.
 </p>
-<div class="paragraph"><p>Try <ulink url="https://linux.die.net/man/8/lsusb">lsusb(8)</ulink> or running this NUT driver with <code>-DD</code> command-line
+<div class="paragraph"><p>Try <a href="https://linux.die.net/man/8/lsusb">lsusb(8)</a> or running this NUT driver with <code>-DD</code> command-line
 argument for finding out the strings to match.</p></div>
 <div class="paragraph"><p>Examples:</p></div>
 <div class="ulist"><ul>
@@ -1469,7 +1507,7 @@ OPTIONAL, NOT RECOMMENDED.
 <div class="paragraph"><p>Select a UPS on a specific USB bus or group of buses. The argument is
 a regular expression that must match the bus name where the UPS is
 connected (e.g. <code>bus="002"</code> or <code>bus="00[2-3]"</code>) as seen on Linux in
-<code>/sys/bus/usb/devices</code> or <ulink url="https://linux.die.net/man/8/lsusb">lsusb(8)</ulink>; including leading zeroes.</p></div>
+<code>/sys/bus/usb/devices</code> or <a href="https://linux.die.net/man/8/lsusb">lsusb(8)</a>; including leading zeroes.</p></div>
 <div class="admonitionblock">
 <table><tr>
 <td class="icon">
@@ -1491,7 +1529,7 @@ OPTIONAL, NOT RECOMMENDED.
 <div class="paragraph"><p>Select a UPS on a specific USB device or group of devices. The argument is
 a regular expression that must match the device name where the UPS is
 connected (e.g. <code>device="001"</code> or <code>device="00[1-2]"</code>) as seen on Linux
-in <code>/sys/bus/usb/devices</code> or <ulink url="https://linux.die.net/man/8/lsusb">lsusb(8)</ulink>; including leading zeroes.</p></div>
+in <code>/sys/bus/usb/devices</code> or <a href="https://linux.die.net/man/8/lsusb">lsusb(8)</a>; including leading zeroes.</p></div>
 <div class="admonitionblock">
 <table><tr>
 <td class="icon">
@@ -2415,9 +2453,21 @@ So, the <strong>beeper.toggle</strong> command may appear to have no effect in t
 <div class="sect2">
 <h3 id="_masterguard_units">MASTERGUARD UNITS</h3>
 <div class="paragraph"><p>The driver is supposed to support both "new" A series (A700/1000/2000/3000 and their -19 cousins) and E series (E60/100/200) but was tested only on A due to lack of E hardware.</p></div>
-</div>
-<div class="sect2">
-<h3 id="_voltronic_qs_units">VOLTRONIC-QS UNITS</h3>
+<div class="paragraph"><p>VOLTRONIC-AXPERT UNITS</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>This protocol supports Voltronic Power Axpert inverters, based on P30 protocol
+(used e.g. in photovoltaic equipment, often paired with an UPS charged by the
+solar panels).
+
+The code is currently largely experimental, with data point and command names
+not aligned with concepts that are part of NUT standard vocabulary (this many
+of them are prefixed with `experimental.` namespace). In fact,  many features
+may be only exposed in specially configured builds of the NUT driver program.
+
+
+VOLTRONIC-QS UNITS</code></pre>
+</div></div>
 <div class="paragraph"><p>Both <strong>load.off</strong> and <strong>shutdown.stayoff</strong> instant commands are known to work as expected (i.e. turn the load off indefinitely) only if mains is present, otherwise, as soon as mains returns the load will be powered.</p></div>
 <div class="paragraph"><p>After issuing a <strong>shutdown.return</strong> instant command, the UPS won&#8217;t wait <strong>ondelay</strong> before powering on the load, provided the following conditions are met:</p></div>
 <div class="ulist"><ul>
@@ -2782,7 +2832,7 @@ The NUT HCL: <a href="https://www.networkupstools.org/stable-hcl.html">https://w
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-06-12 10:51:51 UTC -- Network UPS Tools 2.8.3.463.1
+Last updated 2025-08-09 00:56:34 UTC -- Network UPS Tools 2.8.4.9
 </div>
 </div>
 </body>
