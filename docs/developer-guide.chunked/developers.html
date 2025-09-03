@@ -53,7 +53,13 @@ with <code class="literal">upsdrv_</code>, and they will be called at different 
 depending on what needs to happen.</p><p>See the <a class="link" href="new-drivers.html" title="5. Creating a new driver to support another device">driver documentation</a> for information on writing
 drivers, and also refer to the skeletal driver in <code class="literal">skel.c</code>.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_portability"></a>4.3. Portability</h3></div></div></div><p>Avoid things that will break on other systems.  All the world is not an
 x86 Linux box.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_c_comments"></a>C comments</h4></div></div></div><p>There are still older systems out there that don’t do C++ style comments.</p><pre class="screen">/* Comments look like this. */
-// Not like this.</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_variable_declarations_go_on_top"></a>Variable declarations go on top</h4></div></div></div><p>Newer versions of gcc allow you to declare a variable inside a function
+// Not like this.</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_complete_method_signatures"></a>Complete method signatures</h4></div></div></div><p>If a method has intentionally no arguments, this should be explicit by
+specifying a <code class="literal">void</code> argument list in both declarations (header or top
+of a C source file for <code class="literal">static</code> methods) and implementations:</p><pre class="screen">/* Like this: */
+void good_stuff(void);
+
+/* NOT like this: */
+void bad_stuff();</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_variable_declarations_go_on_top"></a>Variable declarations go on top</h4></div></div></div><p>Newer versions of gcc allow you to declare a variable inside a function
 after code, somewhat like the way C++ operates, like this:</p><pre class="screen">function do_stuff(void)
 {
         check_something();
@@ -851,4 +857,4 @@ scenarios automatically. If your code adds a substantial feature, consider
 extending the <code class="literal">Jenkinsfile-dynamatrix</code> and/or <code class="literal">ci_build.sh</code> scripts in the
 workspace root to add another <code class="literal">BUILD_TYPE</code> to the matrix of tests run in
 parallel.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-08-14 11:57:46 -- Network UPS Tools 2.8.4.9</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="versioning.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="new-drivers.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2025-09-03 11:51:50 -- Network UPS Tools 2.8.4.9</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="versioning.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="new-drivers.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
