@@ -24,6 +24,10 @@ control history for "live" codebase.</p><div class="section"><div class="titlepa
 (expected) CI automation for use of data points in drivers that conform
    to patterns defined in <a class="ulink" href="docs/nut-names.txt" target="_top">docs/nut-names.txt</a>
 </li><li class="listitem"><p class="simpara">
+<code class="literal">usbhid-ups</code> driver updates:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Improved support for Eaton 5S1500LCD (US version). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2380" target="_top">#2380</a>]
+</li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">configure</code> script options:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 Introduced <code class="literal">--with-python{,2,3}-modules-dir</code> to specify PyNUT(Client)
@@ -31,7 +35,10 @@ Introduced <code class="literal">--with-python{,2,3}-modules-dir</code> to speci
      it), if not bundling with NUT-Monitor UI app. By default the respective
      interpreter’s <span class="emphasis"><em>site-packages</em></span> or <span class="emphasis"><em>dist-packages</em></span> location will be used,
      so you may have to adjust search paths for any other values. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3062" target="_top">#3062</a>]
-</li></ul></div></li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_release_notes_for_nut_2_8_4_what_8217_s_new_since_2_8_3"></a>2.2. Release notes for NUT 2.8.4 - what’s new since 2.8.3</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
+</li></ul></div></li><li class="listitem">
+Updated <code class="literal">make spellcheck</code> to help avoid asciidoc admonition blocks with
+   visually invalid sentences (after rendering as a box in HTML or PDF). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3077" target="_top">#3077</a>]
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_release_notes_for_nut_2_8_4_what_8217_s_new_since_2_8_3"></a>2.2. Release notes for NUT 2.8.4 - what’s new since 2.8.3</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
 Bug fixes for fallout possible due to "fightwarn" effort in 2.8.0+:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 In <code class="literal">usbhid-ups</code> sources, introduced optional <code class="literal">HU_FLAG_PARAM_REQUIRED</code> for
@@ -1040,7 +1047,7 @@ All drivers should now support the optional <code class="literal">sdcommands</co
 </p><p class="simpara">Also defined <code class="literal">EF_EXIT_SUCCESS</code> and <code class="literal">EF_EXIT_FAILURE</code> in <code class="literal">include/common.h</code>
 to avoid magic numbers in code like <code class="literal">set_exit_flag(-2)</code>, and revised whether
 it is getting set at all in "killpower" vs. other cases, based on new
-<code class="literal">handling_upsdrv_shutdown</code> internal flag.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>during this overhaul, many older drivers got their first ever supported
+<code class="literal">handling_upsdrv_shutdown</code> internal flag.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>During this overhaul, many older drivers got their first ever supported
 INSTCMD such as <code class="literal">shutdown.return</code>, <code class="literal">shutdown.stayoff</code> or <code class="literal">load.off</code>. Default
 logic that was previously the content of <code class="literal">upsdrv_shutdown()</code> methods was often
 relocated into new <code class="literal">shutdown.default</code> INSTCMD definitions. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2670" target="_top">#2670</a>]</p></div></li><li class="listitem"><p class="simpara">
@@ -1618,7 +1625,7 @@ nutdrv_qx and blazer updates:
 extended default ranges for max battery voltage when guessing [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1279" target="_top">#1279</a>]
 </li></ul></div></li><li class="listitem">
 sms_ser, a driver for SMS Brazil UPS Protocol 1Phase, was introduced.
-   NOTE: it may later become a subdriver under nutdrv_qx. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2090" target="_top">#2090</a>]
+   NOTE: It may later become a subdriver under nutdrv_qx. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2090" target="_top">#2090</a>]
 </li><li class="listitem"><p class="simpara">
 usbhid-ups updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -4524,4 +4531,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.33. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-09-07 00:52:58 -- Network UPS Tools 2.8.4.42</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2025-09-07 20:43:47 -- Network UPS Tools 2.8.4.42</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
