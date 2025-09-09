@@ -580,16 +580,16 @@ Devices" (the Power Device Class [PDC] specification).</p><p>For example:</p><pr
  00840010.00840002.00850044
  00840010.00840002.00850045
  00840010.00840002.008500d0</pre><p>To make matters worse, most manufacturers define their own additional
-usages, even in cases where standard usages could have been used. for
-example Belkin defines <code class="literal">00860040</code> = ConfigVoltage (which is incidentally
+usages, even in cases where standard usages could have been used. For
+example Belkin defines <code class="literal">00860040</code> = <code class="literal">ConfigVoltage</code> (which is incidentally
 a violation of the USB PDC specification, as <code class="literal">00860040</code> is reserved for
 future use).</p><p>Thus, subdrivers generally need to provide:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 manufacturer-specific usage definitions,
 </li><li class="listitem">
 a mapping of HID variables to NUT variables.
 </li></ul></div><p>Moreover, subdrivers might have to provide additional functionality,
-such as custom implementations of specific instant commands (load.off,
-shutdown.restart), and conversions of manufacturer specific data
+such as custom implementations of specific instant commands (<code class="literal">load.off</code>,
+<code class="literal">shutdown.restart</code>), and conversions of manufacturer specific data
 formats.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_usage_macros_in_drivers_hidtypes_h"></a>Usage macros in drivers/hidtypes.h</h4></div></div></div><p>The <code class="literal">drivers/hidtypes.h</code> header provides a number of macro names
 for entries in the standard usage tables for Power Device
 <code class="literal">USAGE_POW_&lt;SOMETHING&gt;</code> and Battery System <code class="literal">USAGE_BAT_&lt;SOMETHING&gt;</code>
@@ -638,11 +638,22 @@ different device models or firmware versions, that provide same information
 for a NUT data point, such as <code class="literal">input.voltage</code>. For the <code class="literal">hid2nut</code> mapping
 tables, first hit wins (so you may e.g. prefer to check values with better
 precision first).</p><p>Using a GUI tool with partial-line difference matching and highlighting,
-such as Meld or WinMerge, is recommended for this endeavour.</p><p>For new data points in <code class="literal">hid2nut</code> tables be sure to not invent new names,
+such as Meld or WinMerge, is recommended for this endeavour.</p><p>Alternatively, since NUT v2.8.5, the <code class="literal">usbhid-ups</code> driver initialization
+debug log should clarify which values were parsed from the device report
+descriptor, but were not looked at when walking the subdriver mapping table.
+Some of these items may be due to the device reporting same HID Path with
+different Type values (e.g. as an <span class="emphasis"><em>Input</em></span> and as a <span class="emphasis"><em>Feature</em></span>) with the
+driver only using one of those; in other cases truly new mappings can be
+discovered.</p><p>For new data points in <code class="literal">hid2nut</code> tables be sure to not invent new names,
 but use standard ones from <code class="literal">docs/nut-names.txt</code> file. Temporarily, the
-<code class="literal">experimental.*</code> namespace may be used.
+<code class="literal">experimental.*</code> or <code class="literal">unmapped.*</code> namespaces may be used.
 If you need to standardize a name for some concept not addressed yet,
-please do so via nut-upsdev mailing list discussion.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_customization"></a>Customization</h4></div></div></div><p>The initially generated subdriver code is only a stub,
+please do so via nut-upsdev mailing list discussion.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>For new devices (or firmwares) please also anticipate that a wrong
+subdriver can get used by default, and a better one may already exist
+(perhaps because a vendor matched in the older NUT code by name introduced
+new device models with different dialects) — in this case, please focus
+on <code class="literal">claim</code> methods to ensure that the new devices get handled by the better
+subdriver.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_customization"></a>Customization</h4></div></div></div><p>The initially generated subdriver code is only a stub,
 and will not implement any useful functionality (in particular, it
 will be unable to shut down the UPS). In the beginning, it simply
 attempts to monitor some UPS variables. To make this driver useful,
@@ -732,7 +743,7 @@ Read the NUT code, tracing through how each value gets processed looking
   for where the result deviates from expectations…
 </li><li class="listitem">
 Think, code, test, rinse, repeat, post a PR :)
-</li></ul></div><div class="example"><a id="idm2687"></a><p class="title"><strong>Example 1. Example direct use of REXX</strong></p><div class="example-contents"><p>Example adapted from <a class="ulink" href="https://github.com/networkupstools/nut/issues/2039" target="_top">https://github.com/networkupstools/nut/issues/2039</a></p><p>Run a NUT <code class="literal">usb-hid</code> driver with at least debug verbosity level 3 (<code class="literal">-DDD</code>)
+</li></ul></div><div class="example"><a id="idm2698"></a><p class="title"><strong>Example 1. Example direct use of REXX</strong></p><div class="example-contents"><p>Example adapted from <a class="ulink" href="https://github.com/networkupstools/nut/issues/2039" target="_top">https://github.com/networkupstools/nut/issues/2039</a></p><p>Run a NUT <code class="literal">usb-hid</code> driver with at least debug verbosity level 3 (<code class="literal">-DDD</code>)
 to get a report descriptor dump starting with a line like this:</p><pre class="screen">   3.670755     [D3] Report Descriptor: (909 bytes) =&gt; 05 84 09 04 a1 01 ...</pre><p>…and copy-paste those reported lines as input into <code class="literal">rexx</code> tool, which
 would generate a C source file including human-worded description and
 a relevant data structure:</p><pre class="screen">:; rexx rd.rex -d --hex 05 84 09 04 a1 01 85 01 09 18 ... 55 b1 02 c0 c0 c0
@@ -2499,4 +2510,4 @@ no 0 nibble is sent.</p></div></div><div class="section"><div class="titlepage">
 </li><li class="listitem">
 <code class="literal">nutdrv_qx_ablerex.</code>{<code class="literal">c</code>,<code class="literal">h</code>}
 </li></ul></div></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-09-07 20:48:45 -- Network UPS Tools 2.8.4.42</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="developers.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="sock-protocol.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2025-09-09 17:51:48 -- Network UPS Tools 2.8.4.42</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="developers.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="sock-protocol.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

@@ -26,7 +26,26 @@ control history for "live" codebase.</p><div class="section"><div class="titlepa
 </li><li class="listitem"><p class="simpara">
 <code class="literal">usbhid-ups</code> driver updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Declared support for APC with USB ID <code class="literal">051d:0005</code> (details may evolve
+     as the devices become better known). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3047" target="_top">issue #3047</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3081" target="_top">PR #3081</a>]
+</li><li class="listitem">
 Improved support for Eaton 5S1500LCD (US version). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2380" target="_top">#2380</a>]
+</li><li class="listitem">
+For <code class="literal">ups.status</code> processing, do not assume that <code class="literal">!online</code>==<code class="literal">offline</code>,
+     it may well be that the device just did not report anything (e.g. if
+     it does not really talk USB HID). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3080" target="_top">#3080</a>]
+</li><li class="listitem">
+Suggest iterative testing with explicit <code class="literal">subdrivers</code> if collected data
+     looks wrong. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2058" target="_top">#2058</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/3061" target="_top">#3061</a> et al]
+</li><li class="listitem">
+Check if the subdriver code (mapping table) and the device report
+     descriptor sit together well — namely, that we do not unwittingly
+     ignore any useful reports. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3082" target="_top">#3082</a>]
+</li></ul></div></li><li class="listitem"><p class="simpara">
+<code class="literal">upslog</code> tool updates:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Updated <code class="literal">help()</code> and failure messages to suggest <code class="literal">-m '*,-'</code> for logging
+     of all known local devices to stdout. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3083" target="_top">#3083</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">configure</code> script options:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -4531,4 +4550,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.33. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-09-07 20:48:45 -- Network UPS Tools 2.8.4.42</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2025-09-09 17:51:48 -- Network UPS Tools 2.8.4.42</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
