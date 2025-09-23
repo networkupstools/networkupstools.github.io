@@ -24,6 +24,28 @@ control history for "live" codebase.</p><div class="section"><div class="titlepa
 (expected) CI automation for use of data points in drivers that conform
    to patterns defined in <a class="ulink" href="docs/nut-names.txt" target="_top">docs/nut-names.txt</a>
 </li><li class="listitem"><p class="simpara">
+<code class="literal">nutdrv_qx</code> driver updates:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Define an internal <code class="literal">QX_FLAG_MAPPING_HANDLED</code> to check if the subdriver
+     code (mapping table) and the data found from device walk sit together
+     well — namely, that we successfully use reasonably many of the existing
+     mappings. Suggest how user can help improve the driver if too few data
+     points were seen. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3095" target="_top">PR #3095</a>]
+</li></ul></div></li><li class="listitem"><p class="simpara">
+<code class="literal">snmp-ups</code> driver updates:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Define an internal <code class="literal">SU_FLAG_MAPPING_HANDLED</code> to check if the subdriver
+     code (mapping table) and the data found from device walk sit together
+     well — namely, that we successfully use reasonably many of the existing
+     mappings. Suggest how user can help improve the driver if too few data
+     points were seen, or if the <code class="literal">mibs=auto</code> detection only found the fallback
+     IETF mapping. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3095" target="_top">PR #3095</a>]
+</li></ul></div></li><li class="listitem"><p class="simpara">
+<code class="literal">tripplite_usb</code> driver updates:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Added support for Tripplite protocol 3017 (mostly ASCII). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2258" target="_top">issue #2258</a>,
+     <a class="ulink" href="https://github.com/networkupstools/nut/pull/3093" target="_top">PR #3093</a>]
+</li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">usbhid-ups</code> driver updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 Declared support for APC with USB ID <code class="literal">051d:0005</code> (details may evolve
@@ -40,12 +62,36 @@ Suggest iterative testing with explicit <code class="literal">subdrivers</code> 
 </li><li class="listitem">
 Check if the subdriver code (mapping table) and the device report
      descriptor sit together well — namely, that we do not unwittingly
-     ignore any useful reports. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3082" target="_top">#3082</a>]
+     ignore any useful reports, and that we successfully use reasonably many
+     of the existing mappings. Suggest how user can help improve the driver
+     if too few data points were seen. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3082" target="_top">#3082</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/3095" target="_top">#3095</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">upslog</code> tool updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 Updated <code class="literal">help()</code> and failure messages to suggest <code class="literal">-m '*,-'</code> for logging
      of all known local devices to stdout. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3083" target="_top">#3083</a>]
+</li></ul></div></li><li class="listitem"><p class="simpara">
+<code class="literal">upssched</code> tool updates:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Previously in <a class="ulink" href="https://github.com/networkupstools/nut/pull/2896" target="_top">PR #2896</a> (NUT releases v2.8.3 and v2.8.4) the <code class="literal">UPSNAME</code> and
+     <code class="literal">NOTIFYTYPE</code> environment variables were neutered for the timer daemon,
+     since their values at the moment it first started were irrelevant when
+     actual timers fired. Lack of those values was however also against the
+     documented expectations. Now the values set when the <code class="literal">upssched</code> client
+     is called and ends up updating the timer daemon would be passed into
+     the timer. Also a <code class="literal">START-TIMER-SHARED</code> operation was added, to track a
+     single named timer for possibly many devices and/or event types — in
+     this case they would be comma-separated in the environment variable
+     values. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3092" target="_top">issue #3092</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3097" target="_top">PR #3097</a>]
+</li><li class="listitem">
+The <code class="literal">CANCEL-TIMER</code> action no longer stops at first hit for the timer name,
+     but goes on (in case there are duplicates). A new <code class="literal">CANCEL-TIMER-MATCHED</code>
+     was added, which also cares to match <code class="literal">UPSNAME</code> and <code class="literal">NOTIFYTYPE</code> values
+     (if passed). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3097" target="_top">#3097</a>]
+</li><li class="listitem">
+Introduced support for <code class="literal">DEBUG_MIN</code> setting via <code class="literal">upssched.conf</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3097" target="_top">#3097</a>]
+</li><li class="listitem">
+Introduced <code class="literal">upssched -l</code> mode to list currently tracked timers. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3097" target="_top">#3097</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">configure</code> script options:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -61,6 +107,9 @@ Fixed CI recipes for PyPI publication of PyNUT(Client) module to also
 </li><li class="listitem">
 Updated <code class="literal">make spellcheck</code> to help avoid asciidoc admonition blocks with
    visually invalid sentences (after rendering as a box in HTML or PDF). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3077" target="_top">#3077</a>]
+</li><li class="listitem">
+Updated <code class="literal">docs/*.txt</code>: add asciidoc comments with links to nut-website
+   rendered contents of most interesting pages. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3095" target="_top">#3095</a>]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_release_notes_for_nut_2_8_4_what_8217_s_new_since_2_8_3"></a>2.2. Release notes for NUT 2.8.4 - what’s new since 2.8.3</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
 Bug fixes for fallout possible due to "fightwarn" effort in 2.8.0+:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -4554,4 +4603,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.33. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-09-10 18:08:57 -- Network UPS Tools 2.8.4.42</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2025-09-23 14:44:03 -- Network UPS Tools 2.8.4.42</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

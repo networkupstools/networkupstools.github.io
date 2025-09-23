@@ -863,7 +863,7 @@ maintained by the community at large.  Some standard clients of note include:</p
 </td>
 <td class="content">The <code>upsmon</code> client typically splits into two processes: an unprivileged
   one running with credentials of its <code>RUN_AS_USER</code> configured in the
-  <a href="upsmon.conf.html">upsmon.conf(5)</a> file (or a built-in/packaged default like <code>nut</code>,
+  <a href="upsmon.conf.html">upsmon.conf(5)</a> file (or a built-in/packaged default like <code>nut</code>, <code>ups</code>,
   <code>monuser</code> or <code>nobody</code>) which does most of the work (including notification
   scripts called via <code>NOTIFYCMD</code> setting), and the part which remains owned
   by <code>root</code> to initiate the system shutdown by calling <code>SHUTDOWNCMD</code> when/if
@@ -873,9 +873,11 @@ maintained by the community at large.  Some standard clients of note include:</p
 <div class="paragraph"><p>NUT deployments which desire higher-fidelity control (e.g. different systems
   shutting down after different time spent on battery) often couple the
   <a href="upsmon.html">upsmon(8)</a> with <a href="upssched.html">upssched(8)</a> as their <code>NOTIFYCMD</code> handler.</p></div>
-<div class="paragraph"><p>The "primary" system is usually also responsible for commanding the managed
-  UPS to shut itself down and power up when the "wall power" returns (or to
-  reset the load if it is already back), subject to UPS hardware capabilities.
+<div class="paragraph"><p>The <em>upsmon primary</em> system waits for <em>secondary</em> systems to disconnect as
+  part of their shut down, and is usually also responsible for commanding the
+  managed UPS to shut itself down and power up when the "wall power" returns
+  (or to reset the load if it is already back), subject to UPS hardware
+  capabilities.
   Most client integrations also stall the ultimate reboot/power-off of their
   machine, if its shut down was triggered by <code>upsmon</code>, and reboot after a
   long delay (if the machine is still alive).
@@ -908,6 +910,33 @@ assortment of power devices), using either simple clients like <code>upsc</code>
 <code>upslog</code>, or libraries and bindings provided by the project itself (e.g.
 C, C++, Python, Java in a nearby repository) or by third-party efforts
 (e.g. Perl, Go, C#, REST API).</p></div>
+</div>
+<div class="sect3">
+<h4 id="_nut_drivers_during_shutdown">NUT Drivers during shutdown</h4>
+<div class="paragraph"><p>Arguably another layer in this three-layer stack is a separate role for the
+NUT Driver programs on the <em><a href="upsmon.html">upsmon(8)</a> primary</em> system as mentioned
+above: actually telling the UPS to turn off or power-cycle as part of your
+computer&#8217;s emergency shut down.</p></div>
+<div class="paragraph"><p>While the long-running services for the NUT drivers, data server and clients
+are stopped as part of common OS shutdown, there may be an "endgame"
+integration such as high-numbered SysV init scripts (e.g. <code>/etc/rc0.d/K99nut</code>)
+or the systemd <em>shutdown hook</em> facility, or even something built into the
+<code>initrd</code> or similar RAM disk image that originally launched the end-user
+visible OS and regains control when the OS says it is done.
+Please note that not all operating systems offer ways of such integration,
+and may resort to other solutions (perhaps calling such logic from the <em>stop</em>
+method of <code>upsmon</code> init script or service definition).</p></div>
+<div class="paragraph"><p>Either way, this integration has the effect of detecting that the currently
+processed shutdown is due to an <code>upsmon</code> <em>FSD</em> activity (e.g. that the flag
+file specified by <code>POWERDOWNFLAG</code> configuration option in <a href="upsmon.conf.html">upsmon.conf(5)</a>
+exists and is valid), and launches the NUT driver program(s) again to connect
+to the UPS(es) that this system is a <em>primary</em> manager of (and has possibly
+out-of-band connections to), just to send them the requested command and exit.</p></div>
+<div class="paragraph"><p>For an example of such end-game integration please see the <code>nutshutdown</code>
+script if available in your packaged distribution, or its sources at
+<a href="https://github.com/networkupstools/nut/blob/master/scripts/systemd/nutshutdown.in">https://github.com/networkupstools/nut/blob/master/scripts/systemd/nutshutdown.in</a>
+which also implements a solution to avoid the "power race condition"
+(for operating systems that do not limit the duration of shutdown activity).</p></div>
 </div>
 </div>
 <div class="sect2">
@@ -2038,7 +2067,7 @@ The "UPS management protocol", Informational RFC 9271:
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-09-10 18:08:35 UTC -- Network UPS Tools 2.8.4.42
+Last updated 2025-09-23 14:43:44 UTC -- Network UPS Tools 2.8.4.42
 </div>
 </div>
 </body>

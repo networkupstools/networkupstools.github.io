@@ -769,6 +769,24 @@ Contents of this file should be pure ASCII (character codes
 <div class="sectionbody">
 <div class="dlist"><dl>
 <dt class="hdlist1">
+<strong>DEBUG_MIN</strong> <em>number</em>
+</dt>
+<dd>
+<p>
+Optional. Specify minimal debugging level for <code>upssched</code> daemon or client,
+e.g. for troubleshooting a deployment without a need to edit consumer
+configuration.
+</p>
+<div class="paragraph"><p>Note that command-line option <code>-D</code> can only increase this verbosity level.</p></div>
+<div class="paragraph"><p>Also note that the configuration file is processed line by line, so you
+may want to set this option early on.</p></div>
+<div class="paragraph"><p>Example:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>DEBUG_MIN 6</code></pre>
+</div></div>
+</dd>
+<dt class="hdlist1">
 <strong>CMDSCRIPT</strong> <em>scriptname</em>
 </dt>
 <dd>
@@ -788,8 +806,6 @@ interprocess communications.  This should be in a directory where normal
 users can&#8217;t create the file, due to the possibility of symlinking
 and other evil.
 </p>
-</dd>
-</dl></div>
 <div class="admonitionblock">
 <table><tr>
 <td class="icon">
@@ -817,7 +833,7 @@ owned by your upsmon user, then use it for both.</p></div>
 <div class="paragraph"><p>The stock version of the upssched.conf ships with PIPEFN disabled
 to make you visit this portion of the documentation and think about how
 your system works before potentially opening a security hole.</p></div>
-<div class="dlist"><dl>
+</dd>
 <dt class="hdlist1">
 <strong>LOCKFN</strong> <em>filename</em>
 </dt>
@@ -850,10 +866,42 @@ and <em>upsname</em> match the current activity.  Possible values for
 <p>
 Start a timer of <em>interval</em> seconds.  When it triggers, it
 will pass the argument <em>timername</em> as an argument to your
-CMDSCRIPT.
+CMDSCRIPT. Each invocation starts an independent timer, even
+if the <em>timername</em> was already registered and started (note
+this can mess up subsequent CANCEL-TIMER operations).
 </p>
 <div class="paragraph"><p>Example:</p></div>
-<div class="paragraph"><p>Start a timer that will execute when any UPS (*) has been
+<div class="paragraph"><p>Start a timer that will execute when any UPS (<code>*</code>) has been
+gone for 10 seconds</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>AT COMMBAD * START-TIMER upsgone 10</code></pre>
+</div></div>
+</dd>
+<dt class="hdlist1">
+<strong>START-TIMER-SHARED</strong> <em>timername</em> <em>interval</em>
+</dt>
+<dd>
+<p>
+Start a timer of <em>interval</em> seconds.  When it triggers, it
+will pass the argument <em>timername</em> as an argument to your
+CMDSCRIPT. Each invocation checks if the <em>timername</em> was already
+started, and if so&#8201;&#8212;&#8201;appends the current event&#8217;s <code>UPSNAME</code> and
+<code>NOTIFYTYPE</code> to the list of unique values it would report via
+environment variables (as a comma-separated string) when the
+timer does execute.
+</p>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">Currently this updates the first seen instance with the
+<em>timername</em> (in case you managed to start many).</td>
+</tr></table>
+</div>
+<div class="paragraph"><p>Example:</p></div>
+<div class="paragraph"><p>Start a timer that will execute when any UPS (<code>*</code>) has been
 gone for 10 seconds</p></div>
 <div class="literalblock">
 <div class="content">
@@ -869,12 +917,37 @@ Cancel a running timer called <em>timername</em>, if possible.
 If the timer has passed then pass the optional argument
 <em>cmd</em> to CMDSCRIPT.
 </p>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">This removes the all seen instances with the
+<em>timername</em> (in case you managed to start many).</td>
+</tr></table>
+</div>
 <div class="paragraph"><p>Example:</p></div>
 <div class="paragraph"><p>If a specific UPS (<code>myups@localhost</code>) comes back online, then
 stop the timer before it triggers</p></div>
 <div class="literalblock">
 <div class="content">
 <pre><code>AT COMMOK myups@localhost CANCEL-TIMER upsgone</code></pre>
+</div></div>
+</dd>
+<dt class="hdlist1">
+<strong>CANCEL-TIMER-MATCHED</strong> <em>timername</em> [<em>cmd</em>]
+</dt>
+<dd>
+<p>
+Similar to the above, but tries to only cancel the <em>timername</em> if it
+refers to the <code>UPSNAME</code> and <code>NOTIFYTYPE</code> values passed by caller.
+</p>
+<div class="paragraph"><p>Example:</p></div>
+<div class="paragraph"><p>If any UPS (<code>*</code>) reverts to utility power, then stop the timer before it
+triggers ONLY if that UPS is associated with the already scheduled timer:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>AT ONLINE * CANCEL-TIMER-MATCHED onbattwarn</code></pre>
 </div></div>
 </dd>
 <dt class="hdlist1">
@@ -885,7 +958,7 @@ stop the timer before it triggers</p></div>
 Immediately pass <em>command</em> as an argument to CMDSCRIPT.
 </p>
 <div class="paragraph"><p>Example:</p></div>
-<div class="paragraph"><p>If any UPS (*) reverts to utility power, then execute
+<div class="paragraph"><p>If any UPS (<code>*</code>) reverts to utility power, then execute
 <code>ups-back-on-line</code> via CMDSCRIPT.</p></div>
 <div class="literalblock">
 <div class="content">
@@ -915,7 +988,7 @@ NOTIFY EVENTS in <a href="upsmon.html">upsmon(8)</a>.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-09-10 18:08:35 UTC -- Network UPS Tools 2.8.4.42
+Last updated 2025-09-23 14:43:44 UTC -- Network UPS Tools 2.8.4.42
 </div>
 </div>
 </body>
