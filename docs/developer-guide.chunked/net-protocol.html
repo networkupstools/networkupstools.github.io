@@ -4,8 +4,15 @@ which is <span class="strong"><strong>3493</strong></span>.  The old number (330
 ancestry, and conflicted with other services.  Version 0.50.0 and up
 use 3493 by default.</p><p>This protocol runs over TCP.  UDP support was dropped in July 2003.  It
 had been deprecated for some time and was only capable of the simplest
-query commands as authentication is impossible over a UDP socket.</p><p>A library, named libupsclient, that implement this protocol is provided
-in both static and shared version to help the client application development.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_old_command_removal_notice"></a>10.1. Old command removal notice</h3></div></div></div><p>Before version 1.5.0, a number of old commands were supported.  These
+query commands as authentication is impossible over a UDP socket.</p><p>A C library, named <code class="literal">libupsclient</code>, that implements this protocol, is provided
+in both static and shared version to help the client application development,
+and is extensively used by client programs delivered by the Network UPS Tools
+project.</p><p>Other bindings maintained in the NUT code base or in its orbit, such as the
+C++ library <code class="literal">libnutclient</code>, a Python <code class="literal">PyNUTClient</code> module, a PERL <code class="literal">UPS::Nut</code>
+module, and a Java <code class="literal">jNut</code> client, are also available (but may lag behind in
+completeness of the protocol support).  Numerous third-party implementations
+for other languages also exist, with some related projects listed on the
+<a class="ulink" href="https://networkupstools.org/projects.html" target="_top">NUT web site pages</a>.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_old_command_removal_notice"></a>10.1. Old command removal notice</h3></div></div></div><p>Before version 1.5.0, a number of old commands were supported.  These
 have been removed from the specification.  For more information, consult
 an older version of the software.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_command_reference"></a>10.2. Command reference</h3></div></div></div><p>Multi-word elements are contained within "quotes" for easier parsing.
 Embedded quotes are escaped with backslashes.  Embedded backslashes are
@@ -20,7 +27,7 @@ as documented in its section below.</p></div><div class="section"><div class="ti
 GET NUMLOGINS su700</pre><p>Response:</p><pre class="literallayout">NUMLOGINS &lt;upsname&gt; &lt;value&gt;
 NUMLOGINS su700 1</pre><p><span class="emphasis"><em>&lt;value&gt;</em></span> is the number of clients which have done LOGIN for this UPS.
 This is used by the upsmon in primary mode to determine how many clients are
-still connected when starting the shutdown process.</p><p>This replaces the old "REQ NUMLOGINS" command.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_upsdesc"></a>UPSDESC</h4></div></div></div><p>Form:</p><pre class="literallayout">GET UPSDESC &lt;upsname&gt;
+still connected when starting the shutdown process.</p><p>This replaces the old "REQ NUMLOGINS" command.</p><p>See also <code class="literal">LIST CLIENT &lt;upsname&gt;</code> to get the actual list of connected clients.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_upsdesc"></a>UPSDESC</h4></div></div></div><p>Form:</p><pre class="literallayout">GET UPSDESC &lt;upsname&gt;
 GET UPSDESC su700</pre><p>Response:</p><pre class="literallayout">UPSDESC &lt;upsname&gt; "&lt;description&gt;"
 UPSDESC su700 "Development box"</pre><p><span class="emphasis"><em>&lt;description&gt;</em></span> is the value of "desc=" from ups.conf for this UPS.  If it
 is not set, upsd will return "Unavailable".</p><p>This can be used to provide human-readable descriptions instead of a
@@ -124,7 +131,7 @@ CLIENT &lt;device name&gt; &lt;client IP address&gt;
 END LIST CLIENT &lt;device_name&gt;</pre><pre class="literallayout">BEGIN LIST CLIENT ups1
 CLIENT ups1 ::1
 CLIENT ups1 192.168.1.2
-END LIST CLIENT ups1</pre></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_set_3"></a>10.6. SET</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_var_3"></a>VAR</h4></div></div></div><p>Form:</p><pre class="literallayout">SET VAR &lt;upsname&gt; &lt;varname&gt; "&lt;value&gt;"
+END LIST CLIENT ups1</pre><p>See also <code class="literal">GET NUMLOGINS &lt;upsname&gt;</code> to get just the count of connected clients.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_set_3"></a>10.6. SET</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_var_3"></a>VAR</h4></div></div></div><p>Form:</p><pre class="literallayout">SET VAR &lt;upsname&gt; &lt;varname&gt; "&lt;value&gt;"
 SET VAR su700 ups.id "My UPS"</pre><p>Response:</p><pre class="literallayout">OK                         (if TRACKING is not enabled)
 OK TRACKING &lt;id&gt;           (if TRACKING is enabled)
 ERR &lt;message&gt; [&lt;extra&gt;...] (see Error responses)</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_tracking_3"></a>TRACKING</h4></div></div></div><p>Form:</p><pre class="literallayout">SET TRACKING &lt;value&gt;
@@ -254,6 +261,18 @@ receiving this response.</p></li><li class="listitem"><p class="simpara">
 applies to a SET of an ENUM type which is using a value which is
 not in the list of allowed values.</p></li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_future_ideas"></a>10.17. Future ideas</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_dense_lists"></a>Dense lists</h4></div></div></div><p>The LIST commands may be given the ability to handle options some day.
 For example, <code class="literal">LIST VARS &lt;ups&gt; +DESC</code> would return the current value
-like now, but it would also append the description of that variable.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_get_collection"></a>Get collection</h4></div></div></div><p>Allow to request only a subtree, which can be a collection, or a sub
+like now, but it would also append the description of that variable.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_logout_pending"></a>Logout pending</h4></div></div></div><p>Add a way for logged-in clients such as <a class="ulink" href="../man/upsmon.html" target="_top">upsmon(8)</a> to tell the
+data server that they began their shutdown routine, so eventual loss
+of connection would be quickly interpreted as a <code class="literal">LOGOUT</code> (without any
+wait for further timeouts, as a usual disconnection may be treated).</p><p>This is useful in context of
+<a class="ulink" href="https://github.com/networkupstools/nut/pull/3086" target="_top">PR #3086</a>
+where clients can configure <code class="literal">SHUTDOWNEXIT</code> behavior to NOT end the
+program (and log out) as soon as they tell the OS to shut down, but
+rather stay in a heart-beat loop to tell the data server that they
+are still alive (for specified time or indefinitely, until the OS
+cuts power or networking maybe before it ends the client process),
+as a way to delay the primary client proceeding with its shutdown
+and cutting the UPS power until some important secondary clients are
+actually safely "parked".</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_get_collection"></a>Get collection</h4></div></div></div><p>Allow to request only a subtree, which can be a collection, or a sub
 collection.</p></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-09-30 12:29:11 -- Network UPS Tools 2.8.4.42</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="new-clients.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="dev-tools.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2025-09-30 14:51:04 -- Network UPS Tools 2.8.4.42</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="new-clients.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="dev-tools.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

@@ -63,7 +63,9 @@ DRV_COMPLETE: this is the gold level! It implies that 100 % of
 </li></ul></div></li><li class="listitem">
 <span class="strong"><strong>subdrv_info</strong></span>: array of upsdrv_info_t for sub driver(s) information. For
               example, this is used by usbhid-ups.
-</li></ul></div><p>This information is currently used for the startup banner printing and tests.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_essential_functions"></a>5.6. Essential functions</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_upsdrv_initups"></a>upsdrv_initups</h4></div></div></div><p>Open the port (<code class="literal">device_path</code>) and do any low-level things that it may need
+</li></ul></div><p>This information is currently used for the startup banner printing and tests.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_essential_functions"></a>5.6. Essential functions</h3></div></div></div><p>For a full current list of functions expected in this context, please see the
+<code class="literal">drivers/main.h</code> file in NUT sources.  Some more methods may be required by
+driver structure, even if in the common case they have no-op implementations.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_upsdrv_initups"></a>upsdrv_initups</h4></div></div></div><p>Open the port (<code class="literal">device_path</code>) and do any low-level things that it may need
 to start using that port.  If you have to set DTR or RTS on a serial
 port, do it here.</p><p>Don’t do any sort of hardware detection here, since you may be going
 into upsdrv_shutdown next.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_upsdrv_initinfo"></a>upsdrv_initinfo</h4></div></div></div><p>Try to detect what kind of UPS is out there, if any, assuming that’s
@@ -743,7 +745,7 @@ Read the NUT code, tracing through how each value gets processed looking
   for where the result deviates from expectations…
 </li><li class="listitem">
 Think, code, test, rinse, repeat, post a PR :)
-</li></ul></div><div class="example"><a id="idm2698"></a><p class="title"><strong>Example 1. Example direct use of REXX</strong></p><div class="example-contents"><p>Example adapted from <a class="ulink" href="https://github.com/networkupstools/nut/issues/2039" target="_top">https://github.com/networkupstools/nut/issues/2039</a></p><p>Run a NUT <code class="literal">usb-hid</code> driver with at least debug verbosity level 3 (<code class="literal">-DDD</code>)
+</li></ul></div><div class="example"><a id="idm2700"></a><p class="title"><strong>Example 1. Example direct use of REXX</strong></p><div class="example-contents"><p>Example adapted from <a class="ulink" href="https://github.com/networkupstools/nut/issues/2039" target="_top">https://github.com/networkupstools/nut/issues/2039</a></p><p>Run a NUT <code class="literal">usb-hid</code> driver with at least debug verbosity level 3 (<code class="literal">-DDD</code>)
 to get a report descriptor dump starting with a line like this:</p><pre class="screen">   3.670755     [D3] Report Descriptor: (909 bytes) =&gt; 05 84 09 04 a1 01 ...</pre><p>…and copy-paste those reported lines as input into <code class="literal">rexx</code> tool, which
 would generate a C source file including human-worded description and
 a relevant data structure:</p><pre class="screen">:; rexx rd.rex -d --hex 05 84 09 04 a1 01 85 01 09 18 ... 55 b1 02 c0 c0 c0
@@ -2510,4 +2512,4 @@ no 0 nibble is sent.</p></div></div><div class="section"><div class="titlepage">
 </li><li class="listitem">
 <code class="literal">nutdrv_qx_ablerex.</code>{<code class="literal">c</code>,<code class="literal">h</code>}
 </li></ul></div></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-09-30 12:29:11 -- Network UPS Tools 2.8.4.42</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="developers.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="sock-protocol.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2025-09-30 14:51:04 -- Network UPS Tools 2.8.4.42</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="developers.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="sock-protocol.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
