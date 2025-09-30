@@ -26,6 +26,9 @@ control history for "live" codebase.</p><div class="section"><div class="titlepa
 </li><li class="listitem"><p class="simpara">
 common code:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Introduced <code class="literal">setproctag()</code> and <code class="literal">getproctag()</code> (see examples in <code class="literal">upsmon</code>)
+     to help track the log messages from massively-forking NUT daemons. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3084" target="_top">#3084</a>]
+</li><li class="listitem">
 Extended with plural <code class="literal">checkprocnames()</code> and <code class="literal">compareprocnames()</code>,
      as well as <code class="literal">sendsignalpidaliases()</code> and <code class="literal">sendsignalfnaliases()</code>, for
      binaries that expect to have one of several names at the moment (e.g.
@@ -76,10 +79,27 @@ Check if the subdriver code (mapping table) and the device report
      of the existing mappings. Suggest how user can help improve the driver
      if too few data points were seen. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3082" target="_top">#3082</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/3095" target="_top">#3095</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
+<code class="literal">upsdrvctl</code> tool updates:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Make use of <code class="literal">setproctag()</code> and <code class="literal">getproctag()</code> to report parent/child
+     process names. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3084" target="_top">#3084</a>]
+</li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">upslog</code> tool updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 Updated <code class="literal">help()</code> and failure messages to suggest <code class="literal">-m '*,-'</code> for logging
      of all known local devices to stdout. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3083" target="_top">#3083</a>]
+</li></ul></div></li><li class="listitem"><p class="simpara">
+<code class="literal">upsmon</code> client updates:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+The <code class="literal">SHUTDOWNEXIT</code> option was not handled properly, and the requested
+     long delays did not happen in practice. [issues <a class="ulink" href="https://github.com/networkupstools/nut/issues/2133" target="_top">#2133</a> and <a class="ulink" href="https://github.com/networkupstools/nut/issues/3084" target="_top">#3084</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3086" target="_top">PR #3086</a>]
+</li><li class="listitem">
+Make use of <code class="literal">setproctag()</code> and <code class="literal">getproctag()</code> to report parent/child
+     process names. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3084" target="_top">#3084</a>]
+</li><li class="listitem">
+Introduced a <code class="literal">SHUTDOWN_HOSTSYNC</code> notification message, to report that
+     the primary <code class="literal">upsmon</code> initiated the shutdown and has some secondaries
+     to wait for first. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3084" target="_top">#3084</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">upssched</code> tool updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -102,6 +122,9 @@ The <code class="literal">CANCEL-TIMER</code> action no longer stops at first hi
 Introduced support for <code class="literal">DEBUG_MIN</code> setting via <code class="literal">upssched.conf</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3097" target="_top">#3097</a>]
 </li><li class="listitem">
 Introduced <code class="literal">upssched -l</code> mode to list currently tracked timers. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3097" target="_top">#3097</a>]
+</li><li class="listitem">
+Make use of <code class="literal">setproctag()</code> and <code class="literal">getproctag()</code> to report parent/child
+     process names. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3084" target="_top">#3084</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">configure</code> script options:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -4613,4 +4636,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.33. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-09-30 14:51:04 -- Network UPS Tools 2.8.4.42</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2025-09-30 15:10:33 -- Network UPS Tools 2.8.4.42</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

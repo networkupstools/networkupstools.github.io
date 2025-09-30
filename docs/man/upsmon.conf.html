@@ -835,13 +835,14 @@ values, and multiply by 3.</p></div>
 </dt>
 <dd>
 <p>
-When running in primary mode, upsmon waits this long after sending the
-NOTIFY_SHUTDOWN to warn the users.  After the timer elapses, it then
-runs your SHUTDOWNCMD.  By default this is set to 5 seconds.
+When handling a forced shutdown (FSD) due to a critical UPS state or
+explicit user signal, <code>upsmon</code> waits this long after sending the
+NOTIFY_SHUTDOWN message to warn the users.  After the timer elapses,
+it then runs your SHUTDOWNCMD.  By default this is set to 5 seconds.
 </p>
-<div class="paragraph"><p>If you need to let your users do something in between those events,
-increase this number.  Remember, at this point your UPS battery is
-almost depleted, so don&#8217;t make this too big.</p></div>
+<div class="paragraph"><p>If you need to let your users (or the NOTIFYCMD script) do something
+in between those events, increase this number.  Remember, at this point
+your UPS battery is almost depleted, so don&#8217;t make this too big.</p></div>
 <div class="paragraph"><p>Alternatively, you can set this very low so you don&#8217;t wait around when
 it&#8217;s time to shut down.  Some UPSes don&#8217;t give much warning for low
 battery and will require a value of 0 here for a safe shutdown.</p></div>
@@ -1116,6 +1117,14 @@ SHUTDOWN
 <dd>
 <p>
 The system is being shutdown
+</p>
+</dd>
+<dt class="hdlist1">
+SHUTDOWN_HOSTSYNC
+</dt>
+<dd>
+<p>
+This primary system began the shutdown, and is waiting for secondaries
 </p>
 </dd>
 <dt class="hdlist1">
@@ -1790,7 +1799,7 @@ does not change the previously active logging verbosity.</td>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-09-30 14:50:20 UTC -- Network UPS Tools 2.8.4.42
+Last updated 2025-09-30 15:10:10 UTC -- Network UPS Tools 2.8.4.42
 </div>
 </div>
 </body>
