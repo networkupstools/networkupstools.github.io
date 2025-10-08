@@ -761,6 +761,16 @@ Contents of this file should be pure ASCII (character codes
   not in range would be ignored with a warning message).
 </p>
 </li>
+<li>
+<p>
+Command execution is synchronous (with the called tool process in case
+  of <code>EXECUTE</code> directive, or with the timer process). Consider using your
+  system shell abilities like <code>&amp;</code> to send long-duration handling to the
+  background and let <code>upssched</code> timer daemon continue. This should not
+  impact <code>upsmon</code> daemon, which handles each notification in a separate
+  sub-process (and so not a problem for immediate <code>EXECUTE</code> events).
+</p>
+</li>
 </ul></div>
 </div>
 </div>
@@ -886,10 +896,11 @@ gone for 10 seconds</p></div>
 Start a timer of <em>interval</em> seconds.  When it triggers, it
 will pass the argument <em>timername</em> as an argument to your
 CMDSCRIPT. Each invocation checks if the <em>timername</em> was already
-started, and if so&#8201;&#8212;&#8201;appends the current event&#8217;s <code>UPSNAME</code> and
-<code>NOTIFYTYPE</code> to the list of unique values it would report via
-environment variables (as a comma-separated string) when the
-timer does execute.
+started, and if so&#8201;&#8212;&#8201;appends the current event&#8217;s <code>UPSNAME</code>,
+<code>NOTIFYTYPE</code> and <code>NOTIFYMSG</code> to the list of unique values it
+would report via environment variables (as a comma-separated
+string for <code>UPSNAME</code> and <code>NOTIFYTYPE</code>, and tab-separated
+sentences for <code>NOTIFYMSG</code>) when the timer does execute.
 </p>
 <div class="admonitionblock">
 <table><tr>
@@ -941,6 +952,7 @@ stop the timer before it triggers</p></div>
 <p>
 Similar to the above, but tries to only cancel the <em>timername</em> if it
 refers to the <code>UPSNAME</code> and <code>NOTIFYTYPE</code> values passed by caller.
+The <code>NOTIFYMSG</code> is ignored in this context.
 </p>
 <div class="paragraph"><p>Example:</p></div>
 <div class="paragraph"><p>If any UPS (<code>*</code>) reverts to utility power, then stop the timer before it
@@ -988,7 +1000,7 @@ NOTIFY EVENTS in <a href="upsmon.html">upsmon(8)</a>.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-10-04 15:06:17 UTC -- Network UPS Tools 2.8.4.238
+Last updated 2025-10-08 08:44:07 UTC -- Network UPS Tools 2.8.4.270
 </div>
 </div>
 </body>

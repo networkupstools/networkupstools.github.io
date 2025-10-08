@@ -747,7 +747,7 @@ asciidoc.install();
 <div class="sect1">
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
-<div class="paragraph"><p><strong>upssched</strong></p></div>
+<div class="paragraph"><p><strong>upssched</strong> [OPTIONS] [NOTIFYMSG]</p></div>
 <div class="admonitionblock">
 <table><tr>
 <td class="icon">
@@ -759,7 +759,8 @@ You should never run it directly during normal operations.</td>
 </div>
 <div class="paragraph"><p><strong>upssched</strong> -l</p></div>
 <div class="paragraph"><p>List currently tracked timer events, if any. Report as a TAB-separated
-table of: <em>NAME</em>, <em>TIMEOUT_ABS</em>, <em>TIMEOUT_REL</em>, <em>NOTIFYTYPE</em>, <em>UPSNAME</em>.</p></div>
+table of: <em>NAME</em>, <em>TIMEOUT_ABS</em>, <em>TIMEOUT_REL</em>, <em>NOTIFYTYPE</em>, <em>UPSNAME</em>,
+<code>NOTIFYMSG</code>.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -769,6 +770,68 @@ table of: <em>NAME</em>, <em>TIMEOUT_ABS</em>, <em>TIMEOUT_REL</em>, <em>NOTIFYT
 relative to events being monitored by <a href="upsmon.html">upsmon(8)</a>.  The original
 purpose was to allow for a shutdown to occur after some fixed period
 on battery, but there are other uses that are possible.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_common_options">COMMON OPTIONS</h2>
+<div class="sectionbody">
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>-h</strong>
+</dt>
+<dd>
+<p>
+Show the command-line help message.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>-V</strong>
+</dt>
+<dd>
+<p>
+Show NUT version banner.  More details may be available if you also
+<code>export NUT_DEBUG_LEVEL=1</code> or greater verbosity level.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>-D</strong>
+</dt>
+<dd>
+<p>
+Raise the debugging level. Use this option multiple times for more details.
+</p>
+</dd>
+</dl></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_options">OPTIONS</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>By default <code>upssched</code> processes its configuration file and executes or queues
+calls to its <code>CMDSCRIPT</code>, or cancels some previously queued item(s), based on
+configuration and the <code>NOTIFYTYPE</code> it receives.  One exception to this is the
+queue listing mode <code>-l</code>.</p></div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>-l</strong>
+</dt>
+<dd>
+<p>
+List pending timers (if any) and exit.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>NOTIFYMSG</strong>
+</dt>
+<dd>
+<p>
+Optionally pass a text message (typically originates from <a href="upsmon.html">upsmon(8)</a>
+call to <code>upssched</code> as its <code>NOTIFYCMD</code>) as an environment variable named
+<code>NOTIFYMSG</code> to the <code>CMDSCRIPT</code> launched by <code>upssched</code> immediately or after
+a timer expires.
+</p>
+</dd>
+</dl></div>
 </div>
 </div>
 <div class="sect1">
@@ -794,6 +857,13 @@ NOTIFYFLAG ONBATT SYSLOG+EXEC
 NOTIFYFLAG LOWBATT SYSLOG+EXEC</code></pre>
 </div></div>
 <div class="paragraph"><p>For a full list of notify flags, see the <a href="upsmon.html">upsmon(8)</a> documentation.</p></div>
+<div class="paragraph"><p>Please note that command execution is synchronous (with the called <code>upssched</code>
+tool process in case of <code>EXECUTE</code> directive, or with the timer process).
+Consider using your system shell abilities like <code>&amp;</code> to send long-duration
+handling to the background and let <code>upssched</code> timer daemon continue.
+This should not impact <code>upsmon</code> daemon, which handles each notification
+in a separate sub-process (and so not a problem for immediate <code>EXECUTE</code>
+events).</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -810,6 +880,24 @@ condition.  When it triggers, make your CMDSCRIPT call your shutdown
 routine.  It should finish by calling <code>upsmon -c fsd</code> so that upsmon gets
 to shut down the slaves in a controlled manner.</p></div>
 <div class="paragraph"><p>Be sure you cancel the timer if power returns (ONLINE).</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_early_preparation_for_a_shutdown_on_upsmon_primary_instance">EARLY PREPARATION FOR A SHUTDOWN ON UPSMON PRIMARY INSTANCE</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>The <a href="upsmon.html">upsmon(8)</a> primary instance is responsible for telling the UPS(es)
+to power off at the end of emergency shutdown.  As such, if there are several
+clients, the primary instance raises an "FSD" (Forced Shut Down) flag on the
+data server for each UPS it manages, and waits for secondary instances to log
+off (or for a timeout to expire).  If there are activities that should happen
+on the primary upsmon&#8217;s computer during shutdown which take a long time, you
+can use the <code>FSD</code> notification to begin those operations while the primary
+<code>upsmon</code> instance waits for the secondaries to complete their shutdowns.</p></div>
+<div class="paragraph"><p>If you have several UPSes, you may want to combine several notifications with
+the <code>START-TIMER-SHARED</code> directive (with a short timeout), so you only react
+once.  Alternately, if the needed activity varies by the UPS (e.g. custom
+remote-device shutdown scripts), you may actually want to use <code>EXECUTE</code> rules
+right away (and dispatch further work in your <code>CMDSCRIPT</code>).</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -904,7 +992,7 @@ set by <code>upsmon</code> when it calls <code>upssched</code> as its choice of 
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-10-04 15:06:17 UTC -- Network UPS Tools 2.8.4.238
+Last updated 2025-10-08 08:44:07 UTC -- Network UPS Tools 2.8.4.270
 </div>
 </div>
 </body>
