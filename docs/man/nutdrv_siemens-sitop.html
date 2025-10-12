@@ -5,7 +5,7 @@
 <head>
 <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
 <meta name="generator" content="AsciiDoc 10.2.0" />
-<title>LIBNUTCLIENT_VARIABLES(3)</title>
+<title>NUTDRV_SIEMENS-SITOP(8)</title>
 <style type="text/css">
 /* Shared CSS for AsciiDoc xhtml11 and html5 backends */
 
@@ -735,142 +735,314 @@ asciidoc.install();
 </head>
 <body class="article">
 <div id="header">
-<h1>LIBNUTCLIENT_VARIABLES(3)</h1>
+<h1>NUTDRV_SIEMENS-SITOP(8)</h1>
 </div>
 <div id="content">
 <div class="sect1">
 <h2 id="_name">NAME</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>libnutclient_variables, nutclient_get_device_variables,
-nutclient_get_device_rw_variables, nutclient_has_device_variable,
-nutclient_get_device_variable_description,
-nutclient_get_device_variable_values,
-nutclient_set_device_variable_value, nutclient_set_device_variable_values -
-Variable related functions in Network UPS Tools high-level client access
-library</p></div>
+<div class="paragraph"><p>nutdrv_siemens-sitop - Driver for the Siemens SITOP UPS500 series UPS</p></div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
+<div class="paragraph"><p><strong>nutdrv_siemens-sitop</strong> -h</p></div>
+<div class="paragraph"><p><strong>nutdrv_siemens-sitop</strong> -a <em>UPS_NAME</em> [<em>OPTIONS</em>]</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">This man page only documents the hardware-specific features of the
+<strong>nutdrv_siemens-sitop</strong> driver.  For information about the core driver, see
+<a href="nutupsdrv.html">nutupsdrv(8)</a>.</td>
+</tr></table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_supported_hardware">SUPPORTED HARDWARE</h2>
+<div class="sectionbody">
+<div class="paragraph"><p><strong>nutdrv_siemens-sitop</strong> supports Siemens UPS models from the SITOP UPS500
+series.
+Some models have a serial port, others have a USB port.
+The models with USB port actually contain a serial-over-USB chip,
+so as far as this driver is concerned, all models are serial models.
+This driver should work with all models in the SITOP UPS500 series,
+as long as your kernel has support for the serial port device
+(see section <strong>USB driver</strong> below).</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">This driver has only been tested with the SITOP UPS500S-2.5
+with USB port (Siemens product number 6EP1933-2EC41).</td>
+</tr></table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_device_settings">DEVICE SETTINGS</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>The UPS is configured via DIP-switches.
+For correct functioning in combination with NUT, set the DIP-switches
+to the following:</p></div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>switch 1-4</strong>
+</dt>
+<dd>
+<p>
+Choose whatever suits your situation. Any combination will work with NUT.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>switch 5</strong> (&#8658; / t)
+</dt>
+<dd>
+<p>
+Set to OFF (t). This ensures that the UPS will not cut power unless NUT
+tells it to do so (or unless the batteries are exhausted).
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>switch 6-10</strong> (delay)
+</dt>
+<dd>
+<p>
+Set to OFF (minimum delay). Setting a higher delay will actually also work,
+but any command from NUT will be delayed as well before being executed
+by the UPS. With the minimum setting, it will already take 5 seconds
+before a command from NUT is executed.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>switch 11</strong> (INTERR.)
+</dt>
+<dd>
+<p>
+Set to ON (interrupt the output after the timer expires). This ensures that
+the UPS briefly interrupts the output power in response to the shutdown.return
+command. See the section <strong>Instant Commands</strong> below.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>switch 12</strong> (ON/OFF)
+</dt>
+<dd>
+<p>
+set to ON (enable the UPS functionality). Without this, the UPS will never
+supply power from its batteries.
+</p>
+</dd>
+</dl></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_usb_driver">USB driver</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>The USB-versions of the UPS contain an FTDI USB-to-serial converter chip.
+It is programmed with a non-standard product ID (for example <em>0403:e0e3</em>),
+but can still be used with the normal <code>ftdi_sio</code> driver.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">The following hints may be specific to GNU/Linux.</td>
+</tr></table>
+</div>
+<div class="paragraph"><p>Use <strong>lsusb</strong> to figure out which product ID is used in your model, and
+replace all occurrences of <em>e0e3</em> in the following examples with the actual
+Product ID.</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>modprobe ftdi_sio
+echo 0403 e0e3 &gt; /sys/bus/usb-serial/drivers/ftdi_sio/new_id</code></pre>
+</div></div>
+<div class="paragraph"><p>If your system uses <strong>udev</strong>, this can be automated via an <strong>udev</strong> rule:</p></div>
 <div class="listingblock">
 <div class="content">
-<pre><code>        #include &lt;nutclient.h&gt;
-
-        typedef void* NUTCLIENT_t;
-
-        typedef char** strarr;
-
-        strarr nutclient_get_device_variables(NUTCLIENT_t client,
-                const char* dev);
-
-        strarr nutclient_get_device_rw_variables(NUTCLIENT_t client,
-                const char* dev);
-
-        int nutclient_has_device_variable(NUTCLIENT_t client,
-                const char* dev, const char* var);
-
-        char* nutclient_get_device_variable_description(NUTCLIENT_t client,
-                const char* dev, const char* var);
-
-        strarr nutclient_get_device_variable_values(NUTCLIENT_t client,
-                const char* dev, const char* var);
-
-        void nutclient_set_device_variable_value(NUTCLIENT_t client,
-                const char* dev, const char* var, const char* value);
-
-        void nutclient_set_device_variable_values(NUTCLIENT_t client,
-                const char* dev, const char* var, const strarr values);</code></pre>
+<pre><code>ACTION=="add", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="e0e3", \
+  RUN+="/sbin/modprobe ftdi_sio", \
+  RUN+="/bin/sh -c 'echo 0403 e0e3 &gt; /sys/bus/usb-serial/drivers/ftdi_sio/new_id'"</code></pre>
+</div></div>
+<div class="paragraph"><p>You can use the following udev rule to obtain a predictable device name,
+for example <code>/dev/ttyUPS</code>:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>SUBSYSTEM=="tty" ATTRS{idVendor}=="0403", ATTRS{idProduct}=="e0e3" SYMLINK+="ttyUPS"</code></pre>
 </div></div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_description">DESCRIPTION</h2>
+<h2 id="_polling">POLLING</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>These functions allow to manage variables of devices.</p></div>
+<div class="paragraph"><p>The UPS does not have a special <em>get status</em> command. Instead, it continuously
+sends out status update messages (tens of messages per second).
+Every <strong>pollinterval</strong>, these messages are read from the serial port buffer.</p></div>
+<div class="paragraph"><p>In order to react quickly on status changes from the UPS, and to prevent
+the serial buffer from overflowing, <strong>pollinterval</strong> should be set to a
+relatively low value. The recommended value is 1 (second).</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_extra_arguments">EXTRA ARGUMENTS</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>This driver supports the following optional settings:</p></div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>max_polls_without_data</strong>=<em>num</em>
+</dt>
+<dd>
+<p>
+The serial port is polled periodically for new data (see <strong>Polling</strong>).
+If there is no valid new data after <em>num</em> polls, it is assumed that
+communication with the UPS is lost.
+</p>
+<div class="paragraph"><p>The default value is <em>2</em>. Lower values may cause spurious <em>Data stale</em>
+messages, especially at startup.</p></div>
+</dd>
+</dl></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_instant_commands">INSTANT COMMANDS</h2>
+<div class="sectionbody">
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>shutdown.return</strong>
+</dt>
+<dd>
+<p>
+The behavior of this command depends on the line state:
+</p>
 <div class="ulist"><ul>
 <li>
 <p>
-The <strong>nutclient_get_device_variables()</strong> function retrieves the list
-  of variables names for a device.
-</p>
-<div class="paragraph"><p>The returned strarr must be freed by <em>strarr_free</em>
-(see <a href="libnutclient_general.html">libnutclient_general(3)</a>).</p></div>
-</li>
-<li>
-<p>
-The <strong>nutclient_get_device_rw_variables</strong> function retrieves the list
-  of read-write variables names for a device.
-</p>
-<div class="paragraph"><p>The returned strarr must be freed by <em>strarr_free</em>
-(see <a href="libnutclient_general.html">libnutclient_general(3)</a>).</p></div>
-</li>
-<li>
-<p>
-The <strong>nutclient_has_device_variable</strong> function tests if the specified
-  variable is supported by the device.
-</p>
-<div class="paragraph"><p>Return <em>1</em> if supported and <em>0</em> if not.</p></div>
-</li>
-<li>
-<p>
-The <strong>nutclient_get_device_variable_description</strong> function retrieves
-  the variable description, if any.
-</p>
-<div class="paragraph"><p>The returned string must be freed by <a href="https://linux.die.net/man/3/free">free(3)</a>.</p></div>
-</li>
-<li>
-<p>
-The <strong>nutclient_get_device_variable_values</strong> returns variable values
-  (generally only one).
-</p>
-<div class="paragraph"><p>The returned strarr must be freed by <em>strarr_free</em>
-(see <a href="libnutclient_general.html">libnutclient_general(3)</a>).</p></div>
-</li>
-<li>
-<p>
-The <strong>nutclient_set_device_variable_value</strong> intends to set the value
-  of the specified variable.
+<strong>on line</strong>: after 5 seconds (or longer, if DIP switches 6-10 are not OFF),
+the UPS will shut off its output. After another 5 seconds, the output is
+activated again.
 </p>
 </li>
 <li>
 <p>
-The <strong>nutclient_set_device_variable_values</strong> intends to set multiple
-  values of the specified variable.
+<strong>on battery</strong>: after 5 seconds (or longer, if DIP switches 6-10 are not OFF),
+the UPS will shut off its output. The output will stay off, until the
+line voltage has returned.
 </p>
 </li>
 </ul></div>
-<div class="paragraph"><p>Common arguments:</p></div>
+</dd>
+<dt class="hdlist1">
+<strong>shutdown.stayoff</strong>
+</dt>
+<dd>
+<p>
+The behavior of this command depends on the line state:
+</p>
 <div class="ulist"><ul>
 <li>
 <p>
-<em>dev</em> is the device name.
+<strong>on line</strong>: after 5 seconds (or longer, if DIP switches 6-10 are not OFF),
+the UPS will shut off its output. The output stays off, until the line voltage
+has been removed for at least 1 second, and has been re-applied.
 </p>
 </li>
 <li>
 <p>
-<em>var</em> is the variable name.
-</p>
-</li>
-<li>
-<p>
-<em>value</em> is the variable value.
-</p>
-</li>
-<li>
-<p>
-<em>values</em> is the variable array of values.
+<strong>on battery</strong>: this command behaves the same as <strong>shutdown.return</strong>.
 </p>
 </li>
 </ul></div>
+</dd>
+</dl></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_installation">INSTALLATION</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Make sure that your operating system has created a serial device for the UPS.
+See the section <strong>USB driver</strong> for more information.</p></div>
+<div class="paragraph"><p>Next, make sure that NUT has access rights to this device file.
+For example, by creating an udev rule that grants permission to the NUT user,
+or by adding the NUT user to a user group that can access serial devices
+(e.g. the <strong>dialout</strong> group on Debian-based systems).</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_diagnostics">DIAGNOSTICS</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>You can verify the correct functioning of the hardware, by monitoring the
+serial port with a terminal program, for example <code>picocom</code>:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>:; picocom -b 9600 -d 8 -p n /dev/ttyUPS</code></pre>
+</div></div>
+<div class="paragraph"><p>NUT must not be running when you do this.
+You should now see a continuous stream of 5-character texts coming in,
+for example:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>BUFRD
+BA&gt;85
+DC_OK</code></pre>
+</div></div>
+<div class="paragraph"><p>To exit picocom, use Ctrl-A Ctrl-X.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_known_issues_and_bugs">KNOWN ISSUES AND BUGS</h2>
+<div class="sectionbody">
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>Untested models</strong>
+</dt>
+<dd>
+<p>
+As mentioned under <strong>Supported hardware</strong>, this driver has not been tested
+with all models in the SITOP UPS500 series.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>Data stale messages</strong>
+</dt>
+<dd>
+<p>
+The firmware in these UPSes is quite buggy. After sending data to the UPS,
+it sometimes stops sending status updates. This driver tries to prevent this
+(e.g. by sending commands twice, and by sending additional LF characters after
+each command).
+</p>
+<div class="paragraph"><p>Once the UPS is in this state, communication can only be restored by rebooting
+the UPS, or by unplugging and reconnecting the USB cable.</p></div>
+<div class="paragraph"><p>During normal operation, no commands are sent to the UPS at all
+(only at shutdown), so this issue is expected to have little impact on
+usability.</p></div>
+<div class="paragraph"><p>It is not certain if the serial models are affected by this issue as well.</p></div>
+</dd>
+</dl></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_author">AUTHOR</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Matthijs H. ten Berge</p></div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
-<div class="paragraph"><p><a href="libnutclient.html">libnutclient(3)</a>
-<a href="libnutclient_devices.html">libnutclient_devices(3)</a>
-<a href="libnutclient_general.html">libnutclient_general(3)</a></p></div>
+<div class="sect2">
+<h3 id="_the_core_driver">The core driver:</h3>
+<div class="paragraph"><p><a href="nutupsdrv.html">nutupsdrv(8)</a></p></div>
+</div>
+<div class="sect2">
+<h3 id="_internet_resources">Internet resources:</h3>
+<div class="paragraph"><p>The NUT (Network UPS Tools) home page: <a href="https://www.networkupstools.org/">https://www.networkupstools.org/</a></p></div>
+</div>
 </div>
 </div>
 </div>
