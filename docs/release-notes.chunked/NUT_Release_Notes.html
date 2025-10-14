@@ -37,6 +37,19 @@ Extended with plural <code class="literal">checkprocnames()</code> and <code cla
      framework introduced a <code class="literal">upsdrv_tweak_prognames()</code> hook method to let
      them manipulate the array of <code class="literal">prognames[]</code> aliases. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3101" target="_top">PR #3101</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
+<code class="literal">asem</code>, <code class="literal">bestfortress</code>, <code class="literal">bestuferrups</code>, <code class="literal">bicker_ser</code>, <code class="literal">everups</code>, <code class="literal">metasys</code>,
+   <code class="literal">masterguard</code>, <code class="literal">mge-utalk</code>, <code class="literal">oneac</code>, <code class="literal">phoenixcontact_modbus</code>, <code class="literal">pijuice</code>,
+   <code class="literal">powercom</code>, <code class="literal">powervar_cx_ser</code>, <code class="literal">usbhid-ups</code>, <code class="literal">victronups</code> driver updates:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Moved code to align with NUT driver architecture, so <code class="literal">upsdrv_initups()</code>
+     would focus on preparing communications, and <code class="literal">upsdrv_initinfo()</code> would
+     actually talk to the device and set initial critical data values. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1962" target="_top">#1962</a>]
+</li></ul></div></li><li class="listitem"><p class="simpara">
+<code class="literal">apcupsd-ups</code> driver updates:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Abandoned use of obsolete <code class="literal">gethostbyname()</code> in favour of <code class="literal">getaddrinfo()</code>.
+     Extended to be IPv6-capable along the way. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1209" target="_top">#1209</a>]
+</li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">nutdrv_qx</code> driver updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 Define an internal <code class="literal">QX_FLAG_MAPPING_HANDLED</code> to check if the subdriver
@@ -44,6 +57,14 @@ Define an internal <code class="literal">QX_FLAG_MAPPING_HANDLED</code> to check
      well — namely, that we successfully use reasonably many of the existing
      mappings. Suggest how user can help improve the driver if too few data
      points were seen. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3095" target="_top">PR #3095</a>]
+</li></ul></div></li><li class="listitem"><p class="simpara">
+<code class="literal">powerp-bin</code> and <code class="literal">powerp-txt</code> driver updates:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Their <code class="literal">upsdrv_initinfo()</code> methods did not explicitly reference the
+     <code class="literal">INSTCMD</code> and <code class="literal">SETVAR</code> handler methods (it is unknown whether this
+     actually broke anything, or the needed values were deduced from
+     subdriver definition then). For consistency, these pointers are now
+     assigned. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1962" target="_top">#1962</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">snmp-ups</code> driver updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -4683,4 +4704,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.33. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-10-12 08:49:17 -- Network UPS Tools 2.8.4.287</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2025-10-14 09:44:37 -- Network UPS Tools 2.8.4.326</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
