@@ -2,6 +2,20 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>I.1. Changes from 2.8.4 to 2.8.5</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><link rel="home" href="index.html" title="Network UPS Tools User Manual" /><link rel="up" href="Upgrading_notes.html" title="I. Upgrading notes" /><link rel="prev" href="Upgrading_notes.html" title="I. Upgrading notes" /><link rel="next" href="_changes_from_2_8_3_to_2_8_4.html" title="I.2. Changes from 2.8.3 to 2.8.4" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="Upgrading_notes.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="_changes_from_2_8_3_to_2_8_4.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_8_4_to_2_8_5"></a>I.1. Changes from 2.8.4 to 2.8.5</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 PLANNED: Keep track of any further API clean-up?
 </li><li class="listitem">
+For ages, most recipes for building NUT had customized the <code class="literal">sysconfdir</code> to
+  be <code class="literal">/etc/nut</code>, which is not exactly the <span class="strong"><strong>system</strong></span> configuration directory.
+  This is finally deprecated, with new <code class="literal">--with-confdir</code> configuration option
+  taking over the role of a full path to configuration files (by default
+  <code class="literal">${sysconfdir}${confdir_suffix}</code>), and new <code class="literal">--with-confdir-suffix</code> allowing
+  to specify just <code class="literal">/nut</code> or <code class="literal">/ups</code> that would be tacked onto the default
+  <code class="literal">${sysconfdir}</code> to resolve the <code class="literal">${confdir}</code>. Default behavior should be
+  same as with previous builds: if <code class="literal">sysconfdir</code> is customized (or <code class="literal">prefix</code>
+  is kept at built-in default), the <code class="literal">confdir_suffix</code> will default to empty;
+  otherwise it assumes the value of <code class="literal">/${PACKAGE_NAME}</code> to become <code class="literal">/nut</code> in
+  most cases. A <code class="literal">--with-confdir-examples</code> option was also introduced, to
+  help distributions that place <code class="literal">*.conf.sample</code> files into docs or other
+  locations. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3131" target="_top">#3131</a>]
+</li><li class="listitem">
 Dropped the <code class="literal">compile</code> script from Git sources. It originates from automake
   and is added to work area (if missing) during <code class="literal">autogen.sh</code> rituals anyway
   (as <code class="literal">make</code> says, <code class="literal">'automake --add-missing' can install 'compile'</code> when you
@@ -32,4 +46,4 @@ The <code class="literal">configure</code> script should now try harder to repor
   the "purelib" location as <code class="literal">PYTHON*_SITE_PACKAGES</code>. Packaging recipes
   may have to be updated. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1209" target="_top">#1209</a>]
 </li></ul></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-10-14 09:53:56 -- Network UPS Tools 2.8.4.326</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="Upgrading_notes.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="Upgrading_notes.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="_changes_from_2_8_3_to_2_8_4.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2025-10-16 14:49:09 -- Network UPS Tools 2.8.4.330</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="Upgrading_notes.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="Upgrading_notes.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="_changes_from_2_8_3_to_2_8_4.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

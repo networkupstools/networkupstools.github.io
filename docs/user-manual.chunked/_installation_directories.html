@@ -4,9 +4,23 @@ base path for most of the other install directories.  The default
 is <code class="literal">/usr/local/ups</code>, which puts everything but the state sockets in one
 easy place, and does not conflict with usual distribution packaging.</p><p>If you like having things to be at more of a "system" level, setting
 the prefix to <code class="literal">/usr/local</code> or even <code class="literal">/usr</code> might be better.</p><pre class="literallayout">--exec_prefix=PATH</pre><p>This sets the base path for architecture dependent files. By
-default, it is the same as <code class="literal">&lt;prefix&gt;</code>.</p><pre class="literallayout">--sysconfdir=PATH</pre><p>Changes the location where NUT’s configuration files are stored.
-By default this path is <code class="literal">&lt;prefix&gt;/etc</code>.  Setting this to <code class="literal">/etc/nut</code> or
-<code class="literal">/etc/ups</code> might be useful. See also <code class="literal">--enable-inplace-runtime</code>.</p><p>The <code class="literal">NUT_CONFPATH</code> environment variable overrides this at run time.</p><pre class="literallayout">--sbindir=PATH
+default, it is the same as <code class="literal">&lt;prefix&gt;</code>.</p><pre class="literallayout">--sysconfdir=PATH</pre><p>Base system location for configuration files. By default this path is
+<code class="literal">&lt;prefix&gt;/etc</code>.</p><p>From time immemorial until NUT v2.8.5, this was the option to change
+in order to define a dedicated directory for NUT configuration files.
+Setting this to <code class="literal">/etc/nut</code> or <code class="literal">/etc/ups</code> might be useful in older builds.
+Now the <code class="literal">--with-confdir*</code> options are preferable.</p><pre class="literallayout">--with-confdir-suffix=DIRNAME</pre><p>Provides a partial location where NUT’s configuration files are stored,
+relative to <code class="literal">&lt;sysconfdir&gt;</code>. By default this path is empty if either
+<code class="literal">&lt;sysconfdir&gt;</code> was modified (assuming legacy build configuration was
+re-used for current NUT), or if <code class="literal">&lt;prefix&gt;</code> was NOT modified (then the
+value of <code class="literal">/usr/local/ups/etc</code> makes sense to directly hold NUT configuration
+files).  Otherwise it defaults to <code class="literal">&lt;PACKAGE_NAME&gt;</code> which is <code class="literal">nut</code> (unless
+some distribution hacks the <code class="literal">configure</code> script to their liking).</p><p>Surrounding slashes would be removed and a trailing one added, to normalize
+the paths and avoid double-slashes etc.</p><p>See also <code class="literal">--enable-inplace-runtime</code>.</p><pre class="literallayout">--with-confdir=PATH</pre><p>Changes the location where NUT’s configuration files are stored.
+By default this path is <code class="literal">&lt;sysconfdir&gt;/&lt;confdir_suffix&gt;</code> which on
+most systems resolves to <code class="literal">/etc/nut</code>.</p><p>See also <code class="literal">--enable-inplace-runtime</code>.</p><p>The <code class="literal">NUT_CONFPATH</code> environment variable overrides this at run time.</p><pre class="literallayout">--with-confdir-examples=PATH</pre><p>Changes the location where NUT’s configuration file examples are stored.
+By default this path is <code class="literal">&lt;confdir&gt;</code>, but some distributions prefer to
+store examples under <code class="literal">&lt;docdir&gt;</code> or somewhere else, requiring <code class="literal">&lt;sysconfdir&gt;</code>
+to be used only by actual live system configuration.</p><pre class="literallayout">--sbindir=PATH
 --bindir=PATH</pre><p>Where executable files will be installed. Files that are normally
 executed by root (<code class="literal">upsd</code>, <code class="literal">upsmon</code>, <code class="literal">upssched</code>) go to <code class="literal">&lt;sbindir&gt;</code>,
 all others to <code class="literal">&lt;bindir&gt;</code>. The defaults are <code class="literal">&lt;exec_prefix&gt;/sbin</code> and
@@ -91,4 +105,4 @@ end-user — not done by default since the numbers depends on monitoring
 system performance). Default: "auto" (integration enabled if detected).</p><pre class="literallayout">--with-augeas-lenses-dir=PATH</pre><p>Where to install Augeas configuration-management lenses.</p><p>Only useful and valid if you use Augeas to parse and modify configuration
 files. The default is to use <code class="literal">/usr/share/augeas/lenses</code>, if that directory
 exists, and to not install it otherwise.</p></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-10-14 09:53:56 -- Network UPS Tools 2.8.4.326</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_other_configuration_options.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="Configure_options.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="_directories_used_by_nut_at_run_time.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2025-10-16 14:49:09 -- Network UPS Tools 2.8.4.330</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_other_configuration_options.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="Configure_options.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="_directories_used_by_nut_at_run_time.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
