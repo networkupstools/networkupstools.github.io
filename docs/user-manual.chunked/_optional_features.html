@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>H.4. Optional features</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><link rel="home" href="index.html" title="Network UPS Tools User Manual" /><link rel="up" href="Configure_options.html" title="H. Configure options" /><link rel="prev" href="_driver_selection.html" title="H.3. Driver selection" /><link rel="next" href="_other_configuration_options.html" title="H.5. Other configuration options" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="_driver_selection.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="_other_configuration_options.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_optional_features"></a>H.4. Optional features</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_cgi_client_interface"></a>CGI client interface</h4></div></div></div><pre class="literallayout">--with-cgi (default: no)</pre><p>Build and install the optional CGI programs, HTML files, and sample
 CGI configuration files. This is not enabled by default, as they
-are only useful on web servers. See <a class="ulink" href="data/html/README" target="_top">data/html/README</a> for additional
-information on how to set up CGI programs.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_nut_scanner_tool"></a>NUT Scanner tool</h4></div></div></div><pre class="literallayout">--with-nut-scanner (default: auto)</pre><p>Build and install the optional <a class="ulink" href="../man/nut-scanner.html" target="_top">nut-scanner(8)</a> tool to discover some
+are only useful on web servers. See <a class="ulink" href="data/htmlcgi/README" target="_top">data/htmlcgi/README</a> for
+additional information on how to set up CGI programs.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_nut_scanner_tool"></a>NUT Scanner tool</h4></div></div></div><pre class="literallayout">--with-nut-scanner (default: auto)</pre><p>Build and install the optional <a class="ulink" href="../man/nut-scanner.html" target="_top">nut-scanner(8)</a> tool to discover some
 types of UPS or ePDU devices on locally or remotely connected media (such as
 Serial, USB, SNMP, IPMI, NetXML), as well as NUT data servers (by Avahi/mDNS
 broadcasts or "old" NUT port polling) and simulation device configurations
@@ -131,16 +131,34 @@ etc.</p><p>One exception is generation of NUT-Monitor GUI application, being sep
 for <code class="literal">NUT-Monitor-py2gtk2</code>, <code class="literal">NUT-Monitor-py3qt5</code>, <code class="literal">NUT-Monitor-py3qt6</code> due
 to further backend platform technical differences — these build products
 specifically use <code class="literal">PYTHON2</code> and <code class="literal">PYTHON3</code> substitutions. They may also be
-co-installed on the same system. A dispatcher shell script <code class="literal">NUT-Monitor</code>
-is used to launch the preferred (newest) or only existing implementation.</p><p>Please note that by default NUT tries to make use of everything in your
-build environment, so if both Python generation are detected — the binding
+co-installed on the same system. A dispatcher shell script <code class="literal">NUT-Monitor</code> is
+used to launch the preferred (newest) or the only existing implementation.</p><p>Please note that by default NUT tries to make use of everything in your
+build environment, so if both Python generations are detected — the binding
 module will be delivered into both, and two versions of NUT-Monitor GUI
 application will be installed.  If you want to avoid that behaviour on a
 build system with both interpreters present, you can explicitly specify
-to build e.g. <code class="literal">--without-python2 --with-python=/usr/bin/python-3.9</code>.</p><p>The settings below may be of particular interest to non-distribution
-packaging efforts with their own dedicated directory trees:</p><pre class="literallayout">--with-python=SHEBANG_PATH</pre><p>Specify a definitive version you want used for majority of the Python
+to build e.g. <code class="literal">--without-python2 --with-python=/usr/bin/python-3.9</code>.</p><p>Default values are currently prioritized for auto-detection to result in
+some one Python interpreter version to be chosen even if several were
+discovered (in order: <span class="emphasis"><em>3</em></span>, <span class="emphasis"><em>2</em></span>, or not numbered), using <code class="literal">auto-prio=NUM</code>
+syntax. If some of these options specify a particular interpreter, none
+of the <code class="literal">auto-prio</code> hits are considered.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>Previous default (from NUT v2.8.0 to v2.8.4) was <code class="literal">auto</code> to allow all up
+to three hits to be considered as script shebang and as <code class="literal">make install</code> targets.
+When using <code class="literal">auto</code> values, specifying an explicit <code class="literal">--with-python</code> value does
+not implicitly mean <code class="literal">--without-python2</code> nor <code class="literal">--without-python3</code>, and those
+would be discovered and configured for, if possible. Conversely, an explicit
+e.g. <code class="literal">--with-python2</code> setting does not automatically mean <code class="literal">--without-python</code>
+nor <code class="literal">--without-python3</code>.
+Since this may come across surprising to some people, the <code class="literal">configure</code> script
+would warn in the end if several Python versions were auto-detected one way
+or another.</p></div><p>A value of <code class="literal">yes</code> (default if e.g <code class="literal">--with-python</code> is specified without an
+argument) means to search for an implementation, and fail if one was not
+located.</p><p>The settings below may be of particular interest to non-distribution
+packaging efforts with their own dedicated directory trees (like pkgsrc),
+or where all packages have dedicated sub-trees (like NixOS):</p><pre class="literallayout">--with-python=SHEBANG_PATH</pre><p>Specify a definitive version you want used for majority of the Python
 code (except version-dependent scripts, see above).</p><p>The <code class="literal">SHEBANG_PATH</code> should be a full program pathname, optionally with
-one argument, e.g. <code class="literal">/usr/bin/python-3.9</code> or <code class="literal">/usr/bin/env python2</code>.</p><p>Defaults (in order):
+one argument, e.g. <code class="literal">/usr/bin/python-3.9</code> or <code class="literal">/usr/bin/env python2</code>.
+Note that packaging distributions generally aim for predictable setups,
+and disapprove of <code class="literal">/usr/bin/env</code> in shebangs for packaged scripts.</p><p>Defaults for <code class="literal">--with-python</code> if it was not specified (in order):
 * <code class="literal">python</code>, <code class="literal">python3</code> or <code class="literal">python2</code> program if present in <code class="literal">PATH</code> by such name,
 * or the newest of <code class="literal">PYTHON3</code> or <code class="literal">PYTHON2</code> values (specified or detected below).</p><pre class="literallayout">--with-python2=SHEBANG_PATH
 --with-python3=SHEBANG_PATH</pre><p>For version-dependent scripts (see above) or to default the newest Python
@@ -151,7 +169,7 @@ respectively.</p><p>Conversely, if neither of these configure options were speci
 has Python major version 2 or 3, then the versioned interpreter string would
 point to that.</p><pre class="literallayout">--with-nut_monitor</pre><p>Install the NUT-Monitor GUI application (depending on Python 2 or 3 version
 availability), and optional <code class="literal">desktop-file-install</code> integration).</p><pre class="literallayout">--with-pynut</pre><p>Install the PyNUT module files for general consumption into "site-packages"
-location of the currently chosen Python interpreter(s): yes, no, auto.
+location of the currently chosen Python interpreter(s): <code class="literal">yes</code>, <code class="literal">no</code>, <code class="literal">auto</code>.
 or dedicated as the required dependency of NUT-Monitor application (app).</p><pre class="literallayout">--with-python-modules-dir=(auto|PATH)
 --with-python2-modules-dir=(auto|PATH)
 --with-python3-modules-dir=(auto|PATH)</pre><p>Optional, to specify PyNUT(Client) module installation location (for the
@@ -238,4 +256,4 @@ Core and Client parts.</p></div><div class="section"><div class="titlepage"><div
 dynamically, based on requested scanning options. This allows to build and
 package the tool without requiring all possible dependencies to be installed
 in each run-time environment.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-10-19 11:48:56 -- Network UPS Tools 2.8.4.335</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_driver_selection.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="Configure_options.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="_other_configuration_options.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2025-10-24 06:28:46 -- Network UPS Tools 2.8.4.446</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_driver_selection.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="Configure_options.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="_other_configuration_options.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

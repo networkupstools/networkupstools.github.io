@@ -58,6 +58,12 @@ Define an internal <code class="literal">QX_FLAG_MAPPING_HANDLED</code> to check
      mappings. Suggest how user can help improve the driver if too few data
      points were seen. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3095" target="_top">PR #3095</a>]
 </li><li class="listitem">
+New <code class="literal">nutdrv_qx_innovatae</code> adds support for Ippon INNOVA TAE series which
+     are similar to Q1 except in reporting of nominal <code class="literal">voltage</code>, <code class="literal">current</code>,
+     <code class="literal">frequency</code> data (that along with <code class="literal">battery_voltage_reports_one_pack</code> and
+     <code class="literal">override.battery.packs=12</code> settings yields reasonable <code class="literal">battery.voltage.*</code>
+     data points). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3137" target="_top">issue #3137</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3139" target="_top">PR #3139</a>]
+</li><li class="listitem">
 <code class="literal">nutdrv_qx_masterguard</code> sub-driver adds a way to call battery test until
      the battery charge is low, using a new <code class="literal">test.battery.start.low</code> instant
      command name (registered in <code class="literal">docs/nut-names.txt</code>). The difference between
@@ -66,6 +72,11 @@ Define an internal <code class="literal">QX_FLAG_MAPPING_HANDLED</code> to check
      to be met, i.e. the load must be between 30% and 100% and the starting
      battery capacity is greater than 99%. The "Battery test until battery low"
      can be started anytime. Tested on Masterguard A1000 and A2000 units. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3135" target="_top">#3135</a>]
+</li><li class="listitem">
+<code class="literal">nutdrv_qx_masterguard</code> sub-driver fix <code class="literal">masterguard_add_slaveaddr</code> to
+     return the correct command length, resolving a bug for all commands using
+     the <code class="literal">,XX</code> slave address placeholder. This also enables support for the
+     <code class="literal">test.battery.start.deep</code> (<code class="literal">TUD</code>) command. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3141" target="_top">#3141</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">powerp-bin</code> and <code class="literal">powerp-txt</code> driver updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -74,6 +85,16 @@ Their <code class="literal">upsdrv_initinfo()</code> methods did not explicitly 
      actually broke anything, or the needed values were deduced from
      subdriver definition then). For consistency, these pointers are now
      assigned. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1962" target="_top">#1962</a>]
+</li></ul></div></li><li class="listitem"><p class="simpara">
+<code class="literal">riello_ser</code> and <code class="literal">riello_usb</code> driver updates:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Since the beginning, these drivers fenced availability of <span class="strong"><strong>either</strong></span>
+     <code class="literal">load.*</code> <span class="strong"><strong>or</strong></span> <code class="literal">shutdown.return</code> instant commands based on current
+     power situation (which was also unknown when the <code class="literal">drivername -k</code> mode
+     was used to shut down the system). There seems to be little reason for
+     such separation, so it is now avoided and the current device status
+     is queried when starting to handle the UPS poweroff, as a means to
+     verify communication ability. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1962" target="_top">#1962</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">snmp-ups</code> driver updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -191,6 +212,34 @@ Introduced <code class="literal">--with-python{,2,3}-modules-dir</code> to speci
      it), if not bundling with NUT-Monitor UI app. By default the respective
      interpreter’s <span class="emphasis"><em>site-packages</em></span> or <span class="emphasis"><em>dist-packages</em></span> location will be used,
      so you may have to adjust search paths for any other values. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3062" target="_top">#3062</a>]
+</li><li class="listitem">
+The script would now warn the caller if several different Python program
+     paths or module locations were discovered (at least one automatically),
+     in case this was not something the callers wanted — just so they know.
+     [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1792" target="_top">#1792</a>]
+</li><li class="listitem">
+New supported values were introduced for <code class="literal">--with-python{,2,3}=auto-prio=NUM</code>:
+     this allows to auto-prioritize some <span class="strong"><strong>one</strong></span> available Python interpreter.
+     Default settings were changed from plain <code class="literal">auto</code> (allowing for multiple
+     <code class="literal">python*</code> interpreters and <code class="literal">site-package</code> locations to be used), to
+     prefer a <code class="literal">python3</code> if available, else <code class="literal">python2</code>, else <code class="literal">python</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1792" target="_top">#1792</a>]
+</li><li class="listitem">
+Streamlined handling of <code class="literal">--with-*</code> and <code class="literal">--enable-*</code> options using NUT <span class="emphasis"><em>m4</em></span>
+     macros; fixed reporting help for options whose defaults are evaluated.
+     [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3049" target="_top">issue #3049</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3140" target="_top">PR #3140</a>]
+</li><li class="listitem">
+Automatic <code class="literal">--with-devd</code> could not detect the need to install a FreeBSD
+     devd configuration snippet file, because it expected a source that should
+     not have been there (probably a copy-paste typo in NUT v2.8.0). Also
+     fixed a missed compiler family dependency when handling <code class="literal">--enable-strip</code>,
+     a few logical mismatches of Solaris/illumos packaging options, and default
+     report vs. setting of <code class="literal">--enable-force-nut-version-header</code>. Rephrased and
+     updated many help messages. The <code class="literal">configure</code> script logs should now clarify
+     where CFLAGS/LIBS/LDFLAGS values come from (<span class="emphasis"><em>pkg-config</em></span>, <span class="emphasis"><em>default</em></span>, user
+     provided <span class="emphasis"><em>confargs</em></span> etc.) [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3140" target="_top">#3140</a>]
+</li><li class="listitem">
+Added configure script options for <span class="emphasis"><em>libregex</em></span> tuning, just so it is on par
+     with our other optional dependencies. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3140" target="_top">#3140</a>]
 </li></ul></div></li><li class="listitem">
 Fixed CI recipes for PyPI publication of PyNUT(Client) module to also
    include the source distribution (was posted for NUT v2.8.1 and v2.8.2
@@ -234,6 +283,10 @@ Fixed man page naming for <code class="literal">nutdrv_siemens-sitop(.8)</code> 
 </li><li class="listitem">
 The <code class="literal">configure</code> script should now try harder to report specifically
    the "purelib" location as <code class="literal">PYTHON*_SITE_PACKAGES</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1209" target="_top">#1209</a>]
+</li><li class="listitem">
+Revised use of NUT macros for USB Vendor IDs listed in different drivers,
+   so the names would be better exposed in generated <code class="literal">udev.rules</code> and similar
+   files. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3139" target="_top">PR #3139</a>]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_release_notes_for_nut_2_8_4_what_8217_s_new_since_2_8_3"></a>2.2. Release notes for NUT 2.8.4 - what’s new since 2.8.3</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
 Bug fixes for fallout possible due to "fightwarn" effort in 2.8.0+:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -4727,4 +4780,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.33. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-10-19 11:48:56 -- Network UPS Tools 2.8.4.335</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2025-10-24 06:28:46 -- Network UPS Tools 2.8.4.446</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
