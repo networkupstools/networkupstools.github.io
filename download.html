@@ -72,6 +72,27 @@ asciidoc.install(2);
 </div>
 </div>
 <div class="sect1">
+<h2 id="_building_from_source_code">Building from source code</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>To build from Git sources, you will need a number of tools such as <code>autoconf</code>,
+<code>automake</code> and <code>libtool</code> to use these checkouts or snapshots to generate the
+<code>configure</code> script and some other files.  The distribution archives already
+include the <code>configure</code> script (as well as other files) and do not require
+auto* tools to prepare the sources for a build.</p></div>
+<div class="paragraph"><p>A more complete list of build prerequisites for different platforms can be seen in
+<a href="https://networkupstools.org/docs/qa-guide.chunked/_prerequisites_for_building_nut_on_different_oses.html">Prerequisites
+for building NUT on different OSes</a> chapter in the
+<a href="https://networkupstools.org/docs/qa-guide.chunked/">NUT QA Guide</a>,
+and reading about
+<a href="https://networkupstools.org/docs/user-manual.chunked/Configure_options.html"><code>configure</code>
+script options</a> can also help.</p></div>
+<div class="paragraph"><p>After you <code>configure</code> the source workspace, a <code>make dist-hash</code> recipe would
+create the snapshot tarballs which do not require the <code>auto*</code> tools, and their
+checksum files, such as those available on the NUT website and attached to
+<a href="https://github.com/networkupstools/nut/releases">GitHub Releases page</a>.</p></div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_source_code">Source code</h2>
 <div class="sectionbody">
 <div class="admonitionblock">
@@ -125,6 +146,20 @@ to do so.</p></div>
 </div>
 <div class="sect2">
 <h3 id="_development_tree">Development tree:</h3><div style="clear:left"></div>
+<div class="paragraph"><p>To get the newest fixes or features, you may want to build code that is
+even newer than the most-recent NUT release (and likely much newer than
+whatever your OS distribution has packaged).  This bleeding-edge approach
+usually involves building NUT either from the <code>master</code> branch, or even
+from feature branches which are sources of a pull request being reviewed
+and discussed before it gets merged into the main development trunk.</p></div>
+<div class="paragraph"><p>As such, it is highly recommended to build from Git sources rather than
+"distribution tarball" archives (so you can more easily update your build
+workspace to try subsequent iterations), although the latter are now also
+available for development iterations.</p></div>
+<div class="paragraph"><p>See the live Wiki article on
+<a href="https://github.com/networkupstools/nut/wiki/Building-NUT-for-in%E2%80%90place-upgrades-or-non%E2%80%90disruptive-tests">https://github.com/networkupstools/nut/wiki/Building-NUT-for-in%E2%80%90place-upgrades-or-non%E2%80%90disruptive-tests</a>
+for latest suggestions for building, testing and installing the latest
+NUT code base.</p></div>
 <div class="sect3">
 <h4 id="_code_repository">Code repository</h4>
 <div class="paragraph"><p>The development tree is available through a Git repository hosted at
@@ -174,17 +209,25 @@ sources of operating system distributions, as listed below.</p></div>
 </div>
 <div class="sect3">
 <h4 id="Snapshots">Snapshots</h4>
-<div class="paragraph"><p>GitHub has several download links for repository snapshots (for particular tags
-or branches), but you will need a number of tools such as <code>autoconf</code>, <code>automake</code>
-and <code>libtool</code> to use these snapshots to generate the <code>configure</code> script and some
-other files.</p></div>
-<div class="paragraph"><p>After you <code>configure</code> the source workspace, a <code>make dist-hash</code> recipe would
-create the snapshot tarballs which do not require the <code>auto*</code> tools, and their
-checksum files, such as those available on the NUT website and attached to
-<a href="https://github.com/networkupstools/nut/releases">GitHub Releases page</a>.</p></div>
-<div class="paragraph"><p>Note that the ability to build NUT seamlessly from ZIP or <code>tar.gz</code> snapshots
-prepared by GitHub automatically (as <code>git archive</code> of a checked-out workspace)
-is not regularly checked or "supported" by the Network UPS Tools project. YMMV.</p></div>
+<div class="paragraph"><p>For pull requests and eventual merges into the master branch, a NUT CI job
+prepares correct "dist tarballs" with a snapshot of source code, as well as
+an archive with rendered documentation files (PDF, HTML, man pages).</p></div>
+<div class="paragraph"><p>Links to these "Dist and Docs" archives can be seen on GitHub in merge commit
+comments, and are posted as a rolling comment in pull requests. Keep in mind
+that artefacts like these are stored for up to 90 days, and can be rotated
+away earlier.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img src="./images/note.png" alt="Note" />
+</td>
+<td class="content">GitHub has several download links for repository snapshots (made for
+particular tags or branches), but the ability to build NUT seamlessly from
+ZIP or <code>tar.gz</code> snapshots prepared by GitHub automatically (as a simple
+<code>git archive</code> of a checked-out workspace) is not regularly checked nor
+"supported" by the Network UPS Tools project. YMMV.</td>
+</tr></table>
+</div>
 </div>
 </div>
 <div class="sect2">
@@ -479,8 +522,8 @@ you may lose VMware support if you install it. Use it at your own risks.</td>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Version nut:v2.8.4.132-132+g87008cfc7 ddl:v2.8.4 web:v2.8.3-69-g732be3bc-master<br />
-Last updated 2025-09-23 14:43:43
+Version nut:v2.8.4.790-790+g23814de9c ddl:v2.8.4 web:v2.8.3-91-g1bd0fa79-master<br />
+Last updated 2025-11-08 23:45:33
 </div>
 <div id="footer-badges">
 <a href="https://github.com/networkupstools/nut">
