@@ -170,6 +170,14 @@ Check if the subdriver code (mapping table) and the device report
      of the existing mappings. Suggest how user can help improve the driver
      if too few data points were seen. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3082" target="_top">#3082</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/3095" target="_top">#3095</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
+<code class="literal">upsd</code> data server updates:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Sometimes "Data for UPS [X] is stale" and "UPS [X] data is no longer
+     stale" messages were logged in the same second, especially no busy
+     systems. Now we allow one more second on top of <code class="literal">MAXAGE</code> setting to
+     declare the device dead, just in case fractional/whole second rounding
+     comes into play and breaks things. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/661" target="_top">issue #661</a>]
+</li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">upsdrvctl</code> tool updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 Make use of <code class="literal">setproctag()</code> and <code class="literal">getproctag()</code> to report parent/child
@@ -206,6 +214,9 @@ Tickle service watchdog timer (if any) so the <code class="literal">nut-monitor.
 a <code class="literal">START-TIMER-SHARED</code> rule with a short (approx. 1 second) timeout to group
 several <code class="literal">FSD</code> notifications into one executed action. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3097" target="_top">PR #3097</a>]</p></div></li></ul></div></li><li class="listitem">
 <code class="literal">upsset</code> should now recognize <code class="literal">RANGE NUMBER</code> and <code class="literal">NUMBER</code> types. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3164" target="_top">#3164</a>]
+</li><li class="listitem">
+<code class="literal">upsstats</code> has now JSON output mode via <code class="literal">?json</code> (or <code class="literal">&amp;json</code>) CGI query
+    parameter. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2524" target="_top">issue #2524</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3171" target="_top">PR #3171</a>]
 </li><li class="listitem"><p class="simpara">
 <code class="literal">upssched</code> tool updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -290,6 +301,12 @@ Fixed CI recipes for PyPI publication of PyNUT(Client) module to also
    include the source distribution (was posted for NUT v2.8.1 and v2.8.2
    tagged releases, but absent for v2.8.3 and v2.8.4). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3056" target="_top">#3056</a>]
 </li><li class="listitem">
+The <code class="literal">configure</code> script would now probe (if it can) the operating systems for
+   more user and group account names, such as <code class="literal">upsmon</code>, <code class="literal">nutmon</code>, <code class="literal">ups</code>, <code class="literal">nut</code>
+   (last hit wins, separately for user and groups accounts) settling on one of
+   those if detected instead of <code class="literal">nobody</code> (and optionally <code class="literal">nogroup</code>). It would
+   also warn if <code class="literal">nobody</code> or <code class="literal">nogroup</code> end up being used for a build. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3173" target="_top">#3173</a>]
+</li><li class="listitem">
 Updated <code class="literal">make spellcheck</code> to help avoid asciidoc admonition blocks with
    visually invalid sentences (after rendering as a box in HTML or PDF). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3077" target="_top">#3077</a>]
 </li><li class="listitem">
@@ -303,10 +320,9 @@ Added a <code class="literal">make dist-docs</code> goal to generate, collect an
 Added a GitHub Actions CI job to generate, upload and recycle <code class="literal">make dist</code>
    and <code class="literal">make dist-docs</code> tarballs so they are easier to obtain for people and
    other CI systems (which might not want to follow a Git repository). Links
-   to these artifacts can be seen in workflow page (or its logs), sticky note
-   on top of PR comments, and added as commit comments (seen after the diff of
-   the commit, see e.g. merge commits for the <code class="literal">master</code> branch). Note that the
-   GitHub Action storage keeps artefacts for at most 90 days. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1400" target="_top">#1400</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2829" target="_top">#2829</a>]
+   to these artifacts can be seen in workflow page (or its logs), and added
+   as a line in GitHub Checks list associated with a commit. Note that the
+   GitHub Action storage keeps artifacts for at most 90 days. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1400" target="_top">#1400</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2829" target="_top">#2829</a>]
 </li><li class="listitem">
 Source directory <code class="literal">data/html</code> was renamed to <code class="literal">data/htmlcgi</code> in order to
    better reflect its contents and purpose, compared to documentation-oriented
@@ -4859,4 +4875,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.33. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-11-09 17:52:21 -- Network UPS Tools 2.8.4.699</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2025-11-11 18:01:33 -- Network UPS Tools 2.8.4.817</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

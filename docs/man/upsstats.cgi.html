@@ -766,7 +766,7 @@ unauthorized access or spew a bunch of HTML at you.</td>
 <div class="paragraph"><p><strong>upsstats.cgi</strong>
 uses template files to build web pages containing status information
 from UPS hardware.  It can repeat sections of those template files to
-monitor several UPSes simultaneously, or focus on a single UPS.</p></div>
+monitor several devices simultaneously, or focus on a single UPS.</p></div>
 <div class="paragraph"><p>These templates can also include references to <a href="upsimage.cgi.html">upsimage.cgi(8)</a>
 for graphical displays of battery charge levels, voltage readings, and
 the UPS load.</p></div>
@@ -793,6 +793,69 @@ documented in <a href="upsstats.html.html">upsstats.html(5)</a>.</p></div>
 </div>
 </div>
 <div class="sect1">
+<h2 id="_json_output">JSON OUTPUT</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>In addition to processing HTML templates, <strong>upsstats.cgi</strong> can be
+invoked as a JSON API by adding the <strong>json</strong> parameter to the
+query string (e.g., <strong>?json</strong> or <strong>&amp;json</strong>).</p></div>
+<div class="paragraph"><p>When this parameter is present, the CGI script bypasses all HTML
+template parsing and instead returns a JSON object.</p></div>
+<div class="paragraph"><p>The structure of the JSON output depends on whether the <strong>host</strong>
+parameter is also provided:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<strong>Multi-host (Default):</strong>
+    If no <strong>host</strong> parameter is specified, the script returns a
+    single JSON object containing an <strong>"devices"</strong> key. This key
+    holds an array, with each element in the array being a JSON
+    object representing a monitored UPS.
+</p>
+</li>
+<li>
+<p>
+<strong>Single-host Mode:</strong>
+    If a <strong>host</strong> parameter is provided (e.g.,
+    <strong>?host=<a href="mailto:myups@localhost">myups@localhost</a>&amp;json</strong>), the script returns a single
+    JSON object for that UPS (it will not be wrapped in an
+    "devices" array).
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>In both modes, each UPS object includes:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<strong>host</strong>: The UPS identifier (e.g., "myups@localhost")
+</p>
+</li>
+<li>
+<p>
+<strong>desc</strong>: The host description from ``hosts.conf``
+</p>
+</li>
+<li>
+<p>
+<strong>status_raw</strong>: The raw status string (e.g., "OL")
+</p>
+</li>
+<li>
+<p>
+<strong>status_parsed</strong>: An array of human-readable status strings
+  (e.g., ["Online"])
+</p>
+</li>
+<li>
+<p>
+<strong>vars</strong>: An object containing the full tree of all available
+  variables for that UPS (e.g., "battery.charge": "100",
+  "ups.model": "&#8230;")
+</p>
+</li>
+</ul></div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_files">FILES</h2>
 <div class="sectionbody">
 <div class="paragraph"><p><a href="hosts.conf.html">hosts.conf(5)</a>, <a href="upsstats.html.html">upsstats.html(5)</a>, upsstats-single.html</p></div>
@@ -812,7 +875,7 @@ documented in <a href="upsstats.html.html">upsstats.html(5)</a>.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-11-09 17:52:00 UTC -- Network UPS Tools 2.8.4.699
+Last updated 2025-11-11 18:00:47 UTC -- Network UPS Tools 2.8.4.817
 </div>
 </div>
 </body>
