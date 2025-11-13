@@ -747,9 +747,9 @@ asciidoc.install();
 <div class="sect1">
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
-<div class="paragraph"><p><strong>upsc</strong> -l | -L [<em>host</em>]</p></div>
-<div class="paragraph"><p><strong>upsc</strong> <em>ups</em> [<em>variable</em>]</p></div>
-<div class="paragraph"><p><strong>upsc</strong> -c <em>ups</em></p></div>
+<div class="paragraph"><p><strong>upsc</strong> [-j] -l | -L [<em>host</em>]</p></div>
+<div class="paragraph"><p><strong>upsc</strong> [-j] <em>ups</em> [<em>variable</em>]</p></div>
+<div class="paragraph"><p><strong>upsc</strong> [-j] -c <em>ups</em></p></div>
 </div>
 </div>
 <div class="sect1">
@@ -763,6 +763,29 @@ want to include the full interface.</p></div>
 <div class="sect1">
 <h2 id="_options">OPTIONS</h2>
 <div class="sectionbody">
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>-j</strong>
+</dt>
+<dd>
+<p>
+  Output the results in JSON format. This will bypass the standard
+  text output and print a JSON object to <code>stdout</code>. The structure
+  of the JSON depends on the mode:
+</p>
+</dd>
+</dl></div>
+<div class="openblock">
+<div class="content">
+<div class="literalblock">
+<div class="content">
+<pre><code>`upsc -j -l`: Returns a JSON array of UPS names.
+`upsc -j -L`: Returns a JSON object mapping UPS names to their descriptions.
+`upsc -j &lt;ups&gt;`: Returns a JSON object of all variables and their values.
+`upsc -j &lt;ups&gt; &lt;variable&gt;`: Returns a single JSON string (the value).
+`upsc -j -c &lt;ups&gt;`: Returns a JSON array of client addresses.</code></pre>
+</div></div>
+</div></div>
 <div class="dlist"><dl>
 <dt class="hdlist1">
 <strong>-l</strong> <em>host</em>
@@ -862,6 +885,17 @@ battery.voltage: 13.9
 battery.voltage.nominal: 13.6
 . . .</code></pre>
 </div></div>
+<div class="paragraph"><p>To retrieve all variables for "myups" as a JSON object:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>:; upsc -j myups@mybox:1234
+{
+  "battery.charge": "100.0",
+  "battery.voltage": "13.9",
+  "battery.voltage.nominal": "13.6",
+  ...
+}</code></pre>
+</div></div>
 <div class="paragraph"><p>To list the UPSes configured on this system, along with their descriptions:</p></div>
 <div class="literalblock">
 <div class="content">
@@ -929,7 +963,7 @@ only talks TCP.  This is why <em>upsct</em> no longer exists.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-11-12 11:56:55 UTC -- Network UPS Tools 2.8.4.817
+Last updated 2025-11-13 11:47:12 UTC -- Network UPS Tools 2.8.4.817
 </div>
 </div>
 </body>
