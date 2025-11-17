@@ -98,7 +98,44 @@ should it call <code class="literal">fatalx()</code> nor <code class="literal">f
 <code class="literal">set_exit_flag(N)</code> if required, using values <code class="literal">EF_EXIT_FAILURE</code> (<code class="literal">-1</code>)
 for eventual <code class="literal">exit(EXIT_FAILURE)</code> and <code class="literal">EF_EXIT_SUCCESS</code> (<code class="literal">-2</code>) for
 <code class="literal">exit(EXIT_SUCCESS)</code>, which would be handled in the standard driver
-loop or in <code class="literal">forceshutdown()</code> method of <code class="literal">main.c</code>.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_data_types"></a>5.7. Data types</h3></div></div></div><p>To be of any use, you must supply data in <code class="literal">ups.status</code>.  That is the
+loop or in <code class="literal">forceshutdown()</code> method of <code class="literal">main.c</code>.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_addvar_getval_and_testvar"></a>addvar, getval and testvar</h4></div></div></div><p>NUT drivers can be configured at run-time with optional settings, which
+can be passed on command line or via the <a class="ulink" href="../man/ups.conf.html" target="_top">ups.conf(5)</a> file.
+Such settings broadly fall into two categories: "values" which convey
+some specific value (e.g. <code class="literal">port</code> or <code class="literal">desc</code> strings), and "flags" which
+can be seen as a sort of booleans which are <code class="literal">true</code> if mentioned and
+<code class="literal">false</code> if not (any assigned value would be ignored, if not rejected
+by configuration parser).</p><p>Some options are common to all drivers and are handled in <code class="literal">drivers/main.c</code>
+(which also defines and implements most of the methods in this area), while
+others may be specific to individual drivers or even their sub-drivers.</p><p>The <code class="literal">addvar()</code> method allows to specify a certain option name, with its
+type and a help message string:</p><pre class="literallayout">addvar(VAR_VALUE, "sdtype", "Specify simple shutdown method (0-6)");</pre><pre class="literallayout">addvar(VAR_FLAG,  "wait",   "Wait for AC power");</pre><p>In driver code, these calls should comprise the <code class="literal">upsdrv_makevartable()</code>
+method.</p><p>The <code class="literal">getval()</code> method allows to get the user-provided string value (or
+<code class="literal">NULL</code> — but it is hard to tell apart if the option was not specified
+or no value was assigned).  The <code class="literal">testvar()</code> method allows to check if
+the option name was specified (even if without a value), so is better
+suited for flags.  Internally there is no difference between "values"
+and "flags", so historically some flags were "promoted" to values with
+boolean-ish strings handled explicitly, in addition to some new features.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>Internally, the values can also be marked as reloadable (so that a
+running driver program may change them when re-reading the configuration
+file due to a signal).  The implementation may be currently limited to
+common options handled by <code class="literal">main.c</code> itself.  In code base this is exposed
+with the <code class="literal">addvar_reloadable()</code> and several <code class="literal">test*_reloadable()</code> methods.</p></div><p>Since these methods involve a data structure walk to locate (or not) the
+entry for each option, they should not be used in data processing loops.
+Instead, the driver initialization methods such as <code class="literal">upsdrv_initups()</code>
+should consider all values and flags that can impact the set-up of the
+driver, and save them into C variables (typically strings, booleans, or
+processed and range/value-checked number types) which are then directly
+used in the driver program code.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_nut_usb_addvars"></a>nut_usb_addvars</h4></div></div></div><p>For consistency between USB-capable NUT drivers, a set of <code class="literal">addvar()</code>
+options related to USB media setup and expected by <code class="literal">nut_libusb_open()</code>
+can be defined by calling the <code class="literal">nut_usb_addvars()</code> method, which can be
+seen in <code class="literal">drivers/libusb{0,1}.c</code>.</p><p>Like <code class="literal">addvar()</code>, a call to this method belongs in <code class="literal">upsdrv_makevartable()</code>
+(see existing drivers for examples).</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_nut_ser_addvars"></a>nut_ser_addvars</h4></div></div></div><div class="warning" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Warning</h3><p>NOT CURRENTLY IMPLEMENTED.</p></div><p>Issue <a class="ulink" href="https://github.com/networkupstools/nut/issues/2748" target="_top">https://github.com/networkupstools/nut/issues/2748</a> tracks the idea
+to standardize the set and names of options involved in the serial driver
+connection set-up (speed, parity, stop-bits, etc.) similarly to the
+precedent of <code class="literal">nut_usb_addvars()</code>.  One problem is that many drivers
+released during the past decades reinvented this wheel with different
+option names.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_nut_modbus_addvars"></a>nut_modbus_addvars</h4></div></div></div><div class="warning" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Warning</h3><p>NOT CURRENTLY IMPLEMENTED.</p></div><p>Issue <a class="ulink" href="https://github.com/networkupstools/nut/issues/2419" target="_top">https://github.com/networkupstools/nut/issues/2419</a> tracks a similar
+idea for Modbus-capable drivers (which may involve or not Serial and/or
+USB link and option support, and uniquely TCP/IP RTU support, for example).</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_data_types"></a>5.7. Data types</h3></div></div></div><p>To be of any use, you must supply data in <code class="literal">ups.status</code>.  That is the
 minimum needed to let upsmon do its job.  Whenever possible, you should
 also provide anything else that can be monitored by the driver.  Some
 obvious things are the manufacturer name and model name, voltage data,
@@ -745,7 +782,7 @@ Read the NUT code, tracing through how each value gets processed looking
   for where the result deviates from expectations…
 </li><li class="listitem">
 Think, code, test, rinse, repeat, post a PR :)
-</li></ul></div><div class="example"><a id="idm2700"></a><p class="title"><strong>Example 1. Example direct use of REXX</strong></p><div class="example-contents"><p>Example adapted from <a class="ulink" href="https://github.com/networkupstools/nut/issues/2039" target="_top">https://github.com/networkupstools/nut/issues/2039</a></p><p>Run a NUT <code class="literal">usb-hid</code> driver with at least debug verbosity level 3 (<code class="literal">-DDD</code>)
+</li></ul></div><div class="example"><a id="idm2750"></a><p class="title"><strong>Example 1. Example direct use of REXX</strong></p><div class="example-contents"><p>Example adapted from <a class="ulink" href="https://github.com/networkupstools/nut/issues/2039" target="_top">https://github.com/networkupstools/nut/issues/2039</a></p><p>Run a NUT <code class="literal">usb-hid</code> driver with at least debug verbosity level 3 (<code class="literal">-DDD</code>)
 to get a report descriptor dump starting with a line like this:</p><pre class="screen">   3.670755     [D3] Report Descriptor: (909 bytes) =&gt; 05 84 09 04 a1 01 ...</pre><p>…and copy-paste those reported lines as input into <code class="literal">rexx</code> tool, which
 would generate a C source file including human-worded description and
 a relevant data structure:</p><pre class="screen">:; rexx rd.rex -d --hex 05 84 09 04 a1 01 85 01 09 18 ... 55 b1 02 c0 c0 c0
@@ -2514,4 +2551,4 @@ no 0 nibble is sent.</p></div></div><div class="section"><div class="titlepage">
 </li><li class="listitem">
 <code class="literal">nutdrv_qx_ablerex.</code>{<code class="literal">c</code>,<code class="literal">h</code>}
 </li></ul></div></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-11-13 11:58:43 -- Network UPS Tools 2.8.4.817</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="developers.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="sock-protocol.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2025-11-17 14:47:58 -- Network UPS Tools 2.8.4.817</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="developers.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="sock-protocol.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
