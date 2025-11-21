@@ -747,6 +747,16 @@ asciidoc.install();
 // @license-end
 -->
 </script>
+<style type="text/css">
+a.anchorjs-link {
+  color: inherit;
+  text-decoration: inherit;
+}
+a.anchorjs-link:visited {
+  color: inherit;
+  text-decoration: inherit;
+}
+</style>
 </head>
 <body class="article">
 <div id="header">
@@ -782,13 +792,14 @@ over time NUT for Windows support was also implemented (however as of NUT
 release v2.8.3, it remains not 100% complete) so it is possible to run the
 whole server and client stack as native Windows programs.</p></div>
 <div class="paragraph"><p>Most operating systems deliver NUT as packages built from a certain release,
-which for the project is just a better-tested snapshot of on-going development.
+which for the project is just a better-tested snapshot of on-going development
+with an opinionated choice of build and run-time system configuration options.
 Some OS distribution maintainers pick fixes from later releases to update
 their software packages while nominally remaining on the same base line
 version that the distribution&#8217;s major release originally went with. This
 allows to balance delivering stable programs with well-known qualities
 and minimal downsides for a long stretch of time, but misses out on new
-capabilities, features (and yes, new bugs) which the on-going development
+capabilities, features (and yes, new bugs), which the on-going development
 regularly adds to the current code base du-jour.</p></div>
 <div class="paragraph"><p>As such, NUT community support for releases (or any other non-current code)
 is generally limited to suggestions based on experience, but any fixes happen
@@ -998,7 +1009,8 @@ too), which remains until reboot and disappears during reboot.</p></div>
 <div class="sect3">
 <h4 id="_user_group_accounts">User/Group Accounts</h4>
 <div class="paragraph"><p>Generally NUT daemon programs avoid running as a highly-privileged <code>root</code>
-account (on POSIX platforms), and drop privileges to run as the configured
+account (on POSIX platforms), although they anticipate being started as such
+(most system services are) and drop privileges to run as the configured
 user and group accounts such as <code>nut:nut</code>.</p></div>
 <div class="ulist"><ul>
 <li>
@@ -1006,6 +1018,17 @@ user and group accounts such as <code>nut:nut</code>.</p></div>
 One notable exception is the <a href="upsmon.html">upsmon(8)</a> daemon which splits into
   a <code>root</code>-owned process which may trigger the OS shutdown routine, and an
   unprivileged process which does everything else.
+</p>
+</li>
+<li>
+<p>
+Default user and group accounts are built-in, selected as options for the
+  <code>configure</code> script when it prepares the build of NUT.  Those settings can
+  be overridden by configuration file or command-line options of respective
+  NUT daemons, whether to run as a different unprivileged user account (it
+  may be possible to constrain each NUT service to run in their dedicated
+  accounts), or to remain capable of everything as <code>root</code> (rarely, drivers
+  are configured this way temporarily to troubleshoot local device access).
 </p>
 </li>
 </ul></div>
@@ -1022,7 +1045,7 @@ for volatile implementations).</p></div>
 <div class="paragraph"><p>Note that there are several run-time locations for data and socket files of
 NUT&#8217;s privileged and unprivileged programs, and for configuration files.
 Access to these directories and individual files should be secured according
-to NUT documentation; NUT daemons will warn about lax permissions in their
+to NUT documentation. NUT daemons will warn about lax permissions in their
 syslog or console messages. Generally, <code>root:nut</code> and <code>0640</code> permissions
 are correct for most of the files (so the run-time NUT programs may only
 read them but can not rewrite them, not even if there happens to be an
@@ -1086,8 +1109,8 @@ into certain directories according to their documentation:
 <a href="hosts.conf.html">hosts.conf(5)</a> and <a href="upsset.conf.html">upsset.conf(5)</a> for configuration,
 and <code>upsstats-single.html</code> and <code>upsstats.html</code> for HTML UI templates.</p></div>
 <div class="paragraph"><p>Other clients, whether delivered by NUT project (<a href="NUT-Monitor.html">NUT-Monitor(8)</a>
-GUI) or co-located (<a href="https://github.com/networkupstools/wmnut">WMNut</a>)
-or third-party (see <a href="https://networkupstools.org/projects.html">https://networkupstools.org/projects.html</a>) would
+GUI), or co-located (<a href="https://github.com/networkupstools/wmnut">WMNut</a>),
+or third-party (see <a href="https://networkupstools.org/projects.html">https://networkupstools.org/projects.html</a>), would
 probably support saving their settings or "favorites".  Do not forget
 to secure access to those files and their copies as well.</p></div>
 </div>
@@ -2082,7 +2105,7 @@ The "UPS management protocol", Informational RFC 9271:
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-11-20 17:58:06 UTC -- Network UPS Tools 2.8.4.817
+Last updated 2025-11-21 17:47:48 UTC -- Network UPS Tools 2.8.4.817
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>
