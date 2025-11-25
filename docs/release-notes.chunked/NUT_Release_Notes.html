@@ -47,6 +47,13 @@ control history for "live" codebase.</p><div class="section"><div class="titlepa
 </li><li class="listitem"><p class="simpara">
 common code:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Generally improved shell script portability (including <code class="literal">Makefile.am</code>
+     embedded recipes) when mixing back-quotes and double-quotes. Namely,
+     the classic Solaris <code class="literal">ksh</code> implementation (also used in current versions
+     of Solaris and illumos based distributions) was strict about following
+     (an older revision of) the POSIX standard here, and some use-cases
+     misbehaved with our older script spelling. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3196" target="_top">issue #3196</a>]
+</li><li class="listitem">
 Introduced <code class="literal">setproctag()</code> and <code class="literal">getproctag()</code> (see examples in <code class="literal">upsmon</code>)
      to help track the log messages from massively-forking NUT daemons. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3084" target="_top">#3084</a>]
 </li><li class="listitem">
@@ -137,6 +144,9 @@ New <code class="literal">nutdrv_qx_innovatae</code> adds support for Ippon INNO
      <code class="literal">battery.ageing.factor</code> (Battery ageing factor in promille) and
      <code class="literal">battery.calibration.factor</code> (Battery calibration factor in percent).
      Tested on A1000 and A2000 units. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3181" target="_top">#3181</a>]
+</li><li class="listitem">
+Hides QX_FLAG_NONUT variables from syslog unless the debug level
+     is raised. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3190" target="_top">issue #3190</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3198" target="_top">PR #3198</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">powerp-bin</code> and <code class="literal">powerp-txt</code> driver updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -4924,4 +4934,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.33. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-11-24 21:37:59 -- Network UPS Tools 2.8.4.817</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2025-11-25 08:51:49 -- Network UPS Tools 2.8.4.888</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
