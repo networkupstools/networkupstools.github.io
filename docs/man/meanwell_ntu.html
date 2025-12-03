@@ -5,7 +5,7 @@
 <head>
 <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
 <meta name="generator" content="AsciiDoc 10.2.0" />
-<title>NUTSCAN_SCAN_SNMP(3)</title>
+<title>MEANWELL_NTU(8)</title>
 <style type="text/css">
 /* Shared CSS for AsciiDoc xhtml11 and html5 backends */
 
@@ -760,114 +760,439 @@ a.anchorjs-link:visited {
 </head>
 <body class="article">
 <div id="header">
-<h1>NUTSCAN_SCAN_SNMP(3)</h1>
+<h1>MEANWELL_NTU(8)</h1>
 </div>
 <div id="content">
 <div class="sect1">
 <h2 id="_name">NAME</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>nutscan_scan_snmp - Scan network for SNMP devices.</p></div>
+<div class="paragraph"><p>meanwell_ntu - Driver for Mean Well NTU series inverter/UPS units</p></div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
-<div class="listingblock">
-<div class="content">
-<pre><code>        #include &lt;nut-scan.h&gt;
-        #include &lt;unistd.h&gt; /* useconds_t */
-
-        nutscan_device_t * nutscan_scan_snmp(
-                const char * start_ip,
-                const char * stop_ip,
-                useconds_t timeout,
-                nutscan_snmp_t * sec);
-
-        nutscan_device_t * nutscan_scan_ip_range_snmp(
-                nutscan_ip_range_list_t * irl,
-                useconds_t usec_timeout,
-                nutscan_snmp_t * sec);</code></pre>
-</div></div>
+<div class="paragraph"><p><strong>meanwell_ntu</strong> -h</p></div>
+<div class="paragraph"><p><strong>meanwell_ntu</strong> -a <em>UPS_NAME</em> [<em>OPTIONS</em>]</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">This man page documents the hardware-specific features of the
+<strong>meanwell_ntu</strong> driver. For general information about NUT drivers, see
+<a href="nutupsdrv.html">nutupsdrv(8)</a>.</td>
+</tr></table>
+</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>The <strong>nutscan_scan_snmp()</strong> and <strong>nutscan_scan_ip_range_snmp()</strong> functions
-try to detect NUT compatible SNMP devices. The former tries SNMP queries
-on every IP ranging from <em>start_ip</em> to <em>stop_ip</em>, where <em>startIP</em> is
-mandatory and <em>stopIP</em> is optional (one <em>startIP</em> address is scanned
-if <em>stopIP</em> is NULL); while the latter can walk several IP address
-ranges represented by a <code>nutscan_ip_range_list_t</code> structure.</p></div>
-<div class="paragraph"><p>Those IP arguments may be either IPv4 or IPv6 addresses or host names.</p></div>
-<div class="paragraph"><p>You MUST call <a href="nutscan_init.html">nutscan_init(3)</a> before using this function.</p></div>
-<div class="paragraph"><p>This function waits up to <em>timeout</em> microseconds before considering
-an IP address does not respond to SNMP queries.</p></div>
-<div class="paragraph"><p>A valid <code>nutscan_snmp_t</code> structure must be passed to this function.</p></div>
-<div class="paragraph"><p>The <code>nutscan_snmp_t</code> structure contains the following members which
-must be filled as described below:</p></div>
-<div class="literalblock">
-<div class="content">
-<pre><code>char * 'community';
-char * 'secLevel';
-char * 'secName';
-char * 'authPassword';
-char * 'privPassword';
-char * 'authProtocol';
-char * 'privProtocol';</code></pre>
-</div></div>
-<div class="paragraph"><p>If <em>community</em> is not NULL, SNMP v1 request are sent using this <em>community</em>.</p></div>
-<div class="paragraph"><p>If <em>community</em> is NULL and <em>secLevel</em> is NULL, SNMP v1 is selected
-and <em>community</em> is set to "public".</p></div>
-<div class="paragraph"><p>In the other cases, SNMP v3 is used. <em>secLevel</em> may be one
-of <code>SNMP_SEC_LEVEL_NOAUTH</code>, <code>SNMP_SEC_LEVEL_AUTHNOPRIV</code>
-or <code>SNMP_SEC_LEVEL_AUTHPRIV</code>.
-<em>secName</em> is the security name and must be non NULL.</p></div>
-<div class="paragraph"><p>If <em>secLevel</em> is set to <code>SNMP_SEC_LEVEL_AUTHNOPRIV</code>, <em>authPassword</em>
-must be non NULL.</p></div>
-<div class="paragraph"><p>If <em>secLevel</em> is set to <code>SNMP_SEC_LEVEL_AUTHPRIV</code>, <em>authPassword</em>
-and <em>privPassword</em> must be non NULL.</p></div>
-<div class="paragraph"><p>If <em>authProtocol</em> is NULL, MD5 protocol is used.
-Else you can set <em>authProtocol</em> to either "MD5" or "SHA".</p></div>
-<div class="paragraph"><p>If <em>privProtocol</em> is NULL, DES protocol is used.
-Else you can set <em>privProtocol</em> to either "AES" or "DES".</p></div>
-<div class="paragraph"><p><em>peername</em> and <em>handle</em> are used internally and do not need any
-initialization.</p></div>
+<div class="paragraph"><p>The <strong>meanwell_ntu</strong> driver provides support for Mean Well NTU series
+inverter/UPS units that implement the vendor&#8217;s ASCII serial protocol.</p></div>
+<div class="paragraph"><p>This driver is currently experimental and intended for early adopters.
+Reported variables and behavior may evolve as additional models and
+firmware revisions are tested.</p></div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_return_value">RETURN VALUE</h2>
+<h2 id="_supported_hardware">SUPPORTED HARDWARE</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>The <strong>nutscan_scan_snmp()</strong> function returns a pointer to a
-<code>nutscan_device_t</code> structure containing all found devices
-or NULL if an error occurs or no device is found.</p></div>
+<div class="paragraph"><p>The driver is known to work with the following NTU models:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+NTU-1200
+</p>
+</li>
+<li>
+<p>
+NTU-1700
+</p>
+</li>
+<li>
+<p>
+NTU-2200
+</p>
+</li>
+<li>
+<p>
+NTU-3200
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>Supported DC-voltage variants include:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+NTU-1200-112, -124, -148
+</p>
+</li>
+<li>
+<p>
+NTU-1700-112, -124, -148
+</p>
+</li>
+<li>
+<p>
+NTU-2200-112, -124, -148
+</p>
+</li>
+<li>
+<p>
+NTU-3200-212, -224, -248
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>Other NTU-series devices using the same protocol may also work.</p></div>
+<div class="paragraph"><p>Communication uses a 9600-8-N-1 serial connection via RS-232 or
+a USB-serial adapter seen by the operating system as a serial
+port, e.g. <code>/dev/ttyUSB0</code> (on Linux).</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_cables">CABLES</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>MEAN WELL p/n: RJ11-RS232</p></div>
+<div class="paragraph"><p>A straight-through serial cable (no modem control) is required.</p></div>
+<div class="paragraph"><p>USB-to-RS-232 adapters work as long as they expose a standard TTY device.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_configuration">CONFIGURATION</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>The driver is configured via <a href="ups.conf.html">ups.conf(5)</a>.</p></div>
+<div class="paragraph"><p>A minimal configuration:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>[meanwell-ntu]
+    driver = meanwell_ntu
+    port   = /dev/ttyUSB0
+    desc   = "Mean Well NTU-1200-124"</code></pre>
+</div></div>
+<div class="sect2">
+<h3 id="_required_parameters">Required parameters</h3>
+<div class="paragraph"><p>Example standard parameters:</p></div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>driver</strong>
+</dt>
+<dd>
+<p>
+Must be set to <code>meanwell_ntu</code>.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>port</strong>
+</dt>
+<dd>
+<p>
+The serial/USB tty device (e.g. <code>/dev/ttyS0</code>, <code>/dev/ttyUSB0</code>).
+</p>
+</dd>
+</dl></div>
+</div>
+<div class="sect2">
+<h3 id="_optional_parameters">Optional parameters</h3>
+<div class="paragraph"><p>This driver currently relies only on standard NUT parameters:</p></div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>pollinterval</strong>
+</dt>
+<dd>
+<p>
+Interval between status polls (default: 2 seconds).
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>synchronous</strong>
+</dt>
+<dd>
+<p>
+Serial I/O mode as documented in <a href="nutupsdrv.html">nutupsdrv(8)</a>.
+</p>
+</dd>
+</dl></div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_instant_commands">INSTANT COMMANDS</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>The following instant commands are supported when the connected hardware
+implements them (see <a href="upscmd.html">upscmd(8)</a>):</p></div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>load.off</strong>
+</dt>
+<dd>
+<p>
+Request shutdown of inverter output and load power-off
+(vendor command <code>C100000000000000</code>).
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>load.on</strong>
+</dt>
+<dd>
+<p>
+Request inverter output power-on
+(vendor command <code>C010000000000000</code>).
+</p>
+</dd>
+</dl></div>
+<div class="paragraph"><p>Support varies across firmware revisions; test before relying on them.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_status_and_variables">STATUS AND VARIABLES</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>The driver regularly sends the <code>Q</code> (status) and <code>I</code> (info) commands and
+maps their fields to standard NUT variables.</p></div>
+<div class="sect2">
+<h3 id="_selected_read_only_variables">Selected read-only variables</h3>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>battery.voltage</strong>
+</dt>
+<dd>
+<p>
+Battery/DC bus voltage (V).
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>battery.charge</strong>
+</dt>
+<dd>
+<p>
+Remaining capacity (%).
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>battery.alarm.voltage</strong>
+</dt>
+<dd>
+<p>
+Low-voltage alarm threshold (V).
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>battery.shutdown.voltage</strong>
+</dt>
+<dd>
+<p>
+Low-voltage shutdown threshold (V).
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>input.voltage</strong>
+</dt>
+<dd>
+<p>
+Utility AC input voltage (non-zero in line or bypass mode).
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>output.voltage</strong>
+</dt>
+<dd>
+<p>
+Inverter output voltage (V).
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>output.frequency</strong>
+</dt>
+<dd>
+<p>
+Output frequency when running on battery (Hz).
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>ups.temperature</strong>
+</dt>
+<dd>
+<p>
+Inverter temperature (°C).
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>ups.load</strong>
+</dt>
+<dd>
+<p>
+Approximate load percentage, derived from PPP bits.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>device.mfr</strong>
+</dt>
+<dd>
+<p>
+Manufacturer string (typically <code>MEANWELL</code>).
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>device.model</strong>, <strong>ups.model</strong>
+</dt>
+<dd>
+<p>
+Model descriptor (e.g. <code>NTU-1200-124</code>).
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>device.serial</strong>
+</dt>
+<dd>
+<p>
+Serial number when reported.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>device.firmware</strong>
+</dt>
+<dd>
+<p>
+Firmware revision string.
+</p>
+</dd>
+</dl></div>
+</div>
+<div class="sect2">
+<h3 id="_ups_status_flags">UPS status flags</h3>
+<div class="paragraph"><p>The NTU protocol exposes a 19-bit status word.</p></div>
+<div class="paragraph"><p>The driver maps selected bits into <code>ups.status</code> keywords:</p></div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>OB</strong>
+</dt>
+<dd>
+<p>
+On battery / inverter mode.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>BYPASS</strong>
+</dt>
+<dd>
+<p>
+Bypass mode active.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>OL</strong>
+</dt>
+<dd>
+<p>
+Utility present / online.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>LB</strong>
+</dt>
+<dd>
+<p>
+Battery low.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>OVER</strong>
+</dt>
+<dd>
+<p>
+Over-temperature condition.
+</p>
+</dd>
+</dl></div>
+<div class="paragraph"><p>The raw bit fields are also exported as informational variables such as
+<strong>battery.low</strong>, <strong>utility.present</strong>, <strong>bypass.mode</strong>, <strong>overtemp</strong>, etc.</p></div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_limitations">LIMITATIONS</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>This driver is marked experimental:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+Protocol interpretation based on limited test samples.
+</p>
+</li>
+<li>
+<p>
+Some fields in <code>Q</code>/<code>I</code> responses are currently unused.
+</p>
+</li>
+<li>
+<p>
+Load and capacity reporting may be refined with further testing.
+</p>
+</li>
+<li>
+<p>
+Shutdown and restart behavior is basic and may not integrate with all
+  NUT power-path logic.
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>For debugging, run the driver with high verbosity, e.g.:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>/usr/local/ups/bin/meanwell_ntu -DDDDD -a meanwell-ntu</code></pre>
+</div></div>
+<div class="paragraph"><p>Please include model, firmware version, and operating mode details when
+reporting issues.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_implementation">IMPLEMENTATION</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Note the protocol on surface seems related to Megatec Qx,
+but is sufficiently different to warrant a separate driver
+and not a sub-driver of e.g. <a href="nutdrv_qx.html">nutdrv_qx(8)</a>.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_author">AUTHOR</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>The <strong>meanwell_ntu</strong> driver was contributed by Jonathan Hite.</p></div>
+<div class="paragraph"><p>Additional improvements may be provided by the NUT community.
+See the project repository for revision history.</p></div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
-<div class="paragraph"><p><a href="nutscan_init.html">nutscan_init(3)</a>,
-<a href="nutscan_scan_usb.html">nutscan_scan_usb(3)</a>, <a href="nutscan_scan_xml_http_range.html">nutscan_scan_xml_http_range(3)</a>,
-<a href="nutscan_scan_nut.html">nutscan_scan_nut(3)</a>, <a href="nutscan_scan_avahi.html">nutscan_scan_avahi(3)</a>,
-<a href="nutscan_scan_ipmi.html">nutscan_scan_ipmi(3)</a>,
-<a href="nutscan_display_sanity_check.html">nutscan_display_sanity_check(3)</a>,
-<a href="nutscan_display_sanity_check_serial.html">nutscan_display_sanity_check_serial(3)</a>,
-<a href="nutscan_display_ups_conf_with_sanity_check.html">nutscan_display_ups_conf_with_sanity_check(3)</a>,
-<a href="nutscan_display_ups_conf.html">nutscan_display_ups_conf(3)</a>,
-<a href="nutscan_display_parsable.html">nutscan_display_parsable(3)</a>, <a href="nutscan_new_device.html">nutscan_new_device(3)</a>,
-<a href="nutscan_free_device.html">nutscan_free_device(3)</a>, <a href="nutscan_add_option_to_device.html">nutscan_add_option_to_device(3)</a>,
-<a href="nutscan_add_device_to_device.html">nutscan_add_device_to_device(3)</a>, <a href="nutscan_scan_eaton_serial.html">nutscan_scan_eaton_serial(3)</a>,
-<a href="nutscan_init_ip_ranges.html">nutscan_init_ip_ranges(3)</a>,
-<a href="nutscan_free_ip_ranges.html">nutscan_free_ip_ranges(3)</a>,
-<a href="nutscan_add_ip_range.html">nutscan_add_ip_range(3)</a>,
-<a href="nutscan_cidr_to_ip.html">nutscan_cidr_to_ip(3)</a></p></div>
+<div class="paragraph"><p><a href="ups.conf.html">ups.conf(5)</a>,
+<a href="nutupsdrv.html">nutupsdrv(8)</a>,
+<a href="upsd.html">upsd(8)</a>,
+<a href="upsmon.html">upsmon(8)</a>,
+<a href="upsc.html">upsc(8)</a>,
+<a href="upscmd.html">upscmd(8)</a></p></div>
+<div class="sect2">
+<h3 id="_internet_resources">Internet resources:</h3>
+<div class="ulist"><ul>
+<li>
+<p>
+The NUT (Network UPS Tools) home page: <a href="https://www.networkupstools.org/">https://www.networkupstools.org/</a>
+</p>
+</li>
+<li>
+<p>
+Vendor documentation: <a href="https://www.meanwell.com/Upload/PDF/NTS,NTU-E.pdf">https://www.meanwell.com/Upload/PDF/NTS,NTU-E.pdf</a>
+</p>
+</li>
+</ul></div>
+</div>
 </div>
 </div>
 </div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-12-03 14:45:41 UTC -- Network UPS Tools 2.8.4.888
+Last updated 2025-12-03 14:45:42 UTC -- Network UPS Tools 2.8.4.888
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>
