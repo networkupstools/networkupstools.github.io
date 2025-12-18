@@ -393,7 +393,58 @@ string, but not any numbers in the suffix):</p><pre class="screen">:; NUT_VERSIO
    NUT_VERSION_FORCED=3.014.00159.02653.05-002658+gdeadbeef+v01.002.0003 \
    NUT_VERSION_STRIP_LEADING_ZEROES=true \
    gitlog2version.sh 2&gt;/dev/null
-3.14.159.2653.5-002658+gdeadbeef+v01.002.0003</pre></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_variables_propagated_by_configure_ac"></a>3.4. Variables propagated by configure.ac</h3></div></div></div><div class="table"><a id="idm1114"></a><p class="title"><strong>Table 5. Values reported via <code class="literal">NUT_VERSION_QUERY</code></strong></p><div class="table-contents"><table class="table" summary="Values reported via NUT_VERSION_QUERY" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; "><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>Variable</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>Description</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">Example (development and release)</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">PACKAGE_VERSION</code></p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>Argument to <code class="literal">AC_INIT</code> determined by
+3.14.159.2653.5-002658+gdeadbeef+v01.002.0003</pre></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_using_semver_compare_sh"></a>3.4. Using semver-compare.sh</h3></div></div></div><p>As a result of work on <code class="literal">gitlog2version.sh</code>, and specifically the next-level
+problems of managing the data set of multiple NUT SEMVER strings (sorting,
+comparisons, etc.), another helper script was born: the <code class="literal">semver-compare.sh</code>.</p><p>It contains the implementation of "expanded variants" of the versions and
+"stripping leading zeroes" used above by the original <code class="literal">gitlog2version.sh</code>
+script, as well as more features used by, for example, the <code class="literal">Makefile.am</code>
+recipes for <a class="ulink" href="https://github.com/networkupstools/nut-website" target="_top">nut-website</a>
+which deal with sorted lists of NUT versions for the DDL page rendering
+(reports about same device model which originated from different NUT releases).</p><p>Common options for scripted actions are (must be mentioned before the action):</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+<code class="literal">{--width|-w} NUM</code>
+</span></dt><dd>
+Pad semver components with leading zeroes to this width (default/min <code class="literal">6</code>).
+</dd><dt><span class="term">
+<code class="literal">{--min-components} NUM</code>
+</span></dt><dd><p class="simpara">
+Ensure there are at least so many components - add <code class="literal">.0</code> in the end if
+needed (NUT SEMVER default is <code class="literal">5</code> for <code class="literal">expand</code> action).
+</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>Not implemented yet for stripping extra zeroed components from a semver.</p></div></dd></dl></div><p>Actions which can be repeated on same command line include:</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+<code class="literal">semver-compare.sh [OPTS] expand "SEMVER"</code>
+</span></dt><dd>
+Pad components in semver start of string with leading zeroes up to desired
+width.
+</dd><dt><span class="term">
+<code class="literal">semver-compare.sh [OPTS] strip "SEMVER"</code>
+</span></dt><dd>
+Strip leading zeroes from components in semver start of string.
+</dd><dt><span class="term">
+<code class="literal">semver-compare.sh [OPTS] --sortable-expand "SEMVER"</code>
+</span></dt><dd>
+Print a tab-separated line with expanded variant in first column,
+and original in second (so you can <code class="literal">sort</code> by the first column).
+</dd><dt><span class="term">
+<code class="literal">semver-compare.sh [OPTS] --sortable-strip "SEMVER"</code>
+</span></dt><dd>
+Print a tab-separated line with original (presumed expanded) variant in first
+column, and stripped in second (so you can <code class="literal">sort</code> by the first column).
+</dd></dl></div><p>Actions which end the script execution include:</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+<code class="literal">semver-compare.sh [OPTS] sort [-r] "SEMVER" "SEMVER"...</code>
+</span></dt><dd>
+Return sorted (via expansion) list of original semver strings (till end
+of args), in their original spelling (with leading zeroes, if present,
+not stripped away).
+</dd><dt><span class="term">
+<code class="literal">semver-compare.sh [OPTS] {test|[} "SEMVER1" {-gt|-ge|-lt|-le|-eq|=|==|-ne|!=|&lt;&gt;|&lt;|&lt;=|&gt;|&gt;=} "SEMVER2"</code>
+</span></dt><dd><p class="simpara">
+Shell-style syntax to compare two semver strings (via expanded variants).
+</p><p class="simpara">Note that <code class="literal">--min-components</code> can play a role here (e.g. is <code class="literal">1.2.3</code> equal
+to <code class="literal">1.2.3.0.0</code>? You can specify whether and how many zeroes can be added
+so it would be or not be equal).</p></dd></dl></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>If you would <code class="literal">sort</code> expanded semver strings yourself, be sure
+to NOT mention the numeric sorting option — it misbehaves for strings
+which do not look like exactly an integer or floating-point number.</p></div><p>For portability and non-regression, the functionality of both scripts is
+extensively tested by <code class="literal">tests/nut-driver-enumerator-test.sh</code> in the NUT code
+base.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_variables_propagated_by_configure_ac"></a>3.5. Variables propagated by configure.ac</h3></div></div></div><div class="table"><a id="idm1186"></a><p class="title"><strong>Table 5. Values reported via <code class="literal">NUT_VERSION_QUERY</code></strong></p><div class="table-contents"><table class="table" summary="Values reported via NUT_VERSION_QUERY" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; "><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>Variable</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>Description</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">Example (development and release)</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">PACKAGE_VERSION</code></p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>Argument to <code class="literal">AC_INIT</code> determined by
                           <code class="literal">NUT_VERSION_QUERY=VER50 gitlog2version.sh</code></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 dev: <code class="literal">2.8.2.695.1</code>
 </li><li class="listitem">
@@ -429,7 +480,7 @@ release: <code class="literal">https://www.networkupstools.org/historic/v2.8.2</
 <code class="literal">"release"</code>
 </li><li class="listitem">
 <code class="literal">"development iteration"</code>
-</li></ul></div></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_variables_propagated_by_nut_version_h"></a>3.5. Variables propagated by nut_version.h</h3></div></div></div><div class="table"><a id="idm1263"></a><p class="title"><strong>Table 6. Values encoded via <code class="literal">include/nut_version.h</code>, generated by <code class="literal">include/Makefile.am</code></strong></p><div class="table-contents"><table class="table" summary="Values encoded via include/nut_version.h, generated by include/Makefile.am" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; "><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>Variable</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>Description</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">Example (development and release)</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">#define NUT_VERSION_MACRO "$NUT_VERSION"</code></p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>Determined by default <code class="literal">gitlog2version.sh</code> (no <code class="literal">NUT_VERSION_QUERY</code>)
+</li></ul></div></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_variables_propagated_by_nut_version_h"></a>3.6. Variables propagated by nut_version.h</h3></div></div></div><div class="table"><a id="idm1335"></a><p class="title"><strong>Table 6. Values encoded via <code class="literal">include/nut_version.h</code>, generated by <code class="literal">include/Makefile.am</code></strong></p><div class="table-contents"><table class="table" summary="Values encoded via include/nut_version.h, generated by include/Makefile.am" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; "><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>Variable</p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>Description</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><pre class="literallayout">Example (development and release)</pre></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">#define NUT_VERSION_MACRO "$NUT_VERSION"</code></p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p>Determined by default <code class="literal">gitlog2version.sh</code> (no <code class="literal">NUT_VERSION_QUERY</code>)
                   at the moment of latest build, or (as fallback) <code class="literal">PACKAGE_VERSION</code>
                   set during the last run of <code class="literal">configure</code> script</p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 <code class="literal">2.8.2.695.1</code>
@@ -447,7 +498,7 @@ release: <code class="literal">https://www.networkupstools.org/historic/v2.8.2</
 <code class="literal">1</code> if <code class="literal">$GITREV_IS_PRERELEASE</code>
 </li><li class="listitem">
 <code class="literal">0</code> otherwise
-</li></ul></div></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_use_in_c_code"></a>3.6. Use in C code</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_common_nut_version_c"></a>common-nut_version.c</h4></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></td></tr></tbody></table></div></div><br class="table-break" /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_use_in_c_code"></a>3.7. Use in C code</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_common_nut_version_c"></a>common-nut_version.c</h4></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 The <code class="literal">NUT_VERSION_MACRO</code> is used in <code class="literal">common/common-nut_version.c</code> and further
   made known to all code base as a static string <code class="literal">UPS_VERSION</code> linked via
   <code class="literal">libcommon*.la</code> internal libraries.
@@ -462,7 +513,7 @@ Method <code class="literal">describe_NUT_VERSION_once()</code> prepares the str
 Method <code class="literal">suggest_doc_links()</code> prepares a uniform bit of text for driver and
   tool programs to report in their <code class="literal">help()</code>/<code class="literal">usage()</code> methods, to refer to
   their manual page under the <code class="literal">NUT_WEBSITE_BASE</code>.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_man_pages"></a>Man pages</h4></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_use_in_resource_files_and_documentation"></a>3.8. Use in resource files and documentation</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_man_pages"></a>Man pages</h4></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 Manual pages and other documentation consume the <code class="literal">PACKAGE_VERSION</code>,
   <code class="literal">PACKAGE_VERSION</code> and <code class="literal">NUT_WEBSITE_BASE</code> as <code class="literal">asciidoc</code> attributes
   when rendering HTML/PDF/man document formats.
@@ -478,4 +529,4 @@ The <code class="literal">PACKAGE_VERSION</code> and <code class="literal">NUT_W
 Version information is propagated into PyPI packages for the <code class="literal">PyNUTClient</code>
   module.
 </li></ul></div></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-12-17 10:42:19 -- Network UPS Tools 2.8.4.888</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="design.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="developers.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2025-12-18 11:49:17 -- Network UPS Tools 2.8.4.888</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="design.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="developers.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
