@@ -5,7 +5,7 @@
 <head>
 <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
 <meta name="generator" content="AsciiDoc 10.2.0" />
-<title>UPSD.USERS(5)</title>
+<title>MUST_EP2000Pro(8)</title>
 <style type="text/css">
 /* Shared CSS for AsciiDoc xhtml11 and html5 backends */
 
@@ -760,200 +760,206 @@ a.anchorjs-link:visited {
 </head>
 <body class="article">
 <div id="header">
-<h1>UPSD.USERS(5)</h1>
+<h1>MUST_EP2000Pro(8)</h1>
 </div>
 <div id="content">
 <div class="sect1">
 <h2 id="_name">NAME</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>upsd.users - Administrative user definitions for NUT upsd data server</p></div>
+<div class="paragraph"><p>must_ep2000pro - Driver for MUST EP2000Pro UPS with
+RS-232 serial Modbus connection.</p></div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_description">DESCRIPTION</h2>
+<h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>Administrative commands such as setting variables and the instant
-commands are powerful, and access to them needs to be restricted.  This
-file defines who may access them, and what is available.</p></div>
+<div class="paragraph"><p><strong>must_ep2000pro</strong> -h</p></div>
+<div class="paragraph"><p><strong>must_ep2000pro</strong> -a <em>DEVICE_NAME</em> [<em>OPTIONS</em>]</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">This man page only documents the hardware-specific features of the
+<em>must_ep2000pro</em> driver.  For information about the core driver, see
+<a href="nutupsdrv.html">nutupsdrv(8)</a>.</td>
+</tr></table>
+</div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_important_notes">IMPORTANT NOTES</h2>
+<h2 id="_supported_hardware">SUPPORTED HARDWARE</h2>
 <div class="sectionbody">
+<div class="paragraph"><p>This driver supports MUST EP2000Pro compatible, line-interactive
+UPS with the following characteristics:</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+12V or 24V external battery
+</p>
+</li>
+<li>
+<p>
+Connection: RS-232 or USB (via RS232-to-USB converter dongle)
+</p>
+</li>
+</ol></div>
+<div class="paragraph"><p>Some models that may be covered by this driver:</p></div>
 <div class="ulist"><ul>
 <li>
 <p>
-Contents of this file should be pure ASCII (character codes
-  not in range would be ignored with a warning message).
+Original EP200Pro
 </p>
 </li>
 <li>
 <p>
-Balance the run-time user permissions to access the file (and perhaps the
-  directory it is in) for only <code>upsd</code> to be able to read it; write access
-  is not needed. It is common to use <code>chown root:nut</code> and <code>chmod 640</code>
-  to set up acceptable file permissions.
+Energy Smart.2
 </p>
+</li>
+<li>
+<p>
+Luxeon UPS-500ZR
+</p>
+</li>
+<li>
+<p>
+Bineos EP20-1000 PRO
+</p>
+</li>
+<li>
+<p>
+any other work with original program from MUST
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>Currently, it has only been tested on the following model:</p></div>
 <div class="ulist"><ul>
 <li>
 <p>
-Packages (and build recipes) typically prepare one set of user and
-    group accounts for NUT. Custom builds with minimal configuration might
-    even use <code>nobody:nogroup</code> or similar, which is inherently insecure.
-</p>
-</li>
-<li>
-<p>
-On systems with extra security concerns, NUT drivers and data server
-    should run as separate user accounts which would be members of one
-    same group for shared access to local Unix socket files and the
-    directory they are in, but different groups for configuration file
-    access. This would need some daemons to use customized <code>user</code>, <code>group</code>,
-    <code>RUN_AS_USER</code> and/or <code>RUN_AS_GROUP</code> settings to override the single
-    built-in value.
-</p>
-</li>
-<li>
-<p>
-Note that the monitoring, logging, etc. clients are networked-only.
-    They do not need access to these files and directories, and can run
-    as an independent user and group altogether.
-</p>
-</li>
-<li>
-<p>
-Keep in mind the security of also any backup copies of this file,
-    e.g. the archive files it might end up in.
+Energy Smart.2 600W
 </p>
 </li>
 </ul></div>
-</li>
-</ul></div>
+<div class="paragraph"><p>Generally, these device do not serve any identification data, so
+autodetection is not possible. Only one documented piece of info is
+"software version" with unknown meaning.</p></div>
+<div class="paragraph"><p>The <code>must_ep2000pro</code> driver uses the libmodbus project, for Modbus
+implementation.</p></div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_sections">SECTIONS</h2>
+<h2 id="_installation">INSTALLATION</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>Each user gets its own section.  The fields in that section set the
-parameters associated with that user&#8217;s privileges.  The section begins
-with the name of the user in brackets, and continues until the next user
-name in brackets or EOF.  These users are independent of <code>/etc/passwd</code>
-or other OS account databases.</p></div>
-<div class="paragraph"><p>Here are some examples to get you started:</p></div>
+<div class="paragraph"><p>This driver should be built by default if libmodbus and development headers
+are available. You can force the <code>configure</code> script to build it with the
+following arguments:</p></div>
 <div class="literalblock">
 <div class="content">
-<pre><code>[admin]
-        password = mypass
-        actions = set
-        actions = fsd
-        instcmds = all</code></pre>
+<pre><code>:; ./configure --with-serial=yes --with-modbus=yes</code></pre>
 </div></div>
-<div class="literalblock">
-<div class="content">
-<pre><code>[pfy]
-        password = duh
-        instcmds = test.panel.start
-        instcmds = test.panel.stop</code></pre>
-</div></div>
-<div class="literalblock">
-<div class="content">
-<pre><code>[upswired]
-        password = blah
-        upsmon primary</code></pre>
-</div></div>
-<div class="literalblock">
-<div class="content">
-<pre><code>[observer]
-        password = abcd
-        upsmon secondary</code></pre>
-</div></div>
+<div class="paragraph"><p>You also need to give proper (R/W) permissions on the local serial device
+file to allow the NUT driver run-time user to access it. This may need
+additional setup for start-up scripting, udev or upower rules, to apply
+the rights on every boot&#8201;&#8212;&#8201;especially if your device nodes are tracked
+by a virtual filesystem.</p></div>
+<div class="paragraph"><p>For example, a USB-to-serial converter can be identified as <code>/dev/ttyACM0</code>
+or <code>/dev/ttyUSB0</code> on Linux, or <code>/dev/ttyU0</code> on FreeBSD (note the capital "U").
+A built-in serial port can be identified as <code>/dev/ttyS0</code> on Linux or one of
+<code>/dev/cua*</code> names on FreeBSD.</p></div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_fields">FIELDS</h2>
+<h2 id="_extra_arguments">EXTRA ARGUMENTS</h2>
 <div class="sectionbody">
+<div class="paragraph"><p>This driver also supports the following optional settings:</p></div>
 <div class="dlist"><dl>
 <dt class="hdlist1">
-<strong>password</strong>
+<strong>lowbatt</strong>=<em>num</em>
 </dt>
 <dd>
 <p>
-Set the password for this user.
-</p>
-</dd>
-<dt class="hdlist1">
-<strong>actions</strong>
-</dt>
-<dd>
-<p>
-Allow the user to do certain things with <code>upsd</code>.  To specify multiple
-actions, use multiple instances of the <strong>actions</strong> field.  Valid
-actions are:
-</p>
-<div class="openblock">
-<div class="content">
-<div class="dlist"><dl>
-<dt class="hdlist1">
-SET
-</dt>
-<dd>
-<p>
-change the value of certain variables in the UPS
-</p>
-</dd>
-<dt class="hdlist1">
-FSD
-</dt>
-<dd>
-<p>
-set the forced shutdown flag in the UPS.  This is
-          equivalent to an "on battery + low battery" situation
-          for the purposes of monitoring.
+Set the value of <code>battery.charge.low</code> to <em>num</em>. Device itself has only switch-off
+on low battery voltage.
 </p>
 </dd>
 </dl></div>
-</div></div>
-<div class="paragraph"><p>The list of actions is expected to grow in the future.</p></div>
-</dd>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_instant_commands">INSTANT COMMANDS</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>This driver supports some instant commands (see <a href="upscmd.html">upscmd(8)</a>):</p></div>
+<div class="dlist"><dl>
 <dt class="hdlist1">
-<strong>instcmds</strong>
+<strong>beeper.enable</strong>
 </dt>
 <dd>
 <p>
-Let a user initiate specific instant commands.  Use "ALL" to grant all
-commands automatically.  To specify multiple commands, use multiple
-instances of the <strong>instcmds</strong> field.  For the full list of what your UPS
-supports, use <code>upscmd -l</code>.
+Enable the UPS beeper
 </p>
-<div class="paragraph"><p>The <code>cmdvartab</code> file supplied with the NUT distribution contains a list
-of most of the generally known command names.</p></div>
 </dd>
 <dt class="hdlist1">
-<strong>upsmon</strong>
+<strong>beeper.disable</strong>
 </dt>
 <dd>
 <p>
-Add the necessary actions for an <code>upsmon</code> process, and can be viewed as a
-role of a particular client instance to work with this data server instance.
-This is either set to <em>primary</em> (may request FSD) or <em>secondary</em> (follows
-critical situations to shut down when needed).
+Disable the UPS beeper
 </p>
-<div class="paragraph"><p>Do not attempt to assign actions to <code>upsmon</code> by hand, as you may miss
-something important.  This method of designating a "upsmon user" was
-created so internal capabilities could be changed later on without
-breaking existing installations (potentially using actions that are
-not exposed for direct assignment).</p></div>
+</dd>
+<dt class="hdlist1">
+<strong>shutdown.return</strong>
+</dt>
+<dd>
+<p>
+Turn off the load and wait for the power to return
+</p>
 </dd>
 </dl></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_known_problems">KNOWN PROBLEMS</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>If you run the <strong>shutdown.return</strong> command with mains present it does nothing.</p></div>
+<div class="paragraph"><p>If you run the <strong>shutdown.return</strong> command without mains present it immediately
+powers off the device.</p></div>
+<div class="paragraph"><p>There is no setting in device documentation to specify a shutdown delay.</p></div>
+<div class="paragraph"><p>On development side: to write even a single register, you must use the
+"write multiple registers" command.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_author">AUTHOR</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Mikhail Mironov &lt;<a href="mailto:mike@darkmike.ru">mike@darkmike.ru</a>&gt;</p></div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
-<div class="paragraph"><p><a href="upsd.html">upsd(8)</a>, <a href="upsd.conf.html">upsd.conf(5)</a></p></div>
+<div class="sect2">
+<h3 id="_the_core_driver">The core driver:</h3>
+<div class="paragraph"><p><a href="nutupsdrv.html">nutupsdrv(8)</a></p></div>
+</div>
 <div class="sect2">
 <h3 id="_internet_resources">Internet resources:</h3>
-<div class="paragraph"><p>The NUT (Network UPS Tools) home page: <a href="https://www.networkupstools.org/">https://www.networkupstools.org/</a></p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+The NUT (Network UPS Tools) home page: <a href="https://www.networkupstools.org/">https://www.networkupstools.org/</a>
+</p>
+</li>
+<li>
+<p>
+libmodbus home page: <a href="http://libmodbus.org">http://libmodbus.org</a>
+</p>
+</li>
+<li>
+<p>
+Simple data reader for similar device: <a href="https://github.com/reverieline/ep2000pro">https://github.com/reverieline/ep2000pro</a>
+</p>
+</li>
+</ul></div>
 </div>
 </div>
 </div>
