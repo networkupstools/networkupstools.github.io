@@ -790,21 +790,23 @@ Windows system as applicable.</p></div>
 <div class="paragraph"><p>Beside launching or stopping a set of the NUT programs in certain cases,
 this helper program also allows to register (or un-register) itself as a
 Windows service. To actually manage the service from command line you can
-execute the Windows <code>net</code> command, e.g.:</p></div>
+execute the Windows <code>net</code> or <code>sc</code> commands, e.g.:</p></div>
 <div class="listingblock">
 <div class="content">
 <pre><code>net stop "Network UPS Tools"
-net start "Network UPS Tools"</code></pre>
+net start "Network UPS Tools"
+sc query "Network UPS Tools"</code></pre>
 </div></div>
 <div class="paragraph"><p>You can also execute <code>nut start</code> to automatically register the service
 (if not yet registered) and start it, and <code>nut stop</code> to stop the service
-(if registered and running).</p></div>
+(if registered and running), and <code>nut status</code> to check on it (if registered).</p></div>
 <div class="paragraph"><p>Note that for a Windows machine to act as a NUT data server for further
 clients, you may have to add Windows Firewall rules to allow incoming
 connections (by default to port <code>3493/tcp</code>), e.g. using PowerShell to
 elevate (alternately right-click a "Command Prompt" shortcut and select
 "Run as administrator"), and execute <code>netsh</code> to actually configure the
-needed "Advanced Firewall" rule:</p></div>
+needed "Advanced Firewall" rule (align the path to binary with your
+installation):</p></div>
 <div class="listingblock">
 <div class="content">
 <pre><code>REM Elevate to administrator status then run netsh to add firewall rule.
@@ -908,6 +910,23 @@ and try to start this service.
 Try to stop a Windows service called "Network UPS Tools".
 </p>
 </dd>
+<dt class="hdlist1">
+<strong>restart</strong>
+</dt>
+<dd>
+<p>
+Try to stop a Windows service called "Network UPS Tools" (do not fail if
+we can not), then try to install it (if not yet done) and start it.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>status</strong>
+</dt>
+<dd>
+<p>
+Try to query status of a Windows service called "Network UPS Tools".
+</p>
+</dd>
 </dl></div>
 </div>
 </div>
@@ -920,7 +939,13 @@ running with verbose debug mode) or when exiting after an attempted service
 initialization while not running in a service context.</p></div>
 <div class="paragraph"><p>Most of normal logging from <strong>nut.exe</strong> goes to the Windows Event Log.</p></div>
 <div class="paragraph"><p>Launched NUT programs may emit messages of their own; their fate when no
-console is attached is questionable.</p></div>
+console is attached is questionable. The service may be cheerfully "running"
+(as long as <code>MODE=...</code> is set in <code>nut.conf</code>), but specific daemons under it
+might refuse to start. For example, it may be troublesome to see (without
+perusing the Windows Event Log, Applications section) whether they are missing
+some configuration file or entry. You may have to launch respective daemons
+manually to check what they complain about, or use <strong>nut.exe -N</strong> mode,
+all with raised NUT debug verbosity settings.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -939,7 +964,7 @@ console is attached is questionable.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-12-23 14:55:01 UTC -- Network UPS Tools 2.8.4.993
+Last updated 2025-12-27 23:47:18 UTC -- Network UPS Tools 2.8.4.993
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>
