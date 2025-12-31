@@ -425,7 +425,18 @@ Default <code class="literal">PIDPATH</code> is now more strictly <code class="l
 </li><li class="listitem">
 Augmented <code class="literal">nut.exe</code> launcher with <code class="literal">status</code> and <code class="literal">restart</code> actions, and
    general ability to debug-log the activities during service management
-   operations. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3235" target="_top">PR #3235</a>]
+   operations. (Re-)registration of the "Network UPS Tools" service should
+   now populate a nice description of it. The <code class="literal">-U</code> (uninstall) action should
+   now also try to stop the service first. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3235" target="_top">PR #3235</a>]
+</li><li class="listitem">
+Fixed <code class="literal">LISTEN *</code> handling for <code class="literal">upsd.exe</code> in NUT for Windows builds. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3237" target="_top">PR #3237</a>]
+</li><li class="listitem">
+Revised WIN32 <code class="literal">WSAStartup()</code> and registration of <code class="literal">atexit(WSACleanup)</code> to
+   only be done once per program (and cleanups to be always registered); this
+   impacts the C <code class="literal">libupsclient</code> and C++ <code class="literal">libnutclient</code> libraries (and so most
+   NUT clients and tools which use the former, and <code class="literal">nutconf</code> which uses the
+   latter), the <code class="literal">apcupsd</code> driver, <code class="literal">upsd</code> data server, and <code class="literal">nut-scanner</code> tool.
+   [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3237" target="_top">PR #3237</a>]
 </li><li class="listitem">
 Revised CI and deliverable scripts, and Makefile recipes, to not use
    the verbatim <code class="literal">grep -E</code> (loudly preferred by newer systems, but may be
@@ -4979,4 +4990,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.33. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2025-12-30 18:17:06 -- Network UPS Tools 2.8.4.993</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2025-12-31 14:49:00 -- Network UPS Tools 2.8.4.1052</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
