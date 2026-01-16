@@ -772,9 +772,37 @@ a.anchorjs-link:visited {
 <div class="sect1">
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>This file is used by <a href="upsstats.cgi.html">upsstats.cgi(8)</a> to generate status pages.
-Certain commands are recognized, and will be replaced with various
+<div class="paragraph"><p>This file, and a similarly structured <code>upsstats-single.html</code> for certain
+use-cases, are used by <a href="upsstats.cgi.html">upsstats.cgi(8)</a> to generate NUT CGI status
+pages. Certain commands are recognized, and will be replaced with various
 status elements on the fly.</p></div>
+<div class="paragraph"><p>As a bit of a safety check, the file must start with <code>@NUT_UPSSTATS_TEMPLATE@</code>
+command.</p></div>
+<div class="paragraph"><p>For details about configuring some popular web servers to run NUT CGI
+programs, please see the <a href="upsset.conf.html">upsset.conf(5)</a> page.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">This template file should be placed in the NUT configuration location.
+If you use a dedicated copy of that directory or one not discovered by
+the binaries relocated into your web server&#8217;s <code>cgi-bin</code> locations (such
+as with NUT for Windows builds, defaulting to seek in locations relative
+to each binary), consider exporting the <code>NUT_CONFPATH</code> environment variable
+from the web server.</td>
+</tr></table>
+</div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">On platforms with required program file name extensions, like Windows,
+you may have to use e.g. a <code>*.cgi.exe</code> extension for the programs in HTML
+template files (<code>UPSSTATSPATH</code>, <code>UPSIMAGEPATH</code>).</td>
+</tr></table>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -895,6 +923,43 @@ This UPS knows nothing, how annoying.
 <div class="sectionbody">
 <div class="dlist"><dl>
 <dt class="hdlist1">
+<strong>@NUT_UPSSTATS_TEMPLATE [args]@</strong>
+</dt>
+<dd>
+<p>
+The template file MUST start exactly with <code>@NUT_UPSSTATS_TEMPLATE@</code> or
+<code>@NUT_UPSSTATS_TEMPLATE Some text@</code> so that <a href="upsstats.cgi.html">upsstats.cgi(8)</a> is
+not coerced into showing arbitrary files.
+</p>
+<div class="paragraph"><p>Currently the command and its arguments are otherwise ignored; templates
+shipped with NUT use the argument values "default" and "single" effectively
+as a comment for debugging/troubleshooting.</p></div>
+</dd>
+<dt class="hdlist1">
+<strong>@UPSSTATSPATH filename@</strong>
+</dt>
+<dd>
+<p>
+URI to the <a href="upsstats.cgi.html">upsstats.cgi(8)</a> program placed into HTML references.
+Default is the program&#8217;s name, making it a link relative to the currently
+displayed page in the browser.
+</p>
+<div class="paragraph"><p>May have to include the platform-specific program file name extension,
+like <code>@UPSSTATSPATH upsstats.cgi.exe@</code></p></div>
+</dd>
+<dt class="hdlist1">
+<strong>@UPSIMAGEPATH filename@</strong>
+</dt>
+<dd>
+<p>
+URI to the <a href="upsimage.cgi.html">upsimage.cgi(8)</a> program placed into HTML references.
+Default is the program&#8217;s name, making it a link relative to the currently
+displayed page in the browser.
+</p>
+<div class="paragraph"><p>May have to include the platform-specific program file name extension,
+like <code>@UPSIMAGEPATH upsimage.cgi.exe@</code></p></div>
+</dd>
+<dt class="hdlist1">
 <strong>@AMBTEMP@</strong>
 </dt>
 <dd>
@@ -941,8 +1006,32 @@ Insert the host&#8217;s description from <a href="hosts.conf.html">hosts.conf(5)
 </dt>
 <dd>
 <p>
-Insert a link to upsstats.cgi with the "host" variable set to the
-current UPS.  This is only useful within a FOREACHUPS block.
+Insert a HTML link to <a href="upsstats.cgi.html">upsstats.cgi(8)</a> with the "host" variable
+set to the current UPS.  This is only useful within a FOREACHUPS block.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>@TREELINK [Link text]@</strong>
+</dt>
+<dd>
+<p>
+Insert a HTML link to <a href="upsstats.cgi.html">upsstats.cgi(8)</a> with the "host" variable
+set to the current UPS and "treemode" enabled to show all data points
+as an HTML page.  This is primarily useful within a FOREACHUPS block,
+but also as an <code>upsstats-single.html</code> footer. If some "Link text" is not
+provided, it defaults to "All data".
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>@TREELINK_JSON [Link text]@</strong>
+</dt>
+<dd>
+<p>
+Insert a HTML link to <a href="upsstats.cgi.html">upsstats.cgi(8)</a> with the "host" variable
+set to the current UPS and "treemode" enabled to show all data points
+as a JSON document.  This is primarily useful within a FOREACHUPS block,
+but also as an <code>upsstats-single.html</code> footer. If some "Link text" is not
+provided, it defaults to "JSON".
 </p>
 </dd>
 <dt class="hdlist1">
@@ -1308,7 +1397,7 @@ rules and techniques as documented here.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-01-10 17:53:34 UTC -- Network UPS Tools 2.8.4.1058
+Last updated 2026-01-16 14:47:57 UTC -- Network UPS Tools 2.8.4.1142
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>

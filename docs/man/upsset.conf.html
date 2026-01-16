@@ -766,7 +766,8 @@ a.anchorjs-link:visited {
 <div class="sect1">
 <h2 id="_name">NAME</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>upsset.conf - Configuration for Network UPS Tools upsset.cgi</p></div>
+<div class="paragraph"><p>upsset.conf - Configuration for Network UPS Tools upsset.cgi
+and general description of web server setup for NUT CGI programs</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -775,6 +776,20 @@ a.anchorjs-link:visited {
 <div class="paragraph"><p>This file only does one job&#8201;&#8212;&#8201;it lets you convince <a href="upsset.cgi.html">upsset.cgi(8)</a>
 that your system&#8217;s CGI directory is secure.  The program will not run
 until this file has been properly defined.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">If you custom-build NUT for Windows, keep in mind the <code>--with-cgi-uri</code>
+configuration option.  It defaults to <code>/cgi-bin/nut</code> for POSIX builds and to
+plain <code>/cgi-nut</code> for Windows builds, to make them easier to integrate as
+part of existing web sites or as a dedicated web site, respectively.
+If there is a mismatch of this value for your particular deployment,
+check the <code>html/header.html</code> file to adjust the <code>a href</code> links to CGI
+programs to be opened in the bottom section (called <code>target=mainFrame</code>).</td>
+</tr></table>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -797,16 +812,23 @@ Contents of this file should be pure ASCII (character codes
 There is no rate limiting, as the program shuts down between every request.
 Such is the nature of CGI programs.</p></div>
 <div class="paragraph"><p>Credentials are provided to <code>upsset.cgi</code> as part of your browsing session,
-so it is highly recommended to set up HTTPS on the web server; ways to do
-so are outside the scope of this document.</p></div>
-<div class="paragraph"><p>Normally, attackers would not be able to access your <a href="upsd.html">upsd(8)</a> server
-directly, as it would be protected by the LISTEN directives in your
+so it is highly recommended to set up HTTPS on the web server.
+You may also want to generally use web-server based authentication (whether
+basic user name and password, or LDAP, or client certificate, etc.), or set
+up virtual host listeners with unpublished host names ("security by obscurity"),
+to restrict access to NUT CGI programs generally.
+Ways to do so are specific to your chosen web server implementation and are
+beyond the scope of this document.</p></div>
+<div class="paragraph"><p>Normally, attackers would not be able to access your <a href="upsd.html">upsd(8)</a> NUT data
+server directly, as it would be protected by the <code>LISTEN</code> directives in your
 <a href="upsd.conf.html">upsd.conf(5)</a> file, tcp-wrappers (if available when NUT was built),
 and hopefully local firewall settings in your OS.</p></div>
 <div class="paragraph"><p><strong>upsset</strong> runs on your web server, so <code>upsd</code> will see it as a connection from
-a host on an internal network.  It doesn&#8217;t know that the connection is
+a host on an internal network.  It does not know that the connection is
 actually initiated by someone further outside.  This is why you must
 secure it.</p></div>
+<div class="sect2">
+<h3 id="_apache_web_server">Apache Web Server</h3>
 <div class="paragraph"><p>On Apache, you can use the <code>.htaccess</code> file or put the directives in your
 <code>httpd.conf</code>.  It looks something like this, assuming the <code>.htaccess</code>
 method for older Apache releases:</p></div>
@@ -833,16 +855,132 @@ ScriptAlias /upsset.cgi /usr/share/nut/cgi/upsset.cgi
       &lt;/RequireAny&gt;
 &lt;/Directory&gt;</code></pre>
 </div></div>
+</div>
+<div class="sect2">
+<h3 id="_microsoft_iis">Microsoft IIS</h3>
+<div class="paragraph"><p>With NUT for Windows builds, the Microsoft Internet Information Server (IIS)
+can be used as the platform&#8217;s native web server to host the NUT CGI programs.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Warning</div>
+</td>
+<td class="content">Like other aspects of NUT for Windows, this configuration should be
+considered experimental; feedback and pull requests to improve the code and
+documentation like this page are very welcome.</td>
+</tr></table>
+</div>
+<div class="paragraph"><p>One aspect that may simplify or complicate things is that these builds aim
+to be relocatable, so the archive (eventually package) can be unpacked into
+any directory of the end-user&#8217;s choosing and "just work", and this relies
+on defaulting to use configuration and program location relative to the
+currently executed NUT program, rather than hard-coded paths as in POSIX
+builds tailored to a particular deployment or package.</p></div>
+<div class="paragraph"><p>The click-through setup below was verified on a Windows 10 workstation.
+Names and layering of referenced concepts are known to be different in
+other releases of the operating system. For more details see docs like
+<a href="https://learn.microsoft.com/en-us/iis/configuration/system.webserver/cgi">https://learn.microsoft.com/en-us/iis/configuration/system.webserver/cgi</a>
+or blogs like
+<a href="https://dotnetblog.asphostportal.com/5-steps-to-run-cgi-program-on-your-iis/">https://dotnetblog.asphostportal.com/5-steps-to-run-cgi-program-on-your-iis/</a></p></div>
+<div class="paragraph"><p>In Windows, open Control Panel and go to "Programs / Programs and Features",
+there to the "Turn Windows features on or off" section. Scroll down to the
+"Internet Information Services" and check its box to enable the default set
+of options (e.g. some services, some tools, no FTP). Then drill into its
+"World Wide Web Services / Application Development Features" and select
+"CGI" and "ISAPI Extensions". A reboot may be needed to install these.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">The IIS Manager application needs to be restarted if you add features
+later (after you start it), otherwise they do not show up in the UI to be
+configured.</td>
+</tr></table>
+</div>
+<div class="paragraph"><p>Open IIS Manager, check that the main panel includes icons for "CGI" and for
+"ISAPI and CGI Restrictions".</p></div>
+<div class="paragraph"><p>In IIS configuration, you can edit the Default Web Site or create a new one
+(would need a host name to be known either in DNS or at least via local
+<code>%SystemRoot%\system32\drivers\etc\hosts</code> file), and set the website root
+to the NUT installation location (the directory with <code>etc</code> and <code>cgi-bin</code>
+subdirectories, among other things).</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">It may be more secure to copy the <code>cgi-bin</code> and <code>html</code> subdirectories
+into a separate location (e.g. under <code>c:\inetpub\wwwroot</code> or the non-default
+website root), and then either populate a dedicated <code>etc</code> directory with
+configuration files and templates for the CGI programs, or somehow export
+<code>NUT_CONFPATH</code> environment variable from the web server to point to a location
+not "near" the executable programs. Alternately, explore using an empty root
+and "virtual directories" in IIS to reference just the <code>cgi-bin</code> and <code>html</code> in
+the NUT installation location&#8201;&#8212;&#8201;and so minimize exposure of any other files.</td>
+</tr></table>
+</div>
+<div class="paragraph"><p>Once you have a web-site defined one way or another, select its root in the
+"Connections" panel, and double-click the "ISAPI and CGI Restrictions" icon.
+There "Actions / Add" and specify full paths (3 times overall) to the
+<code>upsimage.cgi.exe</code>, <code>upsset.cgi.exe</code> and <code>upsstats.cgi.exe</code> programs,
+all with the checkbox to "Allow extension path to execute".</p></div>
+<div class="paragraph"><p>Revise "Handler Mappings" for the <code>cgi-bin</code> subdirectory, that it includes
+"CGI-exe" with "Path <code>*.exe</code>" and "State Enabled" (if not, edit the entry,
+press "Request Restrictions", and tick "Access/Execute" there).</p></div>
+<div class="paragraph"><p>If the (virtual) server is dedicated to NUT CGI programs, you may also want
+to visit the "CGI" icon, and change Behavior/Timeout to a few minutes or even
+seconds (and Apply the change), so in case of any breakage in the NUT CGI
+programs, you would not stare at a blank page and not know if the server
+is alive. The IIS default is 15 minutes.</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+You may want to allow for a series of NUT <code>upscli_tryconnect()</code> timeouts
+  (10 seconds each, by default), however, e.g. to get the error messages
+  when NUT data servers are down. While there may be one connection for
+  each run of <code>upsset</code> or <code>upsimage</code> CGI clients, there may be more for
+  <code>upsstats</code> depending on the number of devices you <code>MONITOR</code> in
+  <a href="hosts.conf.html">hosts.conf(5)</a>.
+</p>
+</li>
+<li>
+<p>
+This recommendation may change later if support for "tracking" of
+  device-side completion of posted commands or settings would be implemented;
+  currently the <a href="upsset.html">upsset(8)</a> CGI client only gets and relays confirmation
+  that the NUT data server <a href="upsd.html">upsd(8)</a> received the request.
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>In the NUT configuration directory, update the <a href="hosts.conf.html">hosts.conf(5)</a> and
+<code>upsset.conf</code> files as appropriate, (optionally adapt) and rename the
+<code>upsstats.html.sample</code> and <code>upsstates-single.html.sample</code> files to not
+include the <code>.sample</code> extension.</p></div>
+<div class="paragraph"><p>Finally, assuming default website configuration, go to <a href="http://localhost/html/">http://localhost/html/</a>
+and you should be served with a two-panel page, with a NUT banner and links
+to the two tools on top, and tables of data in the bottom.  If you have device
+monitoring set up already, check the details pages: if they do not render,
+make sure the <code>upsstats.html</code> and <code>upsstats-single.html</code> files define
+<code>UPSSTATSPATH</code> and <code>UPSIMAGEPATH</code> program URI names with the <code>.exe</code> extension.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_completing_the_cgi_setup">Completing the CGI setup</h3>
 <div class="paragraph"><p>If this doesn&#8217;t make sense, then stop reading and leave this program
 alone.  It&#8217;s not something you absolutely need to have anyway.</p></div>
-<div class="paragraph"><p>Assuming you have all this done, and it actually works (test it!), then
-you may add the following directive to this file:</p></div>
+<div class="paragraph"><p>Assuming you have all the above steps done, and it actually works (test it!),
+congratulations&#8201;&#8212;&#8201;you have a read-only web server to report information from
+NUT in a convenient form.</p></div>
+<div class="paragraph"><p>If you further want to manage the devices (and again, if you did set up
+appropriate security constraints), then you may add the following directive
+to this file and so unlock the potentially dangerous access through the server:</p></div>
 <div class="literalblock">
 <div class="content">
 <pre><code>I_HAVE_SECURED_MY_CGI_DIRECTORY</code></pre>
 </div></div>
 <div class="paragraph"><p>If you lie to the program and someone beats on your <code>upsd</code> through your
 web server, don&#8217;t blame me.</p></div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -859,7 +997,7 @@ web server, don&#8217;t blame me.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-01-10 17:53:34 UTC -- Network UPS Tools 2.8.4.1058
+Last updated 2026-01-16 14:47:57 UTC -- Network UPS Tools 2.8.4.1142
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>
