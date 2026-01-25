@@ -21,7 +21,36 @@
 			text-decoration: inherit;
 		}
 	</style></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> </td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="Change_Log"></a>2. Very detailed Change Log</h2></div></div></div><p>This document intends to detail the change log for relatively recent work
-(roughly since the source code was tracked in Git).</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>This change log section represents git commits in range <span class="emphasis"><em>v2.8.4..HEAD</em></span> (commits <span class="emphasis"><em>541c2ecf0..49060909f</em></span>).</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_01_24_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.1. 2026-01-24  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+(roughly since the source code was tracked in Git).</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>This change log section represents git commits in range <span class="emphasis"><em>v2.8.4..HEAD</em></span> (commits <span class="emphasis"><em>541c2ecf0..c49aa0e92</em></span>).</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_01_24_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.1. 2026-01-24  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+drivers/upsdrvctl.c: stop_driver(): try shorter PING first, so a
+          closed socket is detected earlier [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3277" target="_top">#3277</a>]
+</li><li class="listitem">
+drivers/upsdrvctl.c: stop_driver(): if
+          upsdrvquery_connect_drvname_upsname() failed, try another in case
+          the driver is still starting and we were called too soon [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3277" target="_top">#3277</a>]
+</li><li class="listitem">
+drivers/upsdrvctl.c, drivers/upsdrvquery.c: drivers/upsdrvquery.c:
+          upsdrvquery_ping(): revise intense reading loop and timeout
+          accounting when the read size remains 0 [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3277" target="_top">#3277</a>]
+</li><li class="listitem">
+drivers/upsdrvctl.c: stop_driver(): handle not-hearing from the
+          last PONG a bit cleaner [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3277" target="_top">#3277</a>]
+</li><li class="listitem">
+NEWS.adoc, UPGRADING.adoc, docs/nut.dict, drivers/upsdrvquery.c,
+          drivers/upsdrvquery.h: drivers/upsdrvquery.{c,h}, UPGRADING.adoc,
+          NEWS.adoc: introduced upsdrvquery_NOSIGPIPE toggle for consumers
+          who might want to handle SIGPIPE themselves [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3277" target="_top">#3277</a>]
+</li><li class="listitem">
+drivers/upsdrvquery.c: upsdrvquery_close(): refactor work with
+          setsockopt(), prefer it over the blanket signal change for the
+          process; handle EPIPE specially [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3277" target="_top">#3277</a>]
+</li><li class="listitem">
+drivers/upsdrvquery.c: upsdrvquery_write() use MSG_NOSIGNAL where
+          available [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3277" target="_top">#3277</a>]  Proper NUT daemons intercept SIGPIPE and survive
+          closed connections, but consumers of upsdrvquery might not, and
+          would crash. If we can, just return the error (and errno=EPIPE) for
+          the specific call.
+</li><li class="listitem">
 scripts/obs/_service: survive git tags with a dash [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1209" target="_top">#1209</a>]  Avoid
           RPM build error like: line 121: Illegal char <span class="emphasis"><em>-</em></span> (0x2d) in:
           Version:        2.8.5-rc1.12\+g3501cd37
@@ -36,6 +65,24 @@ NEWS.adoc, docs/man/nut-ipmipsu.txt, drivers/nut-ipmipsu.c,
           Special thanks to maintainer of libfreeipmi for helping catch it!
           Co-authored-by: Albert Chu &lt;<a class="ulink" href="mailto:chu11@llnl.gov" target="_top">chu11@llnl.gov</a>&gt;
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_01_23_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.2. 2026-01-23  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+drivers/upsdrvctl.c: upsdrvquery_ping() after telling the driver to
+          stop, so upsdrvctl exits when the driver is gone [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3277" target="_top">#3277</a>]
+</li><li class="listitem">
+drivers/upsdrvquery.c, drivers/upsdrvquery.h:
+          drivers/upsdrvquery.{c,h}: separate upsdrvquery_ping() from
+          upsdrvquery_prepare() [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3277" target="_top">#3277</a>]
+</li><li class="listitem">
+drivers/upsdrvquery.c: protect upsdrvquery_close() from SIGPIPE
+          crash if the other side exited [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3277" target="_top">#3277</a>]
+</li><li class="listitem">
+NEWS.adoc, drivers/upsdrvctl.c: drivers/upsdrvctl.c: if we fail to
+          stop a driver by signal, retry to "exit" it by protocol [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3277" target="_top">#3277</a>]
+</li><li class="listitem">
+NEWS.adoc, conf/ups.conf.sample, docs/man/ups.conf.txt,
+          docs/man/upsdrvctl.txt, drivers/upsdrvctl.c: drivers/upsdrvctl.c,
+          NEWS.adoc, conf/ups.conf.sample, docs: apply global debug_min from
+          ups.conf also to upsdrvctl tool itself [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3276" target="_top">#3276</a>]
+</li><li class="listitem">
 docs/man/nut-ipmipsu.txt: add errata note about possible troubles
           when changing OS user accounts [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3193" target="_top">#3193</a>]
 </li><li class="listitem">
@@ -3847,4 +3894,4 @@ obs/debian.Makefile.am, obs/debian.Makefile.in, obs/debian.NEWS,
           packaging metadata used by OBS as of 2016-08-18 (except
           debian.series)
 </li></ul></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-01-24 20:56:59 -- Network UPS Tools 2.8.4.1219</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> </td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-01-25 17:47:19 -- Network UPS Tools 2.8.4.1219</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> </td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
