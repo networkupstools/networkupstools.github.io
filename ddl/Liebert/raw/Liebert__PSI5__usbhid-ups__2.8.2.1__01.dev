@@ -1,0 +1,87 @@
+# Please add if relevant: DEVICE:URL:REPORT: <GitHub issue/PR or Mailing list archive entry URL>
+# DEVICE:URL:VENDOR: https://www.vertiv.com/en-us/products-catalog/critical-power/uninterruptible-power-supplies-ups/psi5-800rt120/
+
+# Please add comments for humans here and perhaps raise concerns about the data points,
+# see https://networkupstools.org/ddl/#devseq-files for comment-tag syntax
+# strip sensitive data (passwords, SNMP community, serial number, IP address, host name...)
+# and post as a pull request to https://github.com/networkupstools/nut-ddl/
+
+# DEVICE:COMMENT-BLOCK:UPSCONF:
+# > There is a temprature sensor inside this UPS but its not reported here
+# [UPS]
+#      driver = "usbhid-ups"
+#      port = "auto"
+#      vendorid = "10AF"
+#      productid = "0002"
+#      product = "Liebert PSI5"
+#      vendor = "Vertiv Co."
+#      ### These are the most important parameters
+#      ### Otherwise the UPS reports OB and no Battery %
+#      usb_hid_rep_index = 1
+#      usb_hid_desc_index = 1
+#      pollonly = 1
+#      ### Optional:
+#      # bus = "001"
+#      # device = "002"
+#      # busport = "001"
+# DEVICE:EOC
+
+# :; upsc UPS
+battery.capacity: 800
+battery.charge: 100
+battery.charge.warning: 20
+battery.runtime: 12600
+battery.type: PbAc
+battery.voltage: 27.3
+battery.voltage.nominal: 24
+device.mfr: Vertiv Co.
+device.model: Liebert PSI5
+device.serial: [REDACTED]
+device.type: ups
+driver.debug: 0
+driver.flag.allow_killpower: 0
+driver.name: usbhid-ups
+driver.parameter.pollfreq: 30
+driver.parameter.pollinterval: 2
+driver.parameter.port: auto
+driver.parameter.product: Liebert PSI5
+driver.parameter.productid: 0002
+driver.parameter.serial: [REDACTED]
+driver.parameter.synchronous: auto
+driver.parameter.usb_hid_desc_index: 1
+driver.parameter.usb_hid_rep_index: 1
+driver.parameter.pollonly: 1	#COMMENT: If it is not set, the driver may crash or have some odd error
+driver.parameter.vendor: Vertiv Co.
+driver.parameter.vendorid: 10AF
+driver.state: quiet
+driver.version: 2.8.2.1
+driver.version.data: Belkin/Liebert HID 0.21
+driver.version.internal: 0.54
+driver.version.usb: libusb-1.0.28 (API: 0x100010a)
+input.frequency: 60.0
+input.voltage: 121.4
+input.voltage.nominal: 120
+output.frequency: 60.0
+output.voltage: 121.5
+output.voltage.nominal: 120
+ups.load: 6
+ups.mfr: Vertiv Co.
+ups.model: Liebert PSI5
+ups.productid: 0002
+ups.serial: [REDACTED]
+ups.status: OL CHRG
+ups.vendorid: 10af
+
+# DEVICE:COMMENT-BLOCK:FIXME:UPSRW: UPS
+# [driver.debug]
+# Current debug verbosity level of the driver program
+# Type: NUMBER
+# Value: 0
+#
+# [driver.flag.allow_killpower]
+# Safety flip-switch to allow the driver daemon to send UPS shutdown command (accessible via driver.killpower) 
+# This is NOT tested, Use at your own Risk
+# Type: NUMBER
+# Value: 0
+# DEVICE:EOC
+
