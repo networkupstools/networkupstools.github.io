@@ -5,7 +5,7 @@
 <head>
 <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
 <meta name="generator" content="AsciiDoc 10.2.0" />
-<title>UPSLOG(8)</title>
+<title>NUT-UPOWER(8)</title>
 <style type="text/css">
 /* Shared CSS for AsciiDoc xhtml11 and html5 backends */
 
@@ -760,349 +760,106 @@ a.anchorjs-link:visited {
 </head>
 <body class="article">
 <div id="header">
-<h1>UPSLOG(8)</h1>
+<h1>NUT-UPOWER(8)</h1>
 </div>
 <div id="content">
 <div class="sect1">
 <h2 id="_name">NAME</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>upslog - UPS status logger</p></div>
+<div class="paragraph"><p>nut-upower - Driver for UPower devices via D-Bus</p></div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
-<div class="paragraph"><p><strong>upslog -h</strong></p></div>
-<div class="paragraph"><p><strong>upslog</strong> [<em>OPTIONS</em>]</p></div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_description">DESCRIPTION</h2>
-<div class="sectionbody">
-<div class="paragraph"><p><strong>upslog</strong> is a daemon that will poll a UPS at periodic intervals, fetch the
-variables that interest you, format them, and write them to a file.</p></div>
-<div class="paragraph"><p>The default format string includes variables that are supported by many
-common UPS models.  See the description below to make your own.</p></div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_options">OPTIONS</h2>
-<div class="sectionbody">
-<div class="dlist"><dl>
-<dt class="hdlist1">
-<strong>-f</strong> <em>format</em>
-</dt>
-<dd>
-<p>
-Monitor the UPS using this format string.  Be sure to enclose
-<em>format</em> in quotes so your shell doesn&#8217;t split it up. Valid escapes
-within this string are:
-</p>
-<div class="openblock">
-<div class="content">
-<div class="dlist"><dl>
-<dt class="hdlist1">
-%%
-</dt>
-<dd>
-<p>
-Insert a single "%"
-</p>
-</dd>
-<dt class="hdlist1">
-%t
-</dt>
-<dd>
-<p>
-Insert a single TAB character (like <code>printf("\t")</code>)
-</p>
-</dd>
-<dt class="hdlist1">
-%TIME format%
-</dt>
-<dd>
-<p>
-Insert the time with <code>strftime</code> formatting
-</p>
-</dd>
-<dt class="hdlist1">
-%ETIME%
-</dt>
-<dd>
-<p>
-Insert the number of seconds since the start of "Epoch",
-ala <code>time_t</code>.  This is now a 10-digit number.
-</p>
-</dd>
-<dt class="hdlist1">
-%HOST%
-</dt>
-<dd>
-<p>
-Insert the local hostname
-</p>
-</dd>
-<dt class="hdlist1">
-%UPSHOST%
-</dt>
-<dd>
-<p>
-Insert the host of the UPS being monitored
-(the <code>&lt;system&gt;</code> part of your logging specification, e.g. <code>ups[@host[:port]]</code>)
-</p>
-</dd>
-<dt class="hdlist1">
-%PID%
-</dt>
-<dd>
-<p>
-Insert the PID of <code>upslog</code> itself
-</p>
-</dd>
-<dt class="hdlist1">
-%VAR varname%
-</dt>
-<dd>
-<p>
-Insert the value of variable varname
-(see NUT developer documentation chapter "Variables" on-line or in
-the <code>docs/nut-names.txt</code> file in sources of the NUT version you have
-installed for more details)
-</p>
-</dd>
-</dl></div>
-</div></div>
-<div class="paragraph"><p>The default format string is:</p></div>
-<div class="literalblock">
-<div class="content">
-<pre><code>%TIME @Y@m@d @H@M@S% %VAR battery.charge% %VAR input.voltage%
-%VAR ups.load% [%VAR ups.status%] %VAR ups.temperature%
-%VAR input.frequency%</code></pre>
-</div></div>
-</dd>
-<dt class="hdlist1">
-<strong>-N</strong>
-</dt>
-<dd>
-<p>
-Prefix <code>%UPSHOST%%t</code> before the format string (whether default or custom).
-Useful when logging many systems into same target.
-</p>
+<div class="paragraph"><p><strong>nut-upower</strong> -h</p></div>
+<div class="paragraph"><p><strong>nut-upower</strong> -a <em>UPS_NAME</em> [<em>OPTIONS</em>]</p></div>
 <div class="admonitionblock">
 <table><tr>
 <td class="icon">
 <div class="title">Note</div>
 </td>
-<td class="content">This option DOES NOT currently check if you already have <code>%UPSHOST%</code>
-in the formatting string (e.g. specified explicitly).</td>
+<td class="content">This man page only documents the specific features of the
+<strong>nut-upower</strong> driver. For information about the core driver, see
+<a href="nutupsdrv.html">nutupsdrv(8)</a>.</td>
 </tr></table>
 </div>
-</dd>
-<dt class="hdlist1">
-<strong>-i</strong> <em>interval</em>
-</dt>
-<dd>
-<p>
-Wait this many seconds between polls.  This defaults to <em>30</em> seconds.
-</p>
-<div class="paragraph"><p>If you require tighter timing, consider writing your own logger using
-the <a href="upsclient.html">upsclient(3)</a> library.</p></div>
-</dd>
-<dt class="hdlist1">
-<strong>-d</strong> <em>count</em>
-</dt>
-<dd>
-<p>
-Exit after specified amount of updates.  Default is <em>0</em> for infinite loop
-(until interrupted otherwise).
-</p>
-</dd>
-<dt class="hdlist1">
-<strong>-l</strong> <em>logfile</em>
-</dt>
-<dd>
-<p>
-Store the results in this file.
-</p>
-<div class="paragraph"><p>You can use <code>-</code> for stdout, but <code>upslog</code> will remain in the foreground
-by default.</p></div>
-<div class="paragraph"><p>Requires that the <code>-s &lt;system&gt;</code> option is also used for the single-system
-logging.</p></div>
-<div class="paragraph"><p>Can be used with the <code>-m &lt;tuple&gt;</code>, will be added to the list.</p></div>
-</dd>
-<dt class="hdlist1">
-<strong>-D</strong>
-</dt>
-<dd>
-<p>
-Raise debugging verbosity level by one; <code>upslog</code> will remain in the
-foreground by default.
-</p>
-</dd>
-<dt class="hdlist1">
-<strong>-F</strong>
-</dt>
-<dd>
-<p>
-upslog will run in the foreground, regardless of logging target.
-</p>
-</dd>
-<dt class="hdlist1">
-<strong>-B</strong>
-</dt>
-<dd>
-<p>
-upslog will run in the background, regardless of logging target or debugging.
-</p>
-</dd>
-<dt class="hdlist1">
-<strong>-s</strong> <em>ups</em>
-</dt>
-<dd>
-<p>
-Monitor this UPS.  The format for this option is
-<code>upsname[@hostname[:port]]</code>.  The default hostname is "localhost".
-</p>
-<div class="paragraph"><p>The <em>upsname</em> may be an asterisk <code>*</code> to query UPSes currently served by
-<em>hostname</em>, and monitor each of them (into the same logging destination).</p></div>
-<div class="paragraph"><p>Requires that the <code>-l &lt;logfile&gt;</code> option is also used for the single-system
-logging.</p></div>
-<div class="paragraph"><p>Can be used with the <code>-m &lt;tuple&gt;</code>, will be added to the list.</p></div>
-</dd>
-<dt class="hdlist1">
-<strong>-m</strong> <em>tuple</em>
-</dt>
-<dd>
-<p>
-Monitor multiple UPSs (provided several instances of such option).
-</p>
-<div class="paragraph"><p>The format for this option is a tuple of UPS system and log file
-specification, separated by commas. An example would be:</p></div>
-<div class="listingblock">
-<div class="content">
-<pre><code>upsname@hostname:9999,/var/log/nut/cps.log</code></pre>
-</div></div>
-<div class="paragraph"><p>The <em>upsname</em> may be an asterisk <code>*</code> to query UPSes currently served by
-<em>hostname</em>, and monitor each of them (into the same logging destination).</p></div>
-<div class="paragraph"><p>Tuples may specify <code>-</code> as the logfile, to emit messages on <code>stdout</code>
-(e.g. to be collected by the system journal for services).</p></div>
-<div class="paragraph"><p>Use of <code>stdout</code> via tuple-based logging specifications also
-implies that upslog will remain in the foreground by default.</p></div>
-</dd>
-<dt class="hdlist1">
-<strong>-u</strong> <em>username</em>
-</dt>
-<dd>
-<p>
-If started as <em>root</em>, <code>upslog</code> will <a href="https://linux.die.net/man/2/setuid">setuid(2)</a> to the user id
-associated with <em>username</em> for security.
-</p>
-<div class="paragraph"><p>If <em>username</em> is not defined, it will use the value that was compiled into
-the program.  This defaults to <em>nobody</em> (if not otherwise configured),
-which is far from ideal.</p></div>
-</dd>
-</dl></div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_common_options">COMMON OPTIONS</h2>
+<h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
+<div class="paragraph"><p>This driver allows the monitoring of power devices (UPS, batteries) that are
+managed by the UPower daemon via the D-Bus system bus.</p></div>
+<div class="paragraph"><p>It maps UPower properties (state, percentage, voltage, etc.) to standard NUT
+variables, allowing NUT clients to monitor devices that are natively supported
+by the OS desktop environment but not directly by other NUT drivers.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_extra_arguments">EXTRA ARGUMENTS</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>This driver supports the following optional settings in <a href="ups.conf.html">ups.conf(5)</a>:</p></div>
 <div class="dlist"><dl>
 <dt class="hdlist1">
-<strong>-h</strong>
+<strong>port</strong>
 </dt>
 <dd>
 <p>
-Show the command-line help message.
+The UPower Object Path of the device to monitor.
 </p>
 </dd>
+</dl></div>
+<div class="paragraph"><p>If set to <code>auto</code> (the default), the driver will scan for the first UPower device
+whose object path contains the string "ups_".</p></div>
+<div class="paragraph"><p>If set to a specific path (e.g., <code>/org/freedesktop/UPower/devices/ups_hiddev0</code>),
+the driver will attempt to monitor that specific device.</p></div>
+<div class="dlist"><dl>
 <dt class="hdlist1">
-<strong>-V</strong>
+<strong>lowbatt</strong>
 </dt>
 <dd>
 <p>
-Show NUT version banner.  More details may be available if you also
-<code>export NUT_DEBUG_LEVEL=1</code> or greater verbosity level.
-</p>
-</dd>
-<dt class="hdlist1">
-<strong>-W</strong> <em>secs</em>
-</dt>
-<dd>
-<p>
-Set the timeout for initial network connections (by default they are
-indefinitely non-blocking, or until the system interrupts the attempt).
-Overrides the optional <code>NUT_DEFAULT_CONNECT_TIMEOUT</code> environment variable.
+The battery percentage threshold below which the <code>LB</code> (Low Battery) status
+flag is set. The default value is 20.0.
 </p>
 </dd>
 </dl></div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_service_delays">SERVICE DELAYS</h2>
+<h2 id="_installation">INSTALLATION</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>The interval value is merely the number given to <a href="https://linux.die.net/man/3/sleep">sleep(3)</a> after running
-through the format string.  Therefore, a query will actually take slightly
-longer than the interval, depending on the speed of your system.</p></div>
+<div class="paragraph"><p>To use this driver, add a section to your <strong>ups.conf</strong>:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>[myups]
+    driver = nut-upower
+    port = auto
+    lowbatt = 20
+    desc = "Laptop Battery or generic UPS via UPower"</code></pre>
+</div></div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_on_demand_logging">ON-DEMAND LOGGING</h2>
+<h2 id="_requirements">REQUIREMENTS</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>Sending a <code>SIGUSR1</code> to a running <strong>upslog</strong> process makes it wake from the
-current sleep and log immediately.  This is useful when triggered from a
-<strong>upssched</strong> event trigger (e.g. <code>AT ONBATT</code> or <code>AT ONLINE</code>) to ensure that an
-entry always exists, even if the power goes away for a period of time shorter
-than that specified by the <code>-i</code> argument.</p></div>
+<div class="paragraph"><p>This driver requires the <code>upower</code> daemon to be running and accessible via the
+D-Bus system bus. It also requires GLib 2.0 and GIO libraries.</p></div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_log_co_location">LOG CO-LOCATION</h2>
+<h2 id="_author">AUTHOR</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>It is possible and safe to specify the same log file (including <code>-</code> for stdout)
-in several tuples, and it would only be opened or closed once without conflict.</p></div>
-<div class="paragraph"><p>Consider adding <code>%UPSHOST%</code> to your custom formatting string (e.g. by using
-the <strong>-N</strong> command-line option), in order to easily differentiate lines
-corresponding to different systems, when logging them to the same target.</p></div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_log_rotation">LOG ROTATION</h2>
-<div class="sectionbody">
-<div class="paragraph"><p><strong>upslog</strong> writes its PID to <code>upslog.pid</code>, and will reopen the log file if you
-send it a <code>SIGHUP</code>.  This allows it to keep running when the log is rotated
-by an external program.</p></div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_caveats">CAVEATS</h2>
-<div class="sectionbody">
-<div class="paragraph"><p>Historically this daemon supported logging of data for one UPS system per run
-(specified by the <code>-s</code> option) into one log file name or <code>stdout</code> (specified
-by the <code>-l</code> option).</p></div>
-<div class="paragraph"><p>Since NUT v2.8.1 it allowed to log several devices (each logged into its
-individual destination file or common <code>stdout</code>) as specified by multiple
-<code>-m tuple</code> options.  But the two modes were effectively exclusive of each
-other (single-UPS options were ignored if tuples are also provided).</p></div>
-<div class="paragraph"><p>Since NUT v2.8.3, the single-UPS options are added to the list of tuples,
-so both legacy and new options can be reliably used to monitor multiple
-devices in the same run.</p></div>
+<div class="paragraph"><p>Tim Niemueller &lt;<a href="mailto:tim@niemueller.de">tim@niemueller.de</a>&gt;</p></div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
+<div class="paragraph"><p><a href="ups.conf.html">ups.conf(5)</a>, <a href="nutupsdrv.html">nutupsdrv(8)</a>, <a href="upsc.html">upsc(8)</a></p></div>
 <div class="sect2">
-<h3 id="_server">Server:</h3>
-<div class="paragraph"><p><a href="upsd.html">upsd(8)</a></p></div>
-</div>
-<div class="sect2">
-<h3 id="_clients">Clients:</h3>
-<div class="paragraph"><p><a href="upsc.html">upsc(8)</a>, <a href="upscmd.html">upscmd(8)</a>,
-<a href="upsrw.html">upsrw(8)</a>, <a href="upsmon.html">upsmon(8)</a>, <a href="upssched.html">upssched(8)</a></p></div>
-</div>
-<div class="sect2">
-<h3 id="_internet_resources">Internet resources:</h3>
+<h3 id="_internet_resources">Internet Resources:</h3>
 <div class="paragraph"><p>The NUT (Network UPS Tools) home page: <a href="https://www.networkupstools.org/">https://www.networkupstools.org/</a></p></div>
 </div>
 </div>
@@ -1111,7 +868,7 @@ devices in the same run.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-01-29 11:47:01 UTC -- Network UPS Tools 2.8.4.1284
+Last updated 2026-01-29 11:47:03 UTC -- Network UPS Tools 2.8.4.1284
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>

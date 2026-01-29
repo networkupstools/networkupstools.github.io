@@ -172,6 +172,13 @@ Define an internal <code class="literal">QX_FLAG_MAPPING_HANDLED</code> to check
      mappings. Suggest how user can help improve the driver if too few data
      points were seen. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3095" target="_top">PR #3095</a>]
 </li><li class="listitem">
+The <code class="literal">qx_process_answer()</code> method was extended to raise <code class="literal">errno=ETIMEDOUT</code>
+     (rather than <code class="literal">EINVAL</code>) for short reads that are zero length (and/or that
+     <code class="literal">errno</code> value was set in caller’s context already). This was used to make
+     <code class="literal">Voltronic</code> protocol initial connections more reliable when the device
+     controller lags upon first contact (is booting itself?) [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3276" target="_top">issue #3276</a>,
+     <a class="ulink" href="https://github.com/networkupstools/nut/pull/3283" target="_top">PR #3283</a>]
+</li><li class="listitem">
 New <code class="literal">nutdrv_qx_innovatae</code> adds support for Ippon INNOVA TAE series which
      are similar to Q1 except in reporting of nominal <code class="literal">voltage</code>, <code class="literal">current</code>,
      <code class="literal">frequency</code> data (that along with <code class="literal">battery_voltage_reports_one_pack</code> and
@@ -237,7 +244,12 @@ Added support for Tripplite protocol 3017 (mostly ASCII). [<a class="ulink" href
 </li><li class="listitem">
 Fixed default <code class="literal">unit_id</code>, apparently broken by changes in NUT v2.8.1.
      [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3191" target="_top">issue #3191</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3192" target="_top">PR #3192</a>]
-</li></ul></div></li><li class="listitem"><p class="simpara">
+</li></ul></div></li><li class="listitem">
+Introduced a new NUT driver named <code class="literal">nut-upower</code> which provides support
+   for monitoring UPS and battery devices managed by the UPower daemon
+   via D-Bus. This also introduces a new category of drivers that talk to
+   operating system services to obtain power state information. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3279" target="_top">PR #3279</a>]
+</li><li class="listitem"><p class="simpara">
 <code class="literal">usbhid-ups</code> driver updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 Declared support for APC with USB ID <code class="literal">051d:0005</code> (details may evolve
@@ -277,12 +289,21 @@ Check if the subdriver code (mapping table) and the device report
 <code class="literal">powercom-hid</code> subdriver improved with a <code class="literal">powercom_hack_voltage_lkp</code> to
      query <code class="literal">battery.voltage</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2766" target="_top">issue #2766</a>]
 </li><li class="listitem">
+<code class="literal">powercom-hid</code> subdriver now honours configured <code class="literal">offdelay</code> and <code class="literal">ondelay</code>
+     driver options in <code class="literal">ups.conf</code>, and prefers them (if present) over the
+     values received from the UPS itself (like <code class="literal">ups.delay.shutdown</code> and
+     <code class="literal">ups.delay.start</code>), to fix implementations of shutdown/stayoff/startup
+     instant commands. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3288" target="_top">PR #3288</a>]
+</li><li class="listitem">
 Improved handling of transient <code class="literal">LIBUSB_ERROR_IO</code> failures during polling.
      Some devices (CyberPower, etc.) have firmware bugs causing random I/O
      errors on certain HID reports. The driver now skips failing reports and
      continues polling rather than triggering expensive reconnection attempts.
      True disconnections are still detected via other error codes or when all
      polls fail. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3116" target="_top">issue #3116</a>]
+</li><li class="listitem">
+<code class="literal">arduino-hid</code> subdriver enhanced with <code class="literal">ups.load</code>, <code class="literal">input.voltage</code> and
+    <code class="literal">output.voltage</code> readings where supported (e.g. Ugreen US3000). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3281" target="_top">#3281</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">nut-scanner</code> tool updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -5082,4 +5103,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.33. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-01-28 13:19:14 -- Network UPS Tools 2.8.4.1219</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-01-29 11:47:41 -- Network UPS Tools 2.8.4.1284</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
