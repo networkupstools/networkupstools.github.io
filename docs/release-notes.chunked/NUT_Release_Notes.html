@@ -108,6 +108,15 @@ The <code class="literal">upsdrvquery</code> code base was revised to handle SIG
      Separated an <code class="literal">upsdrvquery_ping()</code> operation from earlier code, so it can
      be directly used by consumers (in-tree this is drivers and <code class="literal">upsdrvctl</code>).
      [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3276" target="_top">issue #3276</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3277" target="_top">PR #3277</a>]
+</li><li class="listitem">
+Revised <code class="literal">void*</code> pointer casting into specific types for values returned
+     by <code class="literal">xmalloc()</code> and friends, or iterated in loops via <code class="literal">something-&gt;next</code>,
+     as <code class="literal">clang-21</code> now warns about not-casting void pointers (formally valid,
+     practically uncertain if that code matches the developer’s intention),
+     and (better safe than sorry) added <code class="literal">NULL</code>-return checks although we should
+     not normally get into those code paths with the <code class="literal">x*()</code> methods which
+     should bail out and abort the program with a common error message when
+     an allocation fails. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3293" target="_top">#3293</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 NUT for Windows specific updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -315,6 +324,8 @@ Fixed <code class="literal">nut-scanner</code> search for "simulation devices" t
      built-in NUT configuration path on all platforms, but to also consider
      <code class="literal">NUT_CONFPATH</code> and other fallback locations, like other code does.
      [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3249" target="_top">PR #3249</a>]
+</li><li class="listitem">
+Introduced <code class="literal">nut-scanner</code> support for new <code class="literal">nut-upower</code> driver. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3293" target="_top">PR #3293</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">upsd</code> data server updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -502,6 +513,10 @@ Changed <code class="literal">--enable-extapi-enphase</code> to not default to <
      installed on every system capable of using it; this is a niche capability
      for users of specific devices via a cloud portal. [follow-up to <a class="ulink" href="https://github.com/networkupstools/nut/pull/2813" target="_top">PR #2813</a>
      for <a class="ulink" href="https://github.com/networkupstools/nut/issues/2807" target="_top">issue #2807</a>]
+</li><li class="listitem">
+Fixed <code class="literal">m4/ax_realpath_lib.m4</code> up with more ways to try and gauge the
+     build-time library name from linker/compiler, to improve the chances
+     that <code class="literal">nut-scanner</code> would find them. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3293" target="_top">#3293</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 Recipes, CI and helper script updates not classified above:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -5107,4 +5122,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.33. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-02-03 16:42:25 -- Network UPS Tools 2.8.4.1305</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-02-04 08:47:46 -- Network UPS Tools 2.8.4.1343</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

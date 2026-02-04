@@ -791,11 +791,12 @@ across buses.</p></div>
 <div class="sectionbody">
 <div class="paragraph"><p><strong>nut-scanner</strong> is only built if libltdl (part of libtool development suite)
 is available.</p></div>
-<div class="paragraph"><p>Available scanning options (USB, SNMP, IPMI, &#8230;) will vary according
+<div class="paragraph"><p>Available scanning options (USB, SNMP, IPMI, UPower, &#8230;) will vary according
 to the available compile-time and run-time dependencies. For example, if
 Net-SNMP is installed, thus providing libsnmp libraries (<code>*.so</code> or <code>*.dll</code>)
 and header files during compilation, and at least the library files on the
-monitoring system, then SNMP discovery will be available.</p></div>
+monitoring system, then SNMP discovery will be available. Similarly, UPower
+discovery requires GDBus/libgio libraries.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -983,6 +984,14 @@ No IP address options are required or used.
 <p>
 Scan NUT compatible power supplies available via IPMI on the current host,
 or over the network if IP address ranges are specified.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>-J</strong> | <strong>--upower_scan</strong>
+</dt>
+<dd>
+<p>
+Scan UPower devices. Requires GDBus/libgio libraries to be available.
 </p>
 </dd>
 <dt class="hdlist1">
@@ -1444,6 +1453,19 @@ on Windows):</p></div>
 <div class="content">
 <pre><code>:; nut-scanner --eaton_serial 1-2</code></pre>
 </div></div>
+<div class="paragraph"><p>To scan for UPower devices:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>:; nut-scanner -J
+
+[nutdev-upower1]
+        driver = "upower"
+        port = "/org/freedesktop/UPower/devices/ups_hiddev0"
+        vendor = "APC"
+        product = "Back-UPS ES 700G"
+        serial = "5B1234567890"
+        bus = "upower"</code></pre>
+</div></div>
 </div>
 </div>
 <div class="sect1">
@@ -1460,7 +1482,7 @@ on Windows):</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-02-03 16:42:05 UTC -- Network UPS Tools 2.8.4.1305
+Last updated 2026-02-04 08:47:02 UTC -- Network UPS Tools 2.8.4.1343
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>
