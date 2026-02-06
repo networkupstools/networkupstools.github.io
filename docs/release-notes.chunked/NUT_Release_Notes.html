@@ -117,6 +117,13 @@ Revised <code class="literal">void*</code> pointer casting into specific types f
      not normally get into those code paths with the <code class="literal">x*()</code> methods which
      should bail out and abort the program with a common error message when
      an allocation fails. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3293" target="_top">#3293</a>]
+</li><li class="listitem">
+We have long abstracted <code class="literal">(s)size_t</code> value printing in debug logs etc.
+     using <code class="literal">PRIuSIZE</code> and similar macros. They fell back to <code class="literal">"%zu"</code> when not
+     provided otherwise, but not all platforms actually deliver these format
+     characters. Now it is evaluated at <code class="literal">configure</code> time (to check that the
+     characters may be used), and if not — during <code class="literal">nut_stdint.h</code> parsing to
+     fit known <code class="literal">int</code>/<code class="literal">long</code>/<code class="literal">long long</code> types. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3300" target="_top">#3300</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 NUT for Windows specific updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -245,6 +252,10 @@ Define an internal <code class="literal">SU_FLAG_MAPPING_HANDLED</code> to check
      mappings. Suggest how user can help improve the driver if too few data
      points were seen, or if the <code class="literal">mibs=auto</code> detection only found the fallback
      IETF mapping. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3095" target="_top">PR #3095</a>]
+</li><li class="listitem">
+Added new vendor extension mappings for Vertiv Liebert UPS, tested with
+     PSI5-750MT120 UPS model and IS-UNITY-DP (Firmware 8.4.7.0) SNMP card.
+     [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3296" target="_top">issue #3296</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3299" target="_top">PR #3299</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">tripplite_usb</code> driver updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -348,6 +359,10 @@ The global-level <code class="literal">debug_min</code> setting in <code class="
 </li><li class="listitem">
 If we fail to stop a driver by signal (e.g. PID file was not saved),
      retry to <code class="literal">INSTCMD driver.exit</code> it by socket protocol. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3277" target="_top">#3277</a>]
+</li><li class="listitem">
+The NUT Integration Testing suite now also involves <code class="literal">upsdrvctl</code> to
+     run one driver instance indirectly, helping make check-NIT` catch
+     portability issues with different builds of the tool. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2800" target="_top">#2800</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/3292" target="_top">#3292</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">upslog</code> tool updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -517,12 +532,25 @@ Changed <code class="literal">--enable-extapi-enphase</code> to not default to <
 Fixed <code class="literal">m4/ax_realpath_lib.m4</code> up with more ways to try and gauge the
      build-time library name from linker/compiler, to improve the chances
      that <code class="literal">nut-scanner</code> would find them. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3293" target="_top">#3293</a>]
+</li><li class="listitem">
+Added an option to (primarily) <code class="literal">--disable-threading</code> for systems with
+     detected but broken <code class="literal">libpthread</code> support, or to test alternate code
+     paths during development or in CI. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3300" target="_top">#3300</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 Recipes, CI and helper script updates not classified above:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 Fixed CI recipes for PyPI publication of PyNUT(Client) module to also
      include the source distribution (was posted for NUT v2.8.1 and v2.8.2
      tagged releases, but absent for v2.8.3 and v2.8.4). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3056" target="_top">#3056</a>]
+</li><li class="listitem">
+A new version of BSD <code class="literal">make</code> in NetBSD 11 (Beta) aka <code class="literal">bmake</code> in some other
+     operating systems, complains about some of our sub-<code class="literal">$(MAKE)</code> calls despite
+     the explicit <code class="literal">+</code> prefix in corresponding lines, possibly because that call
+     happens not directly in a rule definition, but in a substituted shell code
+     snippet. The recommended workaround was to add a "Special Source" called
+     <code class="literal">.MAKE</code> to let the tool know that we expect sub-makes in that recipe.
+     However, <span class="strong"><strong>other</strong></span> <code class="literal">make</code> implementations do not know about this token,
+     so its support is tried and detected at <code class="literal">configure</code> time. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3300" target="_top">PR #3300</a>]
 </li><li class="listitem">
 Updated <code class="literal">make spellcheck</code> to help avoid asciidoc admonition blocks with
      visually invalid sentences (after rendering as a box in HTML or PDF).
@@ -5122,4 +5150,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.33. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-02-04 09:01:52 -- Network UPS Tools 2.8.4.1343</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-02-06 11:44:43 -- Network UPS Tools 2.8.4.1397</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
