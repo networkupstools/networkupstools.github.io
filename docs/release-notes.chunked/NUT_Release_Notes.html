@@ -138,6 +138,12 @@ Augmented WIN32 <code class="literal">nut.exe</code> launcher with <code class="
      now populate a nice description of it. The <code class="literal">-U</code> (uninstall) action should
      now also try to stop the service first. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3235" target="_top">PR #3235</a>]
 </li><li class="listitem">
+Using <code class="literal">nut.exe -N</code> for testing and pressing <span class="emphasis"><em>Ctrl+C</em></span> should now cause the
+     started daemons to be killed off. Previously they would linger and e.g.
+     preclude subsequent experiments with the service wrapper. Console close
+     events are ignored, so there is a way to indefinitely keep the daemons
+     started by test-mode wrapper running (kill via Task Manager). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3312" target="_top">#3312</a>]
+</li><li class="listitem">
 Revised WIN32 <code class="literal">WSAStartup()</code> and registration of <code class="literal">atexit(WSACleanup)</code> to
      only be done once per program (and cleanups to be always registered); this
      impacts the C <code class="literal">libupsclient</code> and C++ <code class="literal">libnutclient</code> libraries (and so most
@@ -336,6 +342,11 @@ Fixed <code class="literal">nut-scanner</code> search for "simulation devices" t
      <code class="literal">NUT_CONFPATH</code> and other fallback locations, like other code does.
      [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3249" target="_top">PR #3249</a>]
 </li><li class="listitem">
+Enhance debug-logging of dynamic library loading with information about
+     any missing method in the library discovered at run-time, if lack of such
+     prevents us from using that library, and blocks scanning of corresponding
+     protocol and/or media to discover possibly supported devices. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3310" target="_top">PR #3310</a>]
+</li><li class="listitem">
 Introduced <code class="literal">nut-scanner</code> support for new <code class="literal">nut-upower</code> driver. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3293" target="_top">PR #3293</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">upsd</code> data server updates:
@@ -348,6 +359,12 @@ Sometimes "Data for UPS [X] is stale" and "UPS [X] data is no longer
 </li><li class="listitem">
 Fixed <code class="literal">LISTEN *</code> handling for <code class="literal">upsd.exe</code> in NUT for Windows builds.
      [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3237" target="_top">PR #3237</a>]
+</li><li class="listitem">
+Extended processing of <code class="literal">MAXCONN</code> setting to allow larger values than the
+     operating system allows, by only waiting for that amount of Unix sockets
+     or Windows <code class="literal">HANDLE</code>'s at a time, and moving on to another chunk.
+     The system-provided value can be further limited by <code class="literal">NUT_SYSMAXCONN_LIMIT</code>
+     environment variable (e.g. in tests). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3302" target="_top">#3302</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">upsdrvctl</code> tool updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -410,6 +427,10 @@ Handle <code class="literal">device.model</code> in addition to <code class="lit
 Introduced a <code class="literal">@NUT_UPSSTATS_TEMPLATE@</code> command which the HTML template
      files now MUST start with (safety check that we are reading a template).
      [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3252" target="_top">issue #3252</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3249" target="_top">PR #3249</a>]
+</li><li class="listitem">
+(Experimental) Custom templates other than <code class="literal">upsstats{,-single}.html</code> can
+     now be specified as CGI parameters, if locally permitted via <code class="literal">hosts.conf</code>.
+     [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2524" target="_top">issue #2524</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3304" target="_top">PR #3304</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">upssched</code> tool updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -5150,4 +5171,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.33. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-02-09 09:46:11 -- Network UPS Tools 2.8.4.1397</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-02-10 11:45:27 -- Network UPS Tools 2.8.4.1443</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
