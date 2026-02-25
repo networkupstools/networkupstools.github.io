@@ -128,6 +128,8 @@ If you use the NUT apcsmart or newapc drivers, those pins don&#8217;t matter.</p
 It&#8217;s standard RS-232 serial communications at 2400 bps/8N1.
 Don&#8217;t rush the UPS while transmitting or it may stop talking to you.
 This isn&#8217;t a problem with the normal single character queries, but it really does matter for multi-char things like "<strong><code>@000</code></strong>".
+Some newer units also appear to support two-byte command sequences (for example, <code>9F D2</code>) in addition to the single-character commands listed here.
+These two-byte commands may also work on SPRM and SRVS series units, since they appear to share the same bundled CD management software.
 Sprinkle a few calls to usleep() in your code and everything will work a lot better.</p></div>
 <div class="tableblock">
 <table rules="rows"
@@ -935,6 +937,195 @@ Also <code>1</code>, <code>2</code>, <code>3</code>, <code>4</code> &#8594; unkn
 </tbody>
 </table>
 </div>
+<div class="sect2">
+<h3 id="_the_two_byte_command_examples_apc_spm_series">The two-byte command examples (APC SPM series)</h3>
+<div class="paragraph"><p>The table below shows the two-byte commands that have been observed on newer APC models such as the SPM series.
+These commands appear to be in addition to the single-character commands listed above, and they follow a similar format to the capability string responses, with a command character followed by a locale, number of choices, and choice length, followed by the choices themselves.</p></div>
+<div class="paragraph"><p>Special note: on some models (for example, SPM series), command <code>F</code> reports output frequency, while <code>9F D3</code> reports input line frequency. This does not match the <code>F</code> command description in the single-character command section above.</p></div>
+<div class="paragraph"><p>To change a setting over UART (turn ON or turn OFF), send commands in this sequence:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>9F FE</code> &#8594; select settings operation mode; should return <code>OK</code>
+</p>
+</li>
+<li>
+<p>
+<code>9F XX</code> &#8594; select the setting command to change; current setting value is returned
+</p>
+</li>
+<li>
+<p>
+<code>9F CA</code> &#8594; turn ON, or <code>9F CB</code> &#8594; turn OFF; should return <code>OK</code>
+</p>
+</li>
+<li>
+<p>
+<code>9F FF</code> &#8594; confirm/save the change; should return <code>OK</code>
+</p>
+</li>
+</ul></div>
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="center" valign="middle">Character </th>
+<th align="left" valign="middle">Meaning </th>
+<th align="left" valign="middle">Typical results </th>
+<th align="left" valign="middle">Other info</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong><code>9F D1</code></strong></code></p></td>
+<td align="left" valign="middle"><p class="table">UPS rated info</p></td>
+<td align="left" valign="middle"><p class="table"><code>02000,220,220,50.0,009,048.0,11</code></p></td>
+<td align="left" valign="middle"><p class="table">Appears to return VA, input/output voltage, output frequency,</p>
+<p class="table">battery Ah, battery voltage, and one unknown extra field</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong><code>9F D2</code></strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Running mode</p></td>
+<td align="left" valign="middle"><p class="table"><code>E</code></p></td>
+<td align="left" valign="middle"><div><div class="paragraph"><p>Observed mode values:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>E</code> (eco)
+</p>
+</li>
+<li>
+<p>
+<code>L</code> (line)
+</p>
+</li>
+<li>
+<p>
+<code>Y</code> (bypass)
+</p>
+</li>
+<li>
+<p>
+<code>T</code> (battery test)
+</p>
+</li>
+<li>
+<p>
+<code>B</code> (battery)
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong><code>9F D3</code></strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Input line frequency</p></td>
+<td align="left" valign="middle"><p class="table"><code>50.0</code></p></td>
+<td align="left" valign="middle"><p class="table"></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong><code>9F D4</code></strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Battery current</p></td>
+<td align="left" valign="middle"><p class="table"><code>01.0</code></p></td>
+<td align="left" valign="middle"><p class="table">Numeric value in amps</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong><code>9F D5</code></strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Phase lock flag</p></td>
+<td align="left" valign="middle"><p class="table"><code>1</code></p></td>
+<td align="left" valign="middle"><p class="table">Spreadsheet note: <code>1</code> = locked, <code>0</code> = not locked</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong><code>9F D6</code></strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Transfer frequency range</p></td>
+<td align="left" valign="middle"><p class="table"><code>47.0,53.0</code></p></td>
+<td align="left" valign="middle"><p class="table">Frequency range to force transfer to battery when frequency is selected as a transfer cause</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong><code>9F D7</code></strong></code></p></td>
+<td align="left" valign="middle"><p class="table">ECO mode voltage range</p></td>
+<td align="left" valign="middle"><p class="table"><code>209,231</code></p></td>
+<td align="left" valign="middle"><p class="table">Voltage range to allow ECO mode running when ECO mode is selected as a transfer cause</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong><code>9F D9</code></strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Status bitmap (undecoded)</p></td>
+<td align="left" valign="middle"><p class="table"><code>0100000000000000</code></p></td>
+<td align="left" valign="middle"><p class="table">Bit-level meaning not yet decoded</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong><code>9F E3</code></strong></code></p></td>
+<td align="left" valign="middle"><p class="table">UPS alarm</p></td>
+<td align="left" valign="middle"><p class="table"><code>ON</code></p></td>
+<td align="left" valign="middle"><p class="table">Writable variable.</p>
+<p class="table">Boolean-style response (<code>ON</code> / <code>OFF</code>)</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong><code>9F E4</code></strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Alarm in bypass mode</p></td>
+<td align="left" valign="middle"><p class="table"><code>ON</code></p></td>
+<td align="left" valign="middle"><p class="table">Writable variable.</p>
+<p class="table">Boolean-style response (<code>ON</code> / <code>OFF</code>)</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong><code>9F E5</code></strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Auto reboot</p></td>
+<td align="left" valign="middle"><p class="table"><code>ON</code></p></td>
+<td align="left" valign="middle"><p class="table">Writable variable.</p>
+<p class="table">Boolean-style response (<code>ON</code> / <code>OFF</code>)</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong><code>9F E6</code></strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Bypass when UPS is off</p></td>
+<td align="left" valign="middle"><p class="table"><code>ON</code></p></td>
+<td align="left" valign="middle"><p class="table">Writable variable.</p>
+<p class="table">Boolean-style response (<code>ON</code> / <code>OFF</code>)</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong><code>9F E7</code></strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Converter mode</p></td>
+<td align="left" valign="middle"><p class="table"><code>OFF</code></p></td>
+<td align="left" valign="middle"><p class="table">Writable variable.</p>
+<p class="table">Boolean-style response (<code>ON</code> / <code>OFF</code>)</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong><code>9F E8</code></strong></code></p></td>
+<td align="left" valign="middle"><p class="table">ECO mode</p></td>
+<td align="left" valign="middle"><p class="table"><code>ON</code></p></td>
+<td align="left" valign="middle"><p class="table">Writable variable.</p>
+<p class="table">Boolean-style response (<code>ON</code> / <code>OFF</code>)</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong><code>9F E9</code></strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Green power function</p></td>
+<td align="left" valign="middle"><p class="table"><code>ON</code></p></td>
+<td align="left" valign="middle"><p class="table">Writable variable.</p>
+<p class="table">Boolean-style response (<code>ON</code> / <code>OFF</code>)</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong><code>9F EA</code></strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Cold start</p></td>
+<td align="left" valign="middle"><p class="table"><code>ON</code></p></td>
+<td align="left" valign="middle"><p class="table">Writable variable.</p>
+<p class="table">Boolean-style response (<code>ON</code> / <code>OFF</code>)</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong><code>9F EB</code></strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Bypass not allowed</p></td>
+<td align="left" valign="middle"><p class="table"><code>ON</code></p></td>
+<td align="left" valign="middle"><p class="table">Writable variable.</p>
+<p class="table">Boolean-style response (<code>ON</code> / <code>OFF</code>)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -1358,7 +1549,7 @@ Many thanks.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-01-28 13:18:02 UTC
+Last updated 2026-02-25 08:47:52 UTC
 </div>
 <div id="footer-badges">
 <a href="https://github.com/networkupstools/nut">
