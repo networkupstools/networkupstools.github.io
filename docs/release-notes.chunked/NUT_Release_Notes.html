@@ -20,7 +20,10 @@
 			color: inherit;
 			text-decoration: inherit;
 		}
-	</style></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="NUT_Release_Notes"></a>2. NUT Release Notes (and other feature details)</h2></div></div></div><p>If you’re upgrading from an earlier version, see the <a class="ulink" href="UPGRADING.adoc" target="_top">UPGRADING.adoc</a> file.</p><p>Please note that web and source document links, product and service names
+	</style></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="NUT_Release_Notes"></a>2. NUT Release Notes (and other feature details)</h2></div></div></div><p>This document summarizes the practical side of changes coming with each
+newer release development, as compared to the preceding release.</p><p>If you’re upgrading from an earlier version, or are a package maintainer,
+please see also the <a class="ulink" href="UPGRADING.adoc" target="_top">UPGRADING.adoc</a> file about anticipated impacts
+of ongoing development on existing deployments and third-party consumers.</p><p>Please note that web and source document links, product and service names
 listed in historic entries of past releases may no longer be relevant.</p><p>For a complete and more detailed list of changes, please refer to the
 ChangeLog file (generated for release archives), or to the Git version
 control history for "live" codebase.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_planned_release_notes_for_nut_2_8_5_what_8217_s_new_since_2_8_4"></a>2.1. PLANNED: Release notes for NUT 2.8.5 - what’s new since 2.8.4</h3></div></div></div><p><a class="ulink" href="https://github.com/networkupstools/nut/milestone/12" target="_top">https://github.com/networkupstools/nut/milestone/12</a></p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
@@ -127,6 +130,17 @@ We have long abstracted <code class="literal">(s)size_t</code> value printing in
      characters. Now it is evaluated at <code class="literal">configure</code> time (to check that the
      characters may be used), and if not — during <code class="literal">nut_stdint.h</code> parsing to
      fit known <code class="literal">int</code>/<code class="literal">long</code>/<code class="literal">long long</code> types. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3300" target="_top">#3300</a>]
+</li><li class="listitem">
+Added new API methods and defined bitmap values for <code class="literal">libupsclient</code>
+     C binding to query and report SSL capabilities of the current library
+     build (none, OpenSSL, Mozilla NSS): <code class="literal">upscli_ssl_caps_descr()</code> and
+     <code class="literal">upscli_ssl_caps()</code>. Updated common NUT clients to report this info
+     in their detailed help banners. Done similarly for <code class="literal">upsd</code>. The NIT
+     (NUT Integration Test) suite piggy-backs on this to add run-time
+     dependent tests of SSL capability. Added <code class="literal">upscli_set_debug_level()</code>
+     and <code class="literal">upscli_set_debug_level()</code> methods to facilitate NUT debugging
+     for clients built with shared NUT private libraries. [issues <a class="ulink" href="https://github.com/networkupstools/nut/issues/3328" target="_top">#3328</a>,
+     <a class="ulink" href="https://github.com/networkupstools/nut/issues/1771" target="_top">#1771</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2800" target="_top">#2800</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3330" target="_top">PR #3330</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 NUT for Windows specific updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -262,6 +276,10 @@ Define an internal <code class="literal">SU_FLAG_MAPPING_HANDLED</code> to check
      points were seen, or if the <code class="literal">mibs=auto</code> detection only found the fallback
      IETF mapping. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3095" target="_top">PR #3095</a>]
 </li><li class="listitem">
+Quiesced "unhandled ASN 0x80 received from …" messages when we fall
+     back to using the numeric value from last OID section. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1358" target="_top">issue #1358</a>,
+     PE <a class="ulink" href="https://github.com/networkupstools/nut/issues/3337" target="_top">#3337</a>]
+</li><li class="listitem">
 Added new vendor extension mappings for Vertiv Liebert UPS, tested with
      PSI5-750MT120 UPS model and IS-UNITY-DP (Firmware 8.4.7.0) SNMP card.
      [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3296" target="_top">issue #3296</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3299" target="_top">PR #3299</a>]
@@ -368,6 +386,12 @@ Extended processing of <code class="literal">MAXCONN</code> setting to allow lar
      or Windows <code class="literal">HANDLE</code>'s at a time, and moving on to another chunk.
      The system-provided value can be further limited by <code class="literal">NUT_SYSMAXCONN_LIMIT</code>
      environment variable (e.g. in tests). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3302" target="_top">#3302</a>]
+</li><li class="listitem">
+Extended processing of <code class="literal">CERTREQUEST</code> setting to handle numeric or specific
+     string values, to match both ways of reading ambiguous documentation.
+     Added <code class="literal">configure --with-ssl-client-validation</code> toggle to expose the
+     macro previously meant to be passed via <code class="literal">make</code> command line. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3330" target="_top">PR #3330</a>,
+     but beware <a class="ulink" href="https://github.com/networkupstools/nut/issues/3329" target="_top">issue #3329</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">upsdrvctl</code> tool updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -644,6 +668,11 @@ Revised <code class="literal">tools/gitlog2version.sh</code> helper script (logi
 Dropped the <code class="literal">compile</code> script from Git sources. It originates from automake
      and is added to work area (if missing) during <code class="literal">autogen.sh</code> rituals anyway.
      It is still distributed as part of <code class="literal">make dist</code> tarball. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1209" target="_top">#1209</a>]
+</li><li class="listitem">
+Extended <code class="literal">ci_build.sh</code> and <code class="literal">build-mingw-nut.sh</code> so that certain values
+     of <code class="literal">NUT_SSL_VARIANTS=[yes, no, auto, ssl, nss, openssl]</code> can be used
+     with generic builds to test a specific code path and not only the
+     auto-detected one. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]
 </li></ul></div></li><li class="listitem">
 Upstreamed reference packaging recipes (DEB, RPM) from the 42ITy project
    which can be used with OBS (Open Build Service by SUSE), both to support
@@ -5177,4 +5206,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.33. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-03-04 22:42:48 -- Network UPS Tools 2.8.4.1480</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-03-07 14:53:48 -- Network UPS Tools 2.8.4.1541</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

@@ -132,7 +132,10 @@ passwords.</p><p>Several things must happen before this will work, however. This
 present these steps.</p><p>SSL is available via two back-end libraries : NSS and OpenSSL (historically).
 You can choose to use one of them by specifying it with a build option
 (<code class="literal">--with-nss</code> or <code class="literal">--with-openssl</code>). If neither is specified, the configure
-script will try to detect one of them, with a precedence for OpenSSL.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_openssl_backend_usage"></a>OpenSSL backend usage</h4></div></div></div><p>This section describes how to enable NUT SSL support using
+script will try to detect one of them, with a precedence for OpenSSL.</p><p>Starting with NUT v2.8.5, you can check the actual support of your NUT build
+with <code class="literal">upsd -Dh</code> for the server, and <code class="literal">upsmon -Dh</code> for the typical client, e.g.:</p><pre class="screen">   0.000000     [D1] Network UPS Tools version 2.8.4....
+   0.019319     [D1] NUT data server was built with SSL support: OpenSSL;
+                     without client certificate validation</pre><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_openssl_backend_usage"></a>OpenSSL backend usage</h4></div></div></div><p>This section describes how to enable NUT SSL support using
 <a class="ulink" href="http://www.openssl.org" target="_top">OpenSSL</a>.</p><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_install_openssl"></a>Install OpenSSL</h5></div></div></div><p>Install <a class="ulink" href="http://www.openssl.org" target="_top">OpenSSL</a> as usual, either from source
 or binary packages. If using binary packages, be sure to include the developer
 libraries.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_recompile_and_install_nut"></a>Recompile and install NUT</h5></div></div></div><p>Recompile NUT from source, starting with <code class="literal">configure --with-openssl</code>.</p><p>Then install everything as usual.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_create_a_certificate_and_key_for_upsd"></a>Create a certificate and key for upsd</h5></div></div></div><p>openssl (the program) should be in your PATH, unless you installed it from
@@ -221,20 +224,21 @@ signature):
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_install_the_server_side_certificate_2"></a>Install the server-side certificate</h5></div></div></div><p>Just copy the database directory (just the directory and included 3
 database .db files) to the right place, such as <code class="literal">/usr/local/ups/etc/</code>:</p><pre class="literallayout">mv cert_db /usr/local/ups/etc/</pre></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_upsd_required_certificate_database_and_self_certificate"></a>upsd (required): certificate database and self certificate</h5></div></div></div><p>Edit the <code class="literal">upsd.conf</code> to tell where find the certificate database:</p><pre class="literallayout">CERTPATH /usr/local/ups/etc/cert_db</pre><p>Also tell which is the certificate to send to clients to authenticate itself
 and the password to decrypt private key associated to certificate:</p><pre class="literallayout">CERTIDENT "certificate name" "database password"</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>Generally, the certificate name is the server domain name, but is not
-a hard rule. The certificate can be named as useful.</p></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_upsd_optional_client_authentication"></a>upsd (optional): client authentication</h5></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>This functionality is disabled by default. To activate it, recompile
-NUT with <code class="literal">WITH_CLIENT_CERTIFICATE_VALIDATION</code> defined:</p></div><pre class="literallayout">make CFLAGS="-DWITH_CLIENT_CERTIFICATE_VALIDATION"</pre><p>UPSD can accept three levels of client authentication. Just specify it with
-the directive <code class="literal">CERTREQUEST</code> with the corresponding value in the <code class="literal">upsd.conf</code>
-file:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-NO: no client authentication.
-</li><li class="listitem">
-REQUEST: a certificate is request to the client but it is not strictly
-validated.
-If the client does not send any certificate, the connection is closed.
-</li><li class="listitem">
-REQUIRE: a certificate is requested to the client and if it is not valid
-(no validation chain) the connection is closed.
-</li></ul></div><p>Like CA certificates, you can add many "trusted" client and CA certificates
-in server’s certificate databases.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_upsmon_required_upsd_authentication"></a>upsmon (required): upsd authentication</h5></div></div></div><p>In order for <code class="literal">upsmon</code> to securely connect to <code class="literal">upsd</code>, it must authenticate it.
+a hard rule. The certificate can be named as useful.</p></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_upsd_optional_client_authentication"></a>upsd (optional): client authentication</h5></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>This functionality is disabled by default. To activate it, initially
+<code class="literal">configure --with-ssl-client-validation</code> or just recompile NUT with macro
+<code class="literal">WITH_CLIENT_CERTIFICATE_VALIDATION</code> defined:</p></div><pre class="literallayout">make CFLAGS="-DWITH_CLIENT_CERTIFICATE_VALIDATION"</pre><p>UPSD can accept three levels of client authentication. Just specify it with
+the directive <code class="literal">CERTREQUEST</code> with the corresponding numeric or string value
+in the <code class="literal">upsd.conf</code> file:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+(<span class="emphasis"><em>0</em></span>) <span class="emphasis"><em>NO</em></span>: no client authentication.
+</li><li class="listitem"><p class="simpara">
+(<span class="emphasis"><em>1</em></span>) <span class="emphasis"><em>REQUEST</em></span>: a certificate is requested from the client, but it is not
+  strictly validated.
+</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>If the client does not send <span class="strong"><strong>any</strong></span> certificate, the connection is closed.
+- (<span class="emphasis"><em>2</em></span>) <span class="emphasis"><em>REQUIRE</em></span>: a certificate is requested from the client, and if it is
+  not valid (no trusted validation chain) the connection is closed.</p></div></li></ul></div><p>Like CA certificates, you can add many "trusted" client and CA certificates
+in server’s certificate databases.</p><div class="warning" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Warning</h3><p>Until <a class="ulink" href="https://github.com/networkupstools/nut/issues/3329" target="_top">issue
+#3329</a> is solved, not all stock NUT clients may even have a way to present
+some certain certificate.</p></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_upsmon_required_upsd_authentication"></a>upsmon (required): upsd authentication</h5></div></div></div><p>In order for <code class="literal">upsmon</code> to securely connect to <code class="literal">upsd</code>, it must authenticate it.
 You must associate an <code class="literal">upsd</code> host name to security rules in <code class="literal">upsmon.conf</code>
 with the directive <code class="literal">CERTHOST</code>.</p><p><code class="literal">CERTHOST</code> associates a hostname to a certificate name. It also determines
 whether a SSL connection is mandatory, and if the server certificate must be
@@ -323,4 +327,4 @@ unprivileged child that listens for notify events
 unprivileged chrooted child that does network I/O
 </li></ul></div><p>This one is messy, and may not happen for some time, if ever.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_config_files"></a>Config files</h4></div></div></div><p>You may now set <code class="literal">chroot=</code> and <code class="literal">user=</code> in the global section of <code class="literal">ups.conf</code>.</p><p>The <code class="literal">upsd</code> chroots before opening any config files, so there is no way to
 add support for that in <code class="literal">upsd.conf</code> at the present time.</p></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-03-04 22:42:48 -- Network UPS Tools 2.8.4.1480</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="daisychain.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="_glossary.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-03-07 14:53:48 -- Network UPS Tools 2.8.4.1541</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="daisychain.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="_glossary.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

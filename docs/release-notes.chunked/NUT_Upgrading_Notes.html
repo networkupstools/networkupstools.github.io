@@ -21,8 +21,13 @@
 			text-decoration: inherit;
 		}
 	</style></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="NUT_Release_Notes.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="Project_History.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="NUT_Upgrading_Notes"></a>3. NUT Upgrading Notes</h2></div></div></div><p>This file lists changes that affect users who installed older versions
-of this software.  When upgrading from an older version, be sure to
-check this file to see if you need to make changes to your system.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>For packaging (OS distribution or in-house) it is recommended to
+of this software, or third-party integrations and library or data consumers.
+When upgrading from an older NUT version, be sure to check this file to
+see if you need to make changes to your system.</p><p>We welcome feedback from package maintainers — if you had to patch something
+out, or work around something in NUT code or recipes, please let us know in
+the issue tracker. Chances are, other distributions feel your pain, and some
+generalized solution belongs in the upstream project as an easy to use build
+configuration toggle to be shared by all interested downstream projects.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>For packaging (OS distribution or in-house) it is recommended to
 primarily <code class="literal">./configure --with-all</code> and then excise <code class="literal">--without-something</code>
 explicitly for items not supported on your platform, so you do not miss
 out on new NUT features as they come with new releases. Some may require
@@ -40,6 +45,10 @@ Added a <code class="literal">configure</code> script option to <code class="lit
   a NUT packaging build, note there would be several more NUT shared
   library files to deliver with the packages (formally versioned and
   named by NUT release semantic version triplet). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2800" target="_top">issue #2800</a>]
+</li><li class="listitem">
+Related to the above, <code class="literal">libupsclient</code> will remove the exported symbol for
+  <code class="literal">nut_debug_level</code> variable in a later NUT release, and now introduces the
+  <code class="literal">upscli_set_debug_level()</code> and <code class="literal">upscli_get_debug_level()</code> methods. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3330" target="_top">PR #3330</a>]
 </li><li class="listitem">
 For ages, most recipes for building NUT had customized the <code class="literal">sysconfdir</code> to
   be <code class="literal">/etc/nut</code>, which is not exactly the <span class="strong"><strong>system</strong></span> configuration directory.
@@ -104,6 +113,10 @@ The <code class="literal">upsdrvquery*</code> semi-internal API for talking on t
   it themselves, instead of using <code class="literal">errno=EPIPE</code> after a failed call, you can
   use <code class="literal">upsdrvquery_NOSIGPIPE=0</code> to disable neutering of the signal inside
   the API itself. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3277" target="_top">PR #3277</a>]
+</li><li class="listitem">
+Added new API methods and defined bitmap values for <code class="literal">libupsclient</code> C binding
+  to query and report SSL capabilities of the library build (none, OpenSSL,
+  Mozilla NSS): <code class="literal">upscli_ssl_caps_descr()</code> and <code class="literal">upscli_ssl_caps()</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/33" target="_top">PR #33</a>xx]
 </li><li class="listitem">
 Fixed man page naming for <code class="literal">nutdrv_siemens-sitop(.8)</code> (dash vs. underscore)
   to match the driver program name. Packaging recipes may have to be updated.
@@ -982,4 +995,4 @@ The newapc driver has been renamed to apcsmart.  If you previously
   used newapc, make sure you delete the old binary and fix your
   ups.conf.  Otherwise, you may run the old driver from 1.4.
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_file_trimmed_here_on_changes_from_1_2_2_to_1_4_0"></a>3.30. File trimmed here on changes from 1.2.2 to 1.4.0</h3></div></div></div><p>For information before this point, start with version 2.4.1 and work back.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-03-04 22:42:48 -- Network UPS Tools 2.8.4.1480</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="NUT_Release_Notes.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="Project_History.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-03-07 14:53:48 -- Network UPS Tools 2.8.4.1541</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="NUT_Release_Notes.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="Project_History.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
