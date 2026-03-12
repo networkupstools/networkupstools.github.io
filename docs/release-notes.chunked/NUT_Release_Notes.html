@@ -141,6 +141,10 @@ Added new API methods and defined bitmap values for <code class="literal">libups
      and <code class="literal">upscli_set_debug_level()</code> methods to facilitate NUT debugging
      for clients built with shared NUT private libraries. [issues <a class="ulink" href="https://github.com/networkupstools/nut/issues/3328" target="_top">#3328</a>,
      <a class="ulink" href="https://github.com/networkupstools/nut/issues/1771" target="_top">#1771</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2800" target="_top">#2800</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3330" target="_top">PR #3330</a>]
+</li><li class="listitem">
+Revised OpenSSL handshake to support retries requested by the library,
+     so it at least works reliably on different platforms within the scope
+     it has now. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3331" target="_top">issue #3331</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3344" target="_top">PR #3344</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 NUT for Windows specific updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -332,6 +336,9 @@ Check if the subdriver code (mapping table) and the device report
      of the existing mappings. Suggest how user can help improve the driver
      if too few data points were seen. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3082" target="_top">#3082</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/3095" target="_top">#3095</a>]
 </li><li class="listitem">
+Default to <code class="literal">usb_hid_rep_index=1</code> for Liebert PSI5 and PowerSure PST
+     devices with ID <code class="literal">10af:0002</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3345" target="_top">#3345</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1028" target="_top">#1028</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1252" target="_top">#1252</a> etc.]
+</li><li class="listitem">
 <code class="literal">cps-hid</code> updated with Replace Battery information. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3268" target="_top">PR #3268</a>]
 </li><li class="listitem">
 <code class="literal">openups-hid</code> had <code class="literal">nobattery</code> definition inverted, causing alarms — now
@@ -354,7 +361,15 @@ Improved handling of transient <code class="literal">LIBUSB_ERROR_IO</code> fail
      polls fail. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3116" target="_top">issue #3116</a>]
 </li><li class="listitem">
 <code class="literal">arduino-hid</code> subdriver enhanced with <code class="literal">ups.load</code>, <code class="literal">input.voltage</code> and
-    <code class="literal">output.voltage</code> readings where supported (e.g. Ugreen US3000). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3281" target="_top">#3281</a>]
+     <code class="literal">output.voltage</code> readings where supported (e.g. Ugreen US3000). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3281" target="_top">#3281</a>]
+</li><li class="listitem">
+Introduced a <code class="literal">winhid</code> extension in NUT for Windows builds, to directly
+     work with Windows HID API so that extra driver like WinUSB or Zadig is
+     not needed. Note that currently this backend follows a read-focused
+     scope: it supports device discovery and matching by identifiers such
+     as <code class="literal">vendorid</code> and <code class="literal">productid</code>, input/feature reads, and interrupt-report
+     fallback handling. Feature-report writes are not implemented in this
+     phase, so <code class="literal">setvar</code>/<code class="literal">instcmd</code> operations may be unavailable. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3335" target="_top">PR #3335</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">nut-scanner</code> tool updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -5206,4 +5221,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.33. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-03-07 15:07:07 -- Network UPS Tools 2.8.4.1541</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-03-12 14:54:49 -- Network UPS Tools 2.8.4.1541</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
