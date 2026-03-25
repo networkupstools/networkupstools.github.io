@@ -97,25 +97,25 @@ Daemons running with systemd integration tended to report "logged the
      systemd watchdog situation once, will not spam more about it" even if
      those "logged" messages were at an invisible verbosity level. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3157" target="_top">issue #3157</a>,
      <a class="ulink" href="https://github.com/networkupstools/nut/pull/3151" target="_top">PR #3151</a>]
-</li><li class="listitem">
+</li><li class="listitem"><p class="simpara">
 Systemd units for some daemons were revised to honour the <code class="literal">MODE</code> setting
      from <code class="literal">nut.conf</code>, if available, to gracefully not-start when explicitly
      not-requested (e.g. do not start <code class="literal">upsd</code> in <code class="literal">MODE=netclient</code>), even though
      the unit is nominally enabled; this should make packaging and providing
      service pre-sets more simple. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/837" target="_top">issue #837</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3233" target="_top">PR #3233</a>]
-</li><li class="listitem">
-Fixed thread-safety of IP address printout in <code class="literal">libupsclient</code> method
+</p><p class="simpara">In a way, this should also fix fallout of a change delivered in NUT v2.8.4
+release, where <code class="literal">upsmon</code> could have started with <code class="literal">MODE=none</code> in <code class="literal">nut.conf</code>,
+but the <code class="literal">nutshutdown</code> script would bail out quickly and quietly. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3008" target="_top">PR #3008</a>]
+   * Fixed thread-safety of IP address printout in <code class="literal">libupsclient</code> method
      <code class="literal">upscli_tryconnect()</code> (practical bug seen in <code class="literal">nut-scanner</code> parallel scans).
      [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3234" target="_top">issue #3234</a>]
-</li><li class="listitem">
-The <code class="literal">upsdrvquery</code> code base was revised to handle SIGPIPE without crashing
+   * The <code class="literal">upsdrvquery</code> code base was revised to handle SIGPIPE without crashing
      (if the consumers did not neuter the signal themselves), although this
      behavior is optional by <code class="literal">upsdrvquery_NOSIGPIPE</code>.
      Separated an <code class="literal">upsdrvquery_ping()</code> operation from earlier code, so it can
      be directly used by consumers (in-tree this is drivers and <code class="literal">upsdrvctl</code>).
      [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3276" target="_top">issue #3276</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3277" target="_top">PR #3277</a>]
-</li><li class="listitem">
-Revised <code class="literal">void*</code> pointer casting into specific types for values returned
+   * Revised <code class="literal">void*</code> pointer casting into specific types for values returned
      by <code class="literal">xmalloc()</code> and friends, or iterated in loops via <code class="literal">something-&gt;next</code>,
      as <code class="literal">clang-21</code> now warns about not-casting void pointers (formally valid,
      practically uncertain if that code matches the developer’s intention),
@@ -123,15 +123,13 @@ Revised <code class="literal">void*</code> pointer casting into specific types f
      not normally get into those code paths with the <code class="literal">x*()</code> methods which
      should bail out and abort the program with a common error message when
      an allocation fails. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3293" target="_top">#3293</a>]
-</li><li class="listitem">
-We have long abstracted <code class="literal">(s)size_t</code> value printing in debug logs etc.
+   * We have long abstracted <code class="literal">(s)size_t</code> value printing in debug logs etc.
      using <code class="literal">PRIuSIZE</code> and similar macros. They fell back to <code class="literal">"%zu"</code> when not
      provided otherwise, but not all platforms actually deliver these format
      characters. Now it is evaluated at <code class="literal">configure</code> time (to check that the
      characters may be used), and if not — during <code class="literal">nut_stdint.h</code> parsing to
      fit known <code class="literal">int</code>/<code class="literal">long</code>/<code class="literal">long long</code> types. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3300" target="_top">#3300</a>]
-</li><li class="listitem">
-Added new API methods and defined bitmap values for <code class="literal">libupsclient</code>
+   * Added new API methods and defined bitmap values for <code class="literal">libupsclient</code>
      C binding to query and report SSL capabilities of the current library
      build (none, OpenSSL, Mozilla NSS): <code class="literal">upscli_ssl_caps_descr()</code> and
      <code class="literal">upscli_ssl_caps()</code>. Updated common NUT clients to report this info
@@ -141,19 +139,15 @@ Added new API methods and defined bitmap values for <code class="literal">libups
      and <code class="literal">upscli_set_debug_level()</code> methods to facilitate NUT debugging
      for clients built with shared NUT private libraries. [issues <a class="ulink" href="https://github.com/networkupstools/nut/issues/3328" target="_top">#3328</a>,
      <a class="ulink" href="https://github.com/networkupstools/nut/issues/1771" target="_top">#1771</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2800" target="_top">#2800</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3330" target="_top">PR #3330</a>]
-</li><li class="listitem">
-Revised OpenSSL handshake to support retries requested by the library,
+   * Revised OpenSSL handshake to support retries requested by the library,
      so it at least works reliably on different platforms within the scope
      it has now. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3331" target="_top">issue #3331</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3344" target="_top">PR #3344</a>]
-</li><li class="listitem">
-Extended <code class="literal">PyNUTClient</code> to support <code class="literal">STARTTLS</code> and optional server/self
+   * Extended <code class="literal">PyNUTClient</code> to support <code class="literal">STARTTLS</code> and optional server/self
      identification, added NIT tests for that ability. [issues <a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/3329" target="_top">#3329</a>,
      <a class="ulink" href="https://github.com/networkupstools/nut/issues/1600" target="_top">#1600</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3352" target="_top">PR #3352</a>].
-</li><li class="listitem">
-Ported C client library <code class="literal">libupsclient</code> support logic for SSL connections
+   * Ported C client library <code class="literal">libupsclient</code> support logic for SSL connections
      into C++ client library <code class="literal">libnutclient</code> and added tests for it. [issues
-     <a class="ulink" href="https://github.com/networkupstools/nut/issues/1599" target="_top">#1599</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3353" target="_top">PR #3353</a>]
-</li></ul></div></li><li class="listitem"><p class="simpara">
+     <a class="ulink" href="https://github.com/networkupstools/nut/issues/1599" target="_top">#1599</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3353" target="_top">PR #3353</a>]</p></li></ul></div></li><li class="listitem"><p class="simpara">
 NUT for Windows specific updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 Revised detection of (relative) paths to program and configuration files
@@ -396,7 +390,7 @@ Introduced <code class="literal">nut-scanner</code> support for new <code class=
 <code class="literal">upsd</code> data server updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 Sometimes "Data for UPS [X] is stale" and "UPS [X] data is no longer
-     stale" messages were logged in the same second, especially no busy
+     stale" messages were logged in the same second, especially on busy
      systems. Now we allow one more second on top of <code class="literal">MAXAGE</code> setting to
      declare the device dead, just in case fractional/whole second rounding
      comes into play and breaks things. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/661" target="_top">issue #661</a>]
@@ -408,7 +402,10 @@ Extended processing of <code class="literal">MAXCONN</code> setting to allow lar
      operating system allows, by only waiting for that amount of Unix sockets
      or Windows <code class="literal">HANDLE</code>'s at a time, and moving on to another chunk.
      The system-provided value can be further limited by <code class="literal">NUT_SYSMAXCONN_LIMIT</code>
-     environment variable (e.g. in tests). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3302" target="_top">#3302</a>]
+     environment variable (e.g. in tests). For the other side of the coin, the
+     NIT script now supports an optional <code class="literal">DUMMY_UPS_SWARM_COUNT</code> environment
+     variable which can specify the amount of additional drivers to spawn for
+     the sake of stress-testing, and <code class="literal">UPSLOG_SWARM_COUNT</code> for clients. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3302" target="_top">#3302</a>]
 </li><li class="listitem">
 Extended processing of <code class="literal">CERTREQUEST</code> setting to handle numeric or specific
      string values, to match both ways of reading ambiguous documentation.
@@ -610,6 +607,9 @@ Fixed <code class="literal">m4/ax_realpath_lib.m4</code> up with more ways to tr
 Added an option to (primarily) <code class="literal">--disable-threading</code> for systems with
      detected but broken <code class="literal">libpthread</code> support, or to test alternate code
      paths during development or in CI. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3300" target="_top">#3300</a>]
+</li><li class="listitem">
+Adjusted C++ header search path on Termux when <code class="literal">-isystem</code> is involved,
+     as noted with NSS builds. [issues <a class="ulink" href="https://github.com/networkupstools/nut/issues/1599" target="_top">#1599</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3353" target="_top">PR #3353</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 Recipes, CI and helper script updates not classified above:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -5229,4 +5229,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.33. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-03-22 00:05:01 -- Network UPS Tools 2.8.4.1637</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-03-25 17:46:24 -- Network UPS Tools 2.8.4.1670</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
