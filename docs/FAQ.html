@@ -219,7 +219,10 @@ sources for a more streamlined and modern variant):</p><pre class="screen">     
         halt -p</pre><p>For more details and a better integrated example, please see
 <a class="ulink" href="https://github.com/networkupstools/nut/blob/master/scripts/systemd/nutshutdown.in" target="_top">https://github.com/networkupstools/nut/blob/master/scripts/systemd/nutshutdown.in</a>
 (a copy tailored for your OS distribution may be or not be included
-in NUT packages, if you installed from those).</p><p>The other solution is to change your BIOS setting to "always power
+in NUT packages, if you installed from those).</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>The NUT-provided <code class="literal">nutshutdown</code> and its derivatives in packages
+provided by OS distributions are subject to proper NUT configuration,
+such as that you do not keep <code class="literal">MODE=none</code> in <code class="literal">nut.conf</code> (at which point
+the standard shutdown hook script would exit without doing anything).</p></div><p>The other solution is to change your BIOS setting to "always power
 on" instead of "last state", assuming that’s possible.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_my_operating_system_has_no_shutdown_scripts_how_can_i_tell_the_ups_to_go_down_and_or_avoid_power_races"></a>17. My operating system has no shutdown scripts, how can I tell the UPS to go down and/or avoid power races?</h2></div></div></div><p>Modern operating systems offer service management frameworks, like
 the Solaris 10/11 and illumos SMF, or Linux systemd.  These frameworks
 drive the life cycle of the operating system and enforce their opinions
@@ -605,14 +608,17 @@ and similar to the diff block below:</p><pre class="screen">--- a/etc/ssl/openss
  [provider_sect]</pre><p>Of course, keep in mind that by doing this you degrade your security level.
 If better solutions are possible in your situation, prefer to follow them!</p><p>Thanks to Kajetan Rzepecki for doing the research and posting the findings
 in <a class="ulink" href="https://github.com/networkupstools/nut/issues/1899" target="_top">https://github.com/networkupstools/nut/issues/1899</a></p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_i_built_nut_from_git_and_it_complains_about_lots_of_missing_files_what_happened"></a>45. I built NUT from Git, and it complains about lots of missing files. What happened?</h2></div></div></div><p>If you are not actively developing a driver, can you use a snapshot instead?
-The NUT instance of Buildbot generates tar files of the latest NUT source
-after each successful build, and these snapshots include a pre-built version
-of the <code class="literal">./configure</code> script.</p><div class="warning" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Warning</h3><p>There is an outstanding bug that after the shutdown of BuildBot,
-no regular distribution tarballs are in fact published.</p></div><p>To build from Git, you will need recent versions of autoconf, automake, libtool,
+A NUT CI job generates tar files of the latest NUT source for pull requests and
+eventual increments of the <code class="literal">master</code> branch as part of each successful build,
+and these snapshots include a pre-built version of the <code class="literal">./configure</code> script.
+In GitHub build status for each such commit you can see status entries with
+a "GHA-01: Tarballs" prefix — one of those would have an URL to a ZIP file
+with a standard source tarball, and another tarball with rendered documentation
+files.</p><p>To build from Git, you will need recent versions of autoconf, automake, libtool,
 asciidoc, a2x and its dependencies for DocBook/dblatex. Rather than publish a
 list of the exact versions needed (which will quickly become out of date), we
-recommend you consult your distribution’s dependency list for building a NUT
-package, and use that as a starting point.</p><p>That said, for the numerous systems running build agents of the NUT CI farm,
+recommend you consult the dependency list in the recipes of your OS distribution
+for building their official NUT package, and use that as a starting point.</p><p>That said, for the numerous systems running build agents of the NUT CI farm,
 their lists of dependency packages are available in <code class="literal">docs/config-prereqs.txt</code>
 in NUT sources.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_do_i_have_to_use_a_serial_connection_to_monitor_the_ups_what_about_direct_network_connections_snmp_or_otherwise"></a>46. Do I have to use a serial connection to monitor the UPS? What about direct network connections (SNMP or otherwise)?</h2></div></div></div><p>NUT currently supports USB communication through several drivers,
 and also SNMP and XML/HTTP (Eaton and MGE) communications.</p><p>Since NUT is very extensible, support for a new communication bus can be added
@@ -702,4 +708,4 @@ they won’t be stuck in the halted state with the UPS running on line power.</p
                 # uh oh, we never got shut down! (power race?)
                 reboot
         fi</pre></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-03-31 22:12:25 -- Network UPS Tools 2.8.4.1670</div><script xmlns="" type="text/javascript">anchors.add();</script></body></html>
+		Last updated 2026-04-01 14:44:59 -- Network UPS Tools 2.8.4.1670</div><script xmlns="" type="text/javascript">anchors.add();</script></body></html>

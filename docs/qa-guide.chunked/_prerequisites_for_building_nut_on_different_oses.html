@@ -1374,7 +1374,17 @@ suggest to start by updating the base ecosystem (using their terminal):</p><pre 
 including your terminal would be closed/restarted, and wait for this stage
 to complete.</p><p>Run it again to refresh more of the ecosystem, now without restarting it:</p><pre class="screen">:; pacman -Syu</pre><p>Finally, install tools and prerequisites for building NUT; note that some
 of the recommended package names are "umbrellas" for several implementations,
-and the <code class="literal">pacman</code> would ask you which (or "all") to install in those cases.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>Suggestions below use <code class="literal">x86_64</code> generic variants where possible, and
+and the <code class="literal">pacman</code> would ask you which (or "all") to install in those cases.</p><p>NUT build recipes and other scripts use symbolic links generously.
+Creation of these requires not only the use of NTFS, but also a granted
+run-time user privilege on Windows, as well as a setting for MSYS/CygWin
+<code class="literal">ln</code> implementation to actually create symlinks and not copy the files.
+Add this to your <code class="literal">~/.profile</code> in the MSYS2 environment, and change your
+account accordingly (or modify the MSYS2 shortcut to always "Run as
+Administrator" and ask for UAC upon launch as needed):</p><pre class="screen">### This may require elevated privileges (Run as Administrator),
+### or a Developer profile in Windows (can come via registry hacks),
+### or a Group Policy setting:
+MSYS="winsymlinks:nativestrict"
+export MSYS</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>Suggestions below use <code class="literal">x86_64</code> generic variants where possible, and
 <code class="literal">clang</code> where available to try both build toolkits on the platform. If you
 want to build <code class="literal">i686</code> (32-bit) or alternate backends (e.g. <code class="literal">ucrt</code> instead
 of default <code class="literal">msvcrt</code>), poke the repository search to see what is available.</p></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>To build NUT with <code class="literal">ci_build.sh</code> (and generally — to help <code class="literal">configure</code>
@@ -1484,4 +1494,4 @@ add the third-party shared libraries involved, for that file set to be usable.</
    | while read LIB ; do cp -pf "$LIB" "$DESTDIR/mingw64/bin/" ; done</pre><p>Keep in mind that a similar trick (or links to <code class="literal">*.dll</code> — and symlinks are
 problematic on that platform) may be needed in other directories, such as
 <code class="literal">sbin</code> and <code class="literal">cgi-bin</code>:</p><pre class="screen">:; ( cd "$DESTDIR/mingw64/bin/" &amp;&amp; ln *.dll ../sbin &amp;&amp; ln *.dll ../cgi-bin )</pre></div></div></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-03-31 22:11:19 -- Network UPS Tools 2.8.4.1670</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_continuous_integration_nut_ci_farm_build_agent_preparation.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> </td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-04-01 14:44:26 -- Network UPS Tools 2.8.4.1670</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_continuous_integration_nut_ci_farm_build_agent_preparation.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> </td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

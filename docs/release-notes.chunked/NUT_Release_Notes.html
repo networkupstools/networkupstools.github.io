@@ -153,7 +153,13 @@ but the <code class="literal">nutshutdown</code> script would bail out quickly a
      <a class="ulink" href="https://github.com/networkupstools/nut/issues/1600" target="_top">#1600</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3352" target="_top">PR #3352</a>].
    * Ported C client library <code class="literal">libupsclient</code> support logic for SSL connections
      into C++ client library <code class="literal">libnutclient</code> and added tests for it. [issues
-     <a class="ulink" href="https://github.com/networkupstools/nut/issues/1599" target="_top">#1599</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3353" target="_top">PR #3353</a>]</p></li></ul></div></li><li class="listitem"><p class="simpara">
+     <a class="ulink" href="https://github.com/networkupstools/nut/issues/1599" target="_top">#1599</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3353" target="_top">PR #3353</a>]
+   * Added support for command-line debugging with <code class="literal">-D</code> option into <code class="literal">upsc</code>,
+     <code class="literal">upscmd</code> and <code class="literal">upsrw</code> command-line clients, and the <code class="literal">nutconf</code> tool.
+     Revised handling of <code class="literal">-D</code> and/or <code class="literal">NUT_DEBUG_LEVEL</code> environment variable
+     in other programs. Extended public API of libupsclient and libnutscan
+     to diligently arrange debug-logging when at run-time those libraries
+     actually have different copies of the methods and data involved. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3378" target="_top">#3378</a>]</p></li></ul></div></li><li class="listitem"><p class="simpara">
 NUT for Windows specific updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 Revised detection of (relative) paths to program and configuration files
@@ -466,7 +472,8 @@ a <code class="literal">START-TIMER-SHARED</code> rule with a short (approx. 1 s
 several <code class="literal">FSD</code> notifications into one executed action. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3097" target="_top">PR #3097</a>]</p></div></li></ul></div></li><li class="listitem">
 <code class="literal">upsc</code> has now optional JSON output [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3172" target="_top">issue #3172</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3178" target="_top">PR #3178</a>]
 </li><li class="listitem">
-<code class="literal">upsset</code> should now recognize <code class="literal">RANGE NUMBER</code> and <code class="literal">NUMBER</code> types. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3164" target="_top">#3164</a>]
+<code class="literal">upsset</code> CGI tool should now recognize <code class="literal">RANGE NUMBER</code> and <code class="literal">NUMBER</code> types.
+   [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3164" target="_top">#3164</a>]
 </li><li class="listitem"><p class="simpara">
 <code class="literal">upsstats</code> CGI tool updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -646,6 +653,10 @@ Further developer workflow speedup with <code class="literal">make spellcheck-in
      dictionary contents, in case some new terms have to be added. [PRs <a class="ulink" href="https://github.com/networkupstools/nut/issues/3186" target="_top">#3186</a>,
      <a class="ulink" href="https://github.com/networkupstools/nut/issues/2871" target="_top">#2871</a>]
 </li><li class="listitem">
+Added <code class="literal">make .libs-dev-PATH</code> recipe to generate a file which developers
+     or CI scripts can source to prefer freshly built NUT libraries and some
+     tools in their <code class="literal">LD_LIBRARY_PATH</code> and <code class="literal">PATH</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3379" target="_top">#3379</a>]
+</li><li class="listitem">
 Introduced <code class="literal">make distcheck-completeness</code> goal to verify that our
      distribution archives can exactly reproduce themselves. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2829" target="_top">#2829</a>]
 </li><li class="listitem">
@@ -822,8 +833,8 @@ Print arguments of a processed command into the debug log, to help track
 <code class="literal">upsdrvquery</code> API updates [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2969" target="_top">#2969</a>]:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 Added <code class="literal">upsdrvquery_oneshot_conn()</code> for issuing one-shot queries using an
-     existing <code class="literal">udq_pipe_conn_t *</code> connection. The caller manages the
-     connection’s lifecycle, and the function includes a best-effort call to
+     existing <code class="literal">udq_pipe_conn_t *</code> connection. The caller manages the lifecycle
+     of the socket connection, and the function includes a best-effort call to
      restore broadcast mode after the query to return the connection as it was.
 </li><li class="listitem">
 Added <code class="literal">upsdrvquery_oneshot_sockfn()</code> for initiating one-shot queries using
@@ -5235,4 +5246,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.33. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-03-31 22:11:19 -- Network UPS Tools 2.8.4.1670</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-04-01 14:44:26 -- Network UPS Tools 2.8.4.1670</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
