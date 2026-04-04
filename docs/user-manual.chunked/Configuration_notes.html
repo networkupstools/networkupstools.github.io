@@ -316,9 +316,10 @@ generates a <code class="literal">NOTIFY_SHUTDOWN</code> event
 waits <code class="literal">FINALDELAY</code> seconds — typically <code class="literal">5</code>
 </li><li class="listitem">
 creates the <code class="literal">POWERDOWNFLAG</code> file in its local filesystem — usually
-     configured (explicitly!) to be <code class="literal">/etc/killpower</code>, or preferably be
-     <code class="literal">/var/run/nut/killpower</code> or <code class="literal">/run/nut/killpower</code> in a temporary file
-     system that disappears after reboot
+     configured (explicitly!) to be <code class="literal">/etc/killpower</code>. Ideally, a temporary file
+     system is used for this file location (one which, after reboot, has been
+     emptied by the OS). For example, <code class="literal">/var/run/nut/killpower</code> or
+     <code class="literal">/run/nut/killpower</code>.
 </li><li class="listitem">
 calls the <code class="literal">SHUTDOWNCMD</code>
 </li><li class="listitem">
@@ -354,7 +355,15 @@ distribution uses NUT-provided unit definitions, <code class="literal">systemctl
 may also work.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>If you want to make reloading work later, see the entry in the
 <a class="ulink" href="FAQ.html" target="_top">FAQ</a> about starting <code class="literal">upsd</code> as a different user.</p></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_power_off_flag_file"></a>Power Off flag file</h5></div></div></div><p>Set the <code class="literal">POWERDOWNFLAG</code> location for <code class="literal">upsmon</code>.</p><p>In <span class="emphasis"><em>upsmon.conf</em></span>, add a <code class="literal">POWERDOWNFLAG</code> directive with a filename.
 The <code class="literal">upsmon</code> will create this file when the UPS needs to be powered off
-during a power failure when low battery is reached.</p><p>We will test for the presence of this file in a later step.</p><pre class="literallayout">POWERDOWNFLAG /etc/killpower</pre><p>References: man pages: <a class="ulink" href="../man/upsmon.html" target="_top">upsmon(8)</a>,
+during a power failure when low battery is reached.</p><p>We will test for the presence of this file in a later step.</p><p>It is recommended to use a volatile file system, which is re-created
+during boot, like <code class="literal">/run</code> or <code class="literal">/var/run</code> on many OSes. Historic default
+was under <code class="literal">/etc</code> where unprivileged users could not write, but a
+persistent file could confuse the later shutdowns if it was not removed.</p><pre class="literallayout">POWERDOWNFLAG /etc/killpower</pre><p>As far as NUT is concerned, this should be configured on any <code class="literal">upsmon</code>
+instance which is "primary" for any device that may be commanded to
+shut down, and is powered by same device.</p><p>Other shutdown scripts, on "primary" or "secondary" systems are however
+welcome to check for the time-constrained shutdown due to power outage,
+in case they need to balance graceful vs. urgent activities (e.g. how
+long to wait for their client-server disconnection).</p><p>The <code class="literal">upsmon -K</code> command should be used for such check.</p><p>References: man pages: <a class="ulink" href="../man/upsmon.html" target="_top">upsmon(8)</a>,
 <a class="ulink" href="../man/upsmon.conf.html" target="_top">upsmon.conf(5)</a></p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_securing_upsmon_conf"></a>Securing upsmon.conf</h5></div></div></div><p>The recommended setting is to have it owned by <code class="literal">root:nut</code>, then make it
 readable by the group and not by the world.  This file contains passwords
 that could be used by an attacker to start a shutdown, so keep it secure.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>If you installed NUT from source and used <code class="literal">make install-as-root</code>,
@@ -545,4 +554,4 @@ system with a 1:1 cord:supply ratio has more wires stuffed behind it, but
 it’s much easier to move things around since any given UPS drives a smaller
 percentage of the overall power.</p><p>More information can be found in the <a class="ulink" href="../user-manual.chunked/index.html" target="_top">NUT user manual</a>,
 and the various <a class="ulink" href="man/index.html" target="_top">user manual pages</a>.</p></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-04-03 00:39:41 -- Network UPS Tools 2.8.4.1670</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_installation_instructions.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="Advanced_usage_scheduling_notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-04-04 23:14:35 -- Network UPS Tools 2.8.4.1804</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_installation_instructions.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="Advanced_usage_scheduling_notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

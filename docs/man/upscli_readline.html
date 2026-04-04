@@ -766,7 +766,8 @@ a.anchorjs-link:visited {
 <div class="sect1">
 <h2 id="_name">NAME</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>upscli_readline, upscli_readline_timeout - Read a single response from a UPS</p></div>
+<div class="paragraph"><p>upscli_readline, upscli_readline_timeout,
+upscli_readline_timeout_may_disconnect - Read a single response from a UPS</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -780,7 +781,11 @@ a.anchorjs-link:visited {
         int upscli_readline(UPSCONN_t *ups, char *buf, size_t buflen);
 
         int upscli_readline_timeout(UPSCONN_t *ups, char *buf, size_t buflen,
-                const time_t timeout);</code></pre>
+                const time_t timeout);
+
+        int upscli_readline_timeout_may_disconnect(UPSCONN_t *ups,
+                char *buf, size_t buflen, const time_t timeout,
+                int may_disconnect);</code></pre>
 </div></div>
 </div>
 </div>
@@ -794,10 +799,12 @@ into the buffer <em>buf</em>.</p></div>
 <div class="paragraph"><p>Some parsing of the string occurs during reception.  In particular,
 ERR messages from <a href="upsd.html">upsd(8)</a> are detected and will cause this
 function to return <em>-1</em>.</p></div>
-<div class="paragraph"><p>The difference between the two functions is that <strong>upscli_readline_timeout()</strong>
+<div class="paragraph"><p>The difference between the three functions is that <strong>upscli_readline_timeout()</strong>
 lets the caller decide the amount of time (<em>timeout</em> seconds) after which it
 should give up and return, whereas <strong>upscli_readline()</strong> does not offer this
-freedom, and uses NUT default network timeout (5 seconds).</p></div>
+freedom, and uses NUT default network timeout (5 seconds). Both of these
+disconnect upon errors. The <strong>upscli_readline_timeout_may_disconnect()</strong>
+further allows to enable or disable such disconnections.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -820,7 +827,7 @@ return <em>0</em> on success, or <em>-1</em> if an error occurs.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-03 00:39:19 UTC -- Network UPS Tools 2.8.4.1670
+Last updated 2026-04-04 23:14:14 UTC -- Network UPS Tools 2.8.4.1804
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>
