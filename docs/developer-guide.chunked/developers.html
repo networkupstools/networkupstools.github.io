@@ -1,16 +1,55 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>3. Information for developers</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><link rel="home" href="index.html" title="Network UPS Tools Developer Guide" /><link rel="up" href="index.html" title="Network UPS Tools Developer Guide" /><link rel="prev" href="design.html" title="2. NUT design document" /><link rel="next" href="new-drivers.html" title="4. Creating a new driver to support another device" /><meta xmlns="" name="format-detection" content="telephone=no" /></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="design.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="new-drivers.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="developers"></a>3. Information for developers</h2></div></div></div><p>This document is intended to explain some of the more useful things
-within the tree, and provide a standard for working on the code.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_general_stuff_8201_8212_8201_common_subdirectory"></a>3.1. General stuff — common subdirectory</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_string_handling"></a>String handling</h4></div></div></div><p>Use <code class="literal">snprintf()</code>.  It’s even provided with a compatibility module if the
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>4. Information for developers</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css" /><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /><link rel="home" href="index.html" title="Network UPS Tools Developer Guide" /><link rel="up" href="index.html" title="Network UPS Tools Developer Guide" /><link rel="prev" href="versioning.html" title="3. NUT Semantic Versioning" /><link rel="next" href="new-drivers.html" title="5. Creating a new driver to support another device" /><meta xmlns="" name="format-detection" content="telephone=no" /><script xmlns="" type="text/javascript">
+
+// @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&dn=expat.txt Expat
+//
+// AnchorJS - v5.0.0 - 2023-01-18
+// https://www.bryanbraun.com/anchorjs/
+// Copyright (c) 2023 Bryan Braun; Licensed MIT
+//
+// @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&dn=expat.txt Expat
+!function(A,e){"use strict";"function"==typeof define&&define.amd?define([],e):"object"==typeof module&&module.exports?module.exports=e():(A.AnchorJS=e(),A.anchors=new A.AnchorJS)}(globalThis,function(){"use strict";return function(A){function u(A){A.icon=Object.prototype.hasOwnProperty.call(A,"icon")?A.icon:"",A.visible=Object.prototype.hasOwnProperty.call(A,"visible")?A.visible:"hover",A.placement=Object.prototype.hasOwnProperty.call(A,"placement")?A.placement:"right",A.ariaLabel=Object.prototype.hasOwnProperty.call(A,"ariaLabel")?A.ariaLabel:"Anchor",A.class=Object.prototype.hasOwnProperty.call(A,"class")?A.class:"",A.base=Object.prototype.hasOwnProperty.call(A,"base")?A.base:"",A.truncate=Object.prototype.hasOwnProperty.call(A,"truncate")?Math.floor(A.truncate):64,A.titleText=Object.prototype.hasOwnProperty.call(A,"titleText")?A.titleText:""}function d(A){var e;if("string"==typeof A||A instanceof String)e=[].slice.call(document.querySelectorAll(A));else{if(!(Array.isArray(A)||A instanceof NodeList))throw new TypeError("The selector provided to AnchorJS was invalid.");e=[].slice.call(A)}return e}this.options=A||{},this.elements=[],u(this.options),this.add=function(A){var e,t,o,i,n,s,a,r,l,c,h,p=[];if(u(this.options),0!==(e=d(A=A||"h2, h3, h4, h5, h6")).length){for(null===document.head.querySelector("style.anchorjs")&&((A=document.createElement("style")).className="anchorjs",A.appendChild(document.createTextNode("")),void 0===(h=document.head.querySelector('[rel="stylesheet"],style'))?document.head.appendChild(A):document.head.insertBefore(A,h),A.sheet.insertRule(".anchorjs-link{opacity:0;text-decoration:none;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}",A.sheet.cssRules.length),A.sheet.insertRule(":hover>.anchorjs-link,.anchorjs-link:focus{opacity:1}",A.sheet.cssRules.length),A.sheet.insertRule("[data-anchorjs-icon]::after{content:attr(data-anchorjs-icon)}",A.sheet.cssRules.length),A.sheet.insertRule('@font-face{font-family:anchorjs-icons;src:url(data:n/a;base64,AAEAAAALAIAAAwAwT1MvMg8yG2cAAAE4AAAAYGNtYXDp3gC3AAABpAAAAExnYXNwAAAAEAAAA9wAAAAIZ2x5ZlQCcfwAAAH4AAABCGhlYWQHFvHyAAAAvAAAADZoaGVhBnACFwAAAPQAAAAkaG10eASAADEAAAGYAAAADGxvY2EACACEAAAB8AAAAAhtYXhwAAYAVwAAARgAAAAgbmFtZQGOH9cAAAMAAAAAunBvc3QAAwAAAAADvAAAACAAAQAAAAEAAHzE2p9fDzz1AAkEAAAAAADRecUWAAAAANQA6R8AAAAAAoACwAAAAAgAAgAAAAAAAAABAAADwP/AAAACgAAA/9MCrQABAAAAAAAAAAAAAAAAAAAAAwABAAAAAwBVAAIAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAMCQAGQAAUAAAKZAswAAACPApkCzAAAAesAMwEJAAAAAAAAAAAAAAAAAAAAARAAAAAAAAAAAAAAAAAAAAAAQAAg//0DwP/AAEADwABAAAAAAQAAAAAAAAAAAAAAIAAAAAAAAAIAAAACgAAxAAAAAwAAAAMAAAAcAAEAAwAAABwAAwABAAAAHAAEADAAAAAIAAgAAgAAACDpy//9//8AAAAg6cv//f///+EWNwADAAEAAAAAAAAAAAAAAAAACACEAAEAAAAAAAAAAAAAAAAxAAACAAQARAKAAsAAKwBUAAABIiYnJjQ3NzY2MzIWFxYUBwcGIicmNDc3NjQnJiYjIgYHBwYUFxYUBwYGIwciJicmNDc3NjIXFhQHBwYUFxYWMzI2Nzc2NCcmNDc2MhcWFAcHBgYjARQGDAUtLXoWOR8fORYtLTgKGwoKCjgaGg0gEhIgDXoaGgkJBQwHdR85Fi0tOAobCgoKOBoaDSASEiANehoaCQkKGwotLXoWOR8BMwUFLYEuehYXFxYugC44CQkKGwo4GkoaDQ0NDXoaShoKGwoFBe8XFi6ALjgJCQobCjgaShoNDQ0NehpKGgobCgoKLYEuehYXAAAADACWAAEAAAAAAAEACAAAAAEAAAAAAAIAAwAIAAEAAAAAAAMACAAAAAEAAAAAAAQACAAAAAEAAAAAAAUAAQALAAEAAAAAAAYACAAAAAMAAQQJAAEAEAAMAAMAAQQJAAIABgAcAAMAAQQJAAMAEAAMAAMAAQQJAAQAEAAMAAMAAQQJAAUAAgAiAAMAAQQJAAYAEAAMYW5jaG9yanM0MDBAAGEAbgBjAGgAbwByAGoAcwA0ADAAMABAAAAAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAH//wAP) format("truetype")}',A.sheet.cssRules.length)),h=document.querySelectorAll("[id]"),t=[].map.call(h,function(A){return A.id}),i=0;i<e.length;i++)if(this.hasAnchorJSLink(e[i]))p.push(i);else{if(e[i].hasAttribute("id"))o=e[i].getAttribute("id");else if(e[i].hasAttribute("data-anchor-id"))o=e[i].getAttribute("data-anchor-id");else{for(r=a=this.urlify(e[i].textContent),s=0;n=t.indexOf(r=void 0!==n?a+"-"+s:r),s+=1,-1!==n;);n=void 0,t.push(r),e[i].setAttribute("id",r),o=r}(l=document.createElement("a")).className="anchorjs-link "+this.options.class,l.setAttribute("aria-label",this.options.ariaLabel),l.setAttribute("data-anchorjs-icon",this.options.icon),this.options.titleText&&(l.title=this.options.titleText),c=document.querySelector("base")?window.location.pathname+window.location.search:"",c=this.options.base||c,l.href=c+"#"+o,"always"===this.options.visible&&(l.style.opacity="1"),""===this.options.icon&&(l.style.font="1em/1 anchorjs-icons","left"===this.options.placement)&&(l.style.lineHeight="inherit"),"left"===this.options.placement?(l.style.position="absolute",l.style.marginLeft="-1.25em",l.style.paddingRight=".25em",l.style.paddingLeft=".25em",e[i].insertBefore(l,e[i].firstChild)):(l.style.marginLeft=".1875em",l.style.paddingRight=".1875em",l.style.paddingLeft=".1875em",e[i].appendChild(l))}for(i=0;i<p.length;i++)e.splice(p[i]-i,1);this.elements=this.elements.concat(e)}return this},this.remove=function(A){for(var e,t,o=d(A),i=0;i<o.length;i++)(t=o[i].querySelector(".anchorjs-link"))&&(-1!==(e=this.elements.indexOf(o[i]))&&this.elements.splice(e,1),o[i].removeChild(t));return this},this.removeAll=function(){this.remove(this.elements)},this.urlify=function(A){var e=document.createElement("textarea");return e.innerHTML=A,A=e.value,this.options.truncate||u(this.options),A.trim().replace(/'/gi,"").replace(/[& +$,:;=?@"#{}|^~[`%!'<>\]./()*\\\n\t\b\v\u00A0]/g,"-").replace(/-{2,}/g,"-").substring(0,this.options.truncate).replace(/^-+|-+$/gm,"").toLowerCase()},this.hasAnchorJSLink=function(A){var e=A.firstChild&&-1<(" "+A.firstChild.className+" ").indexOf(" anchorjs-link "),A=A.lastChild&&-1<(" "+A.lastChild.className+" ").indexOf(" anchorjs-link ");return e||A||!1}}});
+// @license-end
+
+		</script><style xmlns="" type="text/css">
+		a.anchorjs-link {
+			color: inherit;
+			text-decoration: inherit;
+		}
+		a.anchorjs-link:visited {
+			color: inherit;
+			text-decoration: inherit;
+		}
+	</style></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="versioning.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="new-drivers.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="developers"></a>4. Information for developers</h2></div></div></div><p>This document is intended to explain some of the more useful things
+within the tree, and provide a standard for working on the code.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_general_stuff_8201_8212_8201_common_subdirectory"></a>4.1. General stuff — common subdirectory</h3></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_string_handling"></a>String handling</h4></div></div></div><p>Use <code class="literal">snprintf()</code>.  It’s even provided with a compatibility module if the
 target system doesn’t have it natively.</p><p>If you use <code class="literal">snprintf()</code> to load some value into a buffer, make sure you
-provide the format string.  Don’t use user-provided format strings,
-since that’s an easy way to open yourself up to an exploit.</p><p>Don’t use <code class="literal">strcat()</code>.  We have a neat wrapper for <code class="literal">snprintf()</code> called
+provide the format string.  Don’t use user-provided format strings without
+delicate verification, since that’s an easy way to open yourself up to an
+exploit.</p><p>Don’t use <code class="literal">strcat()</code>.  We have a neat wrapper for <code class="literal">snprintf()</code> called
 <code class="literal">snprintfcat()</code> that allows you to append to <code class="literal">char *</code> with a format
-string and all the usual string length checking of <code class="literal">snprintf()</code> routine.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_error_reporting"></a>Error reporting</h4></div></div></div><p>Don’t call <code class="literal">syslog()</code> directly.  Use <code class="literal">upslog_with_errno()</code> and <code class="literal">upslogx()</code>.
-They may write to the syslog, stderr, or both as appropriate.  This
-means you don’t have to worry about whether you’re running in the
+string and all the usual string length checking of <code class="literal">snprintf()</code> routine.
+There is also a <code class="literal">vsnprintfcat()</code> (with a single <code class="literal">va_list</code> argument) for
+API completeness.</p><p>In a few cases you can use a formatting string coming from a mapping
+table or constructed during run-time.  This is generally not safe (due
+to references into the stack when handling the variable argument list),
+and modern compilers warn against doing so.  While it is possible to
+quiesce the warnings with pragmas, it is better to play safe with the
+"dynamic" versions of methods provided by NUT — they allow to combine
+both compile-time checks of expected formatting string vs. types of data
+in the method arguments, and run-time equivalence of the actual dynamic
+formatting string to those expectations.  Such hardened methods include
+<code class="literal">snprintf_dynamic()</code>, <code class="literal">vsnprintf_dynamic()</code>, <code class="literal">snprintfcat_dynamic()</code>,
+<code class="literal">vsnprintfcat_dynamic()</code>, and <code class="literal">mkstr_dynamic()</code> which returns a <code class="literal">char *</code>
+to its statically allocated buffer.  Common string operations in drivers
+in this case can benefit from similar <code class="literal">dstate_setinfo_dynamic()</code> or
+<code class="literal">dstate_addenum_dynamic()</code> methods.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_error_reporting"></a>Error reporting</h4></div></div></div><p>Don’t call <code class="literal">syslog()</code> directly.  Use <code class="literal">upslog_with_errno()</code> and <code class="literal">upslogx()</code>.
+They may also write to the <code class="literal">syslog</code>, <code class="literal">stderr</code>, or both as appropriate.
+This means you don’t have to worry about whether you’re running in the
 background or not.</p><p>The <code class="literal">upslog_with_errno()</code> routine prints your message plus the string
-expansion of <code class="literal">errno</code>. The <code class="literal">upslogx()</code> just prints the message.</p><p><code class="literal">fatal_with_errno()</code> and <code class="literal">fatalx()</code> work the same way, but they
-also <code class="literal">exit(EXIT_FAILURE)</code> afterwards. Don’t call <code class="literal">exit()</code> directly.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_debugging_information"></a>Debugging information</h4></div></div></div><p>The <code class="literal">upsdebug_with_errno()</code>, <code class="literal">upsdebugx()</code>, <code class="literal">upsdebug_hex()</code> and
+expansion of current <code class="literal">errno</code> value. The <code class="literal">upslogx()</code> just prints the message.</p><p><code class="literal">fatal_with_errno()</code> and <code class="literal">fatalx()</code> work the same way, but they
+also <code class="literal">exit(arg)</code> afterwards, where <code class="literal">arg</code> is the first argument of the
+<code class="literal">fatal*()</code> method — typically <code class="literal">EXIT_FAILURE</code> or <code class="literal">EXIT_SUCCESS</code>.
+In most cases, you should not call <code class="literal">exit()</code> directly.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_debugging_information"></a>Debugging information</h4></div></div></div><p>The <code class="literal">upsdebug_with_errno()</code>, <code class="literal">upsdebugx()</code>, <code class="literal">upsdebug_hex()</code> and
 <code class="literal">upsdebug_ascii()</code> routines use the global <code class="literal">nut_debug_level</code>, so you
 don’t have to mess around with <code class="literal">printf()</code>'s and <code class="literal">if</code>'s yourself.
 Use them.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_memory_allocation"></a>Memory allocation</h4></div></div></div><p><code class="literal">xmalloc()</code>, <code class="literal">xcalloc()</code>, <code class="literal">xrealloc()</code> and <code class="literal">xstrdup()</code> all check the
@@ -22,20 +61,26 @@ take input a line at a time or even a character at a time.</p><p>You must initia
 other <code class="literal">parseconf</code> function.  <code class="literal">pconf_encode()</code> is the only exception, since
 it operates on a buffer you supply and is an auxiliary function.</p><p>Escaping special characters and quoting multiple-word elements is all
 handled by the state machine.  Using the same code for all config files
-avoids code duplication.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>this does not apply to drivers.  Driver authors should use the
+avoids code duplication.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>This does not apply to drivers.  Driver authors should use the
 <code class="literal">upsdrv_makevartable()</code> scheme to pick up values from <span class="emphasis"><em>ups.conf</em></span> file.
 Drivers should not have their own config files.</p></div><p>Drivers may have their own data files, such as lists of hardware,
 mapping tables, or similar.  The difference between a data file and a
 config file is that users should never be expected to edit a data file
 under normal circumstances.  This technique might be used to add more
 hardware support to a driver without recompiling.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_lt_time_h_gt_vs_lt_sys_time_h_gt"></a>&lt;time.h&gt; vs. &lt;sys/time.h&gt;</h4></div></div></div><p>This is already handled by autoconf, so just <code class="literal">#include "timehead.h"</code> and
-you will get the right headers on every system.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_device_drivers_8201_8212_8201_main_c"></a>3.2. Device drivers — main.c</h3></div></div></div><p>The device drivers use <code class="literal">main.c</code> as their core.</p><p>To write a new driver, you create a file with a series of support
+you will get the right headers on every system.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_device_drivers_8201_8212_8201_main_c"></a>4.2. Device drivers — main.c</h3></div></div></div><p>The device drivers use <code class="literal">main.c</code> as their core.</p><p>To write a new driver, you create a file with a series of support
 functions that will be called by main.  These all have names that start
 with <code class="literal">upsdrv_</code>, and they will be called at different times by main
-depending on what needs to happen.</p><p>See the <a class="link" href="new-drivers.html" title="4. Creating a new driver to support another device">driver documentation</a> for information on writing
-drivers, and also refer to the skeletal driver in <code class="literal">skel.c</code>.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_portability"></a>3.3. Portability</h3></div></div></div><p>Avoid things that will break on other systems.  All the world is not an
+depending on what needs to happen.</p><p>See the <a class="link" href="new-drivers.html" title="5. Creating a new driver to support another device">driver documentation</a> for information on writing
+drivers, and also refer to the skeletal driver in <code class="literal">skel.c</code>.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_portability"></a>4.3. Portability</h3></div></div></div><p>Avoid things that will break on other systems.  All the world is not an
 x86 Linux box.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_c_comments"></a>C comments</h4></div></div></div><p>There are still older systems out there that don’t do C++ style comments.</p><pre class="screen">/* Comments look like this. */
-// Not like this.</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_variable_declarations_go_on_top"></a>Variable declarations go on top</h4></div></div></div><p>Newer versions of gcc allow you to declare a variable inside a function
+// Not like this.</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_complete_method_signatures"></a>Complete method signatures</h4></div></div></div><p>If a method has intentionally no arguments, this should be explicit by
+specifying a <code class="literal">void</code> argument list in both declarations (header or top
+of a C source file for <code class="literal">static</code> methods) and implementations:</p><pre class="screen">/* Like this: */
+void good_stuff(void);
+
+/* NOT like this: */
+void bad_stuff();</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_variable_declarations_go_on_top"></a>Variable declarations go on top</h4></div></div></div><p>Newer versions of gcc allow you to declare a variable inside a function
 after code, somewhat like the way C++ operates, like this:</p><pre class="screen">function do_stuff(void)
 {
         check_something();
@@ -65,6 +110,22 @@ to "ANSI C"/C89/C90 standard) is initial variable declaration inside a
 
         /* Additional loops cause also an error about re-declaring a variable: */
         for (int i = 10; i &lt; 15; ++i) { ... }
+}</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_variable_length_arrays"></a>Variable length arrays</h4></div></div></div><p>We also avoid initialization of arrays using a variable (e.g. a method
+argument) as poorly portable to older compilers, and prefer explicitly
+allocated and freed buffers, if variable size is needed.</p><p>This should be avoided:</p><pre class="screen">function avoid_vla(int len)
+{
+        char    *buf[len];
+...
+}</pre><p>This should be used instead (preferably with <code class="literal">size_t</code> arguments right away),
+be sure to <code class="literal">free()</code> anywhere you <code class="literal">return</code> from the function:</p><pre class="screen">int use_xcalloc(size_t len)
+{
+        char    *buf = xcalloc(len, sizeof(char));
+
+        if (!buf)
+                return -1;
+...
+        free(buf);
+        return 1;
 }</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_other_hints"></a>Other hints</h4></div></div></div><div class="tip" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Tip</h3><p>At this point NUT is expected to work correctly when built with a
 "strict" C99 (or rather GNU99 on many systems) or newer standard.</p></div><p>The NUT codebase may build in a mode without warnings made fatal on C89
 (GNU89), but the emitted warnings indicate that those binaries may crash.
@@ -76,9 +137,9 @@ That said, some systems refuse to expose methods or types available in
 their system headers and binary libraries if strict-C mode is used alone,
 without extra system-specific defines to enable more than the baseline.</p><p>It was also seen that cross-builds (e.g. NUT for Windows using mingw on
 Linux) may be unable to define <code class="literal">WIN32</code> and/or find symbols for linking
-when using a strict-C language standard.</p><p>The C<code class="literal"> support expects C</code>11 or newer (not really configured or tested
-for older C<code class="literal">98 or C</code>03), modulo features that were deprecated in later
-language revisions (C++14 onwards) as highlighted by warnings from newer
+when using a strict-C language standard.</p><p>The C++ support expects C+<code class="literal">11 or newer (not really configured or tested
+for older C</code>+98 or C+<code class="literal">03), modulo features that were deprecated in later
+language revisions (C</code>+14 onwards) as highlighted by warnings from newer
 compilers.</p><p>Note also that the NUT codebase currently relies on certain features,
 such as the printf format modifiers for <code class="literal">(s)size_t</code>, use of <code class="literal">long long</code>,
 some nuances about structure/array initializers, variadic macros for
@@ -93,173 +154,15 @@ in regular CI builds or one-off local builds for community members with
 a zoo of old systems.</p><p>If somebody in the community actually requires to build and run NUT on
 systems that old, where newer compilers are not available, pull requests
 to fix the offending coding issues in some way that does not break other
-use-cases are welcome.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_continuous_integration_and_automated_builds"></a>3.4. Continuous Integration and Automated Builds</h3></div></div></div><p>To ease and automate the build scenarios which were deemed important for
+use-cases are welcome.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_continuous_integration_and_automated_builds"></a>4.4. Continuous Integration and Automated Builds</h3></div></div></div><p>To ease and automate the build scenarios which were deemed important for
 quality assurance and non-regression checks of NUT, several solutions
-were introduced over time.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_build_automation_tools_and_scripts"></a>Build automation tools and scripts</h4></div></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_ci_build_sh"></a>ci_build.sh</h5></div></div></div><p>This script was originally introduced (following ZeroMQ/ZProject example)
-to automate CI builds, by automating certain scenarios driven by exported
-environment variables to set particular <code class="literal">configure</code> options and <code class="literal">make</code>
-some targets (chosen by the <code class="literal">BUILD_TYPE</code> envvar). It can also be used
-locally to avoid much typing to re-run those scenarios during development.</p><p>Developers can directly use the scripts involved in CI builds to fix
-existing code on their workstations or to ensure support for new
-compilers and C standard revisions, e.g. save a local file like this
-to call the common script with pre-sets:</p><pre class="literallayout">$ cat _fightwarn-gcc10-gnu17.sh
-#!/bin/sh</pre><pre class="literallayout">BUILD_TYPE=default-all-errors \
-CFLAGS="-Wall -Wextra -Werror -pedantic -std=gnu17" \
-CXXFLAGS="-Wall -Wextra -Werror -std=gnu++17" \
-CC=gcc-10 CXX=g++-10 \
-        ./ci_build.sh</pre><p>…and then execute it to prepare a workspace, after which you can go
-fixing bugs file-by-file running a <code class="literal">make</code> after each save to confirm
-your solutions and uncover the next issue to address :-)</p><p>Helpfully, the NUT CI farm build logs report the configuration used for
-each executed stage, so if some build combination fails — you can just
-scroll to the end of that section and copy-paste the way to reproduce
-an issue locally (on an OS similar to that build case).</p><p>Note that while spelling out sets of warnings can help in a quest to
-fix certain bugs during development (if only by removing noise from
-classes of warnings not relevant to the issue one is working on), there
-is a reasonable set of warnings which NUT codebase actively tries to
-be clean about (and checks in CI), detailed in the next section.</p><p>For the <code class="literal">ci_build.sh</code> usage like above, one can instead pass the setting
-via <code class="literal">BUILD_WARNOPT=...</code>, and require that all emitted warnings are fatal
-for their build, e.g.:</p><pre class="literallayout">$ cat _fightwarn-clang9-gnu11.sh
-#!/bin/sh</pre><pre class="literallayout">BUILD_TYPE=default-all-errors \
-BUILD_WARNOPT=hard BUILD_WARNFATAL=yes \
-CFLAGS="-std=gnu11" \
-CXXFLAGS="-std=gnu++11" \
-CC=clang-9 CXX=clang++-9 CPP=clang-cpp \
-        ./ci_build.sh</pre><p>Finally, for refactoring effort geared particularly for fighting the
-warnings which exist in current codebase, the script contains some
-presets (which would evolve along with codebase quality improvements)
-as <code class="literal">BUILD_TYPE=fightwarn-gcc</code>, <code class="literal">BUILD_TYPE=fightwarn-clang</code> or plain
-<code class="literal">BUILD_TYPE=fightwarn</code>:</p><pre class="literallayout">BUILD_TYPE=fightwarn-clang ./ci_build.sh</pre><p>As a rule of thumb, new contributions must not emit any warnings when
-built in GNU99 mode with a <code class="literal">minimal</code> "difficulty" level of warnings.
-Technically they must survive the part of test matrix across the several
-platforms tested by NUT CI and marked in project settings as required
-to pass, to be accepted for a pull request merge.</p><p>Developers aiming to post successful pull requests to improve NUT can
-pass the <code class="literal">--enable-warnings</code> option to the <code class="literal">configure</code> script in local
-builds to see how that behaves and ensure that at least in some set-up
-their contribution is viable. Note that different compiler versions and
-vendors (gcc/clang/…), building against different OS and third-party
-dependencies, with different CPU architectures and different language
-specification revisions, might all complain about different issues — and catching this in as diverse range of set-ups as possible is why we
-have CI tests.</p><p>It can be beneficial for serial developers to set up a local BuildBot,
-Travis or a Jenkins instance with a matrix test job, to test their local
-git repository branches with whatever systems they have available.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-<a class="ulink" href="https://github.com/networkupstools/nut/issues/823" target="_top">https://github.com/networkupstools/nut/issues/823</a>
-</li></ul></div><p>While <code class="literal">autoconf</code> tries its best to provide portable shell code, sometimes
-there are builds of system shell that just fail under stress. If you are
-seeing random failures of <code class="literal">./configure</code> script in different spots with
-the same inputs, try telling <code class="literal">./ci_build.sh</code> to loop configuring until
-success (instead of quickly failing), and/or tell <code class="literal">./configure</code> to use
-another shell at least for the system call-outs, with options like these:</p><pre class="literallayout">SHELL=/bin/bash CONFIG_SHELL=/bin/bash CI_SHELL_IS_FLAKY=true \
-./ci_build.sh</pre></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_jenkins_ci"></a>Jenkins CI</h5></div></div></div><p>Since mid-2021, the NUT CI farm is implemented by several virtual servers
-courteously provided by <a class="ulink" href="http://fosshost.org" target="_top">Fosshost</a> and later by
-<a class="ulink" href="https://www.digitalocean.com/?refcode=d2fbf2b9e082&amp;utm_campaign=Referral_Invite&amp;utm_medium=Referral_Program&amp;utm_source=badge" target="_top">DigitalOcean</a>.</p><p>These run various operating systems as build agents, and a Jenkins instance
-to orchestrate the builds of NUT branches and pull requests on those agents.</p><p>This is driven by <code class="literal">Jenkinsfile-dynamatrix</code> and a Jenkins Shared Library called
-<a class="ulink" href="https://github.com/networkupstools/jenkins-dynamatrix" target="_top">jenkins-dynamatrix</a>
-which prepares a matrix of builds across as many operating systems,
-bitnesses/architectures, compilers, make programs and C/C++ revisions
-as it can — based on the population of currently available build agents
-and capabilities which they expose as agent labels.</p><p>This hopefully means that people interested in NUT can contribute to the
-build farm (and ensure NUT is and remains compatible with their platform)
-by running a Jenkins Swarm agent with certain labels, which would dial
-into <a class="ulink" href="https://ci.networkupstools.org/" target="_top">https://ci.networkupstools.org/</a> controller. Please contact the NUT
-maintainer if you want to participate in this manner.</p><p>The <code class="literal">Jenkinsfile-dynamatrix</code> recipe allows NUT CI farm to run different sets
-of build scenarios based on various conditions, such as the name of branch
-being built (or PR’ed against), changed files (e.g. C/C++ sources vs. just
-docs), and some build combinations may be not required to succeed.</p><p>For example, the main development branch and pull requests against it must
-cleanly pass all specified builds and tests on various platforms with the
-default level of warnings specified in the <code class="literal">configure</code> script. These are
-balanced to not run too many build scenarios overall, but just a quick and
-sufficiently representative set.</p><p>As another example, there is special handling for "fightwarn" pattern in
-the branch names to run many more builds with varying warning levels and
-more variants of intermediate language revisions, and so expose concerns
-deliberately missed by default warnings levels in "master" branch builds
-(the bar moves over time, as some classes of warnings become extinct from
-our codebase).</p><p>Further special handling for branches named like <code class="literal">fightwarn.*89.*</code> regex
-enables more intensive warning levels for a GNU89 build specifically (which
-are otherwise disabled as noisy yet not useful for supported C99+ builds),
-and is intended to help develop fixes for support of this older language
-revision, if anyone would dare.</p><p>Many of those unsuccessful build stages are precisely the focus of the
-"fightwarn" effort, and are currently marked as "may fail", so they end
-up as "UNSTABLE" (seen as orange bubbles in the Jenkins BlueOcean UI, or
-orange cells in the tabular list of stages in the legacy UI), rather than
-as "FAILURE" (red bubbles) for build scenarios that were not expected to
-fail and usually represent higher-priority problems that would block a PR.</p><p>Developers whose PR builds (or attempts to fix warnings) did not succeed in
-some cell of such build matrix, can look at the individual logs of that cell.
-Beside indication from the compiler about the failure, the end of log text
-includes the command which was executed by CI worker and can be reproduced
-locally by the developer, e.g.:</p><pre class="screen">22:26:01  FINISHED with exit-code 2 cmd:  (
-22:26:01  [ -x ./ci_build.sh ] || exit
-22:26:01
-22:26:01  eval BUILD_TYPE="default-alldrv" BUILD_WARNOPT="hard" \
-    BUILD_WARNFATAL="yes" MAKE="make"  CC=gcc-10 CXX=g++-10 \
-    CPP=cpp-10 CFLAGS='-std=gnu99 -m64' CXXFLAGS='-std=gnu++11 -m64' \
-    LDFLAGS='-m64' ./ci_build.sh
-22:26:01  )</pre><p>or for autotools-driven scenarios (which prep, configure, build and test
-in separate stages — so for reproducing a failed build you should also
-look at its configuration step separately):</p><pre class="screen">22:28:18  FINISHED with exit-code 0 cmd:  ( [ -x configure ] || exit; \
-    eval  CC=clang-9 CXX=clang++-9 CPP=clang-cpp-9 CFLAGS='-std=c11 -m64' \
-    CXXFLAGS='-std=c++11 -m64' LDFLAGS='-m64' time ./configure )</pre><p>To re-run such scenario locally, you can copy the line from <code class="literal">eval</code> (but
-without the <code class="literal">eval</code> keyword itself) up to and including the executed script
-or tool, into your shell. Depending on locally available compilers, you
-may have to tweak the <code class="literal">CC</code>, <code class="literal">CXX</code> and <code class="literal">CPP</code> arguments; note that a <code class="literal">CPP</code>
-may be specified as <code class="literal">/path/to/CC -E</code> for GCC and CLANG based toolkits
-at least, if they lack a standalone preprocessor program (e.g. IntelCC).</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>While NUT recipes do not currently recognize a separate <code class="literal">CXXCPP</code>,
-it would follow similar semantics.</p></div><p>Some further details about the NUT CI farm workers are available in
-<a class="ulink" href="config-prereqs.txt" target="_top">config-prereqs.txt</a> and
-<a class="ulink" href="ci-farm-lxc-setup.txt" target="_top">ci-farm-lxc-setup.txt</a> documents.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_appveyor_ci"></a>AppVeyor CI</h5></div></div></div><p>Primarily used for building NUT for Windows on Windows instances provided
-in the cloud — and so ensure non-regression as well as downloadable archives
-with binary installation prototype area, intended for enthusiastic testing
-(proper packaging to follow). NUT for Windows build-ability was re-introduced
-soon after NUT 2.8.0 release.</p><p>This relies on a few prerequisite packages and a common NUT configuration,
-as coded in the <code class="literal">appveyor.yml</code> file in the NUT codebase.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_circleci"></a>CircleCI</h5></div></div></div><p>Primarily used for building NUT for MacOS on instances provided in the cloud,
-and so ensure non-regression across several Xcode releases.</p><p>This relies on a few prerequisite packages and a common NUT configuration,
-as coded in the <code class="literal">.circleci/config.yml</code> file in the NUT codebase.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_travis_ci"></a>Travis CI</h5></div></div></div><p>See the <code class="literal">.travis.yml</code> file in project sources for a detailed list of third
-party dependencies and a large matrix of <code class="literal">CFLAGS</code> and compiler versions
-last known to work or to not (yet) work on operating systems available
-to that CI solution.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>The cloud Travis CI offering became effectively defunct for
-open-source projects in mid-2021, so the <code class="literal">.travis.yml</code> file in NUT
-codebase is not actively maintained.</p><p>Local private deployments of Travis CI are possible, so if anybody does
-use it and has updated markup to share, they are welcome to post PRs.</p></div><p>The NUT project on GitHub has integration with Travis CI to test a large
-set of compiler and option combinations, covering different versions of
-gcc and clang, C standards, and requiring to pass builds at least in a
-mode without warnings (and checking the other cases where any warnings
-are made fatal).</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_pre_set_warning_options"></a>Pre-set warning options</h4></div></div></div><p>The options chosen into pre-sets that can be selected by <code class="literal">configure</code>
-script options are ones we use for different layers of CI tests.</p><p>Values to note include:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-<code class="literal">--enable-Werror(=yes/no)</code> — make warnings fatal;
-</li><li class="listitem"><p class="simpara">
-<code class="literal">--enable-warnings(=.../no)</code> — enable certain warning presets:
-</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
-<code class="literal">gcc-hard</code>, <code class="literal">clang-hard</code>, <code class="literal">gcc-medium</code>, <code class="literal">clang-medium</code>, <code class="literal">gcc-minimal</code>,
-   <code class="literal">clang-minimal</code>, <code class="literal">all</code> — actual definitions that are compiler-dependent
-   (the latter just adds <code class="literal">-Wall</code> which may be relatively portable);
-</li><li class="listitem">
-<code class="literal">hard</code>, <code class="literal">medium</code> or <code class="literal">minimal</code> — if current compiler is detected as
-   CLANG or GCC, apply corresponding setting from above (or <code class="literal">all</code> otherwise);
-</li><li class="listitem">
-<code class="literal">gcc</code> or <code class="literal">clang</code> — apply the set of options (regardless of detected
-   compiler) with default "difficulty" hard-coded in <code class="literal">configure</code> script,
-   to tweak as our codebase becomes cleaner;
-</li><li class="listitem">
-<code class="literal">yes</code>/<code class="literal">auto</code> (also takes effect if <code class="literal">--enable-warnings</code> is requested
-   without an <code class="literal">=ARG</code> part) — if current compiler is detected as CLANG
-   or GCC, apply corresponding setting with default "difficulty" from
-   above (or <code class="literal">all</code> otherwise).
-</li></ul></div></li></ul></div><p>Note that for backwards-compatibility reasons and to help filter out
-introduction of blatant errors, builds with compilers that claim GCC
-compatibility can enable a few easy warning presets by default. This
-can be avoided with an explicit argument to <code class="literal">--disable-warnings</code> (or
-<code class="literal">--enable-warnings=no</code>).</p><p>All levels of warnings pre-sets for GCC in particular do not enforce
-the <code class="literal">-pedantic</code> mode for builds with C89/C90/ANSI standard revision
-(as guesstimated by <code class="literal">CFLAGS</code> content), because nowadays it complains
-more about the system and third-party library headers, than about NUT
-codebase quality (and "our offenses" are mostly something not worth
-fixing in this era, such as the use of <code class="literal">__func__</code> in debug commands).
-If there still are practical use-cases that require builds of NUT on
-pre-C99 compiler toolkits, pull requests are of course welcome — but
-the maintainer team does not intend to spend much time on that.</p><p>Hopefully this warnings pre-set mechanism is extensible enough if we
-would need to add more compilers and/or "difficulty levels" in the
-future.</p><p>Finally, note that such pre-set warnings can be mixed with options
-passed through <code class="literal">CFLAGS</code> or <code class="literal">CXXFLAGS</code> values to your local <code class="literal">configure</code>
-run, but it is up to your compiler how it interprets the resulting mix.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_integrated_development_environments_ides_and_debugging_nut"></a>3.5. Integrated Development Environments (IDEs) and debugging NUT</h3></div></div></div><p>Much of NUT has been coded using classic editors of developers' preference,
+were introduced over time.</p><p>For more information, and perhaps inspiration for building a similar
+solution, please see the <span class="strong"><strong>NUT Quality Assurance and Build Automation Guide</strong></span>,
+and specifically its chapters on
+<a class="ulink" href="../qa-guide.chunked/index.html#CI_compiler_warnings" target="_top">Static analysis by compilers</a>,
+<a class="ulink" href="../qa-guide.chunked/index.html#CI_BUILD_SH" target="_top">ci_build.sh script</a> (or <code class="code">ci_build.adoc</code> in NUT sources for up-to-date information),
+<a class="ulink" href="../qa-guide.chunked/index.html#NUTCI_farm_technologies" target="_top">Continuous Integration (NUT CI farm) technologies</a> and
+<a class="ulink" href="../qa-guide.chunked/index.html#NUTCI_farm_agents" target="_top">Continuous Integration (NUT CI farm) build agent preparation</a>.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_integrated_development_environments_ides_and_debugging_nut"></a>4.5. Integrated Development Environments (IDEs) and debugging NUT</h3></div></div></div><p>Much of NUT has been coded using classic editors of developers' preference,
 like <code class="literal">vi</code>, <code class="literal">nano</code>, Midnight Commander <code class="literal">mcedit</code>, <code class="literal">gedit</code>/<code class="literal">pluma</code>, NotePad++
 and tools like <code class="literal">meld</code> or WinMerge for file comparison and merge.</p><p>Modern IDEs however do offer benefits, specifically for live debugging
 sessions in a more convenient fashion than with command-line <code class="literal">gdb</code> directly.
@@ -277,7 +180,15 @@ Apache NetBeans 17 on Windows with MSYS2 support (as MinGW toolkit);
 Visual Studio Code (VSCode) on Windows with MSYS2 support.
 </li></ul></div><p>Some supporting maintenance and development is doable with IntelliJ IDEA,
 making some things easier to do than with a simple Notepad, but it does
-not handle C/C++ development as such.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_ide_notes_on_windows"></a>IDE notes on Windows</h4></div></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_general_settings_for_builds_on_windows"></a>General settings for builds on Windows</h5></div></div></div><p>When working in a native Windows environment with
+not handle C/C++ development as such.</p><p>Take note that some IDEs can store their project data in the source root
+directory of a project (such as NUT codebase). While <code class="literal">.gitignore</code> rules
+can take care of not adding your local configuration into the SCM, these
+locations can be wiped by a careless <code class="literal">git clean -fdX</code>. You are advised
+to explore configuring your IDE to store project configurations outside
+the source codebase location, or to track such subdirectories as <code class="literal">nbproject</code>
+or <code class="literal">nb-cache</code> or <code class="literal">.idea</code> as a separate Git repository (not necessarily a
+submodule of NUT nor really diligently tracked) to avoid such surprises,
+e.g. <code class="literal">(cd nbproject &amp;&amp; git init .)</code> can help.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_ide_notes_on_windows"></a>IDE notes on Windows</h4></div></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_general_settings_for_builds_on_windows"></a>General settings for builds on Windows</h5></div></div></div><p>When working in a native Windows environment with
 <a class="ulink" href="https://www.msys2.org/" target="_top">MSYS2</a> (providing MinGW x64 among other things),
 you may need to ensure certain environment variables are set before you start
 the IDE (shortcuts and wrappers that start your console apply them via shell).</p><div class="warning" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Warning</h3><p>If you set such environment variables system-wide for your user
@@ -289,7 +200,7 @@ You may want to do this in a dedicated user account!</p></div><p>Examples below 
 are using the "MinGW X64" profile for GCC builds (nuances may differ for
 32-bit, CLANG, UCRT and other profile variants).</p><p>Also keep in mind that not all dependencies and tools involved in a
 fully-fledged NUT build are easily available or usable on Windows (e.g.
-the spell checker). See the <a class="ulink" href="config-prereqs.txt" target="_top">config-prereqs.txt</a> for better detailed
+the spell checker). See <a class="ulink" href="../qa-guide.chunked/index.html#NUT_Config_Prereqs" target="_top">Prerequisites for building NUT on different OSes</a> (or <code class="code">docs/config-prereqs.txt</code> in NUT sources for up-to-date information) for better detailed
 package lists for different operating systems including Windows, and feel
 welcome to post pull requests with suggestions about new tool-chains that
 might fare better than those already tried and documented.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
@@ -507,7 +418,7 @@ IntelliJ portfolio is dedicated to that), so for the core NUT project sources
 it is just a fancy text editor (with <code class="literal">.editorconfig</code> support) without syntax
 highlighting or codebase cross-reference aids, build/run/debug support, etc.</p><p>Still, it is possible to run builds and tests in embedded or external terminal
 session — so it is not worse than editing with legacy tools, and navigation
-or code-base-wide search is arguably easier.</p></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_coding_style"></a>3.6. Coding style</h3></div></div></div><p>This is how we do things:</p><pre class="screen">int open_subspace(char *ship, int privacy)
+or code-base-wide search is arguably easier.</p></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_coding_style"></a>4.6. Coding style</h3></div></div></div><p>This is how we do things:</p><pre class="screen">int open_subspace(char *ship, int privacy)
 {
         if (!privacy)
                 return insecure_channel(ship);
@@ -525,8 +436,8 @@ track too much <code class="literal">{ }</code> nesting and indenting.</p><p>We 
 probably get away with it in your own driver that we will never have to
 touch.  If your function or variable names start pushing important code
 off the right margin of the screen, expect them to meet the byte
-chainsaw sooner or later.</p><p>All types defined with typedef should end in <code class="literal">_t</code>, because this is
-easier to read, and it enables tools (such as indent and emacs) to
+chainsaw sooner or later.</p><p>All types defined with <code class="literal">typedef</code> should end in <code class="literal">_t</code>, because this is
+easier to read, and it enables tools (such as <code class="literal">indent</code> and <code class="literal">emacs</code>) to
 display the source code correctly.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_indenting_with_tabs_vs_spaces"></a>Indenting with tabs vs. spaces</h4></div></div></div><p>Another thing to notice is that the indenting happens with tabs instead
 of spaces.  This lets everyone have their personal tab-width setting
 without inflicting much pain on other developers.  If you use a space,
@@ -541,13 +452,35 @@ a different widths.</p><p>One common example for this is multi-line if condition
 (non-leading) spaces at least between names and values not too many
 characters wide; it still helps to align the columns with spaces at
 offsets divisible by 4 or 8 (consistently for the whole table):</p><pre class="screen">#define SHORT_MACRO                         1   /* flag comment */
-#define SOMETHING_WITH_A_VERY_LONG_NAME     255 /* flag comment */</pre><p>If you write something that uses leading spaces, you may get away with
+#define SOMETHING_WITH_A_VERY_LONG_NAME     255 /* flag comment */</pre><p>While at it, we encourage indentation of nested preprocessor macros
+and pragmas, by adding a single space character for each inner level,
+as well as commenting the <code class="literal">#else</code> and <code class="literal">#endif</code> parts (especially if
+they are far away from their opening <code class="literal">#if</code>/<code class="literal">#ifdef</code>/<code class="literal">#ifndef</code> statement)
+to help visual navigation in the source code base. Please take care to
+keep the hash <code class="literal">#</code> character of the preprocessor lines in the left-most
+column, since some implementations of <code class="literal">cpp</code> parser used for analysis
+default to "traditional" (pre-C89) syntax shared with other languages,
+and then ignore lines which do not start with the hash character (or
+worse, ignore only some of them but not others).</p><pre class="screen">#ifdef WITH_SSL
+# ifdef WITH_NSS
+        /* some code for NSS */
+# endif /* WITH_NSS */
+# ifdef WITH_OPENSSL
+#  ifndef WIN32
+        /* some code for OpenSSL on POSIX systems */
+#  else /* not WIN32 */
+        /* some code for OpenSSL on Windows */
+#  endif        /* not WIN32 */
+# endif /* WITH_OPENSSL */
+#else   /* not WITH_SSL */
+        /* report that crypto support is not built */
+#endif  /* WITH_SSL */</pre><p>If you write something that uses leading spaces, you may get away with
 it in a driver that’s relatively secluded.  However, if we have to work
 on that code, expect it to get reformatted according to the above.</p><p>Patches to existing code that don’t conform to the coding style being
 used in that file will probably be dropped.  If it’s something we really
 need, it will be grudgingly reformatted before being included.</p><p>When in doubt, have a look at Linus’s take on this topic in the Linux
-kernel — Documentation/CodingStyle.  He’s done a far better job of
-explaining this.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_line_breaks"></a>Line breaks</h4></div></div></div><p>It is better to have lines that are longer than 80 characters than to
+kernel — <a class="ulink" href="https://github.com/torvalds/linux/blob/master/Documentation/process/coding-style.rst" target="_top">Documentation/CodingStyle</a>.
+He’s done a far better job of explaining this.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_line_breaks"></a>Line breaks</h4></div></div></div><p>It is better to have lines that are longer than 80 characters than to
 wrap lines in random places. This makes it easier to work with tools
 such as <code class="literal">grep</code>, and it also lets each developer choose their own
 window size and tab setting without being stuck to one particular
@@ -564,7 +497,7 @@ context differences for later code comparisons, relocation, refactoring, etc.</p
 taking arguments that are not used in practice (think a too-trivial
 signal handler). While some compilers offer the facility of decorations
 like <code class="literal">__attribute__(unused)</code>, this proved not to be a portable solution.
-Also the abilities of newer C++ standard revisions are of no help to
+Also the abilities of newer C/C++ standard revisions are of no help to
 the vast range of existing systems that run NUT today and expect to be
 able to do so tomorrow (hence the required C99+ support noted above).</p><p>In NUT codebase we prefer to mark un-used variables explicitly in the
 body of the function (or an <code class="literal">#ifdef</code> branch of its code) using the
@@ -575,14 +508,20 @@ should happen below the declarations.</p><p>To display in a rough example:</p><p
                 NUT_UNUSED_VARIABLE(signal_X);
                 /* We have explicitly got nothing to do if we catch signal X */
                 return;
-        }</pre></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_miscellaneous_coding_style_tools"></a>3.7. Miscellaneous coding style tools</h3></div></div></div><p>NUT codebase includes an <code class="literal">.editorconfig</code> file which should be supported
+        }</pre><p>All this having been said, we do detect and use the support for pragmas
+to quiesce the complaints about such situations, but limit their use to
+processing of certain third-party header files.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_miscellaneous_coding_style_tools"></a>4.7. Miscellaneous coding style tools</h3></div></div></div><p>NUT codebase includes an <code class="literal">.editorconfig</code> file which should be supported
 by most of the IDEs and text editors nowadays. Many support this format
 specification (at least partially) out of the box, possibly with some
 configuration toggle in the GUI. Others may need a plugin, see more at
 <a class="ulink" href="https://editorconfig.org/#pre-installed" target="_top">https://editorconfig.org/#pre-installed</a> page. There are also command-line
-tools to verify and/or enforce compliance of source files to configuration.</p><p>You can go a long way towards converting your source code to the NUT
-coding style by piping it through the following command:</p><pre class="literallayout">indent -kr -i8 -T FILE -l1000 -nhnl</pre><p>This next command does a reasonable job of converting most C++ style
-comments (but not URLs and DOCTYPE strings):</p><pre class="literallayout">sed 's#\(^\|[ \t]\)//[ \t]*\(.*\)[ \t]*#/* \2 */#'</pre><p>Emacs users can adjust how tabs are displayed. For example, it is
+tools to verify and/or enforce compliance of source files to configuration.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>A long-standing plan is to define a <code class="literal">clang-format</code> specification
+for all the different nuances like where we do and don’t want spaces
+around parentheses, how to align multi-line conditional expressions, etc.
+in a way that most of the current NUT code base would already conform.
+Taking the first step is the hardest part, so PRs are welcome :)</p></div><p>You can go a long way towards converting your source code to the NUT
+coding style by piping it through the following command:</p><pre class="literallayout">:; indent -kr -i8 -T FILE -l1000 -nhnl</pre><p>This next command does a reasonable job of converting most C++ style
+comments (but not URLs and DOCTYPE strings):</p><pre class="literallayout">:; sed 's#\(^\|[ \t]\)//[ \t]*\(.*\)[ \t]*#/* \2 */#'</pre><p>Emacs users can adjust how tabs are displayed. For example, it is
 possible to set a tab stop to be 3 spaces, rather than the usual 8.
 (Note that in the saved file, one indentation level will still
 correspond to one tab stop; the difference is only how the file is
@@ -607,7 +546,54 @@ your friend.  If nobody should edit the contents of some buffer that’s
 behind a pointer, <code class="literal">const</code> keeps them honest.</p><p>We always compile with <code class="literal">-Wall</code>, so things like <code class="literal">const</code> and <code class="literal">static</code> help you
 find implementation flaws.  Functions that attempt to modify a constant
 or access something outside their scope will throw a warning or even
-fail to compile in some cases.  This is what we want.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_switch_case_fall_through"></a>Switch case fall-through</h4></div></div></div><p>While C standards allow to write <code class="literal">switch</code> statements to "fall through"
+fail to compile in some cases.  This is what we want.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_switch_case_vs_default_vs_enum"></a>Switch case vs. default vs. enum</h4></div></div></div><p>NUT codebase often uses the <code class="literal">switch/case/case.../default</code> construct to handle
+conditional situations expressed by discrete numeric values (the <code class="literal">case value:</code>
+labels). Different compilers and their different warning settings require
+different rules to be satisfied, and those are sometimes at odds:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+a <code class="literal">switch</code> should definitively handle all cases, so must have a <code class="literal">default</code>
+  label — this works well for general numeric variables;
+</li><li class="listitem">
+an <code class="literal">enum</code>'s valid values are known at compile time, and each must be handled
+  explicitly (even if implemented as many <code class="literal">case value:</code> labels preceding the
+  same code block), so…
+</li><li class="listitem">
+…a <code class="literal">default</code> label is redundant (should never be reachable) in a <code class="literal">switch</code>
+  that handles all <code class="literal">enum</code> values — but this notion is a head-on crash vs. the
+  first rule above.
+</li></ul></div><p>Ultimately, some cases require the wall of <code class="literal">pragma</code> directives below against
+warnings at this spot, and we use the <code class="literal">default</code> label handling to be sure,
+as the least-worst solution (ultra-long lines wrapped for readability in this
+document):</p><pre class="screen">#if (defined HAVE_PRAGMA_GCC_DIAGNOSTIC_PUSH_POP) \
+ &amp;&amp; ( (defined HAVE_PRAGMA_GCC_DIAGNOSTIC_IGNORED_COVERED_SWITCH_DEFAULT) \
+   || (defined HAVE_PRAGMA_GCC_DIAGNOSTIC_IGNORED_UNREACHABLE_CODE) )
+# pragma GCC diagnostic push
+#endif
+#ifdef HAVE_PRAGMA_GCC_DIAGNOSTIC_IGNORED_COVERED_SWITCH_DEFAULT
+# pragma GCC diagnostic ignored "-Wcovered-switch-default"
+#endif
+#ifdef HAVE_PRAGMA_GCC_DIAGNOSTIC_IGNORED_UNREACHABLE_CODE
+# pragma GCC diagnostic ignored "-Wunreachable-code"
+#endif
+/* Older CLANG (e.g. clang-3.4) seems to not support the GCC pragmas above */
+#ifdef __clang__
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wunreachable-code"
+# pragma clang diagnostic ignored "-Wcovered-switch-default"
+#endif
+                /* All enum cases defined as of the time of coding
+                 * have been covered above. Handle later definitions,
+                 * memory corruptions and buggy inputs below...
+                 */
+                default:
+                        fatalx(EXIT_FAILURE, "no suitable definition found!");
+#ifdef __clang__
+# pragma clang diagnostic pop
+#endif
+#if (defined HAVE_PRAGMA_GCC_DIAGNOSTIC_PUSH_POP) \
+ &amp;&amp; ( (defined HAVE_PRAGMA_GCC_DIAGNOSTIC_IGNORED_COVERED_SWITCH_DEFAULT) \
+   || (defined HAVE_PRAGMA_GCC_DIAGNOSTIC_IGNORED_UNREACHABLE_CODE) )
+# pragma GCC diagnostic pop
+#endif</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_switch_case_fall_through"></a>Switch case fall-through</h4></div></div></div><p>While C standards allow to write <code class="literal">switch</code> statements to "fall through"
 from handling one case into another, modern compilers frown upon that
 practice and spew warnings which complicate detecting real bugs in the
 code (and also looking back at some of the cases written decades ago,
@@ -642,32 +628,35 @@ specs.  Part of this is due to the fact that the coding style has been
 evolving slightly over the course of the project.  Some of the code you
 see in these directories is 5 years old, and things have gotten cleaner
 since then.  Don’t worry — it’ll get cleaned up the next time something
-in the vicinity gets a visit.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_memory_leak_checking"></a>Memory leak checking</h4></div></div></div><p>We can’t say enough good things about valgrind.  If you do anything with
-dynamic memory in your code, you need to use this.  Just compile with
-<code class="literal">gcc -g</code> and start the program inside <code class="literal">valgrind</code>.  Run it through the
-suspected area and then exit cleanly.  valgrind will tell you if you’ve
-done anything dodgy like freeing regions twice, reading uninitialized
-memory, or if you’ve leaked memory anywhere.</p><p>For more information, refer to the <a class="ulink" href="http://valgrind.kde.org" target="_top">Valgrind</a>
+in the vicinity gets a visit.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_memory_leak_checking"></a>Memory leak checking</h4></div></div></div><p>We can’t say enough good things about valgrind.</p><p>If you do anything with dynamic memory in your code, you need to use this.
+Just compile with <code class="literal">gcc -g</code> and start the program inside <code class="literal">valgrind</code>.
+Run it through the suspected area and then exit cleanly.  Then valgrind
+will tell you if you’ve done anything dodgy like freeing regions twice,
+leaving files open, reading uninitialized memory, or if you’ve leaked
+memory anywhere.</p><p>For NUT, there are prepared integrations like <code class="literal">configure --with-valgrind</code>.
+See also <code class="literal">scripts/valgrind</code> in NUT sources for a helper tool and resource
+files to suppress common third-party problems.</p><p>For more information, refer to the <a class="ulink" href="http://valgrind.kde.org" target="_top">Valgrind</a>
 project.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_conclusion"></a>Conclusion</h4></div></div></div><p>The summary: please be kind to our eyes.  There’s a lot of stuff in here,
-and many people have put a lot of time and energy to improve it.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_submitting_patches"></a>3.8. Submitting patches</h3></div></div></div><p>Current preference for suggesting changes is to open a pull request on
+and many people have put a lot of time and energy to improve it.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_submitting_patches"></a>4.8. Submitting patches</h3></div></div></div><p>Current preference for suggesting changes is to open a pull request on
 GitHub for the <a class="ulink" href="https://github.com/networkupstools/nut/" target="_top">https://github.com/networkupstools/nut/</a> project.</p><p>For some cases, small patches that arrive by mailing list in unified
-format (<code class="literal">diff -u</code>) as plain text attachments with no HTML and a brief
+format (<code class="literal">diff -Naur</code>) as plain text attachments with no HTML and a brief
 summary at the top are easy to handle, but sadly also easy to overlook.</p><p>If a patch is sent to the nut-upsdev mailing list, it stands a better
 chance of being seen immediately. However, it is likely to be dropped
 if any issues cannot be resolved quickly. If your code might not work
 for others, or if it is a large change, your best bet is to submit a
 pull request or create an
-<a class="ulink" href="https://github.com/networkupstools/nut/issues" target="_top">issue on GitHub</a>.</p><p>The issue tracker allows us to track the patches over a longer period
-of time, and it is less likely that a patch will fall through the cracks.
+<a class="ulink" href="https://github.com/networkupstools/nut/issues" target="_top">issue on GitHub</a>.</p><p>The issue tracker allows us to track the patches, and related discussion
+for clarifications or a review process, over a longer period of time,
+and it is less likely that a patch will fall through the cracks.
 Posting a reminder to the developers (via the nut-upsdev list) about a
-patch on GitHub is fair game.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_patch_cohesion"></a>3.9. Patch cohesion</h3></div></div></div><p>Patches should have some kind of unifying element.  One patch set is one
+patch on GitHub is fair game, if the maintainers do not react in a few days.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_patch_cohesion"></a>4.9. Patch cohesion</h3></div></div></div><p>Patches should have some kind of unifying element.  One patch set is one
 message, and it should all touch similar things.  If you have to edit 6
 files to add support for neutrino detection in UPS hardware, that’s
 fine.</p><p>However, sending one huge patch that does massive separate changes all over
 the tree is not recommended.  That kind of patch has to be split up and
 evaluated separately, assuming the core developers care enough to do that
 instead of just dropping it.</p><p>If you have to make big changes in lots of places, send multiple
-patches — one per item.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_the_finishing_touches_manual_pages_and_device_entry_in_hcl"></a>3.10. The finishing touches: manual pages and device entry in HCL</h3></div></div></div><p>If you change something that involves an argument to a program or
+patches — one per item.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_the_finishing_touches_manual_pages_and_device_entry_in_hcl"></a>4.10. The finishing touches: manual pages and device entry in HCL</h3></div></div></div><p>If you change something that involves an argument to a program or
 configuration file parsing, the man page is probably now out of date.
 If you don’t update it, we have to, and we have enough to do as it is.</p><p>If you write a new driver, send in the man page when you send us the
 source code for your driver.  Otherwise, we will be forced to write a
@@ -680,14 +669,14 @@ updated a driver, your copyright belongs in the heading comment (along
 with existing ones). For vendor backed (or sponsored) contributions we
 welcome an entry in the <a class="ulink" href="docs/acknowledgements.txt" target="_top">docs/acknowledgements.txt</a> file as well,
 to track and know the industry players who help make NUT better and more
-useful.</p><p>It is nice to update the <a class="ulink" href="NEWS" target="_top">NEWS</a> file for significant development
+useful.</p><p>It is nice to update the <a class="ulink" href="NEWS.adoc" target="_top">NEWS.adoc</a> file for significant development
 to be seen as part of next release, as well as to update the
-<a class="ulink" href="UPGRADING" target="_top">UPGRADING</a> file for potentially breaking changes and similar
+<a class="ulink" href="UPGRADING.adoc" target="_top">UPGRADING.adoc</a> file for potentially breaking changes and similar
 heads-up notes for third-party teams (distribution packagers, clients
-and bindings, etc.)</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_source_code_management"></a>3.11. Source code management</h3></div></div></div><p>We currently use a Git repository hosted at GitHub to track changes to
-the NUT source code. This allows you to clone the repository (or fork,
-in GitHub parlance), make changes, and post them online for peer review
-prior to integration.</p><p>To obtain permission to commit directly to the common upstream NUT repository,
+and bindings, etc.)</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_source_code_management"></a>4.11. Source code management</h3></div></div></div><p>We currently use a Git repository hosted at GitHub to track changes to
+the NUT source code. This allows you to "fork" the repository (in GitHub
+parlance), "clone" it to your workstation(s), make a new "branch" with
+your changes, and post them back online for peer review prior to integration.</p><p>To obtain permission to commit directly to the common upstream NUT repository,
 you must be prepared to spend a fair amount of time contributing to the
 NUT codebase. Most developers will be well served by committing to their
 own forked Git repository (preferably in a uniquely named branch for each
@@ -707,9 +696,13 @@ lots of small commits, one per change per file. Unless there is reason to
 keep the intermediate history, we will probably collapse (or "squash" in
 Git parlance) the entire branch into one commit with a <code class="literal">git rebase -i</code>
 before merging.</p><p>The <a class="ulink" href="https://git.wiki.kernel.org/index.php/GitSvnCrashCourse" target="_top">GitSvnCrashCourse</a>
-wiki page has some useful information for long-time users of Subversion.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_git_access"></a>Git access</h4></div></div></div><p>Anonymous Git checkouts are possible:</p><pre class="literallayout">git clone git://github.com/networkupstools/nut.git</pre><p>or</p><pre class="literallayout">git clone https://github.com/networkupstools/nut.git</pre><p>if it is necessary to get around a pesky firewall that blocks the native
+wiki page has some useful information for long-time users of Subversion.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_git_access"></a>Git access</h4></div></div></div><p>Anonymous Git checkouts are possible:</p><pre class="literallayout">:; git clone git://github.com/networkupstools/nut.git</pre><p>or</p><pre class="literallayout">:; git clone https://github.com/networkupstools/nut.git</pre><p>if it is necessary to get around a pesky firewall that blocks the native
 Git protocol.</p><p>For a quicker checkout (when you don’t need the entire repository history),
-you can limit the depth of the clone:</p><pre class="literallayout">git clone --depth 1 git://github.com/networkupstools/nut.git</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_mercurial_hg_access"></a>Mercurial (hg) access</h4></div></div></div><p>There are those who prefer the simplicity and self-consistency of the
+you can limit the depth of the clone:</p><pre class="literallayout">:; git clone --depth 1 git://github.com/networkupstools/nut.git</pre><p>OPTIONALLY you can then fetch known git tags, so semantic versions look
+better (based off a recent release, see
+<a class="ulink" href="../developer-guide.chunked/index.html#versioning" target="_top">NUT Semantic Versioning</a> (or <code class="code">docs/nut-versioning.adoc</code> in NUT sources for up-to-date information)
+for more details):</p><pre class="literallayout">:; cd nut
+:; git fetch --tags --all</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_mercurial_hg_access"></a>Mercurial (hg) access</h4></div></div></div><p>There are those who prefer the simplicity and self-consistency of the
 Mercurial SCM client over the hodgepodge of unique commands which make
 up Git. Rather than debate the merits of each system, we will gently
 guide you towards the <a class="ulink" href="http://hg-git.github.com/" target="_top">hg-git project</a>
@@ -720,7 +713,7 @@ has a <a class="ulink" href="https://github.com/blog/966-improved-subversion-cli
 interface to Git repositories</a> hosted on their servers. You can fork a copy
 of the NUT repository and commit to your fork with SVN.</p><p>Be aware that the examples in the GitHub blog post might result in a
 checkout that includes all of the current branches, as well as the trunk.
-You are most likely interested in a command line similar to the following:</p><pre class="literallayout">svn co https://github.com/networkupstools/nut/trunk nut-trunk-svn</pre></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_ignoring_generated_files"></a>3.12. Ignoring generated files</h3></div></div></div><p>The NUT repository generally only holds files which are not generated from
+You are most likely interested in a command line similar to the following:</p><pre class="literallayout">:; svn co https://github.com/networkupstools/nut/trunk nut-trunk-svn</pre></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_ignoring_generated_files"></a>4.12. Ignoring generated files</h3></div></div></div><p>The NUT repository generally only holds files which are not generated from
 other files. This prevents spurious differences from being recorded in the
 repository history.</p><p>If you add a driver, it is recommended that you add the driver executable
 name to the <code class="literal">.gitignore</code> file in that directory. Similarly, files generated
@@ -728,14 +721,14 @@ from <code class="literal">*.in</code> and <code class="literal">*.am</code> sou
 We try to include a number of generated files in the tarball releases with
 <code class="literal">make dist</code> hooks in order to minimize the number of dependencies for end
 users, but the assumption is that a developer can install the packages
-needed to regenerate those files.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_commit_message_formatting"></a>3.13. Commit message formatting</h3></div></div></div><p>From the <code class="literal">git commit</code> man page:</p><div class="blockquote"><blockquote class="blockquote"><p>Though not required, it’s a good idea to begin the commit message with a
+needed to regenerate those files.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_commit_message_formatting"></a>4.13. Commit message formatting</h3></div></div></div><p>From the <code class="literal">git commit</code> man page:</p><div class="blockquote"><blockquote class="blockquote"><p>Though not required, it’s a good idea to begin the commit message with a
 single short (less than 50 character) line summarizing the change, followed
 by a blank line and then a more thorough description. The text up to the
 first blank line in a commit message is treated as the commit title, and
 that title is used throughout git.</p></blockquote></div><p>If your commit is just a change to one component, such as the HCL, upsd or a
 specific driver, prefix your commit message in a way that matches similar
-commits. This helps when searching the repository or tracking down a
-regression.</p><p>Referring to previous commits can be tricky. If you are referring to the
+commits (typically with the file name(s), check <code class="literal">git log</code> for inspiration).
+This helps when searching the repository or tracking down a regression.</p><p>Referring to previous commits can be tricky. If you are referring to the
 immediate parent of a given commit, it suffices to say "the previous commit".
 (Are you correcting a typo in the previous commit? If you haven’t pushed yet,
 consider using the <code class="literal">git commit --amend</code> command instead of creating a new
@@ -743,7 +736,7 @@ commit.) For other commits, even though tools like gitk and GitHub’s
 repository viewers recognize Git hashes and create links automatically, it is
 best to add some context such as the commit title or a date.</p><p>You may notice that some older commits have <code class="literal">[[SVN:####]]</code> tags and Fossil-ID
 footers. These were lifted from the old SVN commit messages using reposurgeon,
-and should <span class="strong"><strong>not</strong></span> be used as a guide for future commits.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_commit_sign_off"></a>3.14. Commit sign-off</h3></div></div></div><p>Please also note that since 2023 we explicitly ask for contributions to be
+and should <span class="strong"><strong>not</strong></span> be used as a guide for future commits.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_commit_sign_off"></a>4.14. Commit sign-off</h3></div></div></div><p>Please also note that since 2023 we explicitly ask for contributions to be
 "Signed Off" according to "Developer Certificate of Origin" as represented
 in the <code class="literal">LICENSE-DCO</code> file in the root of NUT source tree (verbatim copy of
 Version 1.1 of DCO published at <a class="ulink" href="https://developercertificate.org/" target="_top">https://developercertificate.org/</a> web site).
@@ -759,6 +752,8 @@ meaningful) act — hence they are not automated in git core with an easy
 configuration option.</p><p>For more details see:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 <a class="ulink" href="https://github.com/networkupstools/nut/issues/1994" target="_top">https://github.com/networkupstools/nut/issues/1994</a>
 </li><li class="listitem">
+<a class="ulink" href="https://github.com/networkupstools/nut/wiki/Code-contributions,-PRs,-PGP-and-DCO" target="_top">https://github.com/networkupstools/nut/wiki/Code-contributions,-PRs,-PGP-and-DCO</a>
+</li><li class="listitem">
 <a class="ulink" href="https://stackoverflow.com/questions/1962094/what-is-the-sign-off-feature-in-git-for" target="_top">https://stackoverflow.com/questions/1962094/what-is-the-sign-off-feature-in-git-for</a>
 </li><li class="listitem">
 <a class="ulink" href="https://stackoverflow.com/questions/15015894/git-add-signed-off-by-line-using-format-signoff-not-working" target="_top">https://stackoverflow.com/questions/15015894/git-add-signed-off-by-line-using-format-signoff-not-working</a>
@@ -771,7 +766,7 @@ Numerous public articles can walk you through this ordeal, including:</p><div cl
 <a class="ulink" href="https://docs.github.com/en/authentication/managing-commit-signature-verification/telling-git-about-your-signing-key" target="_top">https://docs.github.com/en/authentication/managing-commit-signature-verification/telling-git-about-your-signing-key</a>
 </li><li class="listitem">
 <a class="ulink" href="https://www.kernel.org/doc/html/v4.19/process/maintainer-pgp-guide.html" target="_top">https://www.kernel.org/doc/html/v4.19/process/maintainer-pgp-guide.html</a>
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_repository_etiquette_and_quality_assurance"></a>3.15. Repository etiquette and quality assurance</h3></div></div></div><p>For developers who have commit access to the common upstream NUT repository:
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_repository_etiquette_and_quality_assurance"></a>4.15. Repository etiquette and quality assurance</h3></div></div></div><p>For developers who have commit access to the common upstream NUT repository:
 Please keep the Git "master" branch in working condition at all times.
 The "master" branch may be used to generate daily tarballs, it provides the
 baseline for new contributions, and occasionally is tagged for a new release.
@@ -781,7 +776,7 @@ and merge the changes back into "master" once they are complete.</p><p>To help k
 in various conditions, including older compilers, different C/C++ standard
 revisions, and an assortment of operating systems; a section below elaborates
 on this in more detail.</p><p>You are encouraged to use <code class="literal">git rebase -i</code> on your private Git branches to
-separate your changes into <a class="link" href="developers.html#_patch_cohesion" title="3.9. Patch cohesion">logical changes</a>.</p><p>From there, you can generate patches for the issue tracker, or the nut-upsdev
+separate your changes into <a class="link" href="developers.html#_patch_cohesion" title="4.9. Patch cohesion">logical changes</a>.</p><p>From there, you can generate patches for the issue tracker, or the nut-upsdev
 mailing list.</p><p>Note that once you rebase a branch, anyone else who has a copy of this branch
 will need to rebase on top of your rebased branch. Obviously, this hinders
 collaboration. In this case, we recommend that you rebase only in your private
@@ -791,32 +786,37 @@ history into a pile of spaghetti by merging unnecessarily. (Test merges can be
 done on integration branches, which can be discarded if the merge is trivial.)
 Be sure that your commit messages are descriptive when merging.</p><p>If you haven’t created a commit out of your local changes yet, and you want to
 fetch the latest code, you can also use <code class="literal">git stash</code> before pulling, then <code class="literal">git
-stash pop</code> to apply your saved changes.</p><p>Here is an example workflow:</p><pre class="screen">        git clone -o central git://github.com/networkupstools/nut.git
+stash pop</code> to apply your saved changes.</p><p>Here is an example workflow (using a slightly older <code class="literal">git</code> command-line syntax,
+so it works verbatim on more platforms):</p><pre class="screen">        :; git clone -o central git://github.com/networkupstools/nut.git
 
-        cd nut
-        git remote add -f username git://github.com/username/nut.git
+        :; cd nut
+        :; git remote add -f USERNAME git://github.com/USERNAME/nut.git
 
-        git checkout master
-        git branch my-new-feature
-        git checkout my-new-feature
+        ### OPTIONALLY you can then fetch known git tags, so semantic
+        ### versions look better (based off a recent release):
+        :; git fetch --tags --all
+
+        :; git checkout master
+        :; git branch my-new-feature
+        :; git checkout my-new-feature
 
         # Hack away
 
-        git add changed-file.c
-        git commit -s
+        :; git add changed-file.c
+        :; git commit -s
 
         # Fix a typo in a file or commit message:
 
-        git commit -s -a --amend
+        :; git commit -s -a --amend
 
         # Someone committed something to the central repository. Fetch it.
 
-        git fetch central
-        git rebase central/master
+        :; git fetch central
+        :; git rebase central/master
 
         # Publish your branch to your GitHub repository:
 
-        git push username my-new-feature</pre><p>If you are new to Git, but are familiar with SVN, some of the following links
+        :; git push USERNAME my-new-feature</pre><p>If you are new to Git, but are familiar with SVN, some of the following links
 may be of use:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 <a class="ulink" href="https://web.archive.org/web/20191224210950/https://git-scm.com/course/svn.html" target="_top">Git - SVN Crash Course (archived)</a>
 </li><li class="listitem">
@@ -825,7 +825,7 @@ may be of use:</p><div class="itemizedlist"><ul class="itemizedlist" style="list
 <a class="ulink" href="https://www.git-tower.com/learn/git/ebook/en/command-line/appendix/from-subversion-to-git" target="_top">Switching from Subversion to Git</a>
 </li><li class="listitem">
 <a class="ulink" href="https://www.atlassian.com/git/tutorials/migrating-overview" target="_top">Migrate from SVN to Git</a>
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="building"></a>3.16. Building the Code</h3></div></div></div><p>For a developer, the NUT build process starts with <code class="literal">./autogen.sh</code>.</p><p>This script generates the <code class="literal">./configure</code> script that end users typically
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="building"></a>4.16. Building the Code</h3></div></div></div><p>For a developer, the NUT build process starts with <code class="literal">./autogen.sh</code>.</p><p>This script generates the <code class="literal">./configure</code> script that end users typically
 invoke to build NUT. If you are making a number of changes to the NUT
 source tree, configuring with the <code class="literal">--enable-maintainer-mode</code> flag will
 ensure that after you change a <code class="literal">Makefile.am</code>, nearby <code class="literal">Makefile.in</code> and
@@ -839,19 +839,22 @@ libtool
 Python
 </li><li class="listitem">
 Perl
-</li></ul></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>See the <a class="ulink" href="config-prereqs.txt" target="_top">config-prereqs.txt</a> for better detailed package lists for
-different operating systems.</p><p>See <code class="literal">ci_build.sh</code> for automating many practical scenarios, for easier
+</li></ul></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>See <a class="ulink" href="../qa-guide.chunked/index.html#NUT_Config_Prereqs" target="_top">Prerequisites for building NUT on different OSes</a> (or <code class="code">docs/config-prereqs.txt</code> in NUT sources for up-to-date information) for better detailed
+package lists for different operating systems.</p><p>See <code class="literal">ci_build.sh</code> for automating many practical scenarios, for easier
 iterations.</p><p>It is optional, but highly recommended, to have Python 2.x or 3.x, and Perl,
 to generate some files included into the <code class="literal">configure</code> script whose presence
 is checked by autotools when it is generated. Neutered files can be just
 "touched" to pass the <code class="literal">autogen.sh</code> if these interpreters are not available,
 and effectively skip those parts of the build later on — <code class="literal">autogen.sh</code> will
 then advise which special environment variables to <code class="literal">export</code> in your situation
-and re-run it.</p></div><p>Even if you do not use your distribution’s packages of NUT, installing the
-distribution’s list of build dependencies for NUT can reduce the amount of
-trial-and-error when installing dependencies. For instance, in Debian, you
-can run <code class="literal">apt-get build-dep nut</code> to install all of the auto* tools as well
-as any development libraries and headers.</p><p>After running <code class="literal">./autogen.sh</code>, you can pass your local configuration
+and re-run it.</p></div><p>Even if you do not use the official NUT packages provided by your
+OS distribution, installing the list of build dependencies and tools
+according to their recipes for NUT packaging can reduce the amount of
+trial-and-error when preparing for a custom build. For instance, in Debian
+and derived operating systems, you can run <code class="literal">apt-get build-dep nut</code> to
+install all of the auto* tools as well as any development libraries and
+headers — as known for the version of NUT packaged with the OS distribution
+release you are using.</p><p>After running <code class="literal">./autogen.sh</code>, you can pass your local configuration
 options to <code class="literal">./configure</code> and run <code class="literal">make</code> from the top-level directory.
 To avoid the need for root privileges when testing new NUT code, you
 may wish to use <code class="literal">--prefix=$HOME/local/nut --with-statepath=/tmp</code>.
@@ -868,13 +871,14 @@ Remember: simply adding a file to Git does not mean it will be distributed.
 To distribute a file, you must update the corresponding <code class="literal">Makefile.am</code> with
 <code class="literal">EXTRA_DIST</code> entry and possibly other recipe handling.</p><p>There is also <code class="literal">make distcheck</code>, which runs an even stricter set of
 tests than <code class="literal">make distcheck-light</code>, but will not work unless you have all
-of the optional third-party libraries and features installed.</p><p>Finally note, that since 2017 the GitHub upstream project is monitored
+of the optional third-party libraries and features installed.</p><p>Finally note, that since 2017 the GitHub upstream project was monitored
 by Travis CI (in addition to earlier multi-platform buildbots which
-occasionally do not work), replaced since 2021 by a dedicated NUT CI farm.
-This means that if your posted improvements are based on current NUT
+occasionally did not work), replaced since 2021 by a dedicated NUT CI farm
+and a number of free cloud CI resources to test some 200-300 scenarios
+with different combinations of build environments and tooling implementations.</p><p>This means that if your posted improvements are based on current NUT
 "master" branch, the resulting pull request should get tested for a number of
 scenarios automatically. If your code adds a substantial feature, consider
 extending the <code class="literal">Jenkinsfile-dynamatrix</code> and/or <code class="literal">ci_build.sh</code> scripts in the
 workspace root to add another <code class="literal">BUILD_TYPE</code> to the matrix of tests run in
 parallel.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2024-04-01 12:16:50 -- Network UPS Tools 2.8.2.1</div><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="design.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="new-drivers.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-04-07 16:53:00 -- Network UPS Tools 2.8.5</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="versioning.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="new-drivers.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

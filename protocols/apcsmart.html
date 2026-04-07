@@ -4,14 +4,16 @@
 <head>
 <title>Network UPS Tools - APC&#8217;s smart protocol</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<meta name="generator" content="AsciiDoc 9.0.0rc2" />
+<meta name="generator" content="AsciiDoc 10.2.1" />
 <meta name="description" content="Power Devices support" />
 <meta name="keywords" content="NUT, Network UPS Tools, Eaton, APC, Free Software, UPS, Uninterruptible Power Supplies, PDU, Power Distributions Units, Solar Controllers, power, power devices, control, monitor, Linux, Unix, Windows, Mac OS X" />
 <meta name="format-detection" content="telephone=no" />
 <link rel="stylesheet" href="../css/xhtml11.css" type="text/css" />
 <link rel="stylesheet" href="../css/web-layout.css" type="text/css" />
+<link rel="stylesheet" href="../css/anchorjs.css" type="text/css" />
 <link rel="shortcut icon" href="../faviconut.ico" />
 <link rel="icon" type="image/png" href="../faviconut.png" />
+<script type="text/javascript" src="../scripts/anchorjs.min.js"></script>
 <script type="text/javascript" src="../scripts/asciidoc.js"></script>
 <script type="text/javascript">
 /*<![CDATA[*/
@@ -28,7 +30,7 @@ asciidoc.install(2);
 <body>
 <div id="layout-banner-box">
 <div id="layout-banner">
-  <div id="layout-logo"><img src="../images/nut-logo.png" alt="NUT logo" /></div>
+  <div id="layout-logo"><img src="../images/nut-logo.svg" alt="NUT logo" width="60" height="60" /></div>
   <div id="layout-title">Network UPS Tools</div>
   <div id="layout-description">Power Devices support</div>
 </div>
@@ -126,6 +128,8 @@ If you use the NUT apcsmart or newapc drivers, those pins don&#8217;t matter.</p
 It&#8217;s standard RS-232 serial communications at 2400 bps/8N1.
 Don&#8217;t rush the UPS while transmitting or it may stop talking to you.
 This isn&#8217;t a problem with the normal single character queries, but it really does matter for multi-char things like "<strong><code>@000</code></strong>".
+Some newer units also appear to support two-byte command sequences (for example, <code>9F D2</code>) in addition to the single-character commands listed here.
+These two-byte commands may also work on SPRM and SRVS series units, since they appear to share the same bundled CD management software.
 Sprinkle a few calls to usleep() in your code and everything will work a lot better.</p></div>
 <div class="tableblock">
 <table rules="rows"
@@ -933,6 +937,195 @@ Also <code>1</code>, <code>2</code>, <code>3</code>, <code>4</code> &#8594; unkn
 </tbody>
 </table>
 </div>
+<div class="sect2">
+<h3 id="_the_two_byte_command_examples_apc_spm_series">The two-byte command examples (APC SPM series)</h3>
+<div class="paragraph"><p>The table below shows the two-byte commands that have been observed on newer APC models such as the SPM series.
+These commands appear to be in addition to the single-character commands listed above, and they follow a similar format to the capability string responses, with a command character followed by a locale, number of choices, and choice length, followed by the choices themselves.</p></div>
+<div class="paragraph"><p>Special note: on some models (for example, SPM series), command <code>F</code> reports output frequency, while <code>9F D3</code> reports input line frequency. This does not match the <code>F</code> command description in the single-character command section above.</p></div>
+<div class="paragraph"><p>To change a setting over UART (turn ON or turn OFF), send commands in this sequence:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>9F FE</code> &#8594; select settings operation mode; should return <code>OK</code>
+</p>
+</li>
+<li>
+<p>
+<code>9F XX</code> &#8594; select the setting command to change; current setting value is returned
+</p>
+</li>
+<li>
+<p>
+<code>9F CA</code> &#8594; turn ON, or <code>9F CB</code> &#8594; turn OFF; should return <code>OK</code>
+</p>
+</li>
+<li>
+<p>
+<code>9F FF</code> &#8594; confirm/save the change; should return <code>OK</code>
+</p>
+</li>
+</ul></div>
+<div class="tableblock">
+<table rules="rows"
+style="margin-left:auto; margin-right:auto;"
+frame="hsides"
+cellspacing="0" cellpadding="4">
+<col />
+<col />
+<col />
+<col />
+<thead>
+<tr>
+<th align="center" valign="middle">Character </th>
+<th align="left" valign="middle">Meaning </th>
+<th align="left" valign="middle">Typical results </th>
+<th align="left" valign="middle">Other info</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong><code>9F D1</code></strong></code></p></td>
+<td align="left" valign="middle"><p class="table">UPS rated info</p></td>
+<td align="left" valign="middle"><p class="table"><code>02000,220,220,50.0,009,048.0,11</code></p></td>
+<td align="left" valign="middle"><p class="table">Appears to return VA, input/output voltage, output frequency,</p>
+<p class="table">battery Ah, battery voltage, and one unknown extra field</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong><code>9F D2</code></strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Running mode</p></td>
+<td align="left" valign="middle"><p class="table"><code>E</code></p></td>
+<td align="left" valign="middle"><div><div class="paragraph"><p>Observed mode values:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>E</code> (eco)
+</p>
+</li>
+<li>
+<p>
+<code>L</code> (line)
+</p>
+</li>
+<li>
+<p>
+<code>Y</code> (bypass)
+</p>
+</li>
+<li>
+<p>
+<code>T</code> (battery test)
+</p>
+</li>
+<li>
+<p>
+<code>B</code> (battery)
+</p>
+</li>
+</ul></div></div></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong><code>9F D3</code></strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Input line frequency</p></td>
+<td align="left" valign="middle"><p class="table"><code>50.0</code></p></td>
+<td align="left" valign="middle"><p class="table"></p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong><code>9F D4</code></strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Battery current</p></td>
+<td align="left" valign="middle"><p class="table"><code>01.0</code></p></td>
+<td align="left" valign="middle"><p class="table">Numeric value in amps</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong><code>9F D5</code></strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Phase lock flag</p></td>
+<td align="left" valign="middle"><p class="table"><code>1</code></p></td>
+<td align="left" valign="middle"><p class="table">Spreadsheet note: <code>1</code> = locked, <code>0</code> = not locked</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong><code>9F D6</code></strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Transfer frequency range</p></td>
+<td align="left" valign="middle"><p class="table"><code>47.0,53.0</code></p></td>
+<td align="left" valign="middle"><p class="table">Frequency range to force transfer to battery when frequency is selected as a transfer cause</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong><code>9F D7</code></strong></code></p></td>
+<td align="left" valign="middle"><p class="table">ECO mode voltage range</p></td>
+<td align="left" valign="middle"><p class="table"><code>209,231</code></p></td>
+<td align="left" valign="middle"><p class="table">Voltage range to allow ECO mode running when ECO mode is selected as a transfer cause</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong><code>9F D9</code></strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Status bitmap (undecoded)</p></td>
+<td align="left" valign="middle"><p class="table"><code>0100000000000000</code></p></td>
+<td align="left" valign="middle"><p class="table">Bit-level meaning not yet decoded</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong><code>9F E3</code></strong></code></p></td>
+<td align="left" valign="middle"><p class="table">UPS alarm</p></td>
+<td align="left" valign="middle"><p class="table"><code>ON</code></p></td>
+<td align="left" valign="middle"><p class="table">Writable variable.</p>
+<p class="table">Boolean-style response (<code>ON</code> / <code>OFF</code>)</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong><code>9F E4</code></strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Alarm in bypass mode</p></td>
+<td align="left" valign="middle"><p class="table"><code>ON</code></p></td>
+<td align="left" valign="middle"><p class="table">Writable variable.</p>
+<p class="table">Boolean-style response (<code>ON</code> / <code>OFF</code>)</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong><code>9F E5</code></strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Auto reboot</p></td>
+<td align="left" valign="middle"><p class="table"><code>ON</code></p></td>
+<td align="left" valign="middle"><p class="table">Writable variable.</p>
+<p class="table">Boolean-style response (<code>ON</code> / <code>OFF</code>)</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong><code>9F E6</code></strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Bypass when UPS is off</p></td>
+<td align="left" valign="middle"><p class="table"><code>ON</code></p></td>
+<td align="left" valign="middle"><p class="table">Writable variable.</p>
+<p class="table">Boolean-style response (<code>ON</code> / <code>OFF</code>)</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong><code>9F E7</code></strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Converter mode</p></td>
+<td align="left" valign="middle"><p class="table"><code>OFF</code></p></td>
+<td align="left" valign="middle"><p class="table">Writable variable.</p>
+<p class="table">Boolean-style response (<code>ON</code> / <code>OFF</code>)</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong><code>9F E8</code></strong></code></p></td>
+<td align="left" valign="middle"><p class="table">ECO mode</p></td>
+<td align="left" valign="middle"><p class="table"><code>ON</code></p></td>
+<td align="left" valign="middle"><p class="table">Writable variable.</p>
+<p class="table">Boolean-style response (<code>ON</code> / <code>OFF</code>)</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong><code>9F E9</code></strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Green power function</p></td>
+<td align="left" valign="middle"><p class="table"><code>ON</code></p></td>
+<td align="left" valign="middle"><p class="table">Writable variable.</p>
+<p class="table">Boolean-style response (<code>ON</code> / <code>OFF</code>)</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong><code>9F EA</code></strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Cold start</p></td>
+<td align="left" valign="middle"><p class="table"><code>ON</code></p></td>
+<td align="left" valign="middle"><p class="table">Writable variable.</p>
+<p class="table">Boolean-style response (<code>ON</code> / <code>OFF</code>)</p></td>
+</tr>
+<tr>
+<td align="center" valign="middle"><p class="table"><code><strong><code>9F EB</code></strong></code></p></td>
+<td align="left" valign="middle"><p class="table">Bypass not allowed</p></td>
+<td align="left" valign="middle"><p class="table"><code>ON</code></p></td>
+<td align="left" valign="middle"><p class="table">Writable variable.</p>
+<p class="table">Boolean-style response (<code>ON</code> / <code>OFF</code>)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -1356,7 +1549,7 @@ Many thanks.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-04-01 12:16:08 UTC
+Last updated 2026-04-07 16:07:33 UTC
 </div>
 <div id="footer-badges">
 <a href="https://github.com/networkupstools/nut">
@@ -1375,6 +1568,11 @@ Last updated 2024-04-01 12:16:08 UTC
   <img style="border:0;height:20"
     src="https://ci.networkupstools.org/buildStatus/icon?job=nut%2Fnut%2Fmaster"
     alt="Latest NUT CI build status: master branch"/>
+</a>
+<a href="https://build.opensuse.org/package/show/home:networkupstools:nut-stable/nut">
+  <img style="border:0;height:20"
+    src="https://build.opensuse.org/projects/home:networkupstools:nut-stable/packages/nut/badge.svg?type=percent"
+    alt="Latest OBS build status: master branch packaged for different Linux distributions"/>
 </a>
 <!-- MacOS, maybe later Windows builds: -->
 <a href="https://app.circleci.com/pipelines/github/networkupstools">
@@ -1416,7 +1614,11 @@ Last updated 2024-04-01 12:16:08 UTC
     src="https://img.shields.io/github/commits-since/networkupstools/nut/latest.svg"
     alt="Commits on master branch since latest release on GitHub"/>
 </a>
-<a href="http://www.methods.co.nz/asciidoc/">
+<!-- See also:
+ // https://web.archive.org/web/20200731075618/http://www.methods.co.nz/asciidoc/
+ // https://github.com/asciidoc-py/asciidoc-py
+ -->
+<a href="https://asciidoc.org/">
   <img style="border:0;width:88px;height:31px"
     src="../images/asciidoc.png"
     alt="Powered by AsciiDoc"/>
@@ -1436,11 +1638,14 @@ Last updated 2024-04-01 12:16:08 UTC
        src="../images/gandi-ar21.svg"
        alt="DNS, redirection and related services Hoster"/>
 </a>
+<!--
+// FH web site defunct since ~Apr 2024
 <a href="https://fosshost.org/">
   <img style="border:0;width:112px;height:38px;"
        src="../images/ci/fosshost.org_Host_Light_38px.png"
        alt="Dedicated Hosting for NUT CI"/>
 </a>
+-->
 <a href="https://www.digitalocean.com/?refcode=d2fbf2b9e082&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge">
   <img style="border:0;height:38px;"
        src="https://opensource.nyc3.cdn.digitaloceanspaces.com/attribution/assets/PoweredByDO/DO_Powered_by_Badge_blue.svg"
@@ -1464,5 +1669,8 @@ Last updated 2024-04-01 12:16:08 UTC
         })();
 
 </script>
+<!-- Assume this footer is at the end of the page (after main contents)?
+     Have a willing browser run the javascript to add permalinks: -->
+<script type="text/javascript">anchors.add();</script>
 </body>
 </html>
