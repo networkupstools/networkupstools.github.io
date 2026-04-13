@@ -21,14 +21,276 @@
 			text-decoration: inherit;
 		}
 	</style></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> </td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="Change_Log"></a>2. Very detailed Change Log</h2></div></div></div><p>This document intends to detail the change log for relatively recent work
-(roughly since the source code was tracked in Git).</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>This change log section represents git commits in range <span class="emphasis"><em>v2.8.5..HEAD</em></span> (commits <span class="emphasis"><em>0e051f9f6..d96f51812</em></span>).</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_09_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.1. 2026-04-09  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+(roughly since the source code was tracked in Git).</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>This change log section represents git commits in range <span class="emphasis"><em>v2.8.5..HEAD</em></span> (commits <span class="emphasis"><em>0e051f9f6..eb08bd453</em></span>).</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_13_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.1. 2026-04-13  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+NEWS.adoc: remove duplicated paragraph (silent merge conflict)
+</li><li class="listitem">
+clients/upsmon.c, clients/upsrw.c, common/common.c,
+          drivers/adelsystem_cbi.c, drivers/generic_modbus.c, drivers/main.c,
+          drivers/powerman-pdu.c, drivers/snmp-ups.c,
+          drivers/tripplite_usb.c, tools/nut-scanner/nutscan-serial.c: <span class="strong"><strong>.c:
+          fix use of non-const char</strong></span> with strstr() and strchr() return values
+          [<a class="ulink" href="https://github.com/networkupstools/nut/issues/823" target="_top">#823</a>]
+</li><li class="listitem">
+docs/man/Makefile.am: fix possible non-delivery of
+          NUTSCAN_UPSLOG_SET_DEBUG_LEVEL_DEPS pages [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3378" target="_top">#3378</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/3379" target="_top">#3379</a>]
+</li><li class="listitem">
+docs/man/upscli_init.txt: update wording and markup for
+          pre-existing features [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3331" target="_top">#3331</a>]
+</li><li class="listitem">
+NEWS.adoc: announce the adjusted markup format
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_12_jim_klimov_lt_ulink_url_mailto_jimklimov_gmail_com_jimklimov_gmail_com_ulink_gt"></a>2.2. 2026-04-12  Jim Klimov &lt;<a class="ulink" href="mailto:jimklimov@gmail.com" target="_top">jimklimov@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+scripts/perl/UPS/Nut.pm: warn if CERTVERIFY and custom CA options
+          are enabled on Darwin platform [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3404" target="_top">#3404</a>]
+</li><li class="listitem">
+scripts/perl/UPS/Nut.pm: align closer with can_ssl [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]
+</li><li class="listitem">
+scripts/perl/UPS/Nut.pm, scripts/perl/test_nutclient.pl,
+          tests/NIT/nit.sh: scripts/perl/*, tests/NIT/nit.sh: streamline
+          passing NUT_DEBUG_SSL_PERL (or defaulting to no debug) [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]
+</li><li class="listitem">
+tests/NIT/nit.sh: neuter CERTVERIFY on darwin for now [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3404" target="_top">#3404</a>]
+</li><li class="listitem">
+tests/NIT/nit.sh: centralize definition of PERL_OPTS [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]
+</li><li class="listitem">
+scripts/perl/UPS/Nut.pm: allow SSL cert validation for IP addresses
+          as host names [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]
+</li><li class="listitem">
+scripts/perl/UPS/Nut.pm: pass only defined args to
+          IO::Socket::SSL→start_SSL() [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]
+</li><li class="listitem">
+scripts/perl/UPS/Nut.pm: support debugging messages of
+          IO::Socket::SSL [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]
+</li><li class="listitem">
+tests/NIT/nit.sh: report the non-default NIT_CASE being handled
+          [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_12_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.3. 2026-04-12  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+scripts/perl/UPS/Nut.pm, scripts/perl/test_nutclient.pl:
+          scripts/perl/UPS/Nut.pm: now we can pass SSL debug level as a
+          number [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]
+</li><li class="listitem">
+scripts/perl/UPS/Nut.pm: fix to loading IO::Socket::SSL via eval
+          with quotes not braces [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]  It is then evaluated at run-time as
+          code reaches that line (or not - conditionals), not at
+          interpretation time where it fails too early. Also use "1;" in the
+          end as a tidy practice.
+</li><li class="listitem">
+clients/nutclient.cpp: work around lack of threads in some mingw
+          versions [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3402" target="_top">#3402</a>]
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_11_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.4. 2026-04-11  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+m4/ax_c_pragmas.m4, clients/nutclient.cpp: introduce
+          HAVE_PRAGMA_GCC_DIAGNOSTIC_IGNORED_DEPRECATED_DECLARATIONS{,_BESIDEFUNC}
+          to implement methods for deprecated "master" operation [<a class="ulink" href="https://github.com/networkupstools/nut/issues/840" target="_top">#840</a>,
+          <a class="ulink" href="https://github.com/networkupstools/nut/issues/3402" target="_top">#3402</a>]
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_10_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.5. 2026-04-10  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+NEWS.adoc: announce updates to client binding libraries [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3402" target="_top">#3402</a>]
+</li><li class="listitem">
+scripts/perl/test_nutclient.pl: avoid "Can’t call method "Error" on
+          an undefined value" messages in failed tests; clearly say that $nut
+          is no more [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]
+</li><li class="listitem">
+scripts/perl/UPS/Nut.pm: when IO::Socket::SSL is not available,
+          report the error with "FEATURE-NOT-SUPPORTED" in text [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]
+</li><li class="listitem">
+tests/NIT/nit.sh: setenv_ssl_perl(): check if IO::Socket::SSL is
+          available, neuter NUT_FORCESSL based on that [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]
+</li><li class="listitem">
+scripts/perl/test_nutclient.pl: support USESSL=undef if no value
+          provided in env [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]
+</li><li class="listitem">
+scripts/perl/UPS/Nut.pm: support USESSL=undef, check that we
+          can_ssl and follow up with that [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]
+</li><li class="listitem">
+scripts/perl/UPS/Nut.pm: _initialize(): include previously reported
+          error in SSL setup fail messages [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]
+</li><li class="listitem">
+scripts/perl/UPS/Nut.pm: apply indentation consistenly (3 styles
+          were intermixed)
+</li><li class="listitem">
+scripts/perl/UPS/Nut.pm, scripts/perl/test_nutclient.pl: support
+          NUT_SSL envvar toggle to disable attempts at SSL altogether [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]
+</li><li class="listitem">
+scripts/perl/UPS/Nut.pm, scripts/perl/test_nutclient.pl:
+          SSL_ca_path should be defined in args by caller, not by a hack in
+          production code [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]
+</li><li class="listitem">
+scripts/perl/UPS/Nut.pm: STARTTLS: debug-print %arg list that is
+          passed to the SSL library [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]
+</li><li class="listitem">
+scripts/perl/UPS/Nut.pm: use CAPATH to provide SSL_ca_path, not
+          SSL_ca_file [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1348" target="_top">#1348</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]
+</li><li class="listitem">
+scripts/python/module/PyNUT.py.in: retry SSL handshake if it timed
+          out, a few times [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3401" target="_top">#3401</a>]
+</li><li class="listitem">
+server/netssl.c: net_starttls(): report which SSL backend is in
+          place (if any) [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3331" target="_top">#3331</a>]
+</li><li class="listitem">
+scripts/python/module/PyNUT.py.in: isValidProtocolVersion():
+          stringify and strip the "result" before matching in regex [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1349" target="_top">#1349</a>]
+</li><li class="listitem">
+clients/Makefile.am: bump libupsclient ABI version
+</li><li class="listitem">
+tests/NIT/nit.sh: add a note about jNut using this script [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>,
+          <a class="ulink" href="https://github.com/networkupstools/nut/issues/1350" target="_top">#1350</a>]
+</li><li class="listitem">
+clients/nutclient.cpp, clients/nutclient.h,
+          clients/nutclientmem.cpp, clients/nutclientmem.h,
+          tests/cpputest-client.cpp: clients/nutclient{,mem}.{h,cpp},
+          tests/cpputest-client.cpp: remember if we enabled TRACKING so it is
+          really done once, confirm with isTrackingModeEnabled() [<a class="ulink" href="https://github.com/networkupstools/nut/issues/656" target="_top">#656</a>]
+</li><li class="listitem">
+scripts/perl/test_nutclient.pl: fix DeviceLogin⇒ListClient for
+          "admin" without a role [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]
+</li><li class="listitem">
+scripts/perl/UPS/Nut.pm: _send(): reset the error buffer before
+          networking away [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1348" target="_top">#1348</a>]
+</li><li class="listitem">
+scripts/perl/UPS/Nut.pm: we can only authenticate once per
+          connection, skip other attempts [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1348" target="_top">#1348</a>]
+</li><li class="listitem">
+docs/download.txt: publish jNut-1.1 [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1350" target="_top">#1350</a>]
+</li><li class="listitem">
+NEWS.adoc: announce updates to client binding libraries [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3402" target="_top">#3402</a>]
+</li><li class="listitem">
+appveyor.yml: post only one (custom) notification per build [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1400" target="_top">#1400</a>]
+</li><li class="listitem">
+docs/man/Makefile.am: hush "cat" errors in
+          LIBNUTCLIENT_TCP_DEPS_SUB recipe
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_09_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.6. 2026-04-09  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+scripts/perl/test_nutclient.pl: fix reporting of @failed methods
+          [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]
+</li><li class="listitem">
+scripts/perl/UPS/Nut.pm: GetTrackingResult(): fix parsing results
+          of GET TRACKING [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1348" target="_top">#1348</a>]
+</li><li class="listitem">
+tests/NIT/nit.sh: when we ask for specific NIT_CASE values (cppnit,
+          python, perl, nutscanner) the lack of prerequisites should be a
+          FAILURE [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]
+</li><li class="listitem">
+tests/NIT/nit.sh: introduce tests for PERL [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1348" target="_top">#1348</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]
+</li><li class="listitem">
+          message, so we can parse it [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1348" target="_top">#1348</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]
+</li><li class="listitem">
+scripts/perl/test_nutclient.pl: fix access to possibly undefined
+          envvars [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1348" target="_top">#1348</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]
+</li><li class="listitem">
+scripts/perl/UPS/Nut.pm: fix error messages when Authenticate() and
+          Login() fail [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1348" target="_top">#1348</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]
+</li><li class="listitem">
+scripts/perl/UPS/Nut.pm, scripts/perl/test_nutclient.pl:
+          scripts/perl/test_nutclient.pl: fix test case setup, update
+          comments [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1348" target="_top">#1348</a>]
+</li><li class="listitem">
+scripts/perl/UPS/Nut.pm: fix string work with TRACKING logic
+</li><li class="listitem">
+scripts/perl/UPS/Nut.pm: change commands that address an UPS to
+          optionally accept the UPS name as argument, only using
+</li><li class="listitem">
+scripts/python/module/test_nutclient.py.in: fix typo in debug
+          traces
+</li><li class="listitem">
+          assignments into debug() calls [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1348" target="_top">#1348</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]
+</li><li class="listitem">
+COPYING, scripts/HP-UX/nut.psf.in, scripts/Makefile.am,
+          scripts/obs/debian.libups-nut-perl.install, scripts/perl/{ ⇒
+          UPS}/Nut.pm, scripts/perl/test_nutclient.pl:
+          scripts/perl/test_nutclient.pl: introduce tests, move Nut.pm to UPS
+          subdir [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1348" target="_top">#1348</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]
+</li><li class="listitem">
+scripts/perl/Nut.pm: call StartTLS() from _initialize(), and use
+          isValidProtocolVersion() method to actively ping a connection after
+          STARTTLS claimed success (but handshake might be broken in fact)
+          [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3387" target="_top">#3387</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1348" target="_top">#1348</a>]
+</li><li class="listitem">
+clients/nutclient.cpp, clients/upsclient.c,
+          scripts/python/module/PyNUT.py.in: Client libraries (C, C+\+,
+          Python): use isValidProtocolVersion() method to actively ping a
+          connection after STARTTLS claimed success (but handshake might be
+          broken in fact) [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3387" target="_top">#3387</a>]
+</li><li class="listitem">
+clients/nutclient.cpp, clients/nutclient.h,
+          clients/nutclientmem.cpp, clients/nutclientmem.h,
+          clients/upsclient.c, clients/upsclient.h, scripts/perl/Nut.pm,
+          scripts/python/module/PyNUT.py.in: Client libraries (C, C+\+,
+          Python, PERL): introduce an isValidProtocolVersion() method to
+          actively ping a connection [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3387" target="_top">#3387</a>]
+</li><li class="listitem">
+clients/nutclient.cpp, clients/nutclient.h,
+          clients/nutclientmem.cpp, clients/nutclientmem.h:
+          clients/nutclient{,mem}.{h,cpp}: becomeSecondary() was overkill,
+          there is no such verb in NUT protocol (LOGIN already reaches that
+          role level)
+</li><li class="listitem">
+scripts/python/module/PyNUT.py.in: refactor FSD() with an explicit
+          becomePrimary() method
+</li><li class="listitem">
+scripts/perl/Nut.pm: becomeSecondary() was overkill, there is no
+          such verb in NUT protocol (LOGIN already reaches that role level)
+</li><li class="listitem">
+scripts/perl/Nut.pm: add warnings toggle
+</li><li class="listitem">
+scripts/perl/Nut.pm: fix typos in comments
+</li><li class="listitem">
+scripts/perl/Nut.pm: rename primary()⇒becomePrimary, add
+          becomeSecondary() for completeness [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1348" target="_top">#1348</a>]
+</li><li class="listitem">
+clients/nutclient.cpp, clients/nutclient.h,
+          clients/nutclientmem.cpp, clients/nutclientmem.h:
+          clients/nutclient{,mem}.{h,cpp}: rename primary()⇒becomePrimary,
+          add becomeSecondary() for completeness [<a class="ulink" href="https://github.com/networkupstools/nut/issues/656" target="_top">#656</a>]
+</li><li class="listitem">
+tests/cpputest-client.cpp: add test with SET VAR TRACKING [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>,
+          <a class="ulink" href="https://github.com/networkupstools/nut/issues/656" target="_top">#656</a>]
+</li><li class="listitem">
+scripts/python/module/test_nutclient.py.in: add test with SET VAR
+          TRACKING [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1349" target="_top">#1349</a>]
+</li><li class="listitem">
+scripts/perl/Nut.pm: fix typos in comments
+</li><li class="listitem">
 docs/download.txt: refer to new release of jNut-1.0 (and the
           following snapshot evolution)
 </li><li class="listitem">
 tests/NIT/nit.sh: do not unset DEBUG_SLEEP when we generate configs
           [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]  We might actually want more of those, with test case
           passwords revealed, etc.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_08_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.2. 2026-04-08  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_08_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.7. 2026-04-08  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+scripts/python/module/PyNUT.py.in: TrackingID class: include
+          timestamp tracking and age reporting [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1349" target="_top">#1349</a>]
+</li><li class="listitem">
+scripts/perl/Nut.pm: TrackingID class: include timestamp tracking
+          and age reporting [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1348" target="_top">#1348</a>]
+</li><li class="listitem">
+clients/nutclient.cpp, clients/nutclient.h,
+          clients/nutclientmem.cpp, clients/nutclientmem.h:
+          clients/nutclient{,mem}.{h,cpp}, tests/*.cpp: implement waiting for
+          TRACKING result if requested [<a class="ulink" href="https://github.com/networkupstools/nut/issues/656" target="_top">#656</a>]
+</li><li class="listitem">
+clients/nutclient.h, clients/Makefile.am: Implement TrackingID as a
+          separate class, including timestamp tracking and age reporting
+          [<a class="ulink" href="https://github.com/networkupstools/nut/issues/656" target="_top">#656</a>]
+</li><li class="listitem">
+scripts/python/module/PyNUT.py.in: Implement TrackingID as a
+          separate class [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1349" target="_top">#1349</a>]
+</li><li class="listitem">
+scripts/python/module/PyNUT.py.in: fix syntax [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1349" target="_top">#1349</a>]
+</li><li class="listitem">
+scripts/perl/Nut.pm: Implement TrackingID as a separate class
+          [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1348" target="_top">#1348</a>]
+</li><li class="listitem">
+scripts/perl/Nut.pm: fix syntax [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1348" target="_top">#1348</a>]
+</li><li class="listitem">
+scripts/python/module/PyNUT.py.in: revise AI creations, complete
+          the TRACKING\+waiting dialog support [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1349" target="_top">#1349</a>]
+</li><li class="listitem">
+scripts/perl/Nut.pm: revise AI creations, complete the
+          TRACKING\+waiting dialog support [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1348" target="_top">#1348</a>]
+</li><li class="listitem">
+scripts/perl/Nut.pm, scripts/python/module/PyNUT.py.in: AI PoC:
+          implement the remainder of NUT Networked protocol (as of NUT
+          v2.8.5) for Python and Perl bindings
+</li><li class="listitem">
+scripts/perl/Nut.pm: clean up trailing white-space
+</li><li class="listitem">
 tests/NIT/nit.sh: simplify with NIT_CASE=generatecfg_sandbox
           support [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]
 </li><li class="listitem">
@@ -42,7 +304,7 @@ configure.ac: hush clang-21 "-Wc11-extensions" warnings about
           system headers
 </li><li class="listitem">
 docs/download.txt: fix NOTE markup for N4W 7Zip size
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_07_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.3. 2026-04-07  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_07_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.8. 2026-04-07  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 docs/maintainer-guide.txt: revise instructions for post-release
           steps (website, etc.)
 </li><li class="listitem">
@@ -56,5 +318,25 @@ NEWS.adoc, UPGRADING.adoc, docs/docinfo.xml.in: Revert "NEWS.adoc,
           v2.8.5 release"  This reverts commit
           784219a3dc935e53a1273063c591bc6dd949590b: finally released NUT
           v2.8.5, preparing for v2.8.6 cycle now.
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_06_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.9. 2026-04-06  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+common/wincompat.c: syslog(), send_to_named_pipe(): debug-log when
+          we failed to open existing NAMED_PIPE and so move on [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3302" target="_top">#3302</a>]
+</li><li class="listitem">
+common/wincompat.c: log errors after methods faults via
+          upslog_with_errno() not plain upslogx() [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3302" target="_top">#3302</a>]
+</li><li class="listitem">
+common/wincompat.c: log progress through pipe*() methods [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3302" target="_top">#3302</a>,
+          <a class="ulink" href="https://github.com/networkupstools/nut/issues/3368" target="_top">#3368</a>]
+</li><li class="listitem">
+common/wincompat.c: fix send_to_named_pipe() to measure
+          strlen(data) once [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3302" target="_top">#3302</a>]
+</li><li class="listitem">
+common/wincompat.c: fix getpass() to measure
+          strlen(wincompat_password) once [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3302" target="_top">#3302</a>]
+</li><li class="listitem">
+common/wincompat.c: fix filter_path() to measure strlen(source)
+          once [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3302" target="_top">#3302</a>]
+</li><li class="listitem">
+common/wincompat.c: tcflush(): fix bitwise OR to boolean OR
 </li></ul></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-04-10 14:57:29 -- Network UPS Tools 2.8.5.11</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> </td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-04-13 14:54:10 -- Network UPS Tools 2.8.5.103</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> </td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
