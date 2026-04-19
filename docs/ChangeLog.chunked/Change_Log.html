@@ -21,13 +21,109 @@
 			text-decoration: inherit;
 		}
 	</style></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> </td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="Change_Log"></a>2. Very detailed Change Log</h2></div></div></div><p>This document intends to detail the change log for relatively recent work
-(roughly since the source code was tracked in Git).</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>This change log section represents git commits in range <span class="emphasis"><em>v2.8.5..HEAD</em></span> (commits <span class="emphasis"><em>0e051f9f6..68fb8bdb7</em></span>).</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_14_axel_gembe_lt_ulink_url_mailto_axel_gembe_net_axel_gembe_net_ulink_gt"></a>2.1. 2026-04-14  Axel Gembe &lt;<a class="ulink" href="mailto:axel@gembe.net" target="_top">axel@gembe.net</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+(roughly since the source code was tracked in Git).</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>This change log section represents git commits in range <span class="emphasis"><em>v2.8.5..HEAD</em></span> (commits <span class="emphasis"><em>0e051f9f6..9b4d84125</em></span>).</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_18_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.1. 2026-04-18  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+drivers/apc_modbus.c: addvar() the modbus_retries option [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3414" target="_top">#3414</a>]
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_15_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.2. 2026-04-15  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+tests/NIT/nit.sh: account SKIPPED test cases (when isTestable* says
+          we can not) [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]
+</li><li class="listitem">
+tests/NIT/nit.sh: be portable, use TABCHAR instead of "\t" [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]
+</li><li class="listitem">
+docs/nut.dict: update for older systems
+</li><li class="listitem">
+configure.ac: work around ancient autotools without PACKAGE_URL
+</li><li class="listitem">
+Makefile.am: hijack PARMAKES_OPT to also set V=0 by default
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_14_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.3. 2026-04-14  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+drivers/nutdrv_qx.c, NEWS.adoc: qx_is_usb_device_supported(): only
+          claim SUPPORTED if subdriver_command was assigned [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3410" target="_top">#3410</a>]
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_14_axel_gembe_lt_ulink_url_mailto_axel_gembe_net_axel_gembe_net_ulink_gt"></a>2.4. 2026-04-14  Axel Gembe &lt;<a class="ulink" href="mailto:axel@gembe.net" target="_top">axel@gembe.net</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+NEWS.adoc, drivers/apc_modbus.c: apc_modbus: increase default TCP
+          response timeout to 2000 ms  The default 500ms timeout value is
+          marginal for Modbus TCP, even on a fast local network. In tests
+          with an APC UPS, we see timeouts because of this:  ``` Apr 14
+          19:10:44 ares apc_modbus[2002143]: _apc_modbus_read_registers: Read
+          of 0:27 failed: Connection timed out (192.168.0.102:502) Apr 14
+          19:10:44 ares apc_modbus[2002143]: _apc_modbus_read_registers: Read
+          of 0:27 failed: Invalid data (192.168.0.102:502) Apr 14 19:10:44
+          ares apc_modbus[2002143]: _apc_modbus_close: Closing connection Apr
+          14 19:10:47 ares apc_modbus[2002143]: Opened modbus successfully
+          ```  Packet capture:  ``` No.     Time    Source  Destination
+          Protocol        Length  Info 3636    2026-04-14 19:10:43.842072
+          192.168.0.40    192.168.0.102   Modbus/TCP      66         Query:
+          Trans: 12622; Unit:   1, Func:   3: Read Holding Registers 3637
+          2026-04-14 19:10:44.018369      192.168.0.102   192.168.0.40    TCP
+          60      502 → 40392 [ACK] Seq=70441 Ack=11905 Win=3660 Len=0 3638
+          2026-04-14 19:10:44.377723      192.168.0.40    192.168.0.102
+          Modbus/TCP      66         Query: Trans: 12623; Unit:   1, Func:
+          3: Read Holding Registers 3639    2026-04-14 19:10:44.578103
+          192.168.0.102   192.168.0.40    TCP     60      502 → 40392 [ACK]
+          Seq=70441 Ack=11917 Win=3648 Len=0 3640    2026-04-14
+          19:10:44.579449      192.168.0.102   192.168.0.40    Modbus/TCP
+          117     Response: Trans: 12622; Unit:   1, Func:   3: Read Holding
+          Registers 3641    2026-04-14 19:10:44.579482      192.168.0.40
+          192.168.0.102   TCP     54      40392 → 502 [ACK] Seq=11917
+          Ack=70504 Win=63 Len=0 3642    2026-04-14 19:10:44.579604
+          192.168.0.40    192.168.0.102   TCP     54      40392 → 502 [FIN,
+          ACK] Seq=11917 Ack=70504 Win=63 Len=0 ```  3636 is the first read,
+          3638 is the retry after 500ms without response, both are ACKed.
+          3640 is the actual response to transaction 12622, which arrives
+          700ms after the initial packet. At this point we expect a response
+          to transaction 12623, which is why we fail with "invalid data".  To
+          fix this we increase the default TCP response timeout to 2000 ms,
+          which seems to be more reasonable for a device that already can
+          take 700 ms to respond under ideal conditions. I chose a bit higher
+          value for users who might connect the device over a higher latency
+          network.
+</li><li class="listitem">
+NEWS.adoc, docs/nut.dict, drivers/apc_modbus.c,
+          drivers/apc_modbus.h: apc_modbus: decode
+          RunTimeCalibrationStatus_BF  <code class="literal">RunTimeCalibrationStatus_BF</code> is
+          explained in <code class="literal">MPAO-98KJ7F_R1_EN</code> Appendix B.  This adds defines for
+          the bitfield and decodes it into
+          <code class="literal">experimental.ups.calibration.result</code> using a string join
+          converter.
+</li><li class="listitem">
+NEWS.adoc, docs/nut.dict, drivers/apc_modbus.c,
+          drivers/apc_modbus.h: apc_modbus: decode PowerSystemError_BF as
+          alarms  <code class="literal">PowerSystemError_BF</code> is explained in <code class="literal">MPAO-98KJ7F_R1_EN</code>
+          Appendix B.  This adds defines for the bitfield and decodes it as
+          alarms in the driver.
+</li><li class="listitem">
+NEWS.adoc, docs/nut.dict, drivers/apc_modbus.c,
+          drivers/apc_modbus.h: apc_modbus: decode BatterySystemError_BF as
+          alarms  <code class="literal">BatterySystemError_BF</code> is explained in <code class="literal">MPAO-98KJ7F_R1_EN</code>
+          Appendix B.  We were already using the bitfield for the <code class="literal">RB</code>
+          status, this adds defines for the bitfield and decodes it as alarms
+          in the driver.
+</li><li class="listitem">
+NEWS.adoc, docs/man/apc_modbus.txt, drivers/apc_modbus.c:
+          apc_modbus: simplify error handling with read retries  Replace the
+          complex <code class="literal">_apc_modbus_handle_error</code> function with a simpler retry
+          mechanism built into <code class="literal">_apc_modbus_read_registers</code>.  The new
+          approach: - Retries register reads on <code class="literal">ETIMEDOUT</code> errors up to
+          <code class="literal">modbus_retries</code> times (configurable, default 3) - On non-timeout
+          errors or after retry exhaustion, closes the connection for
+          reconnection on the next update cycle - Removes the
+          platform-specific (WIN32/POSIX) timeout detection and the
+          flush-based recovery that didn’t work anyway (flush is already done
+          in <code class="literal">_apc_modbus_reopen</code> upon reconnection)  Also adds a
+          <code class="literal">modbus_retries</code> driver option to configure the number of read
+          retry attempts, and improves logging for connection open/close
+          events.  This change was inspired by a patch by @marcan to do the
+          same and from testing the behaviour of <code class="literal">apcupsd</code>, noticing that on
+          my USB unit it times out on read and only succeeds on the first
+          retry.
+</li><li class="listitem">
 NEWS.adoc, drivers/apc_modbus.c: apc_modbus: always zero terminate
           string join  <code class="literal">_apc_modbus_string_join</code> did not zero terminate the
           result in every case, like when all values are <code class="literal">NULL</code>.
 </li><li class="listitem">
 drivers/apc_modbus.c: apc_modbus: bump driver version to 0.20
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_13_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.2. 2026-04-13  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_13_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.5. 2026-04-13  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+conf/upsd.conf.sample, docs/man/upsd.conf.txt: heads-up about
+          MAXCONN and ulimit [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3365" target="_top">#3365</a>]
+</li><li class="listitem">
 NEWS.adoc: remove duplicated paragraph (silent merge conflict)
 </li><li class="listitem">
 clients/upsmon.c, clients/upsrw.c, common/common.c,
@@ -44,7 +140,7 @@ docs/man/upscli_init.txt: update wording and markup for
           pre-existing features [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3331" target="_top">#3331</a>]
 </li><li class="listitem">
 NEWS.adoc: announce the adjusted markup format
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_12_jim_klimov_lt_ulink_url_mailto_jimklimov_gmail_com_jimklimov_gmail_com_ulink_gt"></a>2.3. 2026-04-12  Jim Klimov &lt;<a class="ulink" href="mailto:jimklimov@gmail.com" target="_top">jimklimov@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_12_jim_klimov_lt_ulink_url_mailto_jimklimov_gmail_com_jimklimov_gmail_com_ulink_gt"></a>2.6. 2026-04-12  Jim Klimov &lt;<a class="ulink" href="mailto:jimklimov@gmail.com" target="_top">jimklimov@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 scripts/perl/UPS/Nut.pm: warn if CERTVERIFY and custom CA options
           are enabled on Darwin platform [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3404" target="_top">#3404</a>]
 </li><li class="listitem">
@@ -69,7 +165,7 @@ scripts/perl/UPS/Nut.pm: support debugging messages of
 </li><li class="listitem">
 tests/NIT/nit.sh: report the non-default NIT_CASE being handled
           [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_12_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.4. 2026-04-12  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_12_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.7. 2026-04-12  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 scripts/perl/UPS/Nut.pm, scripts/perl/test_nutclient.pl:
           scripts/perl/UPS/Nut.pm: now we can pass SSL debug level as a
           number [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]
@@ -82,12 +178,12 @@ scripts/perl/UPS/Nut.pm: fix to loading IO::Socket::SSL via eval
 </li><li class="listitem">
 clients/nutclient.cpp: work around lack of threads in some mingw
           versions [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3402" target="_top">#3402</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_11_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.5. 2026-04-11  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_11_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.8. 2026-04-11  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 m4/ax_c_pragmas.m4, clients/nutclient.cpp: introduce
           HAVE_PRAGMA_GCC_DIAGNOSTIC_IGNORED_DEPRECATED_DECLARATIONS{,_BESIDEFUNC}
           to implement methods for deprecated "master" operation [<a class="ulink" href="https://github.com/networkupstools/nut/issues/840" target="_top">#840</a>,
           <a class="ulink" href="https://github.com/networkupstools/nut/issues/3402" target="_top">#3402</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_10_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.6. 2026-04-10  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_10_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.9. 2026-04-10  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 NEWS.adoc: announce updates to client binding libraries [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3402" target="_top">#3402</a>]
 </li><li class="listitem">
 scripts/perl/test_nutclient.pl: avoid "Can’t call method "Error" on
@@ -162,7 +258,7 @@ appveyor.yml: post only one (custom) notification per build [<a class="ulink" hr
 </li><li class="listitem">
 docs/man/Makefile.am: hush "cat" errors in
           LIBNUTCLIENT_TCP_DEPS_SUB recipe
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_09_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.7. 2026-04-09  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_09_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.10. 2026-04-09  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 scripts/perl/test_nutclient.pl: fix reporting of @failed methods
           [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]
 </li><li class="listitem">
@@ -259,7 +355,7 @@ docs/download.txt: refer to new release of jNut-1.0 (and the
 tests/NIT/nit.sh: do not unset DEBUG_SLEEP when we generate configs
           [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]  We might actually want more of those, with test case
           passwords revealed, etc.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_08_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.8. 2026-04-08  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_08_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.11. 2026-04-08  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 scripts/python/module/PyNUT.py.in: TrackingID class: include
           timestamp tracking and age reporting [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1349" target="_top">#1349</a>]
 </li><li class="listitem">
@@ -310,7 +406,7 @@ configure.ac: hush clang-21 "-Wc11-extensions" warnings about
           system headers
 </li><li class="listitem">
 docs/download.txt: fix NOTE markup for N4W 7Zip size
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_07_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.9. 2026-04-07  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_07_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.12. 2026-04-07  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 docs/maintainer-guide.txt: revise instructions for post-release
           steps (website, etc.)
 </li><li class="listitem">
@@ -324,7 +420,7 @@ NEWS.adoc, UPGRADING.adoc, docs/docinfo.xml.in: Revert "NEWS.adoc,
           v2.8.5 release"  This reverts commit
           784219a3dc935e53a1273063c591bc6dd949590b: finally released NUT
           v2.8.5, preparing for v2.8.6 cycle now.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_06_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.10. 2026-04-06  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_06_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.13. 2026-04-06  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 common/wincompat.c: syslog(), send_to_named_pipe(): debug-log when
           we failed to open existing NAMED_PIPE and so move on [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3302" target="_top">#3302</a>]
 </li><li class="listitem">
@@ -345,4 +441,4 @@ common/wincompat.c: fix filter_path() to measure strlen(source)
 </li><li class="listitem">
 common/wincompat.c: tcflush(): fix bitwise OR to boolean OR
 </li></ul></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-04-18 20:14:32 -- Network UPS Tools 2.8.5.103</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> </td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-04-19 20:46:09 -- Network UPS Tools 2.8.5.127</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> </td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
