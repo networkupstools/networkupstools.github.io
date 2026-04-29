@@ -984,35 +984,59 @@ value significantly.</td>
 <dd>
 <p>
 When compiled with SSL support with OpenSSL backend, you can enter the
-certificate file here.
+server&#8217;s own certificate file here. No-op in NSS builds which use <code>CERTPATH</code>
+instead for all purposes.
 </p>
 <div class="paragraph"><p>The certificates must be in PEM format and must be sorted starting with
 the subject&#8217;s certificate (server certificate), followed by intermediate
-CA certificates (if applicable) and the highest level (root) CA. It should
-end with the server key. See <code>docs/security.txt</code> in NUT sources, or the
-Security chapter of NUT user manual, for more information on the SSL
-support in NUT.</p></div>
+CA certificates (if applicable) and the highest level (root) CA.
+It should end with the server&#8217;s private key corresponding to the certificate.
+See <code>docs/security.txt</code> in NUT sources, or the Security chapter of the NUT
+User manual, for more information on the SSL support in NUT.</p></div>
 </dd>
 <dt class="hdlist1">
 <strong>CERTPATH <em>certificate database</em></strong>
 </dt>
 <dd>
 <p>
-When compiled with SSL support with NSS backend, you can enter the
-certificate path here.
+When compiled with SSL support, you can enter the certificate database
+path here.
 </p>
-<div class="paragraph"><p>Certificates are stored in a dedicated database (data split in 3 files).
-Specify the path of the database directory.</p></div>
+<div class="paragraph"><p>For NSS backend, CA and individual certificates and private key(s) are
+stored in a dedicated database (split into 3 files).</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">NSS also provides for a "prefix", so multiple databases may be
+maintained in the same directory, but NUT does not currently support
+this.</td>
+</tr></table>
+</div>
+<div class="paragraph"><p>For OpenSSL backend, CA certificates are typically stored in a single
+PEM file each, with a name (or symlink) based on the certificate subject
+name hash. (For private key and server certificate, see <code>CERTFILE</code> above.)</p></div>
+<div class="paragraph"><p>Alternatively, with OpenSSL the <code>CERTPATH</code> can specify a particular
+PEM file with a collection of multiple CA certificates, e.g.</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>CERTPATH /etc/ssl/certs/ca-certificates.crt</code></pre>
+</div></div>
 </dd>
 <dt class="hdlist1">
 <strong>CERTIDENT <em>certificate name</em> <em>database password</em></strong>
 </dt>
 <dd>
 <p>
-When compiled with SSL support with NSS backend, you can specify the
-certificate name to retrieve from database to authenticate itself and
-the password required to access certificate related private key.
+When compiled with SSL support, you can specify the certificate name to
+retrieve from database for the server to authenticate itself, and the
+password required to access the private key related to this certificate.
 </p>
+<div class="paragraph"><p>Up until NUT release v2.8.5 this was a no-op when built with OpenSSL.
+Now this feature is supported with both OpenSSL (fully with 1.1.0 or
+newer, just for private key password with older 1.0.2+ library and an
+empty "certificate name") and NSS backends.</p></div>
 <div class="admonitionblock">
 <table><tr>
 <td class="icon">
@@ -1028,10 +1052,12 @@ are using a value with spaces in it.</td>
 </dt>
 <dd>
 <p>
-When compiled with SSL support with NSS backend <strong>and</strong> client certificate
-validation (disabled by default, see &#8216;docs/security.txt` in NUT sources),
-you can specify whether <code>upsd</code> requests or requires clients&#8217; certificates.
+When compiled with SSL support <strong>and</strong> client certificate validation (disabled
+by default, see &#8216;docs/security.txt` in NUT sources), you can specify whether
+<code>upsd</code> basically ignores, requests, or requires the clients&#8217; certificates.
 </p>
+<div class="paragraph"><p>Up until NUT release v2.8.5 this was a no-op when built with OpenSSL.
+Now this feature is supported with both OpenSSL and NSS backends.</p></div>
 <div class="admonitionblock">
 <table><tr>
 <td class="icon">
@@ -1119,7 +1145,7 @@ does not change the previously active logging verbosity.</td>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-25 14:01:14 UTC -- Network UPS Tools 2.8.5.127
+Last updated 2026-04-29 08:44:26 UTC -- Network UPS Tools 2.8.5.305
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>

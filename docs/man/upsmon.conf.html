@@ -1680,11 +1680,12 @@ and exiting the daemon. Zero means immediate exit (default), negative
 values mean never exiting on its own accord.</p></div>
 </dd>
 <dt class="hdlist1">
-<strong>CERTPATH</strong> <em>certificate file or database</em>
+<strong>CERTPATH</strong> <em>certificate database</em>
 </dt>
 <dd>
 <p>
-When compiled with SSL support, you can enter the certificate path here.
+When compiled with SSL support, you can enter the certificate database
+path here.
 </p>
 <div class="dlist"><dl>
 <dt class="hdlist1">
@@ -1706,25 +1707,50 @@ With OpenSSL:
     contain one CA certificate. The files are looked up by the CA subject
     name hash value, which must hence be available.
 </p>
+<div class="paragraph"><p>Alternatively, with OpenSSL the <code>CERTPATH</code> can specify a particular
+    PEM file with a collection of multiple CA certificates, e.g.</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>CERTPATH /etc/ssl/certs/ca-certificates.crt</code></pre>
+</div></div>
 </dd>
 </dl></div>
+</dd>
+<dt class="hdlist1">
+<strong>CERTFILE <em>certificate file</em></strong>
+</dt>
+<dd>
+<p>
+When compiled with SSL support with OpenSSL backend (since NUT v2.8.6),
+you can enter the client certificate file here. No-op in NSS builds
+which use <code>CERTPATH</code> for all purposes.
+</p>
+<div class="paragraph"><p>The certificates must be in PEM format and must be sorted starting with
+the subject&#8217;s certificate (server certificate), followed by intermediate
+CA certificates (if applicable) and the highest level (root) CA.
+It should end with the server&#8217;s private key corresponding to the certificate.
+See <code>docs/security.txt</code> in NUT sources, or the Security chapter of the NUT
+User manual, for more information on the SSL support in NUT.</p></div>
 </dd>
 <dt class="hdlist1">
 <strong>CERTIDENT</strong> <em>certificate name</em> <em>database password</em>
 </dt>
 <dd>
 <p>
-When compiled with SSL support with NSS, you can specify the certificate
-name to retrieve from database to authenticate itself and the password
-required to access certificate related private key.
+When compiled with SSL support, you can specify the certificate name to
+retrieve from the database, for the client to authenticate itself, and
+the password required to access the private key related to that certificate.
 </p>
-<div class="paragraph"><p>Currently no-op when built with OpenSSL.</p></div>
+<div class="paragraph"><p>Up until NUT release v2.8.5 this was a no-op when built with OpenSSL.
+Now this feature is supported with both OpenSSL (fully with 1.1.0 or
+newer, just for private key password with older 1.0.2+ library and an
+empty "certificate name") and NSS backends.</p></div>
 <div class="admonitionblock">
 <table><tr>
 <td class="icon">
 <div class="title">Note</div>
 </td>
-<td class="content">Be sure to enclose "certificate name" in double-quotes if you
+<td class="content">Be sure to enclose the "certificate name" in double-quotes if you
 are using a value with spaces in it.</td>
 </tr></table>
 </div>
@@ -1734,13 +1760,15 @@ are using a value with spaces in it.</td>
 </dt>
 <dd>
 <p>
-When compiled with SSL support with NSS, you can specify security directive
+When compiled with SSL support, you can specify the security directive
 for each server you can contact.
 </p>
-<div class="paragraph"><p>Each entry maps server name with the expected certificate name and flags
-indicating if the server certificate is verified and if the connection
-must be secure.</p></div>
-<div class="paragraph"><p>Currently no-op when built with OpenSSL.</p></div>
+<div class="paragraph"><p>Each entry maps a server name with the expected certificate name and flags
+indicating if the server certificate must be "verified" (should the secure
+connection attempt be aborted upon mismatch or inability to verify?), and if
+the connection must be "secured" (should there be no fallback to plain-text?)</p></div>
+<div class="paragraph"><p>Up until NUT release v2.8.5 this was a no-op when built with OpenSSL.
+Now this feature is supported with both OpenSSL &gt;= 1.1.0 and NSS backends.</p></div>
 <div class="admonitionblock">
 <table><tr>
 <td class="icon">
@@ -1764,8 +1792,8 @@ Enabling this greatly reduces the risk of man-in-the-middle attacks.
 This effectively forces the use of SSL, so don&#8217;t use this unless
 all of your upsd hosts are ready for SSL and have their certificates
 in order.</p></div>
-<div class="paragraph"><p>When compiled with NSS support of SSL, can be overridden for host
-specified with a CERTHOST directive.</p></div>
+<div class="paragraph"><p>When compiled with NSS support of SSL (also OpenSSL since NUT release v2.8.6),
+this can be overridden for certain hosts specified with a <code>CERTHOST</code> directive.</p></div>
 </dd>
 <dt class="hdlist1">
 <strong>FORCESSL</strong> <em>0 | 1</em>
@@ -1779,8 +1807,8 @@ to communicate with upsd.
 that nobody can sniff your sessions without a large effort. Setting
 this will make upsmon drop connections if the remote upsd doesn&#8217;t
 support SSL, so don&#8217;t use it unless all of them have it running.</p></div>
-<div class="paragraph"><p>When compiled with NSS support of SSL, can be overridden for host
-specified with a CERTHOST directive.</p></div>
+<div class="paragraph"><p>When compiled with NSS support of SSL (also OpenSSL since NUT release v2.8.6),
+this can be overridden for certain hosts specified with a <code>CERTHOST</code> directive.</p></div>
 </dd>
 <dt class="hdlist1">
 <strong>DEBUG_MIN</strong> <em>INTEGER</em>
@@ -1827,7 +1855,7 @@ does not change the previously active logging verbosity.</td>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-25 14:01:14 UTC -- Network UPS Tools 2.8.5.127
+Last updated 2026-04-29 08:44:26 UTC -- Network UPS Tools 2.8.5.305
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>

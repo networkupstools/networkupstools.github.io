@@ -766,7 +766,7 @@ a.anchorjs-link:visited {
 <div class="sect1">
 <h2 id="_name">NAME</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>upscli_init - Initialize upsclient module specifying security properties.</p></div>
+<div class="paragraph"><p>upscli_init, upscli_init2 - Initialize upsclient module specifying security properties.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -776,11 +776,20 @@ a.anchorjs-link:visited {
 <div class="content">
 <pre><code>        #include &lt;upsclient.h&gt;
 
+        /* Legacy API, without support for client's
+         * own certificate in OpenSSL builds */
         int upscli_init(
                 int certverify,
                 const char *certpath,
                 const char *certname,
-                const char *certpasswd);</code></pre>
+                const char *certpasswd);
+
+        int upscli_init2(
+                int certverify,
+                const char *certpath,
+                const char *certname,
+                const char *certpasswd,
+                const char *certfile);</code></pre>
 </div></div>
 </div>
 </div>
@@ -790,7 +799,8 @@ a.anchorjs-link:visited {
 <div class="paragraph"><p>The <strong>upscli_init()</strong> function initializes upsclient module and sets many
 TLS/SSL-related properties: <em>certverify</em> to 1 makes certificate verification
 required for all SSL connections and <em>certpath</em> is the location of
-certificate database.</p></div>
+certificate database.
+It is equivalent to the newer <strong>upscli_init2()</strong> with <em>certfile</em> set to <em>NULL</em>.</p></div>
 <div class="dlist"><dl>
 <dt class="hdlist1">
 <code>certverify</code>
@@ -804,7 +814,7 @@ and abort the <code>STARTTLS</code> attempt if it is not.
 the situation), or not do it at all.</p></div>
 </dd>
 <dt class="hdlist1">
-<code>certpath</code>
+<code>certpath</code> and <code>certfile</code>
 </dt>
 <dd>
 <div class="ulist"><ul>
@@ -824,12 +834,16 @@ If compiled with OpenSSL, <em>certpath</em> refers to directory containing
 <div class="paragraph"><p>Alternatively, the <code>c_rehash</code> utility (provided by e.g. <code>openssl-perl</code>
   package) can take a directory and iterate it to link all certificates
   found in that directory, in the manner described above.</p></div>
+<div class="paragraph"><p>The <em>certfile</em> may be used to refer to a PEM file with the client certificate
+  and corresponding private key.</p></div>
 </li>
 <li>
 <p>
 If compiled with NSS, the <em>certpath</em> refers to a directory containing its
   database files.
 </p>
+<div class="paragraph"><p>The <em>certfile</em> is currently not used for NSS: all needed information is in
+  the database.</p></div>
 </li>
 </ul></div>
 </dd>
@@ -849,10 +863,16 @@ If compiled with NSS, this allows to choose one of many certificates that
   may be stored in the database.
 </p>
 </li>
+<li>
+<p>
+If compiled with OpenSSL, the <em>certfile</em> is expected to hold one set of
+  certificate and key data.
+</p>
+</li>
 </ul></div>
 </dd>
 </dl></div>
-<div class="paragraph"><p>Notably, the <em>certname</em> (if not empty) can be used to verify that the
+<div class="paragraph"><p>In both cases, the <em>certname</em> (if not empty) can be used to verify that the
 specified file provides a certificate with expected subject name, or possibly
 matches the expected host name or IP address.</p></div>
 </div>
@@ -904,7 +924,7 @@ occurs.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-25 14:01:14 UTC -- Network UPS Tools 2.8.5.127
+Last updated 2026-04-29 08:44:27 UTC -- Network UPS Tools 2.8.5.305
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>
