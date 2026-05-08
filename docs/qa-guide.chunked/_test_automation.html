@@ -83,10 +83,18 @@ up repetitive runs of the <code class="literal">configure</code> script on devel
 our <code class="literal">*.m4</code> and <code class="literal">*.ac</code> script sources and the machine remain the same.</p><p>It can be stored outside of the build area(s), under <code class="literal">${CI_CACHE_NUT_BASEDIR}</code>
 (default: <code class="literal">${HOME}/.cache/nut-ci</code>) if <code class="literal">DO_USE_NUTCI_CACHE=yes</code> as provided
 by caller (e.g. via <code class="literal">~/.profile</code> of a developer) or guessed from environment
-variables typical for CI runs.</p><p>If something acts up, or the build environment changes invisibly to the
+variables typical for CI runs.</p><p>Note there is also a separate <code class="literal">DO_USE_NUTCI_CACHE_DEBUG=yes</code> (or <code class="literal">...=first</code>)
+toggle, which aims to keep a copy of not only the <code class="literal">config.cache</code>, but also of
+<code class="literal">config.log</code> and <code class="literal">config.h</code> files, as well as a copy of the help text from
+<code class="literal">configure</code> script, from a first run with new cache hash for troubleshooting.</p><p>A further <code class="literal">DO_USE_NUTCI_CACHE_DEBUG=each</code> keeps such files time-stamped, from
+every run (primarily to help determine if re-runs do modify some detection
+results due to mis-interpretation of cached data — i.e. to help fix the <code class="literal">m4</code>
+scripts and/or <code class="literal">configure.ac</code> source file).</p><div class="warning" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Warning</h3><p>It is up to the caller (developer, CI) to ensure that third-party
+dependencies and tools (and their flags delivered by <code class="literal">pkg-config</code>, or module
+paths for interpreted languages, etc.) remain the same between cached runs.</p></div><p>If something acts up, or the build environment changes invisibly to the
 script, an <code class="literal">export DO_CLEAN_NUTCI_CACHE_BEFORE=yes</code> (or a more targeted
-<code class="literal">DO_CLEAN_AUTOCONF_CACHE_BEFORE</code>, since NIT uses similar logic and general
-toggle to retain generated test certificates) should fix that.</p><p>You can also always nuke the <code class="literal">${CI_CACHE_NUT_BASEDIR}</code> directory, or the
+<code class="literal">export DO_CLEAN_AUTOCONF_CACHE_BEFORE=yes</code>, since NIT uses similar logic
+and general toggle to retain generated test certificates) should fix that.</p><p>You can also always nuke the <code class="literal">${CI_CACHE_NUT_BASEDIR}</code> directory, or the
 <code class="literal">AUTOCONF_*</code> subdirectories and stale lock files under it.
 It would likely be needed from time to time anyway, as there is now
 no automated clean-up of no longer relevant caches.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_test_programs_in_nut_codebase"></a>3.2. Test programs in NUT codebase</h3></div></div></div><p><a id="CI_NUT_SELFTESTS"></a>FIXME: Write the chapter text.</p><p>For now, investigate files in the <code class="literal">tests/</code> directory contents in NUT sources.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="NIT"></a>3.3. NUT Integration Testing suite (aka NIT)</h3></div></div></div><p>This suite aims to simplify running <code class="literal">upsd</code>, a <code class="literal">dummy-ups</code> driver and
@@ -125,4 +133,4 @@ script, an <code class="literal">export DO_CLEAN_NUTCI_CACHE_BEFORE=yes</code> (
 <code class="literal">NIT_CERT_*</code> subdirectories and stale lock files under it.
 It would likely be needed from time to time anyway, as there is
 now no automated clean-up of no longer relevant caches.</p></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-05-06 10:12:30 -- Network UPS Tools 2.8.5.305</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_code_and_recipe_analysis.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="_continuous_integration_nut_ci_farm_technologies.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-05-08 05:44:27 -- Network UPS Tools 2.8.5.374</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_code_and_recipe_analysis.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="_continuous_integration_nut_ci_farm_technologies.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
