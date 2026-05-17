@@ -21,7 +21,39 @@
 			text-decoration: inherit;
 		}
 	</style></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> </td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="Change_Log"></a>2. Very detailed Change Log</h2></div></div></div><p>This document intends to detail the change log for relatively recent work
-(roughly since the source code was tracked in Git).</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>This change log section represents git commits in range <span class="emphasis"><em>v2.8.5..HEAD</em></span> (commits <span class="emphasis"><em>0e051f9f6..66af0859d</em></span>).</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_05_11_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.1. 2026-05-11  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+(roughly since the source code was tracked in Git).</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>This change log section represents git commits in range <span class="emphasis"><em>v2.8.5..HEAD</em></span> (commits <span class="emphasis"><em>0e051f9f6..0d2c7a14d</em></span>).</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_05_13_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.1. 2026-05-13  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+NEWS.adoc, drivers/nutdrv_qx_megatec.c:
+          drivers/nutdrv_qx_megatec.c: add QX_FLAG_ABSENT to "ups.firmware"
+          so devices with all-spaces in that field can still be recognized
+          [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3436" target="_top">#3436</a>]  Co-authored-by: Jim Klimov &lt;jimklimov\+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;
+          Co-authored-by: Siravijbb &lt;<a class="ulink" href="mailto:siravijbb@gmail.com" target="_top">siravijbb@gmail.com</a>&gt;
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_05_11_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.2. 2026-05-11  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+server/upsd.c: update_sysmaxconn(): default the sysmaxconn value to
+          "MAX - RESERVE_FD_COUNT_UPSD" on platforms where it might matter
+          [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3365" target="_top">#3365</a>]
+</li><li class="listitem">
+server/upsd.c: update_sysmaxconn(): check that detected
+          sysmaxconn_hard is big enough to be useful considering the
+          RESERVE_FD_COUNT_UPSD set aside AND a few actual connections
+          [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3365" target="_top">#3365</a>]
+</li><li class="listitem">
+server/upsd.c: update_sysmaxconn(): revise warning message about
+          hard limit [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3365" target="_top">#3365</a>]
+</li><li class="listitem">
+server/upsd.c: be sure to re-detect sysmaxconn after (re-)loading
+          config [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3365" target="_top">#3365</a>]
+</li><li class="listitem">
+NEWS.adoc, UPGRADING.adoc, docs/nut.dict, server/upsd.c,
+          server/upsd.h: server/upsd.{c,h}, NEWS.adoc, UPGRADING.adoc:
+          consider getrlimit() permissons vs. MAXCONN request [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3365" target="_top">#3365</a>]
+</li><li class="listitem">
+NEWS.adoc, server/conf.c, server/upsd.c, server/upsd.h:
+          server/conf.c, server/upsd.{c,h}, NEWS.adoc: if we hit "Too many
+          open files" during configuration reload, close oldest client
+          connection and retry [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3365" target="_top">#3365</a>]
+</li><li class="listitem">
+server/upsd.h: update © heading and whitespace styling
+</li><li class="listitem">
 docs/nut.dict: update for dllldd [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3420" target="_top">#3420</a>]
 </li><li class="listitem">
 NEWS.adoc: update about <code class="literal">scripts/Windows/dllldd.sh</code> helper script
@@ -98,7 +130,7 @@ scripts/Windows/dllldd.sh: dllldd_with_strings(): filter away some
           bogus <code class="literal">strings</code> outputs and findings [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3420" target="_top">#3420</a>]
 </li><li class="listitem">
 scripts/Windows/dllldd.sh: more filter_away_system_DLLs() [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3420" target="_top">#3420</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_05_10_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.2. 2026-05-10  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_05_10_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.3. 2026-05-10  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 scripts/Windows/dllldd.sh: dllldd_with_tools(): define and clean-up
           TEMPFILE_REC in the outer-most call if we stack them [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3420" target="_top">#3420</a>]  This
           should help directory crawlers etc. ignore paths already walked by
@@ -119,22 +151,22 @@ scripts/Windows/dllldd.sh: filter_away_NUT_DLLs() when we query
 </li><li class="listitem">
 scripts/Windows/dllldd.sh: refactor with discover_COMPILER_PATHS()
           to not do this in a loop [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3420" target="_top">#3420</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_05_09_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.3. 2026-05-09  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_05_09_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.4. 2026-05-09  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 docs/nut.dict: Update nut.dict [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3430" target="_top">#3430</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_05_08_ostrich_lt_570911_ulink_url_mailto_ostrich_users_noreply_github_com_ostrich_users_noreply_github_com_ulink_gt"></a>2.4. 2026-05-08  ostrich &lt;570911+<a class="ulink" href="mailto:ostrich@users.noreply.github.com" target="_top">ostrich@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_05_08_ostrich_lt_570911_ulink_url_mailto_ostrich_users_noreply_github_com_ostrich_users_noreply_github_com_ulink_gt"></a>2.5. 2026-05-08  ostrich &lt;570911+<a class="ulink" href="mailto:ostrich@users.noreply.github.com" target="_top">ostrich@users.noreply.github.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 scripts/python/app/NUT-Monitor-py3qt5.in,
           scripts/python/app/NUT-Monitor-py3qt6.in: Fix NUT-Monitor tray
           tooltip text
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_05_08_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.5. 2026-05-08  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_05_08_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.6. 2026-05-08  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 NEWS.adoc: update about NUT-Monitor tooltips [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3430" target="_top">#3430</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_05_07_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.6. 2026-05-07  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_05_07_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.7. 2026-05-07  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 clients/upsmon.c, NEWS.adoc: do not abort if we did not succeed
           upscli_init() but did not require SSL in the first place [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3420" target="_top">#3420</a>]
 </li><li class="listitem">
 scripts/Windows/dllldd.sh: refactor to find DLLs with <code class="literal">strings</code>
           too; track filenames we already investigated [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3420" target="_top">#3420</a>]  DRY the loop
           and avoid cycles.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_05_06_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.7. 2026-05-06  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_05_06_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.8. 2026-05-06  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 m4/nut_check_libnetsnmp.m4: revise with AC_CACHE_VAL() for each
           option to be remembered [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3108" target="_top">#3108</a>]
 </li><li class="listitem">
@@ -145,7 +177,7 @@ ci_build.sh, scripts/Windows/build-mingw-nut.sh:
           get_CI_CACHE_NUT_HASHDIR_CFG_OPT(): consider also MAKE and
           (CONFIG_)SHELL as circumstances that impact the configuration hash
           [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3108" target="_top">#3108</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_05_05_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.8. 2026-05-05  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_05_05_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.9. 2026-05-05  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 m4/nut_check_libfreeipmi.m4: revise with AC_CACHE_VAL() for each
           option to be remembered [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3108" target="_top">#3108</a>]
 </li><li class="listitem">
@@ -178,7 +210,7 @@ m4/nut_check_libusb.m4: revise with AC_CACHE_VAL() for each option
 </li><li class="listitem">
 m4/nut_check_os.m4: fix comments starting a line with a hash to use
           "dnl" first
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_05_04_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.9. 2026-05-04  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_05_04_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.10. 2026-05-04  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 m4/nut_check_libregex.m4: revise with AC_CACHE_VAL() for each
           option to be remembered [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3108" target="_top">#3108</a>]
 </li><li class="listitem">
@@ -278,16 +310,16 @@ ci_build.sh, scripts/Windows/build-mingw-nut.sh: facilitate re-runs
           handle precious CCACHE_</strong></span> args/vars [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3108" target="_top">#3108</a>]
 </li><li class="listitem">
 ci_build.adoc: clarify some points about caching [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3108" target="_top">#3108</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_05_02_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.10. 2026-05-02  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_05_02_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.11. 2026-05-02  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 ci_build.sh, ci_build.adoc: introduce
           DO_USE_AUTOCONF_CACHE_DEBUG=each mode [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3108" target="_top">#3108</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_05_01_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.11. 2026-05-01  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_05_01_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.12. 2026-05-01  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 NEWS.adoc: move entry for <a class="ulink" href="https://github.com/networkupstools/nut/issues/3302" target="_top">#3302</a> into v2.8.6 release
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_30_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.12. 2026-04-30  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_30_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.13. 2026-04-30  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 docs/config-prereqs.txt: do not pull valgrind into default
           Debian/Ubuntu footprint, it is not ubiquitous  Revise other
           suggestions a bit too
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_29_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.13. 2026-04-29  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_29_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.14. 2026-04-29  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 tests/cpputest-client.cpp: revise reporting of UPSCLI_SSL_CAPS*
           [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3331" target="_top">#3331</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]
 </li><li class="listitem">
@@ -302,7 +334,7 @@ clients/upsclient.c: report if we can not do CERTHOST(name)
           validation [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3331" target="_top">#3331</a>]
 </li><li class="listitem">
 Makefile.am: .libs-dev-PATH: fix typo
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_28_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.14. 2026-04-28  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_28_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.15. 2026-04-28  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 clients/Makefile.am, common/Makefile.am, scripts/obs/debian.rules,
           scripts/obs/nut.spec, tools/nut-scanner/Makefile.am: <span class="strong"><strong>/Makefile.am,
           scripts/obs/</strong></span>: bump libnutclient ABI level [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1290" target="_top">#1290</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/3331" target="_top">#3331</a>]
@@ -342,7 +374,7 @@ tests/NIT/nit.sh: reword SSL support messages [<a class="ulink" href="https://gi
 </li><li class="listitem">
 tests/NIT/nit.sh: revise sanity-check, not all NSS versions had a
           *.txt file [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3331" target="_top">#3331</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_27_jim_klimov_lt_ulink_url_mailto_jimklimov_gmail_com_jimklimov_gmail_com_ulink_gt"></a>2.15. 2026-04-27  Jim Klimov &lt;<a class="ulink" href="mailto:jimklimov@gmail.com" target="_top">jimklimov@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_27_jim_klimov_lt_ulink_url_mailto_jimklimov_gmail_com_jimklimov_gmail_com_ulink_gt"></a>2.16. 2026-04-27  Jim Klimov &lt;<a class="ulink" href="mailto:jimklimov@gmail.com" target="_top">jimklimov@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 clients/nutclient.cpp: fix NULL⇒nullptr [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3331" target="_top">#3331</a>]
 </li><li class="listitem">
 tests/NIT/nit.sh: isTestablePython(): fix detection of interpreter
@@ -356,7 +388,7 @@ tests/NIT/nit.sh: refactor and improve portability with
 </li><li class="listitem">
 ci_build.sh: refactor and improve portability with
           somehash_filter()/somehash_files() method detection [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3108" target="_top">#3108</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_27_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.16. 2026-04-27  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_27_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.17. 2026-04-27  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 .circleci/config.yml: allow various cache contents for same
           branch/job iterations [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3390" target="_top">#3390</a>]
 </li><li class="listitem">
@@ -400,7 +432,7 @@ tests/NIT/nit.sh: fix NUT_CAPATH for PERL SSL tests on Windows
           (MSYS2) with forward slashes too [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]
 </li><li class="listitem">
 tests/NIT/nit.sh: fix portability for recursive "cp" [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3390" target="_top">#3390</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_26_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.17. 2026-04-26  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_26_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.18. 2026-04-26  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 m4/nut_check_libnetsnmp.m4: re-detect libnetsnmp details in mingw
           builds to not lose track [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3108" target="_top">#3108</a>]
 </li><li class="listitem">
@@ -413,7 +445,7 @@ scripts/Windows/build-mingw-nut.sh: add © into the heading
 ci_build.sh: get_CI_CACHE_NUT_HASHDIR_CFG_OPT(), configure_nut():
           stash a copy of first-run config.log and config.h as examples of
           resulting configuration [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3108" target="_top">#3108</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_25_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.18. 2026-04-25  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_25_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.19. 2026-04-25  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 docs/download.txt: fix NOTE block style
 </li><li class="listitem">
 ci_build.sh, Makefile.am: revise passing
@@ -459,7 +491,7 @@ ci_build.sh, scripts/Windows/build-mingw-nut.sh: ci_build.sh: name
 </li><li class="listitem">
 tests/NIT/nit.sh: prepare_NIT_certs(): rename TESTCERT_VARS.sh to
           .env, generate one [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3390" target="_top">#3390</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_24_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.19. 2026-04-24  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_24_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.20. 2026-04-24  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 tests/NIT/nit.sh: fix NUT_CAPATH for PERL SSL tests on Windows
           (MSYS2) [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]
 </li><li class="listitem">
@@ -504,7 +536,7 @@ clients/nutclient.cpp, clients/nutclient.h,
           docs/man/libnutclient_commands.txt, docs/man/libnutclient_tcp.txt:
           clients/nutclient.{cpp,h}, docs/man/libnutclient_tcp.txt: add
           optional CERTHOST verification to OpenSSL code path [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3331" target="_top">#3331</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_23_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.20. 2026-04-23  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_23_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.21. 2026-04-23  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 clients/nutclient.cpp: some builds manage to get into WITH_SSL_CXX
           without WITH_OPENSSL|\|WITH_NSS defined [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3331" target="_top">#3331</a>]
 </li><li class="listitem">
@@ -580,7 +612,7 @@ clients/nutclient.cpp, clients/nutclient.h:
 clients/nutclient.cpp, clients/nutclient.h:
           clients/nutclient.{cpp,h}: SSLConfig::addCertHost(): constrain to
           adding non-trivial entries only [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3331" target="_top">#3331</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_22_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.21. 2026-04-22  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_22_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.22. 2026-04-22  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 clients/nutclient.cpp, clients/nutclient.h:
           clients/nutclient.{cpp,h}: move SSLConfig* method implementations
           from header to CPP file [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3331" target="_top">#3331</a>]
@@ -606,7 +638,7 @@ clients/nutclient.cpp: Socket() constructor should not rely on
           builds, and later valgrind, confirmed an issue with random
           decisions and free()'s based on random data in that struct.
           Apparently C differs from C+\+ in that aspect?..
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_21_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.22. 2026-04-21  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_21_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.23. 2026-04-21  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/usbhid-ups.c, NEWS.adoc: reconnect_ups(): report success
           more visibly [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3423" target="_top">#3423</a>]  Also fix setting "quiet" driver status when
           we actualy remain in reconnecting state (or rather will soon
@@ -654,7 +686,7 @@ clients/nutclient.cpp: TcpClient::connect(): now we can config
 </li><li class="listitem">
 tests/cpputest-client.cpp: setupClientSSL(): rearrange reporting of
           enabled SSL options [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_20_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.23. 2026-04-20  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_20_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.24. 2026-04-20  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 tests/NIT/nit.sh: setenv_ssl_cppnit(): provide NUT_CERTFILE and
           NUT_KEYFILE values for OpenSSL tests [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/3331" target="_top">#3331</a>]
 </li><li class="listitem">
@@ -724,18 +756,18 @@ clients/nutclient.cpp, clients/upsclient.c, server/netssl.c:
           verify subject_CN[], consider comma as a separator too [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3331" target="_top">#3331</a>]
 </li><li class="listitem">
 clients/nutclient.cpp: fix a missed static_cast [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3331" target="_top">#3331</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_19_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.24. 2026-04-19  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_19_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.25. 2026-04-19  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 clients/nutclient.cpp: be sure to include openssl/x509v3.h for
           methods we use [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3331" target="_top">#3331</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_18_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.25. 2026-04-18  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_18_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.26. 2026-04-18  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/apc_modbus.c: addvar() the modbus_retries option [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3414" target="_top">#3414</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_16_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.26. 2026-04-16  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_16_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.27. 2026-04-16  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 tests/NIT/nit.sh: setenv_ssl_common(): revise NUT_CAPATH conditions
           [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]
 </li><li class="listitem">
 tests/NIT/nit.sh: fix check of python FORCESSL is testable [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>,
           <a class="ulink" href="https://github.com/networkupstools/nut/issues/1349" target="_top">#1349</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_15_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.27. 2026-04-15  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_15_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.28. 2026-04-15  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 scripts/python/module/PyNUT.py.in: fix sleep() [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1349" target="_top">#1349</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]
 </li><li class="listitem">
 clients/nutclient.cpp, clients/nutclient.h, clients/upsclient.c,
@@ -796,7 +828,7 @@ docs/nut.dict: update for older systems
 configure.ac: work around ancient autotools without PACKAGE_URL
 </li><li class="listitem">
 Makefile.am: hijack PARMAKES_OPT to also set V=0 by default
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_14_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.28. 2026-04-14  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_14_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.29. 2026-04-14  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 clients/upsclient.c: for now openssl_password_callback() should
           only be declared/implemented when OPENSSL_VERSION_NUMBER &gt;= 1.1.0
           [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3331" target="_top">#3331</a>]
@@ -807,7 +839,7 @@ conf/upsmon.conf.sample.in, docs/man/upsmon.conf.txt: clarify that
 </li><li class="listitem">
 drivers/nutdrv_qx.c, NEWS.adoc: qx_is_usb_device_supported(): only
           claim SUPPORTED if subdriver_command was assigned [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3410" target="_top">#3410</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_14_axel_gembe_lt_ulink_url_mailto_axel_gembe_net_axel_gembe_net_ulink_gt"></a>2.29. 2026-04-14  Axel Gembe &lt;<a class="ulink" href="mailto:axel@gembe.net" target="_top">axel@gembe.net</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_14_axel_gembe_lt_ulink_url_mailto_axel_gembe_net_axel_gembe_net_ulink_gt"></a>2.30. 2026-04-14  Axel Gembe &lt;<a class="ulink" href="mailto:axel@gembe.net" target="_top">axel@gembe.net</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 NEWS.adoc, drivers/apc_modbus.c: apc_modbus: increase default TCP
           response timeout to 2000 ms  The default 500ms timeout value is
           marginal for Modbus TCP, even on a fast local network. In tests
@@ -890,7 +922,7 @@ NEWS.adoc, drivers/apc_modbus.c: apc_modbus: always zero terminate
           result in every case, like when all values are <code class="literal">NULL</code>.
 </li><li class="listitem">
 drivers/apc_modbus.c: apc_modbus: bump driver version to 0.20
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_13_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.30. 2026-04-13  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_13_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.31. 2026-04-13  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 tests/NIT/nit.sh: generate upsmon.pem [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3331" target="_top">#3331</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]
 </li><li class="listitem">
 NEWS.adoc, clients/nutclient.cpp, clients/upsclient.c,
@@ -995,7 +1027,7 @@ docs/man/upscli_init.txt: update wording and markup for
           pre-existing features [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3331" target="_top">#3331</a>]
 </li><li class="listitem">
 NEWS.adoc: announce the adjusted markup format
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_12_jim_klimov_lt_ulink_url_mailto_jimklimov_gmail_com_jimklimov_gmail_com_ulink_gt"></a>2.31. 2026-04-12  Jim Klimov &lt;<a class="ulink" href="mailto:jimklimov@gmail.com" target="_top">jimklimov@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_12_jim_klimov_lt_ulink_url_mailto_jimklimov_gmail_com_jimklimov_gmail_com_ulink_gt"></a>2.32. 2026-04-12  Jim Klimov &lt;<a class="ulink" href="mailto:jimklimov@gmail.com" target="_top">jimklimov@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 scripts/perl/UPS/Nut.pm: warn if CERTVERIFY and custom CA options
           are enabled on Darwin platform [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3404" target="_top">#3404</a>]
 </li><li class="listitem">
@@ -1020,7 +1052,7 @@ scripts/perl/UPS/Nut.pm: support debugging messages of
 </li><li class="listitem">
 tests/NIT/nit.sh: report the non-default NIT_CASE being handled
           [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_12_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.32. 2026-04-12  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_12_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.33. 2026-04-12  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 clients/upsclient.c: upscli_sslinit(): OPENSSL_VERSION_NUMBER
           constraint applies to whole block for X509_VERIFY_PARAM [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3331" target="_top">#3331</a>]
 </li><li class="listitem">
@@ -1045,12 +1077,12 @@ scripts/perl/UPS/Nut.pm: fix to loading IO::Socket::SSL via eval
 </li><li class="listitem">
 clients/nutclient.cpp: work around lack of threads in some mingw
           versions [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3402" target="_top">#3402</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_11_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.33. 2026-04-11  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_11_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.34. 2026-04-11  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 m4/ax_c_pragmas.m4, clients/nutclient.cpp: introduce
           HAVE_PRAGMA_GCC_DIAGNOSTIC_IGNORED_DEPRECATED_DECLARATIONS{,_BESIDEFUNC}
           to implement methods for deprecated "master" operation [<a class="ulink" href="https://github.com/networkupstools/nut/issues/840" target="_top">#840</a>,
           <a class="ulink" href="https://github.com/networkupstools/nut/issues/3402" target="_top">#3402</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_10_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.34. 2026-04-10  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_10_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.35. 2026-04-10  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 NEWS.adoc: announce updates to client binding libraries [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3402" target="_top">#3402</a>]
 </li><li class="listitem">
 scripts/perl/test_nutclient.pl: avoid "Can’t call method "Error" on
@@ -1125,7 +1157,7 @@ appveyor.yml: post only one (custom) notification per build [<a class="ulink" hr
 </li><li class="listitem">
 docs/man/Makefile.am: hush "cat" errors in
           LIBNUTCLIENT_TCP_DEPS_SUB recipe
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_09_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.35. 2026-04-09  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_09_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.36. 2026-04-09  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 scripts/perl/test_nutclient.pl: fix reporting of @failed methods
           [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]
 </li><li class="listitem">
@@ -1222,7 +1254,7 @@ docs/download.txt: refer to new release of jNut-1.0 (and the
 tests/NIT/nit.sh: do not unset DEBUG_SLEEP when we generate configs
           [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>]  We might actually want more of those, with test case
           passwords revealed, etc.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_08_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.36. 2026-04-08  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_08_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.37. 2026-04-08  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 scripts/python/module/PyNUT.py.in: TrackingID class: include
           timestamp tracking and age reporting [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1349" target="_top">#1349</a>]
 </li><li class="listitem">
@@ -1273,7 +1305,7 @@ configure.ac: hush clang-21 "-Wc11-extensions" warnings about
           system headers
 </li><li class="listitem">
 docs/download.txt: fix NOTE markup for N4W 7Zip size
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_07_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.37. 2026-04-07  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_07_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.38. 2026-04-07  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 docs/maintainer-guide.txt: revise instructions for post-release
           steps (website, etc.)
 </li><li class="listitem">
@@ -1287,7 +1319,7 @@ NEWS.adoc, UPGRADING.adoc, docs/docinfo.xml.in: Revert "NEWS.adoc,
           v2.8.5 release"  This reverts commit
           784219a3dc935e53a1273063c591bc6dd949590b: finally released NUT
           v2.8.5, preparing for v2.8.6 cycle now.
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_06_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.38. 2026-04-06  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_04_06_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.39. 2026-04-06  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 common/wincompat.c: syslog(), send_to_named_pipe(): debug-log when
           we failed to open existing NAMED_PIPE and so move on [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3302" target="_top">#3302</a>]
 </li><li class="listitem">
@@ -1307,7 +1339,7 @@ common/wincompat.c: fix filter_path() to measure strlen(source)
           once [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3302" target="_top">#3302</a>]
 </li><li class="listitem">
 common/wincompat.c: tcflush(): fix bitwise OR to boolean OR
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_03_31_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.39. 2026-03-31  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_03_31_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.40. 2026-03-31  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 server/upsd.c: sendback(): adjust debug traces for write() vs
           ssl_write() [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3379" target="_top">#3379</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/3331" target="_top">#3331</a>]
 </li><li class="listitem">
@@ -1320,7 +1352,7 @@ server/upsd.c, server/upsd.h: server/upsd.{c,h}: introduce
 </li><li class="listitem">
 drivers/dstate.c, NEWS.adoc: revise closing of connections and
           returning error codes; document the methods [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3302" target="_top">#3302</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_03_30_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.40. 2026-03-30  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_03_30_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.41. 2026-03-30  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/dstate.c: debug-log the progress around starting and maybe
           failing CreateNamedPipe() [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3302" target="_top">#3302</a>]
 </li><li class="listitem">
@@ -1329,10 +1361,10 @@ drivers/dstate.c: sock_disconnect(): resync code with
 </li><li class="listitem">
 drivers/dstate.c: sock_disconnect(): try to flush the buffer
           [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3368" target="_top">#3368</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_03_25_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.41. 2026-03-25  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_03_25_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.42. 2026-03-25  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/dstate.c: err on the safe side and set conn=NULL after
           sock_disconnect() [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3368" target="_top">#3368</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_03_24_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.42. 2026-03-24  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2026_03_24_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.43. 2026-03-24  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 drivers/upsdrvctl.c: refactor with forkexec_parent_analyze() and a
           re-check before retry - also for WIN32 [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3302" target="_top">#3302</a>]  Also revised
           WaitForSingleObject() result checking - there has to be a chance to
@@ -1340,7 +1372,7 @@ drivers/upsdrvctl.c: refactor with forkexec_parent_analyze() and a
 </li><li class="listitem">
 drivers/upsdrvctl.c: refactor with forkexec_parent_analyze() and a
           re-check before retry - POSIX part [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3302" target="_top">#3302</a>]
-</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_10_02_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.43. 2025-10-02  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_2025_10_02_jim_klimov_lt_jimklimov_ulink_url_mailto_nut_gmail_com_nut_gmail_com_ulink_gt"></a>2.44. 2025-10-02  Jim Klimov &lt;jimklimov+<a class="ulink" href="mailto:nut@gmail.com" target="_top">nut@gmail.com</a>&gt;</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 configure.ac: WIN32 GetAdaptersInfo(): be careful about
           $NETLIBS_GETADDRS usage
 </li><li class="listitem">
@@ -1367,4 +1399,4 @@ ci_build.sh, scripts/Windows/build-mingw-nut.sh, NEWS.adoc:
           introduce options to USE_AUTOCONF_CACHE and/or CLEAN_AUTOCONF_CACHE
           [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3108" target="_top">#3108</a>]
 </li></ul></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-05-15 14:38:55 -- Network UPS Tools 2.8.5.374</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> </td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-05-17 14:44:17 -- Network UPS Tools 2.8.5.374</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> </td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
