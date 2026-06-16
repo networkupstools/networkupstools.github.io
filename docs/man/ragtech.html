@@ -5,7 +5,7 @@
 <head>
 <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
 <meta name="generator" content="AsciiDoc 10.2.0" />
-<title>UPSCLI_REPORT_BUILD_DETAILS(3)</title>
+<title>RAGTECH(8)</title>
 <style type="text/css">
 /* Shared CSS for AsciiDoc xhtml11 and html5 backends */
 
@@ -760,45 +760,126 @@ a.anchorjs-link:visited {
 </head>
 <body class="article">
 <div id="header">
-<h1>UPSCLI_REPORT_BUILD_DETAILS(3)</h1>
+<h1>RAGTECH(8)</h1>
 </div>
 <div id="content">
 <div class="sect1">
 <h2 id="_name">NAME</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>upscli_report_build_details - Print a debug message to report details of the
-current libupsclient build such as its source-code version and SSL capabilities</p></div>
+<div class="paragraph"><p>ragtech - Driver for Ragtech UPS units (USB CDC-ACM)</p></div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_synopsis">SYNOPSIS</h2>
 <div class="sectionbody">
-<div class="listingblock">
-<div class="content">
-<pre><code>        #include &lt;upsclient.h&gt;
-
-        void upscli_report_build_details(void);</code></pre>
-</div></div>
+<div class="paragraph"><p><strong>ragtech</strong> -h</p></div>
+<div class="paragraph"><p><strong>ragtech</strong> -a <em>UPS_NAME</em> [<em>OPTIONS</em>]</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">This man page only documents the hardware-specific features of
+the ragtech driver. For information about the core driver, see
+<a href="nutupsdrv.html">nutupsdrv(8)</a>.</td>
+</tr></table>
 </div>
-</div>
-<div class="sect1">
-<h2 id="_description">DESCRIPTION</h2>
-<div class="sectionbody">
-<div class="paragraph"><p>The <strong>upscli_report_build_details</strong>() function prints a debug log message at
-verbosity <em>1</em> to summarize details about the currently used build of the
-<a href="upsclient.html">upsclient(3)</a> library, including its SSL support.</p></div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_return_value">RETURN VALUE</h2>
+<h2 id="_supported_hardware">SUPPORTED HARDWARE</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>There is no return value.</p></div>
+<div class="paragraph"><p>Targets Ragtech UPSes that expose a USB CDC-ACM serial interface
+(USB VID 0x04D8, PID 0x000A&#8201;&#8212;&#8201;Microchip PIC with CDC firmware).
+The device shows up under Linux as <code>/dev/ttyACM*</code>.</p></div>
+<div class="paragraph"><p>Validated end-to-end against the Ragtech Easy 2000 TI (model id 16 in
+the family-10 device table). The other 19 models in the same table&#8201;&#8212;&#8201;Easy 600/700/900/1200/1300/1400/1600/1800/2000/2200 in both TI (115 V)
+and M2 (220 V) variants, also sold under the NEP, TORO, INNERGIE and
+OneUP brands in Brazil&#8201;&#8212;&#8201;share the same wire protocol and register
+layout and are expected to work; please report results.</p></div>
+<div class="paragraph"><p>This driver is <strong>experimental</strong>. Polling, status decoding and the
+<code>shutdown.stayoff</code> / <code>shutdown.stop</code> instant commands have been
+verified on hardware; <code>shutdown.return</code> and <code>test.battery.start.deep</code>
+are implemented but not yet verified end-to-end (see the
+<strong>allow_shutdown</strong> note below). The beeper-control wire encoding has
+not been reverse-engineered yet.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_extra_arguments">EXTRA ARGUMENTS</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>This driver supports the following options in the <strong>ups.conf</strong>:</p></div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>iout_calib</strong>=<em>number</em>
+</dt>
+<dd>
+<p>
+Per-unit output current calibration constant. If omitted (default),
+the driver reads the value from register <code>0xF3</code> at startup. Set this
+only to override a wrong factory-stored calibration.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>allow_shutdown</strong>
+</dt>
+<dd>
+<p>
+Enable the <code>shutdown.return</code>, <code>shutdown.stayoff</code>, <code>shutdown.stop</code> and
+<code>test.battery.start.deep</code> instant commands. Disabled by default for
+safety: the Easy 2000 TI firmware does <strong>not</strong> auto-restart after a
+coordinated shutdown, so an <code>upsmon</code>-driven shutdown on low battery
+will leave the UPS (and everything plugged into it) powered off until
+someone presses the physical power button. Only set this flag if you
+have an out-of-band way to power the UPS back up, or if you are
+deliberately running a UPS that should stay off after a critical-
+battery event. With this flag unset, <code>upsdrv_shutdown</code> logs the
+refusal and exits with failure instead of cutting the output.
+</p>
+</dd>
+</dl></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_caveats">CAVEATS</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>The serial control lines DTR and RTS are forced low by the driver
+immediately after opening the port. Non-zero levels on either line
+are interpreted by the UPS as a remote shutdown signal&#8201;&#8212;&#8201;never run
+this driver alongside other software that toggles those lines on the
+same device node.</p></div>
+<div class="paragraph"><p>Replies are framed by a 0xAA start byte and have no checksum; the
+driver re-synchronizes by scanning for the start byte after any
+short read.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_author">AUTHOR</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>juslex</p></div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
-<div class="paragraph"><p><a href="upscli_ssl_caps.html">upscli_ssl_caps(3)</a>, <a href="upscli_ssl_caps_descr.html">upscli_ssl_caps_descr(3)</a></p></div>
+<div class="paragraph"><p><a href="nutupsdrv.html">nutupsdrv(8)</a>,
+<a href="ups.conf.html">ups.conf(5)</a></p></div>
+<div class="sect2">
+<h3 id="_internet_resources">Internet resources:</h3>
+<div class="ulist"><ul>
+<li>
+<p>
+The NUT (Network UPS Tools) home page: <a href="https://www.networkupstools.org/">https://www.networkupstools.org/</a>
+</p>
+</li>
+<li>
+<p>
+Reverse-engineering reference:
+  <a href="https://github.com/antunesls/UPS_ESP32_tinySrv">https://github.com/antunesls/UPS_ESP32_tinySrv</a>
+</p>
+</li>
+</ul></div>
+</div>
 </div>
 </div>
 </div>

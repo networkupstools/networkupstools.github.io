@@ -194,7 +194,13 @@ Check known pools:
      see: http://zfsonlinux.org/msg/ZFS-8000-EY
  config:
         rpool ONLINE
-           vda ONLINE</pre></li><li class="listitem"><p class="simpara">
+           vda ONLINE</pre></li><li class="listitem">
+RECOMMENDED: Double-check that <code class="literal">ashift=12</code> (4KB sectors) setting is applied.
+  Storage may subtly misbehave (from being slow to getting corrupted) when
+  using default <code class="literal">ashift=9</code> (512B sectors) on disks with 4KB actual sectors,
+  especially under stress such as CI builds. It may be worthwhile to recreate
+  the ZFS pool if it was prepared in a "wrong" manner.
+</li><li class="listitem"><p class="simpara">
 Import without mounting (<code class="literal">-N</code>), using an alternate root if we decide to
   mount something later (<code class="literal">-R /a</code>), and ignoring possible markers that the
   pool was not unmounted so might be used by another storage user (<code class="literal">-f</code>):
@@ -392,6 +398,18 @@ DigitalOcean rescue CD is Ubuntu 18.04 based, it has an older ZFS version
   <a class="ulink" href="https://openzfs.github.io/openzfs-docs/Getting%20Started/Debian/Debian%20Stretch%20Root%20on%20ZFS.html" target="_top">https://openzfs.github.io/openzfs-docs/Getting%20Started/Debian/Debian%20Stretch%20Root%20on%20ZFS.html</a>
   have to be used particularly to <code class="literal">zpool create bpool</code> (with the dumbed-down
   options for GRUB to be able to read that boot-pool);
+</li><li class="listitem">
+With DigitalOcean VMs it is recommended to explicitly assign <code class="literal">ashift=12</code>
+    when creating ZFS pools on systems which support setting this explicitly.
+    By default the storage sector size is guessed, and may end up using <code class="literal">9</code>
+    (512 bytes) leading to read-modify-write cycles in the underlying storage
+    layers, causing slower I/O and even possible data corruption.
+</li><li class="listitem">
+Usually you can check a resulting ZFS pool’s <code class="literal">ashift</code> value with
+    <code class="literal">zpool get ashift zroot</code>; however for a guessed value <code class="literal">0</code> may be reported.
+    In this case, <code class="literal">zdb -C -e zroot | grep ashift</code> is a more certain way.
+</li><li class="listitem">
+WARNING: The <code class="literal">ashift</code> value can only be assigned during pool creation!
 </li><li class="listitem">
 For the rest of the system,
   <a class="ulink" href="https://openzfs.github.io/openzfs-docs/Getting%20Started/Debian/Debian%20Bookworm%20Root%20on%20ZFS.html" target="_top">https://openzfs.github.io/openzfs-docs/Getting%20Started/Debian/Debian%20Bookworm%20Root%20on%20ZFS.html</a>
@@ -982,4 +1000,4 @@ The <code class="literal">DYNAMATRIX_REFREPO_WORKSPACE_LOCKNAME</code> specifies
   be different for unrelated cache locations, e.g. different hypervisors
   and stand-alone machines.
 </li></ul></div></div></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-06-16 06:50:42 -- Network UPS Tools 2.8.5.494</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_continuous_integration_nut_ci_farm_technologies.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="_prerequisites_for_building_nut_on_different_oses.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-06-16 08:53:24 -- Network UPS Tools 2.8.5.494</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_continuous_integration_nut_ci_farm_technologies.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="_prerequisites_for_building_nut_on_different_oses.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

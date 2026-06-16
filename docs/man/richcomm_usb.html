@@ -797,6 +797,251 @@ apply.  This means that you will only get the essentials in <code>ups.status</co
 </div>
 </div>
 <div class="sect1">
+<h2 id="_extra_arguments">EXTRA ARGUMENTS</h2>
+<div class="sectionbody">
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>port =</strong> <em>string</em>
+</dt>
+<dd>
+<p>
+Required option for all NUT drivers. Some <em>value</em> must be set, typically
+<strong>auto</strong> for drivers that handle USB connections.
+</p>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">This could be a device filesystem path like <code>/dev/usb/hiddev0</code>
+but current use of libusb API precludes knowing and matching by such
+identifiers.  They may also be inherently unreliable (dependent on
+re-plugging and enumeration order). At this time the actual <em>value</em>
+is ignored, but syntactically some <em>port</em> configuration must still
+be there.</td>
+</tr></table>
+</div>
+</dd>
+</dl></div>
+<div class="paragraph"><p>It is possible to control multiple UPS units simultaneously by running
+several instances of this driver, provided they can be uniquely
+distinguished by setting some combination of the <strong>vendor</strong>, <strong>product</strong>,
+<strong>vendorid</strong>, <strong>productid</strong>, <strong>serial</strong>, <strong>bus</strong> and/or <strong>device</strong> options detailed
+below.  For devices or operating systems that do not provide sufficient
+information, the <strong>allow_duplicates</strong> option can be of use (limited and
+risky!)</p></div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>vendorid =</strong> <em>regex</em>
+</dt>
+<dt class="hdlist1">
+<strong>productid =</strong> <em>regex</em>
+</dt>
+<dt class="hdlist1">
+<strong>vendor =</strong> <em>regex</em>
+</dt>
+<dt class="hdlist1">
+<strong>product =</strong> <em>regex</em>
+</dt>
+<dt class="hdlist1">
+<strong>serial =</strong> <em>regex</em>
+</dt>
+<dd>
+<p>
+Select a specific UPS, in case there is more than one connected via
+USB. Each option specifies an extended regular expression (see
+<a href="https://linux.die.net/man/7/regex">regex(7)</a> for more information on regular expressions), which
+must match the UPS&#8217;s entire respective <code>vendor</code>/<code>product</code>/<code>serial</code>
+string values (minus any surrounding whitespace), or the whole 4-digit
+hexadecimal code for <code>vendorid</code> and <code>productid</code>.
+</p>
+<div class="paragraph"><p>Try <a href="https://linux.die.net/man/8/lsusb">lsusb(8)</a> or running this NUT driver with <code>-DD</code> command-line
+argument for finding out the strings to match.</p></div>
+<div class="paragraph"><p>Examples:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>-x vendor="Foo.Corporation.*"</code>
+</p>
+</li>
+<li>
+<p>
+<code>-x vendorid="051d*"</code> (APC)
+</p>
+</li>
+<li>
+<p>
+<code>-x product=".*(Smart|Back)-?UPS.*"</code>
+</p>
+</li>
+</ul></div>
+</dd>
+<dt class="hdlist1">
+<strong>bus =</strong> <em>regex</em>
+</dt>
+<dd>
+<p>
+OPTIONAL, NOT RECOMMENDED.
+</p>
+<div class="paragraph"><p>Select a UPS on a specific USB bus or group of buses. The argument is
+a regular expression that must match the bus name where the UPS is
+connected (e.g. <code>bus="002"</code> or <code>bus="00[2-3]"</code>) as seen on Linux in
+<code>/sys/bus/usb/devices</code> or <a href="https://linux.die.net/man/8/lsusb">lsusb(8)</a>; including leading zeroes.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">Bus numbers are not guaranteed by the OS to be stable across
+re-boots, kernel driver reloads or device re-plugging (e.g. changing
+visible population of USB hubs).</td>
+</tr></table>
+</div>
+</dd>
+<dt class="hdlist1">
+<strong>device =</strong> <em>regex</em>
+</dt>
+<dd>
+<p>
+OPTIONAL, NOT RECOMMENDED.
+</p>
+<div class="paragraph"><p>Select a UPS on a specific USB device or group of devices. The argument is
+a regular expression that must match the device name where the UPS is
+connected (e.g. <code>device="001"</code> or <code>device="00[1-2]"</code>) as seen on Linux
+in <code>/sys/bus/usb/devices</code> or <a href="https://linux.die.net/man/8/lsusb">lsusb(8)</a>; including leading zeroes.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">Device numbers are not guaranteed by the OS to be stable across
+re-boots or device re-plugging.</td>
+</tr></table>
+</div>
+</dd>
+<dt class="hdlist1">
+<strong>busport =</strong> <em>regex</em>
+</dt>
+<dd>
+<p>
+OPTIONAL, NOT RECOMMENDED.
+</p>
+<div class="paragraph"><p>If supported by the hardware, OS and libusb on the particular deployment,
+this option should allow to specify physical port numbers on an USB hub,
+rather than logical <code>device</code> enumeration values, and in turn&#8201;&#8212;&#8201;this should
+be less volatile across reboots or re-plugging. The value may be seen in
+the USB topology output of <code>lsusb -tv</code> on systems with that tool, for example.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">This option is not practically supported by some NUT builds
+(it should be ignored with a warning then), and not by all systems
+that NUT can run on.</td>
+</tr></table>
+</div>
+</dd>
+<dt class="hdlist1">
+<strong>allow_duplicates</strong>
+</dt>
+<dd>
+<p>
+OPTIONAL, NOT RECOMMENDED.
+</p>
+<div class="paragraph"><p>If you have several UPS devices which may not be uniquely identified by
+the options above (e.g. only <em>VID:PID</em> can be discovered there), this flag
+allows each driver instance where it is set to take the first match if
+available, or proceed to try another.</p></div>
+<div class="paragraph"><p>Normally the driver initialization would abort at this point claiming
+"Resource busy" or similar error, assuming that the otherwise properly
+matched device is unique&#8201;&#8212;&#8201;and some other process already handles it.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Warning</div>
+</td>
+<td class="content">
+<div class="paragraph"><p>This feature is inherently non-deterministic!
+The association of driver instance name to actual device
+may vary between runs!</p></div>
+<div class="paragraph"><p>If you only care to know that <strong>at least</strong> one of your no-name UPSes
+is online, this option can help.</p></div>
+<div class="paragraph"><p>If you must really know <strong>which</strong> one, it will not!</p></div>
+</td>
+</tr></table>
+</div>
+</dd>
+<dt class="hdlist1">
+<strong>usb_set_altinterface =</strong> <em>bAlternateSetting</em>
+</dt>
+<dd>
+<p>
+Force redundant call to <code>usb_set_altinterface()</code>, especially if needed
+for devices serving multiple USB roles where the UPS is not represented
+by the interface number <code>0</code> (default).
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>usb_config_index</strong>
+</dt>
+<dt class="hdlist1">
+<strong>usb_hid_rep_index</strong>
+</dt>
+<dt class="hdlist1">
+<strong>usb_hid_desc_index</strong>
+</dt>
+<dt class="hdlist1">
+<strong>usb_hid_ep_in</strong>
+</dt>
+<dt class="hdlist1">
+<strong>usb_hid_ep_out</strong>
+</dt>
+<dd>
+<p>
+Force use of specific interface, endpoint, descriptor index etc. numbers,
+rather than defaulting to <em>0</em> (rarely other values in certain drivers for
+some devices known to use non-zero numbers). Specified as a hexadecimal
+number.
+</p>
+<div class="paragraph"><p>As a rule of thumb for <code>usb_hid_desc_index</code> discovery, you can see larger
+<code>wDescriptorLength</code> values (roughly 600+ bytes) in reports of <code>lsusb</code> or
+similar tools.</p></div>
+</dd>
+<dt class="hdlist1">
+<strong>LIBUSB_DEBUG =</strong> <em>INTEGER</em>
+</dt>
+<dd>
+<p>
+Run-time troubleshooting of USB-capable NUT drivers can involve not only
+raising the common NUT debug verbosity (e.g. using the <code>DEBUG_MIN</code> setting
+in <a href="ups.conf.html">ups.conf(5)</a> or protocol commands to change the <code>driver.debug</code>
+value), but may also benefit from LibUSB specific debugging.
+</p>
+<div class="paragraph"><p>For the latter, you can set the <code>LIBUSB_DEBUG</code> driver option; alternatively
+you can classically export the environment variable <code>LIBUSB_DEBUG</code> before
+starting a NUT driver program (may be set and "exported" in driver init
+script or service method, perhaps via <a href="nut.conf.html">nut.conf(5)</a>), to a numeric
+value such as <code>4</code> ("All messages are emitted").</p></div>
+<div class="paragraph"><p>For more details, including the currently supported values for your version
+of the library, see e.g.:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<a href="https://libusb.sourceforge.io/api-1.0/">https://libusb.sourceforge.io/api-1.0/</a>
+</p>
+</li>
+<li>
+<p>
+<a href="https://libusb.sourceforge.io/api-1.0/group__libusb__lib.html">https://libusb.sourceforge.io/api-1.0/group__libusb__lib.html</a>
+</p>
+</li>
+</ul></div>
+</dd>
+</dl></div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_bugs">BUGS</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>Most contact-closure UPSes will not power down the load if the line power
@@ -844,7 +1089,7 @@ Dirk Teurlings &lt;dirk at upexia.nl&gt;
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-06-16 06:50:22 UTC -- Network UPS Tools 2.8.5.494
+Last updated 2026-06-16 08:53:00 UTC -- Network UPS Tools 2.8.5.494
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>

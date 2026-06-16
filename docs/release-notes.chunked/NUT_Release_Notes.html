@@ -82,6 +82,17 @@ Modified <code class="literal">megatec</code> subdriver to allow <code class="li
       similar to specifying <code class="literal">novendor</code> in the <code class="literal">ups.conf</code> (except that the
       option bypasses the check altogether, so driver instances handling well
       behaved devices would also not show their manufacturer). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3436" target="_top">issue #3436</a>]
+</li><li class="listitem">
+Modified <code class="literal">armac</code> subdriver’s USB interrupt read logic to request up to
+      8 bytes per read instead of strictly requiring 6 bytes. This resolves
+      an initialization failure with certain UPS models (e.g., SVC
+      VP-1250-LCD) that return a 7-byte report instead of the standard 6 bytes,
+      allowing the Megatec payload to be successfully reconstructed. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3485" target="_top">PR #3485</a>]
+</li></ul></div></li><li class="listitem"><p class="simpara">
+<code class="literal">richcomm_usb</code> driver updates:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Completed support for NUT standard USB configuration options, and fixed
+      some problems possible when iterating devices. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1768" target="_top">issue #1768</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3477" target="_top">PR #3477</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">usbhid-ups</code> driver updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -91,7 +102,17 @@ When reconnecting, report success more visibly (not only in debug), and
 common code:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 Revised <span class="emphasis"><em>dstate</em></span> machinery to track socket connections closed mid-way
-     through a call, to avoid access after <code class="literal">free()</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3302" target="_top">#3302</a>]
+      through a call, to avoid access after <code class="literal">free()</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3302" target="_top">#3302</a>]
+</li><li class="listitem">
+When dealing with driver <code class="literal">AF_UNIX</code> sockets (non-WIN32), use non-blocking
+      <code class="literal">connect()</code> to ensure a timeout if something does not respond. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3456" target="_top">PR #3456</a>]
+</li><li class="listitem">
+Windows driver state named pipes now use explicit security attributes
+      instead of relying on default settings from the launch context. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3479" target="_top">PR #3479</a>]
+</li><li class="listitem">
+Drivers with libusb-1.0 code path, and <code class="literal">nutdrv_qx</code> in particular: revise
+      to fix per-close <code class="literal">libusb_exit()</code> deadlock, and escalate a persistent
+      <code class="literal">LIBUSB_ERROR_OVERFLOW</code> state to USB reset handling. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3448" target="_top">PR #3448</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 NUT client libraries:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -427,7 +448,17 @@ Their <code class="literal">upsdrv_initinfo()</code> methods did not explicitly 
      actually broke anything, or the needed values were deduced from
      subdriver definition then). For consistency, these pointers are now
      assigned. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1962" target="_top">#1962</a>]
-</li></ul></div></li><li class="listitem"><p class="simpara">
+</li></ul></div></li><li class="listitem">
+Introduced a new NUT driver named <code class="literal">ragtech</code> which provides support for the
+   Ragtech "Easy Pro" family of line-interactive UPS units (also sold under
+   the NEP, TORO, INNERGIE and OneUP brands in Brazil). Devices present a USB
+   CDC-ACM serial interface (VID <code class="literal">0x04D8</code>, PID <code class="literal">0x000A</code>) and speak a proprietary
+   6-byte register-access protocol with read/write/AND/OR opcodes; the driver
+   covers the 20 models in the family-10 device table and was validated
+   end-to-end against an Easy 2000 TI. Shutdown-related instant commands are
+   opt-in via the <code class="literal">allow_shutdown</code> flag because the firmware does not
+   auto-restart on mains return. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3447" target="_top">PR #3447</a>]
+</li><li class="listitem"><p class="simpara">
 <code class="literal">riello_ser</code> and <code class="literal">riello_usb</code> driver updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 Since the beginning, these drivers fenced availability of <span class="strong"><strong>either</strong></span>
@@ -5406,4 +5437,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.34. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-06-16 06:50:42 -- Network UPS Tools 2.8.5.494</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-06-16 08:53:25 -- Network UPS Tools 2.8.5.494</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
