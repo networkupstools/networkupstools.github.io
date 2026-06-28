@@ -797,6 +797,10 @@ the family-10 device table). The other 19 models in the same table&#8201;&#8212;
 and M2 (220 V) variants, also sold under the NEP, TORO, INNERGIE and
 OneUP brands in Brazil&#8201;&#8212;&#8201;share the same wire protocol and register
 layout and are expected to work; please report results.</p></div>
+<div class="paragraph"><p>Units from other Ragtech lines that share the same USB id (for example
+the Easy Pro "GT" series) speak the same protocol but may report a model
+id that collides with a table entry, so the driver can pick the wrong VA
+rating. Use the <strong>va</strong> option below to set the correct rating in that case.</p></div>
 <div class="paragraph"><p>This driver is <strong>experimental</strong>. Polling, status decoding and the
 <code>shutdown.stayoff</code> / <code>shutdown.stop</code> instant commands have been
 verified on hardware; <code>shutdown.return</code> and <code>test.battery.start.deep</code>
@@ -818,6 +822,20 @@ not been reverse-engineered yet.</p></div>
 Per-unit output current calibration constant. If omitted (default),
 the driver reads the value from register <code>0xF3</code> at startup. Set this
 only to override a wrong factory-stored calibration.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>va</strong>=<em>number</em>
+</dt>
+<dd>
+<p>
+Override the apparent-power (VA) rating of the unit. The model id byte
+reported by the firmware is shared between some product lines (for
+example a 3200 VA "GT" unit reports the same id as the Easy 2200 TI),
+so the driver cannot always tell them apart and may pick the wrong VA
+rating from its model table. Setting <strong>va</strong> to the nameplate rating
+corrects <code>ups.power.nominal</code>, <code>ups.realpower.nominal</code> (VA times the
+0.7 power factor) and the computed <code>ups.load</code>.
 </p>
 </dd>
 <dt class="hdlist1">
@@ -886,7 +904,7 @@ Reverse-engineering reference:
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-06-26 16:11:31 UTC -- Network UPS Tools 2.8.5.494
+Last updated 2026-06-28 20:47:10 UTC -- Network UPS Tools 2.8.5.578
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>
