@@ -69,6 +69,12 @@ Added <code class="literal">modbus_retries</code> option to configure the number
 </li><li class="listitem">
 Increased default TCP response timeout to 2000 ms. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3418" target="_top">PR #3418</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
+<code class="literal">dummy-ups</code> driver updates:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Added <code class="literal">authconf</code> driver parameter for repeater mode to control
+     authentication configuration discovery. It accepts <code class="literal">default</code>, <code class="literal">none</code>,
+     or a specific authconf file path. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3329" target="_top">issue #3329</a>]
+</li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">nutdrv_qx</code> driver updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 Only claim a USB device as "supported" during discovery out of the box
@@ -139,6 +145,9 @@ When reconnecting, report success more visibly (not only in debug), and
       Phoenixtec vendor ID (<code class="literal">0x06da</code>) is gated by device strings so the other
       devices on that ID still fall through to <code class="literal">liebert-hid</code> / <code class="literal">mge-hid</code>.
       [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3501" target="_top">issue #3501</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3502" target="_top">PR #3502</a>]
+</li><li class="listitem">
+<code class="literal">mge-hid</code> subdriver updated to suppress <code class="literal">CHRG</code> status on constant-charge
+      mode devices when battery is fully charged. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3518" target="_top">issue #3518</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3519" target="_top">PR #3519</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">snmp-ups</code> driver updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -158,9 +167,16 @@ When dealing with driver <code class="literal">AF_UNIX</code> sockets (non-WIN32
 Windows driver state named pipes now use explicit security attributes
       instead of relying on default settings from the launch context. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3479" target="_top">PR #3479</a>]
 </li><li class="listitem">
+Likewise for named pipes in other NUT daemons and <code class="literal">upssched</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3527" target="_top">PR #3527</a>]
+</li><li class="listitem">
 Drivers with libusb-1.0 code path, and <code class="literal">nutdrv_qx</code> in particular: revise
       to fix per-close <code class="literal">libusb_exit()</code> deadlock, and escalate a persistent
       <code class="literal">LIBUSB_ERROR_OVERFLOW</code> state to USB reset handling. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3448" target="_top">PR #3448</a>]
+</li><li class="listitem">
+Some driver code paths used buffers sent via USB transfers as fixed-size
+      chunks populated only partially with bytes we intended. These buffers are
+      now more diligently pre-zeroed as their siblings were in other code paths,
+      to avoid sending host stack garbage to a device. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3529" target="_top">#3529</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 NUT client libraries:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -200,6 +216,9 @@ The <code class="literal">libupsclient</code> API was extended with a <code clas
 </li><li class="listitem">
 The <code class="literal">libupsclient</code> © and <code class="literal">libnutclient</code> (C++) API were updated to
       report the ability to check <code class="literal">CERTIDENT</code> information. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3331" target="_top">#3331</a>]
+</li><li class="listitem">
+Introduced support for "authconf" files to store and convey NUT client
+      authentication details. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3329" target="_top">issue #3329</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 Various clients:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -212,6 +231,32 @@ Flush standard output and error buffers before handling clean exit
 Adjust scaling for small (single-digit) value ranges to avoid division
       by zero and not rendering anything. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3469" target="_top">issue #3469</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
+<code class="literal">upsc</code>, <code class="literal">upscmd</code>, <code class="literal">upsrw</code> command-line client updates:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Enabled support for <code class="literal">nutauth.conf</code> files to provide credentials and/or
+      SSL settings in the client which previously only did best-effort attempts
+      at secure communications without an individual certificate, and only
+      anonymously for reading. The new <code class="literal">-A filename</code> option defaults to trying
+      to use a <code class="literal">nutauth.conf</code> file (if found in one of the default locations)
+      but not failing if one is not usable; specific values can require use of
+      such a file (<code class="literal">default</code>) or to not even try reading one (<code class="literal">none</code>).
+      [issues <a class="ulink" href="https://github.com/networkupstools/nut/issues/3329" target="_top">#3329</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/3411" target="_top">#3411</a>]
+</li></ul></div></li><li class="listitem"><p class="simpara">
+<code class="literal">upslog</code> client/tool updates:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Added support for best-effort use of <code class="literal">nutauth.conf</code> files from default
+      locations or via <code class="literal">-A</code> option, as described above. Since this client
+      can establish multiple connections, keep in mind that currently it
+      can only identify itself with some one (first seen) client certificate,
+      if <code class="literal">CERTIDENT</code> settings are used. Multiple <code class="literal">CERTHOST</code> directives for
+      specially trusted servers can be used. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3329" target="_top">#3329</a>]
+</li></ul></div></li><li class="listitem"><p class="simpara">
+<code class="literal">upsstats</code>, <code class="literal">upsset</code>, <code class="literal">upsimage</code> CGI client updates:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Added support for best-effort use of <code class="literal">nutauth.conf</code> files from default
+      locations described above (no way to choose the location, other than
+      by web-server environment variables for CGI calls). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3329" target="_top">#3329</a>]
+</li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">upsmon</code> client updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 Introduced support for <code class="literal">CERTFILE</code> option, so the client can identify
@@ -222,12 +267,38 @@ Failure of SSL connection setup (e.g. due to inability to load the
       success of SSL initialization with both backends is more diligently
       tracked) should now not cause exit of the client if secure connection
       is not required by its configuration in the first place. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3420" target="_top">#3420</a>]
+</li><li class="listitem">
+Potentially a breaking change for existing deployments with <code class="literal">upsmon</code> and
+      <code class="literal">upssched</code> integration: the <code class="literal">CMDSCRIPT</code> and <code class="literal">NOTIFYCMD</code> definitions were
+      revised for the first token to mean an exact program name (possibly with
+      spaces in the value), not a shell scriptlet. Documentation in earlier
+      NUT releases implied that arguments could be passed here — this is no
+      longer true. If you need to pass special arguments to a notification
+      program, please use additional separately quoted tokens, or write a
+      small helper script to do so and specify its path here.
+      The <code class="literal">SHUTDOWNCMD</code> is still a scriptlet, as far as specifying command
+      arguments is concerned, but it also newly supports parsing multiple
+      tokens as additional arguments. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3499" target="_top">PR #3499</a>]
+</li><li class="listitem">
+Introduced a new notification type for unexpected clock change which
+      is specially handled (data re-initialization), whether due to sleep
+      and wake-up, or NTP/RTC clock changes during boot, or severe delays
+      on a stressed system (to name a few practical cases). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3405" target="_top">issue #3405</a>]
+</li></ul></div></li><li class="listitem"><p class="simpara">
+<code class="literal">upssched</code> client/tool updates:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Fixed handling of <code class="literal">NOTIFYMSG</code> from command line if other arguments are
+      present (e.g. debugging with <code class="literal">-DDDDDD</code>). [issues <a class="ulink" href="https://github.com/networkupstools/nut/issues/3105" target="_top">#3105</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/3525" target="_top">#3525</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3527" target="_top">PR #3527</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">NUT-Monitor</code> Python GUI client:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 Fixed Qt tray tooltips to render in plain text, not rich text which
       ended up as literal HTML on KDE Plasma 6; now that rich text formatting
       is only used for main window status labels. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3430" target="_top">PR #3430</a>]
+</li></ul></div></li><li class="listitem"><p class="simpara">
+<code class="literal">upssched</code> client/tool updates:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Added a <code class="literal">clean_exit()</code> handler similar to that in <code class="literal">upsmon</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3499" target="_top">PR #3499</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">upsd</code> data server updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -240,6 +311,10 @@ If the <code class="literal">MAXCONN</code> requested in the configuration file 
       much later (tell the sysadmin to increase <code class="literal">ulimit</code> or set up a more
       conservative <code class="literal">MAXCONN</code>). If there is a separate soft and hard limit,
       and <code class="literal">MAXCONN</code> exceeds the soft limit, try to raise the bar. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3365" target="_top">issue #3365</a>]
+</li><li class="listitem">
+If SSL configuration was provided, but the server failed to apply some
+      aspect of that, it should now abort with an explanation (and not proceed
+      with insecure start-up like it could do before). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3331" target="_top">issue #3331</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3435" target="_top">PR #3435</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 Recipes, CI and helper script updates not classified above:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -249,7 +324,9 @@ Introduced <code class="literal">ci_build.sh</code> settings and respective CI w
       files. Both can be enabled by <code class="literal">export DO_USE_NUTCI_CACHE=yes</code> and would
       store data under a <code class="literal">${CI_CACHE_NUT_BASEDIR}</code> directory (defaults to
       <code class="literal">~/.cache/nut-ci</code>); more fine-tuning environment variables are provided.
-      [issues <a class="ulink" href="https://github.com/networkupstools/nut/issues/3108" target="_top">#3108</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/3390" target="_top">#3390</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3109" target="_top">PR #3109</a>]
+      Directory names are based on hashes of strings that identify the content,
+      which are size-limited to some 8 characters.
+      [issues <a class="ulink" href="https://github.com/networkupstools/nut/issues/3108" target="_top">#3108</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/3390" target="_top">#3390</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/3526" target="_top">#3526</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3109" target="_top">PR #3109</a>]
 </li><li class="listitem">
 Rearranged the GHA job to prepare Dist and Docs Tarballs. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3460" target="_top">PR #3460</a>]
 </li><li class="listitem">
@@ -5489,4 +5566,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.34. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-07-15 20:01:42 -- Network UPS Tools 2.8.5.578</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-07-17 17:46:52 -- Network UPS Tools 2.8.5.792</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

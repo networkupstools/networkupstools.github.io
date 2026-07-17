@@ -901,9 +901,15 @@ events).</p></div>
 <h2 id="_early_shutdowns">EARLY SHUTDOWNS</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>To shut down the system early, define a timer that starts due to an ONBATT
-condition.  When it triggers, make your CMDSCRIPT call your shutdown
-routine.  It should finish by calling <code>upsmon -c fsd</code> so that upsmon gets
-to shut down the slaves in a controlled manner.</p></div>
+condition.  When it triggers, make your <code>CMDSCRIPT</code> call your shutdown
+routine, especially if you have to prioritize something to stop first,
+or have subsystems that can take longer to gracefully stop than the normal
+OS shutdown patience allows (some systems might <code>kill</code> remaining processes
+after a hard-coded timeout).</p></div>
+<div class="paragraph"><p>Your <code>CMDSCRIPT</code> should finish by calling <code>upsmon -c fsd</code>, so that your
+primary instance of <a href="upsmon.html">upsmon(8)</a> gets to shut down the secondary
+systems in a controlled manner (note the primary instance would also run
+its local definition of <code>SHUTDOWNCMD</code> in the end).</p></div>
 <div class="paragraph"><p>Be sure you cancel the timer if power returns (ONLINE).</p></div>
 </div>
 </div>
@@ -1017,7 +1023,7 @@ set by <code>upsmon</code> when it calls <code>upssched</code> as its choice of 
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-07-15 20:01:15 UTC -- Network UPS Tools 2.8.5.578
+Last updated 2026-07-17 17:46:18 UTC -- Network UPS Tools 2.8.5.792
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>

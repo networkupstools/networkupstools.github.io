@@ -774,7 +774,7 @@ a.anchorjs-link:visited {
 <div class="sectionbody">
 <div class="paragraph"><p><strong>upsrw</strong> [-l] <em>ups</em></p></div>
 <div class="paragraph"><p><strong>upsrw</strong> -h</p></div>
-<div class="paragraph"><p><strong>upsrw</strong> -s <em>variable</em> [-u <em>username</em>] [-p <em>password</em>] [-w] [-t &lt;timeout&gt;] <em>ups</em></p></div>
+<div class="paragraph"><p><strong>upsrw</strong> -s <em>variable</em> [-A <em>authconf</em>] [-u <em>username</em>] [-p <em>password</em>] [-w] [-t &lt;timeout&gt;] <em>ups</em></p></div>
 </div>
 </div>
 <div class="sect1">
@@ -830,10 +830,14 @@ with other tools.</p></div>
 <dd>
 <p>
 Set the NUT username for the connection to the server.  This is optional,
-and you will be prompted for this when using the -s option if you don&#8217;t
-specify -u on the command line. NUT usernames are defined in
-<a href="upsd.users.html">upsd.users(5)</a>, and are not linked to system usernames.
+a value from <em>authconf</em> file would be used (if it resolves both a username
+and a password for the host and port involved), otherwise you will be
+prompted for this when using the -s option if you don&#8217;t specify <em>-u</em> on
+the command line.
 </p>
+<div class="paragraph"><p>NUT usernames are defined in <a href="upsd.users.html">upsd.users(5)</a> on the server side,
+and are not linked to system usernames (although if a system user name can
+be resolved, it would be the default proposed value for interactive mode).</p></div>
 </dd>
 <dt class="hdlist1">
 <strong>-p</strong> <em>password</em>
@@ -841,7 +845,8 @@ specify -u on the command line. NUT usernames are defined in
 <dd>
 <p>
 Set the password to authenticate to the server.  This is also optional
-like -u, and you will be prompted for it if necessary.
+like <em>-u</em>, and will be used from <em>authconf</em> or you will be prompted for
+it if necessary.
 </p>
 </dd>
 <dt class="hdlist1">
@@ -917,6 +922,45 @@ indefinitely non-blocking, or until the system interrupts the attempt).
 Overrides the optional <code>NUT_DEFAULT_CONNECT_TIMEOUT</code> environment variable.
 </p>
 </dd>
+<dt class="hdlist1">
+<strong>-A</strong> <em>/path/to/nutauth.conf</em>
+</dt>
+<dd>
+<p>
+  Require use of the specified <a href="nutauth.conf.html">nutauth.conf(5)</a> file (fail if absent,
+  not accessible, or has content errors when parsed) to specify connection
+  security settings and/or credentials for this run.
+</p>
+<div class="paragraph"><p>By silent default, the client tries best-effort (non-fatal) detection of a
+  configuration file in per-user locations <code>${HOME}/.config/nut/nutauth.conf</code>
+  or <code>${HOME}/.nutauth.conf</code>, or site default <code>${NUT_CONFPATH}/nutauth.conf</code>.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">If the <code>NUT_AUTHCONF_FILE</code> environment variable is exported, only that
+  exact full (relative or absolute) file path and name would be tried as the
+  default; otherwise, if the <code>NUT_AUTHCONF_PATH</code> environment variable is
+  exported, only a <code>nutauth.conf</code> file in that directory would be tried as the
+  default (instead of looking at hard-coded default locations listed above).</td>
+</tr></table>
+</div>
+<div class="paragraph"><p>Special values:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>default</code>: require a default file in one of the locations found per rules
+  listed above;
+</p>
+</li>
+<li>
+<p>
+<code>none</code>: do not even try to find and load any such file (legacy default).
+</p>
+</li>
+</ul></div>
+</dd>
 </dl></div>
 </div>
 </div>
@@ -967,7 +1011,8 @@ confusing.</p></div>
 <div class="sect1">
 <h2 id="_see_also">SEE ALSO</h2>
 <div class="sectionbody">
-<div class="paragraph"><p><a href="upsd.html">upsd(8)</a>, <a href="upscmd.html">upscmd(8)</a></p></div>
+<div class="paragraph"><p><a href="upsd.html">upsd(8)</a>, <a href="upscmd.html">upscmd(8)</a>,
+<a href="nutauth.conf.html">nutauth.conf(5)</a></p></div>
 <div class="sect2">
 <h3 id="_internet_resources">Internet resources:</h3>
 <div class="paragraph"><p>The NUT (Network UPS Tools) home page: <a href="https://www.networkupstools.org/">https://www.networkupstools.org/</a></p></div>
@@ -978,7 +1023,7 @@ confusing.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-07-15 20:01:15 UTC -- Network UPS Tools 2.8.5.578
+Last updated 2026-07-17 17:46:18 UTC -- Network UPS Tools 2.8.5.792
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>

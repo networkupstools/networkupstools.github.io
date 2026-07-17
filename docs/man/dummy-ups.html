@@ -997,11 +997,37 @@ using the NUT format, i.e.:</p></div>
 <pre><code>[repeater]
         driver = dummy-ups
         port = ups1@remotehost
-        desc = "dummy-ups in repeater mode"</code></pre>
+        desc = "dummy-ups in repeater mode"
+        authconf = default</code></pre>
 </div></div>
 <div class="paragraph"><p>Unlike UPS specifications in the rest of NUT, the <code>@hostname</code> portion is not
 optional&#8201;&#8212;&#8201;it is the <code>@</code> character which enables Repeater Mode. To refer to an
 UPS on the same host as <strong>dummy-ups</strong>, use <code>port = upsname@localhost</code>.</p></div>
+<div class="paragraph"><p>Since NUT v2.8.6 release, a new <code>authconf</code> driver parameter lets you
+choose how the driver discovers authentication and trust parameters
+for the repeated UPS connection:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>authconf = default</code> to require a user (see <code>RUN_AS_USER</code>) or system
+  supplied NUT authconf file. See <a href="nutauth.conf.html">nutauth.conf(5)</a> man page
+  about default locations for the file.
+</p>
+</li>
+<li>
+<p>
+<code>authconf = none</code> to disable authconf parsing entirely.
+</p>
+</li>
+<li>
+<p>
+<code>authconf = &lt;path&gt;</code> to require a specific authconf file.
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>If no value is specified, the driver will try to find and use
+the file in default locations, but should not fail if that is
+not possible.</p></div>
 <div class="paragraph"><p>Note that to avoid CPU overload with an infinite loop, the driver "sleeps" a
 bit between data-requesting cycles (currently this delay is hardcoded to one
 second), so propagation of data updates available to a remote <code>upsd</code> may lag
@@ -1106,7 +1132,7 @@ to represent the "real" device for this to work.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-07-15 20:01:16 UTC -- Network UPS Tools 2.8.5.578
+Last updated 2026-07-17 17:46:19 UTC -- Network UPS Tools 2.8.5.792
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>

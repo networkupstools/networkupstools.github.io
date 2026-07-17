@@ -786,7 +786,28 @@ a.anchorjs-link:visited {
         nutscan_device_t * nutscan_scan_ip_range_nut(
                 nutscan_ip_range_list_t * irl,
                 const char * port,
-                useconds_t usec_timeout);</code></pre>
+                useconds_t usec_timeout);
+
+        /* Newer API */
+        typedef struct nutscan_nut_authconf {
+                const char * authconf_file;     /* where to load authconf data from; "none" means to ignore auth config even if it exists */
+                useconds_t usec_timeout;        /* Wait this long for a response */
+                const char * port_string;       /* We can pass a port name like "nut" and resolve it inside */
+
+                /* Added for consistency with other structs; not used at the moment;
+                 * practically see also `struct nut_scan_arg` in `scan_nut.c`: */
+                const char * peername;
+                uint16_t port_number;
+        } nutscan_nut_authconf_t;
+
+        nutscan_device_t * nutscan_scan_nut_authconf(
+                const char * startIP,
+                const char * stopIP,
+                nutscan_nut_authconf_t *sec);
+
+        nutscan_device_t * nutscan_scan_ip_range_nut_authconf(
+                nutscan_ip_range_list_t * irl,
+                nutscan_nut_authconf_t *sec);</code></pre>
 </div></div>
 </div>
 </div>
@@ -839,7 +860,7 @@ device is found.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-07-15 20:01:15 UTC -- Network UPS Tools 2.8.5.578
+Last updated 2026-07-17 17:46:18 UTC -- Network UPS Tools 2.8.5.792
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>

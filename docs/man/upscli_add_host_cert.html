@@ -766,7 +766,8 @@ a.anchorjs-link:visited {
 <div class="sect1">
 <h2 id="_name">NAME</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>upscli_add_host_cert - Register a security rule for an host.</p></div>
+<div class="paragraph"><p>upscli_add_host_cert, upscli_add_host_port_cert - Register
+a security rule for a host.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -780,7 +781,14 @@ a.anchorjs-link:visited {
                 const char* hostname,
                 const char* certname,
                 int certverify,
-                int forcessl);</code></pre>
+                int forcessl);
+
+        void upscli_add_host_port_cert(
+                const char* hostname,
+                uint16_t port,
+                const char* certname,
+                int certverify,
+                int forcessl)</code></pre>
 </div></div>
 </div>
 </div>
@@ -788,7 +796,12 @@ a.anchorjs-link:visited {
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>The <strong>upscli_add_host_cert()</strong> function registers a security rule associated
-to the <em>hostname</em>. All connections to this host use this rule.</p></div>
+to the <em>hostname</em> (may spell out a <code>host:port</code> in fact).
+The <strong>upscli_add_host_port_cert()</strong> function registers a security rule
+associated to the exact <em>hostname</em> and <em>port</em> number.
+If an entry with the same exact <code>hostname</code> and <code>port</code> values already exists,
+it is not replaced.
+All connections to this host use this rule.</p></div>
 <div class="paragraph"><p>The rule is composed of the certificate name <em>certname</em> expected for
 the host, <em>certverify</em> if the certificate must be validated for the host
 and <em>forcessl</em> if a secured connection must be used to connect to the host.
@@ -830,7 +843,7 @@ SSL, and which backend(s) and certain features).</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-07-15 20:01:15 UTC -- Network UPS Tools 2.8.5.578
+Last updated 2026-07-17 17:46:18 UTC -- Network UPS Tools 2.8.5.792
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>
