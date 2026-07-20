@@ -94,6 +94,14 @@ Modified <code class="literal">armac</code> subdriver’s USB interrupt read log
       an initialization failure with certain UPS models (e.g., SVC
       VP-1250-LCD) that return a 7-byte report instead of the standard 6 bytes,
       allowing the Megatec payload to be successfully reconstructed. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3485" target="_top">PR #3485</a>]
+</li><li class="listitem">
+In <code class="literal">Voltronic-QS-Hex</code> subdriver, the format string sanity check added in
+      recent NUT releases caught a mismatch in <code class="literal">ups.load</code> reading. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3532" target="_top">issue #3532</a>]
+</li><li class="listitem">
+Modified <code class="literal">voltronic-qs</code> subdriver to request the QI command, supplying
+      NUT with battery charge, runtime, input frequency, output current, and
+      input transfer low/high values on devices which support it (<code class="literal">H</code>, <code class="literal">I</code>, <code class="literal">J</code>
+      protocols, e.g. Powershield PSDR800). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3521" target="_top">#3521</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 Introduced a new NUT driver named <code class="literal">ragtech</code> which provides support for the
    Ragtech "Easy Pro" family of line-interactive UPS units (also sold under
@@ -295,6 +303,10 @@ Fixed handling of <code class="literal">NOTIFYMSG</code> from command line if ot
 Fixed Qt tray tooltips to render in plain text, not rich text which
       ended up as literal HTML on KDE Plasma 6; now that rich text formatting
       is only used for main window status labels. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3430" target="_top">PR #3430</a>]
+</li><li class="listitem">
+Fixed both Python 2 and 3 variants to handle automatic client reconnection
+      (e.g. after system suspend/resume, network interruption, or NUT server
+      restart). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3509" target="_top">issue #3509</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3523" target="_top">PR #3523</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">upssched</code> client/tool updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -5566,4 +5578,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.34. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-07-17 17:55:45 -- Network UPS Tools 2.8.5.792</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-07-20 11:47:26 -- Network UPS Tools 2.8.5.792</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
