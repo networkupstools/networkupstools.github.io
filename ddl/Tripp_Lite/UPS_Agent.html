@@ -1,0 +1,789 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<title>Network UPS Tools - UPS Agent</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="generator" content="AsciiDoc 10.2.0" />
+<meta name="description" content="Power Devices support" />
+<meta name="keywords" content="NUT, Network UPS Tools, Eaton, APC, Free Software, UPS, Uninterruptible Power Supplies, PDU, Power Distributions Units, Solar Controllers, power, power devices, control, monitor, Linux, Unix, Windows, Mac OS X" />
+<meta name="format-detection" content="telephone=no" />
+<link rel="stylesheet" href="../../css/xhtml11.css" type="text/css" />
+<link rel="stylesheet" href="../../css/xhtml11-quirks.css" type="text/css" />
+<link rel="stylesheet" href="../../css/web-layout.css" type="text/css" />
+<link rel="stylesheet" href="../../css/anchorjs.css" type="text/css" />
+<link rel="shortcut icon" href="../../faviconut.ico" />
+<link rel="icon" type="image/png" href="../../faviconut.png" />
+<script type="text/javascript" src="../../scripts/anchorjs.min.js"></script>
+<script type="text/javascript" src="../../scripts/asciidoc.js"></script>
+<script type="text/javascript">
+/*<![CDATA[*/
+asciidoc.install(2);
+/*]]>*/
+</script>
+<!--[if lte IE 7]>
+<link rel="stylesheet" href="../../css/ie-overrides.css" type="text/css" />
+<![endif]-->
+<!--[if lte IE 6]>
+<script type="text/javascript" src="../../scripts/filter_png.js"></script>
+<![endif]-->
+</head>
+<body>
+<div id="layout-banner-box">
+<div id="layout-banner">
+  <div id="layout-logo"><img src="../../images/nut-logo.svg" alt="NUT logo" width="60" height="60" /></div>
+  <div id="layout-title">Network UPS Tools</div>
+  <div id="layout-description">Power Devices support</div>
+</div>
+</div>
+<div id="layout-menu-box">
+  <ul id="layout-menu">
+    <li><a href="../../index.html">Home</a></li>
+    <li><a href="../../download.html">Download</a></li>
+    <li><a href="../../projects.html">Related projects</a></li>
+    <li><a href="../../stable-hcl.html">Compatibility</a></li>
+    <li><a href="../../features.html">Features</a></li>
+    <li><a href="../../documentation.html">Documentation</a></li>
+    <li><a href="../../support.html">Support</a></li>
+    <li>* <a href="https://alioth-lists.debian.net/pipermail/nut-upsuser/">NUT UPS User archive</a></li>
+    <li>* <a href="https://alioth-lists.debian.net/pipermail/nut-upsdev/">NUT UPS Dev archive</a></li>
+    <li>* <a href="https://github.com/networkupstools/nut/">GitHub</a>:<a
+        href="https://github.com/networkupstools/nut/issues">issues</a>,<a
+        href="https://github.com/networkupstools/nut/wiki">wiki</a>
+        and more</li>
+    <li><a href="../..//historic/index.html">Sub-sites for historic releases</a></li>
+    <li><a href="https://opencollective.com/networkupstools/">Sponsor NUT</a></li>
+  </ul>
+  <!-- div id="sponsor"><span>Hosted by<br/></span>
+    <a href="http://sponsor.com"><img src="../../images/sponsor-logo.png" alt="Sponsor" /></a>
+  </div -->
+</div>
+<div id="layout-content-box">
+<div id="layout-content">
+<div id="header">
+<h1>UPS Agent</h1>
+</div>
+<div id="toc">
+  <div id="toctitle">Table of Contents</div>
+  <noscript><p><b>JavaScript must be enabled in your browser to display the table of contents.</b></p></noscript>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph"><p><a href=".">Click here</a> to see reports of other supported models from <em>Tripp Lite</em>.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img src="../../images/note.png" alt="Note" />
+</td>
+<td class="content">
+<div class="paragraph"><p>When a user reports that a variable/command is not right then it will be highlighted by a <span class="nut-ddl-bad-var">red underline</span>.</p></div>
+<div class="paragraph"><p>Bad values/ranges/etc&#8230; will get a <span class="nut-ddl-bad-var-value-example">red dashed outline</span> or <span class="nut-ddl-bad-string-example">red solid left border</span>.</p></div>
+<div class="paragraph"><p>The accompanying explaining comment - if provided - will be emphasized through a <span class="nut-ddl-bad-var-text-example">red dotted border</span> on the left.</p></div>
+</td>
+</tr></table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_2_8_4">2.8.4</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_report_1_with_driver_snmp_ups_detailed_comments_available">Report #1 with driver snmp-ups (detailed comments available)</h3><div style="clear:left"></div>
+<div class="paragraph"><p>This device is known to work with driver <a href="../../docs/man/snmp-ups.html">snmp-ups</a>.</p></div>
+<div class="paragraph"><p>You can grab a <a href="../../docs/man/dummy-ups.html">dummy-ups</a> compliant <code>.dev</code> file to simulate this device <a href="raw/Tripp_Lite__UPS_Agent__snmp-ups__2.8.4__01.dev">clicking here</a>.</p></div>
+<div class="paragraph"><p>Some more detailed comments are available <a href="#anchor-about-2.8.4-1">after</a> the "Known supported&#8230;" sections.</p></div>
+<div class="sect3">
+<h4 id="_known_supported_variables">Known supported variables</h4>
+<div class="paragraph"><p>This device is known to support the following variables (values are just examples):</p></div>
+<div class="hdlist"><table>
+<tr>
+<td class="hdlist1">
+<strong>battery.charge</strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>100 </code>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong>battery.runtime</strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>10500 </code>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong>battery.voltage</strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>81.40 </code>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong>device.contact</strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>Administrator </code>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong>device.description</strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>"UPS Agent" </code>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong>device.location</strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<br />
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong>device.mfr</strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>Tripp Lite / Phoenixtec </code>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong>device.model</strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<br />
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong>device.type</strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>ups </code>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong>driver.debug</strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>0 </code>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong>driver.flag.allow_killpower</strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>0 </code>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong>driver.name</strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>snmp-ups </code>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong>driver.parameter.mibs</strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>xppc </code>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong>driver.parameter.pollinterval</strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>2 </code>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong>driver.parameter.port</strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>192.168.1.2 </code>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong>driver.parameter.snmp_version</strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>v2c </code>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong>driver.parameter.synchronous</strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>auto </code>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong>driver.state</strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>quiet </code>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong>driver.version</strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>2.8.4 </code>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong>driver.version.data</strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>xppc MIB 0.40 </code>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong>driver.version.internal</strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>1.37 </code>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong>input.frequency</strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>50 </code>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong>input.voltage</strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>218.10 </code>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong>output.frequency</strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>49.90 </code>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong>output.voltage</strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>218.80 </code>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong>output.voltage.nominal</strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>220 </code>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong>ups.firmware.aux</strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>11105200-1.44.00 </code>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong>ups.load</strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>6 </code>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong>ups.mfr</strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>Tripp Lite / Phoenixtec </code>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong>ups.model</strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<br />
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong>ups.status</strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>OL </code>
+</p>
+</td>
+</tr>
+<tr>
+<td class="hdlist1">
+<strong>ups.temperature</strong>
+<br />
+</td>
+<td class="hdlist2">
+<p style="margin-top: 0;">
+<code>30.50 </code>
+</p>
+</td>
+</tr>
+</table></div>
+</div>
+<div class="sect3">
+<h4 id="anchor-about-2.8.4-1">About this device</h4>
+<div class="paragraph"><p>Device dump generated by nut-ddl-dump.sh on Sun, 21 Jun 2026 23:46:31 +0800</p></div>
+<div class="paragraph"><p>Reported at:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<a href="https://github.com/networkupstools/nut/pull/3492">https://github.com/networkupstools/nut/pull/3492</a>
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>Further system data or configuration examples:</p></div>
+<div class="listingblock">
+<div class="title">Variables per <code>upsrw ups@localhost</code> listing</div>
+<div class="content">
+<pre><code># TODO: Convert to RW:... and RO:... markup
+:; upsrw ups@localhost
+[device.contact]
+Device administrator name
+Type: STRING
+Maximum length: 128
+Value: Administrator
+
+[device.description]
+Device description
+Type: STRING
+Maximum length: 128
+Value: "UPS Agent"
+
+[device.location]
+Device physical location
+Type: STRING
+Maximum length: 128
+Value:
+
+[driver.debug]
+Current debug verbosity level of the driver program
+Type: NUMBER
+Value: 0
+
+[driver.flag.allow_killpower]
+Safety flip-switch to allow the driver daemon to send UPS shutdown command (accessible via driver.killpower)
+Type: NUMBER
+Value: 0</code></pre>
+</div></div>
+<div class="listingblock">
+<div class="title">Commands per <code>upscmd -l ups@localhost</code> listing</div>
+<div class="content">
+<pre><code># TODO: Convert to CMD:... markup
+:; upscmd -l ups@localhost
+Instant commands supported on UPS [ups]:
+
+driver.killpower - Tell the driver daemon to initiate UPS shutdown; should be unlocked with driver.flag.allow_killpower option or variable setting
+driver.reload - Reload running driver configuration from the file system (only works for changes in some options)
+driver.reload-or-error - Reload running driver configuration from the file system (only works for changes in some options); return an error if something changed and could not be applied live (so the caller can restart it with new options)
+driver.reload-or-exit - Reload running driver configuration from the file system (only works for changes in some options); exit the running driver if something changed and could not be applied live (so service management framework can restart it with new options)
+shutdown.default - Run the driver-defined UPS shutdown sequence (as opposed to user-configured 'sdcommands')</code></pre>
+</div></div>
+<div class="listingblock">
+<div class="title">snmpwalk of the enterprise 935 (Phoenixtec) subtree</div>
+<div class="content">
+<pre><code>:; snmpwalk -v2c -c &lt;community&gt; -On &lt;ups-ip&gt; .1.3.6.1.4.1.935
+.1.3.6.1.4.1.935.1.1.1.1.1.1.0 = ""
+.1.3.6.1.4.1.935.1.1.1.1.1.2.0 = ""
+.1.3.6.1.4.1.935.1.1.1.1.2.1.0 = ""
+.1.3.6.1.4.1.935.1.1.1.1.2.2.0 = STRING: "0"
+.1.3.6.1.4.1.935.1.1.1.1.2.3.0 = STRING: "0"
+.1.3.6.1.4.1.935.1.1.1.1.2.4.0 = STRING: "11105200-1.44.00"
+.1.3.6.1.4.1.935.1.1.1.2.1.1.0 = INTEGER: 2
+.1.3.6.1.4.1.935.1.1.1.2.1.2.0 = INTEGER: 0
+.1.3.6.1.4.1.935.1.1.1.2.1.3.0 = STRING: "2000/01/01"
+.1.3.6.1.4.1.935.1.1.1.2.1.4.0 = STRING: "1000"
+.1.3.6.1.4.1.935.1.1.1.2.2.1.0 = INTEGER: 100
+.1.3.6.1.4.1.935.1.1.1.2.2.2.0 = INTEGER: 815
+.1.3.6.1.4.1.935.1.1.1.2.2.3.0 = INTEGER: 302
+.1.3.6.1.4.1.935.1.1.1.2.2.4.0 = INTEGER: 11640
+.1.3.6.1.4.1.935.1.1.1.2.2.5.0 = INTEGER: 0
+.1.3.6.1.4.1.935.1.1.1.2.2.6.0 = INTEGER: 138
+.1.3.6.1.4.1.935.1.1.1.2.2.7.0 = INTEGER: 0
+.1.3.6.1.4.1.935.1.1.1.2.2.8.0 = INTEGER: 11640
+.1.3.6.1.4.1.935.1.1.1.3.1.1.0 = INTEGER: 1
+.1.3.6.1.4.1.935.1.1.1.3.2.1.0 = INTEGER: 2199
+.1.3.6.1.4.1.935.1.1.1.3.2.2.0 = INTEGER: 2199
+.1.3.6.1.4.1.935.1.1.1.3.2.3.0 = INTEGER: 2199
+.1.3.6.1.4.1.935.1.1.1.3.2.4.0 = INTEGER: 500
+.1.3.6.1.4.1.935.1.1.1.3.2.5.0 = INTEGER: 1
+.1.3.6.1.4.1.935.1.1.1.3.2.6.0 = INTEGER: 0
+.1.3.6.1.4.1.935.1.1.1.4.1.1.0 = INTEGER: 2
+.1.3.6.1.4.1.935.1.1.1.4.1.2.0 = INTEGER: 1
+.1.3.6.1.4.1.935.1.1.1.4.2.1.0 = INTEGER: 2196
+.1.3.6.1.4.1.935.1.1.1.4.2.2.0 = INTEGER: 500
+.1.3.6.1.4.1.935.1.1.1.4.2.3.0 = INTEGER: 6
+.1.3.6.1.4.1.935.1.1.1.4.2.4.0 = INTEGER: 10
+.1.3.6.1.4.1.935.1.1.1.4.2.5.0 = INTEGER: 0
+.1.3.6.1.4.1.935.1.1.1.4.2.6.0 = INTEGER: 8
+.1.3.6.1.4.1.935.1.1.1.5.1.1.0 = INTEGER: 4
+.1.3.6.1.4.1.935.1.1.1.5.2.1.0 = INTEGER: 2200
+.1.3.6.1.4.1.935.1.1.1.5.2.2.0 = INTEGER: 0
+.1.3.6.1.4.1.935.1.1.1.5.2.3.0 = INTEGER: 0
+.1.3.6.1.4.1.935.1.1.1.5.2.4.0 = INTEGER: 3
+.1.3.6.1.4.1.935.1.1.1.5.2.5.0 = INTEGER: 2147483647
+.1.3.6.1.4.1.935.1.1.1.5.2.6.0 = INTEGER: 0
+.1.3.6.1.4.1.935.1.1.1.5.2.7.0 = INTEGER: 1
+.1.3.6.1.4.1.935.1.1.1.5.2.8.0 = INTEGER: 120
+.1.3.6.1.4.1.935.1.1.1.5.2.9.0 = INTEGER: 60
+.1.3.6.1.4.1.935.1.1.1.5.2.10.0 = INTEGER: 120
+.1.3.6.1.4.1.935.1.1.1.5.2.11.0 = INTEGER: 2
+.1.3.6.1.4.1.935.1.1.1.5.2.12.0 = INTEGER: 1
+.1.3.6.1.4.1.935.1.1.1.6.1.1.0 = INTEGER: 1
+.1.3.6.1.4.1.935.1.1.1.6.2.1.0 = INTEGER: 1
+.1.3.6.1.4.1.935.1.1.1.6.2.2.0 = INTEGER: 1
+.1.3.6.1.4.1.935.1.1.1.6.2.3.0 = INTEGER: 1
+.1.3.6.1.4.1.935.1.1.1.6.2.4.0 = INTEGER: 1
+.1.3.6.1.4.1.935.1.1.1.6.2.5.0 = INTEGER: 1
+.1.3.6.1.4.1.935.1.1.1.6.2.6.0 = INTEGER: 1
+.1.3.6.1.4.1.935.1.1.1.7.2.1.0 = INTEGER: 4
+.1.3.6.1.4.1.935.1.1.1.7.2.2.0 = INTEGER: 1
+.1.3.6.1.4.1.935.1.1.1.7.2.3.0 = INTEGER: 1
+.1.3.6.1.4.1.935.1.1.1.7.2.4.0 = STRING: "2019/5/5"
+.1.3.6.1.4.1.935.1.1.1.7.2.5.0 = INTEGER: 1
+.1.3.6.1.4.1.935.1.1.1.7.2.6.0 = INTEGER: 1
+.1.3.6.1.4.1.935.1.1.1.7.2.7.0 = INTEGER: 1
+.1.3.6.1.4.1.935.1.1.1.7.2.8.0 = STRING: "2019/5/5"
+.1.3.6.1.4.1.935.1.1.1.8.1.1.0 = INTEGER: 81
+.1.3.6.1.4.1.935.1.1.1.8.1.2.0 = INTEGER: 100
+.1.3.6.1.4.1.935.1.1.1.8.1.3.0 = INTEGER: 11640
+.1.3.6.1.4.1.935.1.1.1.8.1.4.0 = INTEGER: 0
+.1.3.6.1.4.1.935.1.1.1.8.1.5.0 = INTEGER: 302
+.1.3.6.1.4.1.935.1.1.1.8.2.1.0 = INTEGER: 500
+.1.3.6.1.4.1.935.1.1.1.8.2.2.0 = INTEGER: 2199
+.1.3.6.1.4.1.935.1.1.1.8.2.3.0 = INTEGER: 0
+.1.3.6.1.4.1.935.1.1.1.8.2.4.0 = INTEGER: 0
+.1.3.6.1.4.1.935.1.1.1.8.2.5.0 = INTEGER: 0
+.1.3.6.1.4.1.935.1.1.1.8.2.6.0 = INTEGER: 0
+.1.3.6.1.4.1.935.1.1.1.8.2.7.0 = INTEGER: 0
+.1.3.6.1.4.1.935.1.1.1.8.3.1.0 = INTEGER: 500
+.1.3.6.1.4.1.935.1.1.1.8.3.2.0 = INTEGER: 2196
+.1.3.6.1.4.1.935.1.1.1.8.3.3.0 = INTEGER: 0
+.1.3.6.1.4.1.935.1.1.1.8.3.4.0 = INTEGER: 0
+.1.3.6.1.4.1.935.1.1.1.8.3.5.0 = INTEGER: 60
+.1.3.6.1.4.1.935.1.1.1.8.3.6.0 = INTEGER: 0
+.1.3.6.1.4.1.935.1.1.1.8.3.7.0 = INTEGER: 0
+.1.3.6.1.4.1.935.1.1.1.8.3.8.0 = INTEGER: 8
+.1.3.6.1.4.1.935.1.1.1.8.3.9.0 = INTEGER: 0
+.1.3.6.1.4.1.935.1.1.1.8.3.10.0 = INTEGER: 0
+.1.3.6.1.4.1.935.1.1.1.8.3.11.0 = INTEGER: 10
+.1.3.6.1.4.1.935.1.1.1.8.3.12.0 = INTEGER: 0
+.1.3.6.1.4.1.935.1.1.1.8.3.13.0 = INTEGER: 0
+.1.3.6.1.4.1.935.1.1.1.8.3.14.0 = INTEGER: 0
+.1.3.6.1.4.1.935.1.1.1.8.3.15.0 = INTEGER: 0
+.1.3.6.1.4.1.935.1.1.1.8.3.16.0 = INTEGER: 0
+.1.3.6.1.4.1.935.1.1.1.8.4.1.0 = INTEGER: 500
+.1.3.6.1.4.1.935.1.1.1.8.4.2.0 = INTEGER: 2199
+.1.3.6.1.4.1.935.1.1.1.8.4.3.0 = INTEGER: 0
+.1.3.6.1.4.1.935.1.1.1.8.4.4.0 = INTEGER: 0
+.1.3.6.1.4.1.935.1.1.1.8.4.5.0 = INTEGER: 0
+.1.3.6.1.4.1.935.1.1.1.8.4.6.0 = INTEGER: 0
+.1.3.6.1.4.1.935.1.1.1.8.4.7.0 = INTEGER: 0
+.1.3.6.1.4.1.935.1.1.1.8.5.1.0 = INTEGER: 16
+.1.3.6.1.4.1.935.1.1.1.8.5.2.0 = INTEGER: 16
+.1.3.6.1.4.1.935.1.1.1.8.5.3.0 = INTEGER: 16
+.1.3.6.1.4.1.935.1.1.1.8.5.4.0 = INTEGER: 2
+.1.3.6.1.4.1.935.1.1.1.8.5.5.0 = INTEGER: 5
+.1.3.6.1.4.1.935.1.1.1.8.5.6.0 = INTEGER: 7
+.1.3.6.1.4.1.935.1.1.1.8.5.7.0 = INTEGER: 16
+.1.3.6.1.4.1.935.1.1.1.8.6.1.0 = INTEGER: 16
+.1.3.6.1.4.1.935.1.1.1.8.6.2.0 = INTEGER: 9
+.1.3.6.1.4.1.935.1.1.1.8.6.3.0 = INTEGER: 10
+.1.3.6.1.4.1.935.1.1.1.8.6.4.0 = INTEGER: 12
+.1.3.6.1.4.1.935.1.1.1.8.6.5.0 = INTEGER: 14
+.1.3.6.1.4.1.935.1.1.1.8.7.1.0 = INTEGER: 16
+.1.3.6.1.4.1.935.1.1.1.8.7.2.0 = INTEGER: 16
+.1.3.6.1.4.1.935.1.1.1.8.7.3.0 = INTEGER: 16
+.1.3.6.1.4.1.935.1.1.1.8.7.4.0 = INTEGER: 16
+.1.3.6.1.4.1.935.1.1.1.8.7.5.0 = INTEGER: 16
+.1.3.6.1.4.1.935.1.1.1.8.7.6.0 = INTEGER: 16
+.1.3.6.1.4.1.935.1.1.1.8.7.7.0 = INTEGER: 16
+.1.3.6.1.4.1.935.1.1.1.8.8.1.0 = STRING: "220"
+.1.3.6.1.4.1.935.1.1.1.8.8.2.0 = INTEGER: 50
+.1.3.6.1.4.1.935.1.1.1.8.8.3.0 = STRING: "220"
+.1.3.6.1.4.1.935.1.1.1.8.8.4.0 = INTEGER: 50
+.1.3.6.1.4.1.935.1.1.1.8.8.5.0 = STRING: "220"
+.1.3.6.1.4.1.935.1.1.1.8.8.6.0 = INTEGER: 50
+.1.3.6.1.4.1.935.1.1.1.8.8.7.0 = INTEGER: 0
+.1.3.6.1.4.1.935.1.1.1.8.8.8.0 = STRING: "0"
+.1.3.6.1.4.1.935.1.1.1.9.1.1.0 = INTEGER: 0
+.1.3.6.1.4.1.935.1.1.1.9.1.2.0 = INTEGER: 0
+.1.3.6.1.4.1.935.1.1.1.9.1.3.0 = INTEGER: 1
+.1.3.6.1.4.1.935.1.1.1.9.1.4.0 = INTEGER: 1
+.1.3.6.1.4.1.935.1.1.1.9.1.5.0 = INTEGER: 1
+.1.3.6.1.4.1.935.1.1.1.9.1.6.0 = INTEGER: 1
+.1.3.6.1.4.1.935.1.1.1.9.1.7.0 = INTEGER: 1
+.1.3.6.1.4.1.935.1.1.1.9.1.8.0 = INTEGER: 1
+.1.3.6.1.4.1.935.1.1.1.9.1.9.0 = INTEGER: 1
+.1.3.6.1.4.1.935.1.1.1.9.1.10.0 = INTEGER: 1
+.1.3.6.1.4.1.935.1.1.1.9.1.11.0 = INTEGER: 1
+.1.3.6.1.4.1.935.1.1.1.9.2.1.0 = INTEGER: 500
+.1.3.6.1.4.1.935.1.1.1.9.2.2.0 = INTEGER: 200
+.1.3.6.1.4.1.935.1.1.1.9.2.3.0 = INTEGER: 900
+.1.3.6.1.4.1.935.1.1.1.9.2.4.0 = INTEGER: 200
+.1.3.6.1.4.1.935.2.1.1.0 = INTEGER: 0</code></pre>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footnotes"><hr /></div>
+<div id="footer">
+<div id="footer-text">
+Version nut:v2.8.5.853-853+g28e3bf0bc ddl:v2.8.5-6-g8087f0afe7 web:v2.8.5-40-gf0dfee6d-master<br />
+Last updated 2026-07-22 23:51:33
+</div>
+<div id="footer-badges">
+<a href="https://github.com/networkupstools/nut">
+  <img style="border:0;height:20"
+    src="https://img.shields.io/github/checks-status/networkupstools/nut/master"
+    alt="Latest GitHub checks status: master branch"/>
+</a>
+<!--
+<a href="https://travis-ci.org/github/networkupstools/nut">
+  <img style="border:0;height:20"
+    src="https://api.travis-ci.org/networkupstools/nut.svg?branch=master"
+    alt="Latest Travis CI build status: master branch"/>
+</a>
+-->
+<a href="https://ci.networkupstools.org/job/nut/job/nut/job/master/">
+  <img style="border:0;height:20"
+    src="https://ci.networkupstools.org/buildStatus/icon?job=nut%2Fnut%2Fmaster"
+    alt="Latest NUT CI build status: master branch"/>
+</a>
+<a href="https://build.opensuse.org/package/show/home:networkupstools:nut-stable/nut">
+  <img style="border:0;height:20"
+    src="https://build.opensuse.org/projects/home:networkupstools:nut-stable/packages/nut/badge.svg?type=percent"
+    alt="Latest OBS build status: master branch packaged for different Linux distributions"/>
+</a>
+<!-- MacOS, maybe later Windows builds: -->
+<a href="https://app.circleci.com/pipelines/github/networkupstools">
+  <img style="border:0;height:20"
+    src="https://circleci.com/gh/networkupstools/nut/tree/master.svg?style=svg"
+    alt="Latest Circle CI build status: master branch"/>
+</a>
+<!-- Windows, maybe later MacOS builds: -->
+<a href="https://ci.appveyor.com/project/nut-travis/nut/build/artifacts">
+  <img style="border:0;height:20"
+    src="https://ci.appveyor.com/api/projects/status/vrhkatid9hr7lq7r/branch/master?svg=true&failingText=Windows-FAIL&passingText=Windows-OK&pendingText-Windows-PENDING"
+    alt="Latest AppVeyor build status (NUT for Windows iterations)"/>
+</a>
+<!--
+<a href="https://ci.networkupstools.org/job/nut/job/nut/job/fightwarn/">
+  <img style="border:0;height:20"
+    src="https://ci.networkupstools.org/buildStatus/icon?job=nut%2Fnut%2Ffightwarn&subject=Fightwarn%20Branch"
+    alt="Latest NUT CI build status: fightwarn branch"/>
+</a>
+-->
+<!--
+<a href="https://github.com/networkupstools/nut/releases">
+  <img style="border:0;height:20"
+    src="https://img.shields.io/github/v/release/networkupstools/nut"
+    alt="Latest GitHub drafted NUT source release"/>
+</a>
+-->
+<a href="https://github.com/networkupstools/nut/releases">
+  <img style="border:0;height:20"
+    src="https://img.shields.io/github/v/tag/networkupstools/nut?sort=semver"
+    alt="Latest Git-tagged NUT source release"/>
+</a>
+<!-- Maintainer note: for the counter below to work, a git tag
+     is not sufficient -- a release must be drafted and published
+     at https://github.com/networkupstools/nut/releases
+     Counter URL may also be .../latest/BRANCHNAME -->
+<a href="https://github.com/networkupstools/nut">
+  <img style="border:0;height:20"
+    src="https://img.shields.io/github/commits-since/networkupstools/nut/latest.svg"
+    alt="Commits on master branch since latest release on GitHub"/>
+</a>
+<!-- See also:
+ // https://web.archive.org/web/20200731075618/http://www.methods.co.nz/asciidoc/
+ // https://github.com/asciidoc-py/asciidoc-py
+ -->
+<a href="https://asciidoc.org/">
+  <img style="border:0;width:88px;height:31px"
+    src="../../images/asciidoc.png"
+    alt="Powered by AsciiDoc"/>
+</a>
+<a href="https://validator.w3.org/check?uri=referer">
+  <img style="border:0;width:88px;height:31px"
+    src="https://www.w3.org/Icons/valid-xhtml11-blue"
+    alt="Valid XHTML 1.1"/>
+</a>
+<a href="https://jigsaw.w3.org/css-validator/check?uri=referer">
+  <img style="border:0;width:88px;height:31px"
+    src="https://jigsaw.w3.org/css-validator/images/vcss-blue"
+    alt="Valid CSS!"/>
+</a>
+<a href="https://www.gandi.net/">
+  <img style="border:0;height:38px;"
+       src="../../images/gandi-ar21.svg"
+       alt="DNS, redirection and related services Hoster"/>
+</a>
+<!--
+// FH web site defunct since ~Apr 2024
+<a href="https://fosshost.org/">
+  <img style="border:0;width:112px;height:38px;"
+       src="../../images/ci/fosshost.org_Host_Light_38px.png"
+       alt="Dedicated Hosting for NUT CI"/>
+</a>
+-->
+<a href="https://www.digitalocean.com/?refcode=d2fbf2b9e082&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge">
+  <img style="border:0;height:38px;"
+       src="https://opensource.nyc3.cdn.digitaloceanspaces.com/attribution/assets/PoweredByDO/DO_Powered_by_Badge_blue.svg"
+       alt="Dedicated Hosting for NUT CI"/>
+</a>
+</div>
+</div>
+</div>
+</div>
+<!-- Google Analytics integration -->
+<script type="text/javascript">
+
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-9664272-1']);
+        _gaq.push(['_trackPageview']);
+
+        (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+
+</script>
+<!-- Assume this footer is at the end of the page (after main contents)?
+     Have a willing browser run the javascript to add permalinks: -->
+<script type="text/javascript">anchors.add();</script>
+</body>
+</html>
