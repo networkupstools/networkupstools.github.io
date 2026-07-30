@@ -45,7 +45,18 @@ control history for "live" codebase.</p><div class="section"><div class="titlepa
 </li><li class="listitem">
 (expected) CI automation for use of data points in drivers that conform
    to patterns defined in <a class="ulink" href="docs/nut-names.txt" target="_top">docs/nut-names.txt</a>
-</li><li class="listitem">
+</li><li class="listitem"><p class="simpara">
+Fix fallout of development in NUT v2.8.0 through v2.8.5:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+<code class="literal">nut-scanner</code> tool updates:
+</li></ul></div></li><li class="listitem"><p class="simpara">
+Mutexes used in parallelized scans were not properly released on
+        failure code paths (impacts likely all 2.8.x until now). [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3551" target="_top">PR #3551</a>]
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+USB drivers: fixed an out-of-bounds read of the candidate HID report
+      descriptor lengths, which could cause a segmentation fault (regression
+      added in NUT v2.8.5 release). [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3550" target="_top">PR #3550</a>]
+</li></ul></div></li><li class="listitem">
 Second-level bullet points listed in this file will now use 4 spaces
    (not 3 like before) for easier initial indentation of new entries.
 </li><li class="listitem">
@@ -72,8 +83,8 @@ Increased default TCP response timeout to 2000 ms. [<a class="ulink" href="https
 <code class="literal">dummy-ups</code> driver updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 Added <code class="literal">authconf</code> driver parameter for repeater mode to control
-     authentication configuration discovery. It accepts <code class="literal">default</code>, <code class="literal">none</code>,
-     or a specific authconf file path. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3329" target="_top">issue #3329</a>]
+      authentication configuration discovery. It accepts <code class="literal">default</code>, <code class="literal">none</code>,
+      or a specific authconf file path. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3329" target="_top">issue #3329</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">nhs_ser</code> driver updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -192,6 +203,11 @@ Refactored <code class="literal">common::background()</code> method used by nume
 Revised <span class="emphasis"><em>dstate</em></span> machinery to track socket connections closed mid-way
       through a call, to avoid access after <code class="literal">free()</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3302" target="_top">#3302</a>]
 </li><li class="listitem">
+Debug logging in <code class="literal">dstate.c</code> and <code class="literal">upssched.c</code> reported sent buffers "as
+      is", complete with a confusing blank line where <code class="literal">\n</code> ended the message.
+      This is now passed through newly introduced <code class="literal">upsdebug_ascii_compact()</code>
+      method for better readability and more compact logs. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3525" target="_top">PR #3525</a>]
+</li><li class="listitem">
 When dealing with driver <code class="literal">AF_UNIX</code> sockets (non-WIN32), use non-blocking
       <code class="literal">connect()</code> to ensure a timeout if something does not respond. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3456" target="_top">PR #3456</a>]
 </li><li class="listitem">
@@ -208,6 +224,24 @@ Some driver code paths used buffers sent via USB transfers as fixed-size
       chunks populated only partially with bytes we intended. These buffers are
       now more diligently pre-zeroed as their siblings were in other code paths,
       to avoid sending host stack garbage to a device. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3529" target="_top">#3529</a>]
+</li><li class="listitem">
+Introduced a <code class="literal">reconnect_max_tries</code> setting for NUT drivers, so they can
+      be configured to exit after the specified number of reconnection attempts
+      (so that the OS service management facility can completely recycle the
+      driver program). Multiple drivers were updated to use the new facility
+      to consistently report <code class="literal">reconnect_trying()</code> states instead of what they
+      did before, including: <code class="literal">adelsystem_cbi</code>, <code class="literal">apc_modbus</code>, <code class="literal">apcsmart</code>,
+      <code class="literal">bcmxcp_usb</code>, <code class="literal">blazer_usb</code>, <code class="literal">generic_modbus</code>, <code class="literal">nhs_ser</code>, <code class="literal">nutdrv_qx</code>,
+      <code class="literal">powerman-pdu</code>, <code class="literal">powervar_cx_usb</code>, <code class="literal">richcomm_usb</code>, <code class="literal">riello_usb</code>,
+      <code class="literal">tripplite_usb</code>, <code class="literal">usbhid-ups</code> (it is possible that for now some of them
+      would log the situation twice, with old methods and the new, and that
+      some would abort the program if reconnection attempt fails). [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3541" target="_top">PR #3541</a>]
+</li><li class="listitem">
+<code class="literal">belkin</code>, <code class="literal">bestfortress</code>, <code class="literal">genericups</code>, <code class="literal">powerpanel</code>, <code class="literal">tripplite</code> drivers
+      introduced attempts to reconnect in case of failure, instead of just
+      exiting right away or remaining in data stale mode indefinitely, also
+      using <code class="literal">reconnect_trying()</code> for consistent reporting. They now track
+      serial port file descriptor validity a bit more diligently. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3541" target="_top">PR #3541</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 NUT client libraries:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -320,6 +354,8 @@ Introduced a new notification type for unexpected clock change which
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 Fixed handling of <code class="literal">NOTIFYMSG</code> from command line if other arguments are
       present (e.g. debugging with <code class="literal">-DDDDDD</code>). [issues <a class="ulink" href="https://github.com/networkupstools/nut/issues/3105" target="_top">#3105</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/3525" target="_top">#3525</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3527" target="_top">PR #3527</a>]
+</li><li class="listitem">
+Rewrote the WIN32 code path to spawn the timer daemon. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3525" target="_top">issue #3525</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">NUT-Monitor</code> Python GUI client:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -5609,4 +5645,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.34. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-07-28 13:27:16 -- Network UPS Tools 2.8.5.792</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-07-30 11:46:25 -- Network UPS Tools 2.8.5.792</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
