@@ -57,6 +57,11 @@ USB drivers: fixed an out-of-bounds read of the candidate HID report
       descriptor lengths, which could cause a segmentation fault (regression
       added in NUT v2.8.5 release). [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3550" target="_top">PR #3550</a>]
 </li></ul></div></li><li class="listitem">
+Windows serial compatibility: fixed timeout handling to return data
+   already received as a successful short read, while safely canceling
+   and completing pending overlapped I/O before reusing its state.
+   [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3452" target="_top">issue #3452</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3560" target="_top">PR #3560</a>]
+</li><li class="listitem">
 Second-level bullet points listed in this file will now use 4 spaces
    (not 3 like before) for easier initial indentation of new entries.
 </li><li class="listitem">
@@ -112,6 +117,25 @@ Modified <code class="literal">armac</code> subdriver’s USB interrupt read log
       an initialization failure with certain UPS models (e.g., SVC
       VP-1250-LCD) that return a 7-byte report instead of the standard 6 bytes,
       allowing the Megatec payload to be successfully reconstructed. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3485" target="_top">PR #3485</a>]
+</li><li class="listitem">
+Added an <code class="literal">omron</code> USB subdriver and an <code class="literal">omron</code> protocol subdriver for
+      the OMRON BN150T, and registered its USB ID <code class="literal">0590:00b7</code>. The transport
+      uses a 16-byte HID Output report and validates transfer and reply
+      lengths. The base <code class="literal">Q1</code> mapping follows <code class="literal">q1</code> but omits two status
+      characters. Index 2 was set during stable operation on mains, both in
+      normal mode and in ECO mode, and was clear while on battery; neither OMRON
+      driver version handles it. Index 7, which <code class="literal">q1</code> would publish as the
+      beeper status, is not read by either OMRON driver version. The shutdown
+      commands use OMRON’s form. The subdriver also adds extension queries for
+      battery charge, runtime and temperature, output frequency, firmware
+      (<code class="literal">ups.firmware</code> and <code class="literal">ups.firmware.aux</code>), serial number, battery date and
+      nominal power and battery voltage ratings. The implementation was ported
+      from OMRON-authored GPL driver version 1.00 distributed in the Synology
+      DSM 7.3-86009 GPL sources and version 1.02 distributed in the QNAP QTS
+      5.2.3 GPL sources. Polling and the direct shutdown commands were verified
+      on an unloaded BN150T over USB; other OMRON models and serial connections
+      are untested.
+      [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3112" target="_top">issue #3112</a>]
 </li><li class="listitem">
 In <code class="literal">Voltronic-QS-Hex</code> subdriver, the format string sanity check added in
       recent NUT releases caught a mismatch in <code class="literal">ups.load</code> reading. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3532" target="_top">issue #3532</a>]
@@ -175,6 +199,16 @@ When reconnecting, report success more visibly (not only in debug), and
       Phoenixtec vendor ID (<code class="literal">0x06da</code>) is gated by device strings so the other
       devices on that ID still fall through to <code class="literal">liebert-hid</code> / <code class="literal">mge-hid</code>.
       [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3501" target="_top">issue #3501</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3502" target="_top">PR #3502</a>]
+</li><li class="listitem">
+<code class="literal">idowell-hid</code> subdriver now repairs a firmware bug in those GoldenMate
+      LiFePO4 packs, which encode the four-byte Logical Maximum of
+      <code class="literal">UPS.PowerSummary.RunTimeToEmpty</code> with reversed byte order in report
+      0x02. The resulting value does not fit a signed 32-bit <code class="literal">long</code>, so on
+      platforms where <code class="literal">long</code> is 32-bit (notably Windows) it wrapped negative,
+      and the following <code class="literal">UPS.PowerSummary.Voltage</code> item inherited the same
+      broken maximum from HID global state. Both <code class="literal">battery.runtime</code> and
+      <code class="literal">battery.voltage</code> then read as nonsense; platforms with a 64-bit <code class="literal">long</code>
+      were unaffected. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3555" target="_top">PR #3555</a>]
 </li><li class="listitem">
 <code class="literal">mge-hid</code> subdriver updated to suppress <code class="literal">CHRG</code> status on constant-charge
       mode devices when battery is fully charged. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3518" target="_top">issue #3518</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3519" target="_top">PR #3519</a>]
@@ -804,7 +838,7 @@ Fixed <code class="literal">LISTEN *</code> handling for <code class="literal">u
 </li><li class="listitem">
 Extended processing of <code class="literal">MAXCONN</code> setting to allow larger values than the
      operating system allows, by only waiting for that amount of Unix sockets
-     or Windows <code class="literal">HANDLE</code>'s at a time, and moving on to another chunk.
+     or Windows <code class="literal">HANDLE</code> objects at a time, and moving on to another chunk.
      The system-provided value can be further limited by <code class="literal">NUT_SYSMAXCONN_LIMIT</code>
      environment variable (e.g. in tests). For the other side of the coin, the
      NIT script now supports an optional <code class="literal">DUMMY_UPS_SWARM_COUNT</code> environment
@@ -2233,7 +2267,7 @@ Numeric literals and macros are <code class="literal">int</code> by default
 Results of math with unsigned types like <code class="literal">uint16_t</code>, done in some
        cases, are up-scaled into <code class="literal">int</code> by default
 </li><li class="listitem">
-<code class="literal">char</code>'s, <code class="literal">unsigned</code> or not, seem to be also up-scaled into <code class="literal">int</code>
+<code class="literal">char</code> values, <code class="literal">unsigned</code> or not, seem to be also up-scaled into <code class="literal">int</code>
 </li><li class="listitem">
 Updated <code class="literal">docs/nut-names.txt</code> with items defined by 42ITy NUT fork. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2339" target="_top">#2339</a>]
 </li><li class="listitem">
@@ -3062,9 +3096,9 @@ Several fixes for <code class="literal">upsmon</code> behavior [<a class="ulink"
 </li><li class="listitem">
 Also <code class="literal">upsmon</code> should now recognize <code class="literal">OFF</code> and <code class="literal">BYPASS</code> flags in <code class="literal">ups.status</code>
      and report that these states begin or end. The <code class="literal">OFF</code> state usually means
-     than an administrative action happened to power off the load, but the UPS
+     that an administrative action happened to power off the load, but the UPS
      device is still alive and communicating (USB, SNMP, etc.); corresponding
-     <code class="literal">MONITOR</code>'ed amount of power sources are considered not being "fed" for
+     amount of power sources we <code class="literal">MONITOR</code> are considered not being "fed" for
      the power value calculation purposes. The <code class="literal">BYPASS</code> state is now treated
      similarly to <code class="literal">ONBATT</code>: currently this UPS "feeds" its load, but if later
      communications fail, it is considered dead. This may have unintended
@@ -5645,4 +5679,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.34. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-08-06 11:42:59 -- Network UPS Tools 2.8.5.792</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-08-06 11:49:26 -- Network UPS Tools 2.8.5.792</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
