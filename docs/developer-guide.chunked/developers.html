@@ -436,8 +436,8 @@ or code-base-wide search is arguably easier.</p></div></div></div><div class="se
 
         return secure_channel(ship);
 }</pre><p>The basic idea is that we try to group things into functions, and then
-find ways to drop out of them when we can’t go any further.  There’s
-another way to program this involving a big else chunk and a bunch of
+find ways to drop out of them when we can’t go any further.  There is
+another way to program this, involving a big <code class="literal">else</code> chunk and a bunch of
 braces, and it can be hard to follow.  You can read this from top to
 bottom and have a pretty good idea of what’s going on without having to
 track too much <code class="literal">{ }</code> nesting and indenting.</p><p>We don’t really care for <code class="literal">pretentiousVariableNamingSchemes</code>, but you can
@@ -453,14 +453,29 @@ then you’ve fixed the spacing in stone and have really annoyed half of
 the people out there.</p><p>Note that tabs apply only to <span class="strong"><strong>indenting</strong></span>.  Alignment of text after any
 non-tab character has appeared on the line must be done by spaces in
 order for it to remain at the same alignment when someone views tabs at
-a different widths.</p><p>One common example for this is multi-line if condition:</p><pre class="screen">        if (something &amp;&amp;
-            something_else) {</pre><p>which may be written without mixing tabs and spaces to indent, as:</p><pre class="screen">        if (something
+a different width.</p><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_indentation_and_line_breaking_of_conditional_clauses"></a>Indentation and line-breaking of conditional clauses</h5></div></div></div><p>One common example of this is indentation of multi-line <code class="literal">if</code>, <code class="literal">while</code>,
+<code class="literal">switch</code> etc. conditions — with the additional aspect that we find
+it easier to read indented code with a visually clear boundary of
+where the opening clause ends and a scoped code section starts.
+So for multi-line clauses, the final parenthesis and opening brace
+tend to go onto their own line with the original indentation level:</p><pre class="screen">        /* Clumsy markup */
+        if (something &amp;&amp;
+            something_else) {
+            scoped_code();
+        }</pre><p>which may be written without mixing spaces after tabs to indent, as:</p><pre class="screen">        /* Preferred markup */
+        if (something
         &amp;&amp;  something_else
-        ) {</pre><p>Another example is tables of definitions that are better aligned with
+        ) {
+            scoped_code();
+        }</pre><p>A single-line clause for a scoped block surrounded with curly braces remains
+indented as it was (no need to dedicate a line to the parenthesis and opening
+brace here):</p><pre class="screen">        if (A &amp;&amp; B) {
+            scoped_code();
+        }</pre></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_indentation_of_macro_or_struct_tables"></a>Indentation of macro or struct "tables"</h5></div></div></div><p>Another example is tables of definitions that are better aligned with
 (non-leading) spaces at least between names and values not too many
 characters wide; it still helps to align the columns with spaces at
 offsets divisible by 4 or 8 (consistently for the whole table):</p><pre class="screen">#define SHORT_MACRO                         1   /* flag comment */
-#define SOMETHING_WITH_A_VERY_LONG_NAME     255 /* flag comment */</pre><p>While at it, we encourage indentation of nested preprocessor macros
+#define SOMETHING_WITH_A_VERY_LONG_NAME     255 /* flag comment */</pre></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_indentation_of_pre_processor_macros_and_pragmas"></a>Indentation of pre-processor macros and pragmas</h5></div></div></div><p>While at it, we encourage indentation of nested preprocessor macros
 and pragmas, by adding a single space character for each inner level,
 as well as commenting the <code class="literal">#else</code> and <code class="literal">#endif</code> parts (especially if
 they are far away from their opening <code class="literal">#if</code>/<code class="literal">#ifdef</code>/<code class="literal">#ifndef</code> statement)
@@ -471,9 +486,11 @@ default to "traditional" (pre-C89) syntax shared with other languages,
 and then ignore lines which do not start with the hash character (or
 worse, ignore only some of them but not others).</p><pre class="screen">#ifdef WITH_SSL
 # ifdef WITH_NSS
+#  include &lt;nss.h&gt;
         /* some code for NSS */
 # endif /* WITH_NSS */
 # ifdef WITH_OPENSSL
+#  include &lt;openssl.h&gt;
 #  ifndef WIN32
         /* some code for OpenSSL on POSIX systems */
 #  else /* not WIN32 */
@@ -482,26 +499,30 @@ worse, ignore only some of them but not others).</p><pre class="screen">#ifdef W
 # endif /* WITH_OPENSSL */
 #else   /* not WITH_SSL */
         /* report that crypto support is not built */
-#endif  /* WITH_SSL */</pre><p>If you write something that uses leading spaces, you may get away with
+#endif  /* WITH_SSL */</pre></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_general_notes"></a>General notes</h5></div></div></div><p>If you write something that uses leading spaces, you may get away with
 it in a driver that’s relatively secluded.  However, if we have to work
-on that code, expect it to get reformatted according to the above.</p><p>Patches to existing code that don’t conform to the coding style being
-used in that file will probably be dropped.  If it’s something we really
-need, it will be grudgingly reformatted before being included.</p><p>When in doubt, have a look at Linus’s take on this topic in the Linux
+on that code, expect it to get reformatted according to the above.</p><p>Patches for existing code that don’t conform to the coding style being
+used in that file will probably be dropped or sent back for stylish re-work.
+If it’s something we really need, it will be grudgingly reformatted before
+being included.</p><p>When in doubt, have a look at Linus’s take on this topic in the Linux
 kernel — <a class="ulink" href="https://github.com/torvalds/linux/blob/master/Documentation/process/coding-style.rst" target="_top">Documentation/CodingStyle</a>.
-He’s done a far better job of explaining this.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_line_breaks"></a>Line breaks</h4></div></div></div><p>It is better to have lines that are longer than 80 characters than to
-wrap lines in random places. This makes it easier to work with tools
+He’s done a far better job of explaining this.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_line_breaks"></a>Line breaks</h4></div></div></div><p>It is sometimes better to have lines that are longer than 80 characters than
+to wrap lines in random places. This makes it easier to work with tools
 such as <code class="literal">grep</code>, and it also lets each developer choose their own
 window size and tab setting without being stuck to one particular
-choice.</p><p>Of course, this does not mean that lines should be made unnecessarily
+choice.  Breaking long conditionals at boolean operators, or long debug
+logging calls between parameters, are examples of "not-random" places to
+wrap a line.</p><p>Of course, this does not mean that lines should be made unnecessarily
 long when there is a better alternative (see the note on
-<code class="literal">pretentiousVariableNamingSchemes</code> above).  Certainly there should not
-be more than one statement per line. Please do not use</p><pre class="screen">if (condition) break;</pre><p>but use the following:</p><pre class="screen">if (condition) {
+<code class="literal">pretentiousVariableNamingSchemes</code> above).  Certainly, there should not
+be more than one statement per line. Please do not use markup like:</p><pre class="screen">if (condition) break;</pre><p>but use the following:</p><pre class="screen">if (condition) {
         break;
 }</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>Earlier revisions of coding style might suggest avoiding braces if just
-one line is added as condition/loop/etc. handling code. Current approach is to
-welcome them even for single lines: on one hand, this confirms the intention
-that only this line is the conditional code; on another, this minimizes the
-context differences for later code comparisons, relocation, refactoring, etc.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_un_used_variables_and_function_arguments"></a>Un-used variables and function arguments</h4></div></div></div><p>Whenever a function needs to satisfy a particular API, it can end up
+one line is added as condition/loop/etc. handling code. The current approach
+is to welcome them even for single lines: on one hand, this confirms the
+intention that only this line is the conditional code; on another, this
+minimizes the context differences for later code comparisons, relocation,
+refactoring, etc.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_un_used_variables_and_function_arguments"></a>Un-used variables and function arguments</h4></div></div></div><p>Whenever a function needs to satisfy a particular API, it can end up
 taking arguments that are not used in practice (think a too-trivial
 signal handler). While some compilers offer the facility of decorations
 like <code class="literal">__attribute__(unused)</code>, this proved not to be a portable solution.
@@ -889,4 +910,4 @@ scenarios automatically. If your code adds a substantial feature, consider
 extending the <code class="literal">Jenkinsfile-dynamatrix</code> and/or <code class="literal">ci_build.sh</code> scripts in the
 workspace root to add another <code class="literal">BUILD_TYPE</code> to the matrix of tests run in
 parallel.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-08-15 05:46:32 -- Network UPS Tools 2.8.5.941</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="versioning.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="new-drivers.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-08-17 17:48:36 -- Network UPS Tools 2.8.5.941</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="versioning.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="new-drivers.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

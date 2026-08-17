@@ -776,7 +776,8 @@ a.anchorjs-link:visited {
 <div class="content">
 <pre><code>        #include &lt;authconf.h&gt;
 
-        int upscli_read_authconf_file(const char *filename, int fatal_errors);</code></pre>
+        int upscli_read_authconf_file(const char *filename, int fatal_errors,
+                int debug_level);</code></pre>
 </div></div>
 </div>
 </div>
@@ -794,6 +795,11 @@ tries per-user <code>${HOME}/.config/nut/nutauth.conf</code> or <code>${HOME}/.n
 or a site default <code>${NUT_CONFDIR}/nutauth.conf</code> (whichever is found first).
 Such a file may <code>INCLUDE</code> further configurations (e.g. hop from a per-user
 file to load server-wide defaults), if desired.</p></div>
+<div class="paragraph"><p>If <em>filename</em> is <code>NULL</code> and the file is not found in a default location, the
+method posts an <code>upslogx(LOG_WARNING, ...)</code> about this if <code>debug_level &lt; 0</code>
+or logs an <code>upsdebugx(debug_level, ...)</code> message (note that level zero usually
+goes to <code>stderr</code> right away). This allows to reduce console noise during
+"best-effort" attempts to use the file if present.</p></div>
 <div class="paragraph"><p>The file structure is similar to <strong>ups.conf</strong>, with global defaults and
 per-server sections named like <code>[@localhost:12345]</code> for host defaults,
 or <code>[username@localhost:12345]</code> for specific account overrides.</p></div>
@@ -831,7 +837,7 @@ error occurs (and <em>fatal_errors</em> was zero).</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-08-15 05:45:59 UTC -- Network UPS Tools 2.8.5.941
+Last updated 2026-08-17 17:48:18 UTC -- Network UPS Tools 2.8.5.941
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>

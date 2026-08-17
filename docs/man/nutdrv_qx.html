@@ -1803,7 +1803,7 @@ of the library, see e.g.:</p></div>
 <dd>
 <p>
 Select a USB communication subdriver to use.
-You have a choice between <strong>ablerex</strong>, <strong>armac</strong>, <strong>cypress</strong>, <strong>fabula</strong>, <strong>fuji</strong>, <strong>gtec</strong>, <strong>hunnox</strong>, <strong>ippon</strong>, <strong>krauler</strong>, <strong>omron</strong>, <strong>phoenix</strong>, <strong>phoenixtec</strong>, <strong>sgs</strong> and <strong>snr</strong>.
+You have a choice between <strong>ablerex</strong>, <strong>armac</strong>, <strong>cypress</strong>, <strong>fabula</strong>, <strong>fuji</strong>, <strong>gtec</strong>, <strong>hunnox</strong>, <strong>ippon</strong>, <strong>krauler</strong>, <strong>omron</strong>, <strong>phoenix</strong>, <strong>phoenixtec</strong>, <strong>richcomm-svc</strong>, <strong>sgs</strong> and <strong>snr</strong>.
 </p>
 <div class="paragraph"><p>Run the driver program with the <code>--help</code> option to see the exact list of
 <code>subdriver</code> values it would currently recognize.</p></div>
@@ -1850,6 +1850,34 @@ specific: its banner is "2004 Richcomm Technologies, Inc. Dec 27 2005 ver 1.1."
 Maybe other Richcomm UPSes would work with this&#8201;&#8212;&#8201;maybe better than with
 the older standalone <code>richcomm_usb</code> driver.
 </p>
+</dd>
+<dt class="hdlist1">
+<strong><em>richcomm-svc</em> subdriver</strong>
+</dt>
+<dd>
+<p>
+This USB communication subdriver supports older session-initialized Richcomm
+USB-to-UART bridges. It was developed and tested with an SVC V-1000F whose
+USB ID is <code>0925:1234</code> and product string is <code>UPS USB MON V1.4</code>.
+</p>
+<div class="paragraph"><p>The bridge must be configured for 2400 baud and receive a session-opening
+sequence before it accepts Megatec commands. After that initialization this
+subdriver reuses the Armac command framing and the existing Megatec protocol,
+with the 6-byte interrupt reads required by this hardware.
+Because <code>0925:1234</code> is shared by devices with different communication details,
+this mode is not selected automatically. Configure it explicitly, for example:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>[svc-v1000f]
+    driver = "nutdrv_qx"
+    port = "auto"
+    subdriver = "richcomm-svc"
+    protocol = "megatec"
+    vendorid = "0925"
+    productid = "1234"</code></pre>
+</div></div>
+<div class="paragraph"><p>Polling and <code>test.battery.start.quick</code> were verified on physical hardware.
+Deep battery tests and load or shutdown commands were not tested.</p></div>
 </dd>
 <dt class="hdlist1">
 <strong><em>fabula</em> subdriver</strong>
@@ -3000,7 +3028,7 @@ The NUT HCL: <a href="https://www.networkupstools.org/stable-hcl.html">https://w
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-08-15 05:46:00 UTC -- Network UPS Tools 2.8.5.941
+Last updated 2026-08-17 17:48:19 UTC -- Network UPS Tools 2.8.5.941
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>
