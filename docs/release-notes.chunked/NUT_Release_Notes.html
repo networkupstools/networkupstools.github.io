@@ -121,6 +121,13 @@ Only claim a USB device as "supported" during discovery out of the box
       if <code class="literal">subdriver_command</code> was assigned (<code class="literal">1A86:7523</code> is used by CH340/341
       USB chips not only in UPSes). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3410" target="_top">issue #3410</a>]
 </li><li class="listitem">
+Added a <code class="literal">cypress_0665_5161_subdriver</code> initialization method for devices
+      with USB ID <code class="literal">0665:5161</code> (Belkin, Voltronic, VOLT Polska) which enables
+      a quirk to drain stale bytes from USB buffers of the device before our
+      driver sends queries, and use a longer timeout. If this change breaks
+      your device, please add <code class="literal">cypress_drain_quirk = 0</code> in your <code class="literal">ups.conf</code>
+      and let us know. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2534" target="_top">issue #2534</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3563" target="_top">PR #3563</a>]
+</li><li class="listitem">
 Modified <code class="literal">megatec</code> subdriver to allow <code class="literal">ups.firmware</code> with empty contents
       (when a device returns all-spaces in that part of the <code class="literal">I</code> query response)
       out of the box and not ignore the device as unsupported, by adding the
@@ -209,6 +216,19 @@ riello_usb, riello_ser: report NAK on RE as failure [<a class="ulink" href="http
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 When reconnecting, report success more visibly (not only in debug), and
       do not reset driver state to "quiet" when it will loop trying. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3423" target="_top">PR #3423</a>]
+</li><li class="listitem">
+<code class="literal">apc-hid</code> subdriver: mapped <code class="literal">shutdown.return</code> to
+      <code class="literal">UPS.APCGeneralCollection.APCDelayBeforeReboot</code> with value "1", for
+      newer APC Back-UPS devices (e.g. Back-UPS BX750MI) where that usage
+      is the only shutdown-capable one. Their firmware accepts but never
+      executes the value "10" written by the previously only matching
+      command <code class="literal">shutdown.reboot</code>, so the built-in shutdown sequence reported
+      success without ever powering the load off. The value "1" is what APC
+      PowerChute writes (confirmed by decoding USB captures of the vendor
+      software, and by live tests on another unit): the load is cycled after
+      a fixed ~2 minute grace, the command is executed only while on battery,
+      and output returns when wall power is present, even if AC came back
+      during the grace period. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2683" target="_top">issue #2683</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3566" target="_top">PR #3566</a>]
 </li><li class="listitem">
 <code class="literal">idowell-hid</code> subdriver now also supports GoldenMate 1000VA/800W LiFePO4
       battery packs (<code class="literal">0x06da:0xffff</code>), which carry the same <code class="literal">-BMS-</code> firmware and
@@ -5701,4 +5721,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.34. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-08-17 17:48:36 -- Network UPS Tools 2.8.5.941</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-08-17 17:53:38 -- Network UPS Tools 2.8.5.941</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

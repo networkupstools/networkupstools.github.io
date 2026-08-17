@@ -1835,6 +1835,20 @@ You must provide <strong>value</strong> (<code>0x409</code> or <code>0x4095</cod
 If this flag is set, don&#8217;t autoscan valid range for langid.
 </p>
 </dd>
+<dt class="hdlist1">
+<strong>cypress_drain_quirk =</strong> <em>value</em>
+</dt>
+<dd>
+<p>
+Some devices using the <code>cypress</code> subdriver, e.g. VOLT Polska identified as Cypress
+USB ID <code>0665:5161</code>, were seen to retain stale bytes in their USB buffer, returning
+old "garbage" as response to new queries and so corrupting discovery attempts.
+The <code>nutdrv_qx</code> driver can drain the USB buffer and use longer timeouts to communicate
+with such devices, but such a change may potentially misfire on other devices with
+same USB ID (Belkin, Voltronic).  This option allows to explicitly enable or disable
+this behavior; by default it is chosen according to device self-identification.
+</p>
+</dd>
 </dl></div>
 <div class="sect3">
 <h4 id="_implementation_notes">IMPLEMENTATION NOTES</h4>
@@ -3028,7 +3042,7 @@ The NUT HCL: <a href="https://www.networkupstools.org/stable-hcl.html">https://w
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-08-17 17:48:19 UTC -- Network UPS Tools 2.8.5.941
+Last updated 2026-08-17 17:53:20 UTC -- Network UPS Tools 2.8.5.941
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>
