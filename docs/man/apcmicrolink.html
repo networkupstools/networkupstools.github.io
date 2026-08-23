@@ -766,7 +766,7 @@ a.anchorjs-link:visited {
 <div class="sect1">
 <h2 id="_name">NAME</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>apcmicrolink - Driver for APC Smart-UPS units using the Microlink serial protocol</p></div>
+<div class="paragraph"><p>apcmicrolink - Driver for APC Smart-UPS units using the Microlink protocol (serial or USB)</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -791,7 +791,9 @@ a.anchorjs-link:visited {
 <div class="sectionbody">
 <div class="paragraph"><p>The <strong>apcmicrolink</strong> driver talks the APC Microlink protocol used by newer
 serial-connected Smart-UPS families such as SMT and SMX units with the
-Microlink RJ45 serial port.</p></div>
+Microlink RJ45 serial port. It can also reach the same protocol tunneled
+over USB HID on models that have no serial port at all&#8201;&#8212;&#8201;see <strong>USB MODE</strong>
+below.</p></div>
 <div class="paragraph"><p>This driver is currently experimental. It discovers most values from the
 device descriptor blob at runtime and maps supported Microlink objects onto
 standard NUT variables where possible. Unknown descriptor fields can also be
@@ -802,13 +804,20 @@ published for debugging and reverse-engineering.</p></div>
 <h2 id="_supported_hardware">SUPPORTED HARDWARE</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>This driver is intended for APC Smart-UPS models that expose the Microlink
-serial protocol, notably SMT and SMX units with the vendor Microlink serial
-cable.</p></div>
+protocol, whether over the RJ45 serial cable or tunneled through USB HID.</p></div>
 <div class="paragraph"><p>Tested support currently targets:</p></div>
 <div class="ulist"><ul>
 <li>
 <p>
-APC Smart-UPS SMT/SMX Microlink models
+APC Smart-UPS SMT/SMX Microlink models (serial)
+</p>
+</li>
+<li>
+<p>
+APC Smart-UPS 500 / SCL500RMI1UC (USB)&#8201;&#8212;&#8201;see <strong>USB MODE</strong> below; this is
+  the only USB Microlink model tested so far, by a single user/tester.
+  SCL500RMI1UC is the European regional SKU of the SCL500RM1UC family;
+  the non-European SCL500RM1UC is expected, but not confirmed, to match.
 </p>
 </li>
 </ul></div>
@@ -820,22 +829,45 @@ layout.</p></div>
 <h2 id="_configuration">CONFIGURATION</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>The driver is configured via <a href="ups.conf.html">ups.conf(5)</a>.</p></div>
-<div class="paragraph"><p>A minimal configuration:</p></div>
+<div class="paragraph"><p>A minimal serial configuration:</p></div>
 <div class="listingblock">
 <div class="content">
 <pre><code>[apc-microlink]
     driver = apcmicrolink
     port = /dev/ttyUSB0</code></pre>
 </div></div>
+<div class="paragraph"><p>A minimal USB configuration (see <strong>USB MODE</strong> below):</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>[apc-microlink]
+    driver = apcmicrolink
+    port = auto</code></pre>
+</div></div>
 <div class="sect2">
 <h3 id="_optional_settings">Optional settings</h3>
 <div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>port</strong>=<em>device|auto</em>
+</dt>
+<dd>
+<p>
+For serial devices, the path to the serial port (e.g. <code>/dev/ttyUSB0</code>). For
+USB devices, <code>auto</code> (the default handling in NUT for USB drivers). See
+<strong>USB MODE</strong> below; USB mode requires builds with USB support enabled, and
+<code>port=auto</code> is equivalent to specifying any of the USB matching options
+below (<code>vendorid</code>, <code>productid</code>, <code>vendor</code>, <code>product</code>, <code>serial</code>, <code>bus</code>)
+without an explicit <code>port</code> value&#8201;&#8212;&#8201;either is enough to select USB mode. If
+<code>port</code> is set to anything other than <code>auto</code> while USB matching options are
+also given, the <code>port</code> value is ignored (with a warning) in favor of USB
+mode.
+</p>
+</dd>
 <dt class="hdlist1">
 <strong>baudrate</strong>=<em>num</em>
 </dt>
 <dd>
 <p>
-Set the serial line speed. The default is <code>9600</code>.
+Set the serial line speed. The default is <code>9600</code>. Serial mode only.
 </p>
 </dd>
 <dt class="hdlist1">
@@ -865,6 +897,260 @@ when debug logging is on.
 Select the Microlink command source used for outgoing command writes. The
 default is <code>rj45</code>.
 </p>
+</dd>
+<dt class="hdlist1">
+<strong>hid_fallback</strong>=<em>yes|no</em>
+</dt>
+<dd>
+<p>
+USB mode only. While the Microlink tunnel itself has nothing fresh to
+report (including while it is still trying to connect after startup, see
+<strong>USB MODE</strong> below), publish <code>ups.status</code>/<code>battery.charge</code>/<code>battery.runtime</code>
+from the standard HID Power Device usages this device also exposes on the
+same interrupt pipe, instead of letting that data go stale. The default is
+<code>yes</code>. Set to <code>no</code> to get an honest data gap instead of a value sourced
+from a different (less precise) channel than the rest of the Microlink data.
+</p>
+</dd>
+</dl></div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>port =</strong> <em>string</em>
+</dt>
+<dd>
+<p>
+Required option for all NUT drivers. Some <em>value</em> must be set, typically
+<strong>auto</strong> for drivers that handle USB connections.
+</p>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">This could be a device filesystem path like <code>/dev/usb/hiddev0</code>
+but current use of libusb API precludes knowing and matching by such
+identifiers.  They may also be inherently unreliable (dependent on
+re-plugging and enumeration order). At this time the actual <em>value</em>
+is ignored, but syntactically some <em>port</em> configuration must still
+be there.</td>
+</tr></table>
+</div>
+</dd>
+</dl></div>
+<div class="paragraph"><p>It is possible to control multiple UPS units simultaneously by running
+several instances of this driver, provided they can be uniquely
+distinguished by setting some combination of the <strong>vendor</strong>, <strong>product</strong>,
+<strong>vendorid</strong>, <strong>productid</strong>, <strong>serial</strong>, <strong>bus</strong> and/or <strong>device</strong> options detailed
+below.  For devices or operating systems that do not provide sufficient
+information, the <strong>allow_duplicates</strong> option can be of use (limited and
+risky!)</p></div>
+<div class="dlist"><dl>
+<dt class="hdlist1">
+<strong>vendorid =</strong> <em>regex</em>
+</dt>
+<dt class="hdlist1">
+<strong>productid =</strong> <em>regex</em>
+</dt>
+<dt class="hdlist1">
+<strong>vendor =</strong> <em>regex</em>
+</dt>
+<dt class="hdlist1">
+<strong>product =</strong> <em>regex</em>
+</dt>
+<dt class="hdlist1">
+<strong>serial =</strong> <em>regex</em>
+</dt>
+<dd>
+<p>
+Select a specific UPS, in case there is more than one connected via
+USB. Each option specifies an extended regular expression (see
+<a href="https://linux.die.net/man/7/regex">regex(7)</a> for more information on regular expressions), which
+must match the UPS&#8217;s entire respective <code>vendor</code>/<code>product</code>/<code>serial</code>
+string values (minus any surrounding whitespace), or the whole 4-digit
+hexadecimal code for <code>vendorid</code> and <code>productid</code>.
+</p>
+<div class="paragraph"><p>Try <a href="https://linux.die.net/man/8/lsusb">lsusb(8)</a> or running this NUT driver with <code>-DD</code> command-line
+argument for finding out the strings to match.</p></div>
+<div class="paragraph"><p>Examples:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>-x vendor="Foo.Corporation.*"</code>
+</p>
+</li>
+<li>
+<p>
+<code>-x vendorid="051d*"</code> (APC)
+</p>
+</li>
+<li>
+<p>
+<code>-x product=".*(Smart|Back)-?UPS.*"</code>
+</p>
+</li>
+</ul></div>
+</dd>
+<dt class="hdlist1">
+<strong>bus =</strong> <em>regex</em>
+</dt>
+<dd>
+<p>
+OPTIONAL, NOT RECOMMENDED.
+</p>
+<div class="paragraph"><p>Select a UPS on a specific USB bus or group of buses. The argument is
+a regular expression that must match the bus name where the UPS is
+connected (e.g. <code>bus="002"</code> or <code>bus="00[2-3]"</code>) as seen on Linux in
+<code>/sys/bus/usb/devices</code> or <a href="https://linux.die.net/man/8/lsusb">lsusb(8)</a>; including leading zeroes.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">Bus numbers are not guaranteed by the OS to be stable across
+re-boots, kernel driver reloads or device re-plugging (e.g. changing
+visible population of USB hubs).</td>
+</tr></table>
+</div>
+</dd>
+<dt class="hdlist1">
+<strong>device =</strong> <em>regex</em>
+</dt>
+<dd>
+<p>
+OPTIONAL, NOT RECOMMENDED.
+</p>
+<div class="paragraph"><p>Select a UPS on a specific USB device or group of devices. The argument is
+a regular expression that must match the device name where the UPS is
+connected (e.g. <code>device="001"</code> or <code>device="00[1-2]"</code>) as seen on Linux
+in <code>/sys/bus/usb/devices</code> or <a href="https://linux.die.net/man/8/lsusb">lsusb(8)</a>; including leading zeroes.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">Device numbers are not guaranteed by the OS to be stable across
+re-boots or device re-plugging.</td>
+</tr></table>
+</div>
+</dd>
+<dt class="hdlist1">
+<strong>busport =</strong> <em>regex</em>
+</dt>
+<dd>
+<p>
+OPTIONAL, NOT RECOMMENDED.
+</p>
+<div class="paragraph"><p>If supported by the hardware, OS and libusb on the particular deployment,
+this option should allow to specify physical port numbers on an USB hub,
+rather than logical <code>device</code> enumeration values, and in turn&#8201;&#8212;&#8201;this should
+be less volatile across reboots or re-plugging. The value may be seen in
+the USB topology output of <code>lsusb -tv</code> on systems with that tool, for example.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">This option is not practically supported by some NUT builds
+(it should be ignored with a warning then), and not by all systems
+that NUT can run on.</td>
+</tr></table>
+</div>
+</dd>
+<dt class="hdlist1">
+<strong>allow_duplicates</strong>
+</dt>
+<dd>
+<p>
+OPTIONAL, NOT RECOMMENDED.
+</p>
+<div class="paragraph"><p>If you have several UPS devices which may not be uniquely identified by
+the options above (e.g. only <em>VID:PID</em> can be discovered there), this flag
+allows each driver instance where it is set to take the first match if
+available, or proceed to try another.</p></div>
+<div class="paragraph"><p>Normally the driver initialization would abort at this point claiming
+"Resource busy" or similar error, assuming that the otherwise properly
+matched device is unique&#8201;&#8212;&#8201;and some other process already handles it.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Warning</div>
+</td>
+<td class="content">
+<div class="paragraph"><p>This feature is inherently non-deterministic!
+The association of driver instance name to actual device
+may vary between runs!</p></div>
+<div class="paragraph"><p>If you only care to know that <strong>at least</strong> one of your no-name UPSes
+is online, this option can help.</p></div>
+<div class="paragraph"><p>If you must really know <strong>which</strong> one, it will not!</p></div>
+</td>
+</tr></table>
+</div>
+</dd>
+<dt class="hdlist1">
+<strong>usb_set_altinterface =</strong> <em>bAlternateSetting</em>
+</dt>
+<dd>
+<p>
+Force redundant call to <code>usb_set_altinterface()</code>, especially if needed
+for devices serving multiple USB roles where the UPS is not represented
+by the interface number <code>0</code> (default).
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>usb_config_index</strong>
+</dt>
+<dt class="hdlist1">
+<strong>usb_hid_rep_index</strong>
+</dt>
+<dt class="hdlist1">
+<strong>usb_hid_desc_index</strong>
+</dt>
+<dt class="hdlist1">
+<strong>usb_hid_ep_in</strong>
+</dt>
+<dt class="hdlist1">
+<strong>usb_hid_ep_out</strong>
+</dt>
+<dd>
+<p>
+Force use of specific interface, endpoint, descriptor index etc. numbers,
+rather than defaulting to <em>0</em> (rarely other values in certain drivers for
+some devices known to use non-zero numbers). Specified as a hexadecimal
+number.
+</p>
+<div class="paragraph"><p>As a rule of thumb for <code>usb_hid_desc_index</code> discovery, you can see larger
+<code>wDescriptorLength</code> values (roughly 600+ bytes) in reports of <code>lsusb</code> or
+similar tools.</p></div>
+</dd>
+<dt class="hdlist1">
+<strong>LIBUSB_DEBUG =</strong> <em>INTEGER</em>
+</dt>
+<dd>
+<p>
+Run-time troubleshooting of USB-capable NUT drivers can involve not only
+raising the common NUT debug verbosity (e.g. using the <code>DEBUG_MIN</code> setting
+in <a href="ups.conf.html">ups.conf(5)</a> or protocol commands to change the <code>driver.debug</code>
+value), but may also benefit from LibUSB specific debugging.
+</p>
+<div class="paragraph"><p>For the latter, you can set the <code>LIBUSB_DEBUG</code> driver option; alternatively
+you can classically export the environment variable <code>LIBUSB_DEBUG</code> before
+starting a NUT driver program (may be set and "exported" in driver init
+script or service method, perhaps via <a href="nut.conf.html">nut.conf(5)</a>), to a numeric
+value such as <code>4</code> ("All messages are emitted").</p></div>
+<div class="paragraph"><p>For more details, including the currently supported values for your version
+of the library, see e.g.:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<a href="https://libusb.sourceforge.io/api-1.0/">https://libusb.sourceforge.io/api-1.0/</a>
+</p>
+</li>
+<li>
+<p>
+<a href="https://libusb.sourceforge.io/api-1.0/group__libusb__lib.html">https://libusb.sourceforge.io/api-1.0/group__libusb__lib.html</a>
+</p>
+</li>
+</ul></div>
 </dd>
 </dl></div>
 </div>
@@ -963,6 +1249,37 @@ this can include values such as:</p></div>
 </p>
 </li>
 </ul></div>
+<div class="paragraph"><p>On the tested Smart-UPS 500 (SCL500RMI1UC), the vendor&#8217;s own documentation
+lists these factory-default values for the delay/timer fields above:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<code>outlet.group.N.delay.start</code> ("Turn On Delay"): 0 sec
+</p>
+</li>
+<li>
+<p>
+<code>outlet.group.N.delay.shutdown</code> ("Turn Off Delay"): 0 sec on the
+  unswitched/main group, 90 sec on switched groups
+</p>
+</li>
+<li>
+<p>
+<code>outlet.group.N.delay.reboot</code> ("Reboot Duration"): 8 sec
+</p>
+</li>
+<li>
+<p>
+<code>outlet.group.N.minimumreturnruntime</code> ("Minimum Return Time"): 0 sec
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p><code>outlet.group.N.switchable</code> (<code>yes</code>/<code>no</code>) is published read-only for every
+outlet group, and instant commands for switching a group&#8217;s load are only
+registered for groups where it is <code>yes</code>&#8201;&#8212;&#8201;some Microlink UPS models expose
+one unswitched group (typically group 0) alongside one or more independently
+switchable groups, and the unswitched group has no on/off/cycle/shutdown
+commands to offer.</p></div>
 <div class="paragraph"><p>Supported instant commands currently include:</p></div>
 <div class="ulist"><ul>
 <li>
@@ -990,11 +1307,81 @@ this can include values such as:</p></div>
 </div>
 </div>
 <div class="sect1">
+<h2 id="_usb_mode">USB MODE</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Support for reaching the Microlink protocol over USB HID (<code>port = auto</code>)
+is newer and less exercised than the serial path, and should be considered
+experimental even relative to the rest of this already-experimental driver.
+As of this writing it has been built and tested against a single APC
+Smart-UPS 500 (SCL500RMI1UC) by a single tester, over an extended session
+that included intentional fault injection (USB replug, driver restarts
+mid-handshake, forced fallback). It has not been tested against any other
+USB Microlink model, nor by anyone besides that tester.</p></div>
+<div class="sect2">
+<h3 id="_how_it_works">How it works</h3>
+<div class="paragraph"><p>The UPS tunnels the same Microlink byte protocol that <code>apcmicrolink</code> speaks
+over RS232, but through two HID vendor-page reports on a generic HID vendor
+tunnel, using genuine interrupt IN/OUT transfers rather than HID
+Get/Set_Report control transfers (the tested device does not react to the
+latter at all). Device matching uses the usual NUT USB
+vendorid/productid/vendor/product/serial/bus/device options described
+above; see <a href="https://linux.die.net/man/8/lsusb">lsusb(8)</a> or <code>-DD</code> for finding the values to match.</p></div>
+<div class="paragraph"><p>Session startup over USB is intermittently unreliable on the tested
+hardware&#8201;&#8212;&#8201;the device can take upwards of 90 seconds to become responsive
+to the tunnel handshake after power-up or a USB replug. If the handshake
+does not complete during driver startup, and the device also exposes
+standard HID Power Device usages (as the tested model does), the driver
+starts up anyway using those for <code>ups.status</code>/<code>battery.charge</code>/
+<code>battery.runtime</code> (see the <code>hid_fallback</code> option above) instead of
+refusing to start. Outlet-group data and instant commands, which depend
+on the full Microlink descriptor, become available automatically once the
+tunnel connects&#8201;&#8212;&#8201;no driver restart is needed. If the tunnel stays
+unresponsive, the driver periodically attempts a USB device reset to try
+to recover it.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_kernel_usbhid_conflict">Kernel usbhid conflict</h3>
+<div class="paragraph"><p>The Linux kernel&#8217;s generic <code>usbhid</code> input driver will also claim this kind
+of device by default, since from the USB descriptor&#8217;s point of view it is
+just another HID device. If <code>usbhid</code> holds the interface, this driver
+cannot claim it and will fail to start; and if <code>usbhid</code> reclaims the
+interface after a USB reset or re-enumeration event <strong>while this driver is
+already running</strong> (observed on the tested hardware), every following
+interrupt transfer this driver attempts will be rejected by the kernel
+until the driver process is restarted.</p></div>
+<div class="paragraph"><p>Neither this driver nor NUT&#8217;s shared USB layer (<code>nut_libusb.c</code>) attempts
+to detach <code>usbhid</code> on its own. A udev rule that unbinds <code>usbhid</code> from the
+UPS&#8217;s vendor/product ID avoids this. For example, for VID:PID <code>051d:0003</code>
+(APC Smart-UPS 500 / SCL500RMI1UC):</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>SUBSYSTEM=="usb", DRIVER=="usbhid", ATTRS{idVendor}=="051d", ATTRS{idProduct}=="0003", RUN+="/bin/sh -c 'echo -n $kernel &gt; /sys/bus/usb/drivers/usbhid/unbind'"</code></pre>
+</div></div>
+<div class="paragraph"><p>Save this as e.g.
+<code>/etc/udev/rules.d/70-nut-apcmicrolink-usbhid-blacklist.rules</code>, adjusting
+the <code>idVendor</code>/<code>idProduct</code> match for your own device (see
+<a href="https://linux.die.net/man/8/lsusb">lsusb(8)</a>), then reload with:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>:; udevadm control --reload-rules
+:; udevadm trigger --subsystem-match=usb</code></pre>
+</div></div>
+<div class="paragraph"><p>Any other Microlink-over-USB model that the kernel&#8217;s <code>usbhid</code> driver also
+claims by default would need the same treatment, with its own IDs
+substituted.</p></div>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_cabling">CABLING</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>Use the APC Microlink serial cable appropriate for the UPS. USB-to-serial
 adapters can work if they present a standard TTY device to the operating
-system.</p></div>
+system. For USB Microlink models with no serial port at all, see <strong>USB
+MODE</strong> above instead.</p></div>
+<div class="paragraph"><p>For USB mode on the tested Smart-UPS 500 (SCL500RMI1UC), connectivity uses
+the APC/Schneider Electric cable model 940-0504 (USB A to USB A), not a
+standard USB A-to-B cable.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -1004,6 +1391,11 @@ system.</p></div>
 <li>
 <p>
 Lukas Schmid &lt;<a href="mailto:lukas.schmid@netcube.li">lukas.schmid@netcube.li</a>&gt;
+</p>
+</li>
+<li>
+<p>
+Nicolai <em>nmbro</em> Brogaard &lt;nicolai.brogaard+<a href="mailto:nut@gmail.com">nut@gmail.com</a>&gt;
 </p>
 </li>
 </ul></div>
@@ -1026,7 +1418,7 @@ Lukas Schmid &lt;<a href="mailto:lukas.schmid@netcube.li">lukas.schmid@netcube.l
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-08-18 20:04:17 UTC -- Network UPS Tools 2.8.5.941
+Last updated 2026-08-23 11:58:53 UTC -- Network UPS Tools 2.8.5.1040
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>

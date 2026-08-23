@@ -56,6 +56,11 @@ Mutexes used in parallelized scans were not properly released on
 USB drivers: fixed an out-of-bounds read of the candidate HID report
       descriptor lengths, which could cause a segmentation fault (regression
       added in NUT v2.8.5 release). [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3550" target="_top">PR #3550</a>]
+</li><li class="listitem">
+Refactoring of <code class="literal">configure.ac</code> for NUT v2.8.5 release led to a problem
+      when explicitly specifying same <code class="literal">--with-user</code> <span class="strong"><strong>OR</strong></span> <code class="literal">--with-group</code> name
+      as would be default for current platform (so one was treated as not-set
+      and failed a sanity check). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3513" target="_top">issue #3513</a>]
 </li></ul></div></li><li class="listitem">
 USB drivers now prefer the longer of conflicting HID report descriptor
    lengths for EcoFlow devices using USB ID <code class="literal">3746:ffff</code>. This makes the
@@ -74,6 +79,29 @@ Introduced an experimental <code class="literal">apcmicrolink</code> driver for 
    the APC Microlink protocol on serial port connections. Tested against
    APC Smart-UPS 750 (SMT750RMI2UC). [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3406" target="_top">PR #3406</a>]
 </li><li class="listitem"><p class="simpara">
+Contributed <code class="literal">apcmicrolink</code> driver updates [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3579" target="_top">PR #3579</a>]:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Added USB HID support (<code class="literal">port = auto</code>, matching the usual NUT
+      USB-driver convention), tunneling the Microlink protocol over
+      USB HID for models with no serial port. Tested against APC
+      Smart-UPS 500 (SCL500RMI1UC) by a single tester; considered
+      experimental even relative to the rest of this already-experimental
+      driver. See <a class="ulink" href="../man/apcmicrolink.html" target="_top">apcmicrolink(8)</a> for USB-mode caveats, including
+      a udev rule needed to keep the kernel’s <code class="literal">usbhid</code> driver from
+      claiming the device.
+</li><li class="listitem">
+USB mode: if the Microlink tunnel does not respond during startup,
+      the driver now starts up on standard-HID-PDC fallback data
+      (<code class="literal">ups.status</code>/<code class="literal">battery.charge</code>/<code class="literal">battery.runtime</code>) instead of
+      refusing to start; outlet-group data and instant commands become
+      available automatically once the tunnel connects, with no driver
+      restart needed.
+</li><li class="listitem">
+Added <code class="literal">load.cycle</code> and per-outlet-group instant commands
+      (<code class="literal">outlet.group.N.load.*</code>, <code class="literal">outlet.group.N.shutdown.*</code>), and the
+      <code class="literal">outlet.group.N.switchable</code> variable to distinguish switchable
+      groups from an unswitched main bank.
+</li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">apc_modbus</code> driver updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 Fixed string join not doing zero termination. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3413" target="_top">PR #3413</a>]
@@ -158,8 +186,7 @@ Added an <code class="literal">omron</code> USB subdriver and an <code class="li
       DSM 7.3-86009 GPL sources and version 1.02 distributed in the QNAP QTS
       5.2.3 GPL sources. Polling and the direct shutdown commands were verified
       on an unloaded BN150T over USB; other OMRON models and serial connections
-      are untested.
-      [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3112" target="_top">issue #3112</a>]
+      are untested. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3112" target="_top">issue #3112</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3554" target="_top">PR #3554</a>]
 </li><li class="listitem">
 In <code class="literal">Voltronic-QS-Hex</code> subdriver, the format string sanity check added in
       recent NUT releases caught a mismatch in <code class="literal">ups.load</code> reading. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3532" target="_top">issue #3532</a>]
@@ -249,6 +276,26 @@ When reconnecting, report success more visibly (not only in debug), and
 </li><li class="listitem">
 <code class="literal">mge-hid</code> subdriver updated to suppress <code class="literal">CHRG</code> status on constant-charge
       mode devices when battery is fully charged. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3518" target="_top">issue #3518</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3519" target="_top">PR #3519</a>]
+</li><li class="listitem">
+<code class="literal">tripplite-hid</code> subdriver now recovers the output power reading, which was
+      published as a constant <code class="literal">0.0</code>. Two defects combined: the HID <code class="literal">ActivePower</code>
+      usages were mapped to <code class="literal">ups.power</code>, which <code class="literal">docs/nut-names.txt</code> defines as
+      apparent power (VA) rather than real power (W); and on the tested
+      SMART1500LCD the firmware declares its <code class="literal">ActivePower</code> item with the HID PDC
+      unit for watts/VA (<code class="literal">0x0000D121</code>) while leaving the Unit Exponent at 0, so
+      <code class="literal">get_unit_expo()</code> applied a factor of 1e-7 and a genuine 520 W reading
+      arrived as 5.2e-05, which the <code class="literal">%.1f</code> format then rendered as <code class="literal">0.0</code>.
+      Both <code class="literal">ActivePower</code> usages now map to <code class="literal">ups.realpower</code>, matching the
+      <code class="literal">cps-hid</code> and <code class="literal">mge-hid</code> subdrivers; <code class="literal">ups.power</code> is mapped to the
+      corresponding <code class="literal">ApparentPower</code> usages and <code class="literal">ups.realpower.nominal</code> to
+      <code class="literal">UPS.Flow.ConfigActivePower</code>. A new <code class="literal">tripplite_fix_report_desc()</code> supplies
+      the exponent the firmware omits; it is deliberately limited to the
+      <code class="literal">ActivePower</code> item, since no Tripp Lite descriptor is known to expose an
+      <code class="literal">ApparentPower</code> item with the same defect. Verified on a SMART1500LCD
+      (<code class="literal">09ae:2012</code>), which now reports <code class="literal">ups.realpower: 512.0</code> at <code class="literal">ups.load: 56</code>
+      against its 900 W rating. Note this is a behaviour change for units that
+      report a non-zero <code class="literal">ActivePower</code>: the reading moves from <code class="literal">ups.power</code> to
+      <code class="literal">ups.realpower</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3580" target="_top">issue #3580</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3581" target="_top">PR #3581</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">snmp-ups</code> driver updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -278,6 +325,10 @@ Refactored <code class="literal">common::background()</code> method used by nume
 </li><li class="listitem">
 Revised <span class="emphasis"><em>dstate</em></span> machinery to track socket connections closed mid-way
       through a call, to avoid access after <code class="literal">free()</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3302" target="_top">#3302</a>]
+</li><li class="listitem">
+Some operating systems provide in <code class="literal">sys/stdarg.h</code> definitions that others
+      access through common <code class="literal">stdarg.h</code> — code updated to try including both.
+      [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3577" target="_top">PR #3577</a>]
 </li><li class="listitem">
 Debug logging in <code class="literal">dstate.c</code> and <code class="literal">upssched.c</code> reported sent buffers "as
       is", complete with a confusing blank line where <code class="literal">\n</code> ended the message.
@@ -5721,4 +5772,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.34. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-08-18 20:04:36 -- Network UPS Tools 2.8.5.941</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-08-23 11:59:21 -- Network UPS Tools 2.8.5.1040</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
