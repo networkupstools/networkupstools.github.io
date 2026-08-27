@@ -124,6 +124,14 @@ Three fixes for the read-retry loop added in <a class="ulink" href="https://gith
       failure causes than just a timeout; quieter retry logging to avoid
       severe syslog/journal thrashing. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3571" target="_top">PR #3571</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/3414" target="_top">#3414</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
+<code class="literal">blazer_usb</code> driver updates:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Bounded USB reply parsing by the number of bytes actually received, in
+      the <code class="literal">ippon</code>, <code class="literal">cypress</code> and <code class="literal">phoenix</code> transports, preventing out-of-bounds
+      reads when a reply fills the buffer without containing the expected
+      carriage return or a zero byte. The same defects were fixed in the
+      corresponding <code class="literal">nutdrv_qx</code> transports, which this code predates.
+</li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">dummy-ups</code> driver updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 Added <code class="literal">authconf</code> driver parameter for repeater mode to control
@@ -144,6 +152,13 @@ Added the <code class="literal">richcomm-svc</code> USB communication subdriver 
       reusing the existing Armac command framing and Megatec protocol. Polling
       and a quick battery test were verified with an SVC V-1000F
       (<code class="literal">0925:1234</code>, <code class="literal">UPS USB MON V1.4</code>). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3562" target="_top">issue #3562</a>]
+</li><li class="listitem">
+Bounded USB reply parsing by the number of bytes actually received, in
+      the <code class="literal">ippon</code>, <code class="literal">cypress</code>, <code class="literal">phoenix</code>, <code class="literal">fuji</code> and <code class="literal">gtec</code> transports,
+      preventing out-of-bounds reads when a reply fills the buffer without
+      containing the expected carriage return or a zero byte. Beyond the debug
+      logging, the affected length also reached the reply returned to the
+      caller in the <code class="literal">ippon</code> and <code class="literal">fuji</code> transports.
 </li><li class="listitem">
 Only claim a USB device as "supported" during discovery out of the box
       if <code class="literal">subdriver_command</code> was assigned (<code class="literal">1A86:7523</code> is used by CH340/341
@@ -5787,4 +5802,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.34. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-08-27 15:06:23 -- Network UPS Tools 2.8.5.1040</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-08-27 17:44:46 -- Network UPS Tools 2.8.5.1040</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
