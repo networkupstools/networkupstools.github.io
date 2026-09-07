@@ -1277,9 +1277,10 @@ lists these factory-default values for the delay/timer fields above:</p></div>
 <div class="paragraph"><p><code>outlet.group.N.switchable</code> (<code>yes</code>/<code>no</code>) is published read-only for every
 outlet group, and instant commands for switching a group&#8217;s load are only
 registered for groups where it is <code>yes</code>&#8201;&#8212;&#8201;some Microlink UPS models expose
-one unswitched group (typically group 0) alongside one or more independently
+one unswitched group (group 0) alongside one or more independently
 switchable groups, and the unswitched group has no on/off/cycle/shutdown
-commands to offer.</p></div>
+commands to offer. Other models have no unswitched group at all: their
+outlet groups start numbering at 1, and <code>outlet.group.0</code> is not published.</p></div>
 <div class="paragraph"><p>Supported instant commands currently include:</p></div>
 <div class="ulist"><ul>
 <li>
@@ -1300,6 +1301,16 @@ commands to offer.</p></div>
 <li>
 <p>
 <code>test.panel.stop</code>
+</p>
+</li>
+<li>
+<p>
+<code>beeper.enable</code>
+</p>
+</li>
+<li>
+<p>
+<code>beeper.disable</code>
 </p>
 </li>
 </ul></div>
@@ -1335,9 +1346,26 @@ starts up anyway using those for <code>ups.status</code>/<code>battery.charge</c
 <code>battery.runtime</code> (see the <code>hid_fallback</code> option above) instead of
 refusing to start. Outlet-group data and instant commands, which depend
 on the full Microlink descriptor, become available automatically once the
-tunnel connects&#8201;&#8212;&#8201;no driver restart is needed. If the tunnel stays
-unresponsive, the driver periodically attempts a USB device reset to try
-to recover it.</p></div>
+tunnel connects, with no driver restart needed. If the device disappears
+from the bus (unplug, power cycle), the driver resets and reopens it. It
+does not reset a device that is still present but not answering the
+tunnel, because that does not help.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_libusb_backend">libusb backend</h3>
+<div class="paragraph"><p>USB mode has only been tested against libusb-1.0. Builds against
+libusb-0.1 log a warning once at startup and then carry on, but that
+path is untested for this driver. On at least one system the installed
+libusb-0.1 library&#8217;s interrupt IN read ignored its configured timeout,
+so the driver hung waiting for a reply instead of timing out and
+retrying. If USB mode stops responding, check that NUT was built with
+<code>--with-usb=libusb-1.0</code> before looking further.</p></div>
+<div class="paragraph"><p>With libusb-1.0 and pthreads the driver keeps one read request
+outstanding on a dedicated thread, so it picks up a reply whenever the
+device sends one. Without both, it reads only while already waiting for
+a reply. The tested device can take several seconds to answer and pushes
+unrelated reports on the same pipe meanwhile, so replies that arrive
+outside that window are missed.</p></div>
 </div>
 <div class="sect2">
 <h3 id="_kernel_usbhid_conflict">Kernel usbhid conflict</h3>
@@ -1348,7 +1376,9 @@ cannot claim it and will fail to start; and if <code>usbhid</code> reclaims the
 interface after a USB reset or re-enumeration event <strong>while this driver is
 already running</strong> (observed on the tested hardware), every following
 interrupt transfer this driver attempts will be rejected by the kernel
-until the driver process is restarted.</p></div>
+until the driver process is restarted. The driver detects this, logs a
+warning, and backs off between attempts instead of retrying at full
+speed. It cannot recover on its own.</p></div>
 <div class="paragraph"><p>Neither this driver nor NUT&#8217;s shared USB layer (<code>nut_libusb.c</code>) attempts
 to detach <code>usbhid</code> on its own. A udev rule that unbinds <code>usbhid</code> from the
 UPS&#8217;s vendor/product ID avoids this. For example, for VID:PID <code>051d:0003</code>
@@ -1418,7 +1448,7 @@ Nicolai <em>nmbro</em> Brogaard &lt;nicolai.brogaard+<a href="mailto:nut@gmail.c
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-08-30 17:48:39 UTC -- Network UPS Tools 2.8.5.1040
+Last updated 2026-09-07 10:05:51 UTC -- Network UPS Tools 2.8.5.1040
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>

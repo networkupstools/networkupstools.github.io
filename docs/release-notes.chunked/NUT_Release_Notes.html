@@ -101,6 +101,93 @@ Added <code class="literal">load.cycle</code> and per-outlet-group instant comma
       (<code class="literal">outlet.group.N.load.*</code>, <code class="literal">outlet.group.N.shutdown.*</code>), and the
       <code class="literal">outlet.group.N.switchable</code> variable to distinguish switchable
       groups from an unswitched main bank.
+</li><li class="listitem">
+USB mode: reworked the interrupt-IN read path to use a permanently
+      outstanding asynchronous transfer serviced by a dedicated thread, so
+      device replies are no longer missed while the driver is between
+      polls. Several long-run stability fixes go with it: a USB bus reset
+      is now triggered only on a genuine disconnect rather than on a retry
+      count, the cached page 0 contents are no longer wiped on every
+      session (re)start, the read queue is no longer flushed on every
+      session retry, and the authentication challenge is randomized.
+      Also warns once when built against the untested libusb-0.1 backend,
+      and backs off instead of spinning when the kernel’s <code class="literal">usbhid</code> driver
+      has reclaimed the interface.
+</li><li class="listitem">
+Mapped two further descriptor usages:
+      <code class="literal">experimental.battery.serial</code> (the battery pack’s own serial number,
+      distinct from <code class="literal">ups.serial</code>) and <code class="literal">microlink.diag.slave_password_echo</code>
+      (auth troubleshooting visibility only, not proof that
+      authentication was accepted).
+</li><li class="listitem">
+A page 0 whose announced frame width disagrees with the width of
+      the frame that carried it is now rejected instead of cached. Such
+      a page redefined the length the frame parser demanded, after which
+      nothing checksum-validated again and the session could not
+      recover. Affects both transports. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3587" target="_top">issue #3587</a>]
+</li></ul></div></li><li class="listitem"><p class="simpara">
+Contributed <code class="literal">apcmicrolink</code> driver updates [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3591" target="_top">PR #3591</a>]. The driver
+   remains experimental, but USB sessions should hold up better, and
+   fall back more readily to standard HID PDC data when the Microlink
+   tunnel is unstable or unavailable:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+USB mode: the standard-HID-PDC fallback now engages whenever the
+      Microlink tunnel stops producing usable data, not only when it
+      fails to answer during startup. A device that answers every poll
+      while reporting an all-zero state previously left <code class="literal">ups.status</code>
+      empty indefinitely. The driver hands back to Microlink data once
+      that source looks plausible again, with hysteresis so the two do
+      not swap on alternate polls.
+</li><li class="listitem">
+The Microlink tunnel is now polled for a full page pass per update
+      cycle, instead of one record per <code class="literal">pollinterval</code>. The device does
+      not acknowledge its authentication handshake until roughly 20
+      exchanges after the response is sent, and serves no measurement
+      page until it does, so the slower cadence could leave every
+      measured value reading 0 on a device that was answering normally.
+      Publishes <code class="literal">experimental.microlink.diag.auth_status</code> and
+      <code class="literal">experimental.microlink.diag.auth_refused</code>, and warns when the
+      handshake goes unacknowledged.
+</li><li class="listitem">
+The driver now closes the Microlink session with a STOP when it
+      exits. Without it the device could answer a later client’s session
+      request mid-walk rather than at page 0, and would not re-synchronize
+      until re-enumerated.
+</li><li class="listitem">
+<code class="literal">2:4.7.28</code> and <code class="literal">2:4.7.49</code> are percentages of the nominal ratings
+      rather than absolute readings. <code class="literal">ups.load</code> is now published from the
+      former, with <code class="literal">ups.realpower</code> and <code class="literal">ups.power</code> derived against the
+      nominal ratings, instead of both reading two orders of magnitude
+      low. <code class="literal">ups.test.result</code> now comes from the battery-scope usage that
+      a self test actually updates, and <code class="literal">ups.test.interval</code> is derived
+      from the self-test schedule enumeration.
+</li><li class="listitem">
+Newly mapped: <code class="literal">input.sensitivity</code>, <code class="literal">ups.beeper.status</code>,
+      <code class="literal">experimental.battery.firmware</code> and
+      <code class="literal">experimental.statistics.battery.transfers</code>.
+</li><li class="listitem">
+Driver-specific diagnostic variables moved from <code class="literal">microlink.*</code> to
+      <code class="literal">experimental.microlink.*</code>.
+</li><li class="listitem">
+Documented the Microlink descriptor format that the driver parses,
+      for anyone extending its variable maps. See the NUT Developer
+      Guide.
+</li><li class="listitem">
+<code class="literal">outlet.group.count</code> and the per-outlet-group commands/variables no
+      longer require an unswitched "main" outlet group to be present;
+      devices with only switched groups now expose them correctly.
+      [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3587" target="_top">issue #3587</a>]
+</li><li class="listitem">
+<code class="literal">ups.beeper.status</code> is decoded as a bitmask instead of matching
+      exact enum values, so devices that set additional unrelated bits
+      alongside the enabled/disabled bit report the correct status
+      instead of a raw number. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3587" target="_top">issue #3587</a>]
+</li><li class="listitem">
+<code class="literal">beeper.mute</code> is replaced by <code class="literal">beeper.enable</code>/<code class="literal">beeper.disable</code>: the
+      register it wrote had no confirmed effect, and the actual beeper
+      on/off control used by PowerChute is a persistent setting on the
+      same usage <code class="literal">ups.beeper.status</code> reads, not a temporary mute/re-arm
+      action.
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">apc_modbus</code> driver updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -124,6 +211,11 @@ Three fixes for the read-retry loop added in <a class="ulink" href="https://gith
       failure causes than just a timeout; quieter retry logging to avoid
       severe syslog/journal thrashing. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3571" target="_top">PR #3571</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/3414" target="_top">#3414</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
+<code class="literal">bestups</code> driver updates:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Fixed Megatec Q1 parser to expect specific response format and avoid
+      blind <code class="literal">scanf()</code> usage. [<a class="ulink" href="https://github.com/networkupstools/nut/security/advisories/GHSA-hwqr-5pjj-3m25" target="_top">GHSA-hwqr-5pjj-3m25</a>]
+</li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">blazer_usb</code> driver updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 Bounded USB reply parsing by the number of bytes actually received, in
@@ -138,12 +230,74 @@ Added <code class="literal">authconf</code> driver parameter for repeater mode t
       authentication configuration discovery. It accepts <code class="literal">default</code>, <code class="literal">none</code>,
       or a specific authconf file path. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3329" target="_top">issue #3329</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
+<code class="literal">huawei-ups2000</code> driver updates:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Fixed a Modbus compatibility problem that made changing any variables
+      or sending any instant commands impossible with some UPS models. This
+      was caused by the use of <code class="literal">modbus_write_registers()</code> (Modbus command
+      <code class="literal">0x10</code>), which is not officially supported, making any register write
+      impossible on some models. All uses of <code class="literal">modbus_write_registers()</code> have
+      been changed to <code class="literal">modbus_write_register()</code> (Modbus command <code class="literal">0x06</code>) to
+      avoid this problem. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3593" target="_top">issue #3593</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3604" target="_top">PR #3604</a>].
+</li><li class="listitem">
+Fixed a serious problem previously existed in all NUT versions that
+      made many instant commands unusable, including <code class="literal">bypass.start</code>,
+      <code class="literal">shutdown.return</code>, <code class="literal">shutdown.reboot</code>, and <code class="literal">shutdown.reboot.graceful</code>.
+      Any attempt to use them would fail, with an error logged to <code class="literal">syslog</code>:
+      <code class="literal">reg1 is negative</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3603" target="_top">issue #3603</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3604" target="_top">PR #3604</a>].
+</li></ul></div></li><li class="listitem"><p class="simpara">
+<code class="literal">metasys</code> driver updates:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Fixed parsing of UPS serial number string from the response, now taking
+      care to constrain permitted lengths and offsets. [<a class="ulink" href="https://github.com/networkupstools/nut/security/advisories/GHSA-6p5c-r2jg-r9mj" target="_top">GHSA-6p5c-r2jg-r9mj</a>]
+</li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">nhs_ser</code> driver updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 Modernized serial communication and added validated settings for baud
       rate, data bits, parity, stop bits, flow control, per-byte read timeout,
       and transmission pacing. Also improved serial resource handling and
       reconnection behavior. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3510" target="_top">issue #3510</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3543" target="_top">PR #3543</a>]
+</li><li class="listitem">
+Reworked incoming serial framing to use the total packet length declared
+      by byte <code class="literal">[1]</code>, instead of treating every <code class="literal">0xFF</code> as a new packet and every
+      <code class="literal">0xFE</code> as its end. A leading <code class="literal">0xFF</code> now starts a frame only while the
+      reader is idle; subsequent <code class="literal">0xFF</code> and <code class="literal">0xFE</code> values are preserved as
+      payload or checksum data. The frame is completed at its declared length
+      and accepted only when that final byte is <code class="literal">0xFE</code>. Declared lengths are
+      also bounded by the receive buffer before further bytes are stored.
+      This prevents valid 18-byte and 50-byte HWINFO replies containing an
+      internal <code class="literal">0xFF</code> from being split into unrecognized fragments, allowing
+      the driver to obtain model, firmware, serial number and battery-pack
+      information instead of repeatedly requesting HWINFO and delaying normal
+      polling. The raw packet captures and protocol analysis which made this
+      correction possible were contributed by GitHub user <code class="literal">freechurros</code>.
+      [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3592" target="_top">issue #3592</a>]
+</li><li class="listitem">
+Applied follow-up hardware-test feedback from <code class="literal">freechurros</code>: corrected
+      <code class="literal">interpret_pkt_hwinfo()</code> to validate the HWINFO checksum instead of the
+      DATA checksum, exposed unrecognized packets through <code class="literal">debug_pkt_raw</code>, and
+      published the documented lower-case <code class="literal">battery.charger.status</code> values for
+      compatibility with Home Assistant. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3592" target="_top">issue #3592</a>]
+</li><li class="listitem">
+Send the long, short and compatibility hardware-discovery requests from
+      <code class="literal">upsdrv_initinfo()</code>, checking the serial descriptor before every request.
+      Failed or partial writes now mark data stale and invalidate the port so
+      the normal update cycle reopens it before further communication.
+</li><li class="listitem">
+Refresh cached model-specific data from every valid HWINFO packet and
+      restart discovery after a serial reconnection, allowing a replaced UPS
+      to be identified without restarting the driver.
+</li><li class="listitem">
+Added the legacy five-byte compatibility initialization request
+      (<code class="literal">FF 05 01 06 FE</code>) as a third fallback. The driver first makes six
+      extended initialization attempts, then selects randomly among the
+      extended, normal and compatibility requests so older or otherwise
+      compatibility-dependent NHS units can answer with their supported
+      protocol variant.
+</li><li class="listitem">
+Consolidated the NHS model-code metadata into an indexed lookup table,
+      preserving the existing model descriptions and nominal VA mappings while
+      making unknown-code handling explicit.
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">nutdrv_qx</code> driver updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -292,6 +446,12 @@ When reconnecting, report success more visibly (not only in debug), and
 <code class="literal">mge-hid</code> subdriver updated to suppress <code class="literal">CHRG</code> status on constant-charge
       mode devices when battery is fully charged. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3518" target="_top">issue #3518</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3519" target="_top">PR #3519</a>]
 </li><li class="listitem">
+<code class="literal">mge-hid</code> subdriver: extended the <code class="literal">mge_model_names[]</code> list for the
+      Eaton 5P Gen2 series (largely guessing, feedback and PRs for
+      adaptation to actual string values reported by devices via USB are
+      welcome), so these devices would now report <code class="literal">battery.voltage</code> and
+      <code class="literal">battery.voltage.nominal</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2380" target="_top">#2380</a>]
+</li><li class="listitem">
 <code class="literal">cps-hid</code> subdriver: widened under-declared Logical Maximums for
       <code class="literal">UPS.Input.Voltage</code>, <code class="literal">UPS.Input.ConfigVoltage</code>, <code class="literal">UPS.PowerSummary.Voltage</code>
       and <code class="literal">UPS.PowerSummary.ConfigVoltage</code> on CyberPower HID devices (e.g.
@@ -323,10 +483,22 @@ When reconnecting, report success more visibly (not only in debug), and
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">snmp-ups</code> driver updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Fixed a NULL pointer dereference when setting exact outlet mappings
+      without a corresponding numbered outlet template, and restored handling
+      of exact server-side outlet variables and commands. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3360" target="_top">issue #3360</a>,
+      <a class="ulink" href="https://github.com/networkupstools/nut/pull/3610" target="_top">PR #3610</a>]
+</li><li class="listitem">
+<code class="literal">apc</code> subdriver: exposed <code class="literal">ambient.temperature</code> from universal I/O
+      sensors used with APC Network Management Card 3. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3250" target="_top">issue #3250</a>]
+</li><li class="listitem">
 Extended the XPPC-MIB subdriver (enterprise 935) to expose
       <code class="literal">battery.runtime</code>, <code class="literal">battery.voltage</code>, <code class="literal">input.frequency</code>,
       <code class="literal">output.voltage.nominal</code> and <code class="literal">ups.firmware.aux</code> from Phoenixtec
       based UPS cards that already answer the rest of the subtree. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2608" target="_top">#2608</a>]
+</li><li class="listitem">
+Mapped <code class="literal">standby(8)</code> from XPPC output status to <code class="literal">OL</code> rather than <code class="literal">OFF</code>,
+      because line-interactive devices use it for inverter standby while their
+      UPS output remains online on utility power. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3512" target="_top">issue #3512</a>]
 </li><li class="listitem">
 Introduced <code class="literal">voltronic</code> subdriver for Voltronic enterprise 43943 UPSes,
       developed and tested against a PowerShield Centurion RT 1000VA
@@ -342,6 +514,9 @@ Previously when looping to start a driver (and initially failing), we
 </li></ul></div></li><li class="listitem"><p class="simpara">
 common code:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+POSIX daemons now warn if their real or effective UID remains zero after
+      the common credential switch. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3471" target="_top">issue #3471</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3609" target="_top">PR #3609</a>]
+</li><li class="listitem">
 Refactored <code class="literal">common::background()</code> method used by numerous NUT daemons
       to handle parent and child code paths by separately addressable methods.
       This got used in the shared drivers <code class="literal">main</code> code file to preclude losing
@@ -560,6 +735,12 @@ If SSL configuration was provided, but the server failed to apply some
 </li></ul></div></li><li class="listitem"><p class="simpara">
 Recipes, CI and helper script updates not classified above:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Introduced <code class="literal">AGENTS.md</code> for AI agents to help in a consistent manner with
+      minimal friction. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3608" target="_top">#3608</a>]
+</li><li class="listitem">
+Introduced <code class="literal">SECURITY.md</code> for rules about responsible disclosure of
+      potentially exploitable bugs. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3470" target="_top">#3470</a>]
+</li><li class="listitem">
 Introduced <code class="literal">ci_build.sh</code> settings and respective CI workflow settings
       to optionally re-use a <code class="literal">config.cache</code> file from older runs, and similar
       logic for NIT <code class="literal">nit.sh</code> to re-use generated certificate and private key
@@ -569,6 +750,13 @@ Introduced <code class="literal">ci_build.sh</code> settings and respective CI w
       Directory names are based on hashes of strings that identify the content,
       which are size-limited to some 8 characters.
       [issues <a class="ulink" href="https://github.com/networkupstools/nut/issues/3108" target="_top">#3108</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/3390" target="_top">#3390</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1711" target="_top">#1711</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/3526" target="_top">#3526</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3109" target="_top">PR #3109</a>]
+</li><li class="listitem">
+Introduced <code class="literal">tools/asciidoc-github-links.pl</code> to simplify <code class="literal">docs/Makefile.am</code>
+      generation of <code class="literal">*.adoc-parsed</code> files with substituted GitHub links, and to
+      allow that logic to be executed separately from <code class="literal">make</code> and potentially be
+      re-used by other projects. Added support for lists of PRs/issues as used
+      in this document, and support for GitHub Security Advisories (GHSA).
+      [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3594" target="_top">PR #3594</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1953" target="_top">issue #1953</a>]
 </li><li class="listitem">
 Rearranged the GHA job to prepare Dist and Docs Tarballs. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3460" target="_top">PR #3460</a>]
 </li><li class="listitem">
@@ -1843,8 +2031,7 @@ Revised behaviors for the <code class="literal">upsnotify()</code> common code i
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 It was a bit cryptic when it reported a <span class="strong"><strong>failure to notify</strong></span> (e.g. when a
      NUT program was not running as a service currently), fixed now to report
-     human-friendly text instead of internal enum codes. Follow-up to [issue
-     <a class="ulink" href="https://github.com/networkupstools/nut/issues/1590" target="_top">#1590</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/1777" target="_top">PR #1777</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/2136" target="_top">PR #2136</a>]
+     human-friendly text instead of internal enum codes. Follow-up to [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1590" target="_top">issue #1590</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/1777" target="_top">PR #1777</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/2136" target="_top">PR #2136</a>]
 </li><li class="listitem">
 Drivers should no longer print warning messages about not-initializing
      the notification subsystem because not running as a service when they
@@ -5808,4 +5995,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.34. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-08-30 17:48:58 -- Network UPS Tools 2.8.5.1040</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-09-07 10:06:18 -- Network UPS Tools 2.8.5.1040</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

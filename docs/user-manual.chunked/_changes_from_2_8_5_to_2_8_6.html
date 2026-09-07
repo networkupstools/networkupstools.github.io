@@ -74,5 +74,16 @@ Deployments using <code class="literal">nutdrv_qx</code> driver with <code class
   driver sends queries, and use a longer timeout. If this change breaks your
   device, please add <code class="literal">cypress_drain_quirk = 0</code> in your <code class="literal">ups.conf</code> and let us
   know. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2534" target="_top">issue #2534</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3563" target="_top">PR #3563</a>]
+</li><li class="listitem">
+The <code class="literal">huawei-ups2000</code> driver fixed two serious problems that affected all
+  previous NUT versions. All <code class="literal">huawei-ups2000</code> users are strongly recommended
+  to upgrade to NUT 2.8.6, all previous versions are considered too unreliable
+  to use. Due to a Modbus compatibility problem, it was not possible to <span class="strong"><strong>write
+  to any registers at all</strong></span> on some UPS models, meaning that changing any
+  <span class="strong"><strong>variable</strong></span> or sending any <span class="strong"><strong>instant command</strong></span> was impossible. Furthermore, due
+  to a broken instant command handler, some instant commands would always fail
+  with a <code class="literal">reg1 is negative</code> error (even with a compatible UPS), including
+  <code class="literal">bypass.start</code>, <code class="literal">shutdown.return</code>, <code class="literal">shutdown.reboot</code>, and
+  <code class="literal">shutdown.reboot.graceful</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3593" target="_top">issue #3593</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/3603" target="_top">#3603</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3604" target="_top">PR #3604</a>].
 </li></ul></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-08-30 17:48:58 -- Network UPS Tools 2.8.5.1040</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="Upgrading_notes.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="Upgrading_notes.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="_changes_from_2_8_4_to_2_8_5.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-09-07 10:06:18 -- Network UPS Tools 2.8.5.1040</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="Upgrading_notes.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="Upgrading_notes.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="_changes_from_2_8_4_to_2_8_5.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

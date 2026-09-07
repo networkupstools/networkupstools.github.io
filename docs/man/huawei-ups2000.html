@@ -1322,6 +1322,15 @@ USB-to-serial interface, these models were previously unsupported.</p></div>
 to endless read failures and permanent data stalls.</p></div>
 <div class="paragraph"><p>Driver v0.12 (NUT v2.8.5) fixed support for Microsoft Windows,
 Windows was previously unsupported due to a file locking bug.</p></div>
+<div class="paragraph"><p>Driver v0.14 (NUT v2.8.6) fixed two serious problems that affected all
+previous NUT versions, upgrading is strongly recommended. Due to a broken
+instant command handler, it was impossible to send some instant commands
+to the UPS, including <strong>bypass.start</strong>, <strong>shutdown.return</strong>, <strong>shutdown.reboot</strong>,
+and <strong>shutdown.reboot.graceful</strong>, any attempt to use them will fail with an
+"reg1 is negative" error in the syslog. Due to a separate Modbus compatibility
+problem, the negative impact is worse on some UPS models: it was not possible
+to <strong>write to any registers at all</strong>, meaning that changing any <strong>variable</strong> or
+sending any <strong>instant command</strong> is impossible.</p></div>
 <div class="paragraph"><p>See <strong>Historical bugs</strong> at the bottom of this manual for links.</p></div>
 </div>
 <div class="sect2">
@@ -1443,6 +1452,18 @@ Commit: call ser_close() before modbus_connect(), fix #3244:
 <a href="https://github.com/networkupstools/nut/commit/db2e148503d654726d5520d68e20e71117335813">https://github.com/networkupstools/nut/commit/db2e148503d654726d5520d68e20e71117335813</a>
 </p>
 </li>
+<li>
+<p>
+Issue 3593: huawei-ups2000: shutdown commands never power off the UPS on firmware V2R1C1SPC50 - the unit ignores Modbus function 0x10 writes; only 0x06 works
+<a href="https://github.com/networkupstools/nut/issues/3593">https://github.com/networkupstools/nut/issues/3593</a>
+</p>
+</li>
+<li>
+<p>
+Issue 3603: huawei-ups2000: bypass.start, shutdown.return, shutdown.reboot, and shutdown.reboot.graceful are broken in all NUT versions
+<a href="https://github.com/networkupstools/nut/issues/3603">https://github.com/networkupstools/nut/issues/3603</a>
+</p>
+</li>
 </ul></div>
 </div>
 <div class="sect2">
@@ -1528,7 +1549,7 @@ libmodbus home page: <a href="http://libmodbus.org">http://libmodbus.org</a>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-08-30 17:48:39 UTC -- Network UPS Tools 2.8.5.1040
+Last updated 2026-09-07 10:05:51 UTC -- Network UPS Tools 2.8.5.1040
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>
