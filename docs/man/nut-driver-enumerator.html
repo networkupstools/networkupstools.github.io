@@ -926,7 +926,11 @@ NUT device names which each such unit wraps
 <dd>
 <p>
 Show the complete normalized list of device configuration blocks
-(same as used later by the parser in the script to make decisions)
+(same as used later by the parser in the script to make decisions).
+Quotes and backslashes are retained until values are queried.
+Physical lines joined by a backslash continuation or inside double
+quotes are combined. Section checksums use this normalized text,
+including a final newline.
 </p>
 </dd>
 <dt class="hdlist1">
@@ -942,7 +946,12 @@ Show configuration block of the specified NUT device
 </dt>
 <dd>
 <p>
-Show single configuration key of the specified NUT device
+Show the decoded value of a configuration key of the specified NUT device.
+The first value token is used: double quotes group a token, backslash
+escapes the next character, and an unquoted hash starts a comment.
+Single quotes are literal characters. A flag without a value prints its
+name. Multiple keys may be requested; missing keys print an empty line
+and cause a nonzero exit status.
 </p>
 </dd>
 </dl></div>
@@ -1031,7 +1040,7 @@ Absent or unreadable <code>ups.conf</code> file
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-14 10:06:46 UTC -- Network UPS Tools 2.8.5.1200
+Last updated 2026-09-14 11:47:41 UTC -- Network UPS Tools 2.8.5.1200
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>

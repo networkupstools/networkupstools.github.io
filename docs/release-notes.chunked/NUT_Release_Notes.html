@@ -485,6 +485,11 @@ When reconnecting, report success more visibly (not only in debug), and
       against its 900 W rating. Note this is a behaviour change for units that
       report a non-zero <code class="literal">ActivePower</code>: the reading moves from <code class="literal">ups.power</code> to
       <code class="literal">ups.realpower</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3580" target="_top">issue #3580</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3581" target="_top">PR #3581</a>]
+</li><li class="listitem">
+in <code class="literal">legrand-hid</code> subdriver the <code class="literal">beeper.disable</code> instant command now
+      sends <code class="literal">AudibleAlarmControl=1</code> ("disabled") instead of <code class="literal">3</code> ("muted"),
+      so the buzzer stays off across alarms; added <code class="literal">beeper.mute</code> and
+      <code class="literal">ups.beeper.status</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3638" target="_top">issue #3638</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3639" target="_top">PR #3639</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">snmp-ups</code> driver updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -519,6 +524,11 @@ Previously when looping to start a driver (and initially failing), we
 </li></ul></div></li><li class="listitem"><p class="simpara">
 common code:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+The common state store now retains value changes which differ only in
+      letter case, including updates to opaque strings such as <code class="literal">device.contact</code>.
+      Variable names remain case-insensitive and immutable values remain
+      protected from changes. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3622" target="_top">issue #3622</a>]
+</li><li class="listitem">
 POSIX daemons now warn if their real or effective UID remains zero after
       the common credential switch. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3471" target="_top">issue #3471</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3609" target="_top">PR #3609</a>]
 </li><li class="listitem">
@@ -588,6 +598,11 @@ The <code class="literal">hidparser.c</code> code was further updated to use not
 </li></ul></div></li><li class="listitem"><p class="simpara">
 NUT client libraries:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+The Perl <code class="literal">UPS::Nut</code> module now decodes quoted values and backslash
+      escapes in query/list replies and <code class="literal">nutauth.conf</code> entries, and quotes
+      authentication arguments. Single quotes in configuration are literal.
+      Command descriptions now accept the server’s <code class="literal">CMDDESC</code> response.
+</li><li class="listitem">
 Complete support for actions documented in <code class="literal">docs/net-protocol.txt</code>
       was implemented in C++, Python and PERL bindings in-tree, and for Java
       in <a class="ulink" href="https://github.com/networkupstools/jNut" target="_top">jNut</a> nearby. Among
@@ -755,6 +770,12 @@ Added a <code class="literal">clean_exit()</code> handler similar to that in <co
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">upsd</code> data server updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Validate complete numeric values and conversion ranges for <code class="literal">MAXAGE</code>,
+      <code class="literal">TRACKINGDELAY</code>, <code class="literal">MAXCONN</code> and <code class="literal">CERTREQUEST</code> in <code class="literal">upsd.conf</code>, retaining
+      the previous setting when conversion fails. Preserve public types
+      and avoid overflow in the <code class="literal">MAXAGE</code> grace-second calculation at the
+      maximum signed integer value. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/676" target="_top">issue #676</a>]
+</li><li class="listitem">
 If we hit "Too many open files" during configuration reload, close
       the oldest client connection and retry. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3365" target="_top">issue #3365</a>]
 </li><li class="listitem">
@@ -768,6 +789,15 @@ If the <code class="literal">MAXCONN</code> requested in the configuration file 
 If SSL configuration was provided, but the server failed to apply some
       aspect of that, it should now abort with an explanation (and not proceed
       with insecure start-up like it could do before). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3331" target="_top">issue #3331</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3435" target="_top">PR #3435</a>]
+</li></ul></div></li><li class="listitem"><p class="simpara">
+The <code class="literal">nut-driver-enumerator.sh</code> script (NDE) updates:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+The shell/awk based parser now decodes <code class="literal">ups.conf</code> values using NUT token
+      syntax, preserving quoted hashes and escaped characters and ignoring
+      trailing comments. For example, <code class="literal">port = "auto" # comment</code> now properly
+      selects USB media for <code class="literal">nutdrv_qx</code>. The normalized configuration output
+      retains quotes and backslashes; changed section checksums can cause a
+      one-time reconciliation after upgrading. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3635" target="_top">PR #3635</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 Recipes, CI and helper script updates not classified above:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -6031,4 +6061,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.34. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-09-14 10:07:18 -- Network UPS Tools 2.8.5.1200</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-09-14 11:48:10 -- Network UPS Tools 2.8.5.1200</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

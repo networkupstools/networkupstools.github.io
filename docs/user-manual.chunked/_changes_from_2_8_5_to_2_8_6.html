@@ -21,7 +21,22 @@
 			text-decoration: inherit;
 		}
 	</style></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="Upgrading_notes.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="_changes_from_2_8_4_to_2_8_5.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_changes_from_2_8_5_to_2_8_6"></a>I.1. Changes from 2.8.5 to 2.8.6</h3></div></div></div><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+The Perl <code class="literal">UPS::Nut</code> module now decodes NUT quoting and backslash escapes
+  in query/list values and <code class="literal">nutauth.conf</code>, including include paths. Remove
+  manual decoding of these returned values and pass literal credentials
+  to <code class="literal">Authenticate()</code>. Single quotes in configuration are now literal, as
+  in the C parser; replace single-quoted values with double-quoted values
+  where grouping was intended. The legacy <code class="literal">Set()</code> argument contract is
+  unchanged.
+</li><li class="listitem">
 PLANNED: Keep track of any further API clean-up?
+</li><li class="listitem">
+Correct malformed numeric values in <code class="literal">upsd.conf</code> when upgrading: <code class="literal">MAXAGE</code>,
+  <code class="literal">TRACKINGDELAY</code>, <code class="literal">MAXCONN</code> and numeric <code class="literal">CERTREQUEST</code> values are now checked
+  in full and must fit their destination ranges. Values such as <code class="literal">15seconds</code>
+  were previously read as <code class="literal">15</code>; these and overflowing values are now logged
+  and ignored, retaining the previous setting. Valid decimal values,
+  leading zeroes and trailing whitespace remain accepted. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/676" target="_top">issue #676</a>]
 </li><li class="listitem">
 Potentially a breaking change for C++ clients that rushed to use the new
   SSL support options in <code class="literal">libnutclient</code>: for Mozilla NSS setup, the way to
@@ -75,6 +90,14 @@ The <code class="literal">upsmon</code> and <code class="literal">upsstats.cgi</
   loaded automatically, but its contents conflict with what <code class="literal">upsmon</code> needs
   to know, please specify <code class="literal">AUTHCONF = none</code> in <code class="literal">upsmon.conf</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3439" target="_top">issue #3439</a>]
 </li><li class="listitem">
+<code class="literal">nut-driver-enumerator</code> now preserves quotes and backslashes in normalized
+  configuration output and decodes values once using NUT token syntax.
+  Value queries omit trailing comments, take the first value token and
+  treat single quotes literally. This corrected parsing can change media
+  dependencies. Section checksums may change on upgrade and trigger the
+  usual reconciliation, including driver restarts; subsequent checks of
+  unchanged configuration remain stable. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3635" target="_top">PR #3635</a>]
+</li><li class="listitem">
 The <code class="literal">powervar_cx_usb</code>, <code class="literal">tripplite_usb</code> drivers used a built-in limit on
   reconnection attempts after which they exited (<span class="emphasis"><em>60</em></span> and <span class="emphasis"><em>10</em></span> respectively).
   This was revised to follow the new common setting <code class="literal">reconnect_max_tries</code>,
@@ -111,4 +134,4 @@ The NUT-Monitor GUI client application has historically branched from an
   of the two filenames for same contents (to pick the backend at run-time) may
   also be optimized with symbolic or hard links in packaging. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3596" target="_top">PR #3596</a>]
 </li></ul></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-09-14 10:07:17 -- Network UPS Tools 2.8.5.1200</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="Upgrading_notes.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="Upgrading_notes.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="_changes_from_2_8_4_to_2_8_5.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-09-14 11:48:10 -- Network UPS Tools 2.8.5.1200</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="Upgrading_notes.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="Upgrading_notes.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="_changes_from_2_8_4_to_2_8_5.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

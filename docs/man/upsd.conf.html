@@ -835,6 +835,12 @@ Keep in mind the security of also any backup copies of this file,
 <div class="sect1">
 <h2 id="_configuration_directives">CONFIGURATION DIRECTIVES</h2>
 <div class="sectionbody">
+<div class="paragraph"><p>The numeric arguments to <code>MAXAGE</code>, <code>TRACKINGDELAY</code>, <code>MAXCONN</code> and
+<code>CERTREQUEST</code> must be complete non-negative decimal integers, beginning
+with a digit. Leading zeroes and trailing whitespace are accepted; signs,
+leading whitespace inside quotes, fractions and trailing non-whitespace
+characters are not. Invalid or overflowing conversions are logged and
+ignored, leaving the previous setting unchanged.</p></div>
 <div class="dlist"><dl>
 <dt class="hdlist1">
 <strong>MAXAGE <em>seconds</em></strong>
@@ -847,6 +853,7 @@ time to process updates but is otherwise operational, you can use <code>MAXAGE</
 to make <code>upsd</code> wait longer.
 </p>
 <div class="paragraph"><p>Most users should leave this at the default value.</p></div>
+<div class="paragraph"><p>The value must fit in the platform&#8217;s signed <code>int</code> range. Zero is accepted.</p></div>
 </dd>
 <dt class="hdlist1">
 <strong>TRACKINGDELAY <em>seconds</em></strong>
@@ -857,6 +864,7 @@ When instant commands and variables setting status tracking is enabled, status
 execution information are kept during this amount of time, and then cleaned up.
 This defaults to 3600 (1 hour).
 </p>
+<div class="paragraph"><p>The value must fit in the platform&#8217;s signed <code>int</code> range. Zero is accepted.</p></div>
 </dd>
 <dt class="hdlist1">
 <strong>ALLOW_NO_DEVICE <em>Boolean</em></strong>
@@ -962,6 +970,9 @@ This defaults to maximum number allowed on your system.  Each UPS, each
 runs out of connections, it will no longer accept new incoming client
 connections.  Only set this if you know exactly what you&#8217;re doing.
 </p>
+<div class="paragraph"><p>Zero selects the system default. The value must fit both the platform&#8217;s
+signed <code>long</code> range and its connection-count range. Operating
+system and allocation limits may impose a lower maximum.</p></div>
 <div class="paragraph"><p>Note that on some platforms there may be a smaller amount of file descriptors
 or handles that can be polled in one operation, the server would then poll
 several smaller groups until it handles all the connections it tracks.
@@ -1155,7 +1166,7 @@ to start. Earlier releases logged the error and proceeded in insecure fashion.</
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-14 10:06:46 UTC -- Network UPS Tools 2.8.5.1200
+Last updated 2026-09-14 11:47:41 UTC -- Network UPS Tools 2.8.5.1200
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>
