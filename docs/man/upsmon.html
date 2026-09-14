@@ -986,6 +986,25 @@ See the section on UPS types for more.</p></div>
 </div>
 </div>
 <div class="sect1">
+<h2 id="_ssl_tls_configuration">SSL/TLS CONFIGURATION</h2>
+<div class="sectionbody">
+<div class="paragraph"><p><strong>upsmon</strong> can connect to <a href="upsd.html">upsd(8)</a> servers using SSL/TLS with per-server
+certificate verification and client certificate authentication. SSL/TLS
+configuration is defined in <a href="upsmon.conf.html">upsmon.conf(5)</a> using CERTPATH, CERTVERIFY,
+CERTNAME, and CERTHOST directives.</p></div>
+<div class="paragraph"><p>For systems monitoring multiple UPS devices managed by different entities
+(different CAs or security realms), <strong>upsmon</strong> automatically uses per-connection
+SSL contexts, allowing independent certificate verification and client
+certificate identities for each monitored UPS.</p></div>
+<div class="paragraph"><p>OpenSSL builds support independent per-connection certificate authorities,
+while NSS builds support per-connection client certificate selection from a
+shared process-global database.</p></div>
+<div class="paragraph"><p>See <a href="upsmon.conf.html">upsmon.conf(5)</a> for detailed SSL/TLS configuration options, and
+<a href="upscli_get_or_create_ssl_context.html">upscli_get_or_create_ssl_context(3)</a> for information on the registry
+mechanism used to manage per-connection SSL contexts.</p></div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_notify_events">NOTIFY EVENTS</h2>
 <div class="sectionbody">
 <div class="paragraph"><p><strong>upsmon</strong> senses several events as it monitors each UPS.  They are called
@@ -1885,6 +1904,13 @@ tool outputs.</p></div>
 <a href="upsrw.html">upsrw(8)</a>, <a href="upsmon.html">upsmon(8)</a></p></div>
 </div>
 <div class="sect2">
+<h3 id="_client_libraries_and_utilities">Client libraries and utilities:</h3>
+<div class="paragraph"><p><a href="upsclient.html">upsclient(3)</a>, <a href="upscli_init.html">upscli_init(3)</a>, <a href="upscli_cleanup.html">upscli_cleanup(3)</a>,
+<a href="upscli_get_or_create_ssl_context.html">upscli_get_or_create_ssl_context(3)</a>,
+<a href="upscli_get_or_create_ssl_context_authconf.html">upscli_get_or_create_ssl_context_authconf(3)</a>,
+<a href="upscli_set_ssl_context.html">upscli_set_ssl_context(3)</a>, <a href="upscli_get_ssl_context.html">upscli_get_ssl_context(3)</a></p></div>
+</div>
+<div class="sect2">
 <h3 id="_cgi_programs">CGI programs:</h3>
 <div class="paragraph"><p><a href="upsset.cgi.html">upsset.cgi(8)</a>, <a href="upsstats.cgi.html">upsstats.cgi(8)</a>, <a href="upsimage.cgi.html">upsimage.cgi(8)</a></p></div>
 </div>
@@ -1898,7 +1924,7 @@ tool outputs.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-14 09:51:50 UTC -- Network UPS Tools 2.8.5.1200
+Last updated 2026-09-14 09:58:29 UTC -- Network UPS Tools 2.8.5.1200
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>

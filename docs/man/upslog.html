@@ -1043,6 +1043,7 @@ Overrides the optional <code>NUT_DEFAULT_CONNECT_TIMEOUT</code> environment vari
   Require use of the specified <a href="nutauth.conf.html">nutauth.conf(5)</a> file (fail if absent,
   not accessible, or has content errors when parsed) to specify connection
   security settings and/or credentials for this run.
+  A non-absolute path is treated as relative to NUT configuration directory.
 </p>
 <div class="admonitionblock">
 <table><tr>
@@ -1134,10 +1135,13 @@ other (single-UPS options were ignored if tuples are also provided).</p></div>
 <div class="paragraph"><p>Since NUT v2.8.3, the single-UPS options are added to the list of tuples,
 so both legacy and new options can be reliably used to monitor multiple
 devices in the same run.</p></div>
-<div class="paragraph"><p>Since this client can establish multiple connections, keep in mind that
-currently it can only identify itself with some one (first seen) client
-certificate, if <code>CERTIDENT</code> settings are used in the <a href="nutauth.conf.html">nutauth.conf(5)</a>
-file. Multiple <code>CERTHOST</code> directives for specially trusted servers can be used.</p></div>
+<div class="paragraph"><p>As this client can establish multiple connections, since NUT v2.8.6 release it
+supports per-connection SSL contexts for independent certificate verification
+and client certificate identities. This allows <strong>upslog</strong> to securely log data
+from multiple UPS servers managed by different entities (different CAs or
+security realms). Configuration is specified via <a href="nutauth.conf.html">nutauth.conf(5)</a>
+using CERTPATH, CERTVERIFY, CERTNAME, and CERTHOST directives, and is
+automatically applied per-connection.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -1150,7 +1154,14 @@ file. Multiple <code>CERTHOST</code> directives for specially trusted servers ca
 <div class="sect2">
 <h3 id="_clients">Clients:</h3>
 <div class="paragraph"><p><a href="upsc.html">upsc(8)</a>, <a href="upscmd.html">upscmd(8)</a>,
-<a href="upsrw.html">upsrw(8)</a>, <a href="upsmon.html">upsmon(8)</a>, <a href="upssched.html">upssched(8)</a>,
+<a href="upsrw.html">upsrw(8)</a>, <a href="upsmon.html">upsmon(8)</a>, <a href="upssched.html">upssched(8)</a></p></div>
+</div>
+<div class="sect2">
+<h3 id="_client_libraries_and_utilities">Client libraries and utilities:</h3>
+<div class="paragraph"><p><a href="upsclient.html">upsclient(3)</a>, <a href="upscli_init.html">upscli_init(3)</a>, <a href="upscli_cleanup.html">upscli_cleanup(3)</a>,
+<a href="upscli_get_or_create_ssl_context.html">upscli_get_or_create_ssl_context(3)</a>,
+<a href="upscli_get_or_create_ssl_context_authconf.html">upscli_get_or_create_ssl_context_authconf(3)</a>,
+<a href="upscli_set_ssl_context.html">upscli_set_ssl_context(3)</a>, <a href="upscli_get_ssl_context.html">upscli_get_ssl_context(3)</a>,
 <a href="nutauth.conf.html">nutauth.conf(5)</a></p></div>
 </div>
 <div class="sect2">
@@ -1163,7 +1174,7 @@ file. Multiple <code>CERTHOST</code> directives for specially trusted servers ca
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-14 09:51:50 UTC -- Network UPS Tools 2.8.5.1200
+Last updated 2026-09-14 09:58:29 UTC -- Network UPS Tools 2.8.5.1200
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>

@@ -796,6 +796,44 @@ call <a href="upscli_cleanup.html">upscli_cleanup(3)</a> to flush cache files an
 </div>
 </div>
 <div class="sect1">
+<h2 id="_ssl_context_configuration">SSL CONTEXT CONFIGURATION</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>The NUT upsclient library supports multiple independent SSL contexts within a
+single process, enabling simultaneous connections to multiple NUT servers with
+different certificate authorities and assuming different client certificate
+identities.</p></div>
+<div class="paragraph"><p>A process-wide registry caches SSL context configurations, keyed by parameters
+(CA path, verify mode, client certificate identity, etc.).</p></div>
+<div class="paragraph"><p>Contexts are created by <a href="upscli_get_or_create_ssl_context.html">upscli_get_or_create_ssl_context(3)</a> or
+<a href="upscli_get_or_create_ssl_context_authconf.html">upscli_get_or_create_ssl_context_authconf(3)</a> and attached to individual
+connections via <a href="upscli_set_ssl_context.html">upscli_set_ssl_context(3)</a> before calling
+<a href="upscli_connect.html">upscli_connect(3)</a>.</p></div>
+<div class="paragraph"><p>For most applications, the default context created by <a href="upscli_init.html">upscli_init(3)</a>
+legacy method, or <a href="upscli_init2.html">upscli_init2(3)</a> or <a href="upscli_init_authconf.html">upscli_init_authconf(3)</a>
+methods added in NUT v2.8.6, is sufficient for connections to a single NUT
+data server or multiple servers sharing a common security management realm.</p></div>
+<div class="paragraph"><p>Truly multi-server applications (e.g., <code>upsmon</code>, <code>upslog</code>, <code>upsstats.cgi</code>)
+can however benefit from per-connection contexts when servers are managed
+by different entities (different CAs or client certificate realms).</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+NUT builds against OpenSSL support independent <code>SSL_CTX</code> objects per server
+  that can be used by <code>SSL</code> objects for individual connections, for complete
+  multi-realm isolation.
+</p>
+</li>
+<li>
+<p>
+NUT builds against Mozilla NSS share a process-global certificate database
+  (so the NSS DB files prepared by sysadmin must include all CAs and other
+  data), but support per-connection client certificate identity selection.
+</p>
+</li>
+</ul></div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_network_functions">NETWORK FUNCTIONS</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>To create a new connection, use <a href="upscli_connect.html">upscli_connect(3)</a>.  This will also
@@ -848,6 +886,9 @@ also be used to retrieve the error number.  These numbers are defined in
 <a href="upscli_add_host_cert.html">upscli_add_host_cert(3)</a>,
 <a href="upscli_connect.html">upscli_connect(3)</a>, <a href="upscli_disconnect.html">upscli_disconnect(3)</a>,
 <a href="upscli_fd.html">upscli_fd(3)</a>,
+<a href="upscli_get_or_create_ssl_context.html">upscli_get_or_create_ssl_context(3)</a>,
+<a href="upscli_get_or_create_ssl_context_authconf.html">upscli_get_or_create_ssl_context_authconf(3)</a>,
+<a href="upscli_set_ssl_context.html">upscli_set_ssl_context(3)</a>, <a href="upscli_get_ssl_context.html">upscli_get_ssl_context(3)</a>,
 <a href="upscli_getvar.html">upscli_getvar(3)</a>, <a href="upscli_list_next.html">upscli_list_next(3)</a>,
 <a href="upscli_list_start.html">upscli_list_start(3)</a>, <a href="upscli_readline.html">upscli_readline(3)</a>,
 <a href="upscli_sendline.html">upscli_sendline(3)</a>,
@@ -861,7 +902,7 @@ also be used to retrieve the error number.  These numbers are defined in
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-14 09:51:50 UTC -- Network UPS Tools 2.8.5.1200
+Last updated 2026-09-14 09:58:29 UTC -- Network UPS Tools 2.8.5.1200
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>

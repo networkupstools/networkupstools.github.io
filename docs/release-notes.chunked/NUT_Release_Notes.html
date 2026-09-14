@@ -632,6 +632,21 @@ The <code class="literal">libupsclient</code> © and <code class="literal">libnu
 </li><li class="listitem">
 Introduced support for "authconf" files to store and convey NUT client
       authentication details. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3329" target="_top">issue #3329</a>]
+</li><li class="listitem">
+Added C/C++ client support for multiple independent OpenSSL contexts
+      in the same process, or using multiple NSS client certificates with
+      its single context, for ability to connect to NUT data servers managed
+      by different entities (e.g. certificate authorities and client/server
+      realms). In-tree multiple-connection clients (<code class="literal">upsmon</code>, <code class="literal">upsstats.cgi</code>,
+      <code class="literal">upslog</code>) were updated to use this feature. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3439" target="_top">issue #3439</a>]
+</li><li class="listitem">
+To support the ability of multiple SSL authentication details for
+      <code class="literal">upsmon</code> and <code class="literal">upsstats.cgi</code>, their configuration files were extended
+      with <code class="literal">AUTHCONF</code> keyword which can point to the <code class="literal">nutauth.conf</code> file
+      they should use, or pass the special values <code class="literal">default</code> (require a
+      user- or system-provided <code class="literal">nutauth.conf</code> file) or <code class="literal">none</code> (skip
+      authconf discovery entirely), matching the <code class="literal">-A</code> option semantics
+      of command-line NUT clients. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3439" target="_top">issue #3439</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 Various clients:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -650,10 +665,10 @@ Enabled support for <code class="literal">nutauth.conf</code> files to provide c
       SSL settings in the client which previously only did best-effort attempts
       at secure communications without an individual certificate, and only
       anonymously for reading. The new <code class="literal">-A filename</code> option defaults to trying
-      to use a <code class="literal">nutauth.conf</code> file (if found in one of the default locations)
-      but not failing if one is not usable; specific values can require use of
-      such a file (<code class="literal">default</code>) or to not even try reading one (<code class="literal">none</code>).
-      [issues <a class="ulink" href="https://github.com/networkupstools/nut/issues/3329" target="_top">#3329</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/3411" target="_top">#3411</a>]
+      to use a <code class="literal">nutauth.conf</code> file (if NOT specified here, but rather found in
+      one of the default locations) but not failing if one is not usable; any
+      specific values can require use of such a file (<code class="literal">default</code>) or to not even
+      try reading one (<code class="literal">none</code>). [issues <a class="ulink" href="https://github.com/networkupstools/nut/issues/3329" target="_top">#3329</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/3411" target="_top">#3411</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">upslog</code> client/tool updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -669,6 +684,9 @@ Added support for best-effort use of <code class="literal">nutauth.conf</code> f
 Added support for best-effort use of <code class="literal">nutauth.conf</code> files from default
       locations described above (no way to choose the location, other than
       by web-server environment variables for CGI calls). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3329" target="_top">#3329</a>]
+</li><li class="listitem">
+<code class="literal">upsstats.cgi</code> additionally has a new <code class="literal">AUTHCONF</code> configuration option
+      that can be passed via its <code class="literal">hosts.conf</code> file, as detailed above. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3439" target="_top">#3439</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">upsmon</code> client updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -6013,4 +6031,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.34. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-09-14 09:52:14 -- Network UPS Tools 2.8.5.1200</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-09-14 09:58:52 -- Network UPS Tools 2.8.5.1200</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
