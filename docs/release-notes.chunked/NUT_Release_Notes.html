@@ -48,6 +48,11 @@ control history for "live" codebase.</p><div class="section"><div class="titlepa
 </li><li class="listitem"><p class="simpara">
 Fix fallout of development in NUT v2.8.0 through v2.8.5:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+PyNUT: <code class="literal">GetUPSCommands()</code> now requests command descriptions with the
+      advertised identifiers on Python 3 and uses those identifiers when
+      extracting the response. Returned keys and descriptions remain byte
+      sequences. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3621" target="_top">issue #3621</a>]
+</li><li class="listitem">
 <code class="literal">nut-scanner</code> tool updates:
 </li></ul></div></li><li class="listitem"><p class="simpara">
 Mutexes used in parallelized scans were not properly released on
@@ -596,6 +601,11 @@ Enhanced client side of <code class="literal">STARTTLS</code> dialog to follow u
       This change impacted also the classic C <code class="literal">libupsclient</code> library.
       [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3387" target="_top">issue #3387</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3402" target="_top">PR #3402</a>]
 </li><li class="listitem">
+<code class="literal">PyNUTClient.disconnect()</code> now attempts to send <code class="literal">LOGOUT</code>, closes the
+      socket and clears its reference while the client remains alive. Such
+      cleanup remains harmless when repeated or when socket operations fail.
+      [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3619" target="_top">issue #3619</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3627" target="_top">PR #3627</a>]
+</li><li class="listitem">
 Updated OpenSSL code paths in the <code class="literal">libupsclient</code> C library to support
       features earlier only available with NSS builds, like specifying the
       client certificate+key, optionally with password, and pinning expected
@@ -697,6 +707,10 @@ Rewrote the WIN32 code path to spawn the timer daemon. [<a class="ulink" href="h
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">NUT-Monitor</code> Python GUI client:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+The PyQt5 and PyQt6 <code class="literal">NUT-Monitor</code> commands now share one Python 3
+      implementation. The dispatcher accepts <code class="literal">NUT_MONITOR_QT=5</code> or
+      <code class="literal">NUT_MONITOR_QT=6</code> to require a particular backend. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3596" target="_top">PR #3596</a>]
+</li><li class="listitem">
 Fixed Qt tray tooltips to render in plain text, not rich text which
       ended up as literal HTML on KDE Plasma 6; now that rich text formatting
       is only used for main window status labels. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3430" target="_top">PR #3430</a>]
@@ -5999,4 +6013,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.34. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-09-09 15:07:28 -- Network UPS Tools 2.8.5.1040</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-09-14 09:52:14 -- Network UPS Tools 2.8.5.1200</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
