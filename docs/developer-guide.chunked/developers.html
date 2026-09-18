@@ -44,7 +44,14 @@ formatting string to those expectations.  Such hardened methods include
 <code class="literal">vsnprintfcat_dynamic()</code>, and <code class="literal">mkstr_dynamic()</code> which returns a <code class="literal">char *</code>
 to its statically allocated buffer.  Common string operations in drivers
 in this case can benefit from similar <code class="literal">dstate_setinfo_dynamic()</code> or
-<code class="literal">dstate_addenum_dynamic()</code> methods.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_error_reporting"></a>Error reporting</h4></div></div></div><p>Don’t call <code class="literal">syslog()</code> directly.  Use <code class="literal">upslog_with_errno()</code> and <code class="literal">upslogx()</code>.
+<code class="literal">dstate_addenum_dynamic()</code> methods.</p><p>Existing code which intentionally uses a nonliteral format string can
+bracket the call with <code class="literal">nut-pragmas-format-nonliteral.h</code> and
+<code class="literal">nut-pragmas-format-nonliteral-end.h</code> to quiesce <code class="literal">-Wformat-nonliteral</code>
+and <code class="literal">-Wformat-security</code> diagnostics. These private headers can be included
+repeatedly, preserving the existing compiler capability guards and warning
+scope. They do not validate format strings; keep the reason for using a
+nonliteral format string next to the call and prefer the hardened methods
+above when applicable.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_error_reporting"></a>Error reporting</h4></div></div></div><p>Don’t call <code class="literal">syslog()</code> directly.  Use <code class="literal">upslog_with_errno()</code> and <code class="literal">upslogx()</code>.
 They may also write to the <code class="literal">syslog</code>, <code class="literal">stderr</code>, or both as appropriate.
 This means you don’t have to worry about whether you’re running in the
 background or not.</p><p>The <code class="literal">upslog_with_errno()</code> routine prints your message plus the string
@@ -626,14 +633,25 @@ document):</p><pre class="screen">#if (defined HAVE_PRAGMA_GCC_DIAGNOSTIC_PUSH_P
 # pragma GCC diagnostic pop
 #endif</pre><p>Some frequently repeated pragma combinations, including the example above,
 were off-loaded into pairs of <code class="literal">include/nut-pragmas-*.h</code> files to begin and
-end a quiesced block of source code, e.g.:</p><pre class="screen">        switch(...) {
+end a quiesced block of source code. The <code class="literal">nut-pragmas-range-checks.h</code> and
+<code class="literal">nut-pragmas-range-checks-end.h</code> pair covers the full combination of numeric
+range check warnings used in client and HID communication code. Use it only
+where both the warning set and its conditions match. For example, the
+covered-switch pair is used as follows:</p><pre class="screen">        switch(...) {
                 ...
 #include "nut-pragmas-covered-switch-default.h"
                 default:
                         /* Must not occur. */
                         break;
 #include "nut-pragmas-covered-switch-default-end.h"
-        }</pre></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_switch_case_fall_through"></a>Switch case fall-through</h4></div></div></div><p>While C standards allow to write <code class="literal">switch</code> statements to "fall through"
+        }</pre><p>The <code class="literal">nut-pragmas-type-limits.h</code> and <code class="literal">nut-pragmas-type-limits-end.h</code>
+pair can quiesce <code class="literal">-Wtautological-constant-out-of-range-compare</code> and
+<code class="literal">-Wtype-limits</code> around type range checks.</p><p>The <code class="literal">nut-pragmas-unreachable-code.h</code> and
+<code class="literal">nut-pragmas-unreachable-code-end.h</code> pair suppresses <code class="literal">-Wunreachable-code</code>
+using the existing aggregate GCC capability guard and Clang pragmas.</p><p>The headers preserve the independent warning guards and can be included
+more than once. Keep the pair at the original diagnostic boundaries;
+regions with different guards or additional warnings need their own
+pragmas.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_switch_case_fall_through"></a>Switch case fall-through</h4></div></div></div><p>While C standards allow to write <code class="literal">switch</code> statements to "fall through"
 from handling one case into another, modern compilers frown upon that
 practice and spew warnings which complicate detecting real bugs in the
 code (and also looking back at some of the cases written decades ago,
@@ -921,4 +939,4 @@ scenarios automatically. If your code adds a substantial feature, consider
 extending the <code class="literal">Jenkinsfile-dynamatrix</code> and/or <code class="literal">ci_build.sh</code> scripts in the
 workspace root to add another <code class="literal">BUILD_TYPE</code> to the matrix of tests run in
 parallel.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-09-14 11:55:35 -- Network UPS Tools 2.8.5.1200</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="versioning.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="new-drivers.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-09-18 23:46:45 -- Network UPS Tools 2.8.5.1200</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="versioning.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="new-drivers.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

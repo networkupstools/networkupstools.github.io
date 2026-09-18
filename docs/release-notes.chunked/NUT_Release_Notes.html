@@ -54,9 +54,15 @@ PyNUT: <code class="literal">GetUPSCommands()</code> now requests command descri
       sequences. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3621" target="_top">issue #3621</a>]
 </li><li class="listitem">
 <code class="literal">nut-scanner</code> tool updates:
-</li></ul></div></li><li class="listitem"><p class="simpara">
+</li></ul></div></li><li class="listitem">
 Mutexes used in parallelized scans were not properly released on
         failure code paths (impacts likely all 2.8.x until now). [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3551" target="_top">PR #3551</a>]
+</li><li class="listitem"><p class="simpara">
+When the NUT client library was not found under its known file names
+        and had to be loaded by the libtool default search instead, the
+        result was stored as the availability of the XML/HTTP scan. So the
+        <code class="literal">-M</code> scan could be disabled despite a working <code class="literal">libneon</code>, or offered
+        without one (impacts NUT v2.8.3 through v2.8.5). [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3657" target="_top">PR #3657</a>]
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 USB drivers: fixed an out-of-bounds read of the candidate HID report
       descriptor lengths, which could cause a segmentation fault (regression
@@ -362,6 +368,10 @@ Added an <code class="literal">omron</code> USB subdriver and an <code class="li
       on an unloaded BN150T over USB; other OMRON models and serial connections
       are untested. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3112" target="_top">issue #3112</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3554" target="_top">PR #3554</a>]
 </li><li class="listitem">
+Updated <code class="literal">voltronic</code> subdriver to support Microtek/Voltronic UPS devices
+      that report <code class="literal">QPI</code> as <code class="literal">(PI71</code>, such as Microtek GI3KL 3000VA Online UPS.
+      [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3655" target="_top">PR #3655</a>]
+</li><li class="listitem">
 In <code class="literal">Voltronic-QS-Hex</code> subdriver, the format string sanity check added in
       recent NUT releases caught a mismatch in <code class="literal">ups.load</code> reading. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3532" target="_top">issue #3532</a>]
 </li><li class="listitem">
@@ -524,10 +534,17 @@ Previously when looping to start a driver (and initially failing), we
 </li></ul></div></li><li class="listitem"><p class="simpara">
 common code:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+The configuration and protocol parser now accepts a literal <code class="literal">#</code>
+      inside double quotes, including in UPS and <code class="literal">dummy-ups</code> outlet
+      descriptions. Unquoted <code class="literal">#</code> still starts a comment, and escaped
+      hashes remain supported. Encoded output continues to escape hashes
+      for older peers; default <code class="literal">upsc</code> text output is unchanged.
+      [issues <a class="ulink" href="https://github.com/networkupstools/nut/issues/607" target="_top">#607</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1306" target="_top">#1306</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3633" target="_top">PR #3633</a>]
+</li><li class="listitem">
 The common state store now retains value changes which differ only in
       letter case, including updates to opaque strings such as <code class="literal">device.contact</code>.
       Variable names remain case-insensitive and immutable values remain
-      protected from changes. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3622" target="_top">issue #3622</a>]
+      protected from changes. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3622" target="_top">issue #3622</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3630" target="_top">PR #3630</a>]
 </li><li class="listitem">
 POSIX daemons now warn if their real or effective UID remains zero after
       the common credential switch. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3471" target="_top">issue #3471</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3609" target="_top">PR #3609</a>]
@@ -6061,4 +6078,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.34. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-09-14 11:55:35 -- Network UPS Tools 2.8.5.1200</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-09-18 23:46:45 -- Network UPS Tools 2.8.5.1200</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

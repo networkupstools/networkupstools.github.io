@@ -910,8 +910,38 @@ not be impacted.</p></div>
 is generally named <code>something.dev</code> or <code>something.seq</code>. It contains a list of
 all valid variables and associated values (you can later use <code>upsrw</code>
 only to modify values of these variables), and has the same format as an
-<a href="upsc.html">upsc(8)</a> data dump (<code>&lt;varname&gt;: &lt;value&gt;</code>). This means you can easily
-create definition files from an existing UPS using <code>upsc &gt; file.dev</code>.</p></div>
+<a href="upsc.html">upsc(8)</a> data dump (<code>&lt;varname&gt;: &lt;value&gt;</code>). You can use
+<code>upsc &gt; file.dev</code> as a starting point for a definition file.</p></div>
+<div class="paragraph"><p>Values are read with the common NUT configuration parser. Unquoted value
+tokens are joined with a single space; double quotes preserve spaces
+inside a token. Single quotes (apostrophes) are literal characters.
+An unescaped <code>#</code> outside double quotes starts a comment, while a <code>#</code>
+inside double quotes is literal. For example:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>outlet.1.desc: Outlet #1
+outlet.2.desc: "Outlet \#2"
+outlet.3.desc: "Outlet #3"
+outlet.4.desc: Outlet \#4</code></pre>
+</div></div>
+<div class="paragraph"><p>These values become <code>Outlet</code>, <code>Outlet #2</code>, <code>Outlet #3</code>, and <code>Outlet #4</code>,
+respectively. The last example has two value tokens, <code>Outlet</code> and <code>#4</code>,
+which <strong>dummy-ups</strong> joins with a space. Escaping that space makes one token
+with the same value:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>outlet.4.desc: Outlet\ \#4</code></pre>
+</div></div>
+<div class="paragraph"><p>Older versions of the parser require <code>\#</code> even inside
+double quotes. Backslashes quote the next permitted character once, so
+<code>\n</code> becomes <code>n</code>, while <code>\\</code> becomes a single literal backslash.
+A backslash followed by a physical newline continues the logical line.
+An unescaped <code>=</code> outside double quotes is a separate token; quote or
+escape it when it is part of a value.</p></div>
+<div class="paragraph"><p>The default <code>upsc</code> output does not add quoting or escaping. Before reading
+such a dump back with <strong>dummy-ups</strong>, quote or escape values containing these
+special characters as needed. Its JSON output preserves string values
+unambiguously, but JSON is not a <strong>dummy-ups</strong> definition file format.</p></div>
 <div class="paragraph"><p>Note that the Network UPS project provides an extensive
 <a href="https://www.networkupstools.org/ddl/index.html">DDL (Devices Dumps Library)</a>
 with files which can be used for modelling real devices.
@@ -1132,7 +1162,7 @@ to represent the "real" device for this to work.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-14 11:55:05 UTC -- Network UPS Tools 2.8.5.1200
+Last updated 2026-09-18 23:46:17 UTC -- Network UPS Tools 2.8.5.1200
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>
