@@ -28,21 +28,19 @@ to NUT discovery. Both static and shared versions are provided.</p><p><a class="
 functions.</p><p>Here is a simple example that scans for USB devices, and use its own
 iteration function to display results:</p><p><strong>Scanning and reporting example. </strong>
 </p><pre class="screen">        #include &lt;stdlib.h&gt;
+        #include &lt;stdio.h&gt;
         #include &lt;unistd.h&gt;
         #include &lt;string.h&gt;
 
-        /* Only enable USB scan */
-        #define HAVE_USB_H
-
         #include "nut-scan.h"
 
-        int main()
+        int main(void)
         {
-                nutscan_options_t * opt;
-                nutscan_device_t *device;
-                nutscan_usb_t usb_scanopts;
+                nutscan_options_t       *opt;
+                nutscan_device_t        *device;
+                nutscan_usb_t   usb_scanopts = {0};
 
-                nutscan-init();
+                nutscan_init();
 
                 if ((device = nutscan_scan_usb(&amp;usb_scanopts)) == NULL) {
                         printf("No device found\n");
@@ -50,7 +48,7 @@ iteration function to display results:</p><p><strong>Scanning and reporting exam
                 }
 
                 /* Rewind the list */
-                while(device-&gt;prev != NULL) {
+                while (device-&gt;prev != NULL) {
                         device = device-&gt;prev;
                 }
 
@@ -60,21 +58,21 @@ iteration function to display results:</p><p><strong>Scanning and reporting exam
                                 device-&gt;driver, device-&gt;port);
 
                         /* process options (serial number, bus, ...) */
-                        opt = &amp;(device-&gt;opt);
-                        do {
-                                if( opt-&gt;option != NULL ) {
-                                        printf("\t%s",opt-&gt;option);
-                                        if( opt-&gt;value != NULL ) {
+                        opt = device-&gt;opt;
+                        while (opt != NULL) {
+                                if (opt-&gt;option != NULL) {
+                                        printf("\t%s", opt-&gt;option);
+                                        if (opt-&gt;value != NULL) {
                                                 printf(": \"%s\"", opt-&gt;value);
                                         }
                                         printf("\n");
                                 }
                                 opt = opt-&gt;next;
-                        } while( opt != NULL );
+                        }
 
                         device = device-&gt;next;
                 }
-                while( device != NULL );
+                while (device != NULL);
 
                 exit(EXIT_SUCCESS);
         }</pre><p>
@@ -88,4 +86,4 @@ manual page and the various
 referenced in the same file.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_configuration_helpers"></a>Configuration helpers</h4></div></div></div><p>NUT provides helper scripts to ease the configuration step of your program,
 by detecting the right compilation and link flags.</p><p>For more information, refer to a
 <a class="link" href="lib-info.html" title="C. NUT libraries complementary information">Appendix B: NUT libraries complementary information</a>.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_python_2"></a>8.2. Python</h3></div></div></div><p>Python support for NUT discovery features is not yet available.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_perl_2"></a>8.3. Perl</h3></div></div></div><p>Perl support for NUT discovery features is not yet available.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_java"></a>8.4. Java</h3></div></div></div><p>Java support for NUT discovery features is not yet available.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-09-18 23:58:08 -- Network UPS Tools 2.8.5.1200</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="augeas.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="new-clients.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-10-07 10:18:34 -- Network UPS Tools 2.8.5.1411</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="augeas.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="new-clients.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

@@ -1271,7 +1271,7 @@ readable at that point.</p></div>
  # if shutdown was caused by UPS, perform Belkin UPS workaround.
  if [ -f /etc/killpower ] || /usr/sbin/upsmon -K ; then
     echo "Waiting for AC power, or for UPS batteries to run out..."
-    /usr/bin/belkinunv -x wait /dev/ttyS1
+    /usr/bin/belkinunv -s belkinups -x wait -x port=/dev/ttyS1
 
     # we get here if the power came back on. Reboot.
     echo "Power is back. Rebooting..."
@@ -1289,7 +1289,7 @@ file system integrity checks are done.</p></div>
  # charge to a comfortable level before writing anything to disk
  if [ -f /etc/killpower ] || /usr/sbin/upsmon -K ; then
     echo "Waiting for UPS battery charge to reach 60%..."
-    /usr/bin/belkinunv -x wait=60 -x nohang /dev/ttyS1
+    /usr/bin/belkinunv -s belkinups -x wait=60 -x nohang -x port=/dev/ttyS1
  fi</code></pre>
 </div></div>
 </div>
@@ -1357,7 +1357,7 @@ The documentation for the protocol used by this UPS:
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-18 23:57:43 UTC -- Network UPS Tools 2.8.5.1200
+Last updated 2026-10-07 10:15:13 UTC -- Network UPS Tools 2.8.5.1411
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>

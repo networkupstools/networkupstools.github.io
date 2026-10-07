@@ -1015,6 +1015,21 @@ attached load, if possible.
 <div class="paragraph"><p>You should use <code>upsdrvctl shutdown</code> whenever possible instead of
 calling this directly. Note that the constrained operating system
 context for shutdown typically rules out use of <code>upsdrvsvcctl shutdown</code>.</p></div>
+<div class="paragraph"><p>With the driver daemon for this UPS stopped, <code>-k</code> can also send an instant
+command selected by <code>sdcommands</code> directly to the device, without
+<a href="upsd.html">upsd(8)</a>. If the daemon is running, <code>-k</code> first requests its configured
+shutdown action; the command-line <code>sdcommands</code> override is not passed to it.</p></div>
+<div class="paragraph"><p>For example, to cancel a pending shutdown, if supported by the driver and
+device:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>nutdrv_qx -a myups -x sdcommands=shutdown.stop -k -F</code></pre>
+</div></div>
+<div class="paragraph"><p>The <code>-F</code> option keeps the driver in the foreground.
+Use the driver executable and UPS section name for your configuration, and
+place <code>-x</code> after <code>-a</code> to override the setting from <code>ups.conf</code>. See
+<code>sdcommands</code> in <a href="ups.conf.html">ups.conf(5)</a> for details. A comma-separated list tries
+alternatives until one succeeds; it does not execute every command.</p></div>
 </dd>
 <dt class="hdlist1">
 <strong>-r</strong> <em>directory</em>
@@ -1387,7 +1402,7 @@ information.</p></div>
 </li>
 <li>
 <p>
-<a href="generic_gpio.html">generic_gpio(8)</a>
+<a href="generic_gpio_libgpiod.html">generic_gpio_libgpiod(8)</a>
 </p>
 </li>
 <li>
@@ -1662,7 +1677,7 @@ information.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-18 23:57:42 UTC -- Network UPS Tools 2.8.5.1200
+Last updated 2026-10-07 10:15:09 UTC -- Network UPS Tools 2.8.5.1411
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>

@@ -1379,9 +1379,11 @@ interrupt transfer this driver attempts will be rejected by the kernel
 until the driver process is restarted. The driver detects this, logs a
 warning, and backs off between attempts instead of retrying at full
 speed. It cannot recover on its own.</p></div>
-<div class="paragraph"><p>Neither this driver nor NUT&#8217;s shared USB layer (<code>nut_libusb.c</code>) attempts
-to detach <code>usbhid</code> on its own. A udev rule that unbinds <code>usbhid</code> from the
-UPS&#8217;s vendor/product ID avoids this. For example, for VID:PID <code>051d:0003</code>
+<div class="paragraph"><p>NUT&#8217;s shared USB backends (<code>libusb0.c</code> and <code>libusb1.c</code>) attempt to detach
+a kernel driver when the relevant libusb APIs are available. This does
+not guarantee recovery if <code>usbhid</code> reclaims the interface while this
+driver is running. A udev rule that unbinds <code>usbhid</code> from the UPS&#8217;s
+vendor/product ID can avoid this conflict. For example, for VID:PID <code>051d:0003</code>
 (APC Smart-UPS 500 / SCL500RMI1UC):</p></div>
 <div class="listingblock">
 <div class="content">
@@ -1448,7 +1450,7 @@ Nicolai <em>nmbro</em> Brogaard &lt;nicolai.brogaard+<a href="mailto:nut@gmail.c
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-18 23:57:43 UTC -- Network UPS Tools 2.8.5.1200
+Last updated 2026-10-07 10:15:13 UTC -- Network UPS Tools 2.8.5.1411
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>

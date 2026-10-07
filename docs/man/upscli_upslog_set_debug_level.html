@@ -783,12 +783,12 @@ and sub-process tag variables in the <code>libupsclient</code> build</p></div>
 
         const void *upscli_upslog_cookie(void);
 
-        void upscli_set_debug_level(int, const void *cookie);
-        int  upscli_get_debug_level(void);
+        void upscli_upslog_set_debug_level(int, const void *cookie);
+        int  upscli_upslog_get_debug_level(void);
 
-        void upscli_setprocname(const char *full_procname, const void *cookie);
-        void upscli_setproctag(const char *tag, const void *cookie);
-        const char *upscli_getproctag(void);
+        void upscli_upslog_setprocname(const char *full_procname, const void *cookie);
+        void upscli_upslog_setproctag(const char *tag, const void *cookie);
+        const char *upscli_upslog_getproctag(void);
 
         struct timeval *upscli_upslog_start_sync(struct timeval *tv, const void *cookie);</code></pre>
 </div></div>
@@ -811,9 +811,9 @@ Third-party clients may safely pass <em>NULL</em>.</p></div>
 <div class="paragraph"><p>These methods allow to set or retrieve the value of <code>nut_debug_level</code>
 setting known by the <em>libupsclient</em> library, regardless of build mode.</p></div>
 <div class="paragraph"><p>The most likely use (at least in NUT programs) is to call
-<code>upscli_set_debug_level(nut_debug_level);</code> after changing the
-original variable. Values of the debugging level are zero to disable
-debug, may be negative for a few special cases, and generally are
+<code>upscli_upslog_set_debug_level(nut_debug_level, nut_common_cookie());</code>
+after changing the original variable. Values of the debugging level are
+zero to disable debug, may be negative for a few special cases, and generally are
 positive numbers to cut off the more verbose logging attempts;
 otherwise it is up to the code base and NUT style guide practices
 to assign certain levels to some classes of messages.</p></div>
@@ -850,7 +850,7 @@ stdout and stderr streams.</td>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-18 23:57:42 UTC -- Network UPS Tools 2.8.5.1200
+Last updated 2026-10-07 10:15:12 UTC -- Network UPS Tools 2.8.5.1411
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>

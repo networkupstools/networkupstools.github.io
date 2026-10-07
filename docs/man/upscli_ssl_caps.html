@@ -814,13 +814,12 @@ the <code>stunnel</code> tool can be explored.</p></div>
 <div class="sect1">
 <h2 id="_return_value">RETURN VALUE</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>The <strong>upscli_ssl_caps</strong>() function effectively returns <em>0</em> if SSL support is
-missing, <em>1</em> if OpenSSL can be used, or <em>2</em> if Mozilla NSS can be used,
-since currently the backends are exclusive and it matters because they
-are differently capable.</p></div>
-<div class="paragraph"><p>In the future it may return <em>-1</em> in the event of an error, or e.g. <em>3</em> if
-both OpenSSL and Mozilla NSS could be supported simultaneously (current code
-structure does not allow for that though).</p></div>
+<div class="paragraph"><p>The <strong>upscli_ssl_caps</strong>() function returns a bitmap of the capability flags
+listed above, or <em>0</em> if SSL support is missing. Test individual flags with
+bitwise AND, for example <code>caps &amp; UPSCLI_SSL_CAPS_OPENSSL</code> or
+<code>caps &amp; UPSCLI_SSL_CAPS_NSS</code>, rather than comparing the result to <em>1</em> or <em>2</em>.
+Certificate capability flags may also be set, depending on the backend
+and the APIs available when the library was built.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -833,7 +832,7 @@ structure does not allow for that though).</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-18 23:57:42 UTC -- Network UPS Tools 2.8.5.1200
+Last updated 2026-10-07 10:15:11 UTC -- Network UPS Tools 2.8.5.1411
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>

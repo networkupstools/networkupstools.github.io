@@ -21,84 +21,395 @@
 			text-decoration: inherit;
 		}
 	</style></head><body><div class="navheader"><table width="100%" summary="Navigation header"><tr><td width="20%" align="left"><a accesskey="p" href="dev-tools.html">Prev</a> </td><th width="60%" align="center"> </th><td width="20%" align="right"> <a accesskey="n" href="nut-names.html">Next</a></td></tr></table><hr /></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_nut_core_development_and_maintenance"></a>12. NUT core development and maintenance</h2></div></div></div><p>This section is intended to people who want to develop new core features,
-or to do some maintenance.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_nut_specific_autoconf_macros"></a>12.1. NUT-specific autoconf macros</h3></div></div></div><p>The following NUT-specific autoconf macros are defined in the <code class="literal">m4/</code>
-directory.</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+or to do some maintenance.</p><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_nut_specific_autoconf_macros"></a>12.1. NUT-specific autoconf macros</h3></div></div></div><p>The <code class="literal">m4/</code> directory contains the following macros used by <code class="literal">configure.ac</code>
+and by other NUT macros. Related helpers are grouped below; the source
+files contain the individual probes and platform-specific details.</p><p>These are build-system interfaces. For the options accepted by the
+generated <code class="literal">configure</code> script, see
+<a class="ulink" href="../user-manual.chunked/Configure_options.html#Configure_options" target="_top">Configure options</a>.
+The bundled <code class="literal">AX_*</code> macros are described separately below, including NUT
+adaptations of macros from the Autoconf Archive.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_configuration_options"></a>Configuration options</h4></div></div></div><p>Defined in <code class="literal">m4/nut_arg_with.m4</code>.</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+<span class="strong"><strong>NUT_ARG_WITH(FEATURE, DESCRIPTION, DEFAULT)</strong></span>
+, </span><span class="term">
+<span class="strong"><strong>NUT_ARG_WITH(FEATURE, VALUE_HELP, DESCRIPTION, DEFAULT)</strong></span>
+</span></dt><dd>
+    Declare a <code class="literal">--with-FEATURE</code> option. The four-argument form adds
+    <code class="literal">=VALUE_HELP</code> to the help text and requires a non-empty <span class="emphasis"><em>DEFAULT</em></span>.
+    Both forms set <code class="literal">nut_with_FEATURE</code> and <code class="literal">nut_withGiven_FEATURE</code>;
+    the latter is <code class="literal">yes</code> if the option was supplied, including through
+    <code class="literal">--without-FEATURE</code>, and <code class="literal">no</code> otherwise. Hyphens in <span class="emphasis"><em>FEATURE</em></span> become
+    underscores in these shell variable names.
+</dd><dt><span class="term">
+<span class="strong"><strong>NUT_ARG_ENABLE(FEATURE, DESCRIPTION, DEFAULT)</strong></span>
+, </span><span class="term">
+<span class="strong"><strong>NUT_ARG_ENABLE(FEATURE, VALUE_HELP, DESCRIPTION, DEFAULT)</strong></span>
+</span></dt><dd>
+    The corresponding forms for <code class="literal">--enable-FEATURE</code> and
+    <code class="literal">--disable-FEATURE</code>, setting <code class="literal">nut_enable_FEATURE</code> and
+    <code class="literal">nut_enableGiven_FEATURE</code> with the same name conversion.
+</dd><dt><span class="term">
+<span class="strong"><strong>NUT_ARG_WITH_CUSTOM_DEFAULT_HELP</strong></span>
+, </span><span class="term">
+<span class="strong"><strong>NUT_ARG_ENABLE_CUSTOM_DEFAULT_HELP</strong></span>
+</span></dt><dd>
+    Take <span class="emphasis"><em>FEATURE</em></span>, <span class="emphasis"><em>VALUE_HELP</em></span>, <span class="emphasis"><em>DESCRIPTION</em></span>, <span class="emphasis"><em>DEFAULT</em></span> and
+    <span class="emphasis"><em>DEFAULT_HELP</em></span>. The last argument describes the default in the
+    help text independently of its shell value. An empty <span class="emphasis"><em>VALUE_HELP</em></span>
+    omits the value placeholder; an empty <span class="emphasis"><em>DEFAULT_HELP</em></span> uses <span class="emphasis"><em>DEFAULT</em></span>.
+</dd><dt><span class="term">
+<span class="strong"><strong>NUT_ARG_WITH_EXPAND_DEFAULT_HELP</strong></span>
+, </span><span class="term">
+<span class="strong"><strong>NUT_ARG_ENABLE_EXPAND_DEFAULT_HELP</strong></span>
+, </span><span class="term">
+<span class="strong"><strong>NUT_ARG_WITH_EXPAND_DEFAULT_HELP_SINGLEQUOTE</strong></span>
+, </span><span class="term">
+<span class="strong"><strong>NUT_ARG_ENABLE_EXPAND_DEFAULT_HELP_SINGLEQUOTE</strong></span>
+</span></dt><dd>
+    Take the first four arguments of the custom-help forms and use
+    <code class="literal">NUT_ARG_EXPAND</code> to expand the default for the help text. The
+    <code class="literal">SINGLEQUOTE</code> variants are intended for paths with escaped dollar
+    signs and introduce the help value with <code class="literal">resolved from</code>.
+</dd><dt><span class="term">
+<span class="strong"><strong>NUT_ARG_EXPAND(NAME, VALUE)</strong></span>
+</span></dt><dd>
+    Expand a value through a shell command while autoconf generates
+    <code class="literal">configure</code>. <span class="emphasis"><em>NAME</em></span> identifies the temporary shell variable.
+    This cannot show values which are only determined later, when the
+    generated <code class="literal">configure</code> script runs.
+</dd><dt><span class="term">
+<span class="strong"><strong>NUT_ARG_WITH_LIBOPTS</strong></span>
+, </span><span class="term">
+<span class="strong"><strong>NUT_ARG_WITH_LIBOPTS_INVALID_YESNO</strong></span>
+</span></dt><dd>
+    Take <span class="emphasis"><em>FEATURE</em></span>, <span class="emphasis"><em>VALUE_HELP</em></span>, <span class="emphasis"><em>DESCRIPTION</em></span> and <span class="emphasis"><em>DEFAULT</em></span>, and
+    declare library options with a bracketed, optional help tag.
+    Set the same variables as <code class="literal">NUT_ARG_WITH</code>. The <code class="literal">INVALID_YESNO</code>
+    variant rejects <code class="literal">yes</code> and <code class="literal">no</code>, for options expecting flags or paths.
+</dd><dt><span class="term">
+<span class="strong"><strong>NUT_ARG_WITH_LIBOPTS_INCLUDES</strong></span>
+, </span><span class="term">
+<span class="strong"><strong>NUT_ARG_WITH_LIBOPTS_LIBS</strong></span>
+, </span><span class="term">
+<span class="strong"><strong>NUT_ARG_WITH_LIBOPTS_LIBS_AS_LDFLAGS</strong></span>
+, </span><span class="term">
+<span class="strong"><strong>NUT_ARG_WITH_LIBOPTS_LDFLAGS</strong></span>
+</span></dt><dd>
+    Take a project name, an optional default (otherwise <code class="literal">auto</code>), and
+    an optional display name for the help text. Declare the lower-case
+    <code class="literal">--with-PROJECT-includes</code>, <code class="literal">--with-PROJECT-libs</code> or
+    <code class="literal">--with-PROJECT-ldflags</code> option using the <code class="literal">INVALID_YESNO</code> helper.
+    <code class="literal">LIBS_AS_LDFLAGS</code> retains the <code class="literal">-libs</code> option name but describes its
+    value as <code class="literal">LDFLAGS</code> rather than <code class="literal">LIBS</code>.
+</dd><dt><span class="term">
+<span class="strong"><strong>NUT_ARG_WITH_LIBOPTS_CONFIGSCRIPT</strong></span>
+</span></dt><dd><p class="simpara">
+    Take a project name and optional result variable, program names,
+    default and display name. Declare <code class="literal">--with-PROJECT-config</code> and find
+    the corresponding configuration script. By default the project
+    name determines the upper-case <code class="literal">PROJECT_CONFIG</code> result variable
+    and lower-case <code class="literal">project-config</code> program name. The default is <code class="literal">auto</code>;
+    a disabled script or one that was not found is represented by <code class="literal">none</code>.
+</p><p class="simpara"><code class="literal">NUT_ARG_WITH_LIBOPTS_CONFIGSCRIPT_IMPLEM</code>,
+<code class="literal">NUT_ARG_WITH_LIBOPTS_CONFIGSCRIPT_IMPLEM_2</code> and
+<code class="literal">NUT_ARG_WITH_LIBOPTS_CONFIGSCRIPT_IMPLEM_3</code> are internal helpers which
+apply these defaults and perform the search.</p></dd></dl></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_library_checks"></a>Library checks</h4></div></div></div><p>The <code class="literal">NUT_CHECK_LIB*</code> macros probe headers, libraries and required APIs,
+and provide result variables and compiler/linker flags to their callers.
+Each guards against repeated checks within one <code class="literal">configure</code> run. Many
+also cache results for subsequent runs; such a cache assumes unchanged
+dependencies and configuration arguments.</p><p>The checks for each library evolve organically to compensate for various
+bugs in the libraries, pkg-config, etc. or for significant changes between
+different generations of those dependencies. The need to keep such code in
+manageable sized chunks, as well as to maintain an easily comparable general
+code structure (as in <code class="literal">diff</code> of these files), and the need to match some
+capabilities for others to be based on them, is why we have a separate
+macro and source file for each library detection code.</p><p>The following table lists the primary result variables and flag prefixes.
+For each prefix, the flag variables are <code class="literal">PREFIX_CFLAGS</code> and
+<code class="literal">PREFIX_LIBS</code>, except that libgd uses <code class="literal">LIBGD_LDFLAGS</code> for linking.
+Result names are not uniformly derived from library or macro names.</p><div class="informaltable"><table class="informaltable" cellpadding="4px" style="border-collapse: collapse;border-top: 3px solid #527bbd; border-bottom: 3px solid #527bbd; border-left: 3px solid #527bbd; border-right: 3px solid #527bbd; "><colgroup><col class="col_1" /><col class="col_2" /><col class="col_3" /></colgroup><thead><tr><th style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top">Macro </th><th style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top">Result variable(s) </th><th style="border-bottom: 1px solid #527bbd; " align="left" valign="top">Flag prefix(es)</th></tr></thead><tbody><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">NUT_CHECK_LIBAVAHI</code></p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">nut_have_avahi</code></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">LIBAVAHI</code></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">NUT_CHECK_LIBFREEIPMI</code></p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">nut_have_freeipmi</code></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">LIBIPMI</code></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">NUT_CHECK_LIBGD</code></p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">nut_have_libgd</code></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">LIBGD</code></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">NUT_CHECK_LIBGLIB</code></p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">nut_have_libglib</code>, <code class="literal">nut_have_libgio</code></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">LIBGLIB</code>, <code class="literal">LIBGIO</code></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">NUT_CHECK_LIBGPIO</code></p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">nut_have_gpio</code></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">LIBGPIO</code></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">NUT_CHECK_LIBLTDL</code></p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">nut_have_libltdl</code></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">LIBLTDL</code></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">NUT_CHECK_LIBMODBUS</code></p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">nut_have_libmodbus</code></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">LIBMODBUS</code></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">NUT_CHECK_LIBNEON</code></p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">nut_have_neon</code></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">LIBNEON</code></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">NUT_CHECK_LIBNETSNMP</code></p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">nut_have_libnetsnmp</code></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">LIBNETSNMP</code></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">NUT_CHECK_LIBNSS</code></p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">nut_have_libnss</code></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">LIBSSL</code></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">NUT_CHECK_LIBOPENSSL</code></p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">nut_have_openssl</code></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">LIBSSL</code></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">NUT_CHECK_LIBPOWERMAN</code></p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">nut_have_libpowerman</code></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">LIBPOWERMAN</code></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">NUT_CHECK_LIBREGEX</code></p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">nut_have_regex</code></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">LIBREGEX</code></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">NUT_CHECK_LIBSYSTEMD</code></p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">nut_have_libsystemd</code></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">LIBSYSTEMD</code></p></td></tr><tr><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">NUT_CHECK_LIBUSB</code></p></td><td style="border-right: 1px solid #527bbd; border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">nut_have_libusb</code></p></td><td style="border-bottom: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">LIBUSB</code></p></td></tr><tr><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">NUT_CHECK_LIBWRAP</code></p></td><td style="border-right: 1px solid #527bbd; " align="left" valign="top"><p><code class="literal">nut_have_libwrap</code></p></td><td style="" align="left" valign="top"><p><code class="literal">LIBWRAP</code></p></td></tr></tbody></table></div><p>The source file names correspond to the lower-case macro names, with
+<code class="literal">.m4</code> appended, except <code class="literal">NUT_CHECK_LIBGPIO</code>, which is defined in
+<code class="literal">m4/nut_check_libgpiod.m4</code> and checks libgpiod. <code class="literal">NUT_CHECK_LIBGLIB</code>
+checks both GLib and GIO. The SSL checks share the <code class="literal">LIBSSL</code> flag variables;
+<code class="literal">configure.ac</code> selects the backend to use.</p><p>Some checks also distinguish library versions or optional APIs. For
+example, <code class="literal">NUT_CHECK_LIBUSB</code> reads <code class="literal">nut_with_usb</code>, including requests
+for <code class="literal">libusb-1.0</code> or <code class="literal">libusb-0.1</code> from <code class="literal">--with-usb</code>. It reports the selected
+variant in <code class="literal">nut_usb_lib</code>. <code class="literal">NUT_CHECK_LIBMODBUS</code> checks timeout API variants
+and the optional USB backend. Consult the corresponding source before
+using additional results or changing a dependency check.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_build_tools_and_python"></a>Build tools and Python</h4></div></div></div><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+<span class="strong"><strong>NUT_CHECK_PKGCONFIG</strong></span>
+</span></dt><dd>
+    Defined in <code class="literal">m4/nut_check_pkgconfig.m4</code>. Locate and validate
+    <code class="literal">PKG_CONFIG</code>, with <code class="literal">--with-pkg-config</code> as an override when a usable
+    tool has not already been detected. Set <code class="literal">have_PKG_CONFIG</code> and
+    <code class="literal">have_PKG_CONFIG_MACROS</code> to report tool and macro availability.
+    The macro also handles the pkg-config search environment when
+    cross-compiling.
+</dd><dt><span class="term">
+<span class="strong"><strong>NUT_CHECK_ASCIIDOC</strong></span>
+</span></dt><dd>
+    Defined in <code class="literal">m4/nut_check_asciidoc.m4</code>. Find the documentation
+    tools, including <code class="literal">ASCIIDOC</code>, <code class="literal">A2X</code>, <code class="literal">XSLTPROC</code>, <code class="literal">XMLLINT</code>, <code class="literal">DBLATEX</code>
+    and <code class="literal">SOURCE_HIGHLIGHT</code>. Set <code class="literal">nut_have_asciidoc</code> and the
+    <code class="literal">HAVE_ASCIIDOC</code> Automake conditional according to the prerequisites
+    for man page generation. <code class="literal">configure.ac</code> separately tests the ability
+    to generate the requested documentation formats.
+</dd><dt><span class="term">
+<span class="strong"><strong>NUT_CHECK_ASPELL</strong></span>
+</span></dt><dd>
+    Defined in <code class="literal">m4/nut_check_aspell.m4</code>. Find <code class="literal">ASPELL</code>, check its
+    version and filtering setup, and test spelling checks. Set
+    <code class="literal">nut_have_aspell</code>, the <code class="literal">HAVE_ASPELL</code> Automake conditional and
+    <code class="literal">ASPELL_FILTER_*_PATH</code> variables for the documentation recipes.
+</dd><dt><span class="term">
+<span class="strong"><strong>NUT_CHECK_CPPCHECK</strong></span>
+</span></dt><dd>
+    Defined in <code class="literal">m4/nut_check_cppcheck.m4</code>. Find <code class="literal">CPPCHECK</code> and check
+    its version. Set <code class="literal">nut_have_cppcheck</code> and the <code class="literal">HAVE_CPPCHECK</code>
+    Automake conditional.
+</dd><dt><span class="term">
+<span class="strong"><strong>NUT_CHECK_PYTHON_DEFAULT</strong></span>
+</span></dt><dd><p class="simpara">
+    Defined with its helpers in <code class="literal">m4/nut_check_python.m4</code>. This is
+    the entry point used by <code class="literal">configure.ac</code>: detect Python interpreters,
+    reconcile requests and automatic priorities, and determine module
+    installation paths. Export <code class="literal">PYTHON</code>, <code class="literal">PYTHON2</code>, <code class="literal">PYTHON3</code> and
+    <code class="literal">PYTHON_DEFAULT</code> through <code class="literal">AC_SUBST</code>, with corresponding
+    <code class="literal">HAVE_PYTHON*</code> Automake conditionals. <code class="literal">PYTHON_DEFAULT</code> is used for
+    internal tool calls and script substitutions.
+</p><p class="simpara"><code class="literal">NUT_CHECK_PYTHON</code>, <code class="literal">NUT_CHECK_PYTHON2</code> and <code class="literal">NUT_CHECK_PYTHON3</code> process
+the corresponding <code class="literal">--with-python*</code> options and validate interpreters.
+<code class="literal">NUT_CHECK_PYTHON_INTERIM_RESULTS</code> handles missing and required
+interpreters; <code class="literal">NUT_CHECK_PYTHON_DEFAULT_BEST</code> applies the automatic
+priority policy and publishes the interpreter selections.</p><p class="simpara"><code class="literal">NUT_CHECK_PYTHON_SITE_PACKAGES</code>, <code class="literal">NUT_CHECK_PYTHON2_SITE_PACKAGES</code> and
+<code class="literal">NUT_CHECK_PYTHON3_SITE_PACKAGES</code> obtain module locations from the
+interpreter or the corresponding <code class="literal">--with-python*-modules-dir</code> option.
+They substitute <code class="literal">PYTHON_SITE_PACKAGES</code>, <code class="literal">PYTHON2_SITE_PACKAGES</code> and
+<code class="literal">PYTHON3_SITE_PACKAGES</code>, with matching <code class="literal">HAVE_*</code> Automake conditionals.</p></dd></dl></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_compiler_and_platform_checks"></a>Compiler and platform checks</h4></div></div></div><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+<span class="strong"><strong>NUT_COMPILER_FAMILY</strong></span>
+</span></dt><dd>
+    Defined with the following flag helpers in
+    <code class="literal">m4/nut_compiler_family.m4</code>. Identify GCC and Clang compilers
+    and record version information for <code class="literal">CC</code>, <code class="literal">CXX</code> and <code class="literal">CPP</code>. These
+    results guide later flag and platform checks.
+</dd><dt><span class="term">
+<span class="strong"><strong>NUT_CHECK_COMPILE_FLAG(FLAG)</strong></span>
+</span></dt><dd>
+    Test a flag separately for C and C++, including a link/run check
+    through <code class="literal">AX_RUN_OR_LINK_IFELSE</code>. Append the flag to <code class="literal">CFLAGS</code> or
+    <code class="literal">CXXFLAGS</code> only where the corresponding checks pass. For <code class="literal">-Wno-*</code>
+    flags, first test the positive <code class="literal">-W*</code> spelling to detect unsupported
+    warnings which a compiler might otherwise silently ignore.
+</dd><dt><span class="term">
+<span class="strong"><strong>NUT_COMPILER_FAMILY_FLAGS</strong></span>
+, </span><span class="term">
+<span class="strong"><strong>NUT_COMPILER_FAMILY_FLAGS_DEFAULT_STANDARD</strong></span>
+</span></dt><dd>
+    Apply the compiler flag policy. The first macro checks additional
+    flags and include paths, and both can select default language
+    standards when the caller has not supplied <code class="literal">-std=</code> or <code class="literal">-ansi</code>.
+    The second macro repeats that default-standard selection after
+    other configuration checks.
+</dd><dt><span class="term">
+<span class="strong"><strong>NUT_STASH_WARNINGS</strong></span>
+, </span><span class="term">
+<span class="strong"><strong>NUT_POP_WARNINGS</strong></span>
+</span></dt><dd>
+    Defined in <code class="literal">m4/nut_stash_warnings.m4</code>. Temporarily remove
+    <code class="literal">-W*</code> and <code class="literal">-*pedantic*</code> options from <code class="literal">CFLAGS</code>, <code class="literal">CPPFLAGS</code> and
+    <code class="literal">CXXFLAGS</code> so they do not interfere with configure probes, then
+    append them back afterwards. These helpers split flags on
+    whitespace; they do not support embedded spaces in flag values.
+</dd><dt><span class="term">
+<span class="strong"><strong>NUT_CHECK_BOOL</strong></span>
+</span></dt><dd>
+    Defined in <code class="literal">m4/nut_check_bool.m4</code>. Probe Boolean types and
+    values, and define their detected spellings and implementation
+    properties for <code class="literal">include/nut_bool.h</code>.
+</dd><dt><span class="term">
 <span class="strong"><strong>NUT_TYPE_SOCKLEN_T</strong></span>
 , </span><span class="term">
-<span class="strong"><strong>NUT_TYPE_UINT8_T</strong></span>
-, </span><span class="term">
-<span class="strong"><strong>NUT_TYPE_UINT16_T</strong></span>
+<span class="strong"><strong>NUT_PREREQ_SYS_H_SOCKET</strong></span>
 </span></dt><dd>
-        Check for the corresponding type in the system header files, and
-        <code class="literal">#define</code> a replacement if necessary.
+    Defined in <code class="literal">m4/nut_type_socklen_t.m4</code>. The first checks for
+    <code class="literal">socklen_t</code>, defining a compatible replacement if it is absent or
+    failing configuration if none can be found. The prerequisite helper
+    checks socket headers and substitutes <code class="literal">HAVE_SYS_SOCKET_H</code>,
+    <code class="literal">HAVE_WINSOCK2_H</code> and <code class="literal">HAVE_WS2TCPIP_H</code> as zero-or-one shell values.
 </dd><dt><span class="term">
-<span class="strong"><strong>NUT_CHECK_LIBGD</strong></span>
+<span class="strong"><strong>NUT_CHECK_SOCKETLIB</strong></span>
+</span></dt><dd>
+    Defined in <code class="literal">m4/nut_check_socketlib.m4</code>. Set and substitute
+    <code class="literal">NETLIBS</code>, adding <code class="literal">-lws2_32</code> when the Windows socket startup probe
+    succeeds. Also define <code class="literal">WINDOWS_SOCKETS</code> on success and declare the
+    <code class="literal">HAVE_WINDOWS_SOCKETS</code> Automake conditional. Other socket library
+    checks are performed by <code class="literal">configure.ac</code>.
+</dd><dt><span class="term">
+<span class="strong"><strong>NUT_FUNC_GETNAMEINFO_ARGTYPES</strong></span>
+</span></dt><dd>
+    Defined in <code class="literal">m4/nut_func_getnameinfo_argtypes.m4</code>. Determine
+    compatible argument types for <code class="literal">getnameinfo()</code> and define
+    <code class="literal">GETNAMEINFO_TYPE_ARG1</code>, <code class="literal">GETNAMEINFO_TYPE_ARG2</code>,
+    <code class="literal">GETNAMEINFO_TYPE_ARG46</code> and <code class="literal">GETNAMEINFO_TYPE_ARG7</code> when found.
+    Warn if no matching declaration is found.
+</dd><dt><span class="term">
+<span class="strong"><strong>NUT_CHECK_HEADER_WINDOWS</strong></span>
 , </span><span class="term">
-<span class="strong"><strong>NUT_CHECK_LIBNEON</strong></span>
+<span class="strong"><strong>NUT_CHECK_HEADER_WINSOCK</strong></span>
 , </span><span class="term">
-<span class="strong"><strong>NUT_CHECK_LIBNETSNMP</strong></span>
+<span class="strong"><strong>NUT_CHECK_HEADER_WINSOCK2</strong></span>
 , </span><span class="term">
-<span class="strong"><strong>NUT_CHECK_LIBPOWERMAN</strong></span>
+<span class="strong"><strong>NUT_CHECK_HEADER_WS2TCPIP</strong></span>
 , </span><span class="term">
-<span class="strong"><strong>NUT_CHECK_LIBOPENSSL</strong></span>
+<span class="strong"><strong>NUT_CHECK_HEADER_IPHLPAPI</strong></span>
 , </span><span class="term">
-<span class="strong"><strong>NUT_CHECK_LIBNSS</strong></span>
-, </span><span class="term">
-<span class="strong"><strong>NUT_CHECK_LIBUSB</strong></span>
-, </span><span class="term">
-<span class="strong"><strong>NUT_CHECK_LIBWRAP</strong></span>
-, </span><span class="term">
-<span class="strong"><strong>et al</strong></span>
-</span></dt><dd><p class="simpara">
-        Determine the compiler flags for the corresponding library. On
-        success, set <code class="literal">nut_have_libxxx="yes"</code> and set <code class="literal">LIBXXX_CFLAGS</code> and
-        <code class="literal">LIBXXX_LDFLAGS</code>. On failure, set <code class="literal">nut_have_libxxx="no"</code>. This macro
-        can be run multiple times, but will do the checking only once.
-        Here "xxx" should of course be replaced by the respective library name.
-</p><p class="simpara">The checks for each library grow organically to compensate for
-        various bugs in the libraries, pkg-config, etc. This is why we have
-        a separate macro for each library.</p></dd><dt><span class="term">
-<span class="strong"><strong>NUT_CHECK_IPV6</strong></span>
-</span></dt><dd><p class="simpara">
-        Check for various features required to compile the IPv6 support.
-        Define a preprocessor symbol for each individual feature
-        (<code class="literal">HAVE_GETADDRINFO</code>, <code class="literal">HAVE_FREEADDRINFO</code>, <code class="literal">HAVE_STRUCT_ADDRINFO</code>,
-        <code class="literal">HAVE_SOCKADDR_STORAGE</code>, <code class="literal">SOCKADDR_IN6</code>, <code class="literal">IN6_ADDR</code>,
-        <code class="literal">HAVE_IN6_IS_ADDR_V4MAPPED</code>, <code class="literal">HAVE_AI_ADDRCONFIG</code>).
-</p><p class="simpara">Also set the shell variable <code class="literal">nut_have_ipv6=yes</code> if all the required
-        features are present. Set <code class="literal">nut_have_ipv6=no</code> otherwise.</p></dd><dt><span class="term">
+<span class="strong"><strong>NUT_CHECK_NATIVE_WINDOWS</strong></span>
+</span></dt><dd>
+    Defined in <code class="literal">m4/nut_check_headers_windows.m4</code>. The header
+    checks test whether Windows headers can be compiled, with prerequisites
+    included in the probes. Each defines its <code class="literal">HAVE_*_H</code> C symbol on
+    success and declares the corresponding Automake conditional.
+    <code class="literal">NUT_CHECK_NATIVE_WINDOWS</code> checks for a native Windows target and
+    declares the <code class="literal">DOING_NATIVE_WINDOWS</code> Automake conditional.
+</dd><dt><span class="term">
 <span class="strong"><strong>NUT_CHECK_OS</strong></span>
+, </span><span class="term">
+<span class="strong"><strong>NUT_OS_FUNCTIONS</strong></span>
 </span></dt><dd>
-        Check for the exact system name and type.
-        This was only used in the past to determine the packaging rule to be
-        used through the <code class="literal">OS_NAME</code> variable, but may be useful for other purposes
-        in the future.
-</dd><dt><span class="term">
-<span class="strong"><strong>NUT_REPORT_FEATURE(FEATURE, VALUE, VARIABLE, DESCRIPTION)</strong></span>
+    Defined in <code class="literal">m4/nut_check_os.m4</code>. Inspect system identification
+    files and set <code class="literal">OS_NAME</code> and <code class="literal">PKG_TARGET</code> when a flavour is found.
+    <code class="literal">NUT_OS_FUNCTIONS</code> provides the shell helpers used for this mapping.
+</dd></dl></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_configuration_reports"></a>Configuration reports</h4></div></div></div><p>Defined in <code class="literal">m4/nut_report_feature.m4</code>.</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+<span class="strong"><strong>NUT_REPORT_FEATURE(FEATURE, FLAG, VALUE, VARIABLE, DESCRIPTION)</strong></span>
 </span></dt><dd><p class="simpara">
-        Schedule a line for the end-of-configuration feature summary.  The
-        <span class="emphasis"><em>FEATURE</em></span> is a descriptive string such that the sentence "Checking
-        whether to FEATURE" makes sense, and <span class="emphasis"><em>VALUE</em></span> describes the decision
-        taken (typically <span class="emphasis"><em>yes</em></span> or <span class="emphasis"><em>no</em></span>). The feature is also reported to the
-        terminal.
-</p><p class="simpara">Also use <span class="emphasis"><em>VARIABLE</em></span> and <span class="emphasis"><em>DESCRIPTION</em></span> for defining <code class="literal">AM_CONDITIONAL</code> and
-        <code class="literal">AC_DEFINE</code> (only if <code class="literal">VALUE = "yes"</code>).
-    The <span class="emphasis"><em>VARIABLE</em></span> is of the form <code class="literal">WITH_&lt;NAME&gt;</code>.</p></dd><dt><span class="term">
-<span class="strong"><strong>NUT_REPORT(FEATURE, VALUE)</strong></span>
+    Report a feature decision immediately and queue it for the final
+    summary.
+</p><p class="simpara">The <span class="emphasis"><em>FEATURE</em></span> is a descriptive string such that the scripted sentence
+"Checking whether to FEATURE" as well as "FEATURE" itself in the final
+list of configuration decisions both make sense (keep in mind casing,
+endings, suffixes and verb forms); <span class="emphasis"><em>FLAG</em></span> is the decision (normally
+<code class="literal">yes</code> or <code class="literal">no</code>); <span class="emphasis"><em>VALUE</em></span> adds details such as the selected library.
+This macro declares the Automake conditional named by <span class="emphasis"><em>VARIABLE</em></span>, to be
+true exactly when <span class="emphasis"><em>FLAG</em></span> is <code class="literal">yes</code>. In that case also define the C symbol
+<span class="emphasis"><em>VARIABLE</em></span> as <code class="literal">1</code>, with <span class="emphasis"><em>DESCRIPTION</em></span> as its comment.</p><p class="simpara">Some callers pass a sixth argument to customize the check message.
+The current implementation reads the shell’s sixth positional parameter
+instead of that M4 argument, so callers cannot rely on this control.</p></dd><dt><span class="term">
+<span class="strong"><strong>NUT_REPORT_DRIVER(FEATURE, FLAG, VALUE, VARIABLE, DESCRIPTION)</strong></span>
+, </span><span class="term">
+<span class="strong"><strong>NUT_REPORT_PROGRAM(FEATURE, FLAG, VALUE, VARIABLE, DESCRIPTION)</strong></span>
 </span></dt><dd>
-        Schedule a line for the end-of-configuration feature summary, without
-        printing anything to the terminal immediately.
+    Apply the same conditional and C-definition handling as the feature
+    reporter, using separate summary groups for drivers and programs.
+    Their configuration progress messages use <code class="literal">Checking whether to FEATURE</code>.
 </dd><dt><span class="term">
+<span class="strong"><strong>NUT_REPORT_SETTING(SETTING, VARIABLE, VALUE, DESCRIPTION)</strong></span>
+, </span><span class="term">
+<span class="strong"><strong>NUT_REPORT_SETTING_PATH(SETTING, VARIABLE, VALUE, DESCRIPTION)</strong></span>
+, </span><span class="term">
+<span class="strong"><strong>NUT_REPORT_SETTING_PATH_INTEGRATIONS</strong></span>
+</span></dt><dd>
+    Report a setting and define <span class="emphasis"><em>VARIABLE</em></span> to <span class="emphasis"><em>VALUE</em></span> through
+    <code class="literal">AC_DEFINE_UNQUOTED</code>, using <span class="emphasis"><em>DESCRIPTION</em></span> as its comment. These do
+    not create Automake conditionals. The path variants use separate
+    summary groups for NUT paths and third-party integration paths;
+    <code class="literal">NUT_REPORT_SETTING_PATH_INTEGRATIONS</code> takes the same four arguments.
+    Callers must supply appropriate C quoting for string values.
+    Their configuration progress messages use <code class="literal">Checking setting for SETTING</code>.
+</dd><dt><span class="term">
+<span class="strong"><strong>NUT_REPORT_TARGET(VARIABLE, VALUE, DESCRIPTION)</strong></span>
+, </span><span class="term">
+<span class="strong"><strong>NUT_REPORT_TARGET_WITHOUT_AC_DEFINE(VARIABLE, VALUE, DESCRIPTION)</strong></span>
+</span></dt><dd>
+    Report build/target information immediately and in its summary
+    group. The first also defines <span class="emphasis"><em>VARIABLE</em></span> to <span class="emphasis"><em>VALUE</em></span> through
+    <code class="literal">AC_DEFINE_UNQUOTED</code>; the second only reports it. Neither creates
+    an Automake conditional.
+</dd><dt><span class="term">
+<span class="strong"><strong>NUT_REPORT(FEATURE, VALUE)</strong></span>
+, </span><span class="term">
+<span class="strong"><strong>NUT_REPORT_DRV(FEATURE, VALUE)</strong></span>
+, </span><span class="term">
+<span class="strong"><strong>NUT_REPORT_PRG(FEATURE, VALUE)</strong></span>
+, </span><span class="term">
+<span class="strong"><strong>NUT_REPORT_PATH(FEATURE, VALUE)</strong></span>
+, </span><span class="term">
+<span class="strong"><strong>NUT_REPORT_PATH_INTEGRATIONS(FEATURE, VALUE)</strong></span>
+</span></dt><dd>
+    Queue a summary entry without an immediate terminal message,
+    C definition or Automake conditional. The variants select the
+    general, driver, program, NUT-path or integration-path group.
+</dd><dt><span class="term">
+<span class="strong"><strong>NUT_REPORT_FILE(FEATURE, VALUE, TAG, TITLE)</strong></span>
+</span></dt><dd>
+    The common helper: append an entry to
+    <code class="literal">config.nut_report_feature.log.TAG</code>, adding the group’s title when
+    first used, except for the driver/program continuation groups.
+</dd><dt><span class="term">
+<span class="strong"><strong>NUT_REPORT_COMPILERS</strong></span>
+, </span><span class="term">
 <span class="strong"><strong>NUT_PRINT_FEATURE_REPORT</strong></span>
 </span></dt><dd>
-        Print out a list of the features that have been reported by
-        previous <code class="literal">NUT_REPORT_FEATURE</code> macro calls.
-</dd><dt><span class="term">
-<span class="strong"><strong>NUT_ARG_WITH(FEATURE, DESCRIPTION, DEFAULT)</strong></span>
+    The first writes the compiler and flag summary. The second prints
+    all report groups accumulated in <code class="literal">config.nut_report_feature.log.*</code>.
+    With <code class="literal">--enable-keep_nut_report_feature</code>, it also retains their
+    combined contents in <code class="literal">config.nut_report_feature.log</code>.
+</dd></dl></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_other_bundled_macros"></a>Other bundled macros</h4></div></div></div><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+<span class="strong"><strong><code class="literal">AX_C___ATTRIBUTE__</code></strong></span>
 </span></dt><dd>
-        Declare a simple <code class="literal">--with-FEATURE</code> option with the given <span class="emphasis"><em>DESCRIPTION</em></span>
-        and <span class="emphasis"><em>DEFAULT</em></span>. Sets the variable <code class="literal">nut_with_FEATURE</code>.
-</dd></dl></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="roadmap"></a>12.2. NUT roadmap and ideas for future expansion</h3></div></div></div><p>Here are some ideas that have come up over the years but haven’t
+    Defined in <code class="literal">m4/ax_c___attribute__.m4</code>. Check compiler support
+    for the <code class="literal">unused</code> argument/function attributes and the <code class="literal">noreturn</code>
+    attribute. Define the corresponding <code class="literal">HAVE___ATTRIBUTE__*</code> symbols.
+</dd><dt><span class="term">
+<span class="strong"><strong>AX_C_PRAGMAS</strong></span>
+, </span><span class="term">
+<span class="strong"><strong>AX_C_PRINTF_STRING_NULL</strong></span>
+</span></dt><dd>
+    Defined in <code class="literal">m4/ax_c_pragmas.m4</code>. The first probes support for
+    the diagnostic pragmas used by NUT and defines the corresponding
+    <code class="literal">HAVE_PRAGMA_*</code> symbols. The second checks null-string formatting
+    and compiler warnings, takes <code class="literal">--enable-NUT_STRARG-always</code> into
+    account, and sets the <code class="literal">REQUIRE_NUT_STRARG</code> C definition and Automake
+    conditional. Its cross-compilation fallback only tests linking,
+    not runtime behaviour.
+</dd><dt><span class="term">
+<span class="strong"><strong>AX_CHECK_COMPILE_FLAG</strong></span>
+</span></dt><dd>
+    Defined in <code class="literal">m4/ax_check_compile_flag.m4</code>. Take a flag, success
+    action, failure action, extra flags and optional test input. Check
+    the current language’s compiler, restoring its flags afterwards.
+    The bundled implementation also recognizes selected compiler
+    diagnostics about unsupported options.
+</dd><dt><span class="term">
+<span class="strong"><strong>AX_COMPARE_VERSION</strong></span>
+</span></dt><dd>
+    Defined in <code class="literal">m4/ax_compare_version.m4</code>. Compare two versions
+    using an operator, with optional true/false actions. The argument
+    order is <span class="emphasis"><em>VERSION_A</em></span>, <span class="emphasis"><em>OP</em></span>, <span class="emphasis"><em>VERSION_B</em></span>, <span class="emphasis"><em>ACTION_IF_TRUE</em></span>,
+    <span class="emphasis"><em>ACTION_IF_FALSE</em></span>. Set <code class="literal">ax_compare_version</code> to <code class="literal">true</code> or <code class="literal">false</code>.
+    See the file’s synopsis for supported operators and precision.
+</dd><dt><span class="term">
+<span class="strong"><strong>AX_RUN_OR_LINK_IFELSE</strong></span>
+</span></dt><dd>
+    Defined in <code class="literal">m4/ax_run_or_link_ifelse.m4</code>. Take test source,
+    success action, failure action, optional C flags and optional C++
+    flags. Run the test normally, or only link it when cross-compiling.
+    Temporarily enable fatal warnings and apply the supplied flags,
+    then restore <code class="literal">CFLAGS</code> and <code class="literal">CXXFLAGS</code>.
+</dd><dt><span class="term">
+<span class="strong"><strong>AX_REALPATH(PATH, VARIABLE)</strong></span>
+</span></dt><dd>
+    Defined in <code class="literal">m4/ax_realpath.m4</code>. Resolve a path into <span class="emphasis"><em>VARIABLE</em></span>,
+    trying the <code class="literal">REALPATH</code> tool if configured, then shell fallback methods.
+    <code class="literal">AX_REALPATH_SHELL_ONELEVEL</code> and <code class="literal">AX_REALPATH_SHELL_RECURSIVE</code>
+    implement those fallback methods. <code class="literal">UNITTEST_AX_REALPATH</code> and
+    <code class="literal">UNITTEST_AX_REALPATH_EXPECT</code> are development test helpers in the
+    same file, rather than normal configuration prerequisites.
+</dd><dt><span class="term">
+<span class="strong"><strong>AX_REALPATH_LIB(LIBRARY, VARIABLE, FALLBACK)</strong></span>
+</span></dt><dd>
+    Defined in <code class="literal">m4/ax_realpath_lib.m4</code>. Try to locate a library
+    file using a GCC/Clang-compatible toolchain and resolve its path
+    into <span class="emphasis"><em>VARIABLE</em></span>. <span class="emphasis"><em>FALLBACK</em></span> is optional and defaults to an empty
+    value when resolution fails or the compiler is unsupported.
+    <code class="literal">AX_REALPATH_LIB_PREREQ</code> prepares the required platform tools.
+</dd></dl></div></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="roadmap"></a>12.2. NUT roadmap and ideas for future expansion</h3></div></div></div><p>Here are some ideas that have come up over the years but haven’t
 been implemented yet.  This may be a good place to start if you’re
 looking for a rainy day hacking project.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_roadmap"></a>Roadmap</h4></div></div></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_2_6"></a>2.6</h5></div></div></div><p>This release is focused on the website and documentation rewrite, using
 the excellent <a class="ulink" href="https://asciidoc.org/" target="_top">AsciiDoc</a>.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_2_8"></a>2.8</h5></div></div></div><p>This branch will focus on configuration and user interface improvements.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="_3_0"></a>3.0</h5></div></div></div><p>This major transition will mark the final switch to a complete power
@@ -155,4 +466,4 @@ for native PDU support
 </li><li class="listitem">
 see how we can help and collaborate with DeviceKit-power
 </li></ul></div></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-09-18 23:58:08 -- Network UPS Tools 2.8.5.1200</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="dev-tools.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="nut-names.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-10-07 10:18:34 -- Network UPS Tools 2.8.5.1411</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="dev-tools.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="nut-names.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

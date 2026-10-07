@@ -1193,15 +1193,18 @@ going down the list.</p></div>
 <div class="paragraph"><p>Start the driver with the type you want to try, e.g.:</p></div>
 <div class="literalblock">
 <div class="content">
-<pre><code>genericups -x upstype=n /dev/port</code></pre>
+<pre><code>genericups -s test-ups -x upstype=n -x port=/dev/port</code></pre>
 </div></div>
+<div class="paragraph"><p>To monitor this test through <a href="upsd.html">upsd(8)</a>, first configure a matching
+<code>[test-ups]</code> section in <a href="ups.conf.html">ups.conf(5)</a> with <code>driver = genericups</code> and
+the same port. Alternatively, use the debug mode below.</p></div>
 <div class="paragraph"><p>Let <a href="upsd.html">upsd(8)</a> sync up (watch the syslog), and then run <a href="upsc.html">upsc(8)</a>
 to see what it found.  If the <code>STATUS</code> is correct (should be "OL" for online),
 continue to <a href="#_step_3">Step 3</a>, otherwise go back to step 1.</p></div>
 <div class="paragraph"><p>Alternatively, you can run <code>genericups</code> in debug mode, e.g.:</p></div>
 <div class="literalblock">
 <div class="content">
-<pre><code>genericups -DDDDD -x upstype=n /dev/port</code></pre>
+<pre><code>genericups -s test-ups -DDDDD -x upstype=n -x port=/dev/port</code></pre>
 </div></div>
 <div class="paragraph"><p>In this mode it will be running in the foreground and continuously
 display the line and battery status of the UPS.</p></div>
@@ -1232,7 +1235,7 @@ happens, STATUS should show "OB LB" within 15 seconds.  If not, go to
 switch to shut it down.</p></div>
 <div class="literalblock">
 <div class="content">
-<pre><code>genericups -x upstype=n -k /dev/port</code></pre>
+<pre><code>genericups -s test-ups -x upstype=n -k -x port=/dev/port</code></pre>
 </div></div>
 <div class="paragraph"><p>If the UPS turns off the lamp, you&#8217;re done.  At this point, you have
 verified that the shutdown sequence actually does what you want.  You
@@ -1317,7 +1320,7 @@ UPS of some kind that allows detection and proper load cycling on command.</p></
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-18 23:57:43 UTC -- Network UPS Tools 2.8.5.1200
+Last updated 2026-10-07 10:15:14 UTC -- Network UPS Tools 2.8.5.1411
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>

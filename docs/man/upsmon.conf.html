@@ -1058,13 +1058,25 @@ more information and ideas, see docs/scheduling.txt</p></div>
 <div class="paragraph"><p>The first (possibly only) token of the value is interpreted as a complete
 path to an externally stored executable script (e.g. not an inline scriptlet)
 or program file without further arguments (which may be passed in explicitly
-# quoted separate tokens). This is a change from NUT v2.8.5 and older releases.
+quoted separate tokens). This is a change from NUT v2.8.5 and older releases.
 Remember, this command also needs to be one element in the configuration
 file, so if your command path has spaces, then wrap it in quotes.</p></div>
 <div class="listingblock">
 <div class="content">
 <pre><code>NOTIFYCMD "/path to/script"
 NOTIFYCMD "/path to/script" "--debug" "-v"</code></pre>
+</div></div>
+<div class="paragraph"><p>On Windows, these values are joined into a command line. Grouping them
+during configuration parsing does not preserve arguments with spaces:
+the child can receive several arguments instead. This also applies
+to the executable name in the child&#8217;s argument list and to the appended
+notification message.</p></div>
+<div class="paragraph"><p>Use an executable path without spaces. The following example retains
+double quotes around the data path so a native Windows program using
+C runtime argument parsing receives that path as one argument:</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>NOTIFYCMD "c:\\nut\\notifyme.exe" "\"c:\\path with space\\name\""</code></pre>
 </div></div>
 <div class="paragraph"><p>This script is run in the background&#8201;&#8212;&#8201;that is, <a href="upsmon.html">upsmon(8)</a> normally
 forks before it calls out to start it.  This means that your NOTIFYCMD may
@@ -1913,7 +1925,7 @@ does not change the previously active logging verbosity.</td>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-18 23:57:42 UTC -- Network UPS Tools 2.8.5.1200
+Last updated 2026-10-07 10:15:09 UTC -- Network UPS Tools 2.8.5.1411
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>

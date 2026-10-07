@@ -778,12 +778,12 @@ upscli_readline_timeout_may_disconnect - Read a single response from a UPS</p></
 <pre><code>        #include &lt;upsclient.h&gt;
         #include &lt;time.h&gt; /* or &lt;sys/time.h&gt; on some platforms */
 
-        int upscli_readline(UPSCONN_t *ups, char *buf, size_t buflen);
+        ssize_t upscli_readline(UPSCONN_t *ups, char *buf, size_t buflen);
 
-        int upscli_readline_timeout(UPSCONN_t *ups, char *buf, size_t buflen,
+        ssize_t upscli_readline_timeout(UPSCONN_t *ups, char *buf, size_t buflen,
                 const time_t timeout);
 
-        int upscli_readline_timeout_may_disconnect(UPSCONN_t *ups,
+        ssize_t upscli_readline_timeout_may_disconnect(UPSCONN_t *ups,
                 char *buf, size_t buflen, const time_t timeout,
                 int may_disconnect);</code></pre>
 </div></div>
@@ -796,9 +796,10 @@ upscli_readline_timeout_may_disconnect - Read a single response from a UPS</p></
 the  pointer <em>ups</em> to a <code>UPSCONN_t</code> state structure, receive a single
 line from the server, and copy up to <em>buflen</em> bytes of the response
 into the buffer <em>buf</em>.</p></div>
-<div class="paragraph"><p>Some parsing of the string occurs during reception.  In particular,
-ERR messages from <a href="upsd.html">upsd(8)</a> are detected and will cause this
-function to return <em>-1</em>.</p></div>
+<div class="paragraph"><p>These functions read raw lines and do not interpret ERR messages from
+<a href="upsd.html">upsd(8)</a>. A successfully read ERR line returns <em>0</em>; the caller must
+check the protocol response. Higher-level functions such as
+<a href="upscli_get.html">upscli_get(3)</a> perform this checking.</p></div>
 <div class="paragraph"><p>The difference between the three functions is that <strong>upscli_readline_timeout()</strong>
 lets the caller decide the amount of time (<em>timeout</em> seconds) after which it
 should give up and return, whereas <strong>upscli_readline()</strong> does not offer this
@@ -827,7 +828,7 @@ return <em>0</em> on success, or <em>-1</em> if an error occurs.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-18 23:57:42 UTC -- Network UPS Tools 2.8.5.1200
+Last updated 2026-10-07 10:15:11 UTC -- Network UPS Tools 2.8.5.1411
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>

@@ -956,17 +956,10 @@ Scan NUT devices (i.e. <code>upsd</code> daemon) on IP ranging from <em>start IP
 </dt>
 <dd>
 <p>
-Scan NUT simulated devices (<code>.dev</code> files in the built-in "sysconfig" location).
+Scan NUT simulated devices (<code>.dev</code> and <code>.seq</code> files in the configuration
+directory). A non-empty <code>NUT_CONFPATH</code> environment variable overrides the
+built-in "sysconfig" location.
 </p>
-<div class="admonitionblock">
-<table><tr>
-<td class="icon">
-<div class="title">Warning</div>
-</td>
-<td class="content">The <code>NUT_CONFPATH</code> environment variable override is not currently
-supported.</td>
-</tr></table>
-</div>
 </dd>
 <dt class="hdlist1">
 <strong>-A</strong> | <strong>--avahi_scan</strong>
@@ -1402,11 +1395,37 @@ either too limited or too verbose to be of any use.</td>
 <div class="listingblock">
 <div class="content">
 <pre><code>:; nut-scanner -U
+Scanning USB bus.
 
 [nutdev-usb1]
-        driver = "snmp-ups"
-        port = "192.168.0.42"</code></pre>
+        driver = "usbhid-ups"
+        port = "auto"
+        vendorid = "0463"
+        productid = "FFFF"
+        product = "Ellipse ECO"
+        serial = "000000000"
+        vendor = "EATON"
+        # bus = "005"
+        # device = "002"
+        # busport = "001"
+
+# WARNING: all-same character "serial" with 9 copies of '0' (0x30) reported in some devices: nutdev-usb1</code></pre>
 </div></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">The <code>bus</code>, <code>device</code> and <code>busport</code> values generally depend on enumeration
+performed by the operating system, and can change from one boot or run of the
+driver to another, at least on some systems.  On some systems this may be more
+stable than on others (e.g. you do not keep re-plugging the USB cable on a
+server in the rack, or the OS numbers follow hardware entities more closely),
+and in a few cases this may be the only reasonable way to differentiate multiple
+similar devices&#8201;&#8212;&#8201;in those uncommon circumstances you might want to uncomment
+and use such values.</td>
+</tr></table>
+</div>
 <div class="paragraph"><p>To scan SNMP v1 device with <em>public</em> (default) community on address range
 <em>192.168.0.0 to 192.168.0.255</em>:</p></div>
 <div class="listingblock">
@@ -1426,11 +1445,11 @@ either too limited or too verbose to be of any use.</td>
         driver = "snmp-ups"
         port = "192.168.0.42"</code></pre>
 </div></div>
-<div class="paragraph"><p>To scan NUT servers with a timeout of <em>10</em> seconds on IP range <em>192.168.0.0
-to 192.168.0.127</em> using CIDR notation:</p></div>
+<div class="paragraph"><p>To scan NUT servers with a timeout of <em>10</em> seconds on IP range <em>192.168.1.0
+to 192.168.1.127</em> using CIDR notation:</p></div>
 <div class="listingblock">
 <div class="content">
-<pre><code>:; nut-scanner -O -t 10 -m 192.168.0.0/25
+<pre><code>:; nut-scanner -O -t 10 -m 192.168.1.0/25
 
 [nutdev-nut1]
         driver = "dummy-ups"
@@ -1483,7 +1502,7 @@ on Windows):</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-18 23:57:42 UTC -- Network UPS Tools 2.8.5.1200
+Last updated 2026-10-07 10:15:10 UTC -- Network UPS Tools 2.8.5.1411
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>

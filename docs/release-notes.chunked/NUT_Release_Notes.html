@@ -809,12 +809,103 @@ If SSL configuration was provided, but the server failed to apply some
 </li></ul></div></li><li class="listitem"><p class="simpara">
 The <code class="literal">nut-driver-enumerator.sh</code> script (NDE) updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
-The shell/awk based parser now decodes <code class="literal">ups.conf</code> values using NUT token
+The shell/<code class="literal">awk</code> based parser now decodes <code class="literal">ups.conf</code> values using NUT token
       syntax, preserving quoted hashes and escaped characters and ignoring
       trailing comments. For example, <code class="literal">port = "auto" # comment</code> now properly
       selects USB media for <code class="literal">nutdrv_qx</code>. The normalized configuration output
       retains quotes and backslashes; changed section checksums can cause a
       one-time reconciliation after upgrading. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3635" target="_top">PR #3635</a>]
+</li></ul></div></li><li class="listitem"><p class="simpara">
+Revised dusty corners of NUT documentation:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Documented the existing <code class="literal">mfr</code> and <code class="literal">model</code> options for <code class="literal">liebert</code>.
+      Documented <code class="literal">sysfs_dir</code> for <code class="literal">hwmon_ina219</code>, and corrected the <code class="literal">hwmon</code>
+      path in this driver and documented the integer range and default for
+      its low battery threshold. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2422" target="_top">issue #2422</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3671" target="_top">PR #3671</a>]
+</li><li class="listitem">
+Documented how to use <code class="literal">sdcommands</code> with a stopped driver daemon to
+      send a supported instant command (typically for shutdown) without
+      a locally running <code class="literal">upsd</code> data server. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1677" target="_top">issue #1677</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3672" target="_top">PR #3672</a>]
+</li><li class="listitem">
+Updated the <code class="literal">m4</code> macro reference for developers of the <code class="literal">configure</code> script
+      in <code class="literal">docs/macros.txt</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3674" target="_top">PR #3674</a>]
+</li><li class="listitem">
+Corrected the installation staging example to preserve the source tree
+      (temporary workspace) and stop when staging prerequisites fail. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3677" target="_top">PR #3677</a>]
+</li><li class="listitem">
+Initialized the connection pointer in the C++ client example before
+      exception handling. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3678" target="_top">PR #3678</a>]
+</li><li class="listitem">
+Corrected <code class="literal">libupsclient</code> API declarations, logging examples and the
+      descriptions of SSL capability flags and raw line reads. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3679" target="_top">PR #3679</a>]
+</li><li class="listitem">
+Corrected <code class="literal">nut-scanner</code> library (<code class="literal">libnutscan</code>) API descriptions and
+      the consumer example for current function names, argument types,
+      device-option pointers and initialization. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3680" target="_top">PR #3680</a>]
+</li><li class="listitem">
+Corrected source retrieval examples, removed an unsupported <code class="literal">configure</code>
+      script option and documented the <code class="literal">pkg-config</code> installation-directory
+      default. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3681" target="_top">PR #3681</a>]
+</li><li class="listitem">
+Corrected protocol notation and updated the architecture documentation
+      for individual variable requests and command tracking. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3682" target="_top">PR #3682</a>]
+</li><li class="listitem">
+Corrected the simulation filename and recorder command in the developer
+      walk-through, and fixed quoting in the recorder manual example. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3683" target="_top">PR #3683</a>]
+</li><li class="listitem">
+Corrected <code class="literal">nut-scanner</code> simulation-file and configuration-directory
+      documentation and help, and repaired inconsistent scan examples. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3684" target="_top">PR #3684</a>]
+</li><li class="listitem">
+Corrected <code class="literal">upsmon</code> notification argument handling and escaping examples,
+      shared-timer examples and the documented <code class="literal">FINALDELAY</code> default. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3685" target="_top">PR #3685</a>]
+</li><li class="listitem">
+Corrected the PyNUT <code class="literal">GetUPSCommands</code> method example and the <code class="literal">GetUPSNames</code>
+      return-type documentation. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3686" target="_top">PR #3686</a>]
+</li><li class="listitem">
+Corrected the documented connection defaults for <code class="literal">upsc</code>, <code class="literal">upscmd</code>,
+      <code class="literal">upsrw</code>, <code class="literal">upsmon</code> and <code class="literal">upslog</code> clients, and preserved the remote
+      destination in the <code class="literal">upsc</code> query-loop example. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3687" target="_top">PR #3687</a>]
+</li><li class="listitem">
+Clarified client authentication configuration, unattended credential
+      selection and instant-command permissions. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3688" target="_top">PR #3688</a>]
+</li><li class="listitem">
+Corrected the <code class="literal">upsd</code> manual descriptions of state-path precedence
+      and debug-output stream. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3689" target="_top">PR #3689</a>]
+</li><li class="listitem">
+Updated the <code class="literal">apc_modbus</code> manual for its implemented capabilities,
+      timeout defaults and register-read attempt limit, and corrected the
+      corresponding help text in the <code class="literal">apc_modbus</code> driver program. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3690" target="_top">PR #3690</a>]
+</li><li class="listitem">
+Updated APC Microlink support references and qualified the USB
+      kernel-driver detachment guidance. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3691" target="_top">PR #3691</a>]
+</li><li class="listitem">
+Corrected standalone <code class="literal">belkinunv</code> and <code class="literal">genericups</code> driver examples
+      to supply a driver identifier and port option, and clarified the
+      <code class="literal">genericups</code> monitoring prerequisite. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3692" target="_top">PR #3692</a>]
+</li><li class="listitem">
+Corrected the GPIO driver executable name in examples and fixed
+      a quoted value in its udev rule example. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3693" target="_top">PR #3693</a>]
+</li><li class="listitem">
+Added the required USB identity fields to the Gtec configuration
+      example for <code class="literal">nutdrv_qx</code> driver, with explicit placeholders for the
+      USB device identifiers. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3694" target="_top">PR #3694</a>]
+</li><li class="listitem">
+Removed unsupported quick-test duration configuration guidance from
+      the Powervar serial and USB manuals. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3695" target="_top">PR #3695</a>]
+</li><li class="listitem">
+Removed an ineffective notification option recommendation from the
+      <code class="literal">mge-shut</code> driver troubleshooting guidance. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3696" target="_top">PR #3696</a>]
+</li><li class="listitem">
+Corrected the <code class="literal">upsdrvsvcctl</code> command reference and removed a stale TODO
+      reminder for its existing shutdown fallback. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3697" target="_top">PR #3697</a>]
+</li><li class="listitem">
+Corrected the grep pattern, directory path and displayed result prefixes
+      in the FUSE data-walk example, and fixed a spelling error in the README.
+      Added <code class="literal">scripts/fuse</code> files to <code class="literal">EXTRA_DIST</code> and <code class="literal">spellcheck</code> goals. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3698" target="_top">PR #3698</a>]
+</li><li class="listitem">
+Corrected documentation cross-references and exact variable, option,
+      command and sample-file names in examples. Updated the spelling
+      dictionary for verified terms. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3699" target="_top">PR #3699</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 Recipes, CI and helper script updates not classified above:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -950,8 +1041,8 @@ but the <code class="literal">nutshutdown</code> script would bail out quickly a
      <code class="literal">upscli_ssl_caps()</code>. Updated common NUT clients to report this info
      in their detailed help banners. Done similarly for <code class="literal">upsd</code>. The NIT
      (NUT Integration Test) suite piggy-backs on this to add run-time
-     dependent tests of SSL capability. Added <code class="literal">upscli_set_debug_level()</code>
-     and <code class="literal">upscli_set_debug_level()</code> methods to facilitate NUT debugging
+     dependent tests of SSL capability. Added <code class="literal">upscli_upslog_set_debug_level()</code>
+     and <code class="literal">upscli_upslog_get_debug_level()</code> methods to facilitate NUT debugging
      for clients built with shared NUT private libraries. [issues <a class="ulink" href="https://github.com/networkupstools/nut/issues/3328" target="_top">#3328</a>,
      <a class="ulink" href="https://github.com/networkupstools/nut/issues/1771" target="_top">#1771</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/2800" target="_top">#2800</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3330" target="_top">PR #3330</a>]
    * Revised OpenSSL handshake to support retries requested by the library,
@@ -6078,4 +6169,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.34. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-09-18 23:58:08 -- Network UPS Tools 2.8.5.1200</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-10-07 10:19:02 -- Network UPS Tools 2.8.5.1411</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

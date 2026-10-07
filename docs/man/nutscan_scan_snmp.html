@@ -819,14 +819,30 @@ char * 'privProtocol';</code></pre>
 <div class="paragraph"><p>If <em>community</em> is not NULL, SNMP v1 request are sent using this <em>community</em>.</p></div>
 <div class="paragraph"><p>If <em>community</em> is NULL and <em>secLevel</em> is NULL, SNMP v1 is selected
 and <em>community</em> is set to "public".</p></div>
-<div class="paragraph"><p>In the other cases, SNMP v3 is used. <em>secLevel</em> may be one
-of <code>SNMP_SEC_LEVEL_NOAUTH</code>, <code>SNMP_SEC_LEVEL_AUTHNOPRIV</code>
-or <code>SNMP_SEC_LEVEL_AUTHPRIV</code>.
-<em>secName</em> is the security name and must be non NULL.</p></div>
-<div class="paragraph"><p>If <em>secLevel</em> is set to <code>SNMP_SEC_LEVEL_AUTHNOPRIV</code>, <em>authPassword</em>
-must be non NULL.</p></div>
-<div class="paragraph"><p>If <em>secLevel</em> is set to <code>SNMP_SEC_LEVEL_AUTHPRIV</code>, <em>authPassword</em>
-and <em>privPassword</em> must be non NULL.</p></div>
+<div class="paragraph"><p>In the other cases, SNMP v3 is used. The <em>secLevel</em> corresponds to definitions
+in <code>net-snmp/library/snmp.h</code> as the currently used backend, and may be one of
+the following strings defined by <em>libnutscan</em>:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+"noAuthNoPriv" for <code>SNMP_SEC_LEVEL_NOAUTH</code>,
+</p>
+</li>
+<li>
+<p>
+"authNoPriv" for <code>SNMP_SEC_LEVEL_AUTHNOPRIV</code>, or
+</p>
+</li>
+<li>
+<p>
+"authPriv" for <code>SNMP_SEC_LEVEL_AUTHPRIV</code>.
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p><em>secName</em> is the security name and must be non NULL.</p></div>
+<div class="paragraph"><p>If <em>secLevel</em> is set to "authNoPriv", the <em>authPassword</em> must be non NULL.</p></div>
+<div class="paragraph"><p>If <em>secLevel</em> is set to "authPriv", the <em>authPassword</em> and <em>privPassword</em>
+values must both be non NULL.</p></div>
 <div class="paragraph"><p>If <em>authProtocol</em> is NULL, MD5 protocol is used.
 Else you can set <em>authProtocol</em> to either "MD5" or "SHA".</p></div>
 <div class="paragraph"><p>If <em>privProtocol</em> is NULL, DES protocol is used.
@@ -867,7 +883,7 @@ or NULL if an error occurs or no device is found.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-18 23:57:42 UTC -- Network UPS Tools 2.8.5.1200
+Last updated 2026-10-07 10:15:12 UTC -- Network UPS Tools 2.8.5.1411
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>

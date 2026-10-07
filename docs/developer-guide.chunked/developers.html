@@ -177,7 +177,7 @@ were introduced over time.</p><p>For more information, and perhaps inspiration f
 solution, please see the <span class="strong"><strong>NUT Quality Assurance and Build Automation Guide</strong></span>,
 and specifically its chapters on
 <a class="ulink" href="../qa-guide.chunked/index.html#CI_compiler_warnings" target="_top">Static analysis by compilers</a>,
-<a class="ulink" href="../qa-guide.chunked/index.html#CI_BUILD_SH" target="_top">ci_build.sh script</a> (or <code class="code">ci_build.adoc</code> in NUT sources for up-to-date information),
+<a class="ulink" href="../qa-guide.chunked/_test_automation.html#CI_BUILD_SH" target="_top">ci_build.sh script</a> (or <code class="code">ci_build.adoc</code> in NUT sources for up-to-date information),
 <a class="ulink" href="../qa-guide.chunked/index.html#NUTCI_farm_technologies" target="_top">Continuous Integration (NUT CI farm) technologies</a> and
 <a class="ulink" href="../qa-guide.chunked/index.html#NUTCI_farm_agents" target="_top">Continuous Integration (NUT CI farm) build agent preparation</a>.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_integrated_development_environments_ides_and_debugging_nut"></a>4.5. Integrated Development Environments (IDEs) and debugging NUT</h3></div></div></div><p>Much of NUT has been coded using classic editors of developers' preference,
 like <code class="literal">vi</code>, <code class="literal">nano</code>, Midnight Commander <code class="literal">mcedit</code>, <code class="literal">gedit</code>/<code class="literal">pluma</code>, NotePad++
@@ -754,9 +754,13 @@ lots of small commits, one per change per file. Unless there is reason to
 keep the intermediate history, we will probably collapse (or "squash" in
 Git parlance) the entire branch into one commit with a <code class="literal">git rebase -i</code>
 before merging.</p><p>The <a class="ulink" href="https://git.wiki.kernel.org/index.php/GitSvnCrashCourse" target="_top">GitSvnCrashCourse</a>
-wiki page has some useful information for long-time users of Subversion.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_git_access"></a>Git access</h4></div></div></div><p>Anonymous Git checkouts are possible:</p><pre class="literallayout">:; git clone git://github.com/networkupstools/nut.git</pre><p>or</p><pre class="literallayout">:; git clone https://github.com/networkupstools/nut.git</pre><p>if it is necessary to get around a pesky firewall that blocks the native
-Git protocol.</p><p>For a quicker checkout (when you don’t need the entire repository history),
-you can limit the depth of the clone:</p><pre class="literallayout">:; git clone --depth 1 git://github.com/networkupstools/nut.git</pre><p>OPTIONALLY you can then fetch known git tags, so semantic versions look
+wiki page has some useful information for long-time users of Subversion.</p><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_git_access"></a>Git access</h4></div></div></div><p>Anonymous Git checkouts are possible over HTTPS:</p><pre class="literallayout">:; git clone https://github.com/networkupstools/nut.git</pre><p>…or over SSH (if it is necessary to get around some pesky firewall,
+or to better sign your eventual contributions, but this may require
+that you have registered developer SSH keys in your GitHub account):</p><pre class="literallayout">:; git clone git@github.com:networkupstools/nut.git</pre><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>Earlier versions of this document also suggested the native
+Git protocol (e.g. <code class="literal">git://github.com/networkupstools/nut.git</code> URL)
+for anonymous access, but this is deemed insecure and no longer
+supported by GitHub since 2022.</p></div><p>For a quicker checkout (when you don’t need the entire repository history),
+you can limit the depth of the clone:</p><pre class="literallayout">:; git clone --depth 1 https://github.com/networkupstools/nut.git</pre><p>OPTIONALLY you can then fetch known git tags, so semantic versions look
 better (based off a recent release, see
 <a class="ulink" href="../developer-guide.chunked/index.html#versioning" target="_top">NUT Semantic Versioning</a> (or <code class="code">docs/nut-versioning.adoc</code> in NUT sources for up-to-date information)
 for more details):</p><pre class="literallayout">:; cd nut
@@ -845,10 +849,10 @@ done on integration branches, which can be discarded if the merge is trivial.)
 Be sure that your commit messages are descriptive when merging.</p><p>If you haven’t created a commit out of your local changes yet, and you want to
 fetch the latest code, you can also use <code class="literal">git stash</code> before pulling, then <code class="literal">git
 stash pop</code> to apply your saved changes.</p><p>Here is an example workflow (using a slightly older <code class="literal">git</code> command-line syntax,
-so it works verbatim on more platforms):</p><pre class="screen">        :; git clone -o central git://github.com/networkupstools/nut.git
+so it works verbatim on more platforms):</p><pre class="screen">        :; git clone -o central https://github.com/networkupstools/nut.git
 
         :; cd nut
-        :; git remote add -f USERNAME git://github.com/USERNAME/nut.git
+        :; git remote add -f USERNAME https://github.com/USERNAME/nut.git
 
         ### OPTIONALLY you can then fetch known git tags, so semantic
         ### versions look better (based off a recent release):
@@ -939,4 +943,4 @@ scenarios automatically. If your code adds a substantial feature, consider
 extending the <code class="literal">Jenkinsfile-dynamatrix</code> and/or <code class="literal">ci_build.sh</code> scripts in the
 workspace root to add another <code class="literal">BUILD_TYPE</code> to the matrix of tests run in
 parallel.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-09-18 23:58:08 -- Network UPS Tools 2.8.5.1200</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="versioning.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="new-drivers.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-10-07 10:18:34 -- Network UPS Tools 2.8.5.1411</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="versioning.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="new-drivers.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

@@ -828,13 +828,11 @@ please see <a href="https://github.com/networkupstools/nut/pull/2063">NUT PR #20
 <td class="icon">
 <div class="title">Note</div>
 </td>
-<td class="content">As currently published, this driver supports reading information from
-the UPS. Implementation of support to write (set modifiable variables or send
-commands) is expected with a later release. This can impact the host shutdown
-routines in particular (no ability to actively tell the UPS to power off or
-cycle in the end). As a workaround, you can try integrating <code>apctest</code> (from
-the "apcupsd" project) with a "Test to kill power" into your late-shutdown
-procedure, if needed.</td>
+<td class="content">This driver supports reading information, setting writable variables
+and sending commands supported by the device. Load and shutdown commands
+depend on the discovery of outlet groups. For TCP connections, late-shutdown
+commands also require network access to remain available when the driver
+is called.</td>
 </tr></table>
 </div>
 </div>
@@ -1149,8 +1147,9 @@ Set the Modbus slave id. The default slave id is 1.
 </dt>
 <dd>
 <p>
-Set the Modbus response timeout. The default timeout is set by libmodbus. It can
-be good to set a higher timeout on TCP connections with high latency.
+Set the Modbus response timeout in milliseconds. The default is 500 for
+serial and USB connections, or 2000 for TCP connections. It can be good to
+set a higher timeout on TCP connections with high latency.
 </p>
 </dd>
 <dt class="hdlist1">
@@ -1158,9 +1157,11 @@ be good to set a higher timeout on TCP connections with high latency.
 </dt>
 <dd>
 <p>
-Set the number of retries for Modbus register reads on timeout errors.
-The default is 3 retries. After exhausting retries (or on non-timeout errors),
-the connection is closed and will be re-established on the next update cycle.
+Set the maximum number of attempts for Modbus register reads. The default
+is 3 attempts in total. Reads are retried after timeout, bad CRC, bad data
+or, where supported by libmodbus, wrong-slave errors. After exhausting
+these attempts (or on other errors), the connection is closed and will be
+re-established on the next update cycle.
 </p>
 </dd>
 </dl></div>
@@ -1297,7 +1298,7 @@ Axel Gembe &lt;<a href="mailto:axel@gembe.net">axel@gembe.net</a>&gt;
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-09-18 23:57:43 UTC -- Network UPS Tools 2.8.5.1200
+Last updated 2026-10-07 10:15:16 UTC -- Network UPS Tools 2.8.5.1411
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>

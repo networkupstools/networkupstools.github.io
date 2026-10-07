@@ -58,20 +58,19 @@ test the front panel of the UPS.</p><p>They are passed to the SERVER from a CLIE
 network connection.  The SERVER first checks to make sure that the instant
 command is valid for the DRIVER.  If it’s supported, a message is sent
 via a socket to the DRIVER containing the command and any auxiliary
-information.</p><p>At this point, there is no confirmation to the SERVER of the command’s
-execution.  This is (still) planned for a future release.  This has been
-delayed since returning a response involves some potentially interesting
-timing issues.  Remember that <code class="literal">upsd</code> services clients in a round-robin
-fashion, so all queries must be lightweight and speedy.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>FIXME: Wasn’t "TRACKING" mechanism for "INSTCMD/SET VAR" introduced
-to address just this? See <a class="ulink" href="https://github.com/networkupstools/nut/pull/659" target="_top">https://github.com/networkupstools/nut/pull/659</a></p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_setting_variables"></a>2.4. Setting variables</h3></div></div></div><p>Some variables in the DRIVER or EQUIPMENT can be changed, and carry the
+information.</p><p>When supported by the CLIENT, SERVER and DRIVER, and enabled by the
+CLIENT, command tracking lets the DRIVER report its handler result to
+the SERVER.  The CLIENT can query this result with <code class="literal">GET TRACKING</code>; see
+the <a class="link" href="net-protocol.html" title="10. Network protocol information">network protocol reference</a>.  A reported handler
+result does not by itself confirm completion of a physical device action.</p><p>Remember that <code class="literal">upsd</code> SERVER services all of its clients in a round-robin
+fashion, so individual queries must be lightweight and speedy.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_setting_variables"></a>2.4. Setting variables</h3></div></div></div><p>Some variables in the DRIVER or EQUIPMENT can be changed, and carry the
 FLAG_RW flag.  Upon receiving a SET command from the CLIENT, the SERVER
 first verifies that it is valid for that DRIVER in terms of writability
 and data type.  If those checks pass, it then sends the SET command
 through the socket, much like the instant command design.</p><p>The DRIVER is expected to commit the value to the EQUIPMENT and update
-its internal representation of that variable.</p><p>Like the instant commands, there is currently no acknowledgement of the
-command’s completion from the DRIVER.  This, too, is planned for a future
-release.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>FIXME: Wasn’t "TRACKING" mechanism for "INSTCMD/SET VAR" introduced
-to address just this? See <a class="ulink" href="https://github.com/networkupstools/nut/pull/659" target="_top">https://github.com/networkupstools/nut/pull/659</a></p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_example_data_path"></a>2.5. Example data path</h3></div></div></div><p>Here’s the path a piece of data might take through this architecture.
+its internal representation of that variable.</p><p>The same optional tracking mechanism used for instant commands lets the
+DRIVER report its handler result for a <code class="literal">SET</code> request.  This does not by
+itself confirm that the EQUIPMENT has applied the requested value.</p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_example_data_path"></a>2.5. Example data path</h3></div></div></div><p>Here’s the path a piece of data might take through this architecture.
 The event is a UPS going on battery, and the final result is a pager
 delivering the alpha message to the admin.</p><div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem">
 EQUIPMENT reports on battery by setting flag in status register
@@ -158,4 +157,4 @@ of a driver program over the local socket, as an alternative to signals
 for the already-running driver to reload configuration, exit and make way
 for a new instance of the driver daemon, or command the UPS to kill power
 without the overhead of a new connection made by such new instance.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-09-18 23:58:08 -- Network UPS Tools 2.8.5.1200</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="versioning.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-10-07 10:18:34 -- Network UPS Tools 2.8.5.1411</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="versioning.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
