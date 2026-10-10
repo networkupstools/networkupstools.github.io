@@ -45,6 +45,14 @@ The Perl <code class="literal">UPS::Nut</code> module now decodes NUT quoting an
   where grouping was intended. The legacy <code class="literal">Set()</code> argument contract is
   unchanged. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3634" target="_top">PR #3634</a>]
 </li><li class="listitem">
+<code class="literal">nut-scanner</code> now prefers the <code class="literal">SONAME</code> of each dynamically loaded library
+  (such as <code class="literal">libusb-1.0.so.0</code>) over the fully versioned file name it saw at
+  build time (such as <code class="literal">libusb-1.0.so.0.6.0</code>). Packagers no longer need to
+  rebuild NUT after an ABI-compatible update of libusb, Net-SNMP, neon,
+  Avahi, GLib or FreeIPMI which only changed that file name. The detected
+  values are reported by <code class="literal">./configure</code> as <code class="literal">SONAME_LIB*</code> next to the
+  existing <code class="literal">SOPATH_LIB*</code> and <code class="literal">SOFILE_LIB*</code> values. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3474" target="_top">issue #3474</a>]
+</li><li class="listitem">
 The common configuration and protocol parser now accepts literal <code class="literal">#</code>
   characters inside double quotes. An unescaped <code class="literal">#</code> outside double quotes
   still starts a comment. Existing <code class="literal">\#</code> escapes remain supported and are
@@ -125,12 +133,17 @@ The <code class="literal">powervar_cx_usb</code>, <code class="literal">tripplit
   which defaults to trying indefinitely now. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3541" target="_top">#3541</a>]
 </li><li class="listitem">
 Deployments using <code class="literal">nutdrv_qx</code> driver with <code class="literal">cypress</code> subdriver may be impacted
-  by a fix which added a <code class="literal">cypress_0665_5161_subdriver</code> initialization method for
-  devices with USB ID <code class="literal">0665:5161</code> (Belkin, Voltronic, VOLT Polska) which enables
-  a special quirk to drain stale bytes from USB buffers of the device before our
-  driver sends queries, and use a longer timeout. If this change breaks your
-  device, please add <code class="literal">cypress_drain_quirk = 0</code> in your <code class="literal">ups.conf</code> and let us
-  know. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2534" target="_top">issue #2534</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3563" target="_top">PR #3563</a>]
+  by a fix which added a special quirk, enabled by default for devices with
+  USB ID <code class="literal">0665:5161</code> (Belkin, Voltronic, VOLT Polska), to drain stale bytes
+  from USB buffers of the device before our driver sends queries, and use
+  a longer timeout. If this change breaks your device, please add
+  <code class="literal">cypress_drain_quirk = 0</code> in your <code class="literal">ups.conf</code> and let us know.
+  [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2534" target="_top">issue #2534</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3563" target="_top">PR #3563</a>]
+  With this quirk, a device which keeps sending data for longer than a reply
+  takes is now reset over USB and reconnected; after 3 such resets in a row
+  the driver exits ("Replies from the UPS stayed out of step with commands").
+  The quirk (and its default by USB ID) now also applies with an explicit
+  <code class="literal">subdriver = cypress</code> setting, which used to turn it off. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3720" target="_top">PR #3720</a>]
 </li><li class="listitem">
 The <code class="literal">huawei-ups2000</code> driver fixed two serious problems that affected all
   previous NUT versions. All <code class="literal">huawei-ups2000</code> users are strongly recommended
@@ -1120,4 +1133,4 @@ The newapc driver has been renamed to apcsmart.  If you previously
   used newapc, make sure you delete the old binary and fix your
   ups.conf.  Otherwise, you may run the old driver from 1.4.
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_file_trimmed_here_on_changes_from_1_2_2_to_1_4_0"></a>3.31. File trimmed here on changes from 1.2.2 to 1.4.0</h3></div></div></div><p>For information before this point, start with version 2.4.1 and work back.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-10-07 10:26:36 -- Network UPS Tools 2.8.5.1411</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="NUT_Release_Notes.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="Project_History.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-10-10 15:48:27 -- Network UPS Tools 2.8.5.1466</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="NUT_Release_Notes.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="Project_History.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

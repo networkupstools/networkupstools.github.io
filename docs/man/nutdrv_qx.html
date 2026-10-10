@@ -878,7 +878,7 @@ If you set stayoff in <a href="ups.conf.html">ups.conf(5)</a> when FSD arises th
 <dd>
 <p>
 Skip autodetection of the protocol to use and only use the one specified.
-Supported values: <em>bestups</em>, <em>gtec</em>, <em>hunnox</em>, <em>innovart31</em>, <em>innovart33</em>, <em>innovatae</em>, <em>masterguard</em>, <em>mecer</em>, <em>megatec</em>, <em>megatec/old</em>, <em>mustek</em>, <em>omron</em>, <em>q1</em>, <em>q2</em>, <em>q6</em>, <em>voltronic</em>, <em>voltronic-axpert</em>, <em>voltronic-qs</em>, <em>voltronic-qs-hex</em> and <em>zinto</em>.
+Supported values: <em>bestups</em>, <em>gtec</em>, <em>hunnox</em>, <em>innovart31</em>, <em>innovart33</em>, <em>innovatae</em>, <em>masterguard</em>, <em>mecer</em>, <em>megatec</em>, <em>megatec/old</em>, <em>mustek</em>, <em>omron</em>, <em>q1</em>, <em>q2</em>, <em>q6</em>, <em>santak</em>, <em>voltronic</em>, <em>voltronic-axpert</em>, <em>voltronic-qs</em>, <em>voltronic-qs-hex</em> and <em>zinto</em>.
 </p>
 <div class="paragraph"><p>Run the driver program with the <code>--help</code> option to see the exact list of
 <code>protocol</code> values it would currently recognize.</p></div>
@@ -945,6 +945,14 @@ this fails somehow, you may want to override this value.</p></div>
 and/or <code>battery.runtime</code> (with <code>runtimecal</code> setting), if those readings are
 not provided by the device directly.</p></div>
 </dd>
+</dl></div>
+<div class="paragraph"><p>The <strong>santak</strong> protocol covers single-phase Santak Castle C*K units. They speak
+the same Q6 dialect as <strong>innovart31</strong> but are single-phase and NAK the <code>F</code> ratings
+query, so <strong>innovart31</strong> rejects them; ratings come from the <code>WH</code> command instead.
+Note that <strong>battery.voltage</strong> is already reported at pack level over <code>Q6</code>, so
+<strong>battery_voltage_reports_one_pack</strong> should NOT be set for these devices (the
+per-cell reading is a <code>Q1</code> artefact).</p></div>
+<div class="dlist"><dl>
 <dt class="hdlist1">
 <strong>battery_voltage_reports_one_pack</strong>
 </dt>
@@ -1847,7 +1855,14 @@ The <code>nutdrv_qx</code> driver can drain the USB buffer and use longer timeou
 with such devices, but such a change may potentially misfire on other devices with
 same USB ID (Belkin, Voltronic).  This option allows to explicitly enable or disable
 this behavior; by default it is chosen according to device self-identification.
+This also applies when the <code>cypress</code> subdriver is selected explicitly.
 </p>
+<div class="paragraph"><p>With this behavior enabled, the driver also keeps replies in step with commands
+when the UPS answers only after the driver stopped waiting, or sends data unasked:
+it then drains until the UPS stays quiet for longer than it pauses within a reply,
+and logs such out-of-step data (once, while it keeps recurring).  If the device
+keeps sending data for longer than a reply takes, the driver resets the USB device
+and reconnects, and gives up (exits) after several resets in a row.</p></div>
 </dd>
 </dl></div>
 <div class="sect3">
@@ -3046,7 +3061,7 @@ The NUT HCL: <a href="https://www.networkupstools.org/stable-hcl.html">https://w
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-10-07 10:26:15 UTC -- Network UPS Tools 2.8.5.1411
+Last updated 2026-10-10 15:48:05 UTC -- Network UPS Tools 2.8.5.1466
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>

@@ -933,6 +933,13 @@ on many systems.
 compiled into the code.  This overrides any value you may have set with
 <code>configure --with-port</code>.  If you don&#8217;t change it with configure or this value,
 <code>upsd</code> will listen on port <em>3493</em> for this interface.</p></div>
+<div class="paragraph"><p>The address and port may also be combined as <code>hostname:port</code>, <code>IPv4:port</code>
+or <code>[IPv6]:port</code>. The inline port must be a decimal number from 0 to 65535,
+and must not be followed by a separate port argument. Bare IPv6 addresses
+remain complete addresses: <code>::3493</code> does not specify port 3493.</p></div>
+<div class="paragraph"><p>For an IPv6 address ending in <code>::</code>, appending <code>:port</code> is also accepted:
+<code>:::3493</code> means <code>[::]:3493</code>, and <code>2001:db8:::3493</code> means
+<code>[2001:db8::]:3493</code>. Use brackets for other IPv6 addresses with inline ports.</p></div>
 <div class="paragraph"><p>Multiple <code>LISTEN</code> addresses may be specified.  The default is to bind to
 <code>127.0.0.1</code> if no <code>LISTEN</code> addresses are specified (and also <code>::1</code> if IPv6
 support is compiled in).</p></div>
@@ -950,7 +957,9 @@ socket to handle both address families.</p></div>
 LISTEN 192.168.50.1
 LISTEN myhostname.mydomain
 LISTEN ::1
-LISTEN 2001:0db8:1234:08d3:1319:8a2e:0370:7344</code></pre>
+LISTEN 2001:0db8:1234:08d3:1319:8a2e:0370:7344
+LISTEN 127.0.0.1:3493
+LISTEN [::1]:3493</code></pre>
 </div></div>
 <div class="paragraph"><p>This parameter will only be read at startup.  You&#8217;ll need to restart
 (rather than merely reload) <code>upsd</code> to apply any changes made here.</p></div>
@@ -1166,7 +1175,7 @@ to start. Earlier releases logged the error and proceeded in insecure fashion.</
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-10-07 10:26:14 UTC -- Network UPS Tools 2.8.5.1411
+Last updated 2026-10-10 15:48:05 UTC -- Network UPS Tools 2.8.5.1466
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>
