@@ -869,6 +869,9 @@ mode.
 <p>
 Set the serial line speed. The default is <code>9600</code>. Serial mode only.
 </p>
+<div class="paragraph"><p>In serial mode the driver polls the device continuously, as it always has,
+and the <code>pollinterval</code> setting from <a href="ups.conf.html">ups.conf(5)</a> does not apply.
+USB mode honors <code>pollinterval</code>.</p></div>
 </dd>
 <dt class="hdlist1">
 <strong>showinternals</strong>=<em>yes|no</em>
@@ -1284,7 +1287,11 @@ one unswitched group (group 0) alongside one or more independently
 switchable groups, and the unswitched group has no on/off/cycle/shutdown
 commands to offer. Other models have no unswitched group at all: their
 outlet groups start numbering at 1, and <code>outlet.group.0</code> is not published.</p></div>
-<div class="paragraph"><p>Supported instant commands currently include:</p></div>
+<div class="paragraph"><p>Supported instant commands currently include the following. Each one is
+only offered once the Microlink descriptor turns out to contain the register
+it writes to, since not every model has all of them&#8201;&#8212;&#8201;the tested Smart-UPS
+500, for example, has no runtime calibration command register, so it offers
+no <code>calibrate.*</code> commands:</p></div>
 <div class="ulist"><ul>
 <li>
 <p>
@@ -1303,17 +1310,32 @@ outlet groups start numbering at 1, and <code>outlet.group.0</code> is not publi
 </li>
 <li>
 <p>
-<code>test.panel.stop</code>
-</p>
-</li>
-<li>
-<p>
 <code>beeper.enable</code>
 </p>
 </li>
 <li>
 <p>
 <code>beeper.disable</code>
+</p>
+</li>
+<li>
+<p>
+<code>calibrate.start</code>
+</p>
+</li>
+<li>
+<p>
+<code>calibrate.stop</code>
+</p>
+</li>
+<li>
+<p>
+<code>bypass.start</code>
+</p>
+</li>
+<li>
+<p>
+<code>bypass.stop</code>
 </p>
 </li>
 </ul></div>
@@ -1453,7 +1475,7 @@ Nicolai <em>nmbro</em> Brogaard &lt;nicolai.brogaard+<a href="mailto:nut@gmail.c
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-10-14 21:06:06 UTC -- Network UPS Tools 2.8.5.1525
+Last updated 2026-10-14 23:44:26 UTC -- Network UPS Tools 2.8.5.1525
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>
