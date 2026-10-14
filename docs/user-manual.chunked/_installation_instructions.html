@@ -64,7 +64,32 @@ You might call them "ups" and "nut".  The exact names aren’t important as
 long as you are consistent.</p><p>The process for doing this varies from one system to the next, and
 explaining how to add users is beyond the scope of this document.</p><p>For the purposes of this document, the user name and group name
 will be <span class="emphasis"><em>ups</em></span> and <span class="emphasis"><em>nut</em></span> respectively.</p><p>Be sure the new user is a member of the new group!  If you forget to
-do this, you will have problems later on when you try to start upsd.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_build_and_install"></a>Build and install</h4></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>See also <a class="link" href="_installation_instructions.html#Installing_inplace" title="5.2. Building NUT for in-place upgrades or non-disruptive tests">Building NUT for in-place upgrades or non-disruptive tests</a>.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="Configuration"></a>Configuration</h5></div></div></div><p>Configure the source tree for your system.  Add the <span class="emphasis"><em>--with-user</em></span> and
+do this, you will have problems later on when you try to start upsd.</p></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_repetitive_build_test_optimizations"></a>Repetitive build/test optimizations</h4></div></div></div><p>There are several optimizations in NUT recipes and scripts aimed at speeding
+up repetitive builds and tests, which are not too useful for one-off end-user
+builds, but can bring significant benefits on CI and packaging systems and
+for developers iterating on some features.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<code class="literal">ccache</code> can be used to NOT recompile objects for which no sources have
+  changed. On many systems it suffices to add e.g. <code class="literal">/usr/lib/ccache</code> early
+  in <code class="literal">PATH</code> and populate it with symlinks to e.g. <code class="literal">/usr/bin/ccache</code> using
+  various compiler program names.
+</li><li class="listitem">
+If you are a developer iterating with debug builds on different branches,
+  <code class="literal">export CI_AUTOGEN_STABLE_VERSION=true</code> can additionally ensure that the
+  <code class="literal">AC_INIT</code> in the generated <code class="literal">configure</code> script would not follow NUT SEMVER
+  but use a shorter and temporally stable version string. This helps on some
+  systems where enabling debug options embeds all macros into compiled objects,
+  so an ever-changing <code class="literal">PACKAGE_VERSION</code> in <code class="literal">config.h</code> which does follow NUT
+  SEMVER prevents <code class="literal">ccache</code> direct mode (because each build is deemed unique).
+</li><li class="listitem">
+Using <code class="literal">export DO_USE_NUTCI_CACHE=yes</code> (and derived environment variables
+  like <code class="literal">DO_USE_AUTOCONF_CACHE</code> or <code class="literal">DO_USE_NIT_TESTCERT_CACHE</code>) can be used
+  to speed up re-builds with <code class="literal">ci_build.sh</code> and re-runs of NUT Integration
+  Test suite. Exports like this can be placed into your <code class="literal">~/.profile</code> or
+  exported from CI system recipes.
+</li><li class="listitem">
+When you iterate code development, <code class="literal">./configure --with-doc=skip ...</code> can
+  avoid time loss from parsing documentation files you never even edited.
+</li></ul></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_build_and_install"></a>Build and install</h4></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>See also <a class="link" href="_installation_instructions.html#Installing_inplace" title="5.2. Building NUT for in-place upgrades or non-disruptive tests">Building NUT for in-place upgrades or non-disruptive tests</a>.</p></div><div class="section"><div class="titlepage"><div><div><h5 class="title"><a id="Configuration"></a>Configuration</h5></div></div></div><p>Configure the source tree for your system.  Add the <span class="emphasis"><em>--with-user</em></span> and
 <span class="emphasis"><em>--with-group</em></span> switch to set the user name and group that you created
 above.</p><pre class="literallayout">./configure --with-user=ups --with-group=nut</pre><p>If you need any other switches for configure, add them here.  For example:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 to build and install USB drivers, add <span class="emphasis"><em>--with-usb</em></span> (note that you
@@ -417,4 +442,4 @@ rendering it invalid.</p><div class="note" style="margin-left: 0; margin-right: 
 the <a class="ulink" href="https://github.com/networkupstools/nut/wiki/NUT-for-Windows" target="_top">NUT for
 Windows</a> article on NUT GitHub Wiki.</p></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_runtime_configuration"></a>Runtime configuration</h4></div></div></div><p>You are now ready to configure NUT, and start testing and using it.</p><p>You can jump directly to the
 <a class="link" href="Configuration_notes.html" title="6. Configuration notes">NUT configuration</a>.</p></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-10-14 11:18:18 -- Network UPS Tools 2.8.5.1466</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="Download_instructions.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="Configuration_notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-10-14 20:43:39 -- Network UPS Tools 2.8.5.1525</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="Download_instructions.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="Configuration_notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
