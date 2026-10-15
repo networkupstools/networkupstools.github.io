@@ -715,6 +715,11 @@ Previously when looping to start a driver (and initially failing), we
 </li></ul></div></li><li class="listitem"><p class="simpara">
 common code:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Driver help now prints identical option names, types and descriptions
+      only once, reducing repeated entries from protocol subdrivers.
+      Configuration handling and the parsable <code class="literal">-L</code> list are unchanged.
+      [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2064" target="_top">issue #2064</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3741" target="_top">PR #3741</a>]
+</li><li class="listitem">
 The configuration and protocol parser now accepts a literal <code class="literal">#</code>
       inside double quotes, including in UPS and <code class="literal">dummy-ups</code> outlet
       descriptions. Unquoted <code class="literal">#</code> still starts a comment, and escaped
@@ -796,6 +801,11 @@ The <code class="literal">hidparser.c</code> code was further updated to use not
 </li></ul></div></li><li class="listitem"><p class="simpara">
 NUT client libraries:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Introduction of <code class="literal">nutauth.conf</code> support caused some rearrangement of
+      codebase layout in the library, and this in turn caused some fallout.
+      Fixed <code class="literal">libupsclient</code> builds with OpenSSL or NSS when Clang treats
+      declarations after executable statements as errors. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3761" target="_top">issue #3761</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3762" target="_top">PR #3762</a>]
+</li><li class="listitem">
 The Perl <code class="literal">UPS::Nut</code> module now decodes quoted values and backslash
       escapes in query/list replies and <code class="literal">nutauth.conf</code> entries, and quotes
       authentication arguments. Single quotes in configuration are literal.
@@ -1009,6 +1019,24 @@ The shell/<code class="literal">awk</code> based parser now decodes <code class=
 </li></ul></div></li><li class="listitem"><p class="simpara">
 Revised dusty corners of NUT documentation:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Corrected operator guidance for communication loss, certificate expiry
+      and device-list reloads, debug output and polling intervals. Documented
+      the scanning thread limit, completed notification lists and linked
+      the SSL configuration directives. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3743" target="_top">PR #3743</a>]
+</li><li class="listitem">
+Documented the existing <code class="literal">--with-debuginfo</code> and <code class="literal">--enable-cppunit</code>
+      developer options, including their defaults and dependencies.
+      [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2311" target="_top">issue #2311</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3740" target="_top">PR #3740</a>]
+</li><li class="listitem">
+Included the eight existing text cable references in the generated
+      cable guide and user manual, preserving their diagrams and attribution.
+      [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1367" target="_top">issue #1367</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3742" target="_top">PR #3742</a>]
+</li><li class="listitem">
+Corrected the <code class="literal">usbhid-ups</code> on-battery discharge option name and the
+      <code class="literal">belkinunv</code> configuration guidance. Documented the existing
+      <code class="literal">microdowell</code> delay settings and the <code class="literal">nhs_ser</code> model override and
+      bypass-alarm settings. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3744" target="_top">PR #3744</a>]
+</li><li class="listitem">
 Documented the existing Modbus timeout components and defaults for
       <code class="literal">generic_modbus</code> and <code class="literal">adelsystem_cbi</code>, and corrected the <code class="literal">genericups</code>
       driver name in the GE/IMV/Victron cable reference. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3749" target="_top">PR #3749</a>]
@@ -1022,8 +1050,8 @@ Documented how to use <code class="literal">sdcommands</code> with a stopped dri
       send a supported instant command (typically for shutdown) without
       a locally running <code class="literal">upsd</code> data server. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1677" target="_top">issue #1677</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3672" target="_top">PR #3672</a>]
 </li><li class="listitem">
-Updated the <code class="literal">m4</code> macro reference for developers of the <code class="literal">configure</code> script
-      in <code class="literal">docs/macros.txt</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3674" target="_top">PR #3674</a>]
+Updated the <code class="literal">m4</code> macro reference for developers of the <code class="literal">configure</code>
+      script in <code class="literal">docs/macros.txt</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3674" target="_top">PR #3674</a>]
 </li><li class="listitem">
 Corrected the installation staging example to preserve the source tree
       (temporary workspace) and stop when staging prerequisites fail. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3677" target="_top">PR #3677</a>]
@@ -6386,4 +6414,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.34. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-10-14 23:54:20 -- Network UPS Tools 2.8.5.1525</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-10-15 14:46:46 -- Network UPS Tools 2.8.5.1525</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

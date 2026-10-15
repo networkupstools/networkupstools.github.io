@@ -257,7 +257,25 @@ and checks the NUT <code class="literal">libdir</code> against that list.  If th
 flags are announced; otherwise, the format detected for currently used linker
 by autoconf libtool macros is added to the announced metadata for builds
 against NUT.  If this causes problems, you can either <code class="literal">--disable-...</code> these
-flags or provide the desired string explicitly.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_options_for_developers"></a>Options for developers</h4></div></div></div><pre class="literallayout">--enable-spellcheck (default: auto)</pre><p>Activate recipes for documentation source file spelling checks with <code class="literal">aspell</code>
+flags or provide the desired string explicitly.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_options_for_developers"></a>Options for developers</h4></div></div></div><pre class="literallayout">--with-debuginfo (yes/no/auto/legacy, default: no)</pre><p>Request debug-friendly compiler options for NUT binaries. With <code class="literal">yes</code>, GCC
+and CLANG builds add <code class="literal">-g3 -gdwarf-2</code> and reduce optimization with <code class="literal">-O0</code>.
+For C builds, <code class="literal">-O0</code> is added to <code class="literal">CPPFLAGS</code>, so later optimization options
+in <code class="literal">CFLAGS</code> can still override it. For C++ builds, these options are appended
+to <code class="literal">CXXFLAGS</code> and replace the separate debug options for CppUnit tests.
+Unknown compiler families do not receive these options.</p><p>With <code class="literal">auto</code>, C and C++ are considered separately: add the debug options only
+if the caller’s <code class="literal">CFLAGS</code> or <code class="literal">CXXFLAGS</code>, respectively, contain neither <code class="literal">-O</code>
+nor <code class="literal">-g</code> options. With <code class="literal">no</code>, NUT adds no debug options through this setting;
+compiler defaults and caller-supplied flags still apply. The <code class="literal">legacy</code> value
+adds <code class="literal">-O</code> only if the corresponding flags are empty after the initial
+compiler checks.</p><pre class="literallayout">--enable-cppunit (yes/no/force/auto, default: auto)</pre><p>Control whether to build CppUnit tests for the C++ bindings. Detection
+requires <code class="literal">pkg-config</code>, the CppUnit development files and a compiler with
+C++11 support. The <code class="literal">configure</code> script also checks whether a small CppUnit
+program can build and, when execution is possible, run with the current
+toolkit.</p><p>With <code class="literal">auto</code>, build the tests if these checks succeed; otherwise skip them.
+With <code class="literal">yes</code>, fail configuration if the tests cannot be enabled. With <code class="literal">no</code>,
+disable the tests. With <code class="literal">force</code>, enable the tests even if detection fails,
+with a warning; this does not supply missing dependencies or guarantee that
+the tests will build or run. Enabled tests are run by <code class="literal">make check</code>.</p><pre class="literallayout">--enable-spellcheck (default: auto)</pre><p>Activate recipes for documentation source file spelling checks with <code class="literal">aspell</code>
 tool. Default behavior depends on availability of the tool, so if present — it would run for <code class="literal">make check</code> by default, to facilitate quicker acceptance
 of contributions.</p><pre class="literallayout">--enable-check-NIT (default: no)</pre><p>Add <code class="literal">make check-NIT</code> to default activity of <code class="literal">make check</code> to run the
 NUT Integration Testing suite. This is potentially dangerous (e.g. due
@@ -291,4 +309,4 @@ Core and Client parts.</p></div><div class="section"><div class="titlepage"><div
 dynamically, based on requested scanning options. This allows to build and
 package the tool without requiring all possible dependencies to be installed
 in each run-time environment.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-10-14 23:54:20 -- Network UPS Tools 2.8.5.1525</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_driver_selection.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="Configure_options.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="_other_configuration_options.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-10-15 14:46:46 -- Network UPS Tools 2.8.5.1525</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_driver_selection.html">Prev</a> </td><td width="20%" align="center"><a accesskey="u" href="Configure_options.html">Up</a></td><td width="40%" align="right"> <a accesskey="n" href="_other_configuration_options.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

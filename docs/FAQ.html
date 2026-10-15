@@ -160,11 +160,12 @@ errors about staleness.</p><p>If this happens to you, make sure your driver is s
 Also look at the syslog.  Sometimes the driver loses the connection
 to the UPS, and that will also make the data go stale.</p><p>This might also happen on certain virtualization platforms. If you cannot
 reproduce the problem on a physical machine, please report the bug to the
-virtualization software vendor.</p><p>If this happens a lot, you might consider cranking up DEADTIME
-in the upsmon.conf to suppress some of the warnings for shorter
-intervals.  Use caution when adjusting this number, since it
-directly affects how long you run on battery without knowing
-what’s going on with the UPS.</p><p>Note: some drivers occasionally need more time to update than the
+virtualization software vendor.</p><p>To reduce repeated polling-failure log messages, see
+<code class="literal">POLLFAIL_LOG_THROTTLE_MAX</code> in <a class="ulink" href="man/upsmon.conf.html" target="_top">upsmon.conf(5)</a>.
+<code class="literal">NOCOMMWARNTIME</code> controls recurring <code class="literal">NOCOMM</code> notifications.
+<code class="literal">DEADTIME</code> instead controls how long a UPS last known to be on battery
+can remain unreachable before it is assumed critical; increasing it
+delays this protection.</p><p>Note: some drivers occasionally need more time to update than the
 default value of MAXAGE (in <code class="literal">upsd.conf</code>) allows.  As a result, they
 are temporarily marked stale even though everything is fine.  This
 can happen with MGE Ellipse equipment — see the <a class="ulink" href="man/mge-shut.html" target="_top">mge-shut(8)</a>
@@ -708,4 +709,4 @@ they won’t be stuck in the halted state with the UPS running on line power.</p
                 # uh oh, we never got shut down! (power race?)
                 reboot
         fi</pre></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-10-14 23:55:09 -- Network UPS Tools 2.8.5.1525</div><script xmlns="" type="text/javascript">anchors.add();</script></body></html>
+		Last updated 2026-10-15 14:47:50 -- Network UPS Tools 2.8.5.1525</div><script xmlns="" type="text/javascript">anchors.add();</script></body></html>
