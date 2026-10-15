@@ -47,12 +47,28 @@ goal in itself).</p></div><div class="section"><div class="titlepage"><div><div>
 <a class="ulink" href="https://stories.jenkins.io/user-story/jenkins-is-the-way-for-networkupstools/" target="_top">https://stories.jenkins.io/user-story/jenkins-is-the-way-for-networkupstools/</a>
 </li><li class="listitem">
 <a class="ulink" href="https://github.com/jenkins-infra/stories/blob/main/src/user-story/jenkins-is-the-way-for-networkupstools/index.yaml" target="_top">https://github.com/jenkins-infra/stories/blob/main/src/user-story/jenkins-is-the-way-for-networkupstools/index.yaml</a>
-</li></ul></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_the_jenkins_dynamatrix_library"></a>The jenkins-dynamatrix library</h4></div></div></div><p><a id="Jenkins_Dynamatrix_Library"></a>FIXME: Write the chapter text.</p><p>For now, see <a class="ulink" href="https://github.com/networkupstools/jenkins-dynamatrix" target="_top">https://github.com/networkupstools/jenkins-dynamatrix</a> sources
-(note the README and large comments at start of files may be obsolete, as
-of this writing — documenting the initial ideas, but the implementation
-might differ from that over time).</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_jenkinsfile_dynamatrix_cases_in_nut_sources"></a>Jenkinsfile-dynamatrix cases in NUT sources</h4></div></div></div><p><a id="Jenkins_Dynamatrix_Pipeline"></a>FIXME: Write the chapter text.</p><p>For now, see the <code class="literal">Jenkinsfile-dynamatrix</code> in the NUT sources (maybe only git),
-e.g. <a class="ulink" href="https://github.com/networkupstools/nut/blob/master/Jenkinsfile-dynamatrix" target="_top">https://github.com/networkupstools/nut/blob/master/Jenkinsfile-dynamatrix</a>
-for the practical pipeline preparation and hand-off to library implementation.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_jenkins_ci"></a>Jenkins CI</h4></div></div></div><p><a id="NUT_CI_JENKINS"></a>Since mid-2021, the NUT CI farm is implemented by several virtual servers
+</li></ul></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_the_jenkins_dynamatrix_library"></a>The jenkins-dynamatrix library</h4></div></div></div><p><a id="Jenkins_Dynamatrix_Library"></a>NUT’s Jenkins pipeline loads the
+<a class="ulink" href="https://github.com/networkupstools/jenkins-dynamatrix" target="_top">jenkins-dynamatrix</a>
+Shared Library. The library supplies the matrix-building and pipeline
+functions invoked by <code class="literal">Jenkinsfile-dynamatrix</code>; the NUT file supplies the
+project-specific configuration and build recipes.</p><p>When investigating a matrix result, read the NUT pipeline configuration
+for the revision being built and the library revision loaded by that job.
+These are separate sources of behaviour. The library’s README and source
+comments provide background; compare them with the implementation when
+details have changed.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_jenkinsfile_dynamatrix_cases_in_nut_sources"></a>Jenkinsfile-dynamatrix cases in NUT sources</h4></div></div></div><p><a id="Jenkins_Dynamatrix_Pipeline"></a>The <a class="ulink" href="https://github.com/networkupstools/nut/blob/master/Jenkinsfile-dynamatrix" target="_top">Jenkinsfile-dynamatrix</a>
+file defines NUT-specific inputs to the Shared Library. It builds the
+<code class="literal">dynacfgBase</code> and <code class="literal">dynacfgPipeline</code> maps and passes them to
+<code class="literal">dynamatrixPipeline()</code>.</p><p>The base configuration selects agent labels, matrix axes and common
+environment settings. The pipeline configuration defines stages, commands,
+filters and allowed-failure cases. Some choices depend on the branch name
+and the files changed by a pull request, so two runs can legitimately
+select different scenarios.</p><p>To reproduce a failed scenario, use the revision, configuration command,
+build command and environment recorded for that scenario. Check its agent
+labels and tool versions before choosing a local environment. A passing
+local build applies to the scenario exercised; inspect the individual
+matrix results to identify which other scenarios passed, failed or were
+not selected. See the following section for examples of commands recorded
+in NUT CI logs.</p></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_jenkins_ci"></a>Jenkins CI</h4></div></div></div><p><a id="NUT_CI_JENKINS"></a>Since mid-2021, the NUT CI farm is implemented by several virtual servers
 courteously provided originally by <a class="ulink" href="http://fosshost.org" target="_top">Fosshost</a> and
 later by
 <a class="ulink" href="https://www.digitalocean.com/?refcode=d2fbf2b9e082&amp;utm_campaign=Referral_Invite&amp;utm_medium=Referral_Program&amp;utm_source=badge" target="_top">DigitalOcean</a>.</p><p>These run various operating systems as build agents, and a Jenkins instance
@@ -155,4 +171,4 @@ like WMNut.</p><p>Resulting packages for several Linux platforms can be seen at:
 Sibling OBS projects should automatically spawn and disappear nearby
   for pull requests
 </li></ul></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-10-15 14:58:32 -- Network UPS Tools 2.8.5.1525</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_test_automation.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="_continuous_integration_nut_ci_farm_build_agent_preparation.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-10-15 17:44:32 -- Network UPS Tools 2.8.5.1525</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_test_automation.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="_continuous_integration_nut_ci_farm_build_agent_preparation.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
