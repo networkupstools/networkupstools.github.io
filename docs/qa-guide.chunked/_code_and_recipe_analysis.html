@@ -132,11 +132,24 @@ passed through <code class="literal">CFLAGS</code> or <code class="literal">CXXF
 run, but it is up to your compiler how it interprets the resulting mix.</p></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_shell_script_checks"></a>2.5. Shell script checks</h3></div></div></div><p><a id="CI_shellcheck"></a>The <code class="literal">make shellcheck</code> recipe finds files which the <code class="literal">file</code> tool determines
 to be POSIX or Bourne-Again shell scripts, and runs them through respective
 interpreter’s (<code class="literal">bash</code> or system <code class="literal">/bin/sh</code>) test mode to validate the syntax
-works.</p><p>Given that the <code class="literal">/bin/sh</code> implementation varies wildly on different systems
+works. POSIX shell scripts can be checked with other interpreters instead
+of <code class="literal">/bin/sh</code> by listing them in the <code class="literal">SHELL_PROGS</code> environment variable,
+e.g. <code class="literal">make shellcheck SHELL_PROGS="dash ksh bash"</code>. Warnings that some
+shells (e.g. <code class="literal">ksh93</code>) emit about the legacy command substitution syntax
+(which NUT scripts use deliberately for portability) are hidden.</p><p>Given that the <code class="literal">/bin/sh</code> implementation varies wildly on different systems
 (e.g. Korn shell, BASH, DASH and many others), this goal performed by CI on
 a large number of available platforms makes sure that the lowest-denominator
-syntax we use is actually understood everywhere.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>At a later time additional tests, perhaps using the <code class="literal">shellcheck</code> tool,
-can be introduced into the stack.</p></div><p>The <code class="literal">make shellcheck-nde</code> recipe calls <code class="literal">tests/nut-driver-enumerator-test.sh</code>
+syntax we use is actually understood everywhere.</p><p>For pull requests, the "GHA-07: ShellCheck" GitHub Actions workflow also
+runs the <a class="ulink" href="https://www.shellcheck.net/" target="_top">ShellCheck</a> tool on the shell
+scripts that they change. Many existing scripts have known findings, so it
+fails only for findings of "warning" or "error" level that are new compared
+to the base branch. The new findings are shown as annotations on the
+changed lines, and listed in the job summary. You can run the same check
+locally (with <code class="literal">perl</code> and <code class="literal">shellcheck</code> installed) before posting the
+changes, e.g.:</p><pre class="screen">:; perl tools/shellcheck-ci.pl origin/master</pre><p>The <code class="literal">.shellcheckrc</code> file in the root of NUT sources disables the checks for
+deliberate portability idioms of NUT scripts (e.g. the legacy command
+substitution syntax), and is also used by <code class="literal">shellcheck</code> runs in your editor
+or IDE.</p><p>The <code class="literal">make shellcheck-nde</code> recipe calls <code class="literal">tests/nut-driver-enumerator-test.sh</code>
 to self-test the <code class="literal">scripts/upsdrvsvcctl/nut-driver-enumerator.sh.in</code> against
 an array of <code class="literal">SHELL_PROGS</code> (e.g. a list of interpreters provided by specific
 CI agents), and make sure that shell-script based processing of <code class="literal">ups.conf</code>
@@ -154,7 +167,12 @@ while recipes in numerous subdirectories (where <code class="literal">README.ado
 documentation files exist) have similar goals to check just their files.</p><p>The actual implementation of the goals is in <code class="literal">docs/Makefile.am</code>, and either
 calls the tool if it was detected by the <code class="literal">configure</code> script, or skips work.</p><p>For each checked file, a <code class="literal">*-spellchecked</code> touch-file is created in respective
 <code class="literal">${builddir}</code>, so it is not re-checked until the source document, the custom
-dictionary, or the <code class="literal">Makefile</code> recipe is updated.</p><p>The ecosystem of <code class="literal">Makefile.am</code> files includes the following useful recipes:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+dictionary, or the <code class="literal">Makefile</code> recipe is updated.</p><p>Unknown words are reported with the file name, line and column where they
+were found (relative to the root of NUT sources), followed by the <code class="literal">aspell</code>
+report line with suggestions. When running in GitHub Actions (with the
+<code class="literal">GITHUB_ACTIONS=true</code> environment variable), they are also reported as
+annotations for the source lines, and listed in the job summary (unless
+<code class="literal">SPELLCHECK_ERROR_FATAL=no</code> is set).</p><p>The ecosystem of <code class="literal">Makefile.am</code> files includes the following useful recipes:</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 <code class="literal">spellcheck</code>: passively check that all used words are in some dictionary
   known to this system, or report errors for unknown words;
 </li><li class="listitem"><p class="simpara">
@@ -175,4 +193,4 @@ causing all documents to become fair game for re-checks of their spelling.
   to validate that words used in a custom dictionary are actually present
   in any NUT documentation source file.
 </li></ul></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-10-18 14:02:35 -- Network UPS Tools 2.8.5.1525</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="nut-qa.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="_test_automation.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-10-18 14:45:52 -- Network UPS Tools 2.8.5.1628</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="nut-qa.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="_test_automation.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

@@ -901,6 +901,9 @@ Enabled support for <code class="literal">nutauth.conf</code> files to provide c
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">upslog</code> client/tool updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Fixed a startup memory leak when replacing UPS name and hostname strings
+      allocated during initial parsing or wildcard discovery. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3771" target="_top">#3771</a>]
+</li><li class="listitem">
 Added support for best-effort use of <code class="literal">nutauth.conf</code> files from default
       locations or via <code class="literal">-A</code> option, as described above. Since this client
       can establish multiple connections, keep in mind that currently it
@@ -1208,6 +1211,33 @@ CI build matrix scenarios (Jenkins autotools builds, <code class="literal">ci_bu
       with both a current and an old (7.1, as on CentOS 7) version of the
       <code class="literal">aspell-en</code> dictionary. Local builds keep the default of
       <code class="literal">configure --enable-spellcheck=auto</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3752" target="_top">PR #3752</a>]
+</li><li class="listitem">
+The <code class="literal">make shellcheck</code> (and <code class="literal">make check-scripts-syntax</code>) recipe can now
+      check the POSIX shell scripts with each interpreter listed in the
+      <code class="literal">SHELL_PROGS</code> environment variable (default is still the system
+      <code class="literal">/bin/sh</code>), and hides warnings about the legacy command substitution
+      syntax (e.g. from <code class="literal">ksh93</code>) to avoid noise that obscured other problems.
+      [issues <a class="ulink" href="https://github.com/networkupstools/nut/issues/1058" target="_top">#1058</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1059" target="_top">#1059</a>]
+</li><li class="listitem">
+Added a "GHA-07: ShellCheck" GitHub Actions workflow which checks the
+      shell scripts changed by a pull request, and fails only for findings
+      of "warning" or "error" level that are new compared to the base branch
+      (many existing scripts have known findings), with annotations on the
+      changed lines and a list in the job summary. The same check can be run
+      locally with <code class="literal">perl tools/shellcheck-ci.pl</code>. A new <code class="literal">.shellcheckrc</code> file
+      disables the checks for deliberate portability idioms of NUT scripts
+      (backticks, <code class="literal">x"$var"</code> comparisons, <code class="literal">expr</code>).
+</li><li class="listitem">
+The <code class="literal">make spellcheck</code> recipes now report unknown words with the file
+      name, line and column where they were found (rather than byte offsets
+      in the <code class="literal">aspell</code> output), and in GitHub Actions also as annotations on
+      the source lines (once per unknown word, despite the retries) and in
+      the job summary.
+</li><li class="listitem">
+The <code class="literal">configure</code> script now also looks for <code class="literal">aspell</code> filter resources
+      under <code class="literal">lib64</code> (e.g. on CentOS 7) and in directories named by just the
+      major and minor version (e.g. <code class="literal">aspell-0.60</code> for <code class="literal">aspell</code> 0.60.6.1).
+      [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2068" target="_top">issue #2068</a>]
 </li></ul></div></li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_release_notes_for_nut_2_8_5_what_8217_s_new_since_2_8_4"></a>2.2. Release notes for NUT 2.8.5 - what’s new since 2.8.4</h3></div></div></div><p><a class="ulink" href="https://github.com/networkupstools/nut/milestone/12" target="_top">https://github.com/networkupstools/nut/milestone/12</a></p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
 common code:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -6430,4 +6460,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.34. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-10-18 14:02:35 -- Network UPS Tools 2.8.5.1525</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-10-18 14:45:52 -- Network UPS Tools 2.8.5.1628</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
