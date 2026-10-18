@@ -624,6 +624,13 @@ When reconnecting, report success more visibly (not only in debug), and
       <code class="literal">battery.voltage</code> then read as nonsense; platforms with a 64-bit <code class="literal">long</code>
       were unaffected. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3555" target="_top">PR #3555</a>]
 </li><li class="listitem">
+<code class="literal">idowell-hid</code> subdriver now also repairs the Usage Page of two
+      <code class="literal">PresentStatus</code> flags in those GoldenMate packs: the firmware leaves the
+      Battery System page selected, so the intended <code class="literal">Good</code> and
+      <code class="literal">ShutdownImminent</code> bits were decoded as <code class="literal">AtRateTimeToEmpty</code> and
+      <code class="literal">AverageTimeToEmpty</code> and ignored. They now feed the <code class="literal">OFF</code> and <code class="literal">LB</code>
+      status flags via the existing mappings. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3015" target="_top">issue #3015</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3726" target="_top">PR #3726</a>]
+</li><li class="listitem">
 <code class="literal">mge-hid</code> subdriver updated to suppress <code class="literal">CHRG</code> status on constant-charge
       mode devices when battery is fully charged. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3518" target="_top">issue #3518</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3519" target="_top">PR #3519</a>]
 </li><li class="listitem">
@@ -667,6 +674,14 @@ in <code class="literal">legrand-hid</code> subdriver the <code class="literal">
       so the buzzer stays off across alarms; added <code class="literal">beeper.mute</code> and
       <code class="literal">ups.beeper.status</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3638" target="_top">issue #3638</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3639" target="_top">PR #3639</a>]
 </li><li class="listitem">
+<code class="literal">legrand-hid</code> subdriver: added a <code class="literal">fix_report_desc()</code> hook which clears
+      the Unit and Unit Exponent on 1-bit items of Legrand devices. Some
+      firmware (seen on USB ID <code class="literal">1cb0:0035</code>, which names itself "Reserve")
+      leaves a Unit Exponent of -2 in effect for the <code class="literal">PresentStatus</code> flags,
+      so <code class="literal">libhid</code> scaled a set bit to <code class="literal">0.01</code>: <code class="literal">ACPresent</code> never read as true
+      and the UPS was reported <code class="literal">OB</code> while on mains, and <code class="literal">LB</code> could never be
+      raised. It can be turned off with <code class="literal">disable_fix_report_desc</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3738" target="_top">PR #3738</a>]
+</li><li class="listitem">
 Added a new <code class="literal">vertiv-hid</code> subdriver for the Vertiv Liebert GXT5 (USB ID
       <code class="literal">10af:1000</code>). This device shares the Liebert vendor ID handled by
       <code class="literal">belkin-hid</code>, but exposes everything under <code class="literal">UPS.PowerSummary</code> only (no
@@ -684,6 +699,9 @@ Added a new <code class="literal">vertiv-hid</code> subdriver for the Vertiv Lie
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">snmp-ups</code> driver updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Corrected the IETF fallback warning so it is emitted for automatic
+      IETF selection rather than vendor-specific mappings. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3585" target="_top">issue #3585</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3767" target="_top">PR #3767</a>]
+</li><li class="listitem">
 Fixed a NULL pointer dereference when setting exact outlet mappings
       without a corresponding numbered outlet template, and restored handling
       of exact server-side outlet variables and commands. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3360" target="_top">issue #3360</a>,
@@ -705,6 +723,11 @@ Introduced <code class="literal">voltronic</code> subdriver for Voltronic enterp
       developed and tested against a PowerShield Centurion RT 1000VA
       (PSCERT1000) with a PSSNMPV4 card running firmware 1.1.8.C. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3478" target="_top">issue #3478</a>,
       <a class="ulink" href="https://github.com/networkupstools/nut/pull/3570" target="_top">PR #3570</a>]
+</li><li class="listitem">
+<code class="literal">apc-ats</code> subdriver: added <code class="literal">output.current</code>, <code class="literal">ups.power</code> and <code class="literal">ups.load</code>
+      from the APC ATS output phase table, which also provides
+      <code class="literal">output.voltage</code> on models without the output bank table, such as
+      the AP4452A.
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">upsdrvctl</code> tool updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -6460,4 +6483,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.34. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-10-18 14:45:52 -- Network UPS Tools 2.8.5.1628</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-10-18 15:03:48 -- Network UPS Tools 2.8.5.1628</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
