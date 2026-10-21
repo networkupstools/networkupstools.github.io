@@ -423,33 +423,34 @@ Reworked incoming serial framing to use the total packet length declared
       information instead of repeatedly requesting HWINFO and delaying normal
       polling. The raw packet captures and protocol analysis which made this
       correction possible were contributed by GitHub user <code class="literal">freechurros</code>.
-      [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3592" target="_top">issue #3592</a>]
+      [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3592" target="_top">issue #3592</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3597" target="_top">PR #3597</a>]
 </li><li class="listitem">
 Applied follow-up hardware-test feedback from <code class="literal">freechurros</code>: corrected
       <code class="literal">interpret_pkt_hwinfo()</code> to validate the HWINFO checksum instead of the
       DATA checksum, exposed unrecognized packets through <code class="literal">debug_pkt_raw</code>, and
       published the documented lower-case <code class="literal">battery.charger.status</code> values for
-      compatibility with Home Assistant. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3592" target="_top">issue #3592</a>]
+      compatibility with Home Assistant. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3592" target="_top">issue #3592</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3597" target="_top">PR #3597</a>]
 </li><li class="listitem">
 Send the long, short and compatibility hardware-discovery requests from
       <code class="literal">upsdrv_initinfo()</code>, checking the serial descriptor before every request.
       Failed or partial writes now mark data stale and invalidate the port so
       the normal update cycle reopens it before further communication.
+      [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3597" target="_top">PR #3597</a>]
 </li><li class="listitem">
 Refresh cached model-specific data from every valid HWINFO packet and
       restart discovery after a serial reconnection, allowing a replaced UPS
-      to be identified without restarting the driver.
+      to be identified without restarting the driver. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3597" target="_top">PR #3597</a>]
 </li><li class="listitem">
 Added the legacy five-byte compatibility initialization request
       (<code class="literal">FF 05 01 06 FE</code>) as a third fallback. The driver first makes six
       extended initialization attempts, then selects randomly among the
       extended, normal and compatibility requests so older or otherwise
       compatibility-dependent NHS units can answer with their supported
-      protocol variant.
+      protocol variant. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3597" target="_top">PR #3597</a>]
 </li><li class="listitem">
 Consolidated the NHS model-code metadata into an indexed lookup table,
       preserving the existing model descriptions and nominal VA mappings while
-      making unknown-code handling explicit.
+      making unknown-code handling explicit. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3597" target="_top">PR #3597</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">nutdrv_qx</code> driver updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -672,7 +673,7 @@ Added the <code class="literal">microdowell-hid</code> subdriver for the MicroDo
       report buffer now tracks its allocated capacity explicitly alongside the
       declared length, and that capacity is what gets requested and clamped
       against. Devices already using the tweak (some APC Back-UPS models) now
-      receive the intended full-buffer request. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3712" target="_top">issue #3712</a>]
+      receive the intended full-buffer request. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3712" target="_top">issue #3712</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3729" target="_top">PR #3729</a>]
 </li><li class="listitem">
 <code class="literal">idowell-hid</code> subdriver now also repairs the Usage Page of two
       <code class="literal">PresentStatus</code> flags in those GoldenMate packs: the firmware leaves the
@@ -688,7 +689,7 @@ Added the <code class="literal">microdowell-hid</code> subdriver for the MicroDo
       Eaton 5P Gen2 series (largely guessing, feedback and PRs for
       adaptation to actual string values reported by devices via USB are
       welcome), so these devices would now report <code class="literal">battery.voltage</code> and
-      <code class="literal">battery.voltage.nominal</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2380" target="_top">#2380</a>]
+      <code class="literal">battery.voltage.nominal</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2380" target="_top">issue #2380</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3617" target="_top">PR #3617</a>]
 </li><li class="listitem">
 <code class="literal">cps-hid</code> subdriver: widened under-declared Logical Maximums for
       <code class="literal">UPS.Input.Voltage</code>, <code class="literal">UPS.Input.ConfigVoltage</code>, <code class="literal">UPS.PowerSummary.Voltage</code>
@@ -697,7 +698,7 @@ Added the <code class="literal">microdowell-hid</code> subdriver for the MicroDo
       values but declare maximums below them, so NUT masked/clamped them to
       wrong readings (<code class="literal">input.voltage</code> 70, <code class="literal">battery.voltage</code> 22.4 instead of
       <sub>225 / </sub>48 V). The fixes mirror the established <code class="literal">cps_fix_report_desc()</code>
-      and <code class="literal">apc-hid</code> patterns for this device family. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3089" target="_top">issue #3089</a>]
+      and <code class="literal">apc-hid</code> patterns for this device family. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3089" target="_top">issue #3089</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3575" target="_top">PR #3575</a>]
 </li><li class="listitem">
 <code class="literal">tripplite-hid</code> subdriver now recovers the output power reading, which was
       published as a constant <code class="literal">0.0</code>. Two defects combined: the HID <code class="literal">ActivePower</code>
@@ -765,16 +766,17 @@ Fixed a NULL pointer dereference when setting exact outlet mappings
       <a class="ulink" href="https://github.com/networkupstools/nut/pull/3610" target="_top">PR #3610</a>]
 </li><li class="listitem">
 <code class="literal">apc</code> subdriver: exposed <code class="literal">ambient.temperature</code> from universal I/O
-      sensors used with APC Network Management Card 3. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3250" target="_top">issue #3250</a>]
+      sensors used with APC Network Management Card 3. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3250" target="_top">issue #3250</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3605" target="_top">PR #3605</a>]
 </li><li class="listitem">
 Extended the XPPC-MIB subdriver (enterprise 935) to expose
       <code class="literal">battery.runtime</code>, <code class="literal">battery.voltage</code>, <code class="literal">input.frequency</code>,
       <code class="literal">output.voltage.nominal</code> and <code class="literal">ups.firmware.aux</code> from Phoenixtec
-      based UPS cards that already answer the rest of the subtree. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2608" target="_top">#2608</a>]
+      based UPS cards that already answer the rest of the subtree. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2608" target="_top">issue #2608</a>,
+      <a class="ulink" href="https://github.com/networkupstools/nut/pull/3492" target="_top">PR #3492</a>]
 </li><li class="listitem">
 Mapped <code class="literal">standby(8)</code> from XPPC output status to <code class="literal">OL</code> rather than <code class="literal">OFF</code>,
       because line-interactive devices use it for inverter standby while their
-      UPS output remains online on utility power. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3512" target="_top">issue #3512</a>]
+      UPS output remains online on utility power. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3512" target="_top">issue #3512</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3600" target="_top">PR #3600</a>]
 </li><li class="listitem">
 Introduced <code class="literal">voltronic</code> subdriver for Voltronic enterprise 43943 UPSes,
       developed and tested against a PowerShield Centurion RT 1000VA
@@ -784,14 +786,15 @@ Introduced <code class="literal">voltronic</code> subdriver for Voltronic enterp
 <code class="literal">apc-ats</code> subdriver: added <code class="literal">output.current</code>, <code class="literal">ups.power</code> and <code class="literal">ups.load</code>
       from the APC ATS output phase table, which also provides
       <code class="literal">output.voltage</code> on models without the output bank table, such as
-      the AP4452A.
+      the AP4452A. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3673" target="_top">PR #3673</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">upsdrvctl</code> tool updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 Previously when looping to start a driver (and initially failing), we
       checked if it completed the start-up during cool-down delay only when
       called to start multiple (all) drivers at once. There is no reason to
-      not do so for single-driver runs — addressed with this release. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3302" target="_top">#3302</a>]
+      not do so for single-driver runs — addressed with this release.
+      [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3302" target="_top">issue #3302</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3537" target="_top">PR #3537</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 common code:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -903,6 +906,7 @@ The Perl <code class="literal">UPS::Nut</code> module now decodes quoted values 
       escapes in query/list replies and <code class="literal">nutauth.conf</code> entries, and quotes
       authentication arguments. Single quotes in configuration are literal.
       Command descriptions now accept the server’s <code class="literal">CMDDESC</code> response.
+      [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3634" target="_top">PR #3634</a>]
 </li><li class="listitem">
 Complete support for actions documented in <code class="literal">docs/net-protocol.txt</code>
       was implemented in C++, Python and PERL bindings in-tree, and for Java
@@ -962,13 +966,14 @@ To support the ability of multiple SSL authentication details for
       they should use, or pass the special values <code class="literal">default</code> (require a
       user- or system-provided <code class="literal">nutauth.conf</code> file) or <code class="literal">none</code> (skip
       authconf discovery entirely), matching the <code class="literal">-A</code> option semantics
-      of command-line NUT clients. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3439" target="_top">issue #3439</a>]
+      of command-line NUT clients. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3439" target="_top">issue #3439</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3607" target="_top">PR #3607</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 Various clients:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 Flush standard output and error buffers before handling clean exit
       rituals, to avoid losing the result of client’s work in case that
-      clean-up crashes (e.g. due to third-party code involved). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3454" target="_top">#3454</a>]
+      clean-up crashes (e.g. due to third-party code involved). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3454" target="_top">issue #3454</a>,
+      <a class="ulink" href="https://github.com/networkupstools/nut/pull/3497" target="_top">PR #3497</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">upsimage.cgi</code> client updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -1279,7 +1284,7 @@ Refactored detection of semaphore capabilities (for parallel execution)
       caching of the results for repeated runs. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3675" target="_top">PR #3675</a>]
 </li><li class="listitem">
 Jenkins used as the NUT CI farm core has bumped JDK requirements for its
-      controllers and build agents, <code class="literal">docs/config-prereqs.txt</code> revised.
+      controllers and build agents, <code class="literal">docs/config-prereqs.txt</code> revised. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3453" target="_top">PR #3453</a>]
 </li><li class="listitem">
 <code class="literal">Jenkinsfile-dynamatrix</code> recipe revised to generate fewer RISC-V recipes
       specifically (very slow worker), focusing on the newest compiler and C/C++
@@ -1299,7 +1304,7 @@ Fixed more AppVeyor CI step scripts where <code class="literal">cmd.exe</code> i
       builds (they still restore it) nor from failed builds other than of
       <code class="literal">master</code>, run the tests in parallel, sped up compression of the
       artifact archive, and report per-build <code class="literal">ccache</code> statistics in the
-      GitHub notification of passed builds.
+      GitHub notification of passed builds. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3790" target="_top">PR #3790</a>]
 </li><li class="listitem">
 CI build matrix scenarios (Jenkins autotools builds, <code class="literal">ci_build.sh</code> with
       <code class="literal">BUILD_TYPE=default-withdoc*</code>) now pass <code class="literal">--disable-spellcheck</code>, so their
@@ -1322,7 +1327,7 @@ The <code class="literal">make shellcheck</code> (and <code class="literal">make
       <code class="literal">SHELL_PROGS</code> environment variable (default is still the system
       <code class="literal">/bin/sh</code>), and hides warnings about the legacy command substitution
       syntax (e.g. from <code class="literal">ksh93</code>) to avoid noise that obscured other problems.
-      [issues <a class="ulink" href="https://github.com/networkupstools/nut/issues/1058" target="_top">#1058</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1059" target="_top">#1059</a>]
+      [issues <a class="ulink" href="https://github.com/networkupstools/nut/issues/1058" target="_top">#1058</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/1059" target="_top">#1059</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3773" target="_top">PR #3773</a>]
 </li><li class="listitem">
 Added a "GHA-07: ShellCheck" GitHub Actions workflow which checks the
       shell scripts changed by a pull request, and fails only for findings
@@ -1331,18 +1336,18 @@ Added a "GHA-07: ShellCheck" GitHub Actions workflow which checks the
       changed lines and a list in the job summary. The same check can be run
       locally with <code class="literal">perl tools/shellcheck-ci.pl</code>. A new <code class="literal">.shellcheckrc</code> file
       disables the checks for deliberate portability idioms of NUT scripts
-      (backticks, <code class="literal">x"$var"</code> comparisons, <code class="literal">expr</code>).
+      (backticks, <code class="literal">x"$var"</code> comparisons, <code class="literal">expr</code>). [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3773" target="_top">PR #3773</a>]
 </li><li class="listitem">
 The <code class="literal">make spellcheck</code> recipes now report unknown words with the file
       name, line and column where they were found (rather than byte offsets
       in the <code class="literal">aspell</code> output), and in GitHub Actions also as annotations on
       the source lines (once per unknown word, despite the retries) and in
-      the job summary.
+      the job summary. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3773" target="_top">PR #3773</a>]
 </li><li class="listitem">
 The <code class="literal">configure</code> script now also looks for <code class="literal">aspell</code> filter resources
       under <code class="literal">lib64</code> (e.g. on CentOS 7) and in directories named by just the
       major and minor version (e.g. <code class="literal">aspell-0.60</code> for <code class="literal">aspell</code> 0.60.6.1).
-      [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2068" target="_top">issue #2068</a>]
+      [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2068" target="_top">issue #2068</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3773" target="_top">PR #3773</a>]
 </li></ul></div></li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_release_notes_for_nut_2_8_5_what_8217_s_new_since_2_8_4"></a>2.2. Release notes for NUT 2.8.5 - what’s new since 2.8.4</h3></div></div></div><p><a class="ulink" href="https://github.com/networkupstools/nut/milestone/12" target="_top">https://github.com/networkupstools/nut/milestone/12</a></p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
 common code:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -6565,4 +6570,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.34. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-10-21 15:29:17 -- Network UPS Tools 2.8.5.1685</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-10-21 17:44:58 -- Network UPS Tools 2.8.5.1685</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
