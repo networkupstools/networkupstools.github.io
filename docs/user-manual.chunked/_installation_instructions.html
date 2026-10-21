@@ -72,14 +72,20 @@ for developers iterating on some features.</p><div class="itemizedlist"><ul clas
   changed. On many systems it suffices to add e.g. <code class="literal">/usr/lib/ccache</code> early
   in <code class="literal">PATH</code> and populate it with symlinks to e.g. <code class="literal">/usr/bin/ccache</code> using
   various compiler program names.
+  The full Git-derived NUT version, which changes with every commit, is not
+  stored in the <code class="literal">include/config.h</code> file (included by all sources) but only
+  in <code class="literal">include/nut_version.h</code> (included by a couple of source files), so after
+  a new commit or in a fresh checkout, only those few objects get recompiled.
+  This matters especially for debug builds with options like <code class="literal">-g3</code> which
+  embed all macro definitions into compiled objects, so <code class="literal">ccache</code> can not
+  fall back to its preprocessor mode to find a match for a changed macro.
+  If several Git work trees or checkout directories share one cache, set
+  <code class="literal">CCACHE_BASEDIR</code> to a common parent directory so that absolute paths in
+  compiler command lines do not prevent cache hits.
 </li><li class="listitem">
-If you are a developer iterating with debug builds on different branches,
-  <code class="literal">export CI_AUTOGEN_STABLE_VERSION=true</code> can additionally ensure that the
-  <code class="literal">AC_INIT</code> in the generated <code class="literal">configure</code> script would not follow NUT SEMVER
-  but use a shorter and temporally stable version string. This helps on some
-  systems where enabling debug options embeds all macros into compiled objects,
-  so an ever-changing <code class="literal">PACKAGE_VERSION</code> in <code class="literal">config.h</code> which does follow NUT
-  SEMVER prevents <code class="literal">ccache</code> direct mode (because each build is deemed unique).
+When you iterate code development, <code class="literal">make NUT_VERSION_H_GENERATED=true</code>
+  can skip regeneration of <code class="literal">include/nut_version.h</code> (at a cost of a less
+  precise version reported by the built programs).
 </li><li class="listitem">
 Using <code class="literal">export DO_USE_NUTCI_CACHE=yes</code> (and derived environment variables
   like <code class="literal">DO_USE_AUTOCONF_CACHE</code> or <code class="literal">DO_USE_NIT_TESTCERT_CACHE</code>) can be used
@@ -439,4 +445,4 @@ rendering it invalid.</p><div class="note" style="margin-left: 0; margin-right: 
 the <a class="ulink" href="https://github.com/networkupstools/nut/wiki/NUT-for-Windows" target="_top">NUT for
 Windows</a> article on NUT GitHub Wiki.</p></div></div></div><div class="section"><div class="titlepage"><div><div><h4 class="title"><a id="_runtime_configuration"></a>Runtime configuration</h4></div></div></div><p>You are now ready to configure NUT, and start testing and using it.</p><p>You can jump directly to the
 <a class="link" href="Configuration_notes.html" title="6. Configuration notes">NUT configuration</a>.</p></div></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-10-18 18:36:29 -- Network UPS Tools 2.8.5.1628</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="Download_instructions.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="Configuration_notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-10-21 14:49:45 -- Network UPS Tools 2.8.5.1685</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="Download_instructions.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="Configuration_notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

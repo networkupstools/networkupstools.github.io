@@ -101,6 +101,14 @@ USB drivers: fixed an out-of-bounds read of the candidate HID report
       descriptor lengths, which could cause a segmentation fault (regression
       added in NUT v2.8.5 release). [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3550" target="_top">PR #3550</a>]
 </li><li class="listitem">
+NUT for Windows: <code class="literal">snprintf()</code> and <code class="literal">vsnprintf()</code> were mapped to the
+      Microsoft <code class="literal">_snprintf()</code> and <code class="literal">_vsnprintf()</code> methods, which do not
+      terminate the buffer and return -1 when the output does not fit, so
+      NUT code relying on C99 behavior could read past the end of the buffer
+      (impacts the NUT for Windows builds since v2.8.1). The mapping is now
+      only used for Visual Studio versions before 2015, which lacked C99
+      <code class="literal">snprintf()</code>, and a new test checks the C99 behavior. [<a class="ulink" href="https://github.com/networkupstools/nut/security/advisories/GHSA-ghqr-q65h-w9wg" target="_top">GHSA-ghqr-q65h-w9wg</a>]
+</li><li class="listitem">
 Refactoring of <code class="literal">configure.ac</code> for NUT v2.8.5 release led to a problem
       when explicitly specifying same <code class="literal">--with-user</code> <span class="strong"><strong>OR</strong></span> <code class="literal">--with-group</code> name
       as would be default for current platform (so one was treated as not-set
@@ -164,7 +172,7 @@ A page 0 whose announced frame width disagrees with the width of
       the frame that carried it is now rejected instead of cached. Such
       a page redefined the length the frame parser demanded, after which
       nothing checksum-validated again and the session could not
-      recover. Affects both transports. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3587" target="_top">issue #3587</a>]
+      recover. Affects both transports. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3587" target="_top">issue #3587</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3591" target="_top">PR #3591</a>]
 </li><li class="listitem">
 Further updates, the driver remains experimental, but USB sessions
       should hold up better, and fall back more readily to standard HID PDC
@@ -254,74 +262,80 @@ USB mode: the standard-HID fallback no longer publishes a status it
       published only after both status flags were decoded from a recent
       report. Also corrected the startup failure message shown when
       <code class="literal">hid_fallback = no</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3587" target="_top">issue #3587</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3728" target="_top">PR #3728</a>]
-</li></ul></div></li><li class="listitem"><p class="simpara">
-Contributed <code class="literal">apcmicrolink</code> driver follow-ups [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3587" target="_top">issue #3587</a>]:
-</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+</li><li class="listitem">
+More contributed <code class="literal">apcmicrolink</code> driver follow-ups [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3587" target="_top">issue #3587</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3719" target="_top">PR #3719</a>]:
+</li></ul></div></li><li class="listitem">
 <code class="literal">beeper.enable</code> and <code class="literal">beeper.disable</code> now change only the
-      enabled/disabled flag of the alarm-setting register, leaving the
-      alarm-delay value it also holds untouched. Writing a bare 1 or 2
-      zeroed the delay, and real hardware silently ignored that write,
-      so the commands had no effect.
+        enabled/disabled flag of the alarm-setting register, leaving the
+        alarm-delay value it also holds untouched. Writing a bare 1 or 2
+        zeroed the delay, and real hardware silently ignored that write,
+        so the commands had no effect.
 </li><li class="listitem">
 <code class="literal">shutdown.return</code>, <code class="literal">shutdown.stayoff</code> and <code class="literal">shutdown.reboot.graceful</code>
-      now ask the UPS to apply its turn-on delay as well as its turn-off
-      delay. Without it the shutdown still happened, but switched outlet
-      groups did not sequence back on when mains power returned. The
-      command is built in <code class="literal">apc_common.c</code>, which the <code class="literal">apc_modbus</code> driver
-      shares, so its <code class="literal">DRIVER_VERSION</code> is bumped too; that driver’s
-      behavior on this path has not been checked on hardware.
+        now ask the UPS to apply its turn-on delay as well as its turn-off
+        delay. Without it the shutdown still happened, but switched outlet
+        groups did not sequence back on when mains power returned. The
+        command is built in <code class="literal">apc_common.c</code>, which the <code class="literal">apc_modbus</code> driver
+        shares, so its <code class="literal">DRIVER_VERSION</code> is bumped too; that driver’s
+        behavior on this path has not been checked on hardware.
 </li><li class="listitem">
 The calibration status in <code class="literal">ups.status</code> (see above) also follows the
-      UPS-scope register <code class="literal">2:4.5.13</code>, for devices that populate that one
-      instead of <code class="literal">2:13</code>.
+        UPS-scope register <code class="literal">2:4.5.13</code>, for devices that populate that one
+        instead of <code class="literal">2:13</code>.
 </li><li class="listitem">
 Instant commands such as <code class="literal">calibrate.start</code> and <code class="literal">bypass.start</code> are
-      only advertised when the device’s Microlink descriptor contains the
-      register they write to. They used to be listed on every device, so
-      on a model without that register (the tested Smart-UPS 500 has no
-      runtime calibration command register) they could only ever fail.
-      With debug enabled, the driver logs which commands it left out and
-      why.
+        only advertised when the device’s Microlink descriptor contains the
+        register they write to. They used to be listed on every device, so
+        on a model without that register (the tested Smart-UPS 500 has no
+        runtime calibration command register) they could only ever fail.
+        With debug enabled, the driver logs which commands it left out and
+        why.
 </li><li class="listitem">
 The runtime calibration status register in object <code class="literal">A</code> (<code class="literal">A:6.13</code>) is
-      now read, as <code class="literal">experimental.microlink.ups.calibration.status</code>, and a
-      running calibration there raises <code class="literal">CAL</code> in <code class="literal">ups.status</code>. It is the
-      only calibration status the tested Smart-UPS 500 has, so that model
-      previously reported no calibration state at all. It is kept apart
-      from the existing <code class="literal">*.calibration.result</code> variables because it is
-      not yet known whether it carries the same value on devices that
-      have both.
+        now read, as <code class="literal">experimental.microlink.ups.calibration.status</code>, and a
+        running calibration there raises <code class="literal">CAL</code> in <code class="literal">ups.status</code>. It is the
+        only calibration status the tested Smart-UPS 500 has, so that model
+        previously reported no calibration state at all. It is kept apart
+        from the existing <code class="literal">*.calibration.result</code> variables because it is
+        not yet known whether it carries the same value on devices that
+        have both.
 </li><li class="listitem">
 Serial mode: session start sends only the INIT byte again, as the
-      original serial implementation did. The STOP byte that the USB
-      transport needs before INIT had also been sent on serial, where a
-      previously working setup then failed to start.
+        original serial implementation did. The STOP byte that the USB
+        transport needs before INIT had also been sent on serial, where
+        a previously working setup then failed to start.
 </li><li class="listitem">
 When the driver gives up at startup, the message now says whether
-      the session handshake failed or the session started but never
-      became ready, and only mentions the standard HID fallback on USB.
+        the session handshake failed or the session started but never
+        became ready, and only mentions the standard HID fallback on USB.
 </li><li class="listitem">
 Serial mode: the driver polls continuously again, as the original
-      serial driver did, instead of pausing for <code class="literal">pollinterval</code> between
-      passes since USB support was added. USB mode is unchanged.
+        serial driver did, instead of pausing for <code class="literal">pollinterval</code> between
+        passes since USB support was added. USB mode is unchanged.
 </li><li class="listitem">
 Serial mode: startup is complete once the authentication response
-      has been sent, as with the original serial driver, rather than
-      waiting up to 15 seconds for the device to acknowledge it, during
-      which a few missed replies aborted startup. The acknowledgement is
-      still collected by the regular polling. USB mode is unchanged.
-      If startup does fail after the handshake, the message now names
-      the step that was missing.
+        has been sent, as with the original serial driver, rather than
+        waiting up to 15 seconds for the device to acknowledge it, during
+        which a few missed replies aborted startup. The acknowledgement is
+        still collected by the regular polling. USB mode is unchanged.
+        If startup does fail after the handshake, the message now names
+        the step that was missing.
 </li><li class="listitem">
 Serial mode: one record is read per poll again, and data is
-      published after each one, as with the original serial driver.
-      Reading a full pass (about 6 seconds on a tested unit) before
-      publishing delayed status changes such as going on battery by
-      that much. USB mode is unchanged.
-</li><li class="listitem">
+        published after each one, as with the original serial driver.
+        Reading a full pass (about 6 seconds on a tested unit) before
+        publishing delayed status changes such as going on battery by
+        that much. USB mode is unchanged.
+</li><li class="listitem"><p class="simpara">
 Serial mode: the driver no longer sends a STOP byte when it exits.
-      The original serial driver never did; only the USB transport needs
-      it. USB mode is unchanged.
+        The original serial driver never did; only the USB transport needs
+        it. USB mode is unchanged.
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+USB mode: an asynchronous interrupt-IN transfer that did not confirm
+      cancellation in time is now reaped after the USB reset, before the
+      handle is closed, instead of being leaked. The listener thread is now
+      started before its transfer is submitted, so a thread-creation failure
+      no longer leaves a transfer outstanding. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3751" target="_top">issue #3751</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3778" target="_top">PR #3778</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">apc_modbus</code> driver updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -770,6 +784,10 @@ Previously when looping to start a driver (and initially failing), we
 </li></ul></div></li><li class="listitem"><p class="simpara">
 common code:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Fixed strict Clang conversion warnings. Process-name lookup now checks
+      the symlink size before allocation and retains the full signed byte
+      count returned when reading the link. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3770" target="_top">PR #3770</a>]
+</li><li class="listitem">
 Driver help now prints identical option names, types and descriptions
       only once, reducing repeated entries from protocol subdrivers.
       Configuration handling and the parsable <code class="literal">-L</code> list are unchanged.
@@ -862,6 +880,9 @@ The <code class="literal">hidparser.c</code> code was further updated to use not
 </li></ul></div></li><li class="listitem"><p class="simpara">
 NUT client libraries:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Fixed strict Clang conversion warnings and isolated an OpenSSL macro
+      annotation warning in the C client library. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3770" target="_top">PR #3770</a>]
+</li><li class="listitem">
 Introduction of <code class="literal">nutauth.conf</code> support caused some rearrangement of
       codebase layout in the library, and this in turn caused some fallout.
       Fixed <code class="literal">libupsclient</code> builds with OpenSSL or NSS when Clang treats
@@ -1259,6 +1280,16 @@ Further rearrangement of AppVeyor CI builds and security hardening of
       GitHub Actions used to prepare the dist tarballs and report on progress
       there. [PRs <a class="ulink" href="https://github.com/networkupstools/nut/issues/3753" target="_top">#3753</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/3754" target="_top">#3754</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/3756" target="_top">#3756</a>]
 </li><li class="listitem">
+Fixed more AppVeyor CI step scripts where <code class="literal">cmd.exe</code> interpreted <code class="literal">||</code>
+      inside the single-quoted <code class="literal">bash</code> command lines itself (it does not
+      honour such quotes). Also enforce the <code class="literal">ccache</code> size limit before the
+      build cache is saved (it could outgrow the limit for a saved cache
+      item, and get lost), do not save the build cache from pull request
+      builds (they still restore it) nor from failed builds other than of
+      <code class="literal">master</code>, run the tests in parallel, sped up compression of the
+      artifact archive, and report per-build <code class="literal">ccache</code> statistics in the
+      GitHub notification of passed builds.
+</li><li class="listitem">
 CI build matrix scenarios (Jenkins autotools builds, <code class="literal">ci_build.sh</code> with
       <code class="literal">BUILD_TYPE=default-withdoc*</code>) now pass <code class="literal">--disable-spellcheck</code>, so their
       <code class="literal">make check</code> no longer runs (and fails on) the documentation spellcheck.
@@ -1266,6 +1297,14 @@ CI build matrix scenarios (Jenkins autotools builds, <code class="literal">ci_bu
       with both a current and an old (7.1, as on CentOS 7) version of the
       <code class="literal">aspell-en</code> dictionary. Local builds keep the default of
       <code class="literal">configure --enable-spellcheck=auto</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3752" target="_top">PR #3752</a>]
+</li><li class="listitem">
+The <code class="literal">include/config.h</code> file no longer carries the full Git-derived NUT
+      version (which changes with every commit), only the base semantic
+      version (e.g. <code class="literal">2.8.5</code> for a release, or <code class="literal">2.8.5.1</code> for any development
+      iteration after it), so <code class="literal">ccache</code> and similar build caches can re-use
+      compiled objects across commits and fresh CI checkouts. The full
+      version is still provided by <code class="literal">include/nut_version.h</code> and in the
+      substituted <code class="literal">@PACKAGE_VERSION@</code> values. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3759" target="_top">PR #3759</a>, follow-up to <a class="ulink" href="https://github.com/networkupstools/nut/pull/3754" target="_top">PR #3754</a>]
 </li><li class="listitem">
 The <code class="literal">make shellcheck</code> (and <code class="literal">make check-scripts-syntax</code>) recipe can now
       check the POSIX shell scripts with each interpreter listed in the
@@ -6515,4 +6554,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.34. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-10-18 18:36:29 -- Network UPS Tools 2.8.5.1628</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-10-21 14:49:45 -- Network UPS Tools 2.8.5.1685</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
