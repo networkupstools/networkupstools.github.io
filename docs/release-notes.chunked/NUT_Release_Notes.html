@@ -559,6 +559,10 @@ Modified <code class="literal">voltronic-qs</code> subdriver to request the QI c
 Fixed incorrect claim for <code class="literal">innovart33</code> subdriver — the original device
       claiming procedure was borrowed from <code class="literal">innovart31</code> without thoroughly
       checking the code. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3661" target="_top">issue #3661</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3713" target="_top">PR #3713</a>]
+</li><li class="listitem">
+<code class="literal">nutdrv_qx</code>: failed SANTAK, INNOVART31 and INNOVART33 claims no longer
+      leave their probed measurements in the selected subdriver’s state.
+      Configured defaults and overrides are preserved. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3659" target="_top">issue #3659</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3766" target="_top">PR #3766</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 Introduced a new NUT driver named <code class="literal">ragtech</code> which provides support for the
    Ragtech "Easy Pro" family of line-interactive UPS units (also sold under
@@ -742,6 +746,13 @@ Added a new <code class="literal">vertiv-hid</code> subdriver for the Vertiv Lie
       new subdriver is used even when <code class="literal">productid</code> is set in <code class="literal">ups.conf</code>.
       Tested against a GXT5 on mains only; on-battery status transitions
       are not yet confirmed. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3613" target="_top">issue #3613</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3730" target="_top">PR #3730</a>]
+</li><li class="listitem">
+<code class="literal">ecoflow-hid</code> subdriver: the <code class="literal">battery.runtime</code> minutes-to-seconds
+      conversion returned a newly allocated string on every call, which the
+      driver never freed; with this quick-polled value the driver leaked
+      128 bytes per poll (about 14 MB per day at <code class="literal">pollinterval=1</code>). It now
+      uses a static buffer like the other conversion functions. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3787" target="_top">issue #3787</a>,
+      <a class="ulink" href="https://github.com/networkupstools/nut/pull/3788" target="_top">PR #3788</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">snmp-ups</code> driver updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -6554,4 +6565,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.34. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-10-21 14:49:45 -- Network UPS Tools 2.8.5.1685</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-10-21 15:04:02 -- Network UPS Tools 2.8.5.1685</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
