@@ -851,28 +851,14 @@ Different parameters create new registry entries (allows multi-realm connections
 </div>
 </div>
 <div class="sect1">
-<h2 id="_usage_pattern">USAGE PATTERN</h2>
+<h2 id="_connection_setup">CONNECTION SETUP</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>For applications connecting to multiple servers with independent SSL configurations:</p></div>
-<div class="listingblock">
-<div class="content">
-<pre><code>        upscli_authconf_t *ac = upscli_get_authconf_item(
-                NULL, hostname, port_str, 1);
-
-        void *ssl_ctx = upscli_get_or_create_ssl_context_authconf(ac);
-
-        /* NOTE: this clause is just an example of what happens
-         * under the hood; actually the upscli_tryconnect() method
-         * clears "conn" and finds or creates the suitable cached
-         * context by itself, anew every time. */
-        if (ssl_ctx) {
-                upscli_set_ssl_context(conn, ssl_ctx);
-        }
-
-        upscli_connect(conn, hostname, port, flags);</code></pre>
-</div></div>
-<div class="paragraph"><p>This pattern ensures each connection uses its server-specific SSL configuration,
-even when multiple servers are accessed from the same process.</p></div>
+<div class="paragraph"><p><a href="upscli_connect.html">upscli_connect(3)</a> and <a href="upscli_connect.html">upscli_tryconnect(3)</a> clear the
+<code>UPSCONN_t</code> structure, including any previously attached SSL context.
+Attaching a context before either call does not select the context for that
+connection. During SSL setup, the library looks up the server&#8217;s authconf
+and obtains a context internally; see
+<a href="upscli_find_authconf_item.html">upscli_get_authconf_item(3)</a>.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -944,41 +930,11 @@ NSS initialization fails (NSS builds only)
 <div class="sect1">
 <h2 id="_thread_safety">THREAD SAFETY</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>The registry itself is protected by internal synchronization in threaded builds.
-However, individual connection operations are not thread-safe; each thread
-should maintain its own <code>UPSCONN_t</code> (see <a href="upsclient.html">upsclient(3)</a>) instance.</p></div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_examples">EXAMPLES</h2>
-<div class="sectionbody">
-<div class="paragraph"><p>Monitor multiple UPS devices with independent SSL configurations:</p></div>
-<div class="listingblock">
-<div class="content">
-<pre><code>        for (each_ups_in_config) {
-                UPSCONN_t *conn = malloc(sizeof(*conn));
-
-                // Get per-UPS authconf from config files
-                upscli_authconf_t *ac = upscli_get_authconf_item(
-                        NULL, ups-&gt;hostname, ups-&gt;port_str, 1);
-
-                // Create/fetch SSL context from registry
-                /* NOTE: this clause is just an example of what happens
-                 * under the hood; actually the upscli_tryconnect() method
-                 * clears "conn" and finds or creates the suitable cached
-                 * context by itself, anew every time. */
-                void *ctx = upscli_get_or_create_ssl_context_authconf(ac);
-                if (ctx) {
-                        upscli_set_ssl_context(conn, ctx);
-                }
-
-                // Connect with per-UPS SSL settings
-                upscli_connect(conn, ups-&gt;hostname, ups-&gt;port, flags);
-        }
-
-        // Registry is freed when done:
-        upscli_cleanup();</code></pre>
-</div></div>
+<div class="paragraph"><p>Registry lookup, insertion and cleanup are not protected by an internal lock,
+even in threaded builds. Separate <code>UPSCONN_t</code> structures do not isolate this
+process-wide state. Applications must not access or clean up the registry
+concurrently, including through connection setup. This restriction is not a
+general thread-safety guarantee for the library.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -987,7 +943,7 @@ should maintain its own <code>UPSCONN_t</code> (see <a href="upsclient.html">ups
 <div class="paragraph"><p><a href="upscli_init.html">upscli_init(3)</a>, <a href="upscli_init2.html">upscli_init2(3)</a>,
 <a href="upscli_init_authconf.html">upscli_init_authconf(3)</a>, <a href="upscli_cleanup.html">upscli_cleanup(3)</a>,
 <a href="upscli_set_ssl_context.html">upscli_set_ssl_context(3)</a>, <a href="upscli_get_ssl_context.html">upscli_get_ssl_context(3)</a>,
-<a href="upscli_connect.html">upscli_connect(3)</a>, <a href="upscli_tryconnect.html">upscli_tryconnect(3)</a>,
+<a href="upscli_connect.html">upscli_connect(3)</a>, <a href="upscli_connect.html">upscli_tryconnect(3)</a>,
 <a href="upscli_disconnect.html">upscli_disconnect(3)</a>,
 <a href="upscli_authconf_t.html">upscli_authconf_t(3)</a>, <a href="upscli_get_authconf_item.html">upscli_get_authconf_item(3)</a>,
 <a href="upscli_strerror.html">upscli_strerror(3)</a>,
@@ -999,7 +955,7 @@ should maintain its own <code>UPSCONN_t</code> (see <a href="upsclient.html">ups
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-11-18 13:05:23 UTC -- Network UPS Tools 2.8.5.1685
+Last updated 2026-11-19 14:56:46 UTC -- Network UPS Tools 2.8.5.1780
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>

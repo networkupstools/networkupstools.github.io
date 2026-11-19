@@ -804,10 +804,12 @@ different certificate authorities and assuming different client certificate
 identities.</p></div>
 <div class="paragraph"><p>A process-wide registry caches SSL context configurations, keyed by parameters
 (CA path, verify mode, client certificate identity, etc.).</p></div>
-<div class="paragraph"><p>Contexts are created by <a href="upscli_get_or_create_ssl_context.html">upscli_get_or_create_ssl_context(3)</a> or
-<a href="upscli_get_or_create_ssl_context_authconf.html">upscli_get_or_create_ssl_context_authconf(3)</a> and attached to individual
-connections via <a href="upscli_set_ssl_context.html">upscli_set_ssl_context(3)</a> before calling
-<a href="upscli_connect.html">upscli_connect(3)</a>.</p></div>
+<div class="paragraph"><p>During SSL setup, the library looks up the server&#8217;s authconf and obtains a
+context internally. <a href="upscli_connect.html">upscli_connect(3)</a> and <a href="upscli_connect.html">upscli_tryconnect(3)</a>
+clear the connection structure, so a context attached with
+<a href="upscli_set_ssl_context.html">upscli_set_ssl_context(3)</a> before either call is not retained.
+See <a href="upscli_get_or_create_ssl_context.html">upscli_get_or_create_ssl_context(3)</a> for registry behavior and
+concurrency restrictions.</p></div>
 <div class="paragraph"><p>For most applications, the default context created by <a href="upscli_init.html">upscli_init(3)</a>
 legacy method, or <a href="upscli_init2.html">upscli_init2(3)</a> or <a href="upscli_init_authconf.html">upscli_init_authconf(3)</a>
 methods added in NUT v2.8.6, is sufficient for connections to a single NUT
@@ -902,7 +904,7 @@ also be used to retrieve the error number.  These numbers are defined in
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-11-18 13:05:22 UTC -- Network UPS Tools 2.8.5.1685
+Last updated 2026-11-19 14:56:46 UTC -- Network UPS Tools 2.8.5.1780
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>

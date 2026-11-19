@@ -113,6 +113,18 @@ Refactoring of <code class="literal">configure.ac</code> for NUT v2.8.5 release 
       when explicitly specifying same <code class="literal">--with-user</code> <span class="strong"><strong>OR</strong></span> <code class="literal">--with-group</code> name
       as would be default for current platform (so one was treated as not-set
       and failed a sanity check). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3513" target="_top">issue #3513</a>]
+</li><li class="listitem">
+The rules which build the NUT-Monitor translations (<code class="literal">*.mo</code> files) in
+      <code class="literal">scripts/python/Makefile.am</code> named the same file twice in an in-tree
+      build, which OpenBSD <code class="literal">make</code> treats as a dependency cycle: it failed the
+      build, or skipped regenerating the files (impacts NUT v2.8.3 through
+      v2.8.5). Each file now has one rule, which still writes into the build
+      directory, so a read-only source tree (e.g. in <code class="literal">make distcheck</code>) keeps
+      working. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3809" target="_top">PR #3809</a>, follow-up to <a class="ulink" href="https://github.com/networkupstools/nut/issues/2529" target="_top">issue #2529</a>]
+</li><li class="listitem">
+<code class="literal">nut-recorder.sh</code> now prints the error message of a failed <code class="literal">upsc</code> call.
+      It captured the standard output, which went to a file, so the message
+      was always empty. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3809" target="_top">PR #3809</a>]
 </li></ul></div></li><li class="listitem">
 USB drivers now prefer the longer of conflicting HID report descriptor
    lengths for EcoFlow devices using USB ID <code class="literal">3746:ffff</code>. This makes the
@@ -891,7 +903,26 @@ The <code class="literal">hidparser.c</code> code was further updated to use not
       with the actual size detected during device discovery. This should
       avoid potential truncation introduced by the fix above (and avoid
       the overflows it addressed) in normal device interactions. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3588" target="_top">#3588</a>]
-</li></ul></div></li><li class="listitem"><p class="simpara">
+</li><li class="listitem">
+Calls that the OpenBSD linker warns about at every link (as misused or
+      not random) were replaced [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3820" target="_top">PR #3820</a>]:
+</li></ul></div></li><li class="listitem">
+<code class="literal">strcpy()</code> and <code class="literal">sprintf()</code> in <code class="literal">upsmon</code>, <code class="literal">upssched</code>, <code class="literal">tripplite_usb</code>
+        and the Masterguard subdriver of <code class="literal">nutdrv_qx</code>, where the length was
+        already checked; in <code class="literal">upsmon</code> and <code class="literal">upssched</code> the <code class="literal">strcpy()</code> only
+        repeated the <code class="literal">xstrdup()</code> just before it.
+</li><li class="listitem">
+<code class="literal">rand()</code> and <code class="literal">random()</code> now go through a new <code class="literal">nut_random_bytes()</code> in
+        <code class="literal">libcommon</code>, which uses <code class="literal">arc4random_buf()</code> where the system has it
+        (BSDs, macOS, GNU libc 2.36 and newer), else <code class="literal">getrandom()</code> or
+        <code class="literal">/dev/urandom</code> (older GNU libc and other systems) or <code class="literal">rand_s()</code> (Windows),
+        and only if none of those works a <code class="literal">rand()</code> seeded once from the time and
+        process ID. Besides the drivers (<code class="literal">apcmicrolink</code>,
+        <code class="literal">nhs_ser</code>, <code class="literal">safenet</code>), this changes the <code class="literal">upsd</code> tracking IDs and the
+        IDs of driver socket queries: they came from a <code class="literal">rand()</code> that was
+        never seeded, so on most systems every start of <code class="literal">upsd</code> handed out
+        the same sequence of IDs.
+</li><li class="listitem"><p class="simpara">
 NUT client libraries:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 Fixed strict Clang conversion warnings and isolated an OpenSSL macro
@@ -1120,6 +1151,17 @@ The shell/<code class="literal">awk</code> based parser now decodes <code class=
 </li></ul></div></li><li class="listitem"><p class="simpara">
 Revised dusty corners of NUT documentation:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Documented the <code class="literal">SET</code> and <code class="literal">INSTCMD</code> driver callback return values and
+      their client-visible tracking replies. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3602" target="_top">issue #3602</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3847" target="_top">PR #3847</a>]
+</li><li class="listitem">
+Corrected SSL context connection-setup and concurrency guidance,
+      marked the SSL architecture analysis as historical, and clarified
+      continued support for both OpenSSL and NSS. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3747" target="_top">issue #3747</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3831" target="_top">PR #3831</a>]
+</li><li class="listitem">
+Corrected the <code class="literal">pijuice</code> installation guidance, added a minimal
+      configuration example, and documented the existing shutdown request
+      and its unverified power-off and restart behavior. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3747" target="_top">issue #3747</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3832" target="_top">PR #3832</a>]
+</li><li class="listitem">
 Corrected client API signatures and array initialization descriptions,
       SNMP daisychain alarm handling and subdriver mapping references, and
       developer-guide protocol links and source access instructions. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3745" target="_top">PR #3745</a>]
@@ -1296,6 +1338,9 @@ Further rearrangement of AppVeyor CI builds and security hardening of
       GitHub Actions used to prepare the dist tarballs and report on progress
       there. [PRs <a class="ulink" href="https://github.com/networkupstools/nut/issues/3753" target="_top">#3753</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/3754" target="_top">#3754</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/3756" target="_top">#3756</a>]
 </li><li class="listitem">
+The CodeQL workflow skips its analysis matrix for pull requests that
+      change only recognized documentation files. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3746" target="_top">issue #3746</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3846" target="_top">PR #3846</a>]
+</li><li class="listitem">
 Fixed more AppVeyor CI step scripts where <code class="literal">cmd.exe</code> interpreted <code class="literal">||</code>
       inside the single-quoted <code class="literal">bash</code> command lines itself (it does not
       honour such quotes). Also enforce the <code class="literal">ccache</code> size limit before the
@@ -1345,16 +1390,92 @@ Added a "GHA-07: ShellCheck" GitHub Actions workflow which checks the
       disables the checks for deliberate portability idioms of NUT scripts
       (backticks, <code class="literal">x"$var"</code> comparisons, <code class="literal">expr</code>). [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3773" target="_top">PR #3773</a>]
 </li><li class="listitem">
+Added a "GHA-10: Shell portability" GitHub Actions workflow. It checks
+      on GitHub-hosted runners what the Jenkins "shellcheck" quick tests
+      (<code class="literal">make shellcheck</code>, an alias of <code class="literal">make check-scripts-syntax</code>) check with
+      one build agent per OS: <code class="literal">autogen.sh</code> with four autotools generations
+      (as shipped from CentOS 7 to Ubuntu 26.04), <code class="literal">&lt;shell&gt; -n configure</code> and
+      a real <code class="literal">configure</code> under eight <code class="literal">/bin/sh</code> implementations with the
+      results compared, <code class="literal">make check-scripts-syntax</code> with GNU make and
+      <code class="literal">bmake</code>, and a build and driver enumerator test with FreeBSD, NetBSD,
+      OpenBSD and busybox userland tools first in <code class="literal">PATH</code>. Failures show as
+      annotations on the source lines and in the job summary. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3809" target="_top">PR #3809</a>]
+</li><li class="listitem">
+The "GHA-07: ShellCheck" workflow now uses ShellCheck 0.11.0 from its
+      upstream release (pinned by sha256) instead of the version the runner
+      image happens to have (0.9.0 on Ubuntu 24.04), so that it agrees with
+      <code class="literal">tools/shellcheck-ci.pl</code> run locally with the same version. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3809" target="_top">PR #3809</a>]
+</li><li class="listitem">
 The <code class="literal">make spellcheck</code> recipes now report unknown words with the file
       name, line and column where they were found (rather than byte offsets
       in the <code class="literal">aspell</code> output), and in GitHub Actions also as annotations on
       the source lines (once per unknown word, despite the retries) and in
       the job summary. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3773" target="_top">PR #3773</a>]
 </li><li class="listitem">
+The <code class="literal">make spellcheck</code> recipes now sanity-check the dictionary file
+      (should not contain underscores in entries) and that source text files
+      do not contain non-ASCII characters commonly added by AI agents, like
+      the multi-byte symbols for various-length dashes). [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3453" target="_top">PR #3453</a>]
+</li><li class="listitem">
 The <code class="literal">configure</code> script now also looks for <code class="literal">aspell</code> filter resources
       under <code class="literal">lib64</code> (e.g. on CentOS 7) and in directories named by just the
       major and minor version (e.g. <code class="literal">aspell-0.60</code> for <code class="literal">aspell</code> 0.60.6.1).
       [<a class="ulink" href="https://github.com/networkupstools/nut/issues/2068" target="_top">issue #2068</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3773" target="_top">PR #3773</a>]
+</li><li class="listitem">
+USB support can now be built against libusb-1.0 releases from 1.0.9
+      on, such as the <code class="literal">libusb1</code> 1.0.9 package of CentOS 6. Before 1.0.16
+      there is no <code class="literal">libusb_strerror()</code>, so error messages show the name of
+      the libusb error code (from <code class="literal">libusb_error_name()</code>) instead of its
+      description; before 1.0.10 or so there is no <code class="literal">libusb_get_version()</code>,
+      so <code class="literal">driver.version.usb</code> says the version is unknown. <code class="literal">nut-scanner</code>
+      falls back the same way when the libusb it loads at run time lacks
+      these methods. [issues <a class="ulink" href="https://github.com/networkupstools/nut/issues/509" target="_top">#509</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/3781" target="_top">#3781</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3782" target="_top">PR #3782</a>]
+</li><li class="listitem">
+With <code class="literal">--with-usb=auto</code> (or <code class="literal">yes</code>), the <code class="literal">configure</code> script now falls
+      back to an also available libusb-0.1 when the preferred libusb-1.0 is
+      too old for NUT, instead of building without USB drivers. An explicit
+      <code class="literal">--with-usb=libusb-1.0</code> still fails in that case.
+      [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3781" target="_top">issue #3781</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3782" target="_top">PR #3782</a>]
+</li><li class="listitem">
+Portability fixes found with OpenBSD 8.0 (<code class="literal">clang</code> 22, LibreSSL 4.4)
+      and NetBSD 11.0 [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3816" target="_top">PR #3816</a>]:
+</li></ul></div></li><li class="listitem">
+Out-of-tree builds with BSD <code class="literal">make</code> (seen with OpenBSD <code class="literal">make</code>) no
+        longer regenerate the <code class="literal">nut-scanner</code> headers <code class="literal">nutscan-usb.h</code> and
+        <code class="literal">nutscan-snmp.h</code> into the build directory when the copy in the source
+        directory (from <code class="literal">autogen.sh</code> or a dist tarball) is newer than all of
+        its inputs. Such <code class="literal">make</code> does not look up targets via <code class="literal">VPATH</code> the way
+        GNU <code class="literal">make</code> does, and with the two copies <code class="literal">clang</code> 22 and newer warned
+        about "multiple candidates for header", which failed builds with
+        fatal warnings.
+</li><li class="listitem">
+NIT test certificates are now accepted by LibreSSL: the root CA lists
+        its subject key identifier before the authority key identifier that
+        needs it, the fallback for older OpenSSL no longer uses <code class="literal">sed -i</code>
+        (which BSD <code class="literal">sed</code> does not take after the script), and <code class="literal">::1</code> is no
+        longer listed as a DNS name (only as an IP address). Before, NIT on
+        OpenBSD skipped the SSL tests in OpenSSL builds, and the PyNUT tests
+        failed in NSS builds.
+</li><li class="listitem">
+The OpenSSL server and client certificate requests of NIT now come with
+        their own minimal <code class="literal">openssl req</code> configuration, like the root CA’s,
+        rather than relying on the system <code class="literal">openssl.cnf</code>. Where there is none
+        (seen with NetBSD 11.0), NIT skipped the SSL tests in OpenSSL builds.
+</li><li class="listitem">
+The top-level <code class="literal">make check-NIT</code> recipe called an undefined <code class="literal">$(RM_F)</code>,
+        so the shell tried to run <code class="literal">NIT.env</code> as a command. GNU <code class="literal">make</code> only
+        printed an error and went on; BSD <code class="literal">make</code> stopped there.
+</li><li class="listitem"><p class="simpara">
+<code class="literal">str_concat()</code> copies with <code class="literal">memcpy()</code> instead of <code class="literal">strcpy()</code>, so the
+        OpenBSD linker no longer warns about <code class="literal">strcpy()</code> for each program
+        linked with <code class="literal">libcommon</code>.
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+NIT (<code class="literal">tests/NIT/nit.sh</code>) now stops a <code class="literal">cppnit</code> (C++ client library test)
+      run that is still going after <code class="literal">NIT_CPPNIT_TIMEOUT</code> seconds (300 by
+      default, <code class="literal">0</code> waits forever): it logs an error, kills the process and
+      fails that test case, so the rest of NIT still runs. Each <code class="literal">cppnit</code> run
+      normally takes a few seconds; one seen hanging on OpenBSD 8.0 would
+      otherwise have held the CI job until its own timeout. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3816" target="_top">PR #3816</a>]
 </li></ul></div></li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_release_notes_for_nut_2_8_5_what_8217_s_new_since_2_8_4"></a>2.2. Release notes for NUT 2.8.5 - what’s new since 2.8.4</h3></div></div></div><p><a class="ulink" href="https://github.com/networkupstools/nut/milestone/12" target="_top">https://github.com/networkupstools/nut/milestone/12</a></p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem"><p class="simpara">
 common code:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -1702,13 +1823,10 @@ Improved handling of transient <code class="literal">LIBUSB_ERROR_IO</code> fail
 <code class="literal">arduino-hid</code> subdriver enhanced with <code class="literal">ups.load</code>, <code class="literal">input.voltage</code> and
      <code class="literal">output.voltage</code> readings where supported (e.g. Ugreen US3000). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3281" target="_top">#3281</a>]
 </li><li class="listitem">
-Introduced a <code class="literal">winhid</code> extension in NUT for Windows builds, to directly
-     work with Windows HID API so that extra driver like WinUSB or Zadig is
-     not needed. Note that currently this backend follows a read-focused
-     scope: it supports device discovery and matching by identifiers such
-     as <code class="literal">vendorid</code> and <code class="literal">productid</code>, input/feature reads, and interrupt-report
-     fallback handling. Feature-report writes are not implemented in this
-     phase, so <code class="literal">setvar</code>/<code class="literal">instcmd</code> operations may be unavailable. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3335" target="_top">PR #3335</a>]
+Extended the <code class="literal">winhid</code> extension in NUT for Windows builds with selectable
+     HID capability ordering (<code class="literal">winhid_layout</code>) and Feature Report writes, so
+     writable <code class="literal">setvar</code>/<code class="literal">instcmd</code> operations can use the native Windows HID API
+     when supported by the UPS. [PRs <a class="ulink" href="https://github.com/networkupstools/nut/issues/3335" target="_top">#3335</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/3723" target="_top">#3723</a>, <a class="ulink" href="https://github.com/networkupstools/nut/issues/3717" target="_top">issue #3717</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">nut-scanner</code> tool updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -6577,4 +6695,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.34. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-11-18 13:06:03 -- Network UPS Tools 2.8.5.1685</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-11-19 14:57:25 -- Network UPS Tools 2.8.5.1780</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

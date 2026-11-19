@@ -787,8 +787,8 @@ SSL context configuration</p></div>
 <h2 id="_description">DESCRIPTION</h2>
 <div class="sectionbody">
 <div class="paragraph"><p>The <strong>upscli_set_ssl_context</strong>() function attaches an SSL context configuration
-to a connection, enabling per-connection SSL settings for certificate verification,
-client certificate identity, and certificate authority.</p></div>
+to a connection structure. It changes the stored context reference; it does
+not reconfigure an established SSL session.</p></div>
 <div class="paragraph"><p>The <strong>upscli_get_ssl_context</strong>() function retrieves the currently attached SSL
 context for a connection.</p></div>
 </div>
@@ -806,26 +806,15 @@ only by <a href="upscli_cleanup.html">upscli_cleanup(3)</a> after all connection
 <div class="sect1">
 <h2 id="_usage">USAGE</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>These functions are typically used together with <a href="upscli_get_or_create_ssl_context_authconf.html">upscli_get_or_create_ssl_context_authconf(3)</a>
-to support multiple servers with independent SSL configurations within a single
-process:</p></div>
-<div class="listingblock">
-<div class="content">
-<pre><code>        // Get per-server authconf
-        upscli_authconf_t *ac = upscli_get_authconf_item(
-                NULL, hostname, port_str, 1);
-
-        // Create/fetch SSL context from registry
-        void *ssl_ctx = upscli_get_or_create_ssl_context_authconf(ac);
-
-        // Attach to connection
-        if (ssl_ctx) {
-                upscli_set_ssl_context(&amp;conn, ssl_ctx);
-        }
-
-        // Connect (uses per-server CA, client cert, verify mode)
-        upscli_connect(&amp;conn, hostname, port, flags);</code></pre>
-</div></div>
+<div class="paragraph"><p><a href="upscli_connect.html">upscli_connect(3)</a> and <a href="upscli_connect.html">upscli_tryconnect(3)</a> clear the
+<code>UPSCONN_t</code> structure, including its context reference. Calling
+<strong>upscli_set_ssl_context</strong>() before connecting does not select the context for
+that connection. During SSL setup, the library looks up the server&#8217;s authconf
+and obtains a context internally; see
+<a href="upscli_find_authconf_item.html">upscli_get_authconf_item(3)</a>.</p></div>
+<div class="paragraph"><p>Do not call these functions with an uninitialized connection structure.
+Attaching a context after SSL setup does not change the settings of the
+existing SSL session.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -849,7 +838,7 @@ process:</p></div>
 attached to the connection (or NULL if none was attached), allowing callers
 to track context changes if needed.</p></div>
 <div class="paragraph"><p>The <strong>upscli_get_ssl_context</strong>() function returns the currently attached SSL
-context, or NULL if none is attached (connection will use registry default).</p></div>
+context, or NULL if none is attached.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -874,50 +863,22 @@ context, or NULL if none is attached (connection will use registry default).</p>
         An opaque SSL context handle obtained from
         <a href="upscli_get_or_create_ssl_context.html">upscli_get_or_create_ssl_context(3)</a> or
         <a href="upscli_get_or_create_ssl_context_authconf.html">upscli_get_or_create_ssl_context_authconf(3)</a>.
-        Pass NULL to clear any existing per-connection context (falls back to default).
+        Pass NULL to clear the stored per-connection context reference.
 </p>
 </dd>
 </dl></div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_example">EXAMPLE</h2>
-<div class="sectionbody">
-<div class="paragraph"><p>Connecting to multiple NUT servers with independent SSL configurations:</p></div>
-<div class="listingblock">
-<div class="content">
-<pre><code>        UPSCONN_t conn1, conn2;
-
-        // Server 1: custom CA and verify settings
-        upscli_authconf_t *ac1 = upscli_get_authconf_item(
-                NULL, "server1.example.com", "3493", 1);
-        void *ctx1 = upscli_get_or_create_ssl_context_authconf(ac1);
-        upscli_set_ssl_context(&amp;conn1, ctx1);
-        upscli_connect(&amp;conn1, "server1.example.com", 3493, flags);
-
-        // Server 2: different CA and client certificate
-        upscli_authconf_t *ac2 = upscli_get_authconf_item(
-                NULL, "server2.example.com", "3493", 1);
-        void *ctx2 = upscli_get_or_create_ssl_context_authconf(ac2);
-        upscli_set_ssl_context(&amp;conn2, ctx2);
-        upscli_connect(&amp;conn2, "server2.example.com", 3493, flags);
-
-        // Both connections use independent SSL contexts
-
-        // Cleanup
-        upscli_disconnect(&amp;conn1);
-        upscli_disconnect(&amp;conn2);
-        upscli_cleanup();  // Frees all registry contexts</code></pre>
-</div></div>
-</div>
-</div>
-<div class="sect1">
 <h2 id="_legacy_behavior">LEGACY BEHAVIOR</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>When no per-connection SSL context is set (NULL), the connection uses the
-ambient default context created by <a href="upscli_init.html">upscli_init(3)</a>,
+<div class="paragraph"><p>When SSL setup proceeds without a per-connection context, the library uses
+the ambient default context created by <a href="upscli_init.html">upscli_init(3)</a>,
 <a href="upscli_init2.html">upscli_init2(3)</a>, or <a href="upscli_init_authconf.html">upscli_init_authconf(3)</a>. This provides
 backward compatibility with existing client code.</p></div>
+<div class="paragraph"><p>If a context cannot be created for a server&#8217;s authconf entry that contains
+certificate settings, the current implementation logs a warning and
+terminates the process instead of falling back to the default context.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -925,7 +886,8 @@ backward compatibility with existing client code.</p></div>
 <div class="sectionbody">
 <div class="paragraph"><p><a href="upscli_get_or_create_ssl_context.html">upscli_get_or_create_ssl_context(3)</a>,
 <a href="upscli_get_or_create_ssl_context_authconf.html">upscli_get_or_create_ssl_context_authconf(3)</a>,
-<a href="upscli_connect.html">upscli_connect(3)</a>, <a href="upscli_disconnect.html">upscli_disconnect(3)</a>,
+<a href="upscli_connect.html">upscli_connect(3)</a>, <a href="upscli_connect.html">upscli_tryconnect(3)</a>,
+<a href="upscli_disconnect.html">upscli_disconnect(3)</a>,
 <a href="upscli_init.html">upscli_init(3)</a>, <a href="upscli_init2.html">upscli_init2(3)</a>,
 <a href="upscli_init_authconf.html">upscli_init_authconf(3)</a>, <a href="upscli_cleanup.html">upscli_cleanup(3)</a>,
 <a href="upscli_get_authconf_item.html">upscli_get_authconf_item(3)</a>,
@@ -936,7 +898,7 @@ backward compatibility with existing client code.</p></div>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-11-18 13:05:23 UTC -- Network UPS Tools 2.8.5.1685
+Last updated 2026-11-19 14:56:46 UTC -- Network UPS Tools 2.8.5.1780
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>

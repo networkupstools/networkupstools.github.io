@@ -1267,13 +1267,31 @@ are broken on your UPS).
 If this flag is set on Windows builds, use the experimental native Windows HID
 backend instead of libusb.
 </p>
-<div class="paragraph"><p>This backend currently follows a read-focused scope. It supports
-device discovery and matching by identifiers such as <code>vendorid</code> and
-<code>productid</code>, input/feature reads, and interrupt-report fallback handling.
-Feature-report writes are not implemented in this phase, so writable
-<code>setvar</code>/<code>instcmd</code> operations may be unavailable.</p></div>
-<div class="paragraph"><p>This option is ignored on non-WIN32 builds.</p></div>
+<div class="paragraph"><p>This backend supports device discovery and matching by identifiers such as
+<code>vendorid</code> and <code>productid</code>, input/feature reads, interrupt-report fallback
+handling, and Feature Report writes used by writable <code>setvar</code> and <code>instcmd</code>
+operations. A UPS still has to implement the corresponding HID report and
+accept the requested operation.</p></div>
 </dd>
+<dt class="hdlist1">
+<strong>winhid_layout</strong>=<em>value</em>
+</dt>
+<dd>
+<p>
+Select how the Windows HID capability lists are mapped to the NUT HID report
+descriptor. The default <code>auto</code> mode validates the native ordering and falls
+back to the historical <code>legacy</code> ordering when needed. Use <code>native</code> or
+<code>legacy</code> to force one layout when diagnosing a device-specific compatibility
+issue. The value is ignored unless <code>winhid</code> is enabled.
+</p>
+</dd>
+</dl></div>
+<div class="paragraph"><p>The generic <code>set_report()</code> path remains a Feature Report operation. Output
+Reports use a separate transport path so that drivers which send command
+packets can preserve the report type and report-ID semantics of the device.</p></div>
+<div class="paragraph"><p>+
+This option is ignored on non-WIN32 builds.</p></div>
+<div class="dlist"><dl>
 <dt class="hdlist1">
 <strong>interrupt_pipe_no_events_tolerance</strong>=<em>num</em>
 </dt>
@@ -1725,7 +1743,7 @@ Arjen de Korte
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-11-18 13:05:24 UTC -- Network UPS Tools 2.8.5.1685
+Last updated 2026-11-19 14:56:47 UTC -- Network UPS Tools 2.8.5.1780
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>

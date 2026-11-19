@@ -902,8 +902,8 @@ USB-to-serial chip. On Linux, it&#8217;s only usable on Linux 5.12 and later, vi
 the <strong>xr_serial</strong> kernel module. On Windows, it&#8217;s also suggested to install
 an additional device driver. On some newer UPS hardware variants, a WCH
 CH341 chip is used instead, these should have better compatibility (via the
-<strong>ch341</strong> Linux kernel module, or Windows Update). See subsection <strong>Linux USB</strong>
-and <strong>Windows USB</strong> for details.</p></div>
+<strong>ch341</strong> Linux kernel module, or Windows Update). See <a href="#_linux_usb">[_linux_usb]</a>
+and <a href="#_windows_usb">[_windows_usb]</a> for details.</p></div>
 <div class="paragraph"><p>Only one port can be used at a time. When USB is used, RS-232 should be
 unplugged from the UPS, and vice versa. Further, optional adapter cards,
 such as RS-485 or SNMP, are not supported. They should be removed from
@@ -1331,7 +1331,7 @@ and <strong>shutdown.reboot.graceful</strong>, any attempt to use them will fail
 problem, the negative impact is worse on some UPS models: it was not possible
 to <strong>write to any registers at all</strong>, meaning that changing any <strong>variable</strong> or
 sending any <strong>instant command</strong> is impossible.</p></div>
-<div class="paragraph"><p>See <strong>Historical bugs</strong> at the bottom of this manual for links.</p></div>
+<div class="paragraph"><p>See <a href="#_historical_bugs">[_historical_bugs]</a> at the bottom of this manual for links.</p></div>
 </div>
 <div class="sect2">
 <h3 id="_battery_status_has_a_non_fatal_read_failure">Battery status has a non-fatal read failure</h3>
@@ -1381,14 +1381,29 @@ not restore connectivity, as if someone has unplugged the RS-232 cable.</p></div
 front panel, then unplug the UPS from line power. Wait for the LCD front
 screen to go black. Finally reconnect line power and restart your UPS.</p></div>
 <div class="paragraph"><p>That being said, a serial port lockup is unlikely to happen. To our best
-knowledge, this driver never sends malformed commands to the UPS (it was
-only a problem during early development). Furthermore, due to a CRC checksum,
-they&#8217;re unlikely to be accidentally generated.</p></div>
+knowledge, this driver never sends these malformed commands to the UPS.
+Furthermore, due to a CRC checksum, they&#8217;re unlikely to be accidentally
+generated. Thus, we expect that only driver developers are affected,
+not NUT users.</p></div>
 <div class="paragraph"><p>Still, we recommend to power cycle your UPS after making a cabling change,
 especially after changing from RS-485/USB to RS-232, just to ensure the
-UPS selects the correct communication interface. Also, if you have
-discovered a reproducible serial port lockup problem, it can be a
-previously unknown bug, so please make sure to file a bug report.</p></div>
+UPS selects the correct communication interface.</p></div>
+<div class="paragraph"><p>Furthermore, If you have discovered a reproducible serial port lockup problem
+triggered during the use of this NUT driver, it can be a previously unknown
+bug, so please make sure to file a bug report.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">For developers, an example of these malformed commands is provided.
+See <a href="#_serial_port_lockup_reference">[_serial_port_lockup_reference]</a> at the end of this document for a test.
+The lockup occurs when the <strong>Read Device Identification</strong> command (Modbus
+function code <strong>0x2B</strong>) is combined with some <strong>Read Device ID codes</strong>. It was
+first discovered in 2021 during early development before the driver was
+included in NUT, and sequentially rediscovered independently in 2026.</td>
+</tr></table>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_usb_chip_maxlinear_exar_rx21v1410_is_unsupported">USB chip (MaxLinear/Exar RX21V1410) is unsupported</h3>
@@ -1402,7 +1417,7 @@ only be fixed by implementing a driver for your system, nothing can
 be done within NUT. Please use the RS-232 port instead.</p></div>
 <div class="paragraph"><p>Alternatively, if your unit has a WCH CH341 chip (likely only found in
 units made after 2022), it should have better compatibility.</p></div>
-<div class="paragraph"><p>See the previous section <strong>Cabling</strong> for more information.</p></div>
+<div class="paragraph"><p>See <a href="#_cabling">[_cabling]</a> for more information.</p></div>
 </div>
 </div>
 </div>
@@ -1517,6 +1532,17 @@ CH341SER.ZIP:
 </ul></div>
 </div>
 <div class="sect2">
+<h3 id="_serial_port_lockup_reference">Serial port lockup reference:</h3>
+<div class="ulist"><ul>
+<li>
+<p>
+Issue 3735: huawei-ups2000: UPS serial comm lockup triggered by 0x2B ReadDevID=0x01 + ObjectID=0x87 (reproducible "Serial port becomes unresponsive" case)
+<a href="https://github.com/networkupstools/nut/issues/3735">https://github.com/networkupstools/nut/issues/3735</a>
+</p>
+</li>
+</ul></div>
+</div>
+<div class="sect2">
 <h3 id="_internet_resources">Internet resources:</h3>
 <div class="ulist"><ul>
 <li>
@@ -1549,7 +1575,7 @@ libmodbus home page: <a href="http://libmodbus.org">http://libmodbus.org</a>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-11-18 13:05:24 UTC -- Network UPS Tools 2.8.5.1685
+Last updated 2026-11-19 14:56:47 UTC -- Network UPS Tools 2.8.5.1780
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>
