@@ -1,0 +1,135 @@
+# DEVICE:URL:REPORT: https://github.com/networkupstools/nut/pull/3701
+# DEVICE:URL:VENDOR: https://www.sms.com.br/
+
+# DEVICE:COMMENT:
+# SMS (Brazil) Premium 1500 VA, model PRM1500BiBiW, line-interactive,
+# 115 V output (range string EBiS115), 24 V battery bus. It has a USB port
+# with a built-in Prolific PL2303 serial adapter (067b:23a3), so it appears
+# as a /dev/ttyUSB* node and is driven by sms_ser. The unit reported here
+# has extra external batteries attached, so the run times below are longer
+# than a stock unit would give.
+#
+# NOTE: this report is not from a stock NUT release. The sms_ser driver in
+# NUT 2.8.1 (Debian 13 package 2.8.1-5) was rebuilt with the changes of
+# NUT PR #3701 (issue #1987) backported; it reports itself as
+# driver.version.internal 1.00+premium6. With the stock 2.8.1 driver the
+# same unit reports an outage as "BYPASS" instead of "OB", never reopens
+# the serial port after a USB replug, and its shutdown delays do not work
+# (see the PR). The variables below are what the patched driver publishes;
+# the stock driver publishes the same set minus ups.mfr, ups.model,
+# ups.type, output.voltage.nominal, output.frequency.nominal, the
+# ups.delay.* variables and battery.charge.low.
+#
+# Measured on this unit: the UPS counts its test and shutdown delays in
+# units of 0.6 s, and the restore delay of the shutdown command in
+# minutes; the driver in the PR converts seconds accordingly. The UPS
+# raises its own low-battery flag about two minutes before it cuts the
+# output. A full discharge from 100 % to cut-off took about 25 minutes
+# with a 12 % load and the extended battery bank.
+# DEVICE:EOC
+
+# DEVICE:COMMENT-BLOCK:UPSCONF: ups.conf
+# [ups]
+#     driver = sms_ser
+#     port = /dev/sms-ups
+#     desc = "SMS Premium 1500"
+#     default.battery.charge.low = 60
+# DEVICE:EOC
+
+# battery.charge:COMMENT:
+# Only meaningful while on battery, where it tracks the battery voltage
+# (about 100 down to 82 over most of a discharge, then a fast drop to 0 in
+# the last three minutes). On mains it is a recharge ramp that restarts
+# near 20 after any battery use and climbs back to 100, so a low value with
+# ups.status OL does not mean a weak battery. The vendor software shows the
+# same number. The driver only compares it with battery.charge.low while on
+# battery.
+# battery.charge:EOC
+
+# battery.packs:COMMENT:
+# What the UPS reports for its own battery set; external batteries added
+# to the bus are not reflected here.
+# battery.packs:EOC
+
+# battery.voltage:COMMENT:
+# Derived from battery.packs times 12 V, not a measurement; the protocol
+# carries no battery voltage.
+# battery.voltage:EOC
+
+# input.voltage.nominal:COMMENT:
+# The stock driver publishes the range string of the UPS ("EBiS115" here)
+# under this name; kept as is so that no variable disappears. The PR also
+# publishes the numeric output.voltage.nominal (115).
+# input.voltage.nominal:EOC
+
+# input.current.nominal:COMMENT:
+# Always "000" on this unit (protocol field not populated).
+# input.current.nominal:EOC
+
+# input.voltage.extended:COMMENT:
+# Always 0.00 on this unit.
+# input.voltage.extended:EOC
+
+# ups.temperature:COMMENT:
+# Internal sensor near the transformer: about 52 C on mains at 12 % load,
+# falling to 34 C while on battery.
+# ups.temperature:EOC
+
+# :; upsc ups@localhost
+battery.charge: 100.00
+battery.charge.low: 60
+battery.charger.status: resting
+battery.packs: 2
+battery.voltage: 24.00
+battery.voltage.nominal: 24
+device.mfr: SMS
+device.model: PRM1500BiBiW
+device.type: ups
+driver.debug: 0
+driver.flag.allow_killpower: 0
+driver.name: sms_ser
+driver.parameter.default.battery.charge.low: 60
+driver.parameter.pollinterval: 5
+driver.parameter.port: /dev/sms-ups
+driver.parameter.synchronous: auto
+driver.state: quiet
+driver.version: 2.8.1
+driver.version.internal: 1.00+premium6
+input.current.nominal: 000
+input.voltage: 129.30
+input.voltage.extended: 0.00
+input.voltage.nominal: EBiS115
+output.frequency: 59.90
+output.frequency.nominal: 60
+output.voltage: 111.70
+output.voltage.nominal: 115
+ups.beeper.status: enabled
+ups.delay.reboot: 64
+ups.delay.shutdown: 30
+ups.delay.start: 60
+ups.firmware: 1.0
+ups.load: 13.50
+ups.mfr: SMS
+ups.model: PRM1500BiBiW
+ups.status: OL
+ups.temperature: 51.90
+ups.type: line-interactive
+
+# ups.status:COMMENT:
+# Seen on this unit with the patched driver: OL, OB, OB LB, OB CAL (during
+# a battery test), and the beeper state in ups.beeper.status. With the stock
+# 2.8.1 driver an outage shows as BYPASS.
+# ups.status:EOC
+
+#RW:ups.delay.reboot:RANGE:"0" "39321"	#COMMENT: seconds, converted to 0.6 s units by the driver
+#RW:ups.delay.shutdown:RANGE:"0" "39321"	#COMMENT: seconds, converted to 0.6 s units by the driver
+#RW:ups.delay.start:RANGE:"0" "65535"	#COMMENT: seconds, sent rounded up to whole minutes, never 0
+
+#CMD:beeper.toggle	#COMMENT: verified
+#CMD:shutdown.reboot	#COMMENT: verified, output off after ups.delay.reboot, back by itself about 15 s later
+#CMD:shutdown.return	#COMMENT: verified with and without mains; without mains the UPS powers itself off about a minute after the cut and returns a few seconds after mains is back
+#CMD:shutdown.stop	#COMMENT: verified, cancels a pending shutdown
+#CMD:test.battery.start	#COMMENT: verified, takes an optional duration in seconds
+#CMD:test.battery.start.deep	#COMMENT: verified, runs until the UPS reports low battery (about 20 minutes here, with the extended battery bank)
+#CMD:test.battery.start.quick	#COMMENT: verified, 10 seconds
+#CMD:test.battery.stop	#COMMENT: verified

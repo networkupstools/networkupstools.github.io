@@ -1,0 +1,108 @@
+# DEVICE:URL:REPORT: https://github.com/networkupstools/nut/pull/3662
+
+# DEVICE:COMMENT:
+# Santak Castle C1K, an online ("double conversion") 1 kVA UPS with two
+# built-in 12 V batteries, connected over RS232 at 2400 8N1.
+#
+# This complements the earlier `Santak__Castle_C1K__blazer_ser__2.7.4__01.dev`
+# report in this directory, which came from https://github.com/networkupstools/nut/issues/1039
+# and used `blazer_ser`. This one uses the `santak` subdriver of `nutdrv_qx`
+# proposed in https://github.com/networkupstools/nut/pull/3662.
+#
+# What the newer driver adds over the `blazer_ser` dump:
+#
+# * `battery.charge` and `battery.runtime`, which `Q1` simply does not carry.
+# * `battery.voltage` as real pack voltage (027.1) rather than the per-cell
+#   2.28 seen before. The older report suggested `override.battery.packs = 12`
+#   as a workaround and noted it did not work; it is not needed here, because
+#   `Q6` reports the pack voltage directly. `battery_voltage_reports_one_pack`
+#   must NOT be set for these devices.
+# * `ups.model` (`C1K(G7)`), `ups.firmware` and `ups.serial`, read from the
+#   `WH`, `FW?` and `SASV07?` commands. This unit NAKs both `F` and `I`, so
+#   `WH` is the only source of model and ratings.
+# * Nominal output voltage and frequency, and the input transfer window
+#   (`input.transfer.low`/`high`, `input.frequency.low`/`high`), also from `WH`.
+# * Bypass voltage and frequency from `BPS`, and output current and power
+#   from `WA`.
+#
+# `ups.serial` has been removed from this dump, as the generator advises.
+#
+# `device.mfr`/`ups.mfr` come from `override.ups.mfr` in `ups.conf`: the device
+# does not report a manufacturer string, and the subdriver deliberately does
+# not hardcode one.
+#
+# Two commands answer but remain unidentified and are not mapped: `Q4` returns
+# 17 bytes of static binary, and `SASV08?` returns `GASV080001`. Sweeping
+# `SASV01?`..`SASV24?` showed only 07 and 08 exist.
+# DEVICE:EOC
+
+battery.charge: 100
+battery.runtime: 2293
+battery.voltage: 027.1
+device.mfr: Santak
+device.model: C1K(G7)
+device.type: ups
+driver.debug: 0
+driver.flag.allow_killpower: 0
+driver.name: nutdrv_qx
+driver.parameter.override.ups.mfr: Santak
+driver.parameter.pollfreq: 30
+driver.parameter.pollinterval: 2
+driver.parameter.port: /dev/ttyUSB0
+driver.parameter.protocol: santak
+driver.parameter.synchronous: auto
+driver.state: quiet
+driver.version: 2.8.5.1
+driver.version.data: SANTAK 0.01
+driver.version.internal: 0.56
+input.bypass.frequency: 49.9
+input.bypass.phases: 1
+input.bypass.voltage: 225.4
+input.frequency: 49.9
+input.frequency.high: 55.0
+input.frequency.low: 45.0
+input.phases: 1
+input.transfer.high: 264
+input.transfer.low: 187
+input.voltage: 225.4
+output.current: 0.6
+output.frequency: 49.9
+output.frequency.nominal: 50.0
+output.phases: 1
+output.voltage: 226.3
+output.voltage.nominal: 220
+ups.beeper.status: enabled
+ups.delay.shutdown: 30
+ups.delay.start: 180
+ups.firmware: 08477-0307
+ups.load: 13
+ups.mfr: Santak
+ups.model: C1K(G7)
+ups.power: 100.00
+ups.realpower: 100.00
+ups.status: OL
+ups.temperature: 26.5
+ups.type: online
+
+#RW:ups.delay.shutdown:RANGE:"12" "600"
+#RW:ups.delay.start:RANGE:"0" "599940"
+
+#CMD:beeper.toggle
+#CMD:load.off
+#CMD:load.on
+#CMD:shutdown.default
+#CMD:shutdown.return
+#CMD:shutdown.stayoff
+#CMD:shutdown.stop
+#CMD:test.battery.start
+#CMD:test.battery.start.deep
+#CMD:test.battery.start.quick
+#CMD:test.battery.stop
+
+# DEVICE:COMMENT-BLOCK: ups.conf section used for this dump
+# [c1k]
+# 	driver = nutdrv_qx
+# 	port = /dev/ttyUSB0
+# 	protocol = santak
+# 	override.ups.mfr = Santak
+# DEVICE:EOC
