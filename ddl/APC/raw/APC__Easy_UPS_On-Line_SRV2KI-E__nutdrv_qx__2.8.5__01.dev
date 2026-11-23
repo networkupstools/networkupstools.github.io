@@ -1,0 +1,110 @@
+# DEVICE:URL:REPORT: https://github.com/networkupstools/nut/pull/3859
+
+# DEVICE:COMMENT:
+# Device dump of an APC/Schneider Electric Easy UPS On-Line SRV2KI-E
+# (2000 VA / 1800 W, 230 V, 4x 12 V batteries), collected on 2026-11-20
+# with NUT for Windows master snapshot 2.8.5.6042 (driver.version below).
+#
+# The -E generation of the Easy UPS On-Line SRV series is a Voltronic OEM
+# platform: `QPI` returns `(PI01`, `QMD` returns model `WPHVT2K0` (the same
+# string as reported by the FSP Fortron UPS Champ 2000VA Tower in this DDL).
+#
+# Connection: built-in USB port, which is an Exar XR21V1410 USB-UART bridge
+# (USB ID 04e2:1410), 2400 8N1. On Windows the MaxLinear `xrusbser` driver
+# is required (with the generic Microsoft `usbser` driver the device does
+# not answer at all). On Linux the `xr_serial` kernel driver (5.12+) should
+# apply (untested). As it is a plain serial port, `port=auto` does not apply.
+#
+# The device does not answer APC UPS-Link (`Y`), Modbus RTU or MicroLink, so
+# `apcsmart`, `apc_modbus` and `apcmicrolink` do not work with this model.
+#
+# The output was unloaded while this dump was taken, hence `ups.load: 0`
+# and a long `battery.runtime`. Instant commands were only listed, not
+# exercised. The serial number has been redacted.
+# DEVICE:EOC
+
+# DEVICE:COMMENT-BLOCK:UPSCONF:
+# [srv]
+#         driver = nutdrv_qx
+#         port = COM6
+#         protocol = voltronic
+#         desc = "APC Easy UPS On-Line SRV2KI-E"
+# DEVICE:EOC
+
+# upsc output:
+battery.charge: 71
+battery.energysave: no
+battery.packs: 1
+battery.runtime: 19380	#COMMENT: with no load attached
+battery.voltage: 054.4
+battery.voltage.high: 52.00	#COMMENT: not reported by the UPS, driver guesstimation
+battery.voltage.low: 41.60	#COMMENT: not reported by the UPS, driver guesstimation
+battery.voltage.nominal: 48.0
+device.model: WPHVT2K0
+device.serial: REDACTED
+device.type: ups
+driver.debug: 0
+driver.flag.allow_killpower: 0
+driver.name: nutdrv_qx
+driver.parameter.pollfreq: 30
+driver.parameter.pollinterval: 2
+driver.parameter.port: COM6
+driver.parameter.protocol: voltronic
+driver.parameter.synchronous: auto
+driver.state: updateinfo
+driver.version: 2.8.5.1780.8-1788+g6fa23506c
+driver.version.data: Voltronic 0.15
+driver.version.internal: 0.57
+driver.version.usb: libusb-1.0.28 (API: 0x0100010A)
+input.frequency: 50.0
+input.phases: 1
+input.voltage: 224.4
+input.voltage.nominal: 230.0
+output.current: 0.0
+output.current.nominal: 8
+output.frequency: 50.0
+output.frequency.nominal: 50.0
+output.phases: 1
+output.power.maximum.percent: 0
+output.power.minimum.percent: 0
+output.powerfactor: 0.9
+output.voltage: 230.0
+output.voltage.nominal: 230.0
+ups.beeper.status: enabled
+ups.delay.shutdown: 30
+ups.delay.start: 180
+ups.firmware: 03774.06
+ups.firmware.aux: P01
+ups.load: 0
+ups.power.nominal: 2000
+ups.start.auto: yes
+ups.start.battery: yes
+ups.status: OL
+ups.temperature: 19.3
+ups.type: online
+
+#RW:battery.energysave:ENUM:"no"
+#RW:battery.energysave:ENUM:"yes"
+#RW:battery.packs:RANGE:"1" "99"
+#RW:ups.delay.shutdown:RANGE:"12" "5940"
+#RW:ups.delay.start:RANGE:"0" "599940"
+#RW:ups.start.auto:ENUM:"no"
+#RW:ups.start.auto:ENUM:"yes"
+#RW:ups.start.battery:ENUM:"no"
+#RW:ups.start.battery:ENUM:"yes"
+
+#CMD:beeper.disable
+#CMD:beeper.enable
+#CMD:beeper.toggle
+#CMD:bypass.start
+#CMD:bypass.stop
+#CMD:load.off
+#CMD:load.on
+#CMD:shutdown.default
+#CMD:shutdown.return
+#CMD:shutdown.stayoff
+#CMD:shutdown.stop
+#CMD:test.battery.start
+#CMD:test.battery.start.deep
+#CMD:test.battery.start.quick
+#CMD:test.battery.stop
