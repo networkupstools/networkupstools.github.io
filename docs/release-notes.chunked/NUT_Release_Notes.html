@@ -94,12 +94,23 @@ Third-party libraries which <code class="literal">nut-scanner</code> loads dynam
         disabled as a result. The names it tried, and why each one failed,
         are logged at debug level 1 instead, since a failed name followed by
         a working one is not a failure. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3739" target="_top">PR #3739</a>]
-</li><li class="listitem"><p class="simpara">
+</li><li class="listitem">
+Consolidated repeated library selection into a shared helper with
+        explicit candidate lists, preserving lookup order and loading
+        behavior. Added regression tests for library selection, initialization
+        and cleanup. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3760" target="_top">PR #3760</a>]
+</li><li class="listitem">
 When the NUT client library was not found under its known file names
         and had to be loaded by the libtool default search instead, the
         result was stored as the availability of the XML/HTTP scan. So the
         <code class="literal">-M</code> scan could be disabled despite a working <code class="literal">libneon</code>, or offered
         without one (impacts NUT v2.8.3 through v2.8.5). [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3657" target="_top">PR #3657</a>]
+</li><li class="listitem"><p class="simpara">
+<code class="literal">nut-scanner</code> crashed in USB scans in 32-bit Windows builds: it
+        called the dynamically loaded libusb-1.0 methods as default C
+        functions, but there they use the calling convention of Windows
+        API methods (<code class="literal">LIBUSB_CALL</code>), so the stack got misaligned (impacts
+        all NUT 2.8.x until now). [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3791" target="_top">PR #3791</a>]
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 USB drivers: fixed an out-of-bounds read of the candidate HID report
       descriptor lengths, which could cause a segmentation fault (regression
@@ -130,10 +141,16 @@ The rules which build the NUT-Monitor translations (<code class="literal">*.mo</
       It captured the standard output, which went to a file, so the message
       was always empty. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3809" target="_top">PR #3809</a>]
 </li></ul></div></li><li class="listitem">
+USB drivers have a new <code class="literal">usb_request_min_gap_us</code> option, a minimum time
+   between USB control requests, for devices that refuse requests sent too
+   soon and then stop answering until a USB reset. <code class="literal">usbhid-ups</code> subdrivers
+   can provide a default; the CyberPower one uses <code class="literal">100</code> for <code class="literal">0764:0501</code>.
+   [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3808" target="_top">issue #3808</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3814" target="_top">PR #3814</a>]
+</li><li class="listitem">
 USB drivers now prefer the longer of conflicting HID report descriptor
    lengths for EcoFlow devices using USB ID <code class="literal">3746:ffff</code>. This makes the
    complete descriptor available on affected River 3 Plus firmware while
-   retaining the shorter length as a fallback.
+   retaining the shorter length as a fallback. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3568" target="_top">PR #3568</a>]
 </li><li class="listitem">
 Windows serial compatibility: fixed timeout handling to return data
    already received as a successful short read, while safely canceling
@@ -558,8 +575,8 @@ Added an <code class="literal">omron</code> USB subdriver and an <code class="li
       from OMRON-authored GPL driver version 1.00 distributed in the Synology
       DSM 7.3-86009 GPL sources and version 1.02 distributed in the QNAP QTS
       5.2.3 GPL sources. Polling and the direct shutdown commands were verified
-      on an unloaded BN150T over USB; other OMRON models and serial connections
-      are untested. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3112" target="_top">issue #3112</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3554" target="_top">PR #3554</a>]
+      on unloaded BN150T, BW55T and BY50S over USB; other OMRON models and
+      serial connections are untested. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3112" target="_top">issue #3112</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3554" target="_top">PR #3554</a>]
 </li><li class="listitem">
 Updated <code class="literal">voltronic</code> subdriver to support Microtek/Voltronic UPS devices
       that report <code class="literal">QPI</code> as <code class="literal">(PI71</code>, such as Microtek GI3KL 3000VA Online UPS.
@@ -608,12 +625,30 @@ Drain the firmware’s handshake reply before the first status poll.
      flight. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3500" target="_top">issue #3500</a>]
 </li><li class="listitem">
 Compute <code class="literal">battery.charge</code> as <code class="literal">raw / 2.55</code> so a fully charged battery
-     reports exactly 100 % instead of 100.2 %.
+     reports exactly 100 % instead of 100.2 %. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3500" target="_top">issue #3500</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3504" target="_top">PR #3504</a>]
 </li><li class="listitem">
 Added a <code class="literal">va</code> option to override the apparent-power rating when the
      firmware model id is shared between product lines, correcting
      <code class="literal">ups.power.nominal</code>, <code class="literal">ups.realpower.nominal</code> and the computed
      <code class="literal">ups.load</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3500" target="_top">issue #3500</a>]
+</li><li class="listitem">
+Added an optional battery runtime model, enabled by <code class="literal">runtimecal</code>
+     (same semantics as in <code class="literal">nutdrv_qx</code>), with <code class="literal">chargetime</code>, <code class="literal">battery_ah</code>,
+     <code class="literal">extbatt_ah</code>, <code class="literal">obload_factor</code> and <code class="literal">runtime_low</code> options. The firmware
+     reports no runtime and its charge byte is voltage-based, so the driver
+     now publishes its own <code class="literal">battery.charge</code> estimate (energy-integrated on
+     battery, recovering along the charge time on mains) and
+     <code class="literal">battery.runtime</code>, keeps the firmware value in <code class="literal">battery.charge.approx</code>,
+     raises <code class="literal">LB</code> below <code class="literal">runtime_low</code>, and persists the estimate in the state
+     path across driver restarts (<code class="literal">soc_save_interval</code>, 60 s by default, 0 to
+     disable; see the man page for storage considerations). The saved file
+     is created with a 022 umask. The load behind the runtime figure is
+     averaged over about 5 minutes on mains and 15 seconds on battery.
+     Calibration procedure and values measured on a brand new Easy Pro
+     3200 VA are in the man page. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3716" target="_top">PR #3716</a>]
+</li><li class="listitem">
+Added <code class="literal">test.battery.stop</code> (the OEM <code class="literal">cancelDischarge</code> action), gated by
+     <code class="literal">allow_shutdown</code> like <code class="literal">test.battery.start.deep</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3716" target="_top">PR #3716</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">richcomm_usb</code> driver updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -736,6 +771,20 @@ Added the <code class="literal">microdowell-hid</code> subdriver for the MicroDo
       report a non-zero <code class="literal">ActivePower</code>: the reading moves from <code class="literal">ups.power</code> to
       <code class="literal">ups.realpower</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3580" target="_top">issue #3580</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3581" target="_top">PR #3581</a>]
 </li><li class="listitem">
+<code class="literal">tripplite-hid</code> subdriver: on Minuteman UPSes with USB ID <code class="literal">05dd:a0a0</code>
+      (Delta’s vendor ID), <code class="literal">tripplite_fix_report_desc()</code> now also repairs two
+      Report Descriptor defects which left <code class="literal">input.voltage</code>, <code class="literal">output.voltage</code>
+      and <code class="literal">battery.voltage</code> at <code class="literal">0.0</code> and both frequencies at <code class="literal">870.0</code>: the
+      16-bit measurement fields declare a Logical Maximum of 255, so their
+      reports were masked to 8 bits, and the values are sent as tenths but
+      declare a Unit Exponent of 1. The fix widens those Logical Maximums to
+      the field size and sets the Unit Exponents which mean tenths (6 for
+      volts, -1 for hertz and amperes). The <code class="literal">delta_ups-hid</code> subdriver now
+      leaves <code class="literal">05dd:a0a0</code> to <code class="literal">tripplite-hid</code> even when the <code class="literal">productid</code> option
+      is set; it used to claim the device then, without these fixes.
+      Verified on a Minuteman Entrust ETR1500LCD, which now reports 122.3 V
+      input, 123.6 V output, 59.9 Hz and 28.1 V battery. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1852" target="_top">issue #1852</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3764" target="_top">PR #3764</a>]
+</li><li class="listitem">
 in <code class="literal">legrand-hid</code> subdriver the <code class="literal">beeper.disable</code> instant command now
       sends <code class="literal">AudibleAlarmControl=1</code> ("disabled") instead of <code class="literal">3</code> ("muted"),
       so the buzzer stays off across alarms; added <code class="literal">beeper.mute</code> and
@@ -770,9 +819,42 @@ Added a new <code class="literal">vertiv-hid</code> subdriver for the Vertiv Lie
       128 bytes per poll (about 14 MB per day at <code class="literal">pollinterval=1</code>). It now
       uses a static buffer like the other conversion functions. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3787" target="_top">issue #3787</a>,
       <a class="ulink" href="https://github.com/networkupstools/nut/pull/3788" target="_top">PR #3788</a>]
+</li><li class="listitem">
+<code class="literal">liebert-hid</code> subdriver (Phoenixtec, USB ID <code class="literal">06da:ffff</code>) now maps
+      <code class="literal">ups.realpower</code> to <code class="literal">UPS.PowerConverter.Output.ActivePower</code>, <code class="literal">ups.power</code>
+      to <code class="literal">UPS.PowerConverter.Output.ApparentPower</code> and <code class="literal">ups.realpower.nominal</code>
+      to <code class="literal">UPS.Flow.[4].ConfigActivePower</code>, beside the already mapped
+      <code class="literal">UPS.Flow.[4].ConfigApparentPower</code> for <code class="literal">ups.power.nominal</code> (paths that
+      <code class="literal">salicru-hid</code> and <code class="literal">ever-hid</code> already map). Units publishing them, such
+      as the PowerWalker VFI 3000, previously reported only <code class="literal">ups.load</code> - a
+      percentage of the VA rating, which at low load can be several times the
+      real power. Verified on that unit: <code class="literal">ups.realpower: 41</code>, <code class="literal">ups.power: 186</code>,
+      <code class="literal">ups.realpower.nominal: 2700</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3860" target="_top">PR #3860</a>]
+</li><li class="listitem">
+Added the <code class="literal">ugreen-hid</code> subdriver for the Ugreen US2000 (72 W DC UPS, USB
+      ID <code class="literal">2b89:ffff</code>). The device was previously unsupported by any subdriver
+      and no <code class="literal">hid2nut</code> mapping could reach it: its live telemetry arrives
+      unprompted as 64-byte HID Input reports with report ID <code class="literal">0x71</code>, which no
+      object in its report descriptor describes. The subdriver keeps the
+      standard PDC feature-report mappings and decodes that frame for
+      <code class="literal">output.current</code>, <code class="literal">ups.load</code>, <code class="literal">input.voltage</code>, <code class="literal">output.voltage</code>,
+      <code class="literal">battery.current</code>, <code class="literal">battery.charger.status</code> and <code class="literal">battery.temperature</code>.
+      Three feature reports of this firmware are hardcoded dummies (<code class="literal">ups.load</code>
+      and <code class="literal">input.voltage</code> always report <code class="literal">1</code>; <code class="literal">output.voltage</code> is a coarse
+      integer that reads high) and its <code class="literal">PresentStatus</code> flags are never set, so
+      <code class="literal">LB</code> can never be raised from the device; with <code class="literal">battery.charge</code> live, the
+      core <code class="literal">ignorelb</code> option plus <code class="literal">battery.charge.low</code> provides it instead.
+      The frame is decoded only for the product strings the subdriver lists;
+      sibling models on the same USB ID still claim the subdriver to get the
+      standard mappings, but publish no vendor values. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3779" target="_top">issue #3779</a>]
 </li></ul></div></li><li class="listitem"><p class="simpara">
 <code class="literal">snmp-ups</code> driver updates:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+The <code class="literal">huawei</code> subdriver now reports output real power and power factor
+      separately for each phase. It reports real power in watts and apparent
+      power in volt-amperes. Unavailable phase power readings are omitted.
+      [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3863" target="_top">PR #3863</a>]
+</li><li class="listitem">
 Corrected the IETF fallback warning so it is emitted for automatic
       IETF selection rather than vendor-specific mappings. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3585" target="_top">issue #3585</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3767" target="_top">PR #3767</a>]
 </li><li class="listitem">
@@ -820,6 +902,10 @@ Previously when looping to start a driver (and initially failing), we
 </li></ul></div></li><li class="listitem"><p class="simpara">
 common code:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Driver polling now measures intervals with a monotonic clock when
+      available, detects clock jumps and falls back to wall time if the
+      monotonic clock fails. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/10" target="_top">issue #10</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3708" target="_top">PR #3708</a>]
+</li><li class="listitem">
 Fixed strict Clang conversion warnings. Process-name lookup now checks
       the symlink size before allocation and retains the full signed byte
       count returned when reading the link. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3770" target="_top">PR #3770</a>]
@@ -935,6 +1021,9 @@ Calls that the OpenBSD linker warns about at every link (as misused or
 </li><li class="listitem"><p class="simpara">
 NUT client libraries:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Development installs now provide pkg-config files for the scanner and
+      C++ client libraries only when those libraries are built. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3866" target="_top">PR #3866</a>]
+</li><li class="listitem">
 Fixed strict Clang conversion warnings and isolated an OpenSSL macro
       annotation warning in the C client library. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3770" target="_top">PR #3770</a>]
 </li><li class="listitem">
@@ -1295,6 +1384,9 @@ Corrected documentation cross-references and exact variable, option,
 </li></ul></div></li><li class="listitem"><p class="simpara">
 Recipes, CI and helper script updates not classified above:
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Out-of-tree USB builds now find the udev rules template in the source
+      tree and install the rules when the udev directory is detected. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3865" target="_top">PR #3865</a>]
+</li><li class="listitem">
 Introduced <code class="literal">AGENTS.md</code> for AI agents to help in a consistent manner with
       minimal friction. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3608" target="_top">#3608</a>]
 </li><li class="listitem">
@@ -1453,6 +1545,21 @@ With <code class="literal">--with-usb=auto</code> (or <code class="literal">yes<
       too old for NUT, instead of building without USB drivers. An explicit
       <code class="literal">--with-usb=libusb-1.0</code> still fails in that case.
       [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3781" target="_top">issue #3781</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3782" target="_top">PR #3782</a>]
+</li><li class="listitem">
+Windows (MinGW/MSYS2) builds of NUT now support only libusb-1.0 for
+      USB drivers, used with the WinUSB driver. Support for libusb-0.1
+      (libusb-win32 with its <code class="literal">libusb0.sys</code> driver, or libusb-compat) was
+      removed from Windows builds: <code class="literal">configure --with-usb=libusb-0.1</code> now
+      fails there, and an auto-detected libusb-0.1 is not used. Tested
+      with <code class="literal">apcmicrolink</code> and <code class="literal">nut-scanner</code> on Windows 10.
+      [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1507" target="_top">issue #1507</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3791" target="_top">PR #3791</a>]
+</li><li class="listitem">
+The <code class="literal">wdi-simple</code> USB driver installer for Windows now installs the
+      WinUSB driver (or libusbK, if chosen) instead of <code class="literal">libusb0.sys</code>,
+      accepts command-line options, and no longer reads past the end of
+      the generated NUT USB device table. Its build instructions were
+      updated for current libwdi.
+      [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1507" target="_top">issue #1507</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3791" target="_top">PR #3791</a>]
 </li><li class="listitem">
 Portability fixes found with OpenBSD 8.0 (<code class="literal">clang</code> 22, LibreSSL 4.4)
       and NetBSD 11.0 [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3816" target="_top">PR #3816</a>]:
@@ -6712,4 +6819,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.34. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-11-26 16:46:56 -- Network UPS Tools 2.8.5.1785</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-11-26 18:03:07 -- Network UPS Tools 2.8.5.1898</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

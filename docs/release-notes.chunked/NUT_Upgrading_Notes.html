@@ -49,6 +49,13 @@ The <code class="literal">PACKAGE_VERSION</code> and <code class="literal">PACKA
   <code class="literal">*.pc</code> files, packaging recipes and tarball names are not changed.
   [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3754" target="_top">PR #3754</a> follow-up]
 </li><li class="listitem">
+Windows builds of NUT now support only libusb-1.0; libusb-0.1
+  (libusb-win32 or libusb-compat) is no longer supported there, and
+  <code class="literal">--with-usb=libusb-0.1</code> fails. Packagers should depend on libusb-1.0
+  instead. USB devices previously bound to the libusb-win32
+  <code class="literal">libusb0.sys</code> driver must be re-bound to the WinUSB driver (e.g. with
+  the updated <code class="literal">wdi-simple</code> or with Zadig). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1507" target="_top">issue #1507</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3791" target="_top">PR #3791</a>]
+</li><li class="listitem">
 The Perl <code class="literal">UPS::Nut</code> module now decodes NUT quoting and backslash escapes
   in query/list values and <code class="literal">nutauth.conf</code>, including include paths. Remove
   manual decoding of these returned values and pass literal credentials
@@ -157,6 +164,20 @@ Deployments using <code class="literal">nutdrv_qx</code> driver with <code class
   the driver exits ("Replies from the UPS stayed out of step with commands").
   The quirk (and its default by USB ID) now also applies with an explicit
   <code class="literal">subdriver = cypress</code> setting, which used to turn it off. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3720" target="_top">PR #3720</a>]
+</li><li class="listitem">
+If you use <code class="literal">snmp-ups</code> with the <code class="literal">huawei</code> mapping, remove any extra factor
+  of 1000 applied to per-phase output power readings to obtain watts or
+  volt-amperes. The driver now reports those units directly. On three-phase
+  systems, check any dashboards or alerts that used <code class="literal">output.L1.realpower</code>
+  or <code class="literal">output.L2.powerfactor</code> for phase C. Use <code class="literal">output.L3.realpower</code> and
+  <code class="literal">output.L3.powerfactor</code> for that phase. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3863" target="_top">PR #3863</a>]
+</li><li class="listitem">
+Deployments using <code class="literal">usbhid-ups</code> with a Minuteman UPS which reports USB ID
+  <code class="literal">05dd:a0a0</code> and has <code class="literal">productid</code> set in <code class="literal">ups.conf</code> used to get the
+  <code class="literal">delta_ups-hid</code> subdriver. The <code class="literal">tripplite-hid</code> subdriver, which corrects
+  this device’s voltage and frequency readings, now handles it in all
+  cases, so the set of published variables changes somewhat (for example
+  <code class="literal">input.source</code> is no longer reported). [<a class="ulink" href="https://github.com/networkupstools/nut/issues/1852" target="_top">issue #1852</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3764" target="_top">PR #3764</a>]
 </li><li class="listitem">
 The <code class="literal">huawei-ups2000</code> driver fixed two serious problems that affected all
   previous NUT versions. All <code class="literal">huawei-ups2000</code> users are strongly recommended
@@ -1146,4 +1167,4 @@ The newapc driver has been renamed to apcsmart.  If you previously
   used newapc, make sure you delete the old binary and fix your
   ups.conf.  Otherwise, you may run the old driver from 1.4.
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_file_trimmed_here_on_changes_from_1_2_2_to_1_4_0"></a>3.31. File trimmed here on changes from 1.2.2 to 1.4.0</h3></div></div></div><p>For information before this point, start with version 2.4.1 and work back.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-11-26 16:46:56 -- Network UPS Tools 2.8.5.1785</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="NUT_Release_Notes.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="Project_History.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-11-26 18:03:07 -- Network UPS Tools 2.8.5.1898</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="NUT_Release_Notes.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="Project_History.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>

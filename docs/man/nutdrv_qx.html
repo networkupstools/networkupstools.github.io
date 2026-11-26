@@ -1181,8 +1181,8 @@ If the charge or runtime query fails during a poll, the corresponding
 <td class="icon">
 <div class="title">Note</div>
 </td>
-<td class="content">Only the BN150T has been tested, and only over USB. Polling and all
-three direct shutdown commands were exercised with its output unloaded.
+<td class="content">Only the BN150T, BW55T and BY50S have been tested, and only over USB.
+Polling and all three direct shutdown commands were exercised with its output unloaded.
 <strong>shutdown.return</strong> was verified on battery, including automatic output recovery
 after utility returned; <strong>shutdown.stayoff</strong> kept the output off with utility
 present until manual recovery; and <strong>shutdown.stop</strong> cancelled pending
@@ -1772,6 +1772,28 @@ number.
 <div class="paragraph"><p>As a rule of thumb for <code>usb_hid_desc_index</code> discovery, you can see larger
 <code>wDescriptorLength</code> values (roughly 600+ bytes) in reports of <code>lsusb</code> or
 similar tools.</p></div>
+</dd>
+<dt class="hdlist1">
+<strong>usb_request_min_gap_us</strong>=<em>microseconds</em>
+</dt>
+<dd>
+<p>
+Optional.  Minimum time from the end of one USB control request to the
+start of the next, for devices that refuse a request sent too soon after
+their previous answer and then refuse everything until a USB reset.  <code>0</code> is
+off.  Some drivers have a default for devices known to need it (the
+CyberPower subdriver of <code>usbhid-ups</code> uses <code>100</code> for <code>0764:0501</code>); a value
+set here always wins.
+</p>
+<div class="paragraph"><p>An invalid value stops the driver with an error.  Values above 10000
+(10 ms) are capped with a warning, as longer gaps make the driver too slow
+to start and to poll.
+<code>upsc</code> shows the value as written in <code>ups.conf</code>.</p></div>
+<div class="paragraph"><p>A request sent at least this long after the previous answer is not
+delayed.  One sent sooner waits for the remainder of the gap, and usually a
+little longer, as the system wakes the driver late (with <code>100</code>, typically
+120 to 300 microseconds).  After many refused requests in a row soon after
+an answer, the driver logs a hint with a value to try.</p></div>
 </dd>
 <dt class="hdlist1">
 <strong>LIBUSB_DEBUG =</strong> <em>INTEGER</em>
@@ -3061,7 +3083,7 @@ The NUT HCL: <a href="https://www.networkupstools.org/stable-hcl.html">https://w
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-11-26 16:46:22 UTC -- Network UPS Tools 2.8.5.1785
+Last updated 2026-11-26 18:02:31 UTC -- Network UPS Tools 2.8.5.1898
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>

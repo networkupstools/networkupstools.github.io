@@ -801,6 +801,21 @@ layout and are expected to work; please report results.</p></div>
 the Easy Pro "GT" series) speak the same protocol but may report a model
 id that collides with a table entry, so the driver can pick the wrong VA
 rating. Use the <strong>va</strong> option below to set the correct rating in that case.</p></div>
+<div class="paragraph"><p>Also validated end-to-end, including a full discharge and recharge used to
+calibrate the runtime model below, against a Ragtech New Easy Pro 3200 VA
+(part number 20NEP4061, CbU/Ti: automatic 115/127/220 V input, 115 V
+output, internal 2x 12 V 9 Ah bank, quick connector for external battery
+modules, firmware 1.0). This unit reports model id 18 and is therefore
+identified as an <code>Easy 2200 TI</code>; set <code>va = 3200</code> so that
+<code>ups.power.nominal</code> (3200), <code>ups.realpower.nominal</code> (2240) and <code>ups.load</code>
+are correct. The 2200 TI output current scaling matched both the unit&#8217;s
+front-panel load display and the firmware&#8217;s own load register (0x8D)
+within one percentage point, so no <strong>iout_calib</strong> override was needed.
+On this unit the firmware raises <code>LB</code> at about 21.7 V under load, then
+beeps, shows <code>A00</code> on the display and starts a 30 second shutdown
+countdown; the output is cut roughly 60 seconds after <code>LB</code>, whatever the
+charge byte (about 30 % at <code>LB</code>, 13 % at the countdown) says. Use
+<strong>runtime_low</strong> so that hosts shut down before that point.</p></div>
 <div class="paragraph"><p>This driver is <strong>experimental</strong>. Polling, status decoding and the
 <code>shutdown.stayoff</code> / <code>shutdown.stop</code> instant commands have been
 verified on hardware; <code>shutdown.return</code> and <code>test.battery.start.deep</code>
@@ -819,10 +834,22 @@ not been reverse-engineered yet.</p></div>
 </dt>
 <dd>
 <p>
-Per-unit output current calibration constant. If omitted (default),
-the driver reads the value from register <code>0xF3</code> at startup. Set this
-only to override a wrong factory-stored calibration.
+Per-unit output current calibration constant: <code>output.current</code> is
+computed as <em>raw reading</em> times a per-model constant divided by
+<strong>iout_calib</strong>. If omitted (default), the driver reads the value from
+register <code>0xF3</code> at startup; when set, this value takes precedence and
+the register value is only logged. Set this only to override a wrong
+factory-stored calibration.
 </p>
+<div class="paragraph"><p>Rebadged units are the known case. On a "One Up Nitro 2000"&#8201;&#8212;&#8201;whose
+firmware reports the <strong>Easy 2000 TI</strong> model id&#8201;&#8212;&#8201;register <code>0xF3</code> holds
+<code>70</code> where <code>140</code> is correct, so <code>output.current</code>, <code>ups.load</code> and the
+implied output VA all come out exactly twice the real value. If
+<code>ups.load</code> looks too high, and especially if the implied output power
+exceeds what the whole unit draws from the wall, compare
+<code>output.current</code> against a clamp meter on the UPS output (or against a
+load of known consumption) and set <strong>iout_calib</strong> so that the reported
+current matches.</p></div>
 </dd>
 <dt class="hdlist1">
 <strong>va</strong>=<em>number</em>
@@ -839,13 +866,94 @@ corrects <code>ups.power.nominal</code>, <code>ups.realpower.nominal</code> (VA 
 </p>
 </dd>
 <dt class="hdlist1">
+<strong>runtimecal</strong>=<em>runtime_high,load_high,runtime_low,load_low</em>
+</dt>
+<dd>
+<p>
+Enable a calculated <code>battery.runtime</code> (the firmware reports none). Two
+points of full-bank runtime in seconds at a given <code>ups.load</code> in percent,
+with the same meaning as in <a href="nutdrv_qx.html">nutdrv_qx(8)</a>; the driver fits
+<code>runtime = k * load^-n</code> through them. With this set, <code>battery.charge</code> becomes
+the driver&#8217;s own state-of-charge estimate: it integrates the energy drawn
+while on battery and recovers along <strong>chargetime</strong> on mains, because the
+firmware charge byte is derived from battery voltage (it reads 100 % as soon
+as the charger floats the bank, drops sharply under inverter load and was
+still around 30 % when the firmware raised low battery on the unit this was
+calibrated on). The raw firmware value is published as
+<code>battery.charge.approx</code>. The load behind <code>battery.runtime</code> is averaged
+over about 5 minutes on mains, so that short spikes do not swing the
+forecast, and over about 15 seconds on battery. See <em>CALIBRATING THE
+RUNTIME MODEL</em> below.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>chargetime</strong>=<em>seconds</em>
+</dt>
+<dd>
+<p>
+Time to recharge the bank from empty to 80 % (default 28800, the datasheet
+figure). The last 20 % is assumed to take half as long again, so a full
+recharge takes 1.5 times this value.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>battery_ah</strong>=<em>number</em>
+</dt>
+<dd>
+<p>
+Internal bank capacity in Ah (default 9).
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>extbatt_ah</strong>=<em>number</em>
+</dt>
+<dd>
+<p>
+Capacity in Ah of the external battery module(s), at the bank voltage
+(default 0). Runtime scales by (battery_ah + extbatt_ah) / battery_ah.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>obload_factor</strong>=<em>number</em>
+</dt>
+<dd>
+<p>
+On mains, multiply <code>ups.load</code> by this factor when computing <code>battery.runtime</code>
+(default 1.0). The inverter draws noticeably more than the mains path for the
+same equipment, so without it the estimate shown on mains is optimistic.
+Measure it as on-battery load divided by on-mains load.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>runtime_low</strong>=<em>seconds</em>
+</dt>
+<dd>
+<p>
+On battery, raise <code>LB</code> once the estimated runtime drops below this value
+(default 300), so <a href="upsmon.html">upsmon(8)</a> can shut down before the firmware
+low-battery signal. Also published as <code>battery.runtime.low</code>.
+</p>
+</dd>
+<dt class="hdlist1">
+<strong>soc_save_interval</strong>=<em>seconds</em>
+</dt>
+<dd>
+<p>
+How often the driver&#8217;s state-of-charge estimate is saved to the state path
+(default 60); it is also saved on every mains/battery transition and when
+the driver exits. Set to 0 to neither save nor resume it. See <em>STATE OF
+CHARGE FILE</em> below.
+</p>
+</dd>
+<dt class="hdlist1">
 <strong>allow_shutdown</strong>
 </dt>
 <dd>
 <p>
 Enable the <code>shutdown.return</code>, <code>shutdown.stayoff</code>, <code>shutdown.stop</code> and
-<code>test.battery.start.deep</code> instant commands. Disabled by default for
-safety: the Easy 2000 TI firmware does <strong>not</strong> auto-restart after a
+<code>test.battery.start.deep</code> and <code>test.battery.stop</code> instant commands.
+Disabled by default for safety: the Easy 2000 TI firmware does <strong>not</strong>
+auto-restart after a
 coordinated shutdown, so an <code>upsmon</code>-driven shutdown on low battery
 will leave the UPS (and everything plugged into it) powered off until
 someone presses the physical power button. Only set this flag if you
@@ -856,6 +964,121 @@ refusal and exits with failure instead of cutting the output.
 </p>
 </dd>
 </dl></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_calibrating_the_runtime_model">CALIBRATING THE RUNTIME MODEL</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>The model needs two runtime points, the charge time and, optionally, the
+on-battery load factor. The procedure below is the one used on the Easy Pro
+3200 VA mentioned above; one discharge and one recharge are enough.</p></div>
+<div class="paragraph"><p><strong>Preparation.</strong> Keep the UPS on mains for at least 8 hours so the bank is
+full. Stop <a href="upsmon.html">upsmon(8)</a> (or set <strong>runtime_low</strong> to 0 and restart the
+driver) so the host does not shut down during the test, and keep the
+normal load connected. Log the driver variables every few seconds, for
+example:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>while :; do
+    echo "$(date +%T) $(upsc ragtech@localhost 2&gt;/dev/null |
+        grep -E '^(ups\.(status|load|temperature)|battery\.voltage):' |
+        paste -sd' ' -)"
+    sleep 5
+done &gt;&gt; discharge.log</code></pre>
+</div></div>
+<div class="paragraph"><p><strong>Discharge.</strong> Disconnect the UPS from the wall and let it run until the
+firmware raises <code>LB</code>, then restore mains power immediately: the output is
+cut about one minute later. Also abort (restore mains) if the unit reports
+a fault or over-temperature, or if <code>battery.voltage</code> falls below 10.5 V
+per 12 V block (21.0 V for a 24 V bank). The inverter is audibly louder
+than on mains and the internal temperature rose from 50 to 64 C during the
+test; the fan cycles at around 63 C.</p></div>
+<div class="paragraph"><p><strong>Recharge.</strong> Keep logging <code>battery.voltage</code> (once a minute is enough) after
+mains returns. The charger holds a constant current (bulk) while the
+voltage rises, raises the bank to its absorption voltage (28.4 to 28.5 V
+here) and then drops back to float (about 26.8 V). The float transition
+marks a full bank.</p></div>
+<div class="paragraph"><p><strong>Deriving the parameters.</strong></p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+<strong>runtimecal</strong>: the time from disconnection to <code>LB</code> and the average
+  <code>ups.load</code> while on battery form one point; derive the second from the
+  datasheet autonomy table (scaled to the measured point) or from a second
+  run at a different load.
+</p>
+</li>
+<li>
+<p>
+<strong>obload_factor</strong>: average <code>ups.load</code> on battery divided by the average on
+  mains before the test.
+</p>
+</li>
+<li>
+<p>
+<strong>chargetime</strong>: the time from mains return to the float transition,
+  divided by 1.5.
+</p>
+</li>
+</ul></div>
+<div class="paragraph"><p>Measured on the Easy Pro 3200 VA (internal bank only): 1796 s from
+disconnection to <code>LB</code> at an average 11.4 % load on battery (9.2 % on mains
+before the test); bulk charge for 4.1 hours at about 1.5 A, float reached
+6.4 hours after mains returned. The resulting settings:</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>va = 3200
+runtimecal = 1796,11.4,5592,5.0
+chargetime = 15300
+obload_factor = 1.24</code></pre>
+</div></div>
+<div class="paragraph"><p>The second <strong>runtimecal</strong> point keeps the exponent derived from the Ragtech
+datasheet table (80 minutes at about 110 W, 20 minutes at about 300 W).
+These values come from a brand new unit with its factory batteries,
+calibrated within days of purchase; older batteries deliver noticeably less.
+Repeat the discharge after adding external modules (and set <strong>extbatt_ah</strong>),
+and about once a year as the batteries age.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_state_of_charge_file">STATE OF CHARGE FILE</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>With <strong>runtimecal</strong> set, the driver keeps its state-of-charge estimate in
+<code>ragtech-&lt;upsname&gt;.soc</code> under the NUT state path (<code>NUT_STATEPATH</code>, often
+<code>/run/nut</code> or <code>/var/state/ups</code>), as one line with the estimate and a
+timestamp. It is rewritten every <strong>soc_save_interval</strong> seconds (1440 small
+writes a day at the default 60 s), on each mains/battery transition and on
+driver exit, and read back when the driver starts. A saved value older than
+one hour is ignored, and so is a missing file: the driver then starts from
+the firmware charge reading, which is only trustworthy as "full" while on
+mains.</p></div>
+<div class="paragraph"><p>Things to consider for the location of the state path:</p></div>
+<div class="ulist"><ul>
+<li>
+<p>
+On a <code>tmpfs</code> (the default on many systems) the writes cost no storage
+  wear, but the estimate is lost on reboot; after a reboot during or soon
+  after an outage the driver starts from the inflated firmware reading and
+  re-converges as it recharges.
+</p>
+</li>
+<li>
+<p>
+On persistent storage the estimate also survives a quick reboot, but
+  every save is a write to the medium. On systems with soldered-on flash
+  or other wear-sensitive storage, consider a longer <strong>soc_save_interval</strong>
+  or a <code>tmpfs</code> state path. Should the file system be slow or unavailable,
+  the write may also delay a driver poll; a failing save is logged once.
+</p>
+</li>
+<li>
+<p>
+With <strong>soc_save_interval</strong> set to 0 nothing is written; the estimate then
+  restarts from the firmware reading whenever the driver restarts (for
+  example after a configuration change or a USB re-enumeration).
+</p>
+</li>
+</ul></div>
 </div>
 </div>
 <div class="sect1">
@@ -904,7 +1127,7 @@ Reverse-engineering reference:
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-11-26 16:46:22 UTC -- Network UPS Tools 2.8.5.1785
+Last updated 2026-11-26 18:02:30 UTC -- Network UPS Tools 2.8.5.1898
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>

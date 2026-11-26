@@ -1009,6 +1009,28 @@ number.
 similar tools.</p></div>
 </dd>
 <dt class="hdlist1">
+<strong>usb_request_min_gap_us</strong>=<em>microseconds</em>
+</dt>
+<dd>
+<p>
+Optional.  Minimum time from the end of one USB control request to the
+start of the next, for devices that refuse a request sent too soon after
+their previous answer and then refuse everything until a USB reset.  <code>0</code> is
+off.  Some drivers have a default for devices known to need it (the
+CyberPower subdriver of <code>usbhid-ups</code> uses <code>100</code> for <code>0764:0501</code>); a value
+set here always wins.
+</p>
+<div class="paragraph"><p>An invalid value stops the driver with an error.  Values above 10000
+(10 ms) are capped with a warning, as longer gaps make the driver too slow
+to start and to poll.
+<code>upsc</code> shows the value as written in <code>ups.conf</code>.</p></div>
+<div class="paragraph"><p>A request sent at least this long after the previous answer is not
+delayed.  One sent sooner waits for the remainder of the gap, and usually a
+little longer, as the system wakes the driver late (with <code>100</code>, typically
+120 to 300 microseconds).  After many refused requests in a row soon after
+an answer, the driver logs a hint with a value to try.</p></div>
+</dd>
+<dt class="hdlist1">
 <strong>LIBUSB_DEBUG =</strong> <em>INTEGER</em>
 </dt>
 <dd>
@@ -1089,7 +1111,7 @@ Dirk Teurlings &lt;dirk at upexia.nl&gt;
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-11-26 16:46:22 UTC -- Network UPS Tools 2.8.5.1785
+Last updated 2026-11-26 18:02:31 UTC -- Network UPS Tools 2.8.5.1898
 <script type="text/javascript">anchors.add();</script>
 </div>
 </div>
