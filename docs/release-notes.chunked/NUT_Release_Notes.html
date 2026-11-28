@@ -694,6 +694,13 @@ When reconnecting, report success more visibly (not only in debug), and
       <code class="literal">battery.voltage</code> then read as nonsense; platforms with a 64-bit <code class="literal">long</code>
       were unaffected. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3555" target="_top">PR #3555</a>]
 </li><li class="listitem">
+<code class="literal">idowell-hid</code> subdriver now also repairs the Usage Page of two
+      <code class="literal">PresentStatus</code> flags in those GoldenMate packs: the firmware leaves the
+      Battery System page selected, so the intended <code class="literal">Good</code> and
+      <code class="literal">ShutdownImminent</code> bits were decoded as <code class="literal">AtRateTimeToEmpty</code> and
+      <code class="literal">AverageTimeToEmpty</code> and ignored. They now feed the <code class="literal">OFF</code> and <code class="literal">LB</code>
+      status flags via the existing mappings. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3015" target="_top">issue #3015</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3726" target="_top">PR #3726</a>]
+</li><li class="listitem">
 Added the <code class="literal">microdowell-hid</code> subdriver for the MicroDowell <code class="literal">Enterprise USB</code>
       interface (USB ID <code class="literal">075d:0201</code>), as fitted to the B.8 (800 VA). The device
       was previously unsupported, and its report descriptor is broken in three
@@ -725,13 +732,6 @@ Added the <code class="literal">microdowell-hid</code> subdriver for the MicroDo
       declared length, and that capacity is what gets requested and clamped
       against. Devices already using the tweak (some APC Back-UPS models) now
       receive the intended full-buffer request. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3712" target="_top">issue #3712</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3729" target="_top">PR #3729</a>]
-</li><li class="listitem">
-<code class="literal">idowell-hid</code> subdriver now also repairs the Usage Page of two
-      <code class="literal">PresentStatus</code> flags in those GoldenMate packs: the firmware leaves the
-      Battery System page selected, so the intended <code class="literal">Good</code> and
-      <code class="literal">ShutdownImminent</code> bits were decoded as <code class="literal">AtRateTimeToEmpty</code> and
-      <code class="literal">AverageTimeToEmpty</code> and ignored. They now feed the <code class="literal">OFF</code> and <code class="literal">LB</code>
-      status flags via the existing mappings. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3015" target="_top">issue #3015</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3726" target="_top">PR #3726</a>]
 </li><li class="listitem">
 <code class="literal">mge-hid</code> subdriver updated to suppress <code class="literal">CHRG</code> status on constant-charge
       mode devices when battery is fully charged. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3518" target="_top">issue #3518</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3519" target="_top">PR #3519</a>]
@@ -798,6 +798,13 @@ in <code class="literal">legrand-hid</code> subdriver the <code class="literal">
       and the UPS was reported <code class="literal">OB</code> while on mains, and <code class="literal">LB</code> could never be
       raised. It can be turned off with <code class="literal">disable_fix_report_desc</code>. [<a class="ulink" href="https://github.com/networkupstools/nut/pull/3738" target="_top">PR #3738</a>]
 </li><li class="listitem">
+<code class="literal">ecoflow-hid</code> subdriver: the <code class="literal">battery.runtime</code> minutes-to-seconds
+      conversion returned a newly allocated string on every call, which the
+      driver never freed; with this quick-polled value the driver leaked
+      128 bytes per poll (about 14 MB per day at <code class="literal">pollinterval=1</code>). It now
+      uses a static buffer like the other conversion functions. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3787" target="_top">issue #3787</a>,
+      <a class="ulink" href="https://github.com/networkupstools/nut/pull/3788" target="_top">PR #3788</a>]
+</li><li class="listitem">
 Added a new <code class="literal">vertiv-hid</code> subdriver for the Vertiv Liebert GXT5 (USB ID
       <code class="literal">10af:1000</code>). This device shares the Liebert vendor ID handled by
       <code class="literal">belkin-hid</code>, but exposes everything under <code class="literal">UPS.PowerSummary</code> only (no
@@ -812,13 +819,6 @@ Added a new <code class="literal">vertiv-hid</code> subdriver for the Vertiv Lie
       new subdriver is used even when <code class="literal">productid</code> is set in <code class="literal">ups.conf</code>.
       Tested against a GXT5 on mains only; on-battery status transitions
       are not yet confirmed. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3613" target="_top">issue #3613</a>, <a class="ulink" href="https://github.com/networkupstools/nut/pull/3730" target="_top">PR #3730</a>]
-</li><li class="listitem">
-<code class="literal">ecoflow-hid</code> subdriver: the <code class="literal">battery.runtime</code> minutes-to-seconds
-      conversion returned a newly allocated string on every call, which the
-      driver never freed; with this quick-polled value the driver leaked
-      128 bytes per poll (about 14 MB per day at <code class="literal">pollinterval=1</code>). It now
-      uses a static buffer like the other conversion functions. [<a class="ulink" href="https://github.com/networkupstools/nut/issues/3787" target="_top">issue #3787</a>,
-      <a class="ulink" href="https://github.com/networkupstools/nut/pull/3788" target="_top">PR #3788</a>]
 </li><li class="listitem">
 <code class="literal">liebert-hid</code> subdriver (Phoenixtec, USB ID <code class="literal">06da:ffff</code>) now maps
       <code class="literal">ups.realpower</code> to <code class="literal">UPS.PowerConverter.Output.ActivePower</code>, <code class="literal">ups.power</code>
@@ -6819,4 +6819,4 @@ configure now picks up the right flags for gd automatically if gd
 Shutdowns on FreeBSD using the genericups driver should work again.
    [Petri Riihikallio]
 </li></ul></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_historic_releases"></a>2.34. Historic releases</h3></div></div></div><p>More ancient history is not covered in detail here.</p><p>You can see <a class="ulink" href="docs/history.txt" target="_top">docs/history.txt</a> for more details.</p></div></div><div xmlns="" class="navfooter nut_footer"><hr />
-		Last updated 2026-11-28 03:01:19 -- Network UPS Tools 2.8.5.1898</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
+		Last updated 2026-11-28 13:32:23 -- Network UPS Tools 2.8.5.1898</div><script xmlns="" type="text/javascript">anchors.add();</script><div class="navfooter"><hr /><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="_introduction.html">Prev</a> </td><td width="20%" align="center"> </td><td width="40%" align="right"> <a accesskey="n" href="NUT_Upgrading_Notes.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top"> </td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top"> </td></tr></table></div></body></html>
